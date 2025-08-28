@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>WADNRForestHealthTracker.Database</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{b01f4ee0-8013-4b8d-a2ca-41d7672a205c}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>WADNRForestHealthTracker.Database</RootNamespace>
+    <AssemblyName>WADNRForestHealthTracker.Database</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo" />
+    <Folder Include="Scripts" />
+    <Folder Include="HangFire" />
+    <Folder Include="dbo\Functions" />
+    <Folder Include="dbo\Procs" />
+    <Folder Include="dbo\Tables" />
+    <Folder Include="dbo\Views" />
+    <Folder Include="HangFire\Tables" />
+    <Folder Include="Scripts\LookupTables" />
+    <Folder Include="Scripts\ReleaseScripts" />
+    <Folder Include="Scripts\Utility" />
+    <Folder Include="dbo\Triggers" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Triggers\dbo.trPreventDeleteOfUnknownOrganization.sql" />
+    <Build Include="dbo\Triggers\dbo.trPreventUpdateOfUnknownOrganization.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ActivityType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.AgreementPersonRole.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ArcOnlineFinanceApiRawJsonImportTableType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.AuditLogEventType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.CostType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.CustomPageDisplayType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.CustomPageNavigationSection.sql" />
+    <Build Include="Scripts\LookupTables\dbo.Division.sql" />
+    <Build Include="Scripts\LookupTables\dbo.FieldDefinition.sql" />
+    <Build Include="Scripts\LookupTables\dbo.FileResourceMimeType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.FirmaPageRenderType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.FirmaPageType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.FocusAreaStatus.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ForesterRole.sql" />
+    <Build Include="Scripts\LookupTables\dbo.FundingSource.sql" />
+    <Build Include="Scripts\LookupTables\dbo.FundSourceAllocationPriority.sql" />
+    <Build Include="Scripts\LookupTables\dbo.FundSourceAllocationSource.sql" />
+    <Build Include="Scripts\LookupTables\dbo.FundSourceStatus.sql" />
+    <Build Include="Scripts\LookupTables\dbo.GisUploadAttemptWorkflowSection.sql" />
+    <Build Include="Scripts\LookupTables\dbo.GisUploadAttemptWorkflowSectionGrouping.sql" />
+    <Build Include="Scripts\LookupTables\dbo.GoogleChartType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.InteractionEventType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.InvoiceMatchAmountType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.InvoiceStatus.sql" />
+    <Build Include="Scripts\LookupTables\dbo.JsonImportStatusType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.MeasurementUnitType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.NotificationType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.OrganizationCode.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProgramNotificationType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProjectApprovalStatus.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProjectColorByType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProjectCostType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProjectCreateSection.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProjectDocumentType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProjectImageTiming.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProjectLocationFilterType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProjectLocationSimpleType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProjectLocationType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProjectPersonRelationshipType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProjectStage.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProjectStewardshipAreaType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProjectUpdateSection.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProjectUpdateState.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ProjectWorkflowSectionGrouping.sql" />
+    <Build Include="Scripts\LookupTables\dbo.RecurrenceInterval.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ReportTemplateModel.sql" />
+    <Build Include="Scripts\LookupTables\dbo.ReportTemplateModelType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.Role.sql" />
+    <Build Include="Scripts\LookupTables\dbo.SocrataDataMartRawJsonImportTableType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.SupportRequestType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.TabularDataImportTableType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.TreatmentCode.sql" />
+    <Build Include="Scripts\LookupTables\dbo.TreatmentDetailedActivityType.sql" />
+    <Build Include="Scripts\LookupTables\dbo.TreatmentType.sql" />
+    <Build Include="dbo\Tables\dbo.ActivityType.sql" />
+  </ItemGroup>
+</Project>

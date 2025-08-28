@@ -26,3 +26,8 @@
 /.vs/wadnrforesthealth/v16/*.suo
 
 *.vshistory
+.vs
+/.dockerignore
+/*.user
+*.user
+*.cache
