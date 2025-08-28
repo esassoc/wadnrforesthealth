@@ -1,13 +1,18 @@
-delete from dbo.ArcOnlineFinanceApiRawJsonImportTableType
-
-/*
-    SocrataDataMartRawJsonImportTableTypeID [int] NOT NULL,
-    SocrataDataMartRawJsonImportTableTypeName [varchar](100) NOT NULL
-*/
-
-insert into dbo.ArcOnlineFinanceApiRawJsonImportTableType(ArcOnlineFinanceApiRawJsonImportTableTypeID, ArcOnlineFinanceApiRawJsonImportTableTypeName) values (1, 'Vendor')
-insert into dbo.ArcOnlineFinanceApiRawJsonImportTableType(ArcOnlineFinanceApiRawJsonImportTableTypeID, ArcOnlineFinanceApiRawJsonImportTableTypeName) values (2, 'ProgramIndex')
-insert into dbo.ArcOnlineFinanceApiRawJsonImportTableType(ArcOnlineFinanceApiRawJsonImportTableTypeID, ArcOnlineFinanceApiRawJsonImportTableTypeName) values (3, 'ProjectCode')
-insert into dbo.ArcOnlineFinanceApiRawJsonImportTableType(ArcOnlineFinanceApiRawJsonImportTableTypeID, ArcOnlineFinanceApiRawJsonImportTableTypeName) values (4, 'FundSourceExpenditure')
+merge into dbo.ArcOnlineFinanceApiRawJsonImportTableType as Target
+using (values
+(1, 'Vendor'),
+(2, 'ProgramIndex'),
+(3, 'ProjectCode'),
+(4, 'FundSourceExpenditure')
+) as Source (ArcOnlineFinanceApiRawJsonImportTableTypeID, ArcOnlineFinanceApiRawJsonImportTableTypeName)
+on Target.ArcOnlineFinanceApiRawJsonImportTableTypeID = Source.ArcOnlineFinanceApiRawJsonImportTableTypeID
+when matched then
+    update set
+        ArcOnlineFinanceApiRawJsonImportTableTypeName = Source.ArcOnlineFinanceApiRawJsonImportTableTypeName
+when not matched by target then
+    insert (ArcOnlineFinanceApiRawJsonImportTableTypeID, ArcOnlineFinanceApiRawJsonImportTableTypeName)
+    values (ArcOnlineFinanceApiRawJsonImportTableTypeID, ArcOnlineFinanceApiRawJsonImportTableTypeName)
+when not matched by source then
+    delete;
 
 

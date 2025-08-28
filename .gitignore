@@ -31,3 +31,7 @@
 /*.user
 *.user
 *.cache
+*.dbmdl
+/WADNRForestHealthTracker.Database/*.jfm
+bin
+obj

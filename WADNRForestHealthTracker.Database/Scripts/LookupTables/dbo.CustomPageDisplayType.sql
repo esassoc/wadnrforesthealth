@@ -1,6 +1,18 @@
-delete from dbo.CustomPageDisplayType
-
-insert into dbo.CustomPageDisplayType(CustomPageDisplayTypeID, CustomPageDisplayTypeName, CustomPageDisplayTypeDisplayName, CustomPageDisplayTypeDescription) values (1, 'Disabled', 'Disabled', 'Not visible to any users')
-insert into dbo.CustomPageDisplayType(CustomPageDisplayTypeID, CustomPageDisplayTypeName, CustomPageDisplayTypeDisplayName, CustomPageDisplayTypeDescription) values (2, 'Public', 'Public', 'Visible to all users')
-insert into dbo.CustomPageDisplayType(CustomPageDisplayTypeID, CustomPageDisplayTypeName, CustomPageDisplayTypeDisplayName, CustomPageDisplayTypeDescription) values (3, 'Protected', 'Protected', 'Visible to logged in users only')
+merge into dbo.CustomPageDisplayType as Target
+using (values
+(1, 'Disabled', 'Disabled', 'Not visible to any users'),
+(2, 'Public', 'Public', 'Visible to all users'),
+(3, 'Protected', 'Protected', 'Visible to logged in users only')
+) as Source (CustomPageDisplayTypeID, CustomPageDisplayTypeName, CustomPageDisplayTypeDisplayName, CustomPageDisplayTypeDescription)
+on Target.CustomPageDisplayTypeID = Source.CustomPageDisplayTypeID
+when matched then
+    update set
+        CustomPageDisplayTypeName = Source.CustomPageDisplayTypeName,
+        CustomPageDisplayTypeDisplayName = Source.CustomPageDisplayTypeDisplayName,
+        CustomPageDisplayTypeDescription = Source.CustomPageDisplayTypeDescription
+when not matched by target then
+    insert (CustomPageDisplayTypeID, CustomPageDisplayTypeName, CustomPageDisplayTypeDisplayName, CustomPageDisplayTypeDescription)
+    values (CustomPageDisplayTypeID, CustomPageDisplayTypeName, CustomPageDisplayTypeDisplayName, CustomPageDisplayTypeDescription)
+when not matched by source then
+    delete;
 
