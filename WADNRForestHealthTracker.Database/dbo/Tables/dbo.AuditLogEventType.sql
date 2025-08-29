@@ -1,17 +1,8 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[AuditLogEventType](
-	[AuditLogEventTypeID] [int] NOT NULL,
-	[AuditLogEventTypeName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[AuditLogEventTypeDisplayName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
- CONSTRAINT [PK_AuditLogEventType_AuditLogEventTypeID] PRIMARY KEY CLUSTERED 
+CREATE TABLE dbo.AuditLogEventType
 (
-	[AuditLogEventTypeID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_AuditLogEventType_AuditLogEventTypeName] UNIQUE NONCLUSTERED 
-(
-	[AuditLogEventTypeName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+    AuditLogEventTypeID int IDENTITY(1,1) NOT NULL CONSTRAINT PK_AuditLogEventType_AuditLogEventTypeID PRIMARY KEY,
+    AuditLogEventTypeName varchar(100) NOT NULL,
+    AuditLogEventTypeDisplayName varchar(100) NOT NULL,
+    CONSTRAINT AK_AuditLogEventType_AuditLogEventTypeName UNIQUE (AuditLogEventTypeName)
+)
+GO

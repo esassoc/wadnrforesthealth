@@ -1,13 +1,9 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Authenticator](
-	[AuthenticatorID] [int] IDENTITY(1,1) NOT NULL,
-	[AuthenticatorName] [varchar](10) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[AuthenticatorFullName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
- CONSTRAINT [PK_Authenticator_AuthenticatorID] PRIMARY KEY CLUSTERED 
+CREATE TABLE dbo.Authenticator
 (
-	[AuthenticatorID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+    AuthenticatorID int IDENTITY(1,1) NOT NULL CONSTRAINT PK_Authenticator_AuthenticatorID PRIMARY KEY,
+    PersonID int NOT NULL CONSTRAINT FK_Authenticator_Person_PersonID FOREIGN KEY REFERENCES dbo.Person(PersonID),
+    AuthenticatorType varchar(50) NOT NULL,
+    AuthenticatorValue varchar(256) NOT NULL,
+    ExpirationDate datetime NULL
+)
+GO

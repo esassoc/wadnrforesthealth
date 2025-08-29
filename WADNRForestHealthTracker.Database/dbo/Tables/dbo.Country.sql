@@ -1,13 +1,8 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Country](
-	[CountryID] [int] NOT NULL,
-	[CountryName] [varchar](255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[CountryAbbrev] [varchar](2) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
- CONSTRAINT [PK_Country_CountryID] PRIMARY KEY CLUSTERED 
+CREATE TABLE dbo.Country
 (
-	[CountryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+    CountryID int IDENTITY(1,1) NOT NULL CONSTRAINT PK_Country_CountryID PRIMARY KEY,
+    CountryName varchar(100) NOT NULL,
+    CountryCode varchar(10) NOT NULL,
+    CONSTRAINT AK_Country_CountryName UNIQUE (CountryName)
+)
+GO

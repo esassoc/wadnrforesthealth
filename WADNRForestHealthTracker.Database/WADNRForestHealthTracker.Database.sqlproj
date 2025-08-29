@@ -137,5 +137,17 @@
     <Build Include="dbo\Tables\dbo.ArcOnlineFinanceApiRawJsonImport.sql" />
     <Build Include="dbo\Tables\dbo.ArcOnlineFinanceApiRawJsonImportTableType.sql" />
     <Build Include="dbo\Tables\dbo.AuditLog.sql" />
+    <Build Include="dbo\Tables\dbo.AuditLogEventType.sql" />
+    <Build Include="dbo\Tables\dbo.Authenticator.sql" />
+    <Build Include="dbo\Tables\dbo.Classification.sql" />
+    <Build Include="dbo\Tables\dbo.ClassificationSystem.sql" />
+    <Build Include="dbo\Tables\dbo.CostType.sql" />
+    <Build Include="dbo\Tables\dbo.CostTypeDatamartMapping.sql" />
+    <Build Include="dbo\Tables\dbo.Country.sql" />
+    <Build Include="dbo\Tables\dbo.County.sql" />
+    <Build Include="dbo\Tables\dbo.CustomPage.sql" />
+    <Build Include="dbo\Tables\dbo.CustomPageDisplayType.sql" />
+    <Build Include="dbo\Tables\dbo.CustomPageImage.sql" />
+    <Build Include="dbo\Tables\dbo.CustomPageNavigationSection.sql" />
   </ItemGroup>
 </Project>
