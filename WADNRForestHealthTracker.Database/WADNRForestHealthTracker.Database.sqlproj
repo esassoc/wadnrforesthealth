@@ -175,5 +175,23 @@
     <Build Include="dbo\Tables\dbo.ForesterWorkUnit.sql" />
     <Build Include="dbo\Tables\dbo.FundingSource.sql" />
     <Build Include="dbo\Tables\dbo.FundSource.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocation.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationBudgetLineItem.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationChangeLog.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationExpenditure.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationExpenditureJsonStage.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationFileResource.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationLikelyPerson.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationNote.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationNoteInternal.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationPriority.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationProgramIndexProjectCode.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationProgramManager.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationSource.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceFileResource.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceNote.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceNoteInternal.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceStatus.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceType.sql" />
   </ItemGroup>
 </Project>

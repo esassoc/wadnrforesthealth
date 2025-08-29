@@ -1,66 +1,18 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[FundSourceAllocation](
-	[FundSourceAllocationID] [int] IDENTITY(1,1) NOT NULL,
-	[FundSourceAllocationName] [nvarchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[StartDate] [datetime] NULL,
-	[EndDate] [datetime] NULL,
-	[AllocationAmount] [money] NULL,
-	[FederalFundCodeID] [int] NULL,
-	[OrganizationID] [int] NULL,
-	[DNRUplandRegionID] [int] NULL,
-	[DivisionID] [int] NULL,
-	[FundSourceManagerID] [int] NULL,
-	[FundSourceAllocationPriorityID] [int] NULL,
-	[HasFundFSPs] [bit] NULL,
-	[FundSourceAllocationSourceID] [int] NULL,
-	[LikelyToUse] [bit] NULL,
-	[FundSourceID] [int] NOT NULL,
- CONSTRAINT [PK_FundSourceAllocation_FundSourceAllocationID] PRIMARY KEY CLUSTERED 
-(
-	[FundSourceAllocationID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-
+    [FundSourceAllocationID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_FundSourceAllocation_FundSourceAllocationID] PRIMARY KEY,
+    [FundSourceAllocationName] [varchar](100) NULL,
+    [StartDate] [datetime] NULL,
+    [EndDate] [datetime] NULL,
+    [AllocationAmount] [money] NULL,
+    [FederalFundCodeID] [int] NULL CONSTRAINT [FK_FundSourceAllocation_FederalFundCode_FederalFundCodeID] FOREIGN KEY REFERENCES [dbo].[FederalFundCode]([FederalFundCodeID]),
+    [OrganizationID] [int] NULL CONSTRAINT [FK_FundSourceAllocation_Organization_OrganizationID] FOREIGN KEY REFERENCES [dbo].[Organization]([OrganizationID]),
+    [DNRUplandRegionID] [int] NULL CONSTRAINT [FK_FundSourceAllocation_DNRUplandRegion_DNRUplandRegionID] FOREIGN KEY REFERENCES [dbo].[DNRUplandRegion]([DNRUplandRegionID]),
+    [DivisionID] [int] NULL CONSTRAINT [FK_FundSourceAllocation_Division_DivisionID] FOREIGN KEY REFERENCES [dbo].[Division]([DivisionID]),
+    [FundSourceManagerID] [int] NULL CONSTRAINT [FK_FundSourceAllocation_Person_FundSourceManagerID_PersonID] FOREIGN KEY REFERENCES [dbo].[Person]([PersonID]),
+    [FundSourceAllocationPriorityID] [int] NULL CONSTRAINT [FK_FundSourceAllocation_FundSourceAllocationPriority_FundSourceAllocationPriorityID] FOREIGN KEY REFERENCES [dbo].[FundSourceAllocationPriority]([FundSourceAllocationPriorityID]),
+    [HasFundFSPs] [bit] NULL,
+    [FundSourceAllocationSourceID] [int] NULL CONSTRAINT [FK_FundSourceAllocation_FundSourceAllocationSource_FundSourceAllocationSourceID] FOREIGN KEY REFERENCES [dbo].[FundSourceAllocationSource]([FundSourceAllocationSourceID]),
+    [LikelyToUse] [bit] NULL,
+    [FundSourceID] [int] NOT NULL CONSTRAINT [FK_FundSourceAllocation_FundSource_FundSourceID] FOREIGN KEY REFERENCES [dbo].[FundSource]([FundSourceID])
+)
 GO
-ALTER TABLE [dbo].[FundSourceAllocation]  WITH CHECK ADD  CONSTRAINT [FK_FundSourceAllocation_Division_DivisionID] FOREIGN KEY([DivisionID])
-REFERENCES [dbo].[Division] ([DivisionID])
-GO
-ALTER TABLE [dbo].[FundSourceAllocation] CHECK CONSTRAINT [FK_FundSourceAllocation_Division_DivisionID]
-GO
-ALTER TABLE [dbo].[FundSourceAllocation]  WITH CHECK ADD  CONSTRAINT [FK_FundSourceAllocation_DNRUplandRegion_DNRUplandRegionID] FOREIGN KEY([DNRUplandRegionID])
-REFERENCES [dbo].[DNRUplandRegion] ([DNRUplandRegionID])
-GO
-ALTER TABLE [dbo].[FundSourceAllocation] CHECK CONSTRAINT [FK_FundSourceAllocation_DNRUplandRegion_DNRUplandRegionID]
-GO
-ALTER TABLE [dbo].[FundSourceAllocation]  WITH CHECK ADD  CONSTRAINT [FK_FundSourceAllocation_FederalFundCode_FederalFundCodeID] FOREIGN KEY([FederalFundCodeID])
-REFERENCES [dbo].[FederalFundCode] ([FederalFundCodeID])
-GO
-ALTER TABLE [dbo].[FundSourceAllocation] CHECK CONSTRAINT [FK_FundSourceAllocation_FederalFundCode_FederalFundCodeID]
-GO
-ALTER TABLE [dbo].[FundSourceAllocation]  WITH CHECK ADD  CONSTRAINT [FK_FundSourceAllocation_FundSource_FundSourceID] FOREIGN KEY([FundSourceID])
-REFERENCES [dbo].[FundSource] ([FundSourceID])
-GO
-ALTER TABLE [dbo].[FundSourceAllocation] CHECK CONSTRAINT [FK_FundSourceAllocation_FundSource_FundSourceID]
-GO
-ALTER TABLE [dbo].[FundSourceAllocation]  WITH CHECK ADD  CONSTRAINT [FK_FundSourceAllocation_FundSourceAllocationPriority_FundSourceAllocationPriorityID] FOREIGN KEY([FundSourceAllocationPriorityID])
-REFERENCES [dbo].[FundSourceAllocationPriority] ([FundSourceAllocationPriorityID])
-GO
-ALTER TABLE [dbo].[FundSourceAllocation] CHECK CONSTRAINT [FK_FundSourceAllocation_FundSourceAllocationPriority_FundSourceAllocationPriorityID]
-GO
-ALTER TABLE [dbo].[FundSourceAllocation]  WITH CHECK ADD  CONSTRAINT [FK_FundSourceAllocation_FundSourceAllocationSource_FundSourceAllocationSourceID] FOREIGN KEY([FundSourceAllocationSourceID])
-REFERENCES [dbo].[FundSourceAllocationSource] ([FundSourceAllocationSourceID])
-GO
-ALTER TABLE [dbo].[FundSourceAllocation] CHECK CONSTRAINT [FK_FundSourceAllocation_FundSourceAllocationSource_FundSourceAllocationSourceID]
-GO
-ALTER TABLE [dbo].[FundSourceAllocation]  WITH CHECK ADD  CONSTRAINT [FK_FundSourceAllocation_Organization_OrganizationID] FOREIGN KEY([OrganizationID])
-REFERENCES [dbo].[Organization] ([OrganizationID])
-GO
-ALTER TABLE [dbo].[FundSourceAllocation] CHECK CONSTRAINT [FK_FundSourceAllocation_Organization_OrganizationID]
-GO
-ALTER TABLE [dbo].[FundSourceAllocation]  WITH CHECK ADD  CONSTRAINT [FK_FundSourceAllocation_Person_FundSourceManagerID_PersonID] FOREIGN KEY([FundSourceManagerID])
-REFERENCES [dbo].[Person] ([PersonID])
-GO
-ALTER TABLE [dbo].[FundSourceAllocation] CHECK CONSTRAINT [FK_FundSourceAllocation_Person_FundSourceManagerID_PersonID]
