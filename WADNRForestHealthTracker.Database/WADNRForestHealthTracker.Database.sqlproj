@@ -199,5 +199,13 @@
     <Build Include="dbo\Tables\dbo.GisExcludeIncludeColumn.sql" />
     <Build Include="dbo\Tables\dbo.GisExcludeIncludeColumnValue.sql" />
     <Build Include="dbo\Tables\dbo.GisFeature.sql" />
+    <Build Include="dbo\Tables\dbo.GisFeatureMetadataAttribute.sql" />
+    <Build Include="dbo\Tables\dbo.GisMetadataAttribute.sql" />
+    <Build Include="dbo\Tables\dbo.GisUploadAttempt.sql" />
+    <Build Include="dbo\Tables\dbo.GisUploadAttemptGisMetadataAttribute.sql" />
+    <Build Include="dbo\Tables\dbo.GisUploadAttemptWorkflowSection.sql" />
+    <Build Include="dbo\Tables\dbo.GisUploadAttemptWorkflowSectionGrouping.sql" />
+    <Build Include="dbo\Tables\dbo.GisUploadProgramMergeGrouping.sql" />
+    <Build Include="dbo\Tables\dbo.GisUploadSourceOrganization.sql" />
   </ItemGroup>
 </Project>
