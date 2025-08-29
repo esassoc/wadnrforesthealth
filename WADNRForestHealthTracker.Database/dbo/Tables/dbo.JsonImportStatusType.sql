@@ -1,16 +1,6 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[JsonImportStatusType](
-	[JsonImportStatusTypeID] [int] NOT NULL,
-	[JsonImportStatusTypeName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
- CONSTRAINT [PK_JsonImportStatusType_JsonImportStatusTypeID] PRIMARY KEY CLUSTERED 
-(
-	[JsonImportStatusTypeID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_JsonImportStatusType_JsonImportStatusTypeName] UNIQUE NONCLUSTERED 
-(
-	[JsonImportStatusTypeName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+    [JsonImportStatusTypeID] [int] NOT NULL CONSTRAINT [PK_JsonImportStatusType_JsonImportStatusTypeID] PRIMARY KEY,
+    [JsonImportStatusTypeName] [varchar](100) NOT NULL,
+    CONSTRAINT [AK_JsonImportStatusType_JsonImportStatusTypeName] UNIQUE ([JsonImportStatusTypeName])
+)
+GO
