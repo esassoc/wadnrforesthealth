@@ -149,5 +149,16 @@
     <Build Include="dbo\Tables\dbo.CustomPageDisplayType.sql" />
     <Build Include="dbo\Tables\dbo.CustomPageImage.sql" />
     <Build Include="dbo\Tables\dbo.CustomPageNavigationSection.sql" />
+    <Build Include="dbo\Tables\dbo.DatabaseMigration.sql" />
+    <Build Include="dbo\Tables\dbo.Deployment.sql" />
+    <Build Include="dbo\Tables\dbo.Division.sql" />
+    <Build Include="dbo\Tables\dbo.DNRUplandRegion.sql" />
+    <Build Include="dbo\Tables\dbo.DNRUplandRegionContentImage.sql" />
+    <Build Include="dbo\Tables\dbo.ExternalMapLayer.sql" />
+    <Build Include="dbo\Tables\dbo.FederalFundCode.sql" />
+    <Build Include="dbo\Tables\dbo.FieldDefinition.sql" />
+    <Build Include="dbo\Tables\dbo.FieldDefinitionData.sql" />
+    <Build Include="dbo\Tables\dbo.FieldDefinitionDataImage.sql" />
+    <Build Include="dbo\Tables\dbo.FileResource.sql" />
   </ItemGroup>
 </Project>

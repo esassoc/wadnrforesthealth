@@ -1,22 +1,9 @@
-SET ANSI_NULLS ON
+
+CREATE TABLE dbo.FieldDefinition
+(
+    FieldDefinitionID int IDENTITY(1,1) NOT NULL CONSTRAINT PK_FieldDefinition_FieldDefinitionID PRIMARY KEY,
+    FieldDefinitionName varchar(100) NOT NULL,
+    FieldDefinitionType varchar(50) NOT NULL,
+    CONSTRAINT AK_FieldDefinition_FieldDefinitionName UNIQUE (FieldDefinitionName)
+)
 GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[FieldDefinition](
-	[FieldDefinitionID] [int] NOT NULL,
-	[FieldDefinitionName] [varchar](300) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[FieldDefinitionDisplayName] [varchar](300) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[DefaultDefinition] [dbo].[html] NOT NULL,
- CONSTRAINT [PK_FieldDefinition_FieldDefinitionID] PRIMARY KEY CLUSTERED 
-(
-	[FieldDefinitionID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_FieldDefinition_FieldDefinitionDisplayName] UNIQUE NONCLUSTERED 
-(
-	[FieldDefinitionDisplayName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_FieldDefinition_FieldDefinitionName] UNIQUE NONCLUSTERED 
-(
-	[FieldDefinitionName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]

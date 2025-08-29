@@ -1,48 +1,8 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[DNRUplandRegion](
-	[DNRUplandRegionID] [int] NOT NULL,
-	[DNRUplandRegionAbbrev] [nvarchar](10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[DNRUplandRegionName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[DNRUplandRegionLocation] [geometry] NULL,
-	[RegionAddress] [varchar](255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[RegionCity] [varchar](30) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[RegionState] [varchar](30) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[RegionZip] [varchar](10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[RegionPhone] [varchar](30) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[RegionEmail] [varchar](255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[DNRUplandRegionCoordinatorID] [int] NULL,
-	[RegionContent] [dbo].[html] NULL,
- CONSTRAINT [PK_DNRUplandRegion_DNRUplandRegionID] PRIMARY KEY CLUSTERED 
+CREATE TABLE dbo.DNRUplandRegion
 (
-	[DNRUplandRegionID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_DNRUplandRegion_DNRUplandRegionName] UNIQUE NONCLUSTERED 
-(
-	[DNRUplandRegionName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
+    DNRUplandRegionID int IDENTITY(1,1) NOT NULL CONSTRAINT PK_DNRUplandRegion_DNRUplandRegionID PRIMARY KEY,
+    DNRUplandRegionName varchar(100) NOT NULL,
+    DNRUplandRegionCode varchar(10) NOT NULL,
+    CONSTRAINT AK_DNRUplandRegion_DNRUplandRegionName UNIQUE (DNRUplandRegionName)
+)
 GO
-ALTER TABLE [dbo].[DNRUplandRegion]  WITH CHECK ADD  CONSTRAINT [FK_DNRUplandRegion_Person_DNRUplandRegionCoordinatorID_PersonID] FOREIGN KEY([DNRUplandRegionCoordinatorID])
-REFERENCES [dbo].[Person] ([PersonID])
-GO
-ALTER TABLE [dbo].[DNRUplandRegion] CHECK CONSTRAINT [FK_DNRUplandRegion_Person_DNRUplandRegionCoordinatorID_PersonID]
-GO
-SET ARITHABORT ON
-SET CONCAT_NULL_YIELDS_NULL ON
-SET QUOTED_IDENTIFIER ON
-SET ANSI_NULLS ON
-SET ANSI_PADDING ON
-SET ANSI_WARNINGS ON
-SET NUMERIC_ROUNDABORT OFF
-
-GO
-CREATE SPATIAL INDEX [SPATIAL_DNRUplandRegion_DNRUplandRegionLocation] ON [dbo].[DNRUplandRegion]
-(
-	[DNRUplandRegionLocation]
-)USING  GEOMETRY_AUTO_GRID 
-WITH (BOUNDING_BOX =(-125, 45, -116, 50), 
-CELLS_PER_OBJECT = 8, PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]

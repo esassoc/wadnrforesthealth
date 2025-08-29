@@ -1,28 +1,8 @@
-SET ANSI_NULLS ON
+CREATE TABLE dbo.ExternalMapLayer
+(
+    ExternalMapLayerID int IDENTITY(1,1) NOT NULL CONSTRAINT PK_ExternalMapLayer_ExternalMapLayerID PRIMARY KEY,
+    LayerName varchar(100) NOT NULL,
+    LayerUrl varchar(256) NOT NULL,
+    LayerType varchar(50) NOT NULL
+)
 GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ExternalMapLayer](
-	[ExternalMapLayerID] [int] IDENTITY(1,1) NOT NULL,
-	[DisplayName] [varchar](75) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[LayerUrl] [varchar](500) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[LayerDescription] [varchar](200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[FeatureNameField] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[DisplayOnPriorityLandscape] [bit] NOT NULL,
-	[DisplayOnProjectMap] [bit] NOT NULL,
-	[DisplayOnAllOthers] [bit] NOT NULL,
-	[IsActive] [bit] NOT NULL,
-	[IsTiledMapService] [bit] NOT NULL,
- CONSTRAINT [PK_ExternalMapLayer_ExternalMapLayerID] PRIMARY KEY CLUSTERED 
-(
-	[ExternalMapLayerID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_ExternalMapLayer_DisplayName] UNIQUE NONCLUSTERED 
-(
-	[DisplayName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_ExternalMapLayer_LayerUrl] UNIQUE NONCLUSTERED 
-(
-	[LayerUrl] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
