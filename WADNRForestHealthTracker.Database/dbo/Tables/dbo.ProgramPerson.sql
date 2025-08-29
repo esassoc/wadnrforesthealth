@@ -1,29 +1,7 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[ProgramPerson](
-	[ProgramPersonID] [int] IDENTITY(1,1) NOT NULL,
-	[ProgramID] [int] NOT NULL,
-	[PersonID] [int] NOT NULL,
- CONSTRAINT [PK_ProgramPerson_ProgramPersonID] PRIMARY KEY CLUSTERED 
-(
-	[ProgramPersonID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_ProgramPerson_ProgramID_PersonID] UNIQUE NONCLUSTERED 
-(
-	[ProgramID] ASC,
-	[PersonID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-
+    [ProgramPersonID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_ProgramPerson_ProgramPersonID] PRIMARY KEY,
+    [ProgramID] [int] NOT NULL CONSTRAINT [FK_ProgramPerson_Program_ProgramID] FOREIGN KEY REFERENCES [dbo].[Program]([ProgramID]),
+    [PersonID] [int] NOT NULL CONSTRAINT [FK_ProgramPerson_Person_PersonID] FOREIGN KEY REFERENCES [dbo].[Person]([PersonID]),
+    CONSTRAINT [AK_ProgramPerson_ProgramID_PersonID] UNIQUE ([ProgramID], [PersonID])
+)
 GO
-ALTER TABLE [dbo].[ProgramPerson]  WITH CHECK ADD  CONSTRAINT [FK_ProgramPerson_Person_PersonID] FOREIGN KEY([PersonID])
-REFERENCES [dbo].[Person] ([PersonID])
-GO
-ALTER TABLE [dbo].[ProgramPerson] CHECK CONSTRAINT [FK_ProgramPerson_Person_PersonID]
-GO
-ALTER TABLE [dbo].[ProgramPerson]  WITH CHECK ADD  CONSTRAINT [FK_ProgramPerson_Program_ProgramID] FOREIGN KEY([ProgramID])
-REFERENCES [dbo].[Program] ([ProgramID])
-GO
-ALTER TABLE [dbo].[ProgramPerson] CHECK CONSTRAINT [FK_ProgramPerson_Program_ProgramID]

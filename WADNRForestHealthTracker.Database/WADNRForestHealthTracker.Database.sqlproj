@@ -231,5 +231,21 @@
     <Build Include="dbo\Tables\dbo.OrganizationCode.sql" />
     <Build Include="dbo\Tables\dbo.OrganizationType.sql" />
     <Build Include="dbo\Tables\dbo.OrganizationTypeRelationshipType.sql" />
+    <Build Include="dbo\Tables\dbo.Person.sql" />
+    <Build Include="dbo\Tables\dbo.PersonAllowedAuthenticator.sql" />
+    <Build Include="dbo\Tables\dbo.PersonRole.sql" />
+    <Build Include="dbo\Tables\dbo.PersonStewardOrganization.sql" />
+    <Build Include="dbo\Tables\dbo.PersonStewardRegion.sql" />
+    <Build Include="dbo\Tables\dbo.PersonStewardTaxonomyBranch.sql" />
+    <Build Include="dbo\Tables\dbo.PriorityLandscape.sql" />
+    <Build Include="dbo\Tables\dbo.PriorityLandscapeCategory.sql" />
+    <Build Include="dbo\Tables\dbo.PriorityLandscapeFileResource.sql" />
+    <Build Include="dbo\Tables\dbo.Program.sql" />
+    <Build Include="dbo\Tables\dbo.ProgramIndex.sql" />
+    <Build Include="dbo\Tables\dbo.ProgramNotificationConfiguration.sql" />
+    <Build Include="dbo\Tables\dbo.ProgramNotificationSent.sql" />
+    <Build Include="dbo\Tables\dbo.ProgramNotificationSentProject.sql" />
+    <Build Include="dbo\Tables\dbo.ProgramNotificationType.sql" />
+    <Build Include="dbo\Tables\dbo.ProgramPerson.sql" />
   </ItemGroup>
 </Project>
