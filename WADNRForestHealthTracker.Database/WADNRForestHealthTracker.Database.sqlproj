@@ -222,5 +222,14 @@
     <Build Include="dbo\Tables\dbo.LoaRawNortheast.sql" />
     <Build Include="dbo\Tables\dbo.LoaRawSoutheast.sql" />
     <Build Include="dbo\Tables\dbo.LoaStage.sql" />
+    <Build Include="dbo\Tables\dbo.MeasurementUnitType.sql" />
+    <Build Include="dbo\Tables\dbo.Notification.sql" />
+    <Build Include="dbo\Tables\dbo.NotificationProject.sql" />
+    <Build Include="dbo\Tables\dbo.NotificationType.sql" />
+    <Build Include="dbo\Tables\dbo.Organization.sql" />
+    <Build Include="dbo\Tables\dbo.OrganizationBoundaryStaging.sql" />
+    <Build Include="dbo\Tables\dbo.OrganizationCode.sql" />
+    <Build Include="dbo\Tables\dbo.OrganizationType.sql" />
+    <Build Include="dbo\Tables\dbo.OrganizationTypeRelationshipType.sql" />
   </ItemGroup>
 </Project>

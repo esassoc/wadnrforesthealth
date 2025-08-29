@@ -1,20 +1,15 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[OrganizationBoundaryStaging](
 	[OrganizationBoundaryStagingID] [int] IDENTITY(1,1) NOT NULL,
 	[OrganizationID] [int] NOT NULL,
-	[FeatureClassName] [varchar](255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[GeoJson] [varchar](max) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[FeatureClassName] [varchar](255) NOT NULL,
+	[GeoJson] [varchar](max) NOT NULL,
  CONSTRAINT [PK_OrganizationBoundaryStaging_OrganizationBoundaryStagingID] PRIMARY KEY CLUSTERED 
 (
 	[OrganizationBoundaryStagingID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF)
+) 
 GO
+
 ALTER TABLE [dbo].[OrganizationBoundaryStaging]  WITH CHECK ADD  CONSTRAINT [FK_OrganizationBoundaryStaging_Organization_OrganizationID] FOREIGN KEY([OrganizationID])
 REFERENCES [dbo].[Organization] ([OrganizationID])
 GO
-ALTER TABLE [dbo].[OrganizationBoundaryStaging] CHECK CONSTRAINT [FK_OrganizationBoundaryStaging_Organization_OrganizationID]
