@@ -247,5 +247,23 @@
     <Build Include="dbo\Tables\dbo.ProgramNotificationSentProject.sql" />
     <Build Include="dbo\Tables\dbo.ProgramNotificationType.sql" />
     <Build Include="dbo\Tables\dbo.ProgramPerson.sql" />
+    <Build Include="dbo\Tables\dbo.Project.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectApprovalStatus.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectClassification.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectCode.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectColorByType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectCostType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectCounty.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectCountyUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectCreateSection.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectDocument.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectDocumentType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectDocumentUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectExternalLink.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectExternalLinkUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectFundingSource.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectFundingSourceUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectFundSourceAllocationRequest.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectFundSourceAllocationRequestUpdate.sql" />
   </ItemGroup>
 </Project>

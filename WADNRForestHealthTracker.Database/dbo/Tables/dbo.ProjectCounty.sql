@@ -1,29 +1,7 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[ProjectCounty](
-	[ProjectCountyID] [int] IDENTITY(1,1) NOT NULL,
-	[ProjectID] [int] NOT NULL,
-	[CountyID] [int] NOT NULL,
- CONSTRAINT [PK_ProjectCounty_ProjectCountyID] PRIMARY KEY CLUSTERED 
-(
-	[ProjectCountyID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_ProjectCounty_ProjectID_CountyID] UNIQUE NONCLUSTERED 
-(
-	[ProjectID] ASC,
-	[CountyID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-
+    [ProjectCountyID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_ProjectCounty_ProjectCountyID] PRIMARY KEY,
+    [ProjectID] [int] NOT NULL CONSTRAINT [FK_ProjectCounty_Project_ProjectID] FOREIGN KEY REFERENCES [dbo].[Project]([ProjectID]),
+    [CountyID] [int] NOT NULL CONSTRAINT [FK_ProjectCounty_County_CountyID] FOREIGN KEY REFERENCES [dbo].[County]([CountyID]),
+    CONSTRAINT [AK_ProjectCounty_ProjectID_CountyID] UNIQUE ([ProjectID], [CountyID])
+)
 GO
-ALTER TABLE [dbo].[ProjectCounty]  WITH CHECK ADD  CONSTRAINT [FK_ProjectCounty_County_CountyID] FOREIGN KEY([CountyID])
-REFERENCES [dbo].[County] ([CountyID])
-GO
-ALTER TABLE [dbo].[ProjectCounty] CHECK CONSTRAINT [FK_ProjectCounty_County_CountyID]
-GO
-ALTER TABLE [dbo].[ProjectCounty]  WITH CHECK ADD  CONSTRAINT [FK_ProjectCounty_Project_ProjectID] FOREIGN KEY([ProjectID])
-REFERENCES [dbo].[Project] ([ProjectID])
-GO
-ALTER TABLE [dbo].[ProjectCounty] CHECK CONSTRAINT [FK_ProjectCounty_Project_ProjectID]

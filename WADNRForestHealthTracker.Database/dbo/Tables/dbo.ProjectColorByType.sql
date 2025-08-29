@@ -1,27 +1,8 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[ProjectColorByType](
-	[ProjectColorByTypeID] [int] NOT NULL,
-	[ProjectColorByTypeName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[ProjectColorByTypeNameWithIdentifier] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[ProjectColorByTypeDisplayName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[SortOrder] [int] NOT NULL,
- CONSTRAINT [PK_ProjectColorByType_ProjectColorByTypeID] PRIMARY KEY CLUSTERED 
-(
-	[ProjectColorByTypeID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_ProjectColorByType_ProjectColorByTypeDisplayName] UNIQUE NONCLUSTERED 
-(
-	[ProjectColorByTypeDisplayName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_ProjectColorByType_ProjectColorByTypeName] UNIQUE NONCLUSTERED 
-(
-	[ProjectColorByTypeName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_ProjectColorByType_ProjectColorByTypeNameWithIdentifier] UNIQUE NONCLUSTERED 
-(
-	[ProjectColorByTypeNameWithIdentifier] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+    [ProjectColorByTypeID] [int] NOT NULL CONSTRAINT [PK_ProjectColorByType_ProjectColorByTypeID] PRIMARY KEY,
+    [ProjectColorByTypeName] [varchar](100) NOT NULL CONSTRAINT [AK_ProjectColorByType_ProjectColorByTypeName] UNIQUE,
+    [ProjectColorByTypeNameWithIdentifier] [varchar](50) NOT NULL CONSTRAINT [AK_ProjectColorByType_ProjectColorByTypeNameWithIdentifier] UNIQUE,
+    [ProjectColorByTypeDisplayName] [varchar](100) NOT NULL CONSTRAINT [AK_ProjectColorByType_ProjectColorByTypeDisplayName] UNIQUE,
+    [SortOrder] [int] NOT NULL
+)
+GO

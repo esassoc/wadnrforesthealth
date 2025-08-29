@@ -1,20 +1,7 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[ProjectExternalLinkUpdate](
-	[ProjectExternalLinkUpdateID] [int] IDENTITY(1,1) NOT NULL,
-	[ProjectUpdateBatchID] [int] NOT NULL,
-	[ExternalLinkLabel] [varchar](300) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[ExternalLinkUrl] [varchar](300) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
- CONSTRAINT [PK_ProjectExternalLinkUpdate_ProjectExternalLinkUpdateID] PRIMARY KEY CLUSTERED 
-(
-	[ProjectExternalLinkUpdateID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-
+    [ProjectExternalLinkUpdateID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_ProjectExternalLinkUpdate_ProjectExternalLinkUpdateID] PRIMARY KEY,
+    [ProjectUpdateBatchID] [int] NOT NULL CONSTRAINT [FK_ProjectExternalLinkUpdate_ProjectUpdateBatch_ProjectUpdateBatchID] FOREIGN KEY REFERENCES [dbo].[ProjectUpdateBatch]([ProjectUpdateBatchID]),
+    [ExternalLinkLabel] [varchar](300) NOT NULL,
+    [ExternalLinkUrl] [varchar](300) NOT NULL
+)
 GO
-ALTER TABLE [dbo].[ProjectExternalLinkUpdate]  WITH CHECK ADD  CONSTRAINT [FK_ProjectExternalLinkUpdate_ProjectUpdateBatch_ProjectUpdateBatchID] FOREIGN KEY([ProjectUpdateBatchID])
-REFERENCES [dbo].[ProjectUpdateBatch] ([ProjectUpdateBatchID])
-GO
-ALTER TABLE [dbo].[ProjectExternalLinkUpdate] CHECK CONSTRAINT [FK_ProjectExternalLinkUpdate_ProjectUpdateBatch_ProjectUpdateBatchID]
