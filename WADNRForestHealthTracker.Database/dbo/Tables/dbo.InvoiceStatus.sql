@@ -1,21 +1,8 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[InvoiceStatus](
-	[InvoiceStatusID] [int] NOT NULL,
-	[InvoiceStatusName] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[InvoiceStatusDisplayName] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
- CONSTRAINT [PK_InvoiceStatus_InvoiceStatusID] PRIMARY KEY CLUSTERED 
-(
-	[InvoiceStatusID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_InvoiceStatus_InvoiceStatusDisplayName] UNIQUE NONCLUSTERED 
-(
-	[InvoiceStatusDisplayName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_InvoiceStatus_InvoiceStatusName] UNIQUE NONCLUSTERED 
-(
-	[InvoiceStatusName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+    [InvoiceStatusID] [int] NOT NULL CONSTRAINT [PK_InvoiceStatus_InvoiceStatusID] PRIMARY KEY,
+    [InvoiceStatusName] [varchar](50) NOT NULL,
+    [InvoiceStatusDisplayName] [varchar](50) NOT NULL,
+    CONSTRAINT [AK_InvoiceStatus_InvoiceStatusDisplayName] UNIQUE ([InvoiceStatusDisplayName]),
+    CONSTRAINT [AK_InvoiceStatus_InvoiceStatusName] UNIQUE ([InvoiceStatusName])
+)
+GO

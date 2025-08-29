@@ -213,5 +213,10 @@
     <Build Include="dbo\Tables\dbo.InteractionEventFileResource.sql" />
     <Build Include="dbo\Tables\dbo.InteractionEventProject.sql" />
     <Build Include="dbo\Tables\dbo.InteractionEventType.sql" />
+    <Build Include="dbo\Tables\dbo.Invoice.sql" />
+    <Build Include="dbo\Tables\dbo.InvoiceApprovalStatus.sql" />
+    <Build Include="dbo\Tables\dbo.InvoiceMatchAmountType.sql" />
+    <Build Include="dbo\Tables\dbo.InvoicePaymentRequest.sql" />
+    <Build Include="dbo\Tables\dbo.InvoiceStatus.sql" />
   </ItemGroup>
 </Project>

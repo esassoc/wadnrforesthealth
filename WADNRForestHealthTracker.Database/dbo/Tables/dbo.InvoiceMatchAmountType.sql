@@ -1,21 +1,8 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[InvoiceMatchAmountType](
-	[InvoiceMatchAmountTypeID] [int] NOT NULL,
-	[InvoiceMatchAmountTypeName] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[InvoiceMatchAmountTypeDisplayName] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
- CONSTRAINT [PK_InvoiceMatchAmountType_InvoiceMatchAmountTypeID] PRIMARY KEY CLUSTERED 
-(
-	[InvoiceMatchAmountTypeID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_InvoiceMatchAmountType_InvoiceMatchAmountTypeDisplayName] UNIQUE NONCLUSTERED 
-(
-	[InvoiceMatchAmountTypeDisplayName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_InvoiceMatchAmountType_InvoiceMatchAmountTypeName] UNIQUE NONCLUSTERED 
-(
-	[InvoiceMatchAmountTypeName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+    [InvoiceMatchAmountTypeID] [int] NOT NULL CONSTRAINT [PK_InvoiceMatchAmountType_InvoiceMatchAmountTypeID] PRIMARY KEY,
+    [InvoiceMatchAmountTypeName] [varchar](50) NOT NULL,
+    [InvoiceMatchAmountTypeDisplayName] [varchar](50) NOT NULL,
+    CONSTRAINT [AK_InvoiceMatchAmountType_InvoiceMatchAmountTypeDisplayName] UNIQUE ([InvoiceMatchAmountTypeDisplayName]),
+    CONSTRAINT [AK_InvoiceMatchAmountType_InvoiceMatchAmountTypeName] UNIQUE ([InvoiceMatchAmountTypeName])
+)
+GO
