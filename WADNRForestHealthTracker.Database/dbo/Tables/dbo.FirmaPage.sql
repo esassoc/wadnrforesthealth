@@ -1,23 +1,7 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[FirmaPage](
-	[FirmaPageID] [int] IDENTITY(1,1) NOT NULL,
-	[FirmaPageTypeID] [int] NOT NULL,
-	[FirmaPageContent] [dbo].[html] NULL,
- CONSTRAINT [PK_FirmaPage_FirmaPageID] PRIMARY KEY CLUSTERED 
-(
-	[FirmaPageID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_FirmaPage_FirmaPageTypeID] UNIQUE NONCLUSTERED 
-(
-	[FirmaPageTypeID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
+    [FirmaPageID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_FirmaPage_FirmaPageID] PRIMARY KEY,
+    [FirmaPageTypeID] [int] NOT NULL CONSTRAINT [AK_FirmaPage_FirmaPageTypeID] UNIQUE,
+    [FirmaPageContent] [dbo].[html] NULL,
+    CONSTRAINT [FK_FirmaPage_FirmaPageType_FirmaPageTypeID] FOREIGN KEY ([FirmaPageTypeID]) REFERENCES [dbo].[FirmaPageType]([FirmaPageTypeID])
+)
 GO
-ALTER TABLE [dbo].[FirmaPage]  WITH CHECK ADD  CONSTRAINT [FK_FirmaPage_FirmaPageType_FirmaPageTypeID] FOREIGN KEY([FirmaPageTypeID])
-REFERENCES [dbo].[FirmaPageType] ([FirmaPageTypeID])
-GO
-ALTER TABLE [dbo].[FirmaPage] CHECK CONSTRAINT [FK_FirmaPage_FirmaPageType_FirmaPageTypeID]

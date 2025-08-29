@@ -1,14 +1,7 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[ForesterRole](
-	[ForesterRoleID] [int] IDENTITY(1,1) NOT NULL,
-	[ForesterRoleDisplayName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[ForesterRoleName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[SortOrder] [int] NOT NULL,
- CONSTRAINT [PK_ForesterRole_ForesterRoleID] PRIMARY KEY CLUSTERED 
-(
-	[ForesterRoleID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+    [ForesterRoleID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_ForesterRole_ForesterRoleID] PRIMARY KEY,
+    [ForesterRoleDisplayName] [varchar](100) NOT NULL,
+    [ForesterRoleName] [varchar](100) NOT NULL,
+    [SortOrder] [int] NOT NULL
+)
+GO

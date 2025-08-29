@@ -160,5 +160,20 @@
     <Build Include="dbo\Tables\dbo.FieldDefinitionData.sql" />
     <Build Include="dbo\Tables\dbo.FieldDefinitionDataImage.sql" />
     <Build Include="dbo\Tables\dbo.FileResource.sql" />
+    <Build Include="dbo\Tables\dbo.FileResourceMimeType.sql" />
+    <Build Include="dbo\Tables\dbo.FileResourceMimeTypeFileExtension.sql" />
+    <Build Include="dbo\Tables\dbo.FindYourForesterQuestion.sql" />
+    <Build Include="dbo\Tables\dbo.FirmaHomePageImage.sql" />
+    <Build Include="dbo\Tables\dbo.FirmaPage.sql" />
+    <Build Include="dbo\Tables\dbo.FirmaPageImage.sql" />
+    <Build Include="dbo\Tables\dbo.FirmaPageRenderType.sql" />
+    <Build Include="dbo\Tables\dbo.FirmaPageType.sql" />
+    <Build Include="dbo\Tables\dbo.FocusArea.sql" />
+    <Build Include="dbo\Tables\dbo.FocusAreaLocationStaging.sql" />
+    <Build Include="dbo\Tables\dbo.FocusAreaStatus.sql" />
+    <Build Include="dbo\Tables\dbo.ForesterRole.sql" />
+    <Build Include="dbo\Tables\dbo.ForesterWorkUnit.sql" />
+    <Build Include="dbo\Tables\dbo.FundingSource.sql" />
+    <Build Include="dbo\Tables\dbo.FundSource.sql" />
   </ItemGroup>
 </Project>
