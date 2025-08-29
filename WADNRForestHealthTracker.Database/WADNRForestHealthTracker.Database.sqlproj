@@ -127,5 +127,15 @@
     <Build Include="Scripts\LookupTables\dbo.TreatmentDetailedActivityType.sql" />
     <Build Include="Scripts\LookupTables\dbo.TreatmentType.sql" />
     <Build Include="dbo\Tables\dbo.ActivityType.sql" />
+    <Build Include="dbo\Tables\dbo.Agreement.sql" />
+    <Build Include="dbo\Tables\dbo.AgreementFundSourceAllocation.sql" />
+    <Build Include="dbo\Tables\dbo.AgreementPerson.sql" />
+    <Build Include="dbo\Tables\dbo.AgreementPersonRole.sql" />
+    <Build Include="dbo\Tables\dbo.AgreementProject.sql" />
+    <Build Include="dbo\Tables\dbo.AgreementStatus.sql" />
+    <Build Include="dbo\Tables\dbo.AgreementType.sql" />
+    <Build Include="dbo\Tables\dbo.ArcOnlineFinanceApiRawJsonImport.sql" />
+    <Build Include="dbo\Tables\dbo.ArcOnlineFinanceApiRawJsonImportTableType.sql" />
+    <Build Include="dbo\Tables\dbo.AuditLog.sql" />
   </ItemGroup>
 </Project>
