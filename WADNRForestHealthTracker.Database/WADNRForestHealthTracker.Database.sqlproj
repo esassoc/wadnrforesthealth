@@ -193,5 +193,11 @@
     <Build Include="dbo\Tables\dbo.FundSourceNoteInternal.sql" />
     <Build Include="dbo\Tables\dbo.FundSourceStatus.sql" />
     <Build Include="dbo\Tables\dbo.FundSourceType.sql" />
+    <Build Include="dbo\Tables\dbo.geometry_columns.sql" />
+    <Build Include="dbo\Tables\dbo.GisCrossWalkDefault.sql" />
+    <Build Include="dbo\Tables\dbo.GisDefaultMapping.sql" />
+    <Build Include="dbo\Tables\dbo.GisExcludeIncludeColumn.sql" />
+    <Build Include="dbo\Tables\dbo.GisExcludeIncludeColumnValue.sql" />
+    <Build Include="dbo\Tables\dbo.GisFeature.sql" />
   </ItemGroup>
 </Project>
