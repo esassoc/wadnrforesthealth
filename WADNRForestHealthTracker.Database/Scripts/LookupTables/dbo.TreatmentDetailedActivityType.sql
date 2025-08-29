@@ -1,8 +1,6 @@
-delete from dbo.TreatmentDetailedActivityType
 
---TODO
-Insert into dbo.TreatmentDetailedActivityType (TreatmentDetailedActivityTypeID, TreatmentDetailedActivityTypeName, TreatmentDetailedActivityTypeDisplayName)
-values
+merge into dbo.TreatmentDetailedActivityType as Target
+using (values
 (1, 'Chipping', 'Chipping'),
 (2, 'Pruning', 'Pruning'),
 (3, 'Thinning', 'Thinning'),
@@ -24,3 +22,15 @@ values
 (19, 'Mowing', 'Mowing'),
 (20, 'Regen', 'Regen'),
 (21, 'PileBurn', 'Pile Burn')
+)
+    as Source (TreatmentDetailedActivityTypeID, TreatmentDetailedActivityTypeName, TreatmentDetailedActivityTypeDisplayName)
+on Target.TreatmentDetailedActivityTypeID = Source.TreatmentDetailedActivityTypeID
+when matched then
+    update set
+               TreatmentDetailedActivityTypeName = Source.TreatmentDetailedActivityTypeName,
+               TreatmentDetailedActivityTypeDisplayName = Source.TreatmentDetailedActivityTypeDisplayName
+when not matched by target then
+    insert (TreatmentDetailedActivityTypeID, TreatmentDetailedActivityTypeName, TreatmentDetailedActivityTypeDisplayName)
+    values (TreatmentDetailedActivityTypeID, TreatmentDetailedActivityTypeName, TreatmentDetailedActivityTypeDisplayName)
+when not matched by source then
+    delete;

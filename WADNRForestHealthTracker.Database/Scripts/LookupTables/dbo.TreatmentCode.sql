@@ -1,7 +1,6 @@
-delete from dbo.TreatmentCode
 
-Insert into dbo.TreatmentCode (TreatmentCodeID, TreatmentCodeName, TreatmentCodeDisplayName)
-values
+merge into dbo.TreatmentCode as Target
+using (values
 (1, 'BR-1', 'BR-1: Brush Control'),
 (2, 'BR-2', 'BR-2: Brush Control'),
 (3, 'PL-1-New', 'PL-1: New Plan 20-100 acres'),
@@ -25,3 +24,16 @@ values
 (21, 'TH-2', 'TH-2: Thinning'),
 (22, 'TH-3', 'TH-3: Thinning'),
 (23, 'TH-4', 'TH-4: Thinning')
+
+)
+    as Source (TreatmentCodeID, TreatmentCodeName, TreatmentCodeDisplayName)
+on Target.TreatmentCodeID = Source.TreatmentCodeID
+when matched then
+    update set
+               TreatmentCodeName = Source.TreatmentCodeName,
+               TreatmentCodeDisplayName = Source.TreatmentCodeDisplayName
+when not matched by target then
+    insert (TreatmentCodeID, TreatmentCodeName, TreatmentCodeDisplayName)
+    values (TreatmentCodeID, TreatmentCodeName, TreatmentCodeDisplayName)
+when not matched by source then
+    delete;
