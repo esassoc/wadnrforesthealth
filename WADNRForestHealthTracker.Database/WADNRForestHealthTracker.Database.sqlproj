@@ -291,5 +291,10 @@
     <Build Include="dbo\Tables\dbo.ProjectRegionUpdate.sql" />
     <Build Include="dbo\Tables\dbo.ProjectStage.sql" />
     <Build Include="dbo\Tables\dbo.ProjectStewardshipAreaType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectTag.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectUpdateBatch.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectUpdateConfiguration.sql" />
   </ItemGroup>
 </Project>
