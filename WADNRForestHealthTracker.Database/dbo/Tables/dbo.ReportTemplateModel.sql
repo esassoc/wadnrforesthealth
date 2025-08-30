@@ -1,22 +1,7 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[ReportTemplateModel](
-	[ReportTemplateModelID] [int] NOT NULL,
-	[ReportTemplateModelName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[ReportTemplateModelDisplayName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[ReportTemplateModelDescription] [varchar](250) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
- CONSTRAINT [PK_ReportTemplateModel_ReportTemplateModelID] PRIMARY KEY CLUSTERED 
-(
-	[ReportTemplateModelID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_ReportTemplateModel_ReportTemplateModelDisplayName] UNIQUE NONCLUSTERED 
-(
-	[ReportTemplateModelDisplayName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_ReportTemplateModel_ReportTemplateModelName] UNIQUE NONCLUSTERED 
-(
-	[ReportTemplateModelName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+    [ReportTemplateModelID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_ReportTemplateModel_ReportTemplateModelID] PRIMARY KEY,
+    [ReportTemplateModelName] [varchar](100) NOT NULL CONSTRAINT [AK_ReportTemplateModel_ReportTemplateModelName] UNIQUE,
+    [ReportTemplateModelDisplayName] [varchar](100) NOT NULL CONSTRAINT [AK_ReportTemplateModel_ReportTemplateModelDisplayName] UNIQUE,
+    [ReportTemplateModelTypeID] [int] NOT NULL CONSTRAINT [FK_ReportTemplateModel_ReportTemplateModelType_ReportTemplateModelTypeID] FOREIGN KEY REFERENCES [dbo].[ReportTemplateModelType]([ReportTemplateModelTypeID])
+)
+GO

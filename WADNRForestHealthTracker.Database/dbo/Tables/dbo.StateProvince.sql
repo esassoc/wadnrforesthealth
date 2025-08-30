@@ -1,11 +1,7 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[StateProvince](
-	[StateProvinceID] [int] NOT NULL,
-	[StateProvinceAbbreviation] [varchar](2) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[StateProvinceName] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[StateProvinceID] [int] NOT NULL CONSTRAINT [PK_StateProvince_StateProvinceID] PRIMARY KEY,
+	[StateProvinceAbbreviation] [varchar](2) NOT NULL CONSTRAINT [AK_StateProvince_StateProvinceAbbreviation] UNIQUE,
+	[StateProvinceName] [varchar](50) NOT NULL CONSTRAINT [AK_StateProvince_StateProvinceName] UNIQUE,
 	[IsBpaRelevant] [bit] NOT NULL,
 	[SouthWestLatitude] [decimal](5, 2) NULL,
 	[SouthWestLongitude] [decimal](5, 2) NULL,
@@ -13,39 +9,13 @@ CREATE TABLE [dbo].[StateProvince](
 	[NorthEastLongitude] [decimal](5, 2) NULL,
 	[MapObjectID] [int] NULL,
 	[StateProvinceFeature] [geometry] NULL,
-	[CountryID] [int] NOT NULL,
- CONSTRAINT [PK_StateProvince_StateProvinceID] PRIMARY KEY CLUSTERED 
-(
-	[StateProvinceID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_StateProvince_StateProvinceAbbreviation] UNIQUE NONCLUSTERED 
-(
-	[StateProvinceAbbreviation] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_StateProvince_StateProvinceName] UNIQUE NONCLUSTERED 
-(
-	[StateProvinceName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-GO
-ALTER TABLE [dbo].[StateProvince]  WITH CHECK ADD  CONSTRAINT [FK_StateProvince_Country_CountryID] FOREIGN KEY([CountryID])
-REFERENCES [dbo].[Country] ([CountryID])
-GO
-ALTER TABLE [dbo].[StateProvince] CHECK CONSTRAINT [FK_StateProvince_Country_CountryID]
-GO
-SET ARITHABORT ON
-SET CONCAT_NULL_YIELDS_NULL ON
-SET QUOTED_IDENTIFIER ON
-SET ANSI_NULLS ON
-SET ANSI_PADDING ON
-SET ANSI_WARNINGS ON
-SET NUMERIC_ROUNDABORT OFF
-
+	[CountryID] [int] NOT NULL CONSTRAINT [FK_StateProvince_Country_CountryID] FOREIGN KEY REFERENCES [dbo].[Country]([CountryID])
+)
 GO
 CREATE SPATIAL INDEX [SPATIAL_StateProvince_StateProvinceFeature] ON [dbo].[StateProvince]
 (
 	[StateProvinceFeature]
 )USING  GEOMETRY_AUTO_GRID 
 WITH (BOUNDING_BOX =(-142, 33, -102, 79), 
-CELLS_PER_OBJECT = 8, PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+CELLS_PER_OBJECT = 8)
+GO

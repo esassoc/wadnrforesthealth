@@ -296,5 +296,20 @@
     <Build Include="dbo\Tables\dbo.ProjectUpdate.sql" />
     <Build Include="dbo\Tables\dbo.ProjectUpdateBatch.sql" />
     <Build Include="dbo\Tables\dbo.ProjectUpdateConfiguration.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectUpdateHistory.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectUpdateProgram.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectUpdateSection.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectUpdateState.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectWorkflowSectionGrouping.sql" />
+    <Build Include="dbo\Tables\dbo.RecurrenceInterval.sql" />
+    <Build Include="dbo\Tables\dbo.RelationshipType.sql" />
+    <Build Include="dbo\Tables\dbo.ReportTemplate.sql" />
+    <Build Include="dbo\Tables\dbo.ReportTemplateModel.sql" />
+    <Build Include="dbo\Tables\dbo.ReportTemplateModelType.sql" />
+    <Build Include="dbo\Tables\dbo.Role.sql" />
+    <Build Include="dbo\Tables\dbo.SocrataDataMartRawJsonImport.sql" />
+    <Build Include="dbo\Tables\dbo.SocrataDataMartRawJsonImportTableType.sql" />
+    <Build Include="dbo\Tables\dbo.spatial_ref_sys.sql" />
+    <Build Include="dbo\Tables\dbo.StateProvince.sql" />
   </ItemGroup>
 </Project>
