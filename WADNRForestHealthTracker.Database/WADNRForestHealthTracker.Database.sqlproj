@@ -265,5 +265,26 @@
     <Build Include="dbo\Tables\dbo.ProjectFundingSourceUpdate.sql" />
     <Build Include="dbo\Tables\dbo.ProjectFundSourceAllocationRequest.sql" />
     <Build Include="dbo\Tables\dbo.ProjectFundSourceAllocationRequestUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectImage.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectImageTiming.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectImageUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectImportBlockList.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectInternalNote.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectLocation.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectLocationFilterType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectLocationSimpleType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectLocationStaging.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectLocationStagingUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectLocationType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectLocationUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectNote.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectNoteUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectOrganization.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectOrganizationUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectPerson.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectPersonRelationshipType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectPersonUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectPriorityLandscape.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectPriorityLandscapeUpdate.sql" />
   </ItemGroup>
 </Project>
