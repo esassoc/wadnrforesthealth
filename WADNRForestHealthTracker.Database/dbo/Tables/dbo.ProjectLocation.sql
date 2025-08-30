@@ -13,3 +13,10 @@ CREATE TABLE [dbo].[ProjectLocation](
     CONSTRAINT [AK_ProjectLocation_ProjectID_ProjectLocationName] UNIQUE ([ProjectID], [ProjectLocationName])
 )
 GO
+
+CREATE SPATIAL INDEX [SPATIAL_ProjectLocation_ProjectLocationGeometry] ON [dbo].[ProjectLocation]
+(
+	[ProjectLocationGeometry]
+)USING  GEOMETRY_AUTO_GRID 
+WITH (BOUNDING_BOX =(-125, 45, -117, 50), 
+CELLS_PER_OBJECT = 8, PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]

@@ -286,5 +286,10 @@
     <Build Include="dbo\Tables\dbo.ProjectPersonUpdate.sql" />
     <Build Include="dbo\Tables\dbo.ProjectPriorityLandscape.sql" />
     <Build Include="dbo\Tables\dbo.ProjectPriorityLandscapeUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectProgram.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectRegion.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectRegionUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectStage.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectStewardshipAreaType.sql" />
   </ItemGroup>
 </Project>
