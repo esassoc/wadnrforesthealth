@@ -320,5 +320,14 @@
     <Build Include="dbo\Tables\dbo.TaxonomyBranch.sql" />
     <Build Include="dbo\Tables\dbo.TaxonomyLevel.sql" />
     <Build Include="dbo\Tables\dbo.TaxonomyTrunk.sql" />
+    <Build Include="dbo\Tables\dbo.tmp2015-19_grant_payments_singlesheet.sql" />
+    <Build Include="dbo\Tables\dbo.tmpAgreement.sql" />
+    <Build Include="dbo\Tables\dbo.tmpAgreement2.sql" />
+    <Build Include="dbo\Tables\dbo.tmpAgreementContact.sql" />
+    <Build Include="dbo\Tables\dbo.tmpAgreementContactsImportTemplate.sql" />
+    <Build Include="dbo\Tables\dbo.tmpCostTypeMapping.sql" />
+    <Build Include="dbo\Tables\dbo.tmpProgramIndex.sql" />
+    <Build Include="dbo\Tables\dbo.tmpProjectCode.sql" />
+    <Build Include="dbo\Tables\dbo.tmpTreatmentsFromArcGis.sql" />
   </ItemGroup>
 </Project>
