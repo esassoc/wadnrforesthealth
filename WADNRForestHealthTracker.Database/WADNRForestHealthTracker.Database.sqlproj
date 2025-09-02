@@ -316,5 +316,9 @@
     <Build Include="dbo\Tables\dbo.SystemAttribute.sql" />
     <Build Include="dbo\Tables\dbo.TabularDataImport.sql" />
     <Build Include="dbo\Tables\dbo.TabularDataImportTableType.sql" />
+    <Build Include="dbo\Tables\dbo.Tag.sql" />
+    <Build Include="dbo\Tables\dbo.TaxonomyBranch.sql" />
+    <Build Include="dbo\Tables\dbo.TaxonomyLevel.sql" />
+    <Build Include="dbo\Tables\dbo.TaxonomyTrunk.sql" />
   </ItemGroup>
 </Project>

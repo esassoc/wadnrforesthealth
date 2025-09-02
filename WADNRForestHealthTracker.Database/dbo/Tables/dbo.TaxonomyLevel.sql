@@ -1,21 +1,10 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[TaxonomyLevel](
-	[TaxonomyLevelID] [int] NOT NULL,
-	[TaxonomyLevelName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[TaxonomyLevelDisplayName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
- CONSTRAINT [PK_TaxonomyLevel_TaxonomyLevelID] PRIMARY KEY CLUSTERED 
-(
-	[TaxonomyLevelID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_TaxonomyLevel_TaxonomyLevelDisplayName] UNIQUE NONCLUSTERED 
-(
-	[TaxonomyLevelDisplayName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_TaxonomyLevel_TaxonomyLevelName] UNIQUE NONCLUSTERED 
-(
-	[TaxonomyLevelName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+    [TaxonomyLevelID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_TaxonomyLevel_TaxonomyLevelID] PRIMARY KEY,
+    [TaxonomyBranchID] [int] NOT NULL CONSTRAINT [FK_TaxonomyLevel_TaxonomyBranch_TaxonomyBranchID] FOREIGN KEY REFERENCES [dbo].[TaxonomyBranch]([TaxonomyBranchID]),
+    [TaxonomyLevelName] [varchar](100) NOT NULL,
+    [TaxonomyLevelDescription] [dbo].[html] NULL,
+    [ThemeColor] [varchar](20) NULL,
+    [TaxonomyLevelCode] [varchar](10) NULL,
+    [TaxonomyLevelSortOrder] [int] NULL
+)
+GO
