@@ -1,12 +1,5 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[TabularDataImportTableType](
-	[TabularDataImportTableTypeID] [int] NOT NULL,
-	[TabularDataImportTableTypeName] [varchar](200) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
- CONSTRAINT [PK_TabularDataImportTableType_TabularDataImportTableTypeID] PRIMARY KEY CLUSTERED 
-(
-	[TabularDataImportTableTypeID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+    [TabularDataImportTableTypeID] [int] NOT NULL CONSTRAINT [PK_TabularDataImportTableType_TabularDataImportTableTypeID] PRIMARY KEY,
+    [TabularDataImportTableTypeName] [varchar](200) NOT NULL
+)
+GO

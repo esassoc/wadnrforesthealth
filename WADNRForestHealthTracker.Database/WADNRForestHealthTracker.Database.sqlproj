@@ -311,5 +311,10 @@
     <Build Include="dbo\Tables\dbo.SocrataDataMartRawJsonImportTableType.sql" />
     <Build Include="dbo\Tables\dbo.spatial_ref_sys.sql" />
     <Build Include="dbo\Tables\dbo.StateProvince.sql" />
+    <Build Include="dbo\Tables\dbo.SupportRequestLog.sql" />
+    <Build Include="dbo\Tables\dbo.SupportRequestType.sql" />
+    <Build Include="dbo\Tables\dbo.SystemAttribute.sql" />
+    <Build Include="dbo\Tables\dbo.TabularDataImport.sql" />
+    <Build Include="dbo\Tables\dbo.TabularDataImportTableType.sql" />
   </ItemGroup>
 </Project>
