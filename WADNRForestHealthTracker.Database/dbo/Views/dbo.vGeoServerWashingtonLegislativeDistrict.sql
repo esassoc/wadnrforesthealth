@@ -1,6 +1,3 @@
-if exists (select * from dbo.sysobjects where id = object_id('dbo.vGeoServerWashingtonLegislativeDistrict'))
-	drop view dbo.vGeoServerWashingtonLegislativeDistrict
-go
 
 create view dbo.vGeoServerWashingtonLegislativeDistrict
 as

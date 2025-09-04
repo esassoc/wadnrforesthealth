@@ -1,6 +1,3 @@
-if exists (select * from dbo.sysobjects where id = object_id('dbo.vGeoServerPriorityLandscape'))
-	drop view dbo.vGeoServerPriorityLandscape
-go
 
 create view dbo.vGeoServerPriorityLandscape
 as

@@ -1,6 +1,3 @@
-if exists (select * from dbo.sysobjects where id = object_id('dbo.vGeoServerFindYourForester'))
-	drop view dbo.vGeoServerFindYourForester
-go
 
 create view [dbo].vGeoServerFindYourForester
 as

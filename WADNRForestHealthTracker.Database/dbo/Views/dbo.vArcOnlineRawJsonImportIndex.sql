@@ -1,6 +1,3 @@
-if exists (select * from dbo.sysobjects where id = object_id('dbo.vArcOnlineRawJsonImportIndex'))
-    drop view dbo.vArcOnlineRawJsonImportIndex
-go
 
 create view dbo.vArcOnlineRawJsonImportIndex
 as
@@ -19,9 +16,3 @@ from dbo.ArcOnlineFinanceApiRawJsonImport as rj
 inner join ArcOnlineFinanceApiRawJsonImportTableType as tt on rj.ArcOnlineFinanceApiRawJsonImportTableTypeID = tt.ArcOnlineFinanceApiRawJsonImportTableTypeID
 inner join JsonImportStatusType as jist on rj.JsonImportStatusTypeID = jist.JsonImportStatusTypeID
 
-/*
-
-select * from dbo.ArcOnlineFinanceApiRawJsonImport
-select * from dbo.vArcOnlineFinanceApiRawJsonImportIndex
-
-*/

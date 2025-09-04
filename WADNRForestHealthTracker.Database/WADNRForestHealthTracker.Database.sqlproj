@@ -329,5 +329,16 @@
     <Build Include="dbo\Tables\dbo.TreatmentDetailedActivityType.sql" />
     <Build Include="dbo\Tables\dbo.TreatmentType.sql" />
     <Build Include="dbo\Tables\dbo.TreatmentUpdate.sql" />
+    <Build Include="dbo\Views\dbo.vArcOnlineRawJsonImportIndex.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerCounty.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerFindYourForester.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerPriorityLandscape.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerProjectLocationDetailed.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerProjectLocationSimple.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerProjectTreatment.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerRegion.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerWashingtonLegislativeDistrict.sql" />
+    <Build Include="dbo\Views\dbo.vSocrataDataMartRawJsonImportIndex.sql" />
+    <Build Include="dbo\Views\dbo.vTotalTreatedAcresByProject.sql" />
   </ItemGroup>
 </Project>
