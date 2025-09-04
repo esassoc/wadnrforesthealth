@@ -568,12 +568,6 @@
     <Compile Include="Models\Generated\TaxonomyTrunk.Binding.cs" />
     <Compile Include="Models\Generated\TaxonomyTrunk.DatabaseContextExtensions.cs" />
     <Compile Include="Models\Generated\TaxonomyTrunkPrimaryKey.Binding.cs" />
-    <Compile Include="Models\Generated\tmpAgreementContact.Binding.cs" />
-    <Compile Include="Models\Generated\tmpAgreementContact.DatabaseContextExtensions.cs" />
-    <Compile Include="Models\Generated\tmpAgreementContactPrimaryKey.Binding.cs" />
-    <Compile Include="Models\Generated\tmpAgreementContactsImportTemplate.Binding.cs" />
-    <Compile Include="Models\Generated\tmpAgreementContactsImportTemplate.DatabaseContextExtensions.cs" />
-    <Compile Include="Models\Generated\tmpAgreementContactsImportTemplatePrimaryKey.Binding.cs" />
     <Compile Include="Models\Generated\TrainingVideo.Binding.cs" />
     <Compile Include="Models\Generated\TrainingVideo.DatabaseContextExtensions.cs" />
     <Compile Include="Models\Generated\TrainingVideoPrimaryKey.Binding.cs" />

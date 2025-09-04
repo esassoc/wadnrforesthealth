@@ -167,8 +167,6 @@ namespace ProjectFirma.Web.Models
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<TaxonomyBranch> TaxonomyBranches { get; set; }
         public virtual DbSet<TaxonomyTrunk> TaxonomyTrunks { get; set; }
-        public virtual DbSet<tmpAgreementContact> tmpAgreementContacts { get; set; }
-        public virtual DbSet<tmpAgreementContactsImportTemplate> tmpAgreementContactsImportTemplates { get; set; }
         public virtual DbSet<TrainingVideo> TrainingVideos { get; set; }
         public virtual DbSet<TreatmentArea> TreatmentAreas { get; set; }
         public virtual DbSet<TreatmentCode> TreatmentCodes { get; set; }
@@ -962,12 +960,6 @@ namespace ProjectFirma.Web.Models
 
                 case "TaxonomyTrunk":
                     return TaxonomyTrunks.GetTaxonomyTrunk(primaryKey);
-
-                case "tmpAgreementContact":
-                    return tmpAgreementContacts.GettmpAgreementContact(primaryKey);
-
-                case "tmpAgreementContactsImportTemplate":
-                    return tmpAgreementContactsImportTemplates.GettmpAgreementContactsImportTemplate(primaryKey);
 
                 case "TrainingVideo":
                     return TrainingVideos.GetTrainingVideo(primaryKey);
