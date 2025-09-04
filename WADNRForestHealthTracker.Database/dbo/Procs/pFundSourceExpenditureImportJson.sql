@@ -1,6 +1,3 @@
-IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('dbo.pFundSourceExpenditureImportJson'))
-    DROP PROCEDURE dbo.pFundSourceExpenditureImportJson
-GO
 
 CREATE PROCEDURE dbo.pFundSourceExpenditureImportJson
 (

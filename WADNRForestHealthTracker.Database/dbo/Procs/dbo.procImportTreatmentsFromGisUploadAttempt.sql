@@ -1,6 +1,4 @@
-IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.procImportTreatmentsFromGisUploadAttempt'))
-    drop procedure dbo.procImportTreatmentsFromGisUploadAttempt
-go
+
 create procedure dbo.procImportTreatmentsFromGisUploadAttempt
 (
     @piGisUploadAttemptID int,

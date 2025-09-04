@@ -1,5 +1,4 @@
-﻿if object_id('dbo.LTrimX') is not null DROP FUNCTION dbo.LTrimX
-GO
+﻿
 CREATE FUNCTION dbo.LTrimX(@str VARCHAR(MAX)) RETURNS VARCHAR(MAX)
 AS
 BEGIN

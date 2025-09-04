@@ -1,6 +1,5 @@
-IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.fGetUploadProgramCounty'))
-drop function dbo.fGetUploadProgramCounty
-GO
+
+
 CREATE FUNCTION dbo.fGetUploadProgramCounty
 (
     @piGisUploadAttemptID int,

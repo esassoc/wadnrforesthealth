@@ -1,6 +1,4 @@
-IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.fGetProjectPriorityLandscape'))
-drop function dbo.fGetProjectPriorityLandscape
-GO
+
 CREATE FUNCTION dbo.fGetProjectPriorityLandscape
 (
        @piGisUploadAttemptID int,

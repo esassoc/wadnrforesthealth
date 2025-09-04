@@ -1,7 +1,4 @@
 
-IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.fGetBoundingBoxForProjectIdList'))
-    drop function dbo.fGetBoundingBoxForProjectIdList
-go
 
 create function dbo.fGetBoundingBoxForProjectIdList(@ProjectIDList varchar(max))
 returns @rtnTable TABLE 

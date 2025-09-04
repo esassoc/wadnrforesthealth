@@ -1,6 +1,4 @@
-﻿IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.fnSplitString'))
-    drop function dbo.fnSplitString
-go
+﻿
 CREATE FUNCTION dbo.fnSplitString
 (
    @stringToSplit NVARCHAR(MAX),

@@ -1,6 +1,4 @@
-IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('dbo.pImportLoaTabularData'))
-    DROP PROCEDURE dbo.pImportLoaTabularData
-GO
+
 
 CREATE PROCEDURE dbo.pImportLoaTabularData
 AS

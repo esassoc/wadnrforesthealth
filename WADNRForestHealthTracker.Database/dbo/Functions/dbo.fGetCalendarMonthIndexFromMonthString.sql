@@ -1,7 +1,4 @@
 
-IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.fGetCalendarMonthIndexFromMonthString'))
-    drop function dbo.fGetCalendarMonthIndexFromMonthString
-go
 
 /*
 Returns the current Fiscal Year Biennium

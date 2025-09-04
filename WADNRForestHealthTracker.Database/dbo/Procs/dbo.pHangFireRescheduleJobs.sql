@@ -1,6 +1,4 @@
-IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.pHangFireRescheduleJobs'))
-  drop procedure dbo.pHangFireRescheduleJobs
-go
+
 create procedure dbo.pHangFireRescheduleJobs
 as
     set transaction isolation level serializable

@@ -1,6 +1,5 @@
-IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.pGeospatial_SpatialIndexCreate'))
-    drop procedure dbo.pGeospatial_SpatialIndexCreate
-go
+
+
 create procedure dbo.pGeospatial_SpatialIndexCreate(@applyChanges bit = 0, @databaseNameOptional sysname = null, @tableNameOptional sysname = null, @geometryColumnName sysname = null)
 as
 begin

@@ -11,9 +11,7 @@
 -- through 9999-12-31T23:59:59.999
 
 -- Returns NULL if parameter is out of range
-IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.fUnixTimeToDateTime2'))
-    drop function dbo.fUnixTimeToDateTime2
-go
+
 create function dbo.fUnixTimeToDateTime2(@x bigint)
 returns datetime2 
 as 

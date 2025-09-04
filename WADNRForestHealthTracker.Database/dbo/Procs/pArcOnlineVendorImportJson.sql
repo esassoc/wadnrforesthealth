@@ -1,6 +1,3 @@
-IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('dbo.pArcOnlineVendorImportJson'))
-	DROP PROCEDURE dbo.pArcOnlineVendorImportJson
-GO
 
 CREATE PROCEDURE dbo.pArcOnlineVendorImportJson
 (

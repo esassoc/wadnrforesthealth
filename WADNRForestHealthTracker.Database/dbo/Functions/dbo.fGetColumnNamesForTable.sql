@@ -1,6 +1,5 @@
-IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.fGetColumnNamesForTable'))
-drop function dbo.fGetColumnNamesForTable
-GO
+
+
 CREATE FUNCTION dbo.fGetColumnNamesForTable
 (
     @psTableName varchar(100)

@@ -1,8 +1,4 @@
--- fConvertDateTimeUtcToPacificStandardTime
 
-IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.fConvertDateTimeUtcToPacificStandardTime'))
-    drop function dbo.fConvertDateTimeUtcToPacificStandardTime
-go
 create function dbo.fConvertDateTimeUtcToPacificStandardTime(@x datetime)
 returns datetime 
 as 

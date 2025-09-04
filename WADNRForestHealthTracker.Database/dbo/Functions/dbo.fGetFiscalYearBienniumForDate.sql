@@ -1,8 +1,4 @@
 
-IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.fGetFiscalYearBienniumForDate'))
-    drop function dbo.fGetFiscalYearBienniumForDate
-go
-
 /*
 Returns the Fiscal Year Biennium for a given date
 */

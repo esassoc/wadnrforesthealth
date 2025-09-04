@@ -1,6 +1,4 @@
-IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('dbo.pClearOutdatedSocrataDataMartRawJsonImports'))
-    DROP PROCEDURE dbo.pClearOutdatedSocrataDataMartRawJsonImports
-GO
+
 
 CREATE PROCEDURE dbo.pClearOutdatedSocrataDataMartRawJsonImports
     (
