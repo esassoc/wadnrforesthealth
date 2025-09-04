@@ -1,21 +1,8 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[TreatmentType](
-	[TreatmentTypeID] [int] NOT NULL,
-	[TreatmentTypeName] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[TreatmentTypeDisplayName] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
- CONSTRAINT [PK_TreatmentType_TreatmentTypeID] PRIMARY KEY CLUSTERED 
-(
-	[TreatmentTypeID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_TreatmentType_TreatmentTypeDisplayName] UNIQUE NONCLUSTERED 
-(
-	[TreatmentTypeDisplayName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_TreatmentType_TreatmentTypeName] UNIQUE NONCLUSTERED 
-(
-	[TreatmentTypeName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+    [TreatmentTypeID] [int] NOT NULL CONSTRAINT [PK_TreatmentType_TreatmentTypeID] PRIMARY KEY,
+    [TreatmentTypeName] [varchar](50) NOT NULL,
+    [TreatmentTypeDisplayName] [varchar](50) NOT NULL,
+    CONSTRAINT [AK_TreatmentType_TreatmentTypeDisplayName] UNIQUE ([TreatmentTypeDisplayName]),
+    CONSTRAINT [AK_TreatmentType_TreatmentTypeName] UNIQUE ([TreatmentTypeName])
+)
+GO
