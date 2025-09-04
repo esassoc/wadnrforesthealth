@@ -1,19 +1,15 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 CREATE TABLE [dbo].[tmpTreatmentsFromArcGis](
 	[OBJECTID] [int] NULL,
-	[PROJECT_NM] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[GRANT_FUND_INFO] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[TRT_LOCAL_ID] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[UNIT_ID] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[TRT_STATUS] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[PROJECT_NM] [varchar](50) NULL,
+	[GRANT_FUND_INFO] [varchar](100) NULL,
+	[TRT_LOCAL_ID] [varchar](50) NULL,
+	[UNIT_ID] [varchar](50) NULL,
+	[TRT_STATUS] [varchar](50) NULL,
 	[COLLECT_DATE] [datetime2](7) NULL,
-	[COLLECT_METH] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[OWNER_NM] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[FY] [varchar](8) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[COMMENTS] [varchar](300) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[COLLECT_METH] [varchar](50) NULL,
+	[OWNER_NM] [varchar](50) NULL,
+	[FY] [varchar](8) NULL,
+	[COMMENTS] [varchar](300) NULL,
 	[GIS_ACRES] [float] NULL,
 	[CHIPPING] [float] NULL,
 	[PRUNING] [float] NULL,
@@ -28,16 +24,17 @@ CREATE TABLE [dbo].[tmpTreatmentsFromArcGis](
 	[BRN_MACH_PLE] [float] NULL,
 	[OTHER] [float] NULL,
 	[ACT_CMP_DT] [datetime2](7) NULL,
-	[CONTRACTOR] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[CONTRACT_NUM] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[TRT_SUM] [varchar](200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[created_user] [varchar](255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[CONTRACTOR] [varchar](50) NULL,
+	[CONTRACT_NUM] [varchar](50) NULL,
+	[TRT_SUM] [varchar](200) NULL,
+	[created_user] [varchar](255) NULL,
 	[created_date] [datetime2](7) NULL,
-	[last_edited_user] [varchar](255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[last_edited_user] [varchar](255) NULL,
 	[last_edited_date] [datetime2](7) NULL,
-	[FHT_Project_Number] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[GlobalID] [varchar](38) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[FHT_Project_Number] [varchar](50) NULL,
+	[GlobalID] [varchar](38) NULL,
 	[SHAPE_Length] [float] NULL,
 	[SHAPE_Area] [float] NULL,
 	[GEOM] [geometry] NULL
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+)
+GO
