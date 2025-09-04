@@ -382,5 +382,23 @@
     <Build Include="dbo\Procs\pProgramIndexImportJson.sql" />
     <Build Include="dbo\Procs\pProjectCodeImportJson.sql" />
     <Build Include="dbo\Procs\pSetMeToWADNRAdminRole.sql" />
+    <Build Include="Scripts\Utility\Copy Tenant Full.sql" />
+    <Build Include="Scripts\Utility\delete projects.sql" />
+    <Build Include="Scripts\Utility\find tables with 0 records.sql" />
+    <Build Include="Scripts\Utility\RestoreDatabase.sql" />
+    <Build Include="Scripts\Utility\script to find empty projectLocationPoints and fill them in.sql" />
+    <Build Include="Scripts\Utility\script to fix AreProjectLocationsBad unit test bad locations.sql" />
+    <Build Include="Scripts\Utility\UpdateTenantAttributes.sql" />
+    <Build Include="HangFire\Tables\HangFire.AggregatedCounter.sql" />
+    <Build Include="HangFire\Tables\HangFire.Counter.sql" />
+    <Build Include="HangFire\Tables\HangFire.Hash.sql" />
+    <Build Include="HangFire\Tables\HangFire.Job.sql" />
+    <Build Include="HangFire\Tables\HangFire.JobParameter.sql" />
+    <Build Include="HangFire\Tables\HangFire.JobQueue.sql" />
+    <Build Include="HangFire\Tables\HangFire.List.sql" />
+    <Build Include="HangFire\Tables\HangFire.Schema.sql" />
+    <Build Include="HangFire\Tables\HangFire.Server.sql" />
+    <Build Include="HangFire\Tables\HangFire.Set.sql" />
+    <Build Include="HangFire\Tables\HangFire.State.sql" />
   </ItemGroup>
 </Project>
