@@ -76,7 +76,7 @@ namespace ProjectFirma.Web.ScheduledJobs
             var body = new Dictionary<string, string>();
             body.Add("client_id", FirmaWebConfiguration.ArcGisClientId);
             body.Add("client_secret", FirmaWebConfiguration.ArcGisClientSecret);
-            body.Add("fundSource_type", "client_credentials");
+            body.Add("grant_type", "client_credentials");
 
             var htmlContent = new FormUrlEncodedContent(body);
             HttpResponseMessage response;
