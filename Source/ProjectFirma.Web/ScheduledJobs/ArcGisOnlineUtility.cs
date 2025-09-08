@@ -95,6 +95,13 @@ namespace ProjectFirma.Web.ScheduledJobs
                 return false;
             }
 
+            if (string.IsNullOrEmpty(arcGISAuthorization.access_token))
+            {
+                ILog Logger = LogManager.GetLogger(typeof(ArcGisOnlineUtility));
+                Logger.Error("ArcGIS: access token is empty!");
+                return false;
+            }
+
             if (httpClient.DefaultRequestHeaders.Contains("X-Esri-Authorization"))
             {
                 httpClient.DefaultRequestHeaders.Remove("X-Esri-Authorization");
