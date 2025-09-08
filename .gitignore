@@ -26,3 +26,9 @@
 /.vs/wadnrforesthealth/v16/*.suo
 
 *.vshistory
+*.user
+*.vs
+/**/bin/
+/**/obj/
+*.dbmdl
+*.jfm
