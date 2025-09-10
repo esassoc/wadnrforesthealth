@@ -907,10 +907,6 @@ FROM [dbo].[vTotalTreatedAcresByProject] AS [vTotalTreatedAcresByProject]</Defin
       <End Role="ProjectUpdateBatch" EntitySet="ProjectUpdateBatch" />
       <End Role="ProjectLocationStagingUpdates" EntitySet="ProjectLocationStagingUpdate" />
     </AssociationSet>
-    <AssociationSet Name="FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID" Association="ProjectFirma.Web.Models.Store.FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID">
-      <End Role="ProjectLocation" EntitySet="ProjectLocation" />
-      <End Role="ProjectLocationUpdates" EntitySet="ProjectLocationUpdate" />
-    </AssociationSet>
     <AssociationSet Name="FK_ProjectLocationUpdate_ProjectUpdateBatch_ProjectUpdateBatchID" Association="ProjectFirma.Web.Models.Store.FK_ProjectLocationUpdate_ProjectUpdateBatch_ProjectUpdateBatchID">
       <End Role="ProjectUpdateBatch" EntitySet="ProjectUpdateBatch" />
       <End Role="ProjectLocationUpdates" EntitySet="ProjectLocationUpdate" />
@@ -2413,7 +2409,6 @@ FROM [dbo].[vTotalTreatedAcresByProject] AS [vTotalTreatedAcresByProject]</Defin
     <Property Name="ProjectLocationUpdateName" Type="varchar" Nullable="false" MaxLength="100" />
     <Property Name="ArcGisObjectID" Type="int" />
     <Property Name="ArcGisGlobalID" Type="varchar" MaxLength="50" />
-    <Property Name="ProjectLocationID" Type="int" />
   </EntityType>
   <EntityType Name="ProjectNote">
     <Key>
@@ -5109,18 +5104,6 @@ warning 6002: The table/view 'WADNRForestHealthDB.dbo.vTotalTreatedAcresByProjec
       </Principal>
       <Dependent Role="ProjectLocationStagingUpdates">
         <PropertyRef Name="ProjectUpdateBatchID" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID">
-    <End Role="ProjectLocation" Type="ProjectFirma.Web.Models.Store.ProjectLocation" Multiplicity="0..1" />
-    <End Role="ProjectLocationUpdates" Type="ProjectFirma.Web.Models.Store.ProjectLocationUpdate" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="ProjectLocation">
-        <PropertyRef Name="ProjectLocationID" />
-      </Principal>
-      <Dependent Role="ProjectLocationUpdates">
-        <PropertyRef Name="ProjectLocationID" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

@@ -33,28 +33,28 @@ namespace ProjectFirma.Web.Models
             var project = projectUpdateBatch.Project;
             projectUpdateBatch.TreatmentUpdates = project.Treatments.Select(t =>
             {
-                var projectLocationUpdateID = projectUpdateBatch.ProjectLocationUpdates
-                    .SingleOrDefault(plu => plu.ProjectLocationID == t.ProjectLocation.ProjectLocationID)
-                    ?.ProjectLocationUpdateID;
-                return new TreatmentUpdate()
+                var projectLocationUpdate = projectUpdateBatch.ProjectLocationUpdates.SingleOrDefault(plu => plu.ProjectLocationUpdateGeometry.SpatialEquals(t.ProjectLocation?.ProjectLocationGeometry) && plu.ProjectLocationUpdateName == t.ProjectLocation?.ProjectLocationName);
+                int? projectLocationUpdateID = null;
+                if (projectLocationUpdate != null)
+                {
+                    projectLocationUpdateID = projectLocationUpdate.ProjectLocationUpdateID;
+                }
+                return new TreatmentUpdate(projectUpdateBatch, t.TreatmentFootprintAcres, t.TreatmentType, t.TreatmentDetailedActivityType)
                 {
                     ProjectUpdateBatchID = projectUpdateBatch.ProjectUpdateBatchID,
                     TreatmentStartDate = t.TreatmentStartDate,
                     TreatmentEndDate = t.TreatmentEndDate,
-                    TreatmentFootprintAcres = t.TreatmentFootprintAcres,
                     TreatmentNotes = t.TreatmentNotes,
-                    TreatmentTypeID = t.TreatmentTypeID,
                     TreatmentCodeID = t.TreatmentCodeID,
                     TreatmentTreatedAcres = t.TreatmentTreatedAcres,
                     CostPerAcre = t.CostPerAcre,
                     TreatmentTypeImportedText = t.TreatmentTypeImportedText,
                     CreateGisUploadAttemptID = t.CreateGisUploadAttemptID,
                     UpdateGisUploadAttemptID = t.UpdateGisUploadAttemptID,
-                    TreatmentDetailedActivityTypeID = t.TreatmentDetailedActivityTypeID,
                     TreatmentDetailedActivityTypeImportedText = t.TreatmentDetailedActivityTypeImportedText,
                     ProgramID = t.ProgramID,
                     ImportedFromGis = t.ImportedFromGis,
-                    ProjectLocationUpdateID = projectLocationUpdateID   
+                    ProjectLocationUpdateID = projectLocationUpdateID,
                 };
             }).ToList();
         }
@@ -75,10 +75,7 @@ namespace ProjectFirma.Web.Models
                 projectUpdateBatch.TreatmentUpdates.ToList().ForEach(tu =>
                 {
                     var projectLocation = project.ProjectLocations
-                        .SingleOrDefault(x =>
-                            (tu.ProjectLocationUpdate.ProjectLocationID.HasValue && x.ProjectLocationID == tu.ProjectLocationUpdate.ProjectLocationID) ||
-                            (!tu.ProjectLocationUpdate.ProjectLocationID.HasValue && x.ProjectLocationName == tu.ProjectLocationUpdate.ProjectLocationUpdateName)
-                        );
+                        .SingleOrDefault(x => x.ProjectLocationGeometry.SpatialEquals(tu.ProjectLocationUpdate.ProjectLocationUpdateGeometry) && x.ProjectLocationName == tu.ProjectLocationUpdate.ProjectLocationUpdateName);
                     var treatment = new Treatment(
                         project.ProjectID,
                         tu.TreatmentStartDate,
