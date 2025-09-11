@@ -52,7 +52,15 @@ namespace ProjectFirma.Web.Views.ProjectUpdate
             var projectLocations = projectUpdateBatch.Project.ProjectLocations.ToList();
             var projectLocationUpdates = projectUpdateBatch.ProjectLocationUpdates.ToList();
 
-            var isValid = ProjectUpdateController.RevertProjectLocationUpdates(projectUpdateBatch.Project, projectUpdateBatch);
+            var isValid = true;
+
+            var projectLocationNames = projectLocations.Select(x => x.ProjectLocationName).ToHashSet();
+            var newProjectLocationUpdates = projectLocationUpdates.Where(x => !projectLocationNames.Contains(x.ProjectLocationUpdateName));
+
+            if (newProjectLocationUpdates.Any(x => x.TreatmentUpdates.Any()))
+            {
+                isValid = false;
+            }
 
             return isValid;
         }
