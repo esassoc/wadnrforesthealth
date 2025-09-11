@@ -11,7 +11,6 @@ CREATE TABLE [dbo].[ProjectLocationUpdate](
 	[ProjectLocationUpdateName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 	[ArcGisObjectID] [int] NULL,
 	[ArcGisGlobalID] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[ProjectLocationID] [int] NULL,
  CONSTRAINT [PK_ProjectLocationUpdate_ProjectLocationUpdateID] PRIMARY KEY CLUSTERED 
 (
 	[ProjectLocationUpdateID] ASC
@@ -23,11 +22,6 @@ CREATE TABLE [dbo].[ProjectLocationUpdate](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
-GO
-ALTER TABLE [dbo].[ProjectLocationUpdate]  WITH CHECK ADD  CONSTRAINT [FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID] FOREIGN KEY([ProjectLocationID])
-REFERENCES [dbo].[ProjectLocation] ([ProjectLocationID])
-GO
-ALTER TABLE [dbo].[ProjectLocationUpdate] CHECK CONSTRAINT [FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID]
 GO
 ALTER TABLE [dbo].[ProjectLocationUpdate]  WITH CHECK ADD  CONSTRAINT [FK_ProjectLocationUpdate_ProjectLocationType_ProjectLocationTypeID] FOREIGN KEY([ProjectLocationTypeID])
 REFERENCES [dbo].[ProjectLocationType] ([ProjectLocationTypeID])

@@ -1013,10 +1013,6 @@
       <End Role="ProjectUpdateBatch" EntitySet="ProjectUpdateBatch" />
       <End Role="ProjectImageUpdates" EntitySet="ProjectImageUpdate" />
     </AssociationSet>
-    <AssociationSet Name="FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID" Association="ProjectFirma.Web.Models.FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID">
-      <End Role="ProjectLocation" EntitySet="ProjectLocation" />
-      <End Role="ProjectLocationUpdates" EntitySet="ProjectLocationUpdate" />
-    </AssociationSet>
     <AssociationSet Name="FK_Treatment_ProjectLocation_ProjectLocationID" Association="ProjectFirma.Web.Models.FK_Treatment_ProjectLocation_ProjectLocationID">
       <End Role="ProjectLocation" EntitySet="ProjectLocation" />
       <End Role="Treatments" EntitySet="Treatment" />
@@ -2752,7 +2748,6 @@
     <Property Name="TemporaryTreatmentCacheID" Type="Int32" />
     <NavigationProperty Name="Program" Relationship="ProjectFirma.Web.Models.FK_ProjectLocation_Program_ProgramID" FromRole="ProjectLocations" ToRole="Program" />
     <NavigationProperty Name="Project" Relationship="ProjectFirma.Web.Models.FK_ProjectLocation_Project_ProjectID" FromRole="ProjectLocations" ToRole="Project" />
-    <NavigationProperty Name="ProjectLocationUpdates" Relationship="ProjectFirma.Web.Models.FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID" FromRole="ProjectLocation" ToRole="ProjectLocationUpdates" />
     <NavigationProperty Name="Treatments" Relationship="ProjectFirma.Web.Models.FK_Treatment_ProjectLocation_ProjectLocationID" FromRole="ProjectLocation" ToRole="Treatments" />
   </EntityType>
   <EntityType Name="ProjectLocationStaging">
@@ -2795,8 +2790,6 @@
     <Property Name="ProjectLocationUpdateName" Type="String" Nullable="false" MaxLength="100" Unicode="false" FixedLength="false" />
     <Property Name="ArcGisObjectID" Type="Int32" />
     <Property Name="ArcGisGlobalID" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
-    <Property Name="ProjectLocationID" Type="Int32" />
-    <NavigationProperty Name="ProjectLocation" Relationship="ProjectFirma.Web.Models.FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID" FromRole="ProjectLocationUpdates" ToRole="ProjectLocation" />
     <NavigationProperty Name="ProjectUpdateBatch" Relationship="ProjectFirma.Web.Models.FK_ProjectLocationUpdate_ProjectUpdateBatch_ProjectUpdateBatchID" FromRole="ProjectLocationUpdates" ToRole="ProjectUpdateBatch" />
     <NavigationProperty Name="TreatmentUpdates" Relationship="ProjectFirma.Web.Models.FK_TreatmentUpdate_ProjectLocationUpdate_ProjectLocationUpdateID" FromRole="ProjectLocationUpdate" ToRole="TreatmentUpdates" />
   </EntityType>
@@ -6019,18 +6012,6 @@
       </Principal>
       <Dependent Role="ProjectImageUpdates">
         <PropertyRef Name="ProjectUpdateBatchID" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID">
-    <End Role="ProjectLocation" Type="ProjectFirma.Web.Models.ProjectLocation" Multiplicity="0..1" />
-    <End Role="ProjectLocationUpdates" Type="ProjectFirma.Web.Models.ProjectLocationUpdate" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="ProjectLocation">
-        <PropertyRef Name="ProjectLocationID" />
-      </Principal>
-      <Dependent Role="ProjectLocationUpdates">
-        <PropertyRef Name="ProjectLocationID" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

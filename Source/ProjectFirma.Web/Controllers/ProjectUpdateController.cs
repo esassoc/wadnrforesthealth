@@ -710,7 +710,7 @@ namespace ProjectFirma.Web.Controllers
             var projectUpdateBatch = GetLatestNotApprovedProjectUpdateBatchAndThrowIfNoneFound(project);
 
             // Validate refresh will not orphan any Treatment records
-            var isValid = ValidateRefreshProjectLocationDetailed(project.ProjectLocations.ToList(), projectUpdateBatch.ProjectLocationUpdates.ToList());
+            var isValid = LocationDetailedViewData.CanRevertLocationDetailed(projectUpdateBatch);
             if (!isValid)
             {
                 SetErrorForDisplay("Reverting project locations would delete Treatment Areas associated with Treatments.");
@@ -718,59 +718,56 @@ namespace ProjectFirma.Web.Controllers
             }
 
             // We need to consider that TreatmentUpdates could have foreign keys to the ProjectLocationUpdates being refreshed
-            var projectLocationUpdates = projectUpdateBatch.ProjectLocationUpdates;
             projectUpdateBatch.DeleteProjectLocationStagingUpdates();
 
-            // Remove project location updates that were created during the update
-            var projectLocationUpdatesToDelete = projectUpdateBatch.ProjectLocationUpdates.Where(x => !x.ProjectLocationID.HasValue).ToList();
-            foreach(var locationToDelete in projectLocationUpdatesToDelete)
-            {
-                projectLocationUpdates.Remove(locationToDelete);
-            }
-            HttpRequestStorage.DatabaseEntities.ProjectLocationUpdates.DeleteProjectLocationUpdate(projectLocationUpdatesToDelete);
+            // Remove project location updates 
+            //var projectLocationUpdatesToDelete = projectUpdateBatch.ProjectLocationUpdates.ToList();
 
-            // Get project location updates that need to be reverted or re-created
-            var revertedProjectLocationUpdates = project.ProjectLocations.Select(projectLocationToClone => new RevertedProjectLocationUpdate(
-                projectLocationToClone.ProjectLocationID,
-                projectLocationToClone.ProjectLocationGeometry,
-                projectLocationToClone.ProjectLocationNotes,
-                projectLocationToClone.ProjectLocationType,
-                projectLocationToClone.ProjectLocationName,
-                projectLocationToClone.ArcGisObjectID,
-                projectLocationToClone.ArcGisGlobalID)
-            ).ToList();
+            RevertProjectLocationUpdates(project, projectUpdateBatch);
 
-            foreach(var revertedLocation in revertedProjectLocationUpdates)
-            {
-                var projectLocationUpdate = projectLocationUpdates.SingleOrDefault(x => x.ProjectLocationID == revertedLocation.ProjectLocationID);
-                if (projectLocationUpdate != null)  // revert existing project location update
-                {
-                    projectLocationUpdate.ProjectLocationUpdateGeometry = revertedLocation.ProjectLocationUpdateGeometry;
-                    projectLocationUpdate.ProjectLocationUpdateNotes = revertedLocation.ProjectLocationUpdateNotes;
-                    projectLocationUpdate.ProjectLocationTypeID = revertedLocation.ProjectLocationType.ProjectLocationTypeID;
-                    projectLocationUpdate.ProjectLocationUpdateName = revertedLocation.ProjectLocationUpdateName;
-                    projectLocationUpdate.ArcGisObjectID = revertedLocation.ArcGisObjectID;
-                    projectLocationUpdate.ArcGisGlobalID = revertedLocation.ArcGisGlobalID;
-                }
-                else  // recreate project location update that was deleted
-                {
-                    projectLocationUpdates.Add(new ProjectLocationUpdate(
-                        projectUpdateBatch,
-                        revertedLocation.ProjectLocationID,
-                        revertedLocation.ProjectLocationUpdateGeometry,
-                        revertedLocation.ProjectLocationUpdateNotes,
-                        revertedLocation.ProjectLocationType,
-                        revertedLocation.ProjectLocationUpdateName,
-                        revertedLocation.ArcGisObjectID,
-                        revertedLocation.ArcGisGlobalID)
-                    );
-                }
-            }
+            //recreate project location updates from project locations
+            //ProjectLocationUpdate.CreateFromProject(projectUpdateBatch);
 
-            projectUpdateBatch.ProjectLocationUpdates = projectLocationUpdates;
 
             projectUpdateBatch.TickleLastUpdateDate(CurrentPerson);
             return new ModalDialogFormJsonResult();
+        }
+
+        public static bool RevertProjectLocationUpdates(Project project, ProjectUpdateBatch projectUpdateBatch)
+        {
+
+            try
+            {
+                HttpRequestStorage.DatabaseEntities.ProjectLocationUpdates.Load();
+                var allProjectLocationUpdates = HttpRequestStorage.DatabaseEntities.ProjectLocationUpdates.Local;
+                //var allInDb = HttpRequestStorage.DatabaseEntities.ProjectLocationUpdates.ToList();//.DeleteProjectLocationUpdate(projectLocationUpdatesToDelete);
+
+                var projectLocationUpdatesFromProject = project.ProjectLocations.Select(pl => new ProjectLocationUpdate(projectUpdateBatch,
+                    pl.ProjectLocationGeometry,
+                    pl.ProjectLocationNotes,
+                    pl.ProjectLocationTypeID,
+                    pl.ProjectLocationName,
+                    pl.ArcGisObjectID,
+                    pl.ArcGisGlobalID
+                )).ToList();
+                projectUpdateBatch.ProjectLocationUpdates.Merge(projectLocationUpdatesFromProject, allProjectLocationUpdates,
+                    (x, y) => x.ProjectUpdateBatchID == y.ProjectUpdateBatchID && x.ProjectLocationUpdateName == y.ProjectLocationUpdateName,
+                    (x, y) =>
+                    {
+                        x.ProjectLocationGeometry = y.ProjectLocationGeometry;
+                        x.ProjectLocationTypeID = y.ProjectLocationTypeID;
+                        x.ProjectLocationNotes = y.ProjectLocationNotes;
+                        x.ArcGisGlobalID = y.ArcGisGlobalID;
+                        x.ArcGisObjectID = y.ArcGisObjectID;
+                });
+    
+            }
+            catch (Exception )
+            {
+                return false;
+            }
+            
+            return true;
         }
 
         private PartialViewResult ViewRefreshProjectLocationDetailed(ConfirmDialogFormViewModel viewModel)
@@ -779,41 +776,6 @@ namespace ProjectFirma.Web.Controllers
                 new ConfirmDialogFormViewData(
                     $"Are you sure you want to refresh the {FieldDefinition.ProjectLocation.GetFieldDefinitionLabel()} data? This will pull the most recently approved information for the {FieldDefinition.Project.GetFieldDefinitionLabel()} and any updates made in this section will be lost.");
             return RazorPartialView<ConfirmDialogForm, ConfirmDialogFormViewData, ConfirmDialogFormViewModel>(viewData, viewModel);
-        }
-
-        private bool ValidateRefreshProjectLocationDetailed(List<ProjectLocation> projectLocations, List<ProjectLocationUpdate> projectLocationUpdates)
-        {
-            var isValid = true;
-
-            var newProjectLocationUpdates = projectLocationUpdates.Where(x => !x.ProjectLocationID.HasValue).ToList();  // These ProjectLocationUpdates are new
-            var exisitingProjectLocationUpdates = projectLocationUpdates.Where(x => x.ProjectLocationID.HasValue).ToList();  // These ProjectLocationUpdates were created from ProjectLocations
-
-            // these were created as part of the update, and thus will get deleted by the refresh
-            foreach(var newProjectLocationUpdate in newProjectLocationUpdates)
-            {
-                if (newProjectLocationUpdate.TreatmentUpdates.Any())
-                {
-                    isValid = false;
-                    break;
-                }
-            }
-            if (!isValid) return false;
-
-            // type changed to Treatment Area and associated with a TreatmentUpdate; refresh will cause the TreatmentUpdate to refer to a ProjectLocationUpdate that is no longer a Treatment Area
-            foreach(var exisitingProjectLocationUpdate in exisitingProjectLocationUpdates)
-            {
-                if (exisitingProjectLocationUpdate.TreatmentUpdates.Any())
-                {
-                    var correspondingProjectLocation = projectLocations.SingleOrDefault(x => x.ProjectLocationID == exisitingProjectLocationUpdate.ProjectLocationID);
-                    if (correspondingProjectLocation?.ProjectLocationTypeID != ProjectLocationType.TreatmentArea.ProjectLocationTypeID)
-                    {
-                        isValid = false;
-                        break;
-                    }
-                }
-            }
-
-            return isValid;
         }
 
         [HttpGet]

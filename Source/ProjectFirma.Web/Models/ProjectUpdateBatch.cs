@@ -118,7 +118,7 @@ namespace ProjectFirma.Web.Models
             // project county
             ProjectCountyUpdate.CreateFromProject(projectUpdateBatch);
 
-            // treatments
+            // treatments - must happen after locations
             TreatmentUpdate.CreateFromProject(projectUpdateBatch);
 
             // photos
