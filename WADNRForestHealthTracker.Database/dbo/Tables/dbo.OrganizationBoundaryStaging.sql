@@ -6,10 +6,10 @@ CREATE TABLE [dbo].[OrganizationBoundaryStaging](
  CONSTRAINT [PK_OrganizationBoundaryStaging_OrganizationBoundaryStagingID] PRIMARY KEY CLUSTERED 
 (
 	[OrganizationBoundaryStagingID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF)
+)
 ) 
 GO
 
-ALTER TABLE [dbo].[OrganizationBoundaryStaging]  WITH CHECK ADD  CONSTRAINT [FK_OrganizationBoundaryStaging_Organization_OrganizationID] FOREIGN KEY([OrganizationID])
+ALTER TABLE [dbo].[OrganizationBoundaryStaging] ADD  CONSTRAINT [FK_OrganizationBoundaryStaging_Organization_OrganizationID] FOREIGN KEY([OrganizationID])
 REFERENCES [dbo].[Organization] ([OrganizationID])
 GO

@@ -30,10 +30,13 @@ CREATE TABLE [dbo].[Project](
     [ProjectFundingSourceNotes] [varchar](4000) NULL,
     [NoCountiesExplanation] [varchar](4000) NULL,
     [PercentageMatch] [int] NULL,
-    CONSTRAINT [CK_Project_ProjectCannotHaveProjectStageProposalAndApprovalStatusApproved] CHECK (([ProjectStageID]<>(1) OR [ProjectApprovalStatusID]<>(3)),
+    CONSTRAINT [CK_Project_ProjectCannotHaveProjectStageProposalAndApprovalStatusApproved] CHECK ([ProjectStageID]<>(1) OR [ProjectApprovalStatusID]<>(3)),
     CONSTRAINT [CK_Project_ProjectGisIdentifierDoesNotEndWithSpace] CHECK ((right([ProjectGisIdentifier],(1))<>' ')),
     CONSTRAINT [CK_Project_ProjectLocationPoint_IsPointData] CHECK (([ProjectLocationPoint] IS NULL OR [ProjectLocationPoint] IS NOT NULL AND [ProjectLocationPoint].[STGeometryType]()='Point'))
 )
-GO
-CREATE SPATIAL INDEX [SPATIAL_Project_ProjectLocationPoint] ON [dbo].[Project]([ProjectLocationPoint]) USING GEOMETRY_AUTO_GRID WITH (BOUNDING_BOX =(-125, 45, -117, 50), CELLS_PER_OBJECT = 8)
-GO
+GO;
+
+--CREATE SPATIAL INDEX [SPATIAL_Project_ProjectLocationPoint] ON [dbo].[Project]([ProjectLocationPoint]) 
+--USING GEOMETRY_AUTO_GRID WITH 
+--    (BOUNDING_BOX = (-125, 45, -117, 50), CELLS_PER_OBJECT = 8)
+--GO
