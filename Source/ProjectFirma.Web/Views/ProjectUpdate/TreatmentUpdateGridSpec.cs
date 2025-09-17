@@ -26,7 +26,7 @@ namespace ProjectFirma.Web.Views.ProjectUpdate
 
             Add("Edit", x => x.ImportedFromGis.HasValue && x.ImportedFromGis.Value ? new HtmlString(string.Empty) : AgGridHtmlHelpers.MakeEditIconAsModalDialogLinkBootstrap(new ModalDialogForm(x.GetEditTreatmentUpdateUrl(), $"Edit Treatment Update"), userHasEditPermissions), buttonGridWidth, AgGridColumnFilterType.None);
 
-            Add("Treatment Area Name", a => a.ProjectLocationUpdate.ProjectLocationUpdateName, 200, AgGridColumnFilterType.SelectFilterStrict);
+            Add("Treatment Area Name", a => a.ProjectLocationUpdate?.ProjectLocationUpdateName, 200, AgGridColumnFilterType.SelectFilterStrict);
             Add("Treatment Update ID", a => a.TreatmentUpdateID.ToString(), 75, AgGridColumnFilterType.Text);
             Add(Models.FieldDefinition.TreatmentType.GetFieldDefinitionLabel(), a => a.TreatmentType.TreatmentTypeDisplayName, 120, AgGridColumnFilterType.SelectFilterStrict);
             Add(Models.FieldDefinition.TreatmentCode.GetFieldDefinitionLabel(), a => a.TreatmentCode?.TreatmentCodeDisplayName, 120, AgGridColumnFilterType.SelectFilterStrict);

@@ -76,7 +76,7 @@ namespace ProjectFirma.Web.ScheduledJobs
             var body = new Dictionary<string, string>();
             body.Add("client_id", FirmaWebConfiguration.ArcGisClientId);
             body.Add("client_secret", FirmaWebConfiguration.ArcGisClientSecret);
-            body.Add("fundSource_type", "client_credentials");
+            body.Add("grant_type", "client_credentials");
 
             var htmlContent = new FormUrlEncodedContent(body);
             HttpResponseMessage response;
@@ -92,6 +92,13 @@ namespace ProjectFirma.Web.ScheduledJobs
             {
                 ILog Logger = LogManager.GetLogger(typeof(ArcGisOnlineUtility));
                 Logger.Error("ArcGIS: Unable to get token.", e);
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(arcGISAuthorization.access_token))
+            {
+                ILog Logger = LogManager.GetLogger(typeof(ArcGisOnlineUtility));
+                Logger.Error("ArcGIS: access token is empty!");
                 return false;
             }
 

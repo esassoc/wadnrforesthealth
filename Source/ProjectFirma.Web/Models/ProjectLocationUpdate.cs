@@ -37,12 +37,29 @@ namespace ProjectFirma.Web.Models
             ArcGisGlobalID = arcGisGlobalID;
         }
 
-        public ProjectLocationUpdate(ProjectUpdateBatch projectUpdateBatch, int projectLocationID, DbGeometry projectLocationGeometry, string projectLocationNotes, ProjectLocationType projectLocationType, string projectLocationName, int? arcGisObjectID, string arcGisGlobalID) : this(projectUpdateBatch, projectLocationGeometry, projectLocationType, projectLocationName)
+        /// <summary>
+        /// 9-10-25 TK&RO - Use this one when you do not want to have ProjectLocationGeometrys applied to the ProjectUpdateBatch.
+        /// We are using this for the ProjectLocationUpdate revert function, so that we can merge the project locations into the project location updates
+        /// </summary>
+        /// <param name="projectUpdateBatch"></param>
+        /// <param name="projectLocationGeometry"></param>
+        /// <param name="projectLocationNotes"></param>
+        /// <param name="projectLocationTypeID"></param>
+        /// <param name="projectLocationName"></param>
+        /// <param name="arcGisObjectID"></param>
+        /// <param name="arcGisGlobalID"></param>
+        public ProjectLocationUpdate(ProjectUpdateBatch projectUpdateBatch, DbGeometry projectLocationGeometry, string projectLocationNotes, int projectLocationTypeID, string projectLocationName, int? arcGisObjectID, string arcGisGlobalID)
         {
-            ProjectLocationID = projectLocationID;
             ProjectLocationUpdateNotes = projectLocationNotes;
             ArcGisObjectID = arcGisObjectID;
             ArcGisGlobalID = arcGisGlobalID;
+
+            ProjectLocationUpdateID = ModelObjectHelpers.MakeNextUnsavedPrimaryKeyValue();
+            ProjectUpdateBatchID = projectUpdateBatch.ProjectUpdateBatchID;
+            ProjectUpdateBatch = projectUpdateBatch;
+            ProjectLocationUpdateGeometry = projectLocationGeometry;
+            ProjectLocationTypeID = projectLocationTypeID;
+            ProjectLocationUpdateName = projectLocationName;
         }
 
         public string AuditDescriptionString
@@ -81,7 +98,6 @@ namespace ProjectFirma.Web.Models
             var project = projectUpdateBatch.Project;
             projectUpdateBatch.ProjectLocationUpdates = project.ProjectLocations.Select(
                                                                       projectLocationToClone => new ProjectLocationUpdate(projectUpdateBatch,
-                                                                                                    projectLocationToClone.ProjectLocationID,
                                                                                                     projectLocationToClone.ProjectLocationGeometry, 
                                                                                                     projectLocationToClone.ProjectLocationNotes, 
                                                                                                     projectLocationToClone.ProjectLocationType, 
@@ -94,18 +110,20 @@ namespace ProjectFirma.Web.Models
         {
             var project = projectUpdateBatch.Project;
             var projectLocationsFromProjectUpdate = projectUpdateBatch.ProjectLocationUpdates.Select(
-                plu => new ProjectLocation(project, (plu.ProjectLocationID ?? ModelObjectHelpers.MakeNextUnsavedPrimaryKeyValue()), plu.ProjectLocationUpdateName, plu.ProjectLocationUpdateGeometry, plu.ProjectLocationTypeID, plu.ProjectLocationUpdateNotes)
+                plu => new ProjectLocation(project, plu.ProjectLocationUpdateName, plu.ProjectLocationUpdateGeometry, plu.ProjectLocationTypeID, plu.ProjectLocationUpdateNotes)
             ).ToList();
+
             project.ProjectLocations.Merge(
                 projectLocationsFromProjectUpdate,
                 allProjectLocations,
-                (x, y) => x.ProjectID == y.ProjectID && x.ProjectLocationID == y.ProjectLocationID,
+                (x, y) => x.ProjectID == y.ProjectID && x.ProjectLocationName == y.ProjectLocationName,
                 (x, y) =>
                 {
-                    x.ProjectLocationName = y.ProjectLocationName;
                     x.ProjectLocationGeometry = y.ProjectLocationGeometry;
                     x.ProjectLocationTypeID = y.ProjectLocationTypeID;
                     x.ProjectLocationNotes = y.ProjectLocationNotes;
+                    x.ArcGisGlobalID = y.ArcGisGlobalID;
+                    x.ArcGisObjectID = y.ArcGisObjectID;
                 }
             );
         }
