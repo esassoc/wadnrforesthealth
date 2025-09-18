@@ -18,10 +18,8 @@ begin
 --remove references to ProjectUpdateBatch First:
 delete from dbo.ProjectCountyUpdate where ProjectUpdateBatchID in (select ProjectUpdateBatchID from dbo.ProjectUpdateBatch where ProjectID in (select ID from @ProjectIDList))
 delete from dbo.ProjectDocumentUpdate where ProjectUpdateBatchID in (select ProjectUpdateBatchID from dbo.ProjectUpdateBatch where ProjectID in (select ID from @ProjectIDList))
-delete from dbo.ProjectExemptReportingYearUpdate where ProjectUpdateBatchID in (select ProjectUpdateBatchID from dbo.ProjectUpdateBatch where ProjectID in (select ID from @ProjectIDList))
 delete from dbo.ProjectExternalLinkUpdate where ProjectUpdateBatchID in (select ProjectUpdateBatchID from dbo.ProjectUpdateBatch where ProjectID in (select ID from @ProjectIDList))
 delete from dbo.ProjectFundingSourceUpdate where ProjectUpdateBatchID in (select ProjectUpdateBatchID from dbo.ProjectUpdateBatch where ProjectID in (select ID from @ProjectIDList))
-delete from dbo.ProjectFundSourceAllocationExpenditureUpdate where ProjectUpdateBatchID in (select ProjectUpdateBatchID from dbo.ProjectUpdateBatch where ProjectID in (select ID from @ProjectIDList))
 delete from dbo.ProjectFundSourceAllocationRequestUpdate where ProjectUpdateBatchID in (select ProjectUpdateBatchID from dbo.ProjectUpdateBatch where ProjectID in (select ID from @ProjectIDList))
 delete from dbo.ProjectImageUpdate where ProjectUpdateBatchID in (select ProjectUpdateBatchID from dbo.ProjectUpdateBatch where ProjectID in (select ID from @ProjectIDList))
 -- 1/12/24 TK - TreatmentUpdate has a reference to ProjectLocationUpdate
@@ -48,10 +46,8 @@ delete from dbo.ProgramNotificationSentProject where ProjectID in (select ID fro
 delete from dbo.ProjectClassification where ProjectID in (select ID from @ProjectIDList)
 delete from dbo.ProjectCounty where ProjectID in (select ID from @ProjectIDList)
 delete from dbo.ProjectDocument where ProjectID in (select ID from @ProjectIDList)
-delete from dbo.ProjectExemptReportingYear where ProjectID in (select ID from @ProjectIDList)
 delete from dbo.ProjectExternalLink where ProjectID in (select ID from @ProjectIDList)
 delete from dbo.ProjectFundingSource where ProjectID in (select ID from @ProjectIDList)
-delete from dbo.ProjectFundSourceAllocationExpenditure where ProjectID in (select ID from @ProjectIDList)
 delete from dbo.ProjectFundSourceAllocationRequest where ProjectID in (select ID from @ProjectIDList)
 delete from dbo.ProjectImage where ProjectID in (select ID from @ProjectIDList)
 -- 1/12/24 TK - this is just setting the ID to null because we want to preserve the rest of the block list data and not delete the whole record, just remove the connection to the deleted projects

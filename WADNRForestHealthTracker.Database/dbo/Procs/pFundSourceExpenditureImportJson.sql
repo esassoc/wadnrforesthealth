@@ -151,7 +151,7 @@ inner join dbo.CostTypeDatamartMapping as ctdm on ctdm.DatamartObjectCode = tgp.
                                                   and 
                                                   ctdm.DatamartSubObjectName = tgp.SubObjName
 where tgp.Biennium = @BienniumToImport or @BienniumToImport is null
-order by CalendarYear, CalendarMonth, CostTypeID, Biennium, FiscalMo, FiscalAdjMo, MoString, SourceSystem, DocNo, DocSuffix, DocDate, InvoiceDesc, InvoiceDate, GlAcctNo, ObjCd, ObjName, SubObjCd, SubObjName, SubSubObjCd, SubSubObjName, ApprnCd, ApprnName, FundCd, FundName, OrgCd, OrgName, ProgIdxCd, ProgIdxName, ProgCd, ProgName, SubProgCd, SubProgName, ActivityCd, ActivityName, SubActivityCd, SubActivityName, ProjectCd, ProjectName, VendorNo, VendorName, ExpendAccrued
+order by CalendarYear, CalendarMonth, CostTypeID, tgp.Biennium, FiscalMo, FiscalAdjMo, MoString, SourceSystem, DocNo, DocSuffix, DocDate, InvoiceDesc, InvoiceDate, GlAcctNo, ObjCd, ObjName, SubObjCd, SubObjName, SubSubObjCd, SubSubObjName, ApprnCd, ApprnName, FundCd, FundName, OrgCd, OrgName, ProgIdxCd, ProgIdxName, ProgCd, ProgName, SubProgCd, SubProgName, ActivityCd, ActivityName, SubActivityCd, SubActivityName, ProjectCd, ProjectName, VendorNo, VendorName, ExpendAccrued
 
 end
 go
