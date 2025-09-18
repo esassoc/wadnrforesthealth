@@ -9,4 +9,4 @@ select
 	r.DNRUplandRegionLocation as Ogr_Geometry
 	
 from
-	dbo.DnrUplandRegion as r
+	dbo.DNRUplandRegion as r

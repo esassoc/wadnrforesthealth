@@ -405,6 +405,7 @@
     <Build Include="HangFire\Tables\HangFire.State.sql" />
     <Build Include="dbo\User Defined Types\html.sql" />
     <Build Include="dbo\User Defined Types\IDList.sql" />
+    <Build Include="HangFire\HangFire.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\130\SqlSchemas\master.dacpac">

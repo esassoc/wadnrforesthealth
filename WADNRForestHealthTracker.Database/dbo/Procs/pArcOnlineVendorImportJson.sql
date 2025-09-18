@@ -69,7 +69,7 @@ select distinct o.VendorID into #VendorFKs
 from dbo.Organization o
 
 insert into #VendorFKs
-select distinct p.VendorId from Person p
+select distinct p.VendorID from Person p
 
 insert into #VendorFKs
 select distinct ipr.VendorID from InvoicePaymentRequest ipr

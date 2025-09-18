@@ -47,7 +47,7 @@ select distinct o.VendorID into #VendorFKs
 from dbo.Organization o
 
 insert into #VendorFKs
-select distinct p.VendorId from Person p
+select distinct p.VendorID from Person p
 
 insert into #VendorFKs
 select distinct ipr.VendorID from InvoicePaymentRequest ipr
@@ -57,7 +57,7 @@ select distinct ipr.VendorID from InvoicePaymentRequest ipr
 delete from dbo.Vendor 
 where VendorID in 
 (
-	select dbv.VendorID 
+	select dbv.VendorID
 	from dbo.Vendor as dbv
 	full outer join #vendorSocrataTemp as tv on tv.vendor_num = dbv.StatewideVendorNumber and tv.vendor_num_suffix = dbv.StatewideVendorNumberSuffix
 	where (tv.vendor_num is null or tv.vendor_num_suffix is null) 

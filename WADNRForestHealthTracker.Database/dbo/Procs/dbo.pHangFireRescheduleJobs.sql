@@ -18,23 +18,23 @@ as
     ) a1
     left join
     (
-        select [key] as RecurringJobName, [value] as TimeZoneId
-        from HangFire.Hash where field='TimeZoneId'
+        select [Key] as RecurringJobName, [Value] as TimeZoneId
+        from HangFire.Hash where Field='TimeZoneId'
     ) a2 on a1.RecurringJobName = a2.RecurringJobName
     left join 
     (
-        select [key] as RecurringJobName, [value] as Cron
-        from HangFire.Hash where field='Cron'
+        select [Key] as RecurringJobName, [Value] as Cron
+        from HangFire.Hash where Field='Cron'
     ) a3 on a1.RecurringJobName = a3.RecurringJobName
     left join
     (
-        select [key] as RecurringJobName, [value] as NextExecution
-        from HangFire.Hash where field='NextExecution'
+        select [Key] as RecurringJobName, [Value] as NextExecution
+        from HangFire.Hash where Field='NextExecution'
     ) a4 on a1.RecurringJobName = a4.RecurringJobName
     left join
     (   
-        select [key] as RecurringJobName, [value] as LastExecution
-        from HangFire.Hash where field='LastExecution'
+        select [Key] as RecurringJobName, [Value] as LastExecution
+        from HangFire.Hash where Field='LastExecution'
     ) a5 on a1.RecurringJobName = a5.RecurringJobName
 
     if object_id('tempdb.dbo.#tmpRecurringJobDaily') is not null drop table #tmpRecurringJobDaily
