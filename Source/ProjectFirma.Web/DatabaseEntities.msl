@@ -1927,6 +1927,61 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="vLoaStageFundSourceAllocation">
+      <EntityTypeMapping TypeName="ProjectFirma.Web.Models.vLoaStageFundSourceAllocation">
+        <MappingFragment StoreEntitySet="vLoaStageFundSourceAllocation">
+          <ScalarProperty Name="LoaStageID" ColumnName="LoaStageID" />
+          <ScalarProperty Name="FundSourceID" ColumnName="FundSourceID" />
+          <ScalarProperty Name="FundSourceAllocationID" ColumnName="FundSourceAllocationID" />
+          <ScalarProperty Name="IsNortheast" ColumnName="IsNortheast" />
+          <ScalarProperty Name="IsSoutheast" ColumnName="IsSoutheast" />
+          <ScalarProperty Name="ProgramIndex" ColumnName="ProgramIndex" />
+          <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="vLoaStageFundSourceAllocationByProgramIndexProjectCode">
+      <EntityTypeMapping TypeName="ProjectFirma.Web.Models.vLoaStageFundSourceAllocationByProgramIndexProjectCode">
+        <MappingFragment StoreEntitySet="vLoaStageFundSourceAllocationByProgramIndexProjectCode">
+          <ScalarProperty Name="LoaStageID" ColumnName="LoaStageID" />
+          <ScalarProperty Name="FundSourceAllocationID" ColumnName="FundSourceAllocationID" />
+          <ScalarProperty Name="FundSourceID" ColumnName="FundSourceID" />
+          <ScalarProperty Name="IsNortheast" ColumnName="IsNortheast" />
+          <ScalarProperty Name="IsSoutheast" ColumnName="IsSoutheast" />
+          <ScalarProperty Name="ProgramIndex" ColumnName="ProgramIndex" />
+          <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="vLoaStageProjectFundSourceAllocation">
+      <EntityTypeMapping TypeName="ProjectFirma.Web.Models.vLoaStageProjectFundSourceAllocation">
+        <MappingFragment StoreEntitySet="vLoaStageProjectFundSourceAllocation">
+          <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+          <ScalarProperty Name="ProjectGisIdentifier" ColumnName="ProjectGisIdentifier" />
+          <ScalarProperty Name="MatchAmount" ColumnName="MatchAmount" />
+          <ScalarProperty Name="PayAmount" ColumnName="PayAmount" />
+          <ScalarProperty Name="ProjectStatus" ColumnName="ProjectStatus" />
+          <ScalarProperty Name="FundSourceAllocationID" ColumnName="FundSourceAllocationID" />
+          <ScalarProperty Name="LetterDate" ColumnName="LetterDate" />
+          <ScalarProperty Name="ProjectExpirationDate" ColumnName="ProjectExpirationDate" />
+          <ScalarProperty Name="ApplicationDate" ColumnName="ApplicationDate" />
+          <ScalarProperty Name="DecisionDate" ColumnName="DecisionDate" />
+          <ScalarProperty Name="LoaStageID" ColumnName="LoaStageID" />
+          <ScalarProperty Name="IsNortheast" ColumnName="IsNortheast" />
+          <ScalarProperty Name="IsSoutheast" ColumnName="IsSoutheast" />
+          <ScalarProperty Name="ProgramIndex" ColumnName="ProgramIndex" />
+          <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="vSingularFundSourceAllocation">
+      <EntityTypeMapping TypeName="ProjectFirma.Web.Models.vSingularFundSourceAllocation">
+        <MappingFragment StoreEntitySet="vSingularFundSourceAllocation">
+          <ScalarProperty Name="FundSourceID" ColumnName="FundSourceID" />
+          <ScalarProperty Name="FundSourceAllocationID" ColumnName="FundSourceAllocationID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="vSocrataDataMartRawJsonImportIndex">
       <EntityTypeMapping TypeName="ProjectFirma.Web.Models.vSocrataDataMartRawJsonImportIndex">
         <MappingFragment StoreEntitySet="vSocrataDataMartRawJsonImportIndex">

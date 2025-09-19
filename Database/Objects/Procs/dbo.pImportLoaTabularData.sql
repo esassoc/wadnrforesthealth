@@ -71,8 +71,9 @@ begin
                                                                                                       dbo.ProjectFundSourceAllocationRequest pgar
                                                                                                       join dbo.Project p on pgar.ProjectID = p.ProjectID
                                                                                                       join dbo.ProjectProgram pp on p.ProjectID = pp.ProjectID
-                                                                                                      where pp.ProgramID = 3 -- LoaProgram)
-                                                                                                      )
+                                                                                                      where pp.ProgramID = 3 -- LoaProgram
+																									  and pgar.ImportedFromTabularData = 1 -- DONT DELETE USER ENTERED DATA!!
+																									  )
 
               insert into dbo.ProjectFundSourceAllocationRequest(ProjectID, FundSourceAllocationID, TotalAmount, MatchAmount, PayAmount, CreateDate, ImportedFromTabularData)
 

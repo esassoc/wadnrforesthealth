@@ -599,6 +599,10 @@
     <Compile Include="Models\Generated\VendorPrimaryKey.Binding.cs" />
     <Compile Include="Models\Generated\vGeoServerCounty.Binding.cs" />
     <Compile Include="Models\Generated\vGeoServerPriorityLandscape.Binding.cs" />
+    <Compile Include="Models\Generated\vLoaStageFundSourceAllocation.Binding.cs" />
+    <Compile Include="Models\Generated\vLoaStageFundSourceAllocationByProgramIndexProjectCode.Binding.cs" />
+    <Compile Include="Models\Generated\vLoaStageProjectFundSourceAllocation.Binding.cs" />
+    <Compile Include="Models\Generated\vSingularFundSourceAllocation.Binding.cs" />
     <Compile Include="Models\Generated\vSocrataDataMartRawJsonImportIndex.Binding.cs" />
     <Compile Include="Models\Generated\vTotalTreatedAcresByProject.Binding.cs" />
     <Compile Include="Models\Generated\WashingtonLegislativeDistrict.Binding.cs" />
