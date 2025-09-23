@@ -83,7 +83,7 @@ Source code is available upon request via <support@sitkatech.com>.
     </div>
 
     <hr />
-    
+
     <div class="row">
         <div class="col-sm-3">
             @Html.LabelWithSugarFor(FieldDefinition.ProjectDescription)
@@ -92,7 +92,7 @@ Source code is available upon request via <support@sitkatech.com>.
             @Html.Raw(ViewDataTyped.ProjectDescription)
         </div>
     </div>
-    
+
     <div class="row">
         <div class="col-sm-3">
             @Html.LabelWithSugarFor(FieldDefinition.ExpirationDate)
@@ -110,7 +110,7 @@ Source code is available upon request via <support@sitkatech.com>.
             @ViewDataTyped.FocusAreaDisplayName
         </div>
     </div>
-    
+
     <div class="row">
         <div class="col-sm-3">
             @Html.LabelWithSugarFor(FieldDefinition.Program)
@@ -119,7 +119,7 @@ Source code is available upon request via <support@sitkatech.com>.
             @ViewDataTyped.ProjectProgramListDisplayString
         </div>
     </div>
-    
+
     <div class="row">
         <div class="col-sm-3">
             @Html.LabelWithSugarFor(FieldDefinition.PercentageMatch)
@@ -128,8 +128,19 @@ Source code is available upon request via <support@sitkatech.com>.
             @ViewDataTyped.PercentageMatchFormatted
         </div>
     </div>
-
-
+    
+    @if (ViewDataTyped.ShowProjectGisIdentifier)
+    {
+        <div class="row">
+            <div class="col-sm-3">
+                @Html.LabelWithSugarFor(FieldDefinition.ProjectIdentifier)
+            </div>
+            <div class="col-sm-9">
+                @ViewDataTyped.ProjectGisIdentifier
+            </div>
+        </div>
+    }
+    
 
 
 
