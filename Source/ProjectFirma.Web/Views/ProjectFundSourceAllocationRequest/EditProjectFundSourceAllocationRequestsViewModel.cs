@@ -165,7 +165,7 @@ namespace ProjectFirma.Web.Views.ProjectFundSourceAllocationRequest
                                            StringComparison.InvariantCultureIgnoreCase);
                 if(projectIsLoa && (ProjectFundSourceAllocationRequests == null || !ProjectFundSourceAllocationRequests.Any()))
                 {
-                    yield return new ValidationResult("LOA Projects must have at least one FundSource Allocation");
+                    yield return new ValidationResult("LOA Projects must have at least one Fund Source Allocation");
                 }
             }
 
@@ -176,7 +176,7 @@ namespace ProjectFirma.Web.Views.ProjectFundSourceAllocationRequest
 
             if (ProjectFundSourceAllocationRequests.GroupBy(x => x.FundSourceAllocationID).Any(x => x.Count() > 1))
             {
-                yield return new ValidationResult("Each fundSource allocation can only be used once.");
+                yield return new ValidationResult("Each Fund Source Allocation can only be used once.");
             }
 
             //foreach (var projectFundSourceAllocationRequest in ProjectFundSourceAllocationRequests)
