@@ -151,6 +151,10 @@
     <EntitySet Name="vArcOnlineRawJsonImportIndex" EntityType="ProjectFirma.Web.Models.vArcOnlineRawJsonImportIndex" />
     <EntitySet Name="vGeoServerCounty" EntityType="ProjectFirma.Web.Models.vGeoServerCounty" />
     <EntitySet Name="vGeoServerPriorityLandscape" EntityType="ProjectFirma.Web.Models.vGeoServerPriorityLandscape" />
+    <EntitySet Name="vLoaStageFundSourceAllocation" EntityType="ProjectFirma.Web.Models.vLoaStageFundSourceAllocation" />
+    <EntitySet Name="vLoaStageFundSourceAllocationByProgramIndexProjectCode" EntityType="ProjectFirma.Web.Models.vLoaStageFundSourceAllocationByProgramIndexProjectCode" />
+    <EntitySet Name="vLoaStageProjectFundSourceAllocation" EntityType="ProjectFirma.Web.Models.vLoaStageProjectFundSourceAllocation" />
+    <EntitySet Name="vSingularFundSourceAllocation" EntityType="ProjectFirma.Web.Models.vSingularFundSourceAllocation" />
     <EntitySet Name="vSocrataDataMartRawJsonImportIndex" EntityType="ProjectFirma.Web.Models.vSocrataDataMartRawJsonImportIndex" />
     <EntitySet Name="vTotalTreatedAcresByProject" EntityType="ProjectFirma.Web.Models.vTotalTreatedAcresByProject" />
     <AssociationSet Name="FK_Agreement_AgreementStatus_AgreementStatusID" Association="ProjectFirma.Web.Models.FK_Agreement_AgreementStatus_AgreementStatusID">
@@ -1012,10 +1016,6 @@
     <AssociationSet Name="FK_ProjectImageUpdate_ProjectUpdateBatch_ProjectUpdateBatchID" Association="ProjectFirma.Web.Models.FK_ProjectImageUpdate_ProjectUpdateBatch_ProjectUpdateBatchID">
       <End Role="ProjectUpdateBatch" EntitySet="ProjectUpdateBatch" />
       <End Role="ProjectImageUpdates" EntitySet="ProjectImageUpdate" />
-    </AssociationSet>
-    <AssociationSet Name="FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID" Association="ProjectFirma.Web.Models.FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID">
-      <End Role="ProjectLocation" EntitySet="ProjectLocation" />
-      <End Role="ProjectLocationUpdates" EntitySet="ProjectLocationUpdate" />
     </AssociationSet>
     <AssociationSet Name="FK_Treatment_ProjectLocation_ProjectLocationID" Association="ProjectFirma.Web.Models.FK_Treatment_ProjectLocation_ProjectLocationID">
       <End Role="ProjectLocation" EntitySet="ProjectLocation" />
@@ -2752,7 +2752,6 @@
     <Property Name="TemporaryTreatmentCacheID" Type="Int32" />
     <NavigationProperty Name="Program" Relationship="ProjectFirma.Web.Models.FK_ProjectLocation_Program_ProgramID" FromRole="ProjectLocations" ToRole="Program" />
     <NavigationProperty Name="Project" Relationship="ProjectFirma.Web.Models.FK_ProjectLocation_Project_ProjectID" FromRole="ProjectLocations" ToRole="Project" />
-    <NavigationProperty Name="ProjectLocationUpdates" Relationship="ProjectFirma.Web.Models.FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID" FromRole="ProjectLocation" ToRole="ProjectLocationUpdates" />
     <NavigationProperty Name="Treatments" Relationship="ProjectFirma.Web.Models.FK_Treatment_ProjectLocation_ProjectLocationID" FromRole="ProjectLocation" ToRole="Treatments" />
   </EntityType>
   <EntityType Name="ProjectLocationStaging">
@@ -2795,8 +2794,6 @@
     <Property Name="ProjectLocationUpdateName" Type="String" Nullable="false" MaxLength="100" Unicode="false" FixedLength="false" />
     <Property Name="ArcGisObjectID" Type="Int32" />
     <Property Name="ArcGisGlobalID" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
-    <Property Name="ProjectLocationID" Type="Int32" />
-    <NavigationProperty Name="ProjectLocation" Relationship="ProjectFirma.Web.Models.FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID" FromRole="ProjectLocationUpdates" ToRole="ProjectLocation" />
     <NavigationProperty Name="ProjectUpdateBatch" Relationship="ProjectFirma.Web.Models.FK_ProjectLocationUpdate_ProjectUpdateBatch_ProjectUpdateBatchID" FromRole="ProjectLocationUpdates" ToRole="ProjectUpdateBatch" />
     <NavigationProperty Name="TreatmentUpdates" Relationship="ProjectFirma.Web.Models.FK_TreatmentUpdate_ProjectLocationUpdate_ProjectLocationUpdateID" FromRole="ProjectLocationUpdate" ToRole="TreatmentUpdates" />
   </EntityType>
@@ -3410,6 +3407,62 @@
     <Property Name="PriorityLandscapeCategoryID" Type="Int32" />
     <Property Name="PriorityLandscapeCategoryName" Type="String" Nullable="false" MaxLength="100" Unicode="false" FixedLength="false" />
     <Property Name="MapColor" Type="String" Nullable="false" MaxLength="20" Unicode="false" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="vLoaStageFundSourceAllocation">
+    <Key>
+      <PropertyRef Name="LoaStageID" />
+      <PropertyRef Name="IsNortheast" />
+    </Key>
+    <Property Name="LoaStageID" Type="Int32" Nullable="false" />
+    <Property Name="FundSourceID" Type="Int32" />
+    <Property Name="FundSourceAllocationID" Type="Int32" />
+    <Property Name="IsNortheast" Type="Boolean" Nullable="false" />
+    <Property Name="IsSoutheast" Type="Boolean" />
+    <Property Name="ProgramIndex" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+    <Property Name="ProjectCode" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="vLoaStageFundSourceAllocationByProgramIndexProjectCode">
+    <Key>
+      <PropertyRef Name="LoaStageID" />
+      <PropertyRef Name="IsNortheast" />
+    </Key>
+    <Property Name="LoaStageID" Type="Int32" Nullable="false" />
+    <Property Name="FundSourceAllocationID" Type="Int32" />
+    <Property Name="FundSourceID" Type="Int32" />
+    <Property Name="IsNortheast" Type="Boolean" Nullable="false" />
+    <Property Name="IsSoutheast" Type="Boolean" />
+    <Property Name="ProgramIndex" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+    <Property Name="ProjectCode" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="vLoaStageProjectFundSourceAllocation">
+    <Key>
+      <PropertyRef Name="ProjectID" />
+      <PropertyRef Name="LoaStageID" />
+      <PropertyRef Name="IsNortheast" />
+    </Key>
+    <Property Name="ProjectID" Type="Int32" Nullable="false" />
+    <Property Name="ProjectGisIdentifier" Type="String" MaxLength="140" Unicode="false" FixedLength="false" />
+    <Property Name="MatchAmount" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="PayAmount" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="ProjectStatus" Type="String" MaxLength="600" Unicode="false" FixedLength="false" />
+    <Property Name="FundSourceAllocationID" Type="Int32" />
+    <Property Name="LetterDate" Type="DateTime" />
+    <Property Name="ProjectExpirationDate" Type="DateTime" />
+    <Property Name="ApplicationDate" Type="DateTime" />
+    <Property Name="DecisionDate" Type="DateTime" />
+    <Property Name="LoaStageID" Type="Int32" Nullable="false" />
+    <Property Name="IsNortheast" Type="Boolean" Nullable="false" />
+    <Property Name="IsSoutheast" Type="Boolean" />
+    <Property Name="ProgramIndex" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+    <Property Name="ProjectCode" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="vSingularFundSourceAllocation">
+    <Key>
+      <PropertyRef Name="FundSourceID" />
+      <PropertyRef Name="FundSourceAllocationID" />
+    </Key>
+    <Property Name="FundSourceID" Type="Int32" Nullable="false" />
+    <Property Name="FundSourceAllocationID" Type="Int32" Nullable="false" />
   </EntityType>
   <EntityType Name="vSocrataDataMartRawJsonImportIndex">
     <Key>
@@ -6019,18 +6072,6 @@
       </Principal>
       <Dependent Role="ProjectImageUpdates">
         <PropertyRef Name="ProjectUpdateBatchID" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID">
-    <End Role="ProjectLocation" Type="ProjectFirma.Web.Models.ProjectLocation" Multiplicity="0..1" />
-    <End Role="ProjectLocationUpdates" Type="ProjectFirma.Web.Models.ProjectLocationUpdate" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="ProjectLocation">
-        <PropertyRef Name="ProjectLocationID" />
-      </Principal>
-      <Dependent Role="ProjectLocationUpdates">
-        <PropertyRef Name="ProjectLocationID" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

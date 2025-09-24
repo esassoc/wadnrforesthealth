@@ -46,20 +46,24 @@ namespace ProjectFirma.Web.Views.Shared.ProjectControls
         
         public string PercentageMatchFormatted { get; }
         
+        public string ProjectGisIdentifier { get; }
+        
+        public bool ShowProjectGisIdentifier { get; }
+        
 
         public ProjectBasicsViewData(Models.Project project)
         {
             ProjectStageDisplayName = project.ProjectStage.ProjectStageDisplayName;
             PlannedDateString = project.GetPlannedDate();
             CompletedDateString = project.GetCompletionDateFormatted();
-            LeadImplementerDisplay = project.GetLeadImplementer().DisplayNameWithoutAbbreviation;
+            LeadImplementerDisplay = project.GetLeadImplementer()?.DisplayNameWithoutAbbreviation ?? "None Selected";
             ProjectDescription = project.ProjectDescription.HtmlEncodeWithBreaks();
             ExpirationDateString = project.GetExpirationDateFormatted();
             FocusAreaDisplayName = project.FocusArea.GetDisplayNameAsUrl();
             ProjectProgramListDisplayString = project.ProjectPrograms.ToProgramListDisplay(true);
             PercentageMatchFormatted = project.PercentageMatchFormatted;
-
-            
+            ProjectGisIdentifier = project.ProjectGisIdentifier;
+            ShowProjectGisIdentifier = !string.IsNullOrEmpty(project.ProjectGisIdentifier);
         }
 
         public ProjectBasicsViewData(Models.ProjectUpdateBatch projectUpdateBatch)
@@ -67,15 +71,15 @@ namespace ProjectFirma.Web.Views.Shared.ProjectControls
             ProjectStageDisplayName = projectUpdateBatch.ProjectUpdate.ProjectStage.ProjectStageDisplayName;
             PlannedDateString = projectUpdateBatch.ProjectUpdate.GetPlannedDate();
             CompletedDateString = projectUpdateBatch.ProjectUpdate.GetCompletionDateFormatted();
-            LeadImplementerDisplay = projectUpdateBatch.GetLeadImplementer().DisplayNameWithoutAbbreviation;
+            LeadImplementerDisplay = projectUpdateBatch.GetLeadImplementer()?.DisplayNameWithoutAbbreviation ?? "None Selected";
             ProjectDescription = projectUpdateBatch.ProjectUpdate.ProjectDescription.HtmlEncodeWithBreaks();
             ExpirationDateString = projectUpdateBatch.ProjectUpdate.GetExpirationDateFormatted();
             FocusAreaDisplayName = projectUpdateBatch.ProjectUpdate.FocusArea.GetDisplayNameAsUrl();
             ProjectProgramListDisplayString = projectUpdateBatch.ProjectUpdatePrograms.ToProgramListDisplay(true);
             PercentageMatchFormatted = projectUpdateBatch.ProjectUpdate.PercentageMatchFormatted;
+            ShowProjectGisIdentifier = false;
 
-   
-            
+
         }
     }
 }

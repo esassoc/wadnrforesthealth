@@ -26,12 +26,16 @@
 /.vs/wadnrforesthealth/v16/*.suo
 
 *.vshistory
-.vs
+*.vs
+/**/bin/
+/**/obj/
+*.dbmdl
+*.jfm
+
 /.dockerignore
 /*.user
 *.user
 *.cache
-*.dbmdl
 /WADNRForestHealthTracker.Database/*.jfm
 bin
 obj

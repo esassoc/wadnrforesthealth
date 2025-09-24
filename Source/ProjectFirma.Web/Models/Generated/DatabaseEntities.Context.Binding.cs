@@ -177,6 +177,10 @@ namespace ProjectFirma.Web.Models
         public virtual DbSet<vArcOnlineRawJsonImportIndex> vArcOnlineRawJsonImportIndices { get; set; }
         public virtual DbSet<vGeoServerCounty> vGeoServerCounties { get; set; }
         public virtual DbSet<vGeoServerPriorityLandscape> vGeoServerPriorityLandscapes { get; set; }
+        public virtual DbSet<vLoaStageFundSourceAllocationByProgramIndexProjectCode> vLoaStageFundSourceAllocationByProgramIndexProjectCodes { get; set; }
+        public virtual DbSet<vLoaStageFundSourceAllocation> vLoaStageFundSourceAllocations { get; set; }
+        public virtual DbSet<vLoaStageProjectFundSourceAllocation> vLoaStageProjectFundSourceAllocations { get; set; }
+        public virtual DbSet<vSingularFundSourceAllocation> vSingularFundSourceAllocations { get; set; }
         public virtual DbSet<vSocrataDataMartRawJsonImportIndex> vSocrataDataMartRawJsonImportIndices { get; set; }
         public virtual DbSet<vTotalTreatedAcresByProject> vTotalTreatedAcresByProjects { get; set; }
         public virtual DbSet<fGetBoundingBoxForProjectIdList_Result> fGetBoundingBoxForProjectIdListResults { get; set; }
