@@ -73,8 +73,22 @@ begin
 																									  and pgar.ImportedFromTabularData = 1 -- DONT DELETE USER ENTERED DATA!!
 																									  )
 
-              insert into dbo.ProjectFundSourceAllocationRequest(ProjectID, FundSourceAllocationID, TotalAmount, MatchAmount, PayAmount, CreateDate, ImportedFromTabularData)
 
+			  delete from dbo.ProjectFundSourceAllocationRequest where ProjectFundSourceAllocationRequestID in (select ProjectFundSourceAllocationRequestID
+																												from
+																												dbo.ProjectFundSourceAllocationRequest as pgar
+																												join #projectFundSourceAllocationRequest as tpgar 
+																													on pgar.ProjectID = tpgar.ProjectID 
+																													and pgar.FundSourceAllocationID = tpgar.FundSourceAllocationID
+																												join dbo.Project p on pgar.ProjectID = p.ProjectID
+																												join dbo.ProjectProgram pp on p.ProjectID = pp.ProjectID
+																												where pp.ProgramID = 3 -- LoaProgram
+																												and pgar.ImportedFromTabularData = 0 -- REPLACE USER DATA!
+			  
+																											)
+
+
+              insert into dbo.ProjectFundSourceAllocationRequest(ProjectID, FundSourceAllocationID, TotalAmount, MatchAmount, PayAmount, CreateDate, ImportedFromTabularData)
               select x.ProjectID,
                      x.FundSourceAllocationID
                      , x.TotalAmount
