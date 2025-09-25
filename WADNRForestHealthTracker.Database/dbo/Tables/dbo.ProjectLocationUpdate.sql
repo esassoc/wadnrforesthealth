@@ -7,7 +7,6 @@ CREATE TABLE [dbo].[ProjectLocationUpdate](
     [ProjectLocationUpdateName] [varchar](100) NOT NULL,
     [ArcGisObjectID] [int] NULL,
     [ArcGisGlobalID] [varchar](50) NULL,
-    [ProjectLocationID] [int] NULL CONSTRAINT [FK_ProjectLocationUpdate_ProjectLocation_ProjectLocationID] FOREIGN KEY REFERENCES [dbo].[ProjectLocation]([ProjectLocationID]),
     CONSTRAINT [AK_ProjectLocationUpdate_ProjectUpdateBatchID_ProjectLocationUpdateName] UNIQUE ([ProjectUpdateBatchID], [ProjectLocationUpdateName])
 )
 GO

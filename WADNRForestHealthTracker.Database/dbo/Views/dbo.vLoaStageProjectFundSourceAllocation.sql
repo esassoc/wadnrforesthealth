@@ -1,6 +1,3 @@
-if exists (select * from dbo.sysobjects where id = object_id('dbo.vLoaStageProjectFundSourceAllocation'))
-	drop view dbo.vLoaStageProjectFundSourceAllocation
-go
 
 create view dbo.vLoaStageProjectFundSourceAllocation
 as
