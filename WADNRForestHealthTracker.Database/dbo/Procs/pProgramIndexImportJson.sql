@@ -25,13 +25,13 @@ JSON format:
     CROSS APPLY OPENJSON(RawJsonString)
     WITH
     (
-        activity nvarchar(256),
+        activity varchar(256),
         biennium int,
-        program nvarchar(256),
-        program_index_code nvarchar(256),
-        subactivity nvarchar(256),
-        subprogram nvarchar(256),
-        title nvarchar(256)
+        program varchar(256),
+        program_index_code varchar(256),
+        subactivity varchar(256),
+        subprogram varchar(256),
+        title varchar(256)
     )
     AS programIndexTemp
 

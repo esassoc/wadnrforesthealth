@@ -1,0 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+namespace WADNRForestHealthTracker.EFModels.Entities;
+
+[Table("SupportRequestLog")]
+public partial class SupportRequestLog
+{
+    [Key]
+    public int SupportRequestLogID { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime RequestDate { get; set; }
+
+    [StringLength(200)]
+    [Unicode(false)]
+    public string RequestPersonName { get; set; } = null!;
+
+    [StringLength(256)]
+    [Unicode(false)]
+    public string RequestPersonEmail { get; set; } = null!;
+
+    public int? RequestPersonID { get; set; }
+
+    public int SupportRequestTypeID { get; set; }
+
+    [StringLength(2000)]
+    [Unicode(false)]
+    public string RequestDescription { get; set; } = null!;
+
+    [StringLength(500)]
+    [Unicode(false)]
+    public string? RequestPersonOrganization { get; set; }
+
+    [StringLength(50)]
+    [Unicode(false)]
+    public string? RequestPersonPhone { get; set; }
+}

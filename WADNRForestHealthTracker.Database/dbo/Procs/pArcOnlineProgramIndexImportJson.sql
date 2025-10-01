@@ -24,13 +24,13 @@ ACTIVITY_CODE,SUB_ACTIVITY_CODE,BIENNIUM,PROGRAM_INDEX_CODE,TITLE,PROGRAM_CODE,S
     CROSS APPLY OPENJSON(RawJsonString)
     WITH
     (
-        ACTIVITY_CODE nvarchar(256),
+        ACTIVITY_CODE varchar(256),
         BIENNIUM int,
-        PROGRAM nvarchar(256),
-        PROGRAM_INDEX_CODE nvarchar(256),
-        SUB_ACTIVITY_CODE nvarchar(256),
-        SUB_PROGRAM_CODE nvarchar(256),
-        TITLE nvarchar(256)
+        PROGRAM varchar(256),
+        PROGRAM_INDEX_CODE varchar(256),
+        SUB_ACTIVITY_CODE varchar(256),
+        SUB_PROGRAM_CODE varchar(256),
+        TITLE varchar(256)
     )
     AS programIndexTemp
 

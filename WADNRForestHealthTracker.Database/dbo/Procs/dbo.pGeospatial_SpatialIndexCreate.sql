@@ -11,7 +11,7 @@ begin
     declare @databaseName sysname
 	set @databaseName = ISNULL(@databaseNameOptional, DB_NAME())
 
-	DECLARE @stmt nvarchar(max)
+	DECLARE @stmt varchar(max)
 
     SET @stmt = 'USE ' + QUOTENAME(@databaseName) + ';
                  INSERT INTO #tmpIndexesToCreate(TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME)

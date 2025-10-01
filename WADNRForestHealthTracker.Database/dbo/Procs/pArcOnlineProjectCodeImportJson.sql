@@ -29,7 +29,7 @@ JSON format:
         PROJECT_CODE varchar(200),
         PROJECT_START_DATE datetime,
         PROJECT_END_DATE datetime,
-        TITLE nvarchar(256)
+        TITLE varchar(256)
     )
     AS ProjectCodeTemp
 

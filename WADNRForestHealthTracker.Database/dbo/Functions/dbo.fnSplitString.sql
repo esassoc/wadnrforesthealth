@@ -1,10 +1,10 @@
 ﻿
 CREATE FUNCTION dbo.fnSplitString
 (
-   @stringToSplit NVARCHAR(MAX),
+   @stringToSplit varchar(MAX),
    @delimiter CHAR(1)
 )
-RETURNS @output TABLE(splitdata NVARCHAR(MAX)
+RETURNS @output TABLE(splitdata varchar(MAX)
 )
 BEGIN
    DECLARE @start INT, @end INT

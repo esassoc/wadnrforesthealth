@@ -1,0 +1,18 @@
+//  IMPORTANT:
+//  This file is generated. Your changes will be lost.
+//  Use the corresponding partial class for customizations.
+//  Source Table: [dbo].[AuditLog]
+namespace WADNRForestHealthTracker.EFModels.Entities
+{
+    public partial class AuditLog
+    {
+        public int PrimaryKey => AuditLogID;
+
+
+        public static class FieldLengths
+        {
+            public const int TableName = 500;
+            public const int ColumnName = 500;
+        }
+    }
+}

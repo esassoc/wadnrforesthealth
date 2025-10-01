@@ -4,7 +4,7 @@ if (@@error != 0) goto failed
 
 if(exists(select 1 from sys.columns c join sys.tables t on c.object_id = t.object_id where c.name = 'MapServiceUrl' and t.name = 'GeospatialAreaType'))
 begin
-	declare @sql nvarchar(max)
+	declare @sql varchar(max)
 	set @sql = 'update dbo.GeospatialAreaType set MapServiceUrl = replace(MapServiceUrl, ''wadnrforesthealth-mapserver'', ''@ENVIRONMENT@-wadnrforesthealth-mapserver'')'
 	exec sp_executesql @sql
 	if (@@error != 0) goto failed

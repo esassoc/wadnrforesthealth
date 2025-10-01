@@ -1,0 +1,26 @@
+trigger: none
+
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: develop
+  - repository: BuildTemplates
+    type: github
+    name: sitkatech/BuildTemplates
+    endpoint: "sitkatech"
+
+jobs:  
+  - job: RestoreDevBlobStorage
+    displayName: Restore Dev Blob Storage
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - template: azure-pipelines/templates/blob-storage-restore/blob-storage-restore.yml@BuildTemplates 
+      parameters:
+        subscription: '$(azureSubscription)'
+        containers: '$(containers)'
+        fromStorageAccountName: '$(storageAccountProdApplicationName)'
+        fromStorageAccountKey: '$(storageAccountProdAccountKey)'
+        toStorageAccountName: '$(storageAccountDevApplicationName)'
+        toStorageAccountKey: '$(storageAccountDevAccountKey)'

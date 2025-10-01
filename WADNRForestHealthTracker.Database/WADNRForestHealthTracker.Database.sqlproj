@@ -90,7 +90,6 @@
     <None Include="Scripts\LookupTables\dbo.FocusAreaStatus.sql" />
     <None Include="Scripts\LookupTables\dbo.ForesterRole.sql" />
     <None Include="Scripts\LookupTables\dbo.FundingSource.sql" />
-    <None Include="Scripts\LookupTables\dbo.FundSourceAllocationPriority.sql" />
     <None Include="Scripts\LookupTables\dbo.FundSourceAllocationSource.sql" />
     <None Include="Scripts\LookupTables\dbo.FundSourceStatus.sql" />
     <None Include="Scripts\LookupTables\dbo.GisUploadAttemptWorkflowSection.sql" />
@@ -160,8 +159,8 @@
     <Build Include="dbo\Tables\dbo.ExternalMapLayer.sql" />
     <Build Include="dbo\Tables\dbo.FederalFundCode.sql" />
     <Build Include="dbo\Tables\dbo.FieldDefinition.sql" />
-    <Build Include="dbo\Tables\dbo.FieldDefinitionData.sql" />
-    <Build Include="dbo\Tables\dbo.FieldDefinitionDataImage.sql" />
+    <Build Include="dbo\Tables\dbo.FieldDefinitionDatum.sql" />
+    <Build Include="dbo\Tables\dbo.FieldDefinitionDatumImage.sql" />
     <Build Include="dbo\Tables\dbo.FileResource.sql" />
     <Build Include="dbo\Tables\dbo.FileResourceMimeType.sql" />
     <Build Include="dbo\Tables\dbo.FileResourceMimeTypeFileExtension.sql" />

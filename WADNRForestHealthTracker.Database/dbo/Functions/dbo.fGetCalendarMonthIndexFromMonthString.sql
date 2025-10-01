@@ -6,7 +6,7 @@ Returns the current Fiscal Year Biennium
 
 create function dbo.fGetCalendarMonthIndexFromMonthString
 (
-   @monthString NVARCHAR(MAX)
+   @monthString varchar(MAX)
 )
 returns int
 begin

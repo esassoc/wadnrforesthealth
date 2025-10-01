@@ -1,9 +1,9 @@
 
 CREATE FUNCTION dbo.fRemoveLeadingZeroes
 (
-   @inputString NVARCHAR(MAX)
+   @inputString varchar(MAX)
 )
-RETURNS NVARCHAR(MAX)
+RETURNS varchar(MAX)
 BEGIN
     RETURN SUBSTRING(@inputString, PATINDEX('%[^0]%', @inputString+'.'), LEN(@inputString))
 END
