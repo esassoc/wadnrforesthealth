@@ -183,6 +183,53 @@ FROM [dbo].[vGeoServerCounty] AS [vGeoServerCounty]</DefiningQuery>
 [vGeoServerPriorityLandscape].[MapColor] AS [MapColor]
 FROM [dbo].[vGeoServerPriorityLandscape] AS [vGeoServerPriorityLandscape]</DefiningQuery>
     </EntitySet>
+    <EntitySet Name="vLoaStageFundSourceAllocation" EntityType="ProjectFirma.Web.Models.Store.vLoaStageFundSourceAllocation" store:Type="Views" store:Schema="dbo" store:Name="vLoaStageFundSourceAllocation">
+      <DefiningQuery>SELECT 
+[vLoaStageFundSourceAllocation].[LoaStageID] AS [LoaStageID], 
+[vLoaStageFundSourceAllocation].[FundSourceID] AS [FundSourceID], 
+[vLoaStageFundSourceAllocation].[FundSourceAllocationID] AS [FundSourceAllocationID], 
+[vLoaStageFundSourceAllocation].[IsNortheast] AS [IsNortheast], 
+[vLoaStageFundSourceAllocation].[IsSoutheast] AS [IsSoutheast], 
+[vLoaStageFundSourceAllocation].[ProgramIndex] AS [ProgramIndex], 
+[vLoaStageFundSourceAllocation].[ProjectCode] AS [ProjectCode]
+FROM [dbo].[vLoaStageFundSourceAllocation] AS [vLoaStageFundSourceAllocation]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="vLoaStageFundSourceAllocationByProgramIndexProjectCode" EntityType="ProjectFirma.Web.Models.Store.vLoaStageFundSourceAllocationByProgramIndexProjectCode" store:Type="Views" store:Schema="dbo" store:Name="vLoaStageFundSourceAllocationByProgramIndexProjectCode">
+      <DefiningQuery>SELECT 
+[vLoaStageFundSourceAllocationByProgramIndexProjectCode].[LoaStageID] AS [LoaStageID], 
+[vLoaStageFundSourceAllocationByProgramIndexProjectCode].[FundSourceAllocationID] AS [FundSourceAllocationID], 
+[vLoaStageFundSourceAllocationByProgramIndexProjectCode].[FundSourceID] AS [FundSourceID], 
+[vLoaStageFundSourceAllocationByProgramIndexProjectCode].[IsNortheast] AS [IsNortheast], 
+[vLoaStageFundSourceAllocationByProgramIndexProjectCode].[IsSoutheast] AS [IsSoutheast], 
+[vLoaStageFundSourceAllocationByProgramIndexProjectCode].[ProgramIndex] AS [ProgramIndex], 
+[vLoaStageFundSourceAllocationByProgramIndexProjectCode].[ProjectCode] AS [ProjectCode]
+FROM [dbo].[vLoaStageFundSourceAllocationByProgramIndexProjectCode] AS [vLoaStageFundSourceAllocationByProgramIndexProjectCode]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="vLoaStageProjectFundSourceAllocation" EntityType="ProjectFirma.Web.Models.Store.vLoaStageProjectFundSourceAllocation" store:Type="Views" store:Schema="dbo" store:Name="vLoaStageProjectFundSourceAllocation">
+      <DefiningQuery>SELECT 
+[vLoaStageProjectFundSourceAllocation].[ProjectID] AS [ProjectID], 
+[vLoaStageProjectFundSourceAllocation].[ProjectGisIdentifier] AS [ProjectGisIdentifier], 
+[vLoaStageProjectFundSourceAllocation].[MatchAmount] AS [MatchAmount], 
+[vLoaStageProjectFundSourceAllocation].[PayAmount] AS [PayAmount], 
+[vLoaStageProjectFundSourceAllocation].[ProjectStatus] AS [ProjectStatus], 
+[vLoaStageProjectFundSourceAllocation].[FundSourceAllocationID] AS [FundSourceAllocationID], 
+[vLoaStageProjectFundSourceAllocation].[LetterDate] AS [LetterDate], 
+[vLoaStageProjectFundSourceAllocation].[ProjectExpirationDate] AS [ProjectExpirationDate], 
+[vLoaStageProjectFundSourceAllocation].[ApplicationDate] AS [ApplicationDate], 
+[vLoaStageProjectFundSourceAllocation].[DecisionDate] AS [DecisionDate], 
+[vLoaStageProjectFundSourceAllocation].[LoaStageID] AS [LoaStageID], 
+[vLoaStageProjectFundSourceAllocation].[IsNortheast] AS [IsNortheast], 
+[vLoaStageProjectFundSourceAllocation].[IsSoutheast] AS [IsSoutheast], 
+[vLoaStageProjectFundSourceAllocation].[ProgramIndex] AS [ProgramIndex], 
+[vLoaStageProjectFundSourceAllocation].[ProjectCode] AS [ProjectCode]
+FROM [dbo].[vLoaStageProjectFundSourceAllocation] AS [vLoaStageProjectFundSourceAllocation]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="vSingularFundSourceAllocation" EntityType="ProjectFirma.Web.Models.Store.vSingularFundSourceAllocation" store:Type="Views" store:Schema="dbo" store:Name="vSingularFundSourceAllocation">
+      <DefiningQuery>SELECT 
+[vSingularFundSourceAllocation].[FundSourceID] AS [FundSourceID], 
+[vSingularFundSourceAllocation].[FundSourceAllocationID] AS [FundSourceAllocationID]
+FROM [dbo].[vSingularFundSourceAllocation] AS [vSingularFundSourceAllocation]</DefiningQuery>
+    </EntitySet>
     <EntitySet Name="vSocrataDataMartRawJsonImportIndex" EntityType="ProjectFirma.Web.Models.Store.vSocrataDataMartRawJsonImportIndex" store:Type="Views" store:Schema="dbo" store:Name="vSocrataDataMartRawJsonImportIndex">
       <DefiningQuery>SELECT 
 [vSocrataDataMartRawJsonImportIndex].[SocrataDataMartRawJsonImportID] AS [SocrataDataMartRawJsonImportID], 
@@ -2958,6 +3005,74 @@ warning 6002: The table/view 'WADNRForestHealthDB.dbo.vGeoServerProjectTreatment
   <!--Errors Found During Generation:
 warning 6002: The table/view 'WADNRForestHealthDB.dbo.vGeoServerWashingtonLegislativeDistrict' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
 -->
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'WADNRForestHealthDB.dbo.vLoaStageFundSourceAllocation' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+-->
+  <EntityType Name="vLoaStageFundSourceAllocation">
+    <Key>
+      <PropertyRef Name="LoaStageID" />
+      <PropertyRef Name="IsNortheast" />
+    </Key>
+    <Property Name="LoaStageID" Type="int" Nullable="false" />
+    <Property Name="FundSourceID" Type="int" />
+    <Property Name="FundSourceAllocationID" Type="int" />
+    <Property Name="IsNortheast" Type="bit" Nullable="false" />
+    <Property Name="IsSoutheast" Type="bit" />
+    <Property Name="ProgramIndex" Type="varchar" MaxLength="50" />
+    <Property Name="ProjectCode" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'WADNRForestHealthDB.dbo.vLoaStageFundSourceAllocationByProgramIndexProjectCode' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+-->
+  <EntityType Name="vLoaStageFundSourceAllocationByProgramIndexProjectCode">
+    <Key>
+      <PropertyRef Name="LoaStageID" />
+      <PropertyRef Name="IsNortheast" />
+    </Key>
+    <Property Name="LoaStageID" Type="int" Nullable="false" />
+    <Property Name="FundSourceAllocationID" Type="int" />
+    <Property Name="FundSourceID" Type="int" />
+    <Property Name="IsNortheast" Type="bit" Nullable="false" />
+    <Property Name="IsSoutheast" Type="bit" />
+    <Property Name="ProgramIndex" Type="varchar" MaxLength="50" />
+    <Property Name="ProjectCode" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'WADNRForestHealthDB.dbo.vLoaStageProjectFundSourceAllocation' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+-->
+  <EntityType Name="vLoaStageProjectFundSourceAllocation">
+    <Key>
+      <PropertyRef Name="ProjectID" />
+      <PropertyRef Name="LoaStageID" />
+      <PropertyRef Name="IsNortheast" />
+    </Key>
+    <Property Name="ProjectID" Type="int" Nullable="false" />
+    <Property Name="ProjectGisIdentifier" Type="varchar" MaxLength="140" />
+    <Property Name="MatchAmount" Type="money" />
+    <Property Name="PayAmount" Type="money" />
+    <Property Name="ProjectStatus" Type="varchar" MaxLength="600" />
+    <Property Name="FundSourceAllocationID" Type="int" />
+    <Property Name="LetterDate" Type="datetime" />
+    <Property Name="ProjectExpirationDate" Type="datetime" />
+    <Property Name="ApplicationDate" Type="datetime" />
+    <Property Name="DecisionDate" Type="datetime" />
+    <Property Name="LoaStageID" Type="int" Nullable="false" />
+    <Property Name="IsNortheast" Type="bit" Nullable="false" />
+    <Property Name="IsSoutheast" Type="bit" />
+    <Property Name="ProgramIndex" Type="varchar" MaxLength="50" />
+    <Property Name="ProjectCode" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'WADNRForestHealthDB.dbo.vSingularFundSourceAllocation' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+-->
+  <EntityType Name="vSingularFundSourceAllocation">
+    <Key>
+      <PropertyRef Name="FundSourceID" />
+      <PropertyRef Name="FundSourceAllocationID" />
+    </Key>
+    <Property Name="FundSourceID" Type="int" Nullable="false" />
+    <Property Name="FundSourceAllocationID" Type="int" Nullable="false" />
+  </EntityType>
   <!--Errors Found During Generation:
 warning 6002: The table/view 'WADNRForestHealthDB.dbo.vSocrataDataMartRawJsonImportIndex' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
 -->
