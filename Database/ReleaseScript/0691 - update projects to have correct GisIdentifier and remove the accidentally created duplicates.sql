@@ -95,7 +95,7 @@ delete from dbo.ProjectUpdateBatch where ProjectID in (select ID from @ProjectID
 delete p from dbo.Project as p where p.ProjectID in (select ID from @ProjectIDList)
 
 end
-
+go
 
 
 
