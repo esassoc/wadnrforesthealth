@@ -728,4 +728,49 @@ where x.CreateGisUploadAttemptID = @piGisUploadAttemptID
 
 exec dbo.procImportTreatmentsFromGisUploadAttempt @piGisUploadAttemptID = 1, @projectIdentifierGisMetadataAttributeID = 39, 13
 
+
+
+exec dbo.procImportTreatmentsFromGisUploadAttempt @piGisUploadAttemptID = 5141, @projectIdentifierGisMetadataAttributeID = 241, @footprintAcresMetadataAttributeID = -1, @treatedAcresMetadataAttributeID = 319, @treatmentTypeMetadataAttributeID = 317, @treatmentDetailedActivityTypeMetadataAttributeID = 317, @treatmentTypeID = 4, @treatmentDetailedActivityTypeID = 13, @isFlattened = 0, @pruningAcresMetadataAttributeID = -1, @thinningAcresMetadataAttributeID = -1, @chippingAcresMetadataAttributeID = -1, @masticationAcresMetadataAttributeID = -1, @grazingAcresMetadataAttributeID = -1, @lopScatterAcresMetadataAttributeID = -1, @biomassRemovalAcresMetadataAttributeID = -1, @handPileAcresMetadataAttributeID = -1, @handPileBurnAcresMetadataAttributeID = -1, @machineBurnAcresMetadataAttributeID = -1, @broadcastBurnAcresMetadataAttributeID = -1, @otherBurnAcresMetadataAttributeID = -1, @startDateMetadataAttributeID = -1, @endDateMetadataAttributeID = 250
+
+
+select *     from dbo.Treatment t
+    join dbo.GisUploadAttempt gua on t.CreateGisUploadAttemptID = gua.GisUploadAttemptID
+    join dbo.GisUploadSourceOrganization guso on guso.GisUploadSourceOrganizationID = gua.GisUploadSourceOrganizationID
+    join dbo.GisCrossWalkDefault gcwd on gcwd.GisUploadSourceOrganizationID = guso.GisUploadSourceOrganizationID and gcwd.GisCrossWalkSourceValue = t.TreatmentTypeImportedText
+    --join dbo.TreatmentType tt on tt.TreatmentTypeDisplayName = gcwd.GisCrossWalkMappedValue
+    where gcwd.FieldDefinitionID = 468  and t.ProjectID in (57366, 58042)
+
+
+
+select *	    from dbo.Treatment t
+    join dbo.GisUploadAttempt gua on t.CreateGisUploadAttemptID = gua.GisUploadAttemptID
+    join dbo.GisUploadSourceOrganization guso on guso.GisUploadSourceOrganizationID = gua.GisUploadSourceOrganizationID
+    join dbo.GisCrossWalkDefault gcwd on gcwd.GisUploadSourceOrganizationID = guso.GisUploadSourceOrganizationID and gcwd.GisCrossWalkSourceValue = t.TreatmentDetailedActivityTypeImportedText
+    --join dbo.TreatmentDetailedActivityType tt on tt.TreatmentDetailedActivityTypeDisplayName = gcwd.GisCrossWalkMappedValue
+    where gcwd.FieldDefinitionID = 469 and t.ProjectID in (57366, 58042)
+
+
+
+
+	select * from dbo.TreatmentType
+	select * from dbo.TreatmentDetailedActivityType
+
+
+	select * from dbo.GisCrossWalkDefault as gcwd join dbo.TreatmentType tt on tt.TreatmentTypeName = gcwd.GisCrossWalkMappedValue
+	where gcwd.GisCrossWalkDefaultID = 342
+
+	select * from dbo.GisCrossWalkDefault as gcwd join dbo.TreatmentDetailedActivityType tt on tt.TreatmentDetailedActivityTypeName = gcwd.GisCrossWalkMappedValue
+	where gcwd.GisCrossWalkDefaultID = 316
+
+
+	select * 
+	from dbo.GisUploadSourceOrganization as guso
+		join dbo.GisCrossWalkDefault gcwd on gcwd.GisUploadSourceOrganizationID = guso.GisUploadSourceOrganizationID
+	where 
+		guso.ImportIsFlattened = 0
+
+		select * from dbo.GisCrossWalkDefault where GisCrossWalkMappedValue in ('BroadcastBurn','NonCommercial','PrescribedFire')
+
+	
+
 */
