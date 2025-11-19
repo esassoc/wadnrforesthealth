@@ -423,11 +423,11 @@ namespace ProjectFirma.Web.Controllers
 
             var treatmentTypeSelectListItems = TreatmentType.All.ToSelectList(
                 x => x.TreatmentTypeID.ToString(CultureInfo.InvariantCulture),
-                x => x.TreatmentTypeName);
+                x => x.TreatmentTypeDisplayName);
 
             var treatmentDetailedActivityTypeSelectListItems = TreatmentDetailedActivityType.All.ToSelectList(
                 x => x.TreatmentDetailedActivityTypeID.ToString(CultureInfo.InvariantCulture),
-                x => x.TreatmentDetailedActivityTypeName);
+                x => x.TreatmentDetailedActivityTypeDisplayName);
 
             var viewData = new EditCrosswalkValuesViewData(leadImplementerSelectListItems, projectStageSelectListItems, treatmentTypeSelectListItems, treatmentDetailedActivityTypeSelectListItems, gisUploadSourceOrganization.ImportIsFlattened ?? false);
             return RazorPartialView<EditCrosswalkValues, EditCrosswalkValuesViewData, EditCrosswalkValuesViewModel>(viewData, viewModel);
