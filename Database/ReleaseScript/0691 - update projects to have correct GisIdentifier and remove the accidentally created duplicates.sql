@@ -1,5 +1,23 @@
 
 
+/*
+select 
+	*
+from
+	dbo.Project as p
+	join dbo.ProjectProgram as pp on p.ProjectID = pp.ProjectID
+where
+	pp.ProgramID = 3
+	and p.CreateGisUploadAttemptID is not null
+	and p.ProjectGisIdentifier is null
+
+*/
+
+--- TK - Need to paste this proc here because there are changes needed when it is called at the end of this release script
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('dbo.pBulkDeleteProjects'))
+    DROP PROCEDURE dbo.pBulkDeleteProjects
+GO
+
 CREATE PROCEDURE dbo.pBulkDeleteProjects(@ProjectIDList dbo.IDList readonly)
 AS
 begin
@@ -77,13 +95,63 @@ delete from dbo.ProjectUpdateBatch where ProjectID in (select ID from @ProjectID
 delete p from dbo.Project as p where p.ProjectID in (select ID from @ProjectIDList)
 
 end
+go
+
+
+
+
+
+	if object_id('tempdb.dbo.#tmpProjectNames') is not null drop table #tmpProjectNames
+    select p.ProjectName
+    into #tmpProjectNames
+    from
+		dbo.Project as p
+		join dbo.ProjectProgram as pp on p.ProjectID = pp.ProjectID
+	where
+		pp.ProgramID = 3
+		and p.CreateGisUploadAttemptID is not null
+		and p.ProjectGisIdentifier is null
+
+
+		--select * from #tmpProjectNames
+
+
+if object_id('tempdb.dbo.#tmpProjectsToDelete') is not null drop table #tmpProjectsToDelete
+    select p.ProjectID
+    into #tmpProjectsToDelete
+    from
+		dbo.Project as p
+	where
+		p.ProjectName in (select ProjectName from #tmpProjectNames)
+		and p.ProjectGisIdentifier is not null
+
+
+--select * from #tmpProjectsToDelete
+
+update dbo.Project set ProjectGisIdentifier = ProjectName
+where ProjectName in (select ProjectName from #tmpProjectNames)
+		and ProjectGisIdentifier is null
+
+
+		--select * from dbo.Project where ProjectName in (select ProjectName from #tmpProjectNames)
+
+DECLARE @projectToDeleteIdList AS dbo.IDList
+
+INSERT INTO @projectToDeleteIdList (ID)
+select ProjectID from #tmpProjectsToDelete
+
+	exec dbo.pBulkDeleteProjects @projectToDeleteIdList
+
 
 /*
-
-exec dbo.pBulkDeleteProjects
-ystem.Data.SqlClient.SqlException (0x80131904): The DELETE statement conflicted with the REFERENCE constraint "FK_ProjectLocationUpdate_ProjectUpdateBatch_ProjectUpdateBatchID". The conflict occurred in database "WADNRForestHealthDB", table "dbo.ProjectLocationUpdate", column 'ProjectUpdateBatchID'.
-The DELETE statement conflicted with the REFERENCE constraint "FK_ProjectUpdateBatch_Project_ProjectID". The conflict occurred in database "WADNRForestHealthDB", table "dbo.ProjectUpdateBatch", column 'ProjectID'.
-The statement has been terminated.
-The statement has been terminated.
+select *
+    
+    from
+		dbo.Project as p
+		join dbo.ProjectProgram as pp on p.ProjectID = pp.ProjectID
+	where
+		pp.ProgramID = 3
+		--and p.CreateGisUploadAttemptID is not null
+		and p.ProjectGisIdentifier is null
 
 */
