@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
 [Table("ForesterWorkUnit")]
+[Index("ForesterWorkUnitLocation", Name = "SPATIAL_ForesterWorkUnit_ForesterWorkUnitLocation")]
 public partial class ForesterWorkUnit
 {
     [Key]
@@ -23,6 +25,9 @@ public partial class ForesterWorkUnit
     [StringLength(100)]
     [Unicode(false)]
     public string? RegionName { get; set; }
+
+    [Column(TypeName = "geometry")]
+    public Geometry ForesterWorkUnitLocation { get; set; } = null!;
 
     [ForeignKey("PersonID")]
     [InverseProperty("ForesterWorkUnits")]

@@ -3,14 +3,19 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
 [Table("SystemAttribute")]
+[Index("DefaultBoundingBox", Name = "SPATIAL_SystemAttribute_DefaultBoundingBox")]
 public partial class SystemAttribute
 {
     [Key]
     public int SystemAttributeID { get; set; }
+
+    [Column(TypeName = "geometry")]
+    public Geometry DefaultBoundingBox { get; set; } = null!;
 
     public int MinimumYear { get; set; }
 

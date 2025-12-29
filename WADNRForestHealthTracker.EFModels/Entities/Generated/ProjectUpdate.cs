@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
 [Table("ProjectUpdate")]
+[Index("ProjectLocationPoint", Name = "SPATIAL_ProjectUpdate_ProjectLocationPoint")]
 public partial class ProjectUpdate
 {
     [Key]
@@ -25,6 +27,9 @@ public partial class ProjectUpdate
 
     [Column(TypeName = "money")]
     public decimal? EstimatedTotalCost { get; set; }
+
+    [Column(TypeName = "geometry")]
+    public Geometry? ProjectLocationPoint { get; set; }
 
     [StringLength(4000)]
     [Unicode(false)]

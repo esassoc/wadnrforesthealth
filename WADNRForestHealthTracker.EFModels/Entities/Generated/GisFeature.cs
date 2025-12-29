@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
@@ -13,6 +14,9 @@ public partial class GisFeature
     public int GisFeatureID { get; set; }
 
     public int GisUploadAttemptID { get; set; }
+
+    [Column(TypeName = "geometry")]
+    public Geometry GisFeatureGeometry { get; set; } = null!;
 
     public int GisImportFeatureKey { get; set; }
 

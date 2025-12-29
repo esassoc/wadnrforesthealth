@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
 [Table("StateProvince")]
 [Index("StateProvinceAbbreviation", Name = "AK_StateProvince_StateProvinceAbbreviation", IsUnique = true)]
 [Index("StateProvinceName", Name = "AK_StateProvince_StateProvinceName", IsUnique = true)]
+[Index("StateProvinceFeature", Name = "SPATIAL_StateProvince_StateProvinceFeature")]
 public partial class StateProvince
 {
     [Key]
@@ -37,6 +39,9 @@ public partial class StateProvince
     public decimal? NorthEastLongitude { get; set; }
 
     public int? MapObjectID { get; set; }
+
+    [Column(TypeName = "geometry")]
+    public Geometry? StateProvinceFeature { get; set; }
 
     public int CountryID { get; set; }
 

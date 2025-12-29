@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
 [Table("ProjectLocationUpdate")]
 [Index("ProjectUpdateBatchID", "ProjectLocationUpdateName", Name = "AK_ProjectLocationUpdate_ProjectUpdateBatchID_ProjectLocationUpdateName", IsUnique = true)]
+[Index("ProjectLocationUpdateGeometry", Name = "SPATIAL_ProjectLocationUpdate_ProjectLocationUpdateGeometry")]
 public partial class ProjectLocationUpdate
 {
     [Key]
     public int ProjectLocationUpdateID { get; set; }
 
     public int ProjectUpdateBatchID { get; set; }
+
+    [Column(TypeName = "geometry")]
+    public Geometry ProjectLocationUpdateGeometry { get; set; } = null!;
 
     [StringLength(255)]
     [Unicode(false)]

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
 [Table("PriorityLandscape")]
 [Index("PriorityLandscapeName", Name = "AK_PriorityLandscape_PriorityLandscapeName", IsUnique = true)]
+[Index("PriorityLandscapeLocation", Name = "SPATIAL_PriorityLandscape_PriorityLandscapeLocation")]
 public partial class PriorityLandscape
 {
     [Key]
@@ -16,6 +18,9 @@ public partial class PriorityLandscape
     [StringLength(100)]
     [Unicode(false)]
     public string PriorityLandscapeName { get; set; } = null!;
+
+    [Column(TypeName = "geometry")]
+    public Geometry? PriorityLandscapeLocation { get; set; }
 
     [Unicode(false)]
     public string? PriorityLandscapeDescription { get; set; }

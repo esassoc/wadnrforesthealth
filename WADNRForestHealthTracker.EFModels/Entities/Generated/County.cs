@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
@@ -15,6 +16,9 @@ public partial class County
     public string CountyName { get; set; } = null!;
 
     public int StateProvinceID { get; set; }
+
+    [Column(TypeName = "geometry")]
+    public Geometry? CountyFeature { get; set; }
 
     [Key]
     public int CountyID { get; set; }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
@@ -31,6 +32,9 @@ public partial class Project
     [Column(TypeName = "money")]
     public decimal? EstimatedTotalCost { get; set; }
 
+    [Column(TypeName = "geometry")]
+    public Geometry? ProjectLocationPoint { get; set; }
+
     public bool IsFeatured { get; set; }
 
     [StringLength(4000)]
@@ -56,6 +60,9 @@ public partial class Project
     public DateTime? ApprovalDate { get; set; }
 
     public int? ReviewedByPersonID { get; set; }
+
+    [Column(TypeName = "geometry")]
+    public Geometry? DefaultBoundingBox { get; set; }
 
     [Unicode(false)]
     public string? NoExpendituresToReportExplanation { get; set; }

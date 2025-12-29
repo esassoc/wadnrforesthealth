@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
@@ -19,6 +20,9 @@ public partial class DNRUplandRegion
     [StringLength(100)]
     [Unicode(false)]
     public string DNRUplandRegionName { get; set; } = null!;
+
+    [Column(TypeName = "geometry")]
+    public Geometry? DNRUplandRegionLocation { get; set; }
 
     [StringLength(255)]
     [Unicode(false)]

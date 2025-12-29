@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
@@ -35,6 +36,9 @@ public partial class Organization
     public int? LogoFileResourceID { get; set; }
 
     public int OrganizationTypeID { get; set; }
+
+    [Column(TypeName = "geometry")]
+    public Geometry? OrganizationBoundary { get; set; }
 
     public int? VendorID { get; set; }
 

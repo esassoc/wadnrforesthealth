@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
@@ -18,6 +19,9 @@ public partial class FocusArea
     public string FocusAreaName { get; set; } = null!;
 
     public int FocusAreaStatusID { get; set; }
+
+    [Column(TypeName = "geometry")]
+    public Geometry? FocusAreaLocation { get; set; }
 
     public int DNRUplandRegionID { get; set; }
 

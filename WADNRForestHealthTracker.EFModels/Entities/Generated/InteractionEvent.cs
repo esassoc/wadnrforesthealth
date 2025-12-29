@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
 [Table("InteractionEvent")]
+[Index("InteractionEventLocationSimple", Name = "SPATIAL_InteractionEvent_InteractionEventLocationSimple")]
 public partial class InteractionEvent
 {
     [Key]
@@ -26,6 +28,9 @@ public partial class InteractionEvent
 
     [Column(TypeName = "datetime")]
     public DateTime InteractionEventDate { get; set; }
+
+    [Column(TypeName = "geometry")]
+    public Geometry? InteractionEventLocationSimple { get; set; }
 
     [InverseProperty("InteractionEvent")]
     public virtual ICollection<InteractionEventContact> InteractionEventContacts { get; set; } = new List<InteractionEventContact>();
