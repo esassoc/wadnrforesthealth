@@ -1,0 +1,84 @@
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from "@angular/core";
+import { LinkRendererComponent } from "src/app/shared/components/ag-grid/link-renderer/link-renderer.component";
+import { ColDef } from "ag-grid-community";
+import { AgGridAngular, AgGridModule } from "ag-grid-angular";
+import { FieldDefinitionDatumDetail, PersonDetail } from "src/app/shared/generated/model/models";
+import { FieldDefinitionService } from "src/app/shared/generated/api/field-definition.service";
+import { AlertDisplayComponent } from "src/app/shared/components/alert-display/alert-display.component";
+import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
+import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
+
+@Component({
+    selector: "field-definition-list",
+    templateUrl: "./field-definition-list.component.html",
+    styleUrls: ["./field-definition-list.component.scss"],
+    imports: [AlertDisplayComponent, AgGridModule, WADNRGridComponent, PageHeaderComponent],
+})
+export class FieldDefinitionListComponent implements OnInit {
+    @ViewChild("fieldDefinitionsGrid") fieldDefinitionsGrid: AgGridAngular;
+
+    private currentUser: PersonDetail;
+
+    public fieldDefinitions: Array<FieldDefinitionDatumDetail>;
+
+    public rowData = [];
+    public columnDefs: ColDef[];
+
+    constructor(private fieldDefinitionService: FieldDefinitionService, private cdr: ChangeDetectorRef) {}
+
+    ngOnInit() {
+        this.fieldDefinitionsGrid?.api.showLoadingOverlay();
+        this.fieldDefinitionService.listFieldDefinition().subscribe((fieldDefinitions) => {
+            this.fieldDefinitions = fieldDefinitions;
+            this.rowData = fieldDefinitions;
+            this.fieldDefinitionsGrid.api.hideOverlay();
+            this.cdr.detectChanges();
+        });
+        this.columnDefs = [
+            {
+                headerName: "Label",
+                valueGetter: function (params: any) {
+                    return { LinkValue: params.data.FieldDefinitionType.FieldDefinitionTypeID, LinkDisplay: params.data.FieldDefinitionType.FieldDefinitionTypeDisplayName };
+                },
+                cellRenderer: LinkRendererComponent,
+                filterValueGetter: function (params: any) {
+                    return params.data.FieldDefinitionType.FieldDefinitionTypeDisplayName;
+                },
+                comparator: function (id1: any, id2: any) {
+                    let link1 = id1.LinkDisplay;
+                    let link2 = id2.LinkDisplay;
+                    if (link1 < link2) {
+                        return -1;
+                    }
+                    if (link1 > link2) {
+                        return 1;
+                    }
+                    return 0;
+                },
+                sortable: true,
+                filter: true,
+                width: 200,
+            },
+            {
+                headerName: "Definition",
+                field: "FieldDefinitionValue",
+                cellRenderer: function (params: any) {
+                    return params.data.FieldDefinitionValue ? params.data.FieldDefinitionValue : "";
+                },
+                autoHeight: true,
+                sortable: true,
+                filter: true,
+                width: 900,
+                cellStyle: { "white-space": "normal" },
+            },
+        ];
+
+        this.columnDefs.forEach((x) => {
+            x.resizable = true;
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.cdr.detach();
+    }
+}

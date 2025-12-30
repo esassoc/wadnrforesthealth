@@ -1,0 +1,88 @@
+// Utility classes to control ng-select dropdown panel width.
+// Usage: add class like `lt-panel-w-320` to the host `ng-select` element.
+
+.lt-panel-w-200 {
+    .ng-dropdown-panel,
+    &.ng-dropdown-panel {
+        width: 200px !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+}
+.lt-panel-w-240 {
+    .ng-dropdown-panel,
+    &.ng-dropdown-panel {
+        width: 240px !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+}
+.lt-panel-w-280 {
+    .ng-dropdown-panel,
+    &.ng-dropdown-panel {
+        width: 280px !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+}
+.lt-panel-w-320 {
+    .ng-dropdown-panel,
+    &.ng-dropdown-panel {
+        width: 320px !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+}
+.lt-panel-w-360 {
+    .ng-dropdown-panel,
+    &.ng-dropdown-panel {
+        width: 360px !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+}
+.lt-panel-w-420 {
+    .ng-dropdown-panel,
+    &.ng-dropdown-panel {
+        width: 420px !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+}
+.lt-panel-w-540 {
+    .ng-dropdown-panel,
+    &.ng-dropdown-panel {
+        width: 540px !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+}
+.lt-panel-w-100pct {
+    .ng-dropdown-panel,
+    &.ng-dropdown-panel {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+}
+
+// Generic helper when you need to override inline panel positioning and sizing
+.lt-panel-force-inline {
+    .ng-dropdown-panel {
+        box-sizing: border-box;
+    }
+}
+
+/* Divider line used for ng-select option templates when rendering section separators */
+.ng-option-divider {
+    display: block;
+    height: 1px;
+    margin: 0.25rem 0;
+    background-color: rgba(0, 0, 0, 0.12);
+    pointer-events: none; /* non-interactive */
+}
+
+/* When dropdown is appended to body, ng-select may copy host classes — ensure divider styling applies */
+.ng-dropdown-panel .ng-option-divider {
+    box-sizing: border-box;
+}

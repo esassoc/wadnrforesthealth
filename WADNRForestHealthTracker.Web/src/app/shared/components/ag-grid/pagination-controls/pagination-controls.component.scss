@@ -1,0 +1,23 @@
+@use "/src/scss/abstracts" as *;
+
+.pagination-control-panel {
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .control-button {
+        border: none;
+        background-color: transparent;
+        color: var(--gray-default);
+
+        &:disabled {
+            color: var(--gray-light);
+        }
+    }
+
+    .control-text {
+        padding: 0 var(--spacing-200);
+        width: 200px;
+        text-align: center;
+    }
+}

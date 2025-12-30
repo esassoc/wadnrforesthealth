@@ -1,0 +1,176 @@
+@use "/src/scss/abstracts" as *;
+
+dialog {
+    position: fixed;
+    inset-block-start: 0px;
+    inset-block-end: 0px;
+    max-width: calc((100% - 6px) - 2em);
+    max-height: calc((100% - 6px) - 2em);
+    user-select: text;
+    visibility: visible;
+    overflow: auto;
+    z-index: 1000;
+
+    padding: 0;
+    border: none;
+    box-shadow: var(--shadow-100);
+    overflow: auto;
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: 1rem;
+    }
+
+    &.primary {
+        .modal-header {
+            background-color: var(--primary);
+            color: var(--white);
+            .close {
+                color: var(--white);
+            }
+        }
+        .modal-footer {
+            border-top: 1px solid var(--primary);
+        }
+    }
+
+    &.light {
+        padding: var(--spacing-600);
+        border-radius: 8px;
+        background-color: var(--white);
+        .modal-header {
+            background-color: var(--white);
+            color: var(--black);
+            padding: 0 0 var(--spacing-500) 0;
+
+            border-bottom: 1px solid var(--tan);
+            .close {
+                color: var(--black);
+                font-size: 30px;
+                // position: absolute;
+                // top: 1.25rem;
+                // right: 1rem;
+            }
+        }
+
+        .modal-body {
+            padding: var(--spacing-500) 0;
+            // padding:  0;
+        }
+
+        .modal-footer {
+            background-color: var(--white);
+
+            border-top: 2px solid var(--tan);
+            padding: var(--spacing-500) 0 0 0;
+        }
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .close {
+            line-height: inherit;
+            border: none;
+            background: none;
+            opacity: 0.5;
+            align-self: start;
+            font-size: 1.25em;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+        h3 {
+            font-size: var(--type-size-500);
+        }
+        p {
+            font-size: var(--type-size-300);
+            line-height: 1.25em;
+        }
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+    }
+}
+
+.ngneat-dialog-content {
+    border: 1px solid var(--gray-400);
+    box-shadow: 0px 276px 77px 0px rgba(0, 0, 0, 0), 0px 176px 71px 0px rgba(0, 0, 0, 0.01), 0px 99px 60px 0px rgba(0, 0, 0, 0.05), 0px 44px 44px 0px rgba(0, 0, 0, 0.09),
+        0px 11px 24px 0px rgba(0, 0, 0, 0.1);
+
+    .ngneat-close-dialog {
+        z-index: 99999;
+        background: var(--gray-400);
+        border-radius: 50%;
+        width: 1.25rem;
+        height: 1.25rem;
+        top: 21px;
+        right: 1rem;
+
+        path {
+            fill: var(--gray-0);
+            transition: all 300ms ease-in-out;
+        }
+
+        &:hover {
+            background: var(--gray-800);
+
+            path {
+                fill: var(--gray-0);
+            }
+        }
+    }
+
+    .modal {
+        display: flex;
+        flex-direction: column;
+        max-height: 90vh;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-500) var(--spacing-500) var(--spacing-400) var(--spacing-500);
+        background: var(--gray-50);
+        border-bottom: 1px solid var(--gray-200);
+        position: sticky;
+        top: 0;
+        z-index: 1;
+
+        h3 {
+            font-size: 1.375rem;
+            font-weight: 550;
+            line-height: 1.1;
+        }
+
+        p {
+            font-size: var(--type-size-300);
+            line-height: 1.25em;
+        }
+    }
+
+    .modal-body {
+        padding: var(--spacing-500);
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--spacing-300);
+        padding: var(--spacing-400) var(--spacing-500);
+        background: var(--gray-50);
+        border-top: 1px solid var(--gray-200);
+        position: sticky;
+        bottom: 0;
+        z-index: 1;
+    }
+}

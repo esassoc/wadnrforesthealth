@@ -1,0 +1,71 @@
+<div class="g-col-6 mb-3 chart-tile">
+    @if(chartDto$ | async; as chartDto) {
+    <div class="chart-header">
+        <div>
+            <h4 class="chart-title mb-0">{{ chartDto?.ChartTitle || "Indicator" }}</h4>
+        </div>
+        <!-- If there are multiple subcategories, show a select -->
+        @if(chartDto && chartDto.IndicatorSubcategories && chartDto.IndicatorSubcategories.length > 1) {
+        <div class="chart-select">
+            <select (change)="selectedIndex = +$any($event.target).value">
+                @for(dto of chartDto.IndicatorSubcategories; track dto.ChartName; let i = $index) {
+                <option [value]="i">{{ dto.SubcategoryName || "Variant " + (i + 1) }}</option>
+                }
+            </select>
+        </div>
+        }
+    </div>
+    @if(chartDto.ChartTypeID === IndicatorChartTypeEnum.DynamicChart){
+    <vertical-stacked-bar-chart
+        [chartData]="chartDto.IndicatorSubcategories[selectedIndex ?? 0]?.ChartDataTable"
+        [colorRange]="chartDto.IndicatorSubcategories[selectedIndex ?? 0]?.ColorRange"
+        [chartID]="chartDto.IndicatorSubcategories[selectedIndex ?? 0]?.ChartName"
+        [showCumulativeToggle]="chartDto.CanBeChartedCumulatively"
+        [xFieldName]="chartDto.IndicatorSubcategories[selectedIndex ?? 0]?.XFieldName"
+        [yFieldName]="chartDto.IndicatorSubcategories[selectedIndex ?? 0]?.YFieldName"
+        [valueFormatter]="chartDto.IndicatorSubcategories[selectedIndex ?? 0]?.ValueFormatter"
+        [valueFractionDigits]="chartDto.IndicatorSubcategories[selectedIndex ?? 0]?.ValueFractionDigits">
+    </vertical-stacked-bar-chart>
+    } @else if (chartDto.ChartTypeID === IndicatorChartTypeEnum.ImageUpload) {
+    <a
+        (click)="$event.preventDefault(); openImage(getFileResourceUrl(chartDto.ChartFileResourceInfoGuid), chartDto.ChartTitle)"
+        href="#"
+        role="button"
+        aria-label="Open chart image">
+        <img [oneTimeSrc]="getFileResourceUrl(chartDto.ChartFileResourceInfoGuid)" [alt]="chartDto.ChartTitle || 'Chart image'" />
+    </a>
+    } @else if (chartDto.ChartTypeID === IndicatorChartTypeEnum.HtmlUpload){
+    <iframe [oneTimeSrc]="getFileResourceUrl(chartDto.ChartFileResourceInfoGuid)" allow="fullscreen"></iframe>
+    } @else if (chartDto.ChartTypeID === IndicatorChartTypeEnum.EmbedUrl) {
+    <iframe [oneTimeSrc]="getSafeUrl(chartDto.ChartSourceUrl)" allow="fullscreen"></iframe>
+
+    } @else {
+    <p class="system-text" style="text-align: center; margin-top: 20px">No reported data for this Indicator</p>
+    }
+
+    <div class="chartTabs fullWidth mt-4">
+        <div class="chartTabs-row">
+            <div class="chartTabs-controls">
+                <btn-group-radio-input [options]="tabOptionsCommon" [default]="'Summary'" (change)="onTabChange($event)"></btn-group-radio-input>
+            </div>
+        </div>
+
+        @if((selectedTab || 'summary') === 'summary') {
+        <div class="tab-content">
+            <div [innerHTML]="chartDto.ChartSummary | trustHtml"></div>
+        </div>
+        } @if((selectedTab || 'summary') === 'sources') {
+        <div class="tab-content">
+            <div [innerHTML]="chartDto.ChartSources | trustHtml"></div>
+        </div>
+        }
+    </div>
+    } @if(selectedImage) {
+    <div class="lightbox-backdrop" (click)="closeImage()" role="button" aria-label="Close image">
+        <div class="lightbox-content" (click)="$event.stopPropagation()">
+            <button class="lightbox-close" (click)="closeImage()" aria-label="Close">×</button>
+            <img [src]="selectedImage.src" [alt]="selectedImage.alt || 'Image'" />
+        </div>
+    </div>
+    }
+</div>

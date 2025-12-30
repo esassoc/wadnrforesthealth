@@ -1,0 +1,96 @@
+@use "/src/scss/abstracts" as *;
+
+.ng-select {
+    .ng-select-container {
+        .ng-value-container {
+            height: 100%;
+            input[type="text"] {
+                max-height: 36px;
+            }
+        }
+    }
+}
+
+.ng-select-multiple.custom ::ng-deep {
+    .ng-select-container .ng-value-container .ng-value {
+        background: var(--blue-50);
+        border: 1px solid var(--blue-200);
+        color: var(--blue-700);
+        border-radius: var(--spacing-100);
+    }
+
+    .ng-select-container .ng-value-container .ng-value .ng-value-label {
+        padding: var(--spacing-200);
+        padding-top: 10px;
+        padding-left: 0;
+        font-weight: 600;
+    }
+
+    .ng-select-container .ng-value-container .ng-value .ng-value-icon {
+        padding: var(--spacing-200);
+        padding-top: 10px;
+        border-right: unset;
+
+        &:hover {
+            background: var(--blue-100);
+        }
+    }
+}
+
+.ng-select.custom {
+    .ng-select-container {
+        height: 3rem;
+        border-color: var(--gray-200);
+    }
+
+    .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+        height: 3rem;
+        line-height: 2.25rem;
+    }
+
+    .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+        &.ng-option-selected,
+        &:hover {
+            background: var(--blue-50);
+            color: var(--blue-700);
+        }
+    }
+
+    .ng-clear-wrapper {
+        padding-inline: var(--spacing-200);
+        display: inline-block;
+        width: unset;
+        .ng-clear {
+            font-size: 24px;
+            top: 3px;
+            position: relative;
+        }
+    }
+
+    .ng-arrow-wrapper {
+        padding-inline: var(--spacing-300);
+        display: inline-block;
+        width: unset;
+
+        .ng-arrow {
+            top: 2px;
+            position: relative;
+            border-width: 7px 6px 2.5px;
+        }
+    }
+
+    &.small {
+        .ng-select-container {
+            height: 1rem;
+        }
+
+        .ng-value {
+            top: 1px;
+        }
+    }
+}
+
+.ng-select.custom.ng-select-opened > .ng-select-container .ng-arrow {
+    border-width: 0 6px 7px;
+    top: 0;
+}

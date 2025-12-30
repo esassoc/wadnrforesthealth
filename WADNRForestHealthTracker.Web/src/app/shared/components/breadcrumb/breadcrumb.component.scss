@@ -1,0 +1,93 @@
+:host {
+    display: block;
+
+    /* sizes & colors */
+    --h: 42px; /* crumb height */
+    --slant: 10px; /* width of arrow tip */
+    --blue: #6b9bb8;
+    --bg: #f1f3f5; /* light gray for bar */
+    --text: #1f2a37;
+}
+
+/* ---------------------------------------------- */
+/* Breadcrumb container                           */
+/* ---------------------------------------------- */
+.breadcrumb {
+    display: inline-flex;
+    overflow: hidden;
+    font-weight: 700;
+    background: var(--bg);
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+/* ---------------------------------------------- */
+/* Base crumb                                      */
+/* ---------------------------------------------- */
+.breadcrumb-item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: var(--h);
+    padding: 0 24px;
+    text-decoration: none;
+    color: var(--text);
+    background: transparent;
+    transition: filter 0.18s ease;
+
+    /* remove framework separators */
+    &::before {
+        content: none !important;
+    }
+}
+
+/* ---------------------------------------------- */
+/* FIRST crumb (blue pill + arrow)                */
+/* ---------------------------------------------- */
+.breadcrumb-item:first-child {
+    background: var(--blue);
+    color: #fff;
+}
+
+/* Arrow on first crumb only */
+.breadcrumb-item:first-child::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: calc(-1 * var(--slant));
+    width: 0;
+    height: 0;
+    border-top: calc(var(--h) / 2) solid transparent;
+    border-bottom: calc(var(--h) / 2) solid transparent;
+    border-left: var(--slant) solid var(--blue);
+}
+
+/* ---------------------------------------------- */
+/* Other crumbs                                    */
+/* ---------------------------------------------- */
+.breadcrumb-item:not(:first-child) {
+    /* add padding so text clears arrow tip */
+    padding-left: calc(24px + var(--slant));
+}
+
+/* ---------------------------------------------- */
+/* Active (last) crumb                             */
+/* ---------------------------------------------- */
+.breadcrumb-item.is-active {
+    pointer-events: none;
+}
+
+/* ---------------------------------------------- */
+/* Hover Effects Using Filter: Brightness()        */
+/* ---------------------------------------------- */
+
+/* FIRST crumb hover — arrow is darkened automatically */
+.breadcrumb-item:first-child:not(.is-active):hover {
+    filter: brightness(0.88);
+}
+
+/* OTHER crumbs hover */
+.breadcrumb-item:not(:first-child):not(.is-active):hover {
+    cursor: pointer;
+    filter: brightness(0.94); /* subtle darken */
+}

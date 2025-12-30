@@ -1,0 +1,78 @@
+.simple-tree-root {
+    padding: 0.5rem;
+}
+.simple-tree-search {
+    margin-bottom: 0.5rem;
+}
+.simple-tree-search input {
+    width: 100%;
+    padding: 0.4rem;
+    box-sizing: border-box;
+}
+.simple-tree {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+.simple-tree__node {
+    margin: 0.2rem 0;
+}
+.simple-tree__header {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 0.5rem;
+    /* ensure header content doesn't overflow the container */
+    min-width: 0;
+}
+.simple-tree__toggler {
+    background: transparent;
+    border: none;
+    padding: 0 0.25rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 22px;
+}
+.simple-tree__title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+}
+.simple-tree__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #007bff;
+    color: #fff;
+    border-radius: 999px;
+    padding: 0 8px;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    margin-left: auto; /* push badge to far right */
+}
+.simple-tree__match {
+    font-weight: 700;
+    color: #0b54a0;
+}
+.simple-tree__leaf {
+    color: #222;
+}
+.simple-tree__children {
+    list-style: none;
+    padding-left: 1.1rem;
+    margin: 0.25rem 0 0 0;
+}
+.simple-tree__empty {
+    color: #666;
+    font-style: italic;
+}
+
+/* When top-level borders are enabled, add extra spacing between top-level groups */
+.simple-tree--top-level-border-enabled .simple-tree__node.simple-tree__group-end[data-depth="0"] {
+    margin-bottom: 1rem; /* increased gap after a top-level group */
+}
+
+.simple-tree--top-level-border-enabled .simple-tree__node.simple-tree__group-start[data-depth="0"] {
+    margin-top: 0.5rem; /* small gap before a top-level group */
+}

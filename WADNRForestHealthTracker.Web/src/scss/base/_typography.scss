@@ -1,0 +1,25 @@
+body {
+    font-family: var(--lexend);
+    line-height: 1.4;
+}
+
+a {
+    color: var(--color-link);
+}
+
+button {
+    font-family: var(--lexend);
+}
+
+.site-footer a {
+    color: var(--white);
+    text-decoration: underline;
+}
+
+main {
+    color: var(--color-text);
+}
+
+.system-text {
+    font-style: italic;
+}

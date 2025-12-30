@@ -1,0 +1,40 @@
+@use "/src/scss/abstracts" as *;
+:host,
+.field {
+    height: 100%;
+}
+
+.units-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .units {
+        position: absolute;
+        pointer-events: none;
+        right: 2rem;
+        color: var(--gray-700);
+    }
+}
+
+.radio-options {
+    display: flex;
+    gap: var(--spacing-400);
+    align-items: center;
+    height: var(--spacing-700);
+}
+
+.check-label {
+    display: flex;
+    gap: var(--spacing-400);
+    input {
+        transform: scale(150%);
+    }
+}
+
+.checkbox-list-options {
+    display: flex;
+    gap: var(--spacing-400);
+    align-items: center;
+    height: var(--spacing-700);
+}

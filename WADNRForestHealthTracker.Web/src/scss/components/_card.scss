@@ -1,0 +1,70 @@
+/* Removed SASS @use import; values now reference CSS custom properties defined in src/scss/base/_theme.scss */
+
+.card {
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--border-radius-200);
+
+    &-55 {
+        max-width: 55rem;
+    }
+
+    &-header {
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+
+        .section-title {
+            padding-bottom: 0;
+        }
+
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 0;
+        background-color: var(--card-header-bg-color);
+        border-bottom: 1px solid var(--card-header-border-color);
+        color: var(--card-title-text-color);
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    &-actions {
+        & > * + * {
+            margin-left: 1rem;
+        }
+    }
+
+    &-title {
+        font-size: var(--type-size-300);
+        font-weight: 700;
+        margin: 0;
+        padding: 0;
+        color: var(--card-title-text-color);
+
+        i {
+            font-size: var(--type-size-200);
+            transform: translateY(-6px);
+        }
+    }
+
+    &-body {
+        padding: var(--spacing-500) var(--spacing-600);
+        background-color: var(--card-body-bg-color);
+
+        & + .card-footer {
+            margin-top: var(--spacing-500);
+        }
+    }
+
+    &-footer {
+        border-top: 1px solid var(--card-footer-border-color);
+        border-bottom: 1px solid var(--card-footer-border-color);
+        padding: 1.5rem 0;
+        gap: 0.5rem;
+        border-bottom-left-radius: 0.25rem;
+        border-bottom-right-radius: 0.25rem;
+    }
+
+    .card-body {
+        .card-header {
+            background-color: var(--gray-500);
+        }
+    }
+}

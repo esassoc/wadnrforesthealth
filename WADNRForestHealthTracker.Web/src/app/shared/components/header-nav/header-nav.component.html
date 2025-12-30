@@ -1,0 +1,64 @@
+<nav class="main-nav">
+    <div class="main-nav__header-image">
+        <img src="assets/header-images/main.png" alt="WADNR header image" />
+    </div>
+    <div class="main-nav__wrapper">
+        <ul class="main-nav__links">
+            <li class="main-nav__explorer">
+                <a [href]="'/some-url'" class="main-nav__logo" target="_blank">
+                    <img src="/assets/logos/LT_INFO_LOGO2025-white.png" class="navbarLogo" [alt]="'area logo'" />
+                </a>
+                <div class="main-nav__explorer-area">
+                    <a routerLink="/" routerLinkActive="active" class="nav-link">WADNR</a>
+                </div>
+            </li>
+        </ul>
+        <ul class="main-nav__links main-nav__utilities">
+            <li class="nav-item" routerLinkActive="active">
+                <a href="data-center" routerLinkActive="active" class="nav-link">Data Center</a>
+            </li>
+            <!-- @if (!isAuthenticated()) {
+            <li class="nav-item" routerLinkActive="active">
+                <a href="javascript:void(0);" (click)="login()" routerLinkActive="active" class="nav-link">Log In</a>
+            </li>
+            <li class="nav-item" routerLinkActive="active">
+                <a routerLink="/request-support" routerLinkActive="active" class="nav-link">Request Support</a>
+            </li>
+            }  -->
+            <!-- @if (currentUser$ | async; as currentUser) {
+            <li class="nav-item dropdown welcomeUser" routerLinkActive="active" [dropdownToggle]="userToggle">
+                <a class="dropdown-toggle nav-link" role="button" aria-haspopup="true" aria-expanded="false"> Welcome {{ currentUser.FirstName }} {{ currentUser.LastName }} </a>
+                <div #userToggle class="dropdown-menu dropdown-menu-right">
+                    <a routerLink="/request-support" class="dropdown-item">Request Support</a>
+                    <a href="javascript:void(0);" (click)="logout()" class="dropdown-item">Log Out</a>
+                </div>
+            </li>
+            }  -->
+            <!-- @if (isLTInfoAdministrator() || isClimateResilienceAdministrator()) {
+            <li class="nav-item dropdown" routerLinkActive="active" [dropdownToggle]="manageToggle">
+                <a class="dropdown-toggle nav-link" role="button" aria-haspopup="true" aria-expanded="false"> Manage LT Info </a>
+                <div #manageToggle class="dropdown-menu dropdown-menu-right">
+                    @if (isLTInfoAdministrator()) {
+                    <a href="{{ pageContentIndexUrl() }}" class="dropdown-item">Page Content</a>
+                    <a href="{{ fieldDefinitionIndexUrl() }}" class="dropdown-item">Labels and Definitions</a>
+                    <div class="dropdown-divider"></div>
+                    }
+                    <a href="{{ usersListUrl() }}" class="dropdown-item">Users</a>
+                    <a href="{{ roleIndexUrl() }}" class="dropdown-item">Roles</a>
+                    @if (isLTInfoAdministrator()) {
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ projectUpdateManageUrl() }}" class="dropdown-item">Project Updates</a>
+                    }
+                </div>
+            </li>
+            }  -->
+            @if (showTestingWarning()) {
+            <li class="nav-item qa-warning">
+                <div class="nav-link">
+                    <a class="btn btn-sm btn-warning" [innerHTML]="testingWarningText()"></a>
+                </div>
+            </li>
+            }
+        </ul>
+    </div>
+</nav>

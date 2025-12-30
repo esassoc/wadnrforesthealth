@@ -1,0 +1,22 @@
+span#icon-base {
+    vertical-align: text-top;
+}
+
+.square-svg {
+    svg {
+        width: 1em;
+        height: 1em;
+    }
+}
+svg {
+    path {
+        fill: currentColor;
+    }
+}
+
+svg.no-fill {
+    path {
+        fill: none;
+        stroke: currentColor;
+    }
+}

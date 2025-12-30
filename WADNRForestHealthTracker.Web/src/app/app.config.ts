@@ -1,0 +1,95 @@
+import { ApplicationConfig, ErrorHandler, importProvidersFrom, inject, provideAppInitializer } from "@angular/core";
+import { RouterModule, TitleStrategy, provideRouter, withComponentInputBinding } from "@angular/router";
+
+import { routes } from "./app.routes";
+import { DecimalPipe, CurrencyPipe, DatePipe, PercentPipe } from "@angular/common";
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { environment } from "src/environments/environment";
+import { HttpErrorInterceptor } from "./shared/interceptors/httpErrorInterceptor";
+import { GlobalErrorHandlerService } from "./shared/services/global-error-handler.service";
+import { provideAnimations } from "@angular/platform-browser/animations";
+import { ApiModule } from "./shared/generated/api.module";
+import { Configuration } from "./shared/generated/configuration";
+import { PageTitleStrategy } from "./strategies/page-title-strategy";
+import { AppInitService } from "./app.init";
+import { AuthInterceptor } from "./shared/interceptors/auth-interceptor";
+import { CookieService } from "ngx-cookie-service";
+import { CookieStorageService } from "./shared/services/cookies/cookie-storage.service";
+import { OAuthStorage, OAuthModule } from "angular-oauth2-oidc";
+import { PhonePipe } from "./shared/pipes/phone.pipe";
+import { GroupByPipe } from "./shared/pipes/group-by.pipe";
+import { provideDialogConfig } from "@ngneat/dialog";
+import { SumPipe } from "./shared/pipes/sum.pipe";
+
+export const appConfig: ApplicationConfig = {
+    providers: [
+        provideRouter(routes, withComponentInputBinding()),
+        importProvidersFrom(
+            ApiModule.forRoot(() => {
+                return new Configuration({
+                    basePath: `${environment.mainAppApiUrl}`,
+                });
+            })
+        ),
+        importProvidersFrom(
+            RouterModule.forRoot(routes, {
+                paramsInheritanceStrategy: "always",
+                scrollPositionRestoration: "enabled",
+                anchorScrolling: "enabled",
+            })
+        ),
+        importProvidersFrom(OAuthModule.forRoot()),
+        provideHttpClient(withInterceptorsFromDi()),
+        provideAnimations(),
+        { provide: TitleStrategy, useClass: PageTitleStrategy },
+        {
+            provide: ErrorHandler,
+            useClass: GlobalErrorHandlerService,
+        },
+        CookieService,
+        AppInitService,
+        provideAppInitializer(() => {
+            const initializerFn = init_app(inject(AppInitService));
+            return initializerFn();
+        }),
+        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpErrorInterceptor,
+            multi: true,
+        },
+        {
+            provide: ErrorHandler,
+            useClass: GlobalErrorHandlerService,
+        },
+        DecimalPipe,
+        CurrencyPipe,
+        DatePipe,
+        PhonePipe,
+        PercentPipe,
+        GroupByPipe,
+        SumPipe,
+        {
+            provide: OAuthStorage,
+            useClass: CookieStorageService,
+        },
+        provideDialogConfig({
+            sizes: {
+                sm: {
+                    width: "100%",
+                    maxWidth: "540px",
+                    maxHeight: "90vh",
+                },
+                lg: {
+                    width: "100%",
+                    maxWidth: "1280px",
+                    maxHeight: "90vh",
+                },
+            },
+        }),
+    ],
+};
+
+export function init_app(appLoadService: AppInitService) {
+    return () => appLoadService.init();
+}

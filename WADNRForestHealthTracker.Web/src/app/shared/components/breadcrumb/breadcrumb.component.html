@@ -1,0 +1,7 @@
+<div class="breadcrumb">
+    @for (item of items; track item) { @if (item.url && (items[items.length - 1] !== item || linkLast)) {
+    <a [routerLink]="item.url" class="breadcrumb-item">{{ item.label }}</a>
+    } @else {
+    <span class="breadcrumb-item is-active">{{ item.label }}</span>
+    } }
+</div>

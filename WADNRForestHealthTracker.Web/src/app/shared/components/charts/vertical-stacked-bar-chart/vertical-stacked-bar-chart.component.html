@@ -1,0 +1,34 @@
+<div [loadingSpinner]="{ isLoading }" class="chartSection">
+    <div [id]="chartID" style="width: 100%"></div>
+    <hr />
+    <div class="chartLegend">
+        @if(showCumulativeToggle) {
+        <div class="chart-controls">
+            <div class="switch-wrapper" role="switch" [attr.aria-checked]="isCumulativeLocal" style="display: flex; align-items: center; gap: 8px">
+                <label class="switch">
+                    <input type="checkbox" id="cumulative-toggle" [checked]="cumulativeCheckbox" (change)="toggleCumulativeInline()" aria-label="Toggle cumulative display" />
+                    <span class="toggle" for="cumulative-toggle"><span class="toggle-knob" aria-hidden="true"></span></span>
+                </label>
+                <span class="toggle-text">{{ isCumulativeLocal ? "Cumulative" : "Per-period" }}</span>
+            </div>
+        </div>
+        }
+        <div class="swatches" role="list">
+            @for (kv of colorRange | defaultOrderKeyvalue; track kv) {
+            <button
+                type="button"
+                class="swatch-btn"
+                (click)="toggleGroup(kv.key)"
+                (keydown)="($event.key === 'Enter' || $event.key === ' ') && toggleGroup(kv.key)"
+                [attr.tabindex]="0"
+                [attr.aria-label]="kv.key"
+                [class.disabled]="hiddenGroups.has(kv.key)"
+                role="listitem"
+                [attr.aria-pressed]="hiddenGroups.has(kv.key)">
+                <div class="legend-swatch" [title]="kv.key" [style.background]="kv.value || '#ccc'"></div>
+                <span class="swatch-label" title="{{ kv.key }}">{{ kv.key }}</span>
+            </button>
+            }
+        </div>
+    </div>
+</div>

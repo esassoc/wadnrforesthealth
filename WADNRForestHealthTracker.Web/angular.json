@@ -1,0 +1,143 @@
+{
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "version": 1,
+    "newProjectRoot": "projects",
+    "projects": {
+        "WADNRForestHealthTracker.Web": {
+            "root": "",
+            "sourceRoot": "src",
+            "projectType": "application",
+            "prefix": "",
+            "schematics": {
+                "@schematics/angular:component": {
+                    "style": "scss"
+                }
+            },
+            "architect": {
+                "build": {
+                    "builder": "@angular/build:application",
+                    "options": {
+                        "outputPath": {
+                            "base": "wwwroot",
+                            "browser": ""
+                        },
+                        "index": "src/index.html",
+                        "polyfills": ["zone.js", "@angular/localize/init"],
+                        "tsConfig": "src/tsconfig.app.json",
+                        "assets": [
+                            "src/assets",
+                            {
+                                "glob": "**/*",
+                                "input": "node_modules/tinymce",
+                                "output": "/tinymce/"
+                            }
+                        ],
+                        "styles": [
+                            "src/styles.scss",
+                            "node_modules/leaflet.fullscreen/dist/Control.FullScreen.css",
+                            "node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.css",
+                            "node_modules/@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css"
+                        ],
+                        "scripts": ["src/scripts/leaflet.groupedlayercontrol.js"],
+                        "extractLicenses": false,
+                        "sourceMap": true,
+                        "optimization": false,
+                        "namedChunks": true,
+                        "browser": "src/main.ts",
+                        "stylePreprocessorOptions": {
+                            "includePaths": ["."]
+                        }
+                    },
+                    "configurations": {
+                        "qa": {
+                            "budgets": [
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "8kb"
+                                }
+                            ],
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "namedChunks": false,
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.qa.ts"
+                                }
+                            ]
+                        },
+                        "production": {
+                            "budgets": [
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb"
+                                }
+                            ],
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "namedChunks": false,
+                            "extractLicenses": true,
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.prod.ts"
+                                }
+                            ]
+                        }
+                    },
+                    "defaultConfiguration": ""
+                },
+                "serve": {
+                    "builder": "@angular/build:dev-server",
+                    "options": {
+                        "host": "wadnr.localhost.esassoc.com",
+                        "port": 3215,
+                        "proxyConfig": "proxy.conf.dev.json",
+                        "buildTarget": "WADNRForestHealthTracker.Web:build"
+                    },
+                    "configurations": {
+                        "production": {
+                            "buildTarget": "WADNRForestHealthTracker.Web:build:production"
+                        }
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-eslint/builder:lint",
+                    "options": {
+                        "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+                    }
+                }
+            }
+        }
+    },
+    "cli": {
+        "analytics": false
+    },
+    "schematics": {
+        "@schematics/angular:component": {
+            "type": "component"
+        },
+        "@schematics/angular:directive": {
+            "type": "directive"
+        },
+        "@schematics/angular:service": {
+            "type": "service"
+        },
+        "@schematics/angular:guard": {
+            "typeSeparator": "."
+        },
+        "@schematics/angular:interceptor": {
+            "typeSeparator": "."
+        },
+        "@schematics/angular:module": {
+            "typeSeparator": "."
+        },
+        "@schematics/angular:pipe": {
+            "typeSeparator": "."
+        },
+        "@schematics/angular:resolver": {
+            "typeSeparator": "."
+        }
+    }
+}

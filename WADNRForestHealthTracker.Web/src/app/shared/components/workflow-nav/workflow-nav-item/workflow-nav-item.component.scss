@@ -1,0 +1,18 @@
+@use "/src/scss/abstracts" as *;
+
+.workflow-sidebar-item {
+    a:hover .complete {
+        color: var(--white);
+    }
+
+    .complete {
+        color: var(--green-default);
+    }
+    .info {
+        color: var(--teal-default);
+    }
+    .disabled {
+        pointer-events: none;
+        cursor: default;
+    }
+}

@@ -1,0 +1,5 @@
+<wadnr-grid [rowData]="rowData" [columnDefs]="columnDefs" [downloadFileName]="downloadFileName" defaultRowSelection="multiRow" (selectionChanged)="onSelectionChanged($event)">
+    <div customGridActionsRight>
+        <button class="btn btn-sm btn-primary" (click)="openTagModal()" [disabled]="!selectedRows?.length">Tag Checked Projects</button>
+    </div>
+</wadnr-grid>

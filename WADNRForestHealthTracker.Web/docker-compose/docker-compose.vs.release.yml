@@ -1,0 +1,7 @@
+services:
+  wadnr.web:
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1    
+    image: wadnr/web
+    labels:
+      - "com.microsoft.visualstudio.targetoperatingsystem=linux"

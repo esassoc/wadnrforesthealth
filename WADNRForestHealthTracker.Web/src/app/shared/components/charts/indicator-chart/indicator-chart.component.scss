@@ -1,0 +1,196 @@
+/* header layout for chart tiles: deterministic flex layout without Bootstrap */
+.chart-tile {
+    background-color: var(---chart-tile-bg, #ffffff);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --chart-tile-bg: #ffffff; /* your preferred color */
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .chart-header .chart-title {
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .chart-header .chart-select {
+        flex: 0 0 auto;
+    }
+
+    .chart-select select {
+        min-width: 10rem;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Add gap between tiles in the grid */
+.card-body .grid-12 {
+    gap: 12px;
+    display: grid;
+    /* Responsive: auto-fit columns with min width 320px */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* Tabs under each chart: subtle box and consistent height */
+.chartTabs {
+    .btn-group-radio-input {
+        display: inline-block;
+    }
+    .tab-content {
+        min-height: 4.25rem; /* reserve vertical space so layout doesn't jump */
+        padding: 0.75rem 0.9rem;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 6px;
+        background: rgba(0, 0, 0, 0.02);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) inset;
+    }
+}
+
+/* Full width variant that stretches inside the chart-tile */
+.chartTabs.fullWidth {
+    width: 100%;
+}
+.chartTabs-row {
+    display: flex;
+    width: 100%;
+    gap: 12px;
+    align-items: center;
+}
+.chartTabs-controls {
+    display: flex;
+    align-items: center;
+}
+
+/* Responsive: on narrow screens stack controls above the content and make them full width */
+@media (max-width: 600px) {
+    .chartTabs-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    .chartTabs-controls {
+        justify-content: flex-start;
+        width: 100%;
+    }
+    .chartTabs-controls .btn-group-radio-input {
+        width: 100%;
+        display: block;
+    }
+}
+
+.chartTabs.fullWidth .tab-content {
+    /* visually integrate with card: slightly lighter background */
+    background: rgba(0, 0, 0, 0.015);
+    border-color: rgba(0, 0, 0, 0.04);
+}
+
+.chartTabs .tab-content .metadata-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 0.35rem;
+}
+
+.chartTabs .tab-content .metadata-label {
+    flex: 0 0 35%;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.chartTabs .tab-content .metadata-value {
+    flex: 1 1 auto;
+}
+
+img, iframe {
+    overflow: hidden;
+    margin-bottom: 2vh;
+    min-height: 300px;
+}
+
+iframe {
+    width: 100%;
+    height: 40vh;
+}
+
+.panel-fullscreen iframe {
+    height: 70vh;
+}
+
+/* Lightbox modal */
+.lightbox-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.lightbox-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    background: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lightbox-content img {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    color: #333;
+    cursor: pointer;
+}
+
+.lightbox-prev,
+.lightbox-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 44px;
+    height: 60px;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #222;
+}
+
+.lightbox-prev {
+    left: 8px;
+}
+.lightbox-next {
+    right: 8px;
+}
+
+.lightbox-caption {
+    margin-top: 8px;
+    color: #333;
+}

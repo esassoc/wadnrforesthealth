@@ -1,0 +1,23 @@
+@use "/src/scss/abstracts" as *;
+.text {
+    // some of the old bootstrap colors we're used to
+    &-danger {
+        color: var(--red-default);
+    }
+    &-warning {
+        color: var(--yellow-dark);
+    }
+    &-success {
+        color: var(--green-default);
+    }
+    &-primary {
+        color: var(--primary);
+    }
+    &-secondary {
+        color: var(--secondary);
+    }
+
+    &-muted {
+        color: var(--gray-default);
+    }
+}

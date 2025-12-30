@@ -1,0 +1,25 @@
+@use "/src/scss/abstracts" as *;
+
+li.list-group-item {
+    padding: var(--spacing-400);
+    cursor: pointer;
+
+    .treatment-bmp-type {
+        font-size: var(--type-size-150);
+        margin-top: var(--spacing-200);
+    }
+}
+
+li.list-group-item:hover {
+    background-color: #eee;
+}
+
+li.list-group-item.selected {
+    background-color: #ffff85;
+}
+
+.card h3 {
+    color: var(--primary);
+    padding-bottom: var(--spacing-300);
+    border-bottom: 1px solid var(--gray-light);
+}

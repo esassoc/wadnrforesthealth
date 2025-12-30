@@ -44,7 +44,7 @@ $path = $config.EFPocoGeneratorExePath
 if ($path)
 {
   "Generate POCOs"
-  $args1 = "--db-server-name=" + $config.Server + " --db-name=" + $config.DatabaseName + " --generate-enums-as-select-dropdown-options=false --code-namespace=" + $config.ApiEFModelsNamespace + " --api-efmodels-output-dir=" + $config.ApiEFModelExtensionMethodsPath + " --table-exclude-list=" + $config.TableExcludeList + " --enum-list=" + ($lookupTablesFiles.BaseName -join ",") 
+  $args1 = "--db-server-name=" + $config.Server + " --db-name=" + $config.DatabaseName + " --generate-enums-as-select-dropdown-options=true --code-namespace=" + $config.ApiEFModelsNamespace + " --api-efmodels-output-dir=" + $config.ApiEFModelExtensionMethodsPath + " --table-exclude-list=" + $config.TableExcludeList + " --enum-list=" + ($lookupTablesFiles.BaseName -join ",") + " --typescript-enums-output-dir=" + $config.TypescriptEnumsPath 
 
   $pinfo = New-Object System.Diagnostics.ProcessStartInfo
   $pinfo.FileName = "$PSScriptRoot\$path"

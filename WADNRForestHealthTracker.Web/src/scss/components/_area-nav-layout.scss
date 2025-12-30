@@ -1,0 +1,74 @@
+@use "/src/scss/abstracts" as *;
+
+.area-nav {
+    background: #0b1f41;
+    a {
+        color: var(--gray-0);
+    }
+
+    .nav-item {
+        padding: var(--spacing-400);
+        font-size: 0.875rem;
+        font-weight: 600;
+
+        &:hover {
+            background: #007dc3;
+        }
+
+        icon {
+            svg {
+                width: 10px;
+            }
+        }
+    }
+
+    .dropdown-toggle {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-200);
+
+        icon {
+            display: block;
+            transform: translateY(2px);
+        }
+    }
+
+    .divider {
+        width: 100%;
+        height: 1px;
+        background: var(--gray-0);
+        margin: var(--spacing-200) 0;
+        box-sizing: border-box;
+    }
+
+    &__links {
+        display: flex;
+    }
+
+    .dropdown-menu {
+        background: #007dc3;
+        border: 1px solid var(--gray-0);
+        border-radius: unset;
+        top: 3.25rem;
+    }
+
+    .dropdown-item {
+        display: block;
+        padding: var(--spacing-300) var(--spacing-400);
+        font-size: 0.875rem;
+        &:hover {
+            background: #005c90;
+        }
+    }
+
+    /* Goals dropdown header styling */
+    .dropdown-header {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 1rem;
+        margin: 0;
+        color: var(--gray-0);
+        font-size: 0.95rem;
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.01));
+    }
+}

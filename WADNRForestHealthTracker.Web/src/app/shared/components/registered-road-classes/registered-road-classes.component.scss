@@ -1,0 +1,52 @@
+/* Scoped styles for RegisteredRoadClassesComponent */
+.registered-road-classes-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-family-sans-serif);
+    color: var(--color-text);
+}
+
+.registered-road-classes-table thead th {
+    font-weight: 600;
+    padding: var(--spacing-200) var(--spacing-300);
+    border-bottom: 1px solid var(--gray-200);
+    color: var(--gray-900);
+    font-size: var(--type-size-200);
+}
+
+.registered-road-classes-table tbody td {
+    padding: var(--spacing-200) var(--spacing-300);
+    vertical-align: middle;
+    font-size: var(--type-size-150);
+}
+
+.registered-road-classes-table .alignRight {
+    text-align: right;
+}
+
+.registered-road-classes-table .systemText {
+    color: var(--gray-600);
+    padding: var(--spacing-300) 0;
+}
+
+/* Ensure top separators on groups look consistent */
+.registered-road-classes-table tr.top-sep td {
+    border-top: 2px solid var(--gray-600);
+}
+
+/* Slightly lighter row background for header groups */
+.registered-road-classes-table tbody tr:nth-child(odd) td {
+    background: transparent;
+}
+
+/* Small responsive tweak */
+@media (max-width: 576px) {
+    .registered-road-classes-table thead {
+        display: none;
+    }
+    .registered-road-classes-table tbody td {
+        display: block;
+        width: 100%;
+        padding-left: var(--spacing-300);
+    }
+}

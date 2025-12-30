@@ -1,0 +1,46 @@
+<header class="site-header">
+    <header-nav></header-nav>
+    <nav class="area-nav">
+        <div style="width: 100%">
+            <ul class="area-nav__links">
+                <li class="nav-item"><a [routerLink]="['/about']" routerLinkActive="active" class="nav-link">About</a></li>
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0);" [dropdownToggle]="exploreMenu" class="nav-link dropdown-toggle">Explore <icon icon="AngleDown"></icon></a>
+                    <ul #exploreMenu class="dropdown-menu">
+                        <li><a [routerLink]="['/program-info/local-regional-plans']" class="dropdown-item">Local & Regional Plans</a></li>
+                        <li><a [routerLink]="['/program-info/watersheds']" class="dropdown-item">Watersheds</a></li>
+                        <li><a [routerLink]="['/organizations']" class="dropdown-item">Organizations</a></li>
+                        <li><a [routerLink]="['/funding-sources']" class="dropdown-item">Funding Sources</a></li>
+                        <li class="divider"></li>
+                        <li><a [routerLink]="['/data-center']" class="dropdown-item">Data Center</a></li>
+                        <li><a [routerLink]="['/web-services']" class="dropdown-item">Web Services</a></li>
+                        <li class="divider"></li>
+                        <li><a [routerLink]="['/news-announcements']" class="dropdown-item">News & Announcements</a></li>
+                        <li class="divider"></li>
+                        <li><a [routerLink]="['/nrap']" class="dropdown-item">NRAP</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0);" [dropdownToggle]="projectsMenu" class="nav-link dropdown-toggle">Projects <icon icon="AngleDown"></icon></a>
+                    <ul #projectsMenu class="dropdown-menu">
+                        @if (userHasProjectPermission) {
+                        <li><a [routerLink]="['/projects/my']" class="dropdown-item">My Projects & Proposals</a></li>
+                        <li class="divider"></li>
+                        }
+                        <li><a [routerLink]="['/projects/all']" class="dropdown-item">All LT Info Projects</a></li>
+                        <li><a [routerLink]="['/projects/proposed']" class="dropdown-item">Proposed Projects</a></li>
+                        <li><a [routerLink]="['/project-updates']" class="dropdown-item">Project Updates</a></li>
+                        <li class="divider"></li>
+                        <li><a [routerLink]="['/projects/tags']" class="dropdown-item">Project Tags</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a [routerLink]="['/indicators']" class="nav-link">Indicators</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<main class="site">
+    <div class="site-wrapper">
+        <router-outlet></router-outlet>
+    </div>
+</main>

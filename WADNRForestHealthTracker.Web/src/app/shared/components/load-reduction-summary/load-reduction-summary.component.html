@@ -1,0 +1,40 @@
+<table class="load-reduction-summary-table table">
+    <thead>
+        <tr>
+            <th></th>
+            <th class="align-right">FSP (lbs)</th>
+            <th class="align-right">TP (lbs)</th>
+            <th class="align-right">TN (lbs)</th>
+            <th class="align-right">Credit Potential</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!roadRegistration?.PlrmZipFileResourceInfoID) {
+        <tr>
+            <td colspan="5" class="text-center system-text">Upload a PLRM zip file and assign scenarios to view expected load reduction</td>
+        </tr>
+        } @else {
+        <tr>
+            <td>Baseline</td>
+            <td class="align-right">{{ roadRegistration?.FSPBaseline | number : "1.0-1" }}</td>
+            <td class="align-right">{{ roadRegistration?.TPBaseline | number : "1.0-1" }}</td>
+            <td class="align-right">{{ roadRegistration?.TNBaseline | number : "1.0-1" }}</td>
+            <td class="align-right">N/A</td>
+        </tr>
+        <tr>
+            <td><strong>Road Operations</strong></td>
+            <td class="align-right">{{ roadRegistration?.FSPRoadOperations | number : "1.0-1" }}</td>
+            <td class="align-right">{{ roadRegistration?.TPRoadOperations | number : "1.0-1" }}</td>
+            <td class="align-right">{{ roadRegistration?.TNRoadOperations | number : "1.0-1" }}</td>
+            <td class="align-right">N/A</td>
+        </tr>
+        <tr>
+            <td><strong>Load Reduction</strong></td>
+            <td class="align-right">{{ roadRegistration?.FSPLoadReduction | number : "1.0-1" }}</td>
+            <td class="align-right">{{ roadRegistration?.TPLoadReduction | number : "1.0-1" }}</td>
+            <td class="align-right">{{ roadRegistration?.TNLoadReduction | number : "1.0-1" }}</td>
+            <td class="align-right">{{ roadRegistration?.CreditPotential | number : "1.0-1" }}</td>
+        </tr>
+        }
+    </tbody>
+</table>

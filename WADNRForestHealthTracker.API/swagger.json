@@ -5,6 +5,47 @@
     "version": "1.0"
   },
   "paths": {
+    "/custom-rich-texts/{customRichTextTypeID}": {
+      "get": {
+        "tags": [
+          "CustomRichText"
+        ],
+        "operationId": "Get_CustomRichText",
+        "parameters": [
+          {
+            "name": "customRichTextTypeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FirmaPageDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FirmaPageDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FirmaPageDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/field-definitions": {
       "get": {
         "tags": [
@@ -1451,6 +1492,9 @@
           "FieldDefinitionDisplayName": {
             "type": "string",
             "nullable": true
+          },
+          "LastUpdatePerson": {
+            "$ref": "#/components/schemas/PersonDetail"
           }
         },
         "additionalProperties": false
@@ -2041,6 +2085,23 @@
         },
         "additionalProperties": false
       },
+      "FirmaPageDetail": {
+        "type": "object",
+        "properties": {
+          "FirmaPageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FirmaPageType": {
+            "$ref": "#/components/schemas/FirmaPageTypeDetail"
+          },
+          "FirmaPageContent": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FirmaPageImage": {
         "type": "object",
         "properties": {
@@ -2147,6 +2208,28 @@
           },
           "ToEnum": {
             "$ref": "#/components/schemas/FirmaPageTypeEnum"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FirmaPageTypeDetail": {
+        "type": "object",
+        "properties": {
+          "FirmaPageTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FirmaPageTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FirmaPageTypeDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FirmaPageRenderTypeID": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -5673,6 +5756,112 @@
           },
           "Person": {
             "$ref": "#/components/schemas/Person"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonDetail": {
+        "type": "object",
+        "properties": {
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PersonGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "FirstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "LastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Email": {
+            "type": "string",
+            "nullable": true
+          },
+          "Phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "PasswordPdfK2SaltHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "EIPRoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "UpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastActivityDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "IsActive": {
+            "type": "boolean"
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "LTInfoRoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ParcelTrackerRoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "WebServiceAccessToken": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "LoginName": {
+            "type": "string",
+            "nullable": true
+          },
+          "StormwaterRoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "MonitoringRoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TransportationRoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "LakeClarityTrackerRoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ThresholdRoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ClimateResilienceRoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FullName": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -10522,6 +10711,9 @@
     }
   },
   "tags": [
+    {
+      "name": "CustomRichText"
+    },
     {
       "name": "FieldDefinition"
     },

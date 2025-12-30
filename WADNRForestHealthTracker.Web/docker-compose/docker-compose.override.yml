@@ -1,0 +1,4 @@
+services:
+  wadnr.web:  
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development

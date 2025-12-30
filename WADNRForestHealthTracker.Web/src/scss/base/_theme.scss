@@ -1,0 +1,197 @@
+/* Generated theme: CSS custom properties converted from SASS variables
+   Sources: _colors.scss, _type-sizes.scss, _shadows.scss, _border-radius.scss
+   Keep this file imported early (for example in src/scss/styles.scss).
+*/
+
+@import url("https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap");
+
+:root {
+    /* palette */
+    --blue-lighter: #e7eff1;
+    --blue-light: #b4ccd4;
+    --blue-default: #0d5b73;
+    --blue-dark: #0c5268;
+    --blue-darker: #083745;
+
+    --teal-lighter: #eff5f7;
+    --teal-light: #cce0e7;
+    --teal-dark: #518c9e;
+    --teal-default: #5a9cb0;
+    --teal-darker: #365e6a;
+
+    --orange-lighter: #fff6ea;
+    --orange-light: #ffe3bd;
+    --orange-default: #ffa62b;
+    --orange-dark: #e69527;
+    --orange-darker: #c47b17;
+
+    --green-lighter: #eaf8ea;
+    --green-light: #bee9bd;
+    --green-default: #2cb92a;
+    --green-dark: #188c16;
+    --green-darker: #0b5d0a;
+
+    --yellow-lighter: #fffdf0;
+    --yellow-light: #fff7d2;
+    --yellow-default: #ffe66d;
+    --yellow-dark: #efd13d;
+    --yellow-darker: #cdab07;
+    --yellow-selected: #ffff85;
+
+    --red-lighter: #fdf0f0;
+    --red-light: #f9d1d1;
+    --red-default: #ed6969;
+    --red-dark: #be4c4c;
+    --red-darker: #822d2d;
+
+    --gray-lighter: #fafafa;
+    --gray-light: #d5d5d5;
+    --gray-default: #8a8a8a;
+    --gray-dark: #4e4e4e;
+    --gray-darker: #2a2a2a;
+
+    --white: #ffffff;
+    --white-rgb: 255, 255, 255;
+    --black: #000000;
+    --black-rgb: 0, 0, 0;
+
+    --tan: #f4f3ef;
+
+    /* numeric palette shades */
+    --blue-50: #f0f9fb;
+    --blue-100: #daf0f3;
+    --blue-200: #b9e1e8;
+    --blue-300: #89cad7;
+    --blue-400: #52aabe;
+    --blue-500: #368ea4;
+    --blue-600: #30748a;
+    --blue-700: #2c5f72;
+    --blue-800: #2b4f5f;
+    --blue-900: #2a4755;
+    --blue-950: #162b36;
+
+    --gray-0: #ffffff;
+    --gray-50: #fafafa;
+    --gray-100: #efefef;
+    --gray-200: #dcdcdc;
+    --gray-300: #bdbdbd;
+    --gray-400: #989898;
+    --gray-500: #7c7c7c;
+    --gray-600: #656565;
+    --gray-700: #525252;
+    --gray-800: #464646;
+    --gray-900: #3d3d3d;
+    --gray-950: #292929;
+    --gray-1000: #000000;
+
+    --green-50: #f2fcf1;
+    --green-200: #c0f4be;
+    --green-600: #209b1e;
+
+    --teal-50: #ebffff;
+    --teal-100: #ceffff;
+    --teal-200: #a3fcfe;
+    --teal-300: #63f6fd;
+    --teal-400: #1ce7f4;
+    --teal-500: #00cada;
+    --teal-600: #0396aa;
+    --teal-700: #0a8094;
+    --teal-800: #126778;
+    --teal-900: #145565;
+    --teal-950: #063946;
+
+    --wadnr-orange: #e49937;
+    --orange: var(--wadnr-orange);
+
+    --wadnr-green: #89bf40;
+    --wadnr-blue: #0099ab;
+
+    --primary: #3e72b0;
+    --primary-rgb: 62, 114, 176;
+    --secondary: #5a9cb0;
+    --secondary-rgb: 90, 156, 176;
+    --muted: #dee2e6;
+    --danger: #a94442;
+
+    --wadnr-blue: #2f3f56;
+    --wadnr-olive: #646820;
+
+    /* type sizes (clamp expressions preserved) */
+    --type-size-050: clamp(0.5rem, 0.42rem + 0.38vw, 0.675rem);
+    --type-size-100: clamp(0.6rem, 0.52rem + 0.43vw, 0.78rem);
+    --type-size-150: clamp(0.66rem, 0.58rem + 0.48vw, 0.88rem);
+    --type-size-200: clamp(0.72rem, 0.62rem + 0.52vw, 0.94rem);
+    --type-size-300: clamp(0.87rem, 0.74rem + 0.62vw, 1.13rem);
+    --type-size-400: clamp(1.04rem, 0.89rem + 0.74vw, 1.35rem);
+    --type-size-500: clamp(1.25rem, 1.07rem + 0.89vw, 1.63rem);
+    --type-size-600: clamp(1.5rem, 1.29rem + 1.07vw, 1.95rem);
+    --type-size-700: clamp(1.8rem, 1.54rem + 1.29vw, 2.34rem);
+    --type-size-800: clamp(2.16rem, 1.85rem + 1.54vw, 2.81rem);
+    --type-size-900: clamp(2.59rem, 2.22rem + 1.85vw, 3.37rem);
+    --type-size-1000: clamp(3.11rem, 2.67rem + 2.22vw, 4.625em);
+    --type-size-1500: clamp(5rem, 6.5rem + 3.33vw, 7rem);
+    --type-size-2000: clamp(6.22rem, 5.25rem + 4.44vw, 8.08rem);
+
+    /* shadows */
+    --shadow-100: 0 4px 6px 0 hsla(0, 0%, 0%, 0.1);
+    --shadow-200: 0 0 1.5rem rgba(0, 0, 0, 0.1);
+    --shadow-300: 0px 4px 12px 0px #0000001a;
+
+    /* border radius */
+    --border-radius-100: 0.125rem;
+    --border-radius-200: 0.25rem;
+    --border-radius-300: 0.5rem;
+    --border-radius-400: 0.75rem;
+    --border-radius-500: 1rem;
+    --border-radius-600: 1.5rem;
+    --border-radius-700: 2rem;
+    --border-radius-800: 3rem;
+    --border-radius-900: 4rem;
+
+    /* spacing defaults (add/adjust as needed) */
+    --spacing-unit: 1rem;
+    --spacing-050: calc(0.125 * var(--spacing-unit));
+    --spacing-100: calc(0.25 * var(--spacing-unit));
+    --spacing-200: calc(0.5 * var(--spacing-unit));
+    --spacing-300: calc(0.75 * var(--spacing-unit));
+    --spacing-400: calc(1 * var(--spacing-unit));
+    --spacing-500: calc(1.5 * var(--spacing-unit));
+    --spacing-600: calc(2 * var(--spacing-unit));
+    --spacing-700: calc(3 * var(--spacing-unit));
+    --spacing-775: calc(3.75 * var(--spacing-unit));
+    --spacing-800: calc(4 * var(--spacing-unit));
+    --spacing-900: calc(6 * var(--spacing-unit));
+    --spacing-950: calc(7.5 * var(--spacing-unit));
+    --spacing-1000: calc(15 * var(--spacing-unit));
+
+    /* general site theme */
+    --color-text: #4b4b4b;
+    --color-link: #337ab7;
+
+    --lexend: "Lexend Deca", sans-serif;
+    --header-nav-link-font-weight: inherit;
+    --font-family-sans-serif: var(--lexend);
+    --font-size: 16px;
+    --inter: "Inter", sans-serif;
+
+    /* cards */
+    --card-header-bg-color: #969eac;
+    --card-header-border-color: #969eac;
+    --card-title-text-color: var(--white);
+    --card-body-bg-color: #f7f7f7;
+    --card-border-color: var(--gray-100);
+    --card-footer-border-color: rgba(0, 0, 0, 0.05);
+
+    /* buttons */
+    --btn-primary-bg-color: var(--primary);
+    --btn-primary-border-color: var(--primary);
+    --btn-primary-text-color: var(--white);
+    --btn-primary-hover-bg-color: #305d8e;
+    --btn-primary-hover-border-color: #305d8e;
+
+    --btn-secondary-bg-color: #7a8190;
+    --btn-secondary-border-color: #7a8190;
+    --btn-secondary-text-color: var(--white);
+    --btn-secondary-hover-bg-color: #5e6370;
+    --btn-secondary-hover-border-color: #5e6370;
+}
