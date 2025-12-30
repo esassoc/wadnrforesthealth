@@ -7,8 +7,8 @@ trigger: none
 
 variables:
   spokeKeyVaultName: 'aks-spoke-kv-esa-prod'
-  databaseName: 'WADNRForestHealthTrackerDB'
-  qaStorageAccountName: 'wadnrforesthealthtrackerappqa'
+  databaseName: 'WADNRDB'
+  qaStorageAccountName: 'wadnrappqa'
 
 jobs:
 - job: BackupDB

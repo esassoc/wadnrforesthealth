@@ -1,0 +1,46 @@
+<layerGroup>
+  <id>LayerGroupInfoImpl--4e572307:1802f6f4444:-5c9c</id>
+  <name>DualBenefitPrioritization</name>
+  <mode>SINGLE</mode>
+  <title>DualBenefitPrioritization</title>
+  <workspace>
+    <id>WorkspaceInfoImpl-73401091:166c1a0ea71:-7fff</id>
+  </workspace>
+  <publishables>
+    <published type="layer">
+      <id>LayerInfoImpl--211a5870:1800b538690:-7ffc</id>
+    </published>
+    <published type="layer">
+      <id>LayerInfoImpl--211a5870:1800b538690:-7ffa</id>
+    </published>
+    <published type="layer">
+      <id>LayerInfoImpl--5e86fdc9:1673789eb66:-7e4e</id>
+    </published>
+    <published type="layer">
+      <id>LayerInfoImpl--211a5870:1800b538690:-7ffe</id>
+    </published>
+  </publishables>
+  <styles>
+    <style>
+      <id>StyleInfoImpl--1323792d:17ffb74513e:-7ffd</id>
+    </style>
+    <style>
+      <id>StyleInfoImpl--1323792d:17ffb74513e:-7ffd</id>
+    </style>
+    <style>
+      <id>StyleInfoImpl--211a5870:1800b538690:-6cc7</id>
+    </style>
+    <style>
+      <id>StyleInfoImpl--211a5870:1800b538690:-6cc7</id>
+    </style>
+  </styles>
+  <bounds>
+    <minx>-124.86082024420986</minx>
+    <maxx>-116.91523369414077</maxx>
+    <miny>45.54372685614601</miny>
+    <maxy>49.00243163247204</maxy>
+    <crs>EPSG:4326</crs>
+  </bounds>
+  <dateCreated>2022-04-15 23:06:11.282 UTC</dateCreated>
+  <dateModified>2022-04-22 04:31:51.512 UTC</dateModified>
+</layerGroup>

@@ -1,0 +1,32 @@
+<!-- datastore.xml.template generates datastore.xml during the release/deploy process, customized for the local environment. -->
+<dataStore>
+  <id>DataStoreInfoImpl--7c524755:15d7bc5e17f:-6447</id>
+  <name>GeoServerSqlDataSource</name>
+  <type>Microsoft SQL Server</type>
+  <enabled>true</enabled>
+  <workspace>
+    <id>WorkspaceInfoImpl-73401091:166c1a0ea71:-7fff</id>
+  </workspace>
+  <connectionParameters>
+    <entry key="schema">dbo</entry>
+    <entry key="Use native geometry serialization">true</entry>
+    <entry key="database">${datastore-database}</entry>
+    <entry key="host">${datastore-host}</entry>
+    <entry key="Use Native Paging">false</entry>
+    <entry key="Force spatial index usage via hints">false</entry>
+    <entry key="Expose primary keys">true</entry>
+    <entry key="validate connections">false</entry>
+    <entry key="Integrated Security">false</entry>
+    <entry key="port">1433</entry>
+    <entry key="min connections">1</entry>
+    <entry key="dbtype">sqlserver</entry>
+    <entry key="namespace">WADNRForestHealth</entry>
+    <entry key="Connection timeout">20</entry>
+    <entry key="max connections">10</entry>
+    <entry key="fetch size">1000</entry>
+    <entry key="Test while idle">false</entry>
+    <entry key="user">${datastore-user}</entry>
+    <entry key="passwd">${datastore-password}</entry>
+  </connectionParameters>
+  <__default>false</__default>
+</dataStore>

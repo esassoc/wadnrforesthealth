@@ -1,0 +1,17 @@
+<layer>
+  <name>WashingtonLegislativeDistrict</name>
+  <id>LayerInfoImpl--7ded52f2:173e52b17fe:-7f9b</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--7ded52f2:173e52b17fe:-7f99</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--7ded52f2:173e52b17fe:-7f9c</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateCreated>2020-08-13 23:21:21.570 UTC</dateCreated>
+  <dateModified>2020-08-14 00:12:43.27 UTC</dateModified>
+</layer>

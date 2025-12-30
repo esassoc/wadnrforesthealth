@@ -10,9 +10,16 @@
 /Source/**/bin/
 /Source/**/obj/
 
-# /Source/LtInfo.Common/
-/Source/LtInfo.Common/LtInfo.Common.csproj.user
-/Source/LtInfo.Common/LtInfo.Common.csproj.DotSettings.user
+/WADNRForestHealthTracker/WADNRForestHealthTracker.Common/*.user
+WADNRForestHealthTracker.GeoServer/data_dir/security/*
+WADNRForestHealthTracker.GeoServer/data_dir/.updatepassword.lock
+WADNRForestHealthTracker.GeoServer/data_dir/geoserver-environment.properties
+WADNRForestHealthTracker.GeoServer/data_dir/s3.properties
+WADNRForestHealthTracker.GeoServer/data_dir/controlflow.properties
+WADNRForestHealthTracker.GeoServer/data_dir/logs/geoserver.log.1
+#WADNRForestHealthTracker.GeoServer/data_dir/gwc-layers
+WADNRForestHealthTracker.GeoServer/data_dir/logs
+#WADNRForestHealthTracker.GeoServer/data_dir/gwc
 
 # /Source/LtInfo.Common/HealthMonitor/
 
@@ -29,6 +36,7 @@
 *.dbmdl
 *.jfm
 
+*.env
 /.dockerignore
 /*.user
 *.user
@@ -36,3 +44,5 @@
 /WADNRForestHealthTracker.Database/*.jfm
 bin
 obj
+/Build/temp
+/WADNRForestHealthTracker.API/appsecrets.json

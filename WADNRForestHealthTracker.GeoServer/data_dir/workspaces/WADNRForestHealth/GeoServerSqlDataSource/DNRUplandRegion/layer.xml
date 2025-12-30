@@ -1,0 +1,15 @@
+<layer>
+  <name>DNRUplandRegion</name>
+  <id>LayerInfoImpl--7c524755:15d7bc5e17f:-8444</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--5df0e0e8:1687779b969:-7ffe</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--7c524755:15d7bc5e17f:-7445</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+</layer>

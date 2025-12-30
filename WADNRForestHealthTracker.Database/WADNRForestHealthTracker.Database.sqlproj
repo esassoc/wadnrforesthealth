@@ -417,4 +417,7 @@
       <DatabaseVariableLiteralValue>master</DatabaseVariableLiteralValue>
     </ArtifactReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="WADNRForestHealthTracker.Database.publish.xml" />
+  </ItemGroup>
 </Project>

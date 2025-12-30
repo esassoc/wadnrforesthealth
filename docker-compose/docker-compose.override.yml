@@ -1,0 +1,57 @@
+services:
+  wadnr.api:
+    build:
+      args:
+        source: .
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - SECRET_PATH=${SECRET_PATH_API}
+      - SitkaEmailRedirect=${SitkaEmailRedirect}
+      - SitkaSupportEmail=${SitkaSupportEmail}
+      - DoNotReplyEmail=${DoNotReplyEmail}
+      - MailLogBcc=${MailLogBcc}
+      - KeystoneOpenIDUrl=${KeystoneOpenIDUrl}
+      - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY}
+      - RECAPTCHA_VERIFY_URL=${RECAPTCHA_VERIFY_URL}
+      - RECAPTCHA_SCORE_THRESHOLD=${RECAPTCHA_SCORE_THRESHOLD}
+      - SitkaCaptureServiceUrl=${SitkaCaptureServiceUrl}
+    ports:
+      - "3211:8080"
+      - "3212:8081"
+    volumes:
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  geoserver:
+    container_name: wadnr_geoserver
+    image: kartoza/geoserver:2.28.0
+    environment:
+      - ENABLE_JSONP=true
+      - CATALINA_OPTS=-DALLOW_ENV_PARAMETRIZATION=true
+      - ENV_PROPERTIES=/app/config/geoserver-environment.properties
+      - STABLE_EXTENSIONS=sqlserver-plugin
+      - TOMCAT_EXTRAS=false
+      - ROOT_WEBAPP_REDIRECT=true
+      - SAMPLE_DATA=false
+      - GEOSERVER_CONFIG_DIRECTORY=/app/config
+      - GEOSERVER_ADMIN_USER=geomaster
+      - GEOSERVER_ADMIN_PASSWORD=${GeoserverAdminPassword}
+      - INITIAL_MEMORY=4G
+      - MAXIMUM_MEMORY=8G
+    ports:
+      - 127.0.0.1:3280:8080
+    volumes:
+      - c:/git/sitkatech/wadnrforesthealth/WADNRForestHealth.GeoServer/data_dir:/opt/geoserver/data_dir
+      - c:/sitka/WADNRForestHealth/GeoServer:/app/config
+
+  sitkacapture:
+    container_name: wadnr_sitkacapture
+    image: containersesaqa.azurecr.io/sitkacapture:latest
+    environment:
+        - PORT=3216
+        - NODE_ENV=Development
+    ports:
+        - 127.0.0.1:3216:3216
+    extra_hosts:
+      - "wadnr.localhost.esassoc.com:host-gateway"

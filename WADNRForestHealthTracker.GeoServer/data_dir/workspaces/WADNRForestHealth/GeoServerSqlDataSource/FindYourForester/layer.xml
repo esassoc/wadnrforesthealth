@@ -1,0 +1,17 @@
+<layer>
+  <name>FindYourForester</name>
+  <id>LayerInfoImpl--548d6895:18223bd62c0:-7ffe</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl-7b24d1ec:182cd0a0a5e:-7c68</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--548d6895:18223bd62c0:-7fff</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateCreated>2022-07-22 18:33:38.308 UTC</dateCreated>
+  <dateModified>2022-08-24 00:07:57.98 UTC</dateModified>
+</layer>

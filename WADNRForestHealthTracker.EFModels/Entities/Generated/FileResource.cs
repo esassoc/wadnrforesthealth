@@ -83,4 +83,7 @@ public partial class FileResource
 
     [InverseProperty("SquareLogoFileResource")]
     public virtual ICollection<SystemAttribute> SystemAttributeSquareLogoFileResources { get; set; } = new List<SystemAttribute>();
+
+    public bool InBlobStorage { get; set; }
+    public long? ContentLength { get; set; }
 }

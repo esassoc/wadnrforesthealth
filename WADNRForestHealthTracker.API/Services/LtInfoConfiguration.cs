@@ -1,0 +1,22 @@
+﻿namespace WADNRForestHealthTracker.API.Services
+{
+    public class WADNRForestHealthTrackerConfiguration
+    {
+        public string DatabaseConnectionString { get; set; }
+        public string KeystoneOpenIDUrl { get; set; }
+        public string SendGridApiKey { get; set; }
+        public string SitkaEmailRedirect { get; set; }
+        public string SitkaSupportEmail { get; set; }
+        public string DoNotReplyEmail { get; set; }
+        public string LakeTahoeInfoBaseUrl { get; set; }
+        public string ParcelTrackerBaseUrl { get; set; }
+        public string RECAPTCHA_SECRET_KEY { get; set; }
+        public string RECAPTCHA_VERIFY_URL { get; set; }
+        public double RECAPTCHA_SCORE_THRESHOLD { get; set; }
+        public string LTInfoApiKey { get; set; }
+        public string AzureBlobStorageConnectionString { get; set; }
+        public string SitkaCaptureServiceUrl { get; set; }
+
+        public int Pre2007ProjectCount => 266; // todo: keeping this as a constant here since I doubt it changes now
+    }
+}

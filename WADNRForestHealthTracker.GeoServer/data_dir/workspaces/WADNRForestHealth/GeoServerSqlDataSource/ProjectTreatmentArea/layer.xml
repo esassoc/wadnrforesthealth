@@ -1,0 +1,17 @@
+<layer>
+  <name>ProjectTreatmentArea</name>
+  <id>LayerInfoImpl--538080e8:172f314d0ee:-7ff9</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl-4f81d5aa:172f323622c:-7ff1</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--538080e8:172f314d0ee:-7ffa</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateCreated>2020-06-27 00:10:46.725 UTC</dateCreated>
+  <dateModified>2020-06-27 00:24:26.29 UTC</dateModified>
+</layer>

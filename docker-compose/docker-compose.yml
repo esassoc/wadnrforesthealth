@@ -1,0 +1,6 @@
+services:
+  wadnr.api:
+    image: wadnr/api
+    build:
+      context: ..
+      dockerfile: WADNRForestHealthTracker.API/Dockerfile

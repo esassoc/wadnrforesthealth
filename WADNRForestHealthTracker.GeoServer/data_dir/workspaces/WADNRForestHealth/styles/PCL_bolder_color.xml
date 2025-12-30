@@ -1,0 +1,20 @@
+<style>
+  <id>StyleInfoImpl-7a9e0996:18053408dc8:-30c6</id>
+  <name>PCL_bolder_color</name>
+  <workspace>
+    <id>WorkspaceInfoImpl-73401091:166c1a0ea71:-7fff</id>
+  </workspace>
+  <format>sld</format>
+  <languageVersion>
+    <version>1.0.0</version>
+  </languageVersion>
+  <filename>PCL_bolder_color.sld</filename>
+  <legend>
+    <width>222</width>
+    <height>210</height>
+    <format>image/png</format>
+    <onlineResource>https://foresthealthtracker.dnr.wa.gov/content/leaflet/images/priorityRanking-legend.png</onlineResource>
+  </legend>
+  <dateCreated>2022-04-22 23:53:05.864 UTC</dateCreated>
+  <dateModified>2022-04-23 00:27:52.116 UTC</dateModified>
+</style>
