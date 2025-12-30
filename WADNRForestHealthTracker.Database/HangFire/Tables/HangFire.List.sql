@@ -1,7 +1,14 @@
 CREATE TABLE [HangFire].[List](
-    [Id] [int] IDENTITY(1,1) NOT NULL CONSTRAINT PK_List_Id PRIMARY KEY,
-    [Key] [varchar](100) NOT NULL,
-    [Value] [varchar](max) NULL,
-    [ExpireAt] [datetime] NULL
+	[Id] [bigint] IDENTITY(1,1) NOT NULL,
+	[Key] [nvarchar](100) NOT NULL,
+	[Value] [nvarchar](max) NULL,
+	[ExpireAt] [datetime] NULL,
+	CONSTRAINT [PK_HangFire_List] PRIMARY KEY ([Key], [Id])
 )
 GO
+
+CREATE NONCLUSTERED INDEX [IX_HangFire_List_ExpireAt] ON [HangFire].[List]
+(
+	[ExpireAt] ASC
+)
+WHERE ([ExpireAt] IS NOT NULL)

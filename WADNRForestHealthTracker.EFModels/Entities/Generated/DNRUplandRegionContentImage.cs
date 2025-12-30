@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
 [Table("DNRUplandRegionContentImage")]
+[Index("DNRUplandRegionContentImageID", "FileResourceID", Name = "AK_DNRUplandRegionContentImage_DNRUplandRegionContentImageID_FileResourceID", IsUnique = true)]
 public partial class DNRUplandRegionContentImage
 {
     [Key]
@@ -19,4 +20,8 @@ public partial class DNRUplandRegionContentImage
     [ForeignKey("DNRUplandRegionID")]
     [InverseProperty("DNRUplandRegionContentImages")]
     public virtual DNRUplandRegion DNRUplandRegion { get; set; } = null!;
+
+    [ForeignKey("FileResourceID")]
+    [InverseProperty("DNRUplandRegionContentImages")]
+    public virtual FileResource FileResource { get; set; } = null!;
 }

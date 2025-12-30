@@ -1,13 +1,13 @@
 //  IMPORTANT:
 //  This file is generated. Your changes will be lost.
 //  Use the corresponding partial class for customizations.
-//  Source Table: [dbo].[PersonRole]
+//  Source Table: [dbo].[FieldDefinitionDatumImage]
 namespace WADNRForestHealthTracker.EFModels.Entities
 {
-    public partial class PersonRole
+    public partial class FieldDefinitionDatumImage
     {
-        public int PrimaryKey => PersonRoleID;
-        public Role Role => Role.AllLookupDictionary[RoleID];
+        public int PrimaryKey => FieldDefinitionDatumImageID;
+
 
         public static class FieldLengths
         {

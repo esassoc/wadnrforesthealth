@@ -7,6 +7,7 @@ namespace WADNRForestHealthTracker.EFModels.Entities
     public partial class FundSourceAllocation
     {
         public int PrimaryKey => FundSourceAllocationID;
+        public Division? Division => DivisionID.HasValue ? Division.AllLookupDictionary[DivisionID.Value] : null;
         public FundSourceAllocationSource? FundSourceAllocationSource => FundSourceAllocationSourceID.HasValue ? FundSourceAllocationSource.AllLookupDictionary[FundSourceAllocationSourceID.Value] : null;
 
         public static class FieldLengths

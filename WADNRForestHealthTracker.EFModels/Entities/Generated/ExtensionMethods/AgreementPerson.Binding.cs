@@ -7,7 +7,7 @@ namespace WADNRForestHealthTracker.EFModels.Entities
     public partial class AgreementPerson
     {
         public int PrimaryKey => AgreementPersonID;
-
+        public AgreementPersonRole AgreementPersonRole => AgreementPersonRole.AllLookupDictionary[AgreementPersonRoleID];
 
         public static class FieldLengths
         {

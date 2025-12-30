@@ -7,7 +7,7 @@ namespace WADNRForestHealthTracker.EFModels.Entities
     public partial class SupportRequestLog
     {
         public int PrimaryKey => SupportRequestLogID;
-
+        public SupportRequestType SupportRequestType => SupportRequestType.AllLookupDictionary[SupportRequestTypeID];
 
         public static class FieldLengths
         {

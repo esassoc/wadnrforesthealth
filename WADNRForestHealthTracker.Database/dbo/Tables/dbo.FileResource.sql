@@ -4,10 +4,10 @@ CREATE TABLE dbo.FileResource
     FileResourceMimeTypeID int NOT NULL CONSTRAINT FK_FileResource_FileResourceMimeType_FileResourceMimeTypeID FOREIGN KEY REFERENCES dbo.FileResourceMimeType(FileResourceMimeTypeID),
     OriginalBaseFilename varchar(255) NOT NULL,
     OriginalFileExtension varchar(255) NOT NULL,
-    FileResourceGUID uniqueidentifier NOT NULL,
-    FileResourceData varbinary(max) NOT NULL,
+    FileResourceGUID uniqueidentifier NOT NULL CONSTRAINT AK_FileResource_FileResourceGUID UNIQUE,
     CreatePersonID int NOT NULL CONSTRAINT FK_FileResource_Person_CreatePersonID_PersonID FOREIGN KEY REFERENCES dbo.Person(PersonID),
     CreateDate datetime NOT NULL,
-    CONSTRAINT AK_FileResource_FileResourceGUID UNIQUE (FileResourceGUID)
+    [InBlobStorage] [bit] NOT NULL,
+    [ContentLength] [bigint] NULL    
 )
 GO

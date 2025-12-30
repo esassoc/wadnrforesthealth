@@ -7,12 +7,14 @@ using Microsoft.EntityFrameworkCore;
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
 [Table("ProjectCode")]
+[Index("ProjectCodeName", Name = "AK_ProjectCode_ProjectCodeName", IsUnique = true)]
 public partial class ProjectCode
 {
     [Key]
     public int ProjectCodeID { get; set; }
 
     [StringLength(100)]
+    [Unicode(false)]
     public string ProjectCodeName { get; set; } = null!;
 
     [StringLength(255)]

@@ -20,5 +20,10 @@ public partial class FundSourceAllocationBudgetLineItem
     [Column(TypeName = "money")]
     public decimal FundSourceAllocationBudgetLineItemAmount { get; set; }
 
+    [Unicode(false)]
     public string? FundSourceAllocationBudgetLineItemNote { get; set; }
+
+    [ForeignKey("FundSourceAllocationID")]
+    [InverseProperty("FundSourceAllocationBudgetLineItems")]
+    public virtual FundSourceAllocation FundSourceAllocation { get; set; } = null!;
 }

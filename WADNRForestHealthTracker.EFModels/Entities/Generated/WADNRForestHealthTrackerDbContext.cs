@@ -51,6 +51,10 @@ public partial class WADNRForestHealthTrackerDbContext : DbContext
 
     public virtual DbSet<FederalFundCode> FederalFundCodes { get; set; }
 
+    public virtual DbSet<FieldDefinitionDatum> FieldDefinitionData { get; set; }
+
+    public virtual DbSet<FieldDefinitionDatumImage> FieldDefinitionDatumImages { get; set; }
+
     public virtual DbSet<FileResource> FileResources { get; set; }
 
     public virtual DbSet<FileResourceMimeTypeFileExtension> FileResourceMimeTypeFileExtensions { get; set; }
@@ -383,6 +387,8 @@ public partial class WADNRForestHealthTrackerDbContext : DbContext
             entity.HasKey(e => e.ClassificationID).HasName("PK_Classification_ClassificationID");
 
             entity.HasOne(d => d.ClassificationSystem).WithMany(p => p.Classifications).OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasOne(d => d.KeyImageFileResource).WithMany(p => p.Classifications).HasConstraintName("FK_Classification_FileResource_KeyImageFileResourceID_FileResourceID");
         });
 
         modelBuilder.Entity<ClassificationSystem>(entity =>
@@ -398,8 +404,6 @@ public partial class WADNRForestHealthTrackerDbContext : DbContext
         modelBuilder.Entity<Country>(entity =>
         {
             entity.HasKey(e => e.CountryID).HasName("PK_Country_CountryID");
-
-            entity.Property(e => e.CountryID).ValueGeneratedNever();
         });
 
         modelBuilder.Entity<County>(entity =>
@@ -417,6 +421,10 @@ public partial class WADNRForestHealthTrackerDbContext : DbContext
         modelBuilder.Entity<CustomPageImage>(entity =>
         {
             entity.HasKey(e => e.CustomPageImageID).HasName("PK_CustomPageImage_CustomPageImageID");
+
+            entity.HasOne(d => d.CustomPage).WithMany(p => p.CustomPageImages).OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasOne(d => d.FileResource).WithMany(p => p.CustomPageImages).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<DNRUplandRegion>(entity =>
@@ -433,6 +441,8 @@ public partial class WADNRForestHealthTrackerDbContext : DbContext
             entity.HasKey(e => e.DNRUplandRegionContentImageID).HasName("PK_DNRUplandRegionContentImage_DNRUplandRegionContentImageID");
 
             entity.HasOne(d => d.DNRUplandRegion).WithMany(p => p.DNRUplandRegionContentImages).OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasOne(d => d.FileResource).WithMany(p => p.DNRUplandRegionContentImages).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<ExternalMapLayer>(entity =>
@@ -443,6 +453,20 @@ public partial class WADNRForestHealthTrackerDbContext : DbContext
         modelBuilder.Entity<FederalFundCode>(entity =>
         {
             entity.HasKey(e => e.FederalFundCodeID).HasName("PK_FederalFundCode_FederalFundCodeID");
+        });
+
+        modelBuilder.Entity<FieldDefinitionDatum>(entity =>
+        {
+            entity.HasKey(e => e.FieldDefinitionDatumID).HasName("PK_FieldDefinitionDatum_FieldDefinitionDatumID");
+        });
+
+        modelBuilder.Entity<FieldDefinitionDatumImage>(entity =>
+        {
+            entity.HasKey(e => e.FieldDefinitionDatumImageID).HasName("PK_FieldDefinitionDatumImage_FieldDefinitionDatumImageID");
+
+            entity.HasOne(d => d.FieldDefinitionDatum).WithMany(p => p.FieldDefinitionDatumImages).OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasOne(d => d.FileResource).WithMany(p => p.FieldDefinitionDatumImages).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<FileResource>(entity =>
@@ -525,6 +549,8 @@ public partial class WADNRForestHealthTrackerDbContext : DbContext
         modelBuilder.Entity<FundSourceAllocationBudgetLineItem>(entity =>
         {
             entity.HasKey(e => e.FundSourceAllocationBudgetLineItemID).HasName("PK_FundSourceAllocationBudgetLineItem_FundSourceAllocationBudgetLineItemID");
+
+            entity.HasOne(d => d.FundSourceAllocation).WithMany(p => p.FundSourceAllocationBudgetLineItems).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<FundSourceAllocationChangeLog>(entity =>
@@ -1306,11 +1332,15 @@ public partial class WADNRForestHealthTrackerDbContext : DbContext
             entity.HasKey(e => e.ProjectTagID).HasName("PK_ProjectTag_ProjectTagID");
 
             entity.HasOne(d => d.Project).WithMany(p => p.ProjectTags).OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasOne(d => d.Tag).WithMany(p => p.ProjectTags).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<ProjectType>(entity =>
         {
             entity.HasKey(e => e.ProjectTypeID).HasName("PK_ProjectType_ProjectTypeID");
+
+            entity.HasOne(d => d.TaxonomyBranch).WithMany(p => p.ProjectTypes).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<ProjectUpdate>(entity =>
@@ -1350,6 +1380,10 @@ public partial class WADNRForestHealthTrackerDbContext : DbContext
         modelBuilder.Entity<ProjectUpdateProgram>(entity =>
         {
             entity.HasKey(e => e.ProjectUpdateProgramID).HasName("PK_ProjectUpdateProgram_ProjectUpdateProgramID");
+
+            entity.HasOne(d => d.Program).WithMany(p => p.ProjectUpdatePrograms).OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasOne(d => d.ProjectUpdateBatch).WithMany(p => p.ProjectUpdatePrograms).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<RelationshipType>(entity =>
@@ -1360,6 +1394,8 @@ public partial class WADNRForestHealthTrackerDbContext : DbContext
         modelBuilder.Entity<ReportTemplate>(entity =>
         {
             entity.HasKey(e => e.ReportTemplateID).HasName("PK_ReportTemplate_ReportTemplateID");
+
+            entity.HasOne(d => d.FileResource).WithMany(p => p.ReportTemplates).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<SocrataDataMartRawJsonImport>(entity =>
@@ -1372,6 +1408,8 @@ public partial class WADNRForestHealthTrackerDbContext : DbContext
             entity.HasKey(e => e.StateProvinceID).HasName("PK_StateProvince_StateProvinceID");
 
             entity.Property(e => e.StateProvinceID).ValueGeneratedNever();
+
+            entity.HasOne(d => d.Country).WithMany(p => p.StateProvinces).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<SupportRequestLog>(entity =>
@@ -1383,11 +1421,17 @@ public partial class WADNRForestHealthTrackerDbContext : DbContext
         {
             entity.HasKey(e => e.SystemAttributeID).HasName("PK_SystemAttribute_SystemAttributeID");
 
+            entity.HasOne(d => d.AssociatePerfomanceMeasureTaxonomyLevel).WithMany(p => p.SystemAttributeAssociatePerfomanceMeasureTaxonomyLevels)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SystemAttribute_TaxonomyLevel_AssociatePerfomanceMeasureTaxonomyLevelID_TaxonomyLevelID");
+
             entity.HasOne(d => d.BannerLogoFileResource).WithMany(p => p.SystemAttributeBannerLogoFileResources).HasConstraintName("FK_SystemAttribute_FileResource_BannerLogoFileResourceID_FileResourceID");
 
             entity.HasOne(d => d.PrimaryContactPerson).WithMany(p => p.SystemAttributes).HasConstraintName("FK_SystemAttribute_Person_PrimaryContactPersonID_PersonID");
 
             entity.HasOne(d => d.SquareLogoFileResource).WithMany(p => p.SystemAttributeSquareLogoFileResources).HasConstraintName("FK_SystemAttribute_FileResource_SquareLogoFileResourceID_FileResourceID");
+
+            entity.HasOne(d => d.TaxonomyLevel).WithMany(p => p.SystemAttributeTaxonomyLevels).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<TabularDataImport>(entity =>
@@ -1414,8 +1458,6 @@ public partial class WADNRForestHealthTrackerDbContext : DbContext
         modelBuilder.Entity<TaxonomyLevel>(entity =>
         {
             entity.HasKey(e => e.TaxonomyLevelID).HasName("PK_TaxonomyLevel_TaxonomyLevelID");
-
-            entity.Property(e => e.TaxonomyLevelID).ValueGeneratedNever();
         });
 
         modelBuilder.Entity<TaxonomyTrunk>(entity =>
@@ -1431,6 +1473,8 @@ public partial class WADNRForestHealthTrackerDbContext : DbContext
         modelBuilder.Entity<Treatment>(entity =>
         {
             entity.HasKey(e => e.TreatmentID).HasName("PK_Treatment_TreatmentID");
+
+            entity.HasOne(d => d.Project).WithMany(p => p.Treatments).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<TreatmentArea>(entity =>

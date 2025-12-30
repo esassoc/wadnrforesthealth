@@ -8,6 +8,7 @@ namespace WADNRForestHealthTracker.EFModels.Entities
     {
         public int PrimaryKey => ProgramNotificationConfigurationID;
         public ProgramNotificationType ProgramNotificationType => ProgramNotificationType.AllLookupDictionary[ProgramNotificationTypeID];
+        public RecurrenceInterval RecurrenceInterval => RecurrenceInterval.AllLookupDictionary[RecurrenceIntervalID];
 
         public static class FieldLengths
         {

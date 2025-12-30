@@ -710,15 +710,17 @@ public class AzureBlobStorageService
 
     public bool UploadFileResource(FileResource fileResource)
     {
-        using MemoryStream ms = new MemoryStream(fileResource.FileResourceData);
+        return true;
+        //todo: turn this on if we want to push fileresourcedata to blob
+        //using MemoryStream ms = new MemoryStream(fileResource.FileResourceData);
 
-        var blobClient = _fileResourceContainerClient.GetBlobClient(fileResource.FileResourceGUID.ToString());
-        if (!blobClient.Exists())
-        {
-            blobClient.Upload(ms, new BlobHttpHeaders { ContentType = GetFileResourceContentType(fileResource) });
-        }
+        //var blobClient = _fileResourceContainerClient.GetBlobClient(fileResource.FileResourceGUID.ToString());
+        //if (!blobClient.Exists())
+        //{
+        //    blobClient.Upload(ms, new BlobHttpHeaders { ContentType = GetFileResourceContentType(fileResource) });
+        //}
 
-        return blobClient.Exists();
+        //return blobClient.Exists();
     }
 
     public async Task<BlobDownloadResult> DownloadFileResourceFromBlobStorage(FileResource fileResource)

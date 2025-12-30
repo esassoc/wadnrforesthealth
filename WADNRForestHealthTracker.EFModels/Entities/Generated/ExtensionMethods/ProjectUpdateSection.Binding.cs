@@ -49,7 +49,7 @@ namespace WADNRForestHealthTracker.EFModels.Entities
             HasCompletionStatus = hasCompletionStatus;
             ProjectWorkflowSectionGroupingID = projectWorkflowSectionGroupingID;
         }
-
+        public ProjectWorkflowSectionGrouping ProjectWorkflowSectionGrouping => ProjectWorkflowSectionGrouping.AllLookupDictionary[ProjectWorkflowSectionGroupingID];
         [Key]
         public int ProjectUpdateSectionID { get; private set; }
         public string ProjectUpdateSectionName { get; private set; }

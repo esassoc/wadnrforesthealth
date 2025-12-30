@@ -1,11 +1,25 @@
 CREATE TABLE [HangFire].[Job](
-    [Id] [int] IDENTITY(1,1) NOT NULL CONSTRAINT PK_Job_Id PRIMARY KEY,
-    [StateId] [int] NULL,
-    [StateName] [varchar](20) NULL,
-    [InvocationData] [varchar](max) NOT NULL,
-    [Arguments] [varchar](max) NOT NULL,
-    [CreatedAt] [datetime] NOT NULL,
-    [ExpireAt] [datetime] NULL
+	[Id] [bigint] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_HangFire_Job] PRIMARY KEY,
+	[StateId] [bigint] NULL,
+	[StateName] [nvarchar](20) NULL,
+	[InvocationData] [nvarchar](max) NOT NULL,
+	[Arguments] [nvarchar](max) NOT NULL,
+	[CreatedAt] [datetime] NOT NULL,
+	[ExpireAt] [datetime] NULL
 )
 GO
-CREATE INDEX IX_HangFire_Job_StateName ON [HangFire].[Job]([StateName]);
+
+CREATE NONCLUSTERED INDEX [IX_HangFire_Job_ExpireAt] ON [HangFire].[Job]
+(
+	[ExpireAt] ASC
+)
+INCLUDE([StateName]) 
+WHERE ([ExpireAt] IS NOT NULL)
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_HangFire_Job_StateName] ON [HangFire].[Job]
+(
+	[StateName] ASC
+)
+WHERE ([StateName] IS NOT NULL)

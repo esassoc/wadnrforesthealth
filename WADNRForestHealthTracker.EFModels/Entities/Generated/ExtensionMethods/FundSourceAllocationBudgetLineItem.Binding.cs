@@ -7,7 +7,7 @@ namespace WADNRForestHealthTracker.EFModels.Entities
     public partial class FundSourceAllocationBudgetLineItem
     {
         public int PrimaryKey => FundSourceAllocationBudgetLineItemID;
-
+        public CostType CostType => CostType.AllLookupDictionary[CostTypeID];
 
         public static class FieldLengths
         {

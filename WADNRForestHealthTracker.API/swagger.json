@@ -57,19 +57,6 @@
           }
         }
       }
-    },
-    "/file-resources/push-to-blob-storage": {
-      "post": {
-        "tags": [
-          "FileResource"
-        ],
-        "operationId": "PushToBlobStorage_FileResource",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
     }
   },
   "components": { },

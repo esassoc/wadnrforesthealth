@@ -11,6 +11,7 @@ namespace WADNRForestHealthTracker.EFModels.Entities
 
         public static class FieldLengths
         {
+            public const int AgreementTypeAbbrev = 100;
             public const int AgreementTypeName = 100;
         }
     }

@@ -118,25 +118,25 @@ namespace WADNRForestHealthTracker.API.Controllers
 
 
         //todo: uncomment when we want to sync more fileresources to blob storage
-        [HttpPost("push-to-blob-storage")]
-        public async Task<IActionResult> PushToBlobStorage()
-        {
-            var nextFileResourcesToMove = DbContext.FileResources
-                .Where(x => !x.InBlobStorage)
-                .OrderBy(x => x.FileResourceID)
-                .ToList();
+        //[HttpPost("push-to-blob-storage")]
+        //public async Task<IActionResult> PushToBlobStorage()
+        //{
+        //    var nextFileResourcesToMove = DbContext.FileResources
+        //        .Where(x => !x.InBlobStorage)
+        //        .OrderBy(x => x.FileResourceID)
+        //        .ToList();
 
-            foreach (var fileResource in nextFileResourcesToMove)
-            {
-                Logger.LogInformation($"Begin: Transferring {fileResource.OriginalBaseFilename} to blob storage container.");
-                var created = azureBlobStorageService.UploadFileResource(fileResource);
-                Logger.LogInformation($"Finished: Transferring {fileResource.OriginalBaseFilename} to blob storage container.");
+        //    foreach (var fileResource in nextFileResourcesToMove)
+        //    {
+        //        Logger.LogInformation($"Begin: Transferring {fileResource.OriginalBaseFilename} to blob storage container.");
+        //        var created = azureBlobStorageService.UploadFileResource(fileResource);
+        //        Logger.LogInformation($"Finished: Transferring {fileResource.OriginalBaseFilename} to blob storage container.");
 
-                fileResource.InBlobStorage = created;
-            }
+        //        fileResource.InBlobStorage = created;
+        //    }
 
-            await DbContext.SaveChangesAsync();
-            return Ok();
-        }
+        //    await DbContext.SaveChangesAsync();
+        //    return Ok();
+        //}
     }
 }

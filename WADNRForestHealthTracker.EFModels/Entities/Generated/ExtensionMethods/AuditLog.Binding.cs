@@ -7,7 +7,7 @@ namespace WADNRForestHealthTracker.EFModels.Entities
     public partial class AuditLog
     {
         public int PrimaryKey => AuditLogID;
-
+        public AuditLogEventType AuditLogEventType => AuditLogEventType.AllLookupDictionary[AuditLogEventTypeID];
 
         public static class FieldLengths
         {

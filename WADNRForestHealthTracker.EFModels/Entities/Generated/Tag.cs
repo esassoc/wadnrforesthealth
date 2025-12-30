@@ -19,4 +19,7 @@ public partial class Tag
     [StringLength(1000)]
     [Unicode(false)]
     public string? TagDescription { get; set; }
+
+    [InverseProperty("Tag")]
+    public virtual ICollection<ProjectTag> ProjectTags { get; set; } = new List<ProjectTag>();
 }

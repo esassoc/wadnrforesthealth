@@ -32,7 +32,7 @@ public class BlobFileTransferJob(
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        var nextFileResourcesToMove = DbContext.FileResources.Include(x => x.FileResourceData)
+        var nextFileResourcesToMove = DbContext.FileResources
             .Where(x => !x.InBlobStorage)
             .OrderBy(x => x.FileResourceID)
             .Take(FileResourcesPerJob).ToList();

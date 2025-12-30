@@ -57,6 +57,10 @@ public partial class TreatmentUpdate
     [Column(TypeName = "money")]
     public decimal? CostPerAcre { get; set; }
 
+    [ForeignKey("CreateGisUploadAttemptID")]
+    [InverseProperty("TreatmentUpdateCreateGisUploadAttempts")]
+    public virtual GisUploadAttempt? CreateGisUploadAttempt { get; set; }
+
     [ForeignKey("ProgramID")]
     [InverseProperty("TreatmentUpdates")]
     public virtual Program? Program { get; set; }
@@ -68,4 +72,8 @@ public partial class TreatmentUpdate
     [ForeignKey("ProjectUpdateBatchID")]
     [InverseProperty("TreatmentUpdates")]
     public virtual ProjectUpdateBatch ProjectUpdateBatch { get; set; } = null!;
+
+    [ForeignKey("UpdateGisUploadAttemptID")]
+    [InverseProperty("TreatmentUpdateUpdateGisUploadAttempts")]
+    public virtual GisUploadAttempt? UpdateGisUploadAttempt { get; set; }
 }

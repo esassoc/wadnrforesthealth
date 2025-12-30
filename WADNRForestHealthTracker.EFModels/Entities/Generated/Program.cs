@@ -90,5 +90,11 @@ public partial class Program
     public virtual ICollection<ProjectProgram> ProjectPrograms { get; set; } = new List<ProjectProgram>();
 
     [InverseProperty("Program")]
+    public virtual ICollection<ProjectUpdateProgram> ProjectUpdatePrograms { get; set; } = new List<ProjectUpdateProgram>();
+
+    [InverseProperty("Program")]
     public virtual ICollection<TreatmentUpdate> TreatmentUpdates { get; set; } = new List<TreatmentUpdate>();
+
+    [InverseProperty("Program")]
+    public virtual ICollection<Treatment> Treatments { get; set; } = new List<Treatment>();
 }

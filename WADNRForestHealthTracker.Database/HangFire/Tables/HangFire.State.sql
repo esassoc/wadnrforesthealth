@@ -1,11 +1,9 @@
 CREATE TABLE [HangFire].[State](
-	[Id] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_State_Id] PRIMARY KEY,
-	[JobId] [int] NOT NULL CONSTRAINT [FK_State_Job_JobId_Id] FOREIGN KEY REFERENCES [HangFire].[Job]([Id]) ON UPDATE CASCADE ON DELETE CASCADE,
-	[Name] [varchar](20) NOT NULL,
-	[Reason] [varchar](100) NULL,
+	[Id] [bigint] IDENTITY(1,1) NOT NULL,
+	[JobId] [bigint] NOT NULL CONSTRAINT [FK_HangFire_State_Job] FOREIGN KEY REFERENCES [HangFire].[Job] ([Id]) ON UPDATE CASCADE ON DELETE CASCADE,
+	[Name] [nvarchar](20) NOT NULL,
+	[Reason] [nvarchar](100) NULL,
 	[CreatedAt] [datetime] NOT NULL,
-	[Data] [varchar](max) NULL
+	[Data] [nvarchar](max) NULL,
+	CONSTRAINT [PK_HangFire_State] PRIMARY KEY ([JobId], [Id])
 )
-GO
-CREATE NONCLUSTERED INDEX [IX_HangFire_State_JobId] ON [HangFire].[State]([JobId])
-GO

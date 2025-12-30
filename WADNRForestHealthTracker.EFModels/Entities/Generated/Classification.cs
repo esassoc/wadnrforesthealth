@@ -38,6 +38,10 @@ public partial class Classification
     [InverseProperty("Classifications")]
     public virtual ClassificationSystem ClassificationSystem { get; set; } = null!;
 
+    [ForeignKey("KeyImageFileResourceID")]
+    [InverseProperty("Classifications")]
+    public virtual FileResource? KeyImageFileResource { get; set; }
+
     [InverseProperty("Classification")]
     public virtual ICollection<ProjectClassification> ProjectClassifications { get; set; } = new List<ProjectClassification>();
 }

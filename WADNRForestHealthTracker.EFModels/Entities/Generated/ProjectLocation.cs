@@ -49,4 +49,7 @@ public partial class ProjectLocation
     [ForeignKey("ProjectID")]
     [InverseProperty("ProjectLocations")]
     public virtual Project Project { get; set; } = null!;
+
+    [InverseProperty("ProjectLocation")]
+    public virtual ICollection<Treatment> Treatments { get; set; } = new List<Treatment>();
 }

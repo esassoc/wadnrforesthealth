@@ -1,8 +1,10 @@
 CREATE TABLE [dbo].[ReportTemplate](
     [ReportTemplateID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_ReportTemplate_ReportTemplateID] PRIMARY KEY,
-    [ReportTemplateName] [varchar](100) NOT NULL CONSTRAINT [AK_ReportTemplate_ReportTemplateName] UNIQUE,
-    [ReportTemplateDisplayName] [varchar](100) NOT NULL CONSTRAINT [AK_ReportTemplate_ReportTemplateDisplayName] UNIQUE,
-    [ReportTemplateDescription] [varchar](250) NOT NULL,
-    [ReportTemplateModelID] [int] NOT NULL CONSTRAINT [FK_ReportTemplate_ReportTemplateModel_ReportTemplateModelID] FOREIGN KEY REFERENCES [dbo].[ReportTemplateModel]([ReportTemplateModelID])
+    [FileResourceID] [int] NOT NULL CONSTRAINT [FK_ReportTemplate_FileResource_FileResourceID] FOREIGN KEY REFERENCES [dbo].[FileResource] ([FileResourceID]),
+    [DisplayName] [varchar](50) NOT NULL,
+    [Description] [varchar](250) NULL,
+    [ReportTemplateModelTypeID] [int] NOT NULL CONSTRAINT [FK_ReportTemplate_ReportTemplateModelType_ReportTemplateModelTypeID] FOREIGN KEY REFERENCES [dbo].[ReportTemplateModelType] ([ReportTemplateModelTypeID]),
+    [ReportTemplateModelID] [int] NOT NULL CONSTRAINT [FK_ReportTemplate_ReportTemplateModel_ReportTemplateModelID] FOREIGN KEY REFERENCES [dbo].[ReportTemplateModel]([ReportTemplateModelID]),
+    [IsSystemTemplate] [bit] NOT NULL DEFAULT ((0))
 )
 GO

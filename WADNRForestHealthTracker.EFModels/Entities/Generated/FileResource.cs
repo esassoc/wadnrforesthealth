@@ -25,16 +25,33 @@ public partial class FileResource
 
     public Guid FileResourceGUID { get; set; }
 
-    public byte[] FileResourceData { get; set; } = null!;
-
     public int CreatePersonID { get; set; }
 
     [Column(TypeName = "datetime")]
     public DateTime CreateDate { get; set; }
 
+    public bool InBlobStorage { get; set; }
+
+    public long? ContentLength { get; set; }
+
+    [InverseProperty("AgreementFileResource")]
+    public virtual ICollection<Agreement> Agreements { get; set; } = new List<Agreement>();
+
+    [InverseProperty("KeyImageFileResource")]
+    public virtual ICollection<Classification> Classifications { get; set; } = new List<Classification>();
+
     [ForeignKey("CreatePersonID")]
     [InverseProperty("FileResources")]
     public virtual Person CreatePerson { get; set; } = null!;
+
+    [InverseProperty("FileResource")]
+    public virtual ICollection<CustomPageImage> CustomPageImages { get; set; } = new List<CustomPageImage>();
+
+    [InverseProperty("FileResource")]
+    public virtual ICollection<DNRUplandRegionContentImage> DNRUplandRegionContentImages { get; set; } = new List<DNRUplandRegionContentImage>();
+
+    [InverseProperty("FileResource")]
+    public virtual ICollection<FieldDefinitionDatumImage> FieldDefinitionDatumImages { get; set; } = new List<FieldDefinitionDatumImage>();
 
     [InverseProperty("FileResource")]
     public virtual ICollection<FirmaHomePageImage> FirmaHomePageImages { get; set; } = new List<FirmaHomePageImage>();
@@ -78,12 +95,12 @@ public partial class FileResource
     [InverseProperty("FileResource")]
     public virtual ICollection<ProjectImage> ProjectImages { get; set; } = new List<ProjectImage>();
 
+    [InverseProperty("FileResource")]
+    public virtual ICollection<ReportTemplate> ReportTemplates { get; set; } = new List<ReportTemplate>();
+
     [InverseProperty("BannerLogoFileResource")]
     public virtual ICollection<SystemAttribute> SystemAttributeBannerLogoFileResources { get; set; } = new List<SystemAttribute>();
 
     [InverseProperty("SquareLogoFileResource")]
     public virtual ICollection<SystemAttribute> SystemAttributeSquareLogoFileResources { get; set; } = new List<SystemAttribute>();
-
-    public bool InBlobStorage { get; set; }
-    public long? ContentLength { get; set; }
 }

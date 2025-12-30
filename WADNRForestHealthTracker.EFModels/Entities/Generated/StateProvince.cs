@@ -47,4 +47,8 @@ public partial class StateProvince
 
     [InverseProperty("StateProvince")]
     public virtual ICollection<County> Counties { get; set; } = new List<County>();
+
+    [ForeignKey("CountryID")]
+    [InverseProperty("StateProvinces")]
+    public virtual Country Country { get; set; } = null!;
 }

@@ -32,15 +32,17 @@ namespace WADNRForestHealthTracker.EFModels.Entities
         /// <summary>
         /// Protected constructor only for use in instantiating the set of static lookup values that match database
         /// </summary>
-        protected AgreementPersonRole(int agreementPersonRoleID, string agreementPersonRoleName)
+        protected AgreementPersonRole(int agreementPersonRoleID, string agreementPersonRoleName, string agreementPersonRoleDisplayName)
         {
             AgreementPersonRoleID = agreementPersonRoleID;
             AgreementPersonRoleName = agreementPersonRoleName;
+            AgreementPersonRoleDisplayName = agreementPersonRoleDisplayName;
         }
 
         [Key]
         public int AgreementPersonRoleID { get; private set; }
         public string AgreementPersonRoleName { get; private set; }
+        public string AgreementPersonRoleDisplayName { get; private set; }
         [NotMapped]
         public int PrimaryKey { get { return AgreementPersonRoleID; } }
 
@@ -120,31 +122,31 @@ namespace WADNRForestHealthTracker.EFModels.Entities
 
     public partial class AgreementPersonRoleContractManager : AgreementPersonRole
     {
-        private AgreementPersonRoleContractManager(int agreementPersonRoleID, string agreementPersonRoleName) : base(agreementPersonRoleID, agreementPersonRoleName) {}
-        public static readonly AgreementPersonRoleContractManager Instance = new AgreementPersonRoleContractManager(1, @"ContractManager");
+        private AgreementPersonRoleContractManager(int agreementPersonRoleID, string agreementPersonRoleName, string agreementPersonRoleDisplayName) : base(agreementPersonRoleID, agreementPersonRoleName, agreementPersonRoleDisplayName) {}
+        public static readonly AgreementPersonRoleContractManager Instance = new AgreementPersonRoleContractManager(1, @"ContractManager", @"Contract Manager");
     }
 
     public partial class AgreementPersonRoleProjectManager : AgreementPersonRole
     {
-        private AgreementPersonRoleProjectManager(int agreementPersonRoleID, string agreementPersonRoleName) : base(agreementPersonRoleID, agreementPersonRoleName) {}
-        public static readonly AgreementPersonRoleProjectManager Instance = new AgreementPersonRoleProjectManager(2, @"ProjectManager");
+        private AgreementPersonRoleProjectManager(int agreementPersonRoleID, string agreementPersonRoleName, string agreementPersonRoleDisplayName) : base(agreementPersonRoleID, agreementPersonRoleName, agreementPersonRoleDisplayName) {}
+        public static readonly AgreementPersonRoleProjectManager Instance = new AgreementPersonRoleProjectManager(2, @"ProjectManager", @"Project Manager");
     }
 
     public partial class AgreementPersonRoleProjectCoordinator : AgreementPersonRole
     {
-        private AgreementPersonRoleProjectCoordinator(int agreementPersonRoleID, string agreementPersonRoleName) : base(agreementPersonRoleID, agreementPersonRoleName) {}
-        public static readonly AgreementPersonRoleProjectCoordinator Instance = new AgreementPersonRoleProjectCoordinator(3, @"ProjectCoordinator");
+        private AgreementPersonRoleProjectCoordinator(int agreementPersonRoleID, string agreementPersonRoleName, string agreementPersonRoleDisplayName) : base(agreementPersonRoleID, agreementPersonRoleName, agreementPersonRoleDisplayName) {}
+        public static readonly AgreementPersonRoleProjectCoordinator Instance = new AgreementPersonRoleProjectCoordinator(3, @"ProjectCoordinator", @"Project Coordinator");
     }
 
     public partial class AgreementPersonRoleSigner : AgreementPersonRole
     {
-        private AgreementPersonRoleSigner(int agreementPersonRoleID, string agreementPersonRoleName) : base(agreementPersonRoleID, agreementPersonRoleName) {}
-        public static readonly AgreementPersonRoleSigner Instance = new AgreementPersonRoleSigner(4, @"Signer");
+        private AgreementPersonRoleSigner(int agreementPersonRoleID, string agreementPersonRoleName, string agreementPersonRoleDisplayName) : base(agreementPersonRoleID, agreementPersonRoleName, agreementPersonRoleDisplayName) {}
+        public static readonly AgreementPersonRoleSigner Instance = new AgreementPersonRoleSigner(4, @"Signer", @"Signer");
     }
 
     public partial class AgreementPersonRoleTechnicalContact : AgreementPersonRole
     {
-        private AgreementPersonRoleTechnicalContact(int agreementPersonRoleID, string agreementPersonRoleName) : base(agreementPersonRoleID, agreementPersonRoleName) {}
-        public static readonly AgreementPersonRoleTechnicalContact Instance = new AgreementPersonRoleTechnicalContact(5, @"TechnicalContact");
+        private AgreementPersonRoleTechnicalContact(int agreementPersonRoleID, string agreementPersonRoleName, string agreementPersonRoleDisplayName) : base(agreementPersonRoleID, agreementPersonRoleName, agreementPersonRoleDisplayName) {}
+        public static readonly AgreementPersonRoleTechnicalContact Instance = new AgreementPersonRoleTechnicalContact(5, @"TechnicalContact", @"Technical Contact");
     }
 }

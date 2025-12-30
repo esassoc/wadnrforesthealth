@@ -51,6 +51,10 @@ public partial class SystemAttribute
     [Unicode(false)]
     public string SocrataAppToken { get; set; } = null!;
 
+    [ForeignKey("AssociatePerfomanceMeasureTaxonomyLevelID")]
+    [InverseProperty("SystemAttributeAssociatePerfomanceMeasureTaxonomyLevels")]
+    public virtual TaxonomyLevel AssociatePerfomanceMeasureTaxonomyLevel { get; set; } = null!;
+
     [ForeignKey("BannerLogoFileResourceID")]
     [InverseProperty("SystemAttributeBannerLogoFileResources")]
     public virtual FileResource? BannerLogoFileResource { get; set; }
@@ -62,4 +66,8 @@ public partial class SystemAttribute
     [ForeignKey("SquareLogoFileResourceID")]
     [InverseProperty("SystemAttributeSquareLogoFileResources")]
     public virtual FileResource? SquareLogoFileResource { get; set; }
+
+    [ForeignKey("TaxonomyLevelID")]
+    [InverseProperty("SystemAttributeTaxonomyLevels")]
+    public virtual TaxonomyLevel TaxonomyLevel { get; set; } = null!;
 }

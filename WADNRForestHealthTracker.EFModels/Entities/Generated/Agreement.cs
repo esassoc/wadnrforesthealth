@@ -51,6 +51,10 @@ public partial class Agreement
 
     public int? AgreementFileResourceID { get; set; }
 
+    [ForeignKey("AgreementFileResourceID")]
+    [InverseProperty("Agreements")]
+    public virtual FileResource? AgreementFileResource { get; set; }
+
     [InverseProperty("Agreement")]
     public virtual ICollection<AgreementFundSourceAllocation> AgreementFundSourceAllocations { get; set; } = new List<AgreementFundSourceAllocation>();
 

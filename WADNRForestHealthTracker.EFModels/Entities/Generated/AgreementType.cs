@@ -15,6 +15,10 @@ public partial class AgreementType
 
     [StringLength(100)]
     [Unicode(false)]
+    public string AgreementTypeAbbrev { get; set; } = null!;
+
+    [StringLength(100)]
+    [Unicode(false)]
     public string AgreementTypeName { get; set; } = null!;
 
     [InverseProperty("AgreementType")]

@@ -7,6 +7,7 @@ namespace WADNRForestHealthTracker.EFModels.Entities
     public partial class ArcOnlineFinanceApiRawJsonImport
     {
         public int PrimaryKey => ArcOnlineFinanceApiRawJsonImportID;
+        public ArcOnlineFinanceApiRawJsonImportTableType ArcOnlineFinanceApiRawJsonImportTableType => ArcOnlineFinanceApiRawJsonImportTableType.AllLookupDictionary[ArcOnlineFinanceApiRawJsonImportTableTypeID];
         public JsonImportStatusType JsonImportStatusType => JsonImportStatusType.AllLookupDictionary[JsonImportStatusTypeID];
 
         public static class FieldLengths

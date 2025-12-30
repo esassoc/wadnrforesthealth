@@ -19,4 +19,7 @@ public partial class Country
     [StringLength(2)]
     [Unicode(false)]
     public string CountryAbbrev { get; set; } = null!;
+
+    [InverseProperty("Country")]
+    public virtual ICollection<StateProvince> StateProvinces { get; set; } = new List<StateProvince>();
 }

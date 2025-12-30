@@ -217,6 +217,9 @@ public partial class Person
     [InverseProperty("UpdatePerson")]
     public virtual ICollection<ProjectUpdateHistory> ProjectUpdateHistories { get; set; } = new List<ProjectUpdateHistory>();
 
+    [InverseProperty("RequestPerson")]
+    public virtual ICollection<SupportRequestLog> SupportRequestLogs { get; set; } = new List<SupportRequestLog>();
+
     [InverseProperty("PrimaryContactPerson")]
     public virtual ICollection<SystemAttribute> SystemAttributes { get; set; } = new List<SystemAttribute>();
 

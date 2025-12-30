@@ -15,4 +15,12 @@ public partial class CustomPageImage
     public int CustomPageID { get; set; }
 
     public int FileResourceID { get; set; }
+
+    [ForeignKey("CustomPageID")]
+    [InverseProperty("CustomPageImages")]
+    public virtual CustomPage CustomPage { get; set; } = null!;
+
+    [ForeignKey("FileResourceID")]
+    [InverseProperty("CustomPageImages")]
+    public virtual FileResource FileResource { get; set; } = null!;
 }

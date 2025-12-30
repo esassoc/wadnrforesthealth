@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
 [Table("ExternalMapLayer")]
+[Index("DisplayName", Name = "AK_ExternalMapLayer_DisplayName", IsUnique = true)]
+[Index("LayerUrl", Name = "AK_ExternalMapLayer_LayerUrl", IsUnique = true)]
 public partial class ExternalMapLayer
 {
     [Key]

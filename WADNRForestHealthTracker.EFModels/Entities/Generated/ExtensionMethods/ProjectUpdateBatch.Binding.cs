@@ -7,7 +7,7 @@ namespace WADNRForestHealthTracker.EFModels.Entities
     public partial class ProjectUpdateBatch
     {
         public int PrimaryKey => ProjectUpdateBatchID;
-
+        public ProjectUpdateState ProjectUpdateState => ProjectUpdateState.AllLookupDictionary[ProjectUpdateStateID];
 
         public static class FieldLengths
         {

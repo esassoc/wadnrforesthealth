@@ -17,6 +17,7 @@ public partial class FederalFundCode
     public string? FederalFundCodeAbbrev { get; set; }
 
     [StringLength(255)]
+    [Unicode(false)]
     public string? FederalFundCodeProgram { get; set; }
 
     [InverseProperty("FederalFundCode")]

@@ -21,6 +21,7 @@ public partial class FundSourceAllocationChangeLog
     public decimal? FundSourceAllocationAmountNewValue { get; set; }
 
     [StringLength(2000)]
+    [Unicode(false)]
     public string? FundSourceAllocationAmountNote { get; set; }
 
     public int ChangePersonID { get; set; }

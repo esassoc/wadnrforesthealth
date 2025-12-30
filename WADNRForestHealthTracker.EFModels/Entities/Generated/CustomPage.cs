@@ -26,4 +26,7 @@ public partial class CustomPage
     public string? CustomPageContent { get; set; }
 
     public int CustomPageNavigationSectionID { get; set; }
+
+    [InverseProperty("CustomPage")]
+    public virtual ICollection<CustomPageImage> CustomPageImages { get; set; } = new List<CustomPageImage>();
 }

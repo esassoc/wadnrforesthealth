@@ -14,6 +14,8 @@ public partial class Treatment
 
     public int ProjectID { get; set; }
 
+    public int TreatmentTypeID { get; set; }
+
     [Column(TypeName = "datetime")]
     public DateTime? TreatmentStartDate { get; set; }
 
@@ -26,8 +28,6 @@ public partial class Treatment
     [StringLength(2000)]
     [Unicode(false)]
     public string? TreatmentNotes { get; set; }
-
-    public int TreatmentTypeID { get; set; }
 
     [Column(TypeName = "decimal(38, 10)")]
     public decimal? TreatmentTreatedAcres { get; set; }
@@ -56,4 +56,24 @@ public partial class Treatment
 
     [Column(TypeName = "money")]
     public decimal? CostPerAcre { get; set; }
+
+    [ForeignKey("CreateGisUploadAttemptID")]
+    [InverseProperty("TreatmentCreateGisUploadAttempts")]
+    public virtual GisUploadAttempt? CreateGisUploadAttempt { get; set; }
+
+    [ForeignKey("ProgramID")]
+    [InverseProperty("Treatments")]
+    public virtual Program? Program { get; set; }
+
+    [ForeignKey("ProjectID")]
+    [InverseProperty("Treatments")]
+    public virtual Project Project { get; set; } = null!;
+
+    [ForeignKey("ProjectLocationID")]
+    [InverseProperty("Treatments")]
+    public virtual ProjectLocation? ProjectLocation { get; set; }
+
+    [ForeignKey("UpdateGisUploadAttemptID")]
+    [InverseProperty("TreatmentUpdateGisUploadAttempts")]
+    public virtual GisUploadAttempt? UpdateGisUploadAttempt { get; set; }
 }

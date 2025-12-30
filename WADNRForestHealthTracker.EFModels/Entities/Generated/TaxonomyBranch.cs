@@ -21,7 +21,7 @@ public partial class TaxonomyBranch
     [Unicode(false)]
     public string? TaxonomyBranchDescription { get; set; }
 
-    [StringLength(7)]
+    [StringLength(20)]
     [Unicode(false)]
     public string? ThemeColor { get; set; }
 
@@ -33,6 +33,9 @@ public partial class TaxonomyBranch
 
     [InverseProperty("TaxonomyBranch")]
     public virtual ICollection<PersonStewardTaxonomyBranch> PersonStewardTaxonomyBranches { get; set; } = new List<PersonStewardTaxonomyBranch>();
+
+    [InverseProperty("TaxonomyBranch")]
+    public virtual ICollection<ProjectType> ProjectTypes { get; set; } = new List<ProjectType>();
 
     [ForeignKey("TaxonomyTrunkID")]
     [InverseProperty("TaxonomyBranches")]

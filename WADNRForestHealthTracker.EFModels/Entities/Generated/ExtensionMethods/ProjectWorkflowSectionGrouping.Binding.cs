@@ -40,6 +40,7 @@ namespace WADNRForestHealthTracker.EFModels.Entities
             SortOrder = sortOrder;
         }
         public List<ProjectCreateSection> ProjectCreateSections => ProjectCreateSection.All.Where(x => x.ProjectWorkflowSectionGroupingID == ProjectWorkflowSectionGroupingID).ToList();
+        public List<ProjectUpdateSection> ProjectUpdateSections => ProjectUpdateSection.All.Where(x => x.ProjectWorkflowSectionGroupingID == ProjectWorkflowSectionGroupingID).ToList();
         [Key]
         public int ProjectWorkflowSectionGroupingID { get; private set; }
         public string ProjectWorkflowSectionGroupingName { get; private set; }

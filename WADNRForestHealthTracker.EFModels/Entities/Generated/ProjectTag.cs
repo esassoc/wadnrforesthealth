@@ -20,4 +20,8 @@ public partial class ProjectTag
     [ForeignKey("ProjectID")]
     [InverseProperty("ProjectTags")]
     public virtual Project Project { get; set; } = null!;
+
+    [ForeignKey("TagID")]
+    [InverseProperty("ProjectTags")]
+    public virtual Tag Tag { get; set; } = null!;
 }

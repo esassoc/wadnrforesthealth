@@ -38,4 +38,8 @@ public partial class SupportRequestLog
     [StringLength(50)]
     [Unicode(false)]
     public string? RequestPersonPhone { get; set; }
+
+    [ForeignKey("RequestPersonID")]
+    [InverseProperty("SupportRequestLogs")]
+    public virtual Person? RequestPerson { get; set; }
 }

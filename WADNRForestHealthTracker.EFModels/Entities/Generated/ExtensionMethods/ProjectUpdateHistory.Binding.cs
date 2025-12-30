@@ -7,7 +7,7 @@ namespace WADNRForestHealthTracker.EFModels.Entities
     public partial class ProjectUpdateHistory
     {
         public int PrimaryKey => ProjectUpdateHistoryID;
-
+        public ProjectUpdateState ProjectUpdateState => ProjectUpdateState.AllLookupDictionary[ProjectUpdateStateID];
 
         public static class FieldLengths
         {

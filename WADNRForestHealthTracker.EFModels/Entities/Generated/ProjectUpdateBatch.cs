@@ -154,6 +154,9 @@ public partial class ProjectUpdateBatch
     public virtual ICollection<ProjectUpdateHistory> ProjectUpdateHistories { get; set; } = new List<ProjectUpdateHistory>();
 
     [InverseProperty("ProjectUpdateBatch")]
+    public virtual ICollection<ProjectUpdateProgram> ProjectUpdatePrograms { get; set; } = new List<ProjectUpdateProgram>();
+
+    [InverseProperty("ProjectUpdateBatch")]
     public virtual ICollection<ProjectUpdate> ProjectUpdates { get; set; } = new List<ProjectUpdate>();
 
     [InverseProperty("ProjectUpdateBatch")]

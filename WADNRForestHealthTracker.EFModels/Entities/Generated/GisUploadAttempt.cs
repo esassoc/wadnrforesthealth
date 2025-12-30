@@ -53,4 +53,16 @@ public partial class GisUploadAttempt
 
     [InverseProperty("LastUpdateGisUploadAttempt")]
     public virtual ICollection<Project> ProjectLastUpdateGisUploadAttempts { get; set; } = new List<Project>();
+
+    [InverseProperty("CreateGisUploadAttempt")]
+    public virtual ICollection<Treatment> TreatmentCreateGisUploadAttempts { get; set; } = new List<Treatment>();
+
+    [InverseProperty("CreateGisUploadAttempt")]
+    public virtual ICollection<TreatmentUpdate> TreatmentUpdateCreateGisUploadAttempts { get; set; } = new List<TreatmentUpdate>();
+
+    [InverseProperty("UpdateGisUploadAttempt")]
+    public virtual ICollection<Treatment> TreatmentUpdateGisUploadAttempts { get; set; } = new List<Treatment>();
+
+    [InverseProperty("UpdateGisUploadAttempt")]
+    public virtual ICollection<TreatmentUpdate> TreatmentUpdateUpdateGisUploadAttempts { get; set; } = new List<TreatmentUpdate>();
 }

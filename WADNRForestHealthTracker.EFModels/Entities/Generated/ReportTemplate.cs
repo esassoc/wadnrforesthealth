@@ -27,4 +27,8 @@ public partial class ReportTemplate
     public int ReportTemplateModelID { get; set; }
 
     public bool IsSystemTemplate { get; set; }
+
+    [ForeignKey("FileResourceID")]
+    [InverseProperty("ReportTemplates")]
+    public virtual FileResource FileResource { get; set; } = null!;
 }

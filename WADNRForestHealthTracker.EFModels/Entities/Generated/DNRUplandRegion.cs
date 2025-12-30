@@ -15,6 +15,7 @@ public partial class DNRUplandRegion
     public int DNRUplandRegionID { get; set; }
 
     [StringLength(10)]
+    [Unicode(false)]
     public string? DNRUplandRegionAbbrev { get; set; }
 
     [StringLength(100)]

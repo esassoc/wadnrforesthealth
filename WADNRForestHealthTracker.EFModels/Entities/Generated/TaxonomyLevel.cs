@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace WADNRForestHealthTracker.EFModels.Entities;
 
 [Table("TaxonomyLevel")]
+[Index("TaxonomyLevelDisplayName", Name = "AK_TaxonomyLevel_TaxonomyLevelDisplayName", IsUnique = true)]
+[Index("TaxonomyLevelName", Name = "AK_TaxonomyLevel_TaxonomyLevelName", IsUnique = true)]
 public partial class TaxonomyLevel
 {
     [Key]
@@ -19,4 +21,10 @@ public partial class TaxonomyLevel
     [StringLength(100)]
     [Unicode(false)]
     public string TaxonomyLevelDisplayName { get; set; } = null!;
+
+    [InverseProperty("AssociatePerfomanceMeasureTaxonomyLevel")]
+    public virtual ICollection<SystemAttribute> SystemAttributeAssociatePerfomanceMeasureTaxonomyLevels { get; set; } = new List<SystemAttribute>();
+
+    [InverseProperty("TaxonomyLevel")]
+    public virtual ICollection<SystemAttribute> SystemAttributeTaxonomyLevels { get; set; } = new List<SystemAttribute>();
 }

@@ -12,7 +12,7 @@ namespace WADNRForestHealthTracker.EFModels.Entities
         public static class FieldLengths
         {
             public const int TaxonomyBranchName = 100;
-            public const int ThemeColor = 7;
+            public const int ThemeColor = 20;
             public const int TaxonomyBranchCode = 10;
         }
     }

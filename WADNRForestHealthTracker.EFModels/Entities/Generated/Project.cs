@@ -197,4 +197,7 @@ public partial class Project
     [ForeignKey("ReviewedByPersonID")]
     [InverseProperty("ProjectReviewedByPeople")]
     public virtual Person? ReviewedByPerson { get; set; }
+
+    [InverseProperty("Project")]
+    public virtual ICollection<Treatment> Treatments { get; set; } = new List<Treatment>();
 }

@@ -11,7 +11,8 @@ namespace WADNRForestHealthTracker.EFModels.Entities
 
         public static class FieldLengths
         {
-
+            public const int AuthenticatorName = 10;
+            public const int AuthenticatorFullName = 100;
         }
     }
 }

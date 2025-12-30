@@ -7,7 +7,9 @@ namespace WADNRForestHealthTracker.EFModels.Entities
     public partial class Treatment
     {
         public int PrimaryKey => TreatmentID;
-
+        public TreatmentType TreatmentType => TreatmentType.AllLookupDictionary[TreatmentTypeID];
+        public TreatmentDetailedActivityType TreatmentDetailedActivityType => TreatmentDetailedActivityType.AllLookupDictionary[TreatmentDetailedActivityTypeID];
+        public TreatmentCode? TreatmentCode => TreatmentCodeID.HasValue ? TreatmentCode.AllLookupDictionary[TreatmentCodeID.Value] : null;
 
         public static class FieldLengths
         {

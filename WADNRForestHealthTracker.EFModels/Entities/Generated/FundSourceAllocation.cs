@@ -13,6 +13,7 @@ public partial class FundSourceAllocation
     public int FundSourceAllocationID { get; set; }
 
     [StringLength(100)]
+    [Unicode(false)]
     public string? FundSourceAllocationName { get; set; }
 
     [Column(TypeName = "datetime")]
@@ -58,6 +59,9 @@ public partial class FundSourceAllocation
     [ForeignKey("FundSourceID")]
     [InverseProperty("FundSourceAllocations")]
     public virtual FundSource FundSource { get; set; } = null!;
+
+    [InverseProperty("FundSourceAllocation")]
+    public virtual ICollection<FundSourceAllocationBudgetLineItem> FundSourceAllocationBudgetLineItems { get; set; } = new List<FundSourceAllocationBudgetLineItem>();
 
     [InverseProperty("FundSourceAllocation")]
     public virtual ICollection<FundSourceAllocationChangeLog> FundSourceAllocationChangeLogs { get; set; } = new List<FundSourceAllocationChangeLog>();

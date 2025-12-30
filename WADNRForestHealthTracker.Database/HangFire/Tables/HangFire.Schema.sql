@@ -1,4 +1,3 @@
 CREATE TABLE [HangFire].[Schema](
-	[Version] [int] NOT NULL CONSTRAINT [PK_Schema_Version] PRIMARY KEY
+	[Version] [int] NOT NULL CONSTRAINT [PK_HangFire_Schema] PRIMARY KEY
 )
-GO

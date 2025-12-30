@@ -35,4 +35,8 @@ public partial class ProjectType
 
     [InverseProperty("ProjectType")]
     public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
+
+    [ForeignKey("TaxonomyBranchID")]
+    [InverseProperty("ProjectTypes")]
+    public virtual TaxonomyBranch TaxonomyBranch { get; set; } = null!;
 }
