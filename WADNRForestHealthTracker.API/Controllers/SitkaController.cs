@@ -11,14 +11,14 @@ public abstract class SitkaController<T>(
     WADNRForestHealthTrackerDbContext dbContext,
     ILogger<T> logger,
     KeystoneService keystoneService,
-    IOptions<WADNRForestHealthTrackerConfiguration> ltInfoConfiguration)
+    IOptions<WADNRForestHealthTrackerConfiguration> configuration)
     : ControllerBase
 {
     protected readonly WADNRForestHealthTrackerDbContext DbContext = dbContext;
     protected readonly ILogger<T> Logger = logger;
     protected readonly KeystoneService KeystoneService = keystoneService;
-    protected readonly WADNRForestHealthTrackerConfiguration Configuration = ltInfoConfiguration.Value;
-    protected PersonSimpleDto CallingUser => UserContext.GetUserFromHttpContext(DbContext, HttpContext);
+    protected readonly WADNRForestHealthTrackerConfiguration Configuration = configuration.Value;
+    protected PersonDetail CallingUser => UserContext.GetUserFromHttpContext(DbContext, HttpContext);
 
     protected ActionResult RequireNotNullThrowNotFound(object theObject, string objectType, object objectID)
     {

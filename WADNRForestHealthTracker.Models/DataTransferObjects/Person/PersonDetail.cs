@@ -1,6 +1,6 @@
 ﻿namespace WADNRForestHealthTracker.Models.DataTransferObjects
 {
-    public class PersonSimpleDto
+    public class PersonDetail
     {
         public int PersonID { get; set; }
         public Guid PersonGuid { get; set; }

@@ -8,14 +8,14 @@ namespace WADNRForestHealthTracker.API.Services
 {
     public class UserContext
     {
-        public PersonSimpleDto User { get; set; }
+        public PersonDetail User { get; set; }
 
-        private UserContext(PersonSimpleDto user)
+        private UserContext(PersonDetail user)
         {
             User = user;
         }
 
-        public static PersonSimpleDto GetUserFromHttpContext(WADNRForestHealthTrackerDbContext dbContext, HttpContext httpContext)
+        public static PersonDetail GetUserFromHttpContext(WADNRForestHealthTrackerDbContext dbContext, HttpContext httpContext)
         {
 
             var claimsPrincipal = httpContext.User;
@@ -25,7 +25,7 @@ namespace WADNRForestHealthTracker.API.Services
             }
 
             var userGuid = Guid.Parse(claimsPrincipal.Claims.Single(c => c.Type == "sub").Value);
-            var keystoneUser = People.GetByEmailAsSimpleDto(dbContext, userGuid.ToString());
+            var keystoneUser = People.GetByEmailAsDetail(dbContext, userGuid.ToString());
 
             return keystoneUser;
         }

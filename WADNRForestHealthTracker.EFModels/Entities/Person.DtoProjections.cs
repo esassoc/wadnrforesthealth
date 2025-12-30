@@ -5,8 +5,7 @@ namespace WADNRForestHealthTracker.EFModels.Entities;
 
 public static class PersonProjections
 {
-    // Reusable projection for TreatmentBMPVersionAssessment -> TreatmentBMPVersionAssessmentDto
-    public static readonly Expression<Func<Person, PersonSimpleDto>> AsSimpleDto = x => new PersonSimpleDto
+    public static readonly Expression<Func<Person, PersonDetail>> AsDetail = x => new PersonDetail
     {
         PersonID = x.PersonID,
         FirstName = x.FirstName,
