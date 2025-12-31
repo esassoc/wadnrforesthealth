@@ -19,7 +19,7 @@ WADNR.GeoServer/data_dir/controlflow.properties
 WADNR.GeoServer/data_dir/logs/geoserver.log.1
 #WADNR.GeoServer/data_dir/gwc-layers
 WADNR.GeoServer/data_dir/logs
-#WADNR.GeoServer/data_dir/gwc
+WADNR.GeoServer/data_dir/gwc/diskquota_pagestore_hsql/*
 
 # /Source/LtInfo.Common/HealthMonitor/
 
