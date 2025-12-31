@@ -1,21 +1,20 @@
 <nav class="main-nav">
-    <div class="main-nav__header-image">
-        <img src="assets/header-images/main.png" alt="WADNR header image" />
-    </div>
     <div class="main-nav__wrapper">
         <ul class="main-nav__links">
             <li class="main-nav__explorer">
-                <a [href]="'/some-url'" class="main-nav__logo" target="_blank">
-                    <img src="/assets/logos/LT_INFO_LOGO2025-white.png" class="navbarLogo" [alt]="'area logo'" />
+                <a routerLink="/" routerLinkActive="active" class="main-nav__logo">
+                    <img src="/assets/header-images/header_logo.png" class="navbarLogo" [alt]="'WADNR logo'" />
                 </a>
-                <div class="main-nav__explorer-area">
-                    <a routerLink="/" routerLinkActive="active" class="nav-link">WADNR</a>
-                </div>
             </li>
         </ul>
         <ul class="main-nav__links main-nav__utilities">
-            <li class="nav-item" routerLinkActive="active">
-                <a href="data-center" routerLinkActive="active" class="nav-link">Data Center</a>
+            <li class="nav-item">
+                <form class="main-nav__search" role="search" (submit)="$event.preventDefault()">
+                    <input class="main-nav__search-input" type="search" name="q" placeholder="Project Name or Description" autocomplete="off" />
+                    <button class="main-nav__search-button" type="submit" aria-label="Search">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                    </button>
+                </form>
             </li>
             <!-- @if (!isAuthenticated()) {
             <li class="nav-item" routerLinkActive="active">

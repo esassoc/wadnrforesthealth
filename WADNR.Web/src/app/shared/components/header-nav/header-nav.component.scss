@@ -2,20 +2,9 @@
 
 .main-nav {
     color: white;
+    height: 91px;
+    background-color: #003d6b;
     display: grid;
-    height: 108px;
-
-    &__header-image {
-        grid-row: 1;
-        z-index: 1;
-        grid-column: 1;
-
-        img {
-            width: 100%;
-            height: 108px;
-            object-fit: cover;
-        }
-    }
 
     &__explorer {
         display: flex;
@@ -74,14 +63,14 @@
     }
 
     &__logo {
-        max-width: 300px;
         display: block;
         align-self: center;
 
         img {
             max-width: 100%;
             display: block;
-            height: auto;
+            height: 50px;
+            margin: 10px;
         }
     }
 
@@ -112,8 +101,61 @@
 
     &__utilities {
         align-items: flex-start;
+        align-self: center;
         padding-top: var(--spacing-100);
         padding-right: var(--spacing-600);
+
+        .main-nav__search {
+            display: flex;
+            align-items: stretch;
+            align-self: center;
+            width: 100%;
+            margin: var(--spacing-200) var(--spacing-300) 0 0;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--spacing-200);
+            overflow: hidden;
+            height: 34px;
+            transition: box-shadow 160ms ease, border-color 160ms ease;
+
+            &:focus-within {
+                border-color: #66afe9;
+                box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+            }
+        }
+
+        .main-nav__search-input {
+            flex: 1 1 auto;
+            min-width: 0;
+            max-width: 300px;
+            border: 0;
+            outline: none;
+            padding: 0 var(--spacing-400);
+            font-size: 14px;
+            color: var(--gray-900);
+            background: transparent;
+
+            &::placeholder {
+                color: var(--gray-400);
+            }
+        }
+
+        .main-nav__search-button {
+            flex: 0 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            border-left: 1px solid var(--gray-200);
+            background: transparent;
+            color: var(--gray-700);
+            padding: 0;
+
+            &:hover {
+                background: var(--gray-50);
+            }
+        }
+
         .nav-link {
             color: var(--gray-0);
             padding: 15px;

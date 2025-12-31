@@ -4,14 +4,20 @@
 */
 
 @import url("https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap");
+@import url(https://fonts.googleapis.com/css?family=Basic);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600);
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,700);
+@import url(https://fonts.googleapis.com/css?family=EB+Garamond:400,700);
+@import url("https://fonts.googleapis.com/css?family=PT+Sans:400,700");
 
 :root {
     /* palette */
-    --blue-lighter: #e7eff1;
-    --blue-light: #b4ccd4;
-    --blue-default: #0d5b73;
-    --blue-dark: #0c5268;
-    --blue-darker: #083745;
+    --blue-lighter: #e7f0fb;
+    --blue-light: #7fa9d6;
+    --blue-default: #1f5fa3;
+    --blue-dark: #023467;
+    --blue-darker: #01224a;
 
     --teal-lighter: #eff5f7;
     --teal-light: #cce0e7;
@@ -24,6 +30,12 @@
     --orange-default: #ffa62b;
     --orange-dark: #e69527;
     --orange-darker: #c47b17;
+
+    --brown-lighter: #fcf3e6;
+    --brown-light: #f1d5a6;
+    --brown-default: #c98212;
+    --brown-dark: #9a610a;
+    --brown-darker: #6d4300;
 
     --green-lighter: #eaf8ea;
     --green-light: #bee9bd;
@@ -58,17 +70,29 @@
     --tan: #f4f3ef;
 
     /* numeric palette shades */
-    --blue-50: #f0f9fb;
-    --blue-100: #daf0f3;
-    --blue-200: #b9e1e8;
-    --blue-300: #89cad7;
-    --blue-400: #52aabe;
-    --blue-500: #368ea4;
-    --blue-600: #30748a;
-    --blue-700: #2c5f72;
-    --blue-800: #2b4f5f;
-    --blue-900: #2a4755;
-    --blue-950: #162b36;
+    --blue-50: #e8f0fb;
+    --blue-100: #d3e2f7;
+    --blue-200: #a9c6ed;
+    --blue-300: #7aa6e0;
+    --blue-400: #4f86d3;
+    --blue-500: #2f6fbe;
+    --blue-600: #1f5fa3;
+    --blue-700: #174a82;
+    --blue-800: #023467;
+    --blue-900: #012a57;
+    --blue-950: #01224a;
+
+    --brown-50: #fcf3e6;
+    --brown-100: #f7e7cf;
+    --brown-200: #efd0a0;
+    --brown-300: #e3b46a;
+    --brown-400: #d69a39;
+    --brown-500: #c98212;
+    --brown-600: #b6750f;
+    --brown-700: #9f650c;
+    --brown-800: #9a610a;
+    --brown-900: #7d4e03;
+    --brown-950: #6d4300;
 
     --gray-0: #ffffff;
     --gray-50: #fafafa;
@@ -101,10 +125,12 @@
     --teal-950: #063946;
 
     --wadnr-orange: #e49937;
-    --orange: var(--wadnr-orange);
-
     --wadnr-green: #89bf40;
-    --wadnr-blue: #0099ab;
+    --wadnr-blue: #2f3f56;
+    --wadnr-olive: #646820;
+    --wadnr-brown: #9a610a;
+
+    --orange: var(--wadnr-orange);
 
     --primary: #3e72b0;
     --primary-rgb: 62, 114, 176;
@@ -112,9 +138,6 @@
     --secondary-rgb: 90, 156, 176;
     --muted: #dee2e6;
     --danger: #a94442;
-
-    --wadnr-blue: #2f3f56;
-    --wadnr-olive: #646820;
 
     /* type sizes (clamp expressions preserved) */
     --type-size-050: clamp(0.5rem, 0.42rem + 0.38vw, 0.675rem);
@@ -168,11 +191,12 @@
     --color-text: #4b4b4b;
     --color-link: #337ab7;
 
-    --lexend: "Lexend Deca", sans-serif;
+    --calibri: "Calibri", sans-serif;
     --header-nav-link-font-weight: inherit;
-    --font-family-sans-serif: var(--lexend);
+    --font-family-sans-serif: var(--calibri);
     --font-size: 16px;
     --inter: "Inter", sans-serif;
+    --ptsans: "PT Sans", "myriad pro", Arial;
 
     /* cards */
     --card-header-bg-color: #969eac;

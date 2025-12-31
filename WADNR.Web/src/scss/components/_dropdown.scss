@@ -4,7 +4,7 @@
     &-menu {
         display: none;
 
-        @include desktop-medium {
+        @include desktop-small {
             position: absolute;
             z-index: 1111;
             top: 2rem;
@@ -16,7 +16,7 @@
         }
 
         &-right {
-            @include desktop-medium {
+            @include desktop-small {
                 left: unset;
                 right: 0;
             }
@@ -26,7 +26,7 @@
             padding-top: 0.5rem;
             display: block;
 
-            @include desktop-medium {
+            @include desktop-small {
                 padding-top: unset;
             }
         }
@@ -38,7 +38,7 @@
         padding: 1rem 0;
         color: var(--gray-900);
 
-        @include desktop-medium {
+        @include desktop-small {
             padding: 1rem;
             transition: all 300ms ease;
             font-size: var(--type-size-200);
@@ -47,14 +47,14 @@
         &:hover {
             color: var(--white);
 
-            @include desktop-medium {
+            @include desktop-small {
                 background: var(--secondary);
                 color: var(--white);
             }
         }
 
         &:first-of-type {
-            @include desktop-medium {
+            @include desktop-small {
                 border-top-left-radius: 0.25rem;
                 border-top-right-radius: 0.25rem;
             }
@@ -63,7 +63,7 @@
         &:last-of-type {
             padding-bottom: 0;
 
-            @include desktop-medium {
+            @include desktop-small {
                 padding-bottom: 1rem;
                 border-bottom-left-radius: 0.25rem;
                 border-bottom-right-radius: 0.25rem;
@@ -73,7 +73,7 @@
         & + .dropdown-item {
             border-top: 1px solid rgba(white, 0.05);
 
-            @include desktop-medium {
+            @include desktop-small {
                 border-top: 1px solid rgba(black, 0.05);
             }
         }
@@ -84,7 +84,7 @@
     &__water-dashboard {
         color: var(--white);
 
-        @include desktop-medium {
+        @include desktop-small {
             width: 600px;
 
             color: var(--blue-700);
@@ -93,7 +93,7 @@
         }
 
         &-grid {
-            @include desktop-medium {
+            @include desktop-small {
                 display: grid;
                 grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
                 gap: var(--spacing-400);
@@ -103,7 +103,7 @@
         a {
             color: var(--white);
 
-            @include desktop-medium {
+            @include desktop-small {
                 color: var(--blue-700);
             }
         }
@@ -115,7 +115,7 @@
                 line-height: 1rem;
                 font-weight: 500;
 
-                @include desktop-medium {
+                @include desktop-small {
                     padding-top: 0;
                     padding-bottom: var(--spacing-200);
                     border-bottom: 1px solid var(--gray-200);
@@ -139,7 +139,7 @@
         .right {
             padding-top: var(--spacing-400);
 
-            @include desktop-medium {
+            @include desktop-small {
                 padding-top: var(--spacing-200);
                 border-left: 1px solid var(--gray-200);
                 padding-left: var(--spacing-400);
@@ -156,7 +156,7 @@
             & + .water-account {
                 border-top: 1px solid rgba(var(--white-rgb), 0.1);
 
-                @include desktop-medium {
+                @include desktop-small {
                     border-top: 1px solid var(--gray-100);
                 }
             }
@@ -165,7 +165,7 @@
                 grid-column: 1 / -1;
                 font-size: 0.75rem;
 
-                @include desktop-medium {
+                @include desktop-small {
                     color: var(--gray-500);
                 }
             }
@@ -210,7 +210,7 @@
                 .count {
                     font-size: 12px;
 
-                    @include desktop-medium {
+                    @include desktop-small {
                         color: var(--gray-900);
                     }
                 }
@@ -220,7 +220,7 @@
                 text-align: right;
                 font-size: 12px;
 
-                @include desktop-medium {
+                @include desktop-small {
                     color: var(--gray-500);
                 }
             }
@@ -257,7 +257,7 @@
             gap: var(--spacing-300);
             border-top: 1px solid rgba(var(--white-rgb), 0.1);
 
-            @include desktop-medium {
+            @include desktop-small {
                 border-top: 1px solid var(--gray-200);
             }
         }

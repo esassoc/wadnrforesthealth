@@ -1,18 +1,28 @@
 @use "/src/scss/abstracts" as *;
 
-.area-nav {
-    background: #0b1f41;
+.secondary-nav {
+    background: #dbdbdb;
     a {
-        color: var(--gray-0);
+        color: var(--blue-800);
+        text-transform: uppercase;
+        font-family: var(--ptsans);
+        font-weight: bold;
+        font-stretch: condensed;
+        font-size: 17px;
+        text-transform: uppercase;
+        line-height: 24px;
     }
 
     .nav-item {
         padding: var(--spacing-400);
-        font-size: 0.875rem;
         font-weight: 600;
 
         &:hover {
-            background: #007dc3;
+            background: #fff;
+
+            > a {
+                color: var(--brown-800);
+            }
         }
 
         icon {
@@ -28,36 +38,47 @@
         gap: var(--spacing-200);
 
         icon {
-            display: block;
-            transform: translateY(2px);
+            display: inline-flex;
         }
     }
 
     .divider {
         width: 100%;
         height: 1px;
-        background: var(--gray-0);
+        background: var(--brown-600);
         margin: var(--spacing-200) 0;
         box-sizing: border-box;
     }
 
     &__links {
         display: flex;
+        width: 100%;
+    }
+
+    &__right-start {
+        margin-left: auto;
     }
 
     .dropdown-menu {
-        background: #007dc3;
+        //background: #007dc3;
         border: 1px solid var(--gray-0);
         border-radius: unset;
-        top: 3.25rem;
+        top: 3.55rem;
     }
 
     .dropdown-item {
         display: block;
-        padding: var(--spacing-300) var(--spacing-400);
+        color: var(--gray-1000);
+        font-weight: 400;
+        text-transform: none;
+        padding: var(--spacing-100) var(--spacing-200) !important;
         font-size: 0.875rem;
         &:hover {
-            background: #005c90;
+            background: var(--brown-800);
+        }
+
+        icon {
+            display: inline-flex;
         }
     }
 

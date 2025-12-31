@@ -1,5 +1,7 @@
+@use "/src/scss/abstracts" as *;
+
 body {
-    font-family: var(--lexend);
+    font-family: var(--ptsans);
     line-height: 1.4;
 }
 
@@ -8,7 +10,7 @@ a {
 }
 
 button {
-    font-family: var(--lexend);
+    font-family: var(--ptsans);
 }
 
 .site-footer a {
