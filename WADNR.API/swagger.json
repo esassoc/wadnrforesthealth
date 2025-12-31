@@ -385,6 +385,36 @@
           }
         }
       }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "SystemInfo"
+        ],
+        "operationId": "GetSystemInfo_SystemInfo",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInfoDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInfoDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInfoDetail"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -10207,6 +10237,41 @@
         },
         "additionalProperties": false
       },
+      "SystemInfoDetail": {
+        "type": "object",
+        "properties": {
+          "Environment": {
+            "type": "string",
+            "nullable": true
+          },
+          "CurrentTimeUTC": {
+            "type": "string",
+            "nullable": true
+          },
+          "Application": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "FullInformationalVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "PodName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Version": {
+            "type": "string",
+            "nullable": true
+          },
+          "CompilationDateTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
       "TabularDataImport": {
         "type": "object",
         "properties": {
@@ -11031,6 +11096,9 @@
     },
     {
       "name": "Program"
+    },
+    {
+      "name": "SystemInfo"
     }
   ]
 }
