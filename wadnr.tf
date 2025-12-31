@@ -79,6 +79,12 @@ variable "domainWeb" {
   type = string
 }
 
+
+
+variable "domainGeoserver" {
+  type = string
+}
+
 variable "projectNumber" {
   type = string
 }
