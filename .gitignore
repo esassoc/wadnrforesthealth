@@ -10,16 +10,16 @@
 /Source/**/bin/
 /Source/**/obj/
 
-/WADNRForestHealthTracker/WADNRForestHealthTracker.Common/*.user
-WADNRForestHealthTracker.GeoServer/data_dir/security/*
-WADNRForestHealthTracker.GeoServer/data_dir/.updatepassword.lock
-WADNRForestHealthTracker.GeoServer/data_dir/geoserver-environment.properties
-WADNRForestHealthTracker.GeoServer/data_dir/s3.properties
-WADNRForestHealthTracker.GeoServer/data_dir/controlflow.properties
-WADNRForestHealthTracker.GeoServer/data_dir/logs/geoserver.log.1
-#WADNRForestHealthTracker.GeoServer/data_dir/gwc-layers
-WADNRForestHealthTracker.GeoServer/data_dir/logs
-#WADNRForestHealthTracker.GeoServer/data_dir/gwc
+/WADNR/WADNR.Common/*.user
+WADNR.GeoServer/data_dir/security/*
+WADNR.GeoServer/data_dir/.updatepassword.lock
+WADNR.GeoServer/data_dir/geoserver-environment.properties
+WADNR.GeoServer/data_dir/s3.properties
+WADNR.GeoServer/data_dir/controlflow.properties
+WADNR.GeoServer/data_dir/logs/geoserver.log.1
+#WADNR.GeoServer/data_dir/gwc-layers
+WADNR.GeoServer/data_dir/logs
+#WADNR.GeoServer/data_dir/gwc
 
 # /Source/LtInfo.Common/HealthMonitor/
 
@@ -41,8 +41,8 @@ WADNRForestHealthTracker.GeoServer/data_dir/logs
 /*.user
 *.user
 *.cache
-/WADNRForestHealthTracker.Database/*.jfm
+/WADNR.Database/*.jfm
 bin
 obj
 /Build/temp
-/WADNRForestHealthTracker.API/appsecrets.json
+/WADNR.API/appsecrets.json

@@ -1,7 +1,7 @@
 
 
-"Restore WADNRForestHealthTracker"
+"Restore WADNR"
 & "$PSScriptRoot\DatabaseRestore.ps1"  -iniFile "./build.ini"
 
-"Build WADNRForestHealthTracker"
+"Build WADNR"
 & "$PSScriptRoot\DatabaseBuild.ps1" -iniFile "./build.ini"

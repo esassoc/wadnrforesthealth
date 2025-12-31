@@ -41,9 +41,9 @@ stages:
   - template: azure-pipelines/templates/database/dacpac-template.yml@BuildTemplates 
     parameters:
       name: 'Database'
-      solutionFile: 'WADNRForestHealthTracker.Database/WADNRForestHealthTracker.Database.sqlproj'
+      solutionFile: 'WADNR.Database/WADNR.Database.sqlproj'
       additionalArgs: '/p:DSP=Microsoft.Data.Tools.Schema.Sql.SqlAzureV12DatabaseSchemaProvider'
-      publishPath: 'WADNRForestHealthTracker.Database/bin/Debug/WADNRForestHealthTracker.Database.dacpac'
+      publishPath: 'WADNR.Database/bin/Debug/WADNR.Database.dacpac'
       artifactName: 'Database'
 
 - stage: Test
@@ -59,13 +59,13 @@ stages:
       displayName: 'dotnet restore'
       inputs:
         command: restore
-        projects: 'WADNRForestHealthTracker.Tests/WADNRForestHealthTracker.Tests.csproj'
+        projects: 'WADNR.Tests/WADNR.Tests.csproj'
 
     - task: DotNetCoreCLI@2
       displayName: 'dotnet test'
       inputs:
         command: test
-        projects: 'WADNRForestHealthTracker.Tests/WADNRForestHealthTracker.Tests.csproj'
+        projects: 'WADNR.Tests/WADNR.Tests.csproj'
         arguments: '--no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
         
     - task: PublishCodeCoverageResults@1
@@ -129,7 +129,7 @@ stages:
         displayName: 'Web'
         subscription: '$(azureSubscription)'
         containerRegistry: '$(kv-containerRegistry)'
-        dockerComposeFile: 'WADNRForestHealthTracker.Web/docker-compose/docker-compose.yml'
+        dockerComposeFile: 'WADNR.Web/docker-compose/docker-compose.yml'
         dockerComposeFileArgs: 'env=$(environment)'
         additionalImageTags: |
           $(Build.BuildNumber)-$(environment)
@@ -204,7 +204,7 @@ stages:
     - task: PublishBuildArtifacts@1
       inputs:
         artifactName: GeoServerArtifacts
-        pathtoPublish: 'WADNRForestHealthTracker.GeoServer/data_dir'
+        pathtoPublish: 'WADNR.GeoServer/data_dir'
       condition: and(succeeded(), eq(variables['deploy'], 'true'))
 
 - stage: DeployTerraform
@@ -336,7 +336,7 @@ stages:
               sqlAdministratorPassword: '$(kv-sqlAdministratorPassword)'
               sqlApiUsername: '$(sqlApiUsername)'
               bacpacFile: '$(Pipeline.Workspace)/bacpac/$(databaseName).bacpac'
-              dacpacFile: '$(Pipeline.Workspace)/Database/WADNRForestHealthTracker.Database.dacpac'
+              dacpacFile: '$(Pipeline.Workspace)/Database/WADNR.Database.dacpac'
               projectResourceGroupName: '$(resourceGroupName)'
               databaseID: '$(DATABASE_ID)'
 

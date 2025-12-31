@@ -1,8 +1,0 @@
-services:
-  wadnr.web:
-    image: wadnr/web
-    build:
-      args:
-        env: ${ENVIRONMENT}
-      context: ../..
-      dockerfile: WADNRForestHealthTracker.Web/Dockerfile

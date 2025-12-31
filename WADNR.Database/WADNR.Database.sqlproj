@@ -1,0 +1,423 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>WADNR.Database</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{b01f4ee0-8013-4b8d-a2ca-41d7672a205c}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>WADNR.Database</RootNamespace>
+    <AssemblyName>WADNR.Database</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <TargetFrameworkProfile />
+    <DelayedDurability>FORCED</DelayedDurability>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo" />
+    <Folder Include="Scripts" />
+    <Folder Include="HangFire" />
+    <Folder Include="dbo\Functions" />
+    <Folder Include="dbo\Procs" />
+    <Folder Include="dbo\Tables" />
+    <Folder Include="dbo\Views" />
+    <Folder Include="HangFire\Tables" />
+    <Folder Include="Scripts\LookupTables" />
+    <Folder Include="Scripts\ReleaseScripts" />
+    <Folder Include="Scripts\Utility" />
+    <Folder Include="dbo\Triggers" />
+    <Folder Include="dbo\User Defined Types" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Triggers\dbo.trPreventDeleteOfUnknownOrganization.sql" />
+    <Build Include="dbo\Triggers\dbo.trPreventUpdateOfUnknownOrganization.sql" />
+    <None Include="Scripts\LookupTables\dbo.ActivityType.sql" />
+    <None Include="Scripts\LookupTables\dbo.AgreementPersonRole.sql" />
+    <None Include="Scripts\LookupTables\dbo.ArcOnlineFinanceApiRawJsonImportTableType.sql" />
+    <None Include="Scripts\LookupTables\dbo.AuditLogEventType.sql" />
+    <None Include="Scripts\LookupTables\dbo.CostType.sql" />
+    <None Include="Scripts\LookupTables\dbo.CustomPageDisplayType.sql" />
+    <None Include="Scripts\LookupTables\dbo.CustomPageNavigationSection.sql" />
+    <None Include="Scripts\LookupTables\dbo.Division.sql" />
+    <None Include="Scripts\LookupTables\dbo.FieldDefinition.sql" />
+    <None Include="Scripts\LookupTables\dbo.FileResourceMimeType.sql" />
+    <None Include="Scripts\LookupTables\dbo.FirmaPageRenderType.sql" />
+    <None Include="Scripts\LookupTables\dbo.FirmaPageType.sql" />
+    <None Include="Scripts\LookupTables\dbo.FocusAreaStatus.sql" />
+    <None Include="Scripts\LookupTables\dbo.ForesterRole.sql" />
+    <None Include="Scripts\LookupTables\dbo.FundingSource.sql" />
+    <None Include="Scripts\LookupTables\dbo.FundSourceAllocationSource.sql" />
+    <None Include="Scripts\LookupTables\dbo.FundSourceStatus.sql" />
+    <None Include="Scripts\LookupTables\dbo.GisUploadAttemptWorkflowSection.sql" />
+    <None Include="Scripts\LookupTables\dbo.GisUploadAttemptWorkflowSectionGrouping.sql" />
+    <None Include="Scripts\LookupTables\dbo.GoogleChartType.sql" />
+    <None Include="Scripts\LookupTables\dbo.InteractionEventType.sql" />
+    <None Include="Scripts\LookupTables\dbo.InvoiceMatchAmountType.sql" />
+    <None Include="Scripts\LookupTables\dbo.InvoiceStatus.sql" />
+    <None Include="Scripts\LookupTables\dbo.JsonImportStatusType.sql" />
+    <None Include="Scripts\LookupTables\dbo.MeasurementUnitType.sql" />
+    <None Include="Scripts\LookupTables\dbo.NotificationType.sql" />
+    <None Include="Scripts\LookupTables\dbo.OrganizationCode.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProgramNotificationType.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProjectApprovalStatus.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProjectColorByType.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProjectCostType.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProjectCreateSection.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProjectDocumentType.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProjectImageTiming.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProjectLocationFilterType.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProjectLocationSimpleType.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProjectLocationType.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProjectPersonRelationshipType.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProjectStage.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProjectStewardshipAreaType.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProjectUpdateSection.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProjectUpdateState.sql" />
+    <None Include="Scripts\LookupTables\dbo.ProjectWorkflowSectionGrouping.sql" />
+    <None Include="Scripts\LookupTables\dbo.RecurrenceInterval.sql" />
+    <None Include="Scripts\LookupTables\dbo.ReportTemplateModel.sql" />
+    <None Include="Scripts\LookupTables\dbo.ReportTemplateModelType.sql" />
+    <None Include="Scripts\LookupTables\dbo.Role.sql" />
+    <None Include="Scripts\LookupTables\dbo.SocrataDataMartRawJsonImportTableType.sql" />
+    <None Include="Scripts\LookupTables\dbo.SupportRequestType.sql" />
+    <None Include="Scripts\LookupTables\dbo.TabularDataImportTableType.sql" />
+    <None Include="Scripts\LookupTables\dbo.TreatmentCode.sql" />
+    <None Include="Scripts\LookupTables\dbo.TreatmentDetailedActivityType.sql" />
+    <None Include="Scripts\LookupTables\dbo.TreatmentType.sql" />
+    <Build Include="dbo\Tables\dbo.ActivityType.sql" />
+    <Build Include="dbo\Tables\dbo.Agreement.sql" />
+    <Build Include="dbo\Tables\dbo.AgreementFundSourceAllocation.sql" />
+    <Build Include="dbo\Tables\dbo.AgreementPerson.sql" />
+    <Build Include="dbo\Tables\dbo.AgreementPersonRole.sql" />
+    <Build Include="dbo\Tables\dbo.AgreementProject.sql" />
+    <Build Include="dbo\Tables\dbo.AgreementStatus.sql" />
+    <Build Include="dbo\Tables\dbo.AgreementType.sql" />
+    <Build Include="dbo\Tables\dbo.ArcOnlineFinanceApiRawJsonImport.sql" />
+    <Build Include="dbo\Tables\dbo.ArcOnlineFinanceApiRawJsonImportTableType.sql" />
+    <Build Include="dbo\Tables\dbo.AuditLog.sql" />
+    <Build Include="dbo\Tables\dbo.AuditLogEventType.sql" />
+    <Build Include="dbo\Tables\dbo.Authenticator.sql" />
+    <Build Include="dbo\Tables\dbo.Classification.sql" />
+    <Build Include="dbo\Tables\dbo.ClassificationSystem.sql" />
+    <Build Include="dbo\Tables\dbo.CostType.sql" />
+    <Build Include="dbo\Tables\dbo.CostTypeDatamartMapping.sql" />
+    <Build Include="dbo\Tables\dbo.Country.sql" />
+    <Build Include="dbo\Tables\dbo.County.sql" />
+    <Build Include="dbo\Tables\dbo.CustomPage.sql" />
+    <Build Include="dbo\Tables\dbo.CustomPageDisplayType.sql" />
+    <Build Include="dbo\Tables\dbo.CustomPageImage.sql" />
+    <Build Include="dbo\Tables\dbo.CustomPageNavigationSection.sql" />
+    <Build Include="dbo\Tables\dbo.DatabaseMigration.sql" />
+    <Build Include="dbo\Tables\dbo.Deployment.sql" />
+    <Build Include="dbo\Tables\dbo.Division.sql" />
+    <Build Include="dbo\Tables\dbo.DNRUplandRegion.sql" />
+    <Build Include="dbo\Tables\dbo.DNRUplandRegionContentImage.sql" />
+    <Build Include="dbo\Tables\dbo.ExternalMapLayer.sql" />
+    <Build Include="dbo\Tables\dbo.FederalFundCode.sql" />
+    <Build Include="dbo\Tables\dbo.FieldDefinition.sql" />
+    <Build Include="dbo\Tables\dbo.FieldDefinitionDatum.sql" />
+    <Build Include="dbo\Tables\dbo.FieldDefinitionDatumImage.sql" />
+    <Build Include="dbo\Tables\dbo.FileResource.sql" />
+    <Build Include="dbo\Tables\dbo.FileResourceMimeType.sql" />
+    <Build Include="dbo\Tables\dbo.FileResourceMimeTypeFileExtension.sql" />
+    <Build Include="dbo\Tables\dbo.FindYourForesterQuestion.sql" />
+    <Build Include="dbo\Tables\dbo.FirmaHomePageImage.sql" />
+    <Build Include="dbo\Tables\dbo.FirmaPage.sql" />
+    <Build Include="dbo\Tables\dbo.FirmaPageImage.sql" />
+    <Build Include="dbo\Tables\dbo.FirmaPageRenderType.sql" />
+    <Build Include="dbo\Tables\dbo.FirmaPageType.sql" />
+    <Build Include="dbo\Tables\dbo.FocusArea.sql" />
+    <Build Include="dbo\Tables\dbo.FocusAreaLocationStaging.sql" />
+    <Build Include="dbo\Tables\dbo.FocusAreaStatus.sql" />
+    <Build Include="dbo\Tables\dbo.ForesterRole.sql" />
+    <Build Include="dbo\Tables\dbo.ForesterWorkUnit.sql" />
+    <Build Include="dbo\Tables\dbo.FundingSource.sql" />
+    <Build Include="dbo\Tables\dbo.FundSource.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocation.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationBudgetLineItem.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationChangeLog.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationExpenditure.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationExpenditureJsonStage.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationFileResource.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationLikelyPerson.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationNote.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationNoteInternal.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationPriority.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationProgramIndexProjectCode.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationProgramManager.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceAllocationSource.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceFileResource.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceNote.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceNoteInternal.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceStatus.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceType.sql" />
+    <Build Include="dbo\Tables\dbo.geometry_columns.sql" />
+    <Build Include="dbo\Tables\dbo.GisCrossWalkDefault.sql" />
+    <Build Include="dbo\Tables\dbo.GisDefaultMapping.sql" />
+    <Build Include="dbo\Tables\dbo.GisExcludeIncludeColumn.sql" />
+    <Build Include="dbo\Tables\dbo.GisExcludeIncludeColumnValue.sql" />
+    <Build Include="dbo\Tables\dbo.GisFeature.sql" />
+    <Build Include="dbo\Tables\dbo.GisFeatureMetadataAttribute.sql" />
+    <Build Include="dbo\Tables\dbo.GisMetadataAttribute.sql" />
+    <Build Include="dbo\Tables\dbo.GisUploadAttempt.sql" />
+    <Build Include="dbo\Tables\dbo.GisUploadAttemptGisMetadataAttribute.sql" />
+    <Build Include="dbo\Tables\dbo.GisUploadAttemptWorkflowSection.sql" />
+    <Build Include="dbo\Tables\dbo.GisUploadAttemptWorkflowSectionGrouping.sql" />
+    <Build Include="dbo\Tables\dbo.GisUploadProgramMergeGrouping.sql" />
+    <Build Include="dbo\Tables\dbo.GisUploadSourceOrganization.sql" />
+    <Build Include="dbo\Tables\dbo.GoogleChartType.sql" />
+    <Build Include="dbo\Tables\dbo.InteractionEvent.sql" />
+    <Build Include="dbo\Tables\dbo.InteractionEventContact.sql" />
+    <Build Include="dbo\Tables\dbo.InteractionEventFileResource.sql" />
+    <Build Include="dbo\Tables\dbo.InteractionEventProject.sql" />
+    <Build Include="dbo\Tables\dbo.InteractionEventType.sql" />
+    <Build Include="dbo\Tables\dbo.Invoice.sql" />
+    <Build Include="dbo\Tables\dbo.InvoiceApprovalStatus.sql" />
+    <Build Include="dbo\Tables\dbo.InvoiceMatchAmountType.sql" />
+    <Build Include="dbo\Tables\dbo.InvoicePaymentRequest.sql" />
+    <Build Include="dbo\Tables\dbo.InvoiceStatus.sql" />
+    <Build Include="dbo\Tables\dbo.JsonImportStatusType.sql" />
+    <Build Include="dbo\Tables\dbo.LoaRawNortheast.sql" />
+    <Build Include="dbo\Tables\dbo.LoaRawSoutheast.sql" />
+    <Build Include="dbo\Tables\dbo.LoaStage.sql" />
+    <Build Include="dbo\Tables\dbo.MeasurementUnitType.sql" />
+    <Build Include="dbo\Tables\dbo.Notification.sql" />
+    <Build Include="dbo\Tables\dbo.NotificationProject.sql" />
+    <Build Include="dbo\Tables\dbo.NotificationType.sql" />
+    <Build Include="dbo\Tables\dbo.Organization.sql" />
+    <Build Include="dbo\Tables\dbo.OrganizationBoundaryStaging.sql" />
+    <Build Include="dbo\Tables\dbo.OrganizationCode.sql" />
+    <Build Include="dbo\Tables\dbo.OrganizationType.sql" />
+    <Build Include="dbo\Tables\dbo.OrganizationTypeRelationshipType.sql" />
+    <Build Include="dbo\Tables\dbo.Person.sql" />
+    <Build Include="dbo\Tables\dbo.PersonAllowedAuthenticator.sql" />
+    <Build Include="dbo\Tables\dbo.PersonRole.sql" />
+    <Build Include="dbo\Tables\dbo.PersonStewardOrganization.sql" />
+    <Build Include="dbo\Tables\dbo.PersonStewardRegion.sql" />
+    <Build Include="dbo\Tables\dbo.PersonStewardTaxonomyBranch.sql" />
+    <Build Include="dbo\Tables\dbo.PriorityLandscape.sql" />
+    <Build Include="dbo\Tables\dbo.PriorityLandscapeCategory.sql" />
+    <Build Include="dbo\Tables\dbo.PriorityLandscapeFileResource.sql" />
+    <Build Include="dbo\Tables\dbo.Program.sql" />
+    <Build Include="dbo\Tables\dbo.ProgramIndex.sql" />
+    <Build Include="dbo\Tables\dbo.ProgramNotificationConfiguration.sql" />
+    <Build Include="dbo\Tables\dbo.ProgramNotificationSent.sql" />
+    <Build Include="dbo\Tables\dbo.ProgramNotificationSentProject.sql" />
+    <Build Include="dbo\Tables\dbo.ProgramNotificationType.sql" />
+    <Build Include="dbo\Tables\dbo.ProgramPerson.sql" />
+    <Build Include="dbo\Tables\dbo.Project.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectApprovalStatus.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectClassification.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectCode.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectColorByType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectCostType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectCounty.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectCountyUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectCreateSection.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectDocument.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectDocumentType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectDocumentUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectExternalLink.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectExternalLinkUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectFundingSource.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectFundingSourceUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectFundSourceAllocationRequest.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectFundSourceAllocationRequestUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectImage.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectImageTiming.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectImageUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectImportBlockList.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectInternalNote.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectLocation.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectLocationFilterType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectLocationSimpleType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectLocationStaging.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectLocationStagingUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectLocationType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectLocationUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectNote.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectNoteUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectOrganization.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectOrganizationUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectPerson.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectPersonRelationshipType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectPersonUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectPriorityLandscape.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectPriorityLandscapeUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectProgram.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectRegion.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectRegionUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectStage.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectStewardshipAreaType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectTag.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectType.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectUpdate.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectUpdateBatch.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectUpdateConfiguration.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectUpdateHistory.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectUpdateProgram.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectUpdateSection.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectUpdateState.sql" />
+    <Build Include="dbo\Tables\dbo.ProjectWorkflowSectionGrouping.sql" />
+    <Build Include="dbo\Tables\dbo.RecurrenceInterval.sql" />
+    <Build Include="dbo\Tables\dbo.RelationshipType.sql" />
+    <Build Include="dbo\Tables\dbo.ReportTemplate.sql" />
+    <Build Include="dbo\Tables\dbo.ReportTemplateModel.sql" />
+    <Build Include="dbo\Tables\dbo.ReportTemplateModelType.sql" />
+    <Build Include="dbo\Tables\dbo.Role.sql" />
+    <Build Include="dbo\Tables\dbo.SocrataDataMartRawJsonImport.sql" />
+    <Build Include="dbo\Tables\dbo.SocrataDataMartRawJsonImportTableType.sql" />
+    <Build Include="dbo\Tables\dbo.spatial_ref_sys.sql" />
+    <Build Include="dbo\Tables\dbo.StateProvince.sql" />
+    <Build Include="dbo\Tables\dbo.SupportRequestLog.sql" />
+    <Build Include="dbo\Tables\dbo.SupportRequestType.sql" />
+    <Build Include="dbo\Tables\dbo.SystemAttribute.sql" />
+    <Build Include="dbo\Tables\dbo.TabularDataImport.sql" />
+    <Build Include="dbo\Tables\dbo.TabularDataImportTableType.sql" />
+    <Build Include="dbo\Tables\dbo.Tag.sql" />
+    <Build Include="dbo\Tables\dbo.TaxonomyBranch.sql" />
+    <Build Include="dbo\Tables\dbo.TaxonomyLevel.sql" />
+    <Build Include="dbo\Tables\dbo.TaxonomyTrunk.sql" />
+    <Build Include="dbo\Tables\dbo.WashingtonLegislativeDistrict.sql" />
+    <Build Include="dbo\Tables\dbo.Vendor.sql" />
+    <Build Include="dbo\Tables\dbo.TrainingVideo.sql" />
+    <Build Include="dbo\Tables\dbo.Treatment.sql" />
+    <Build Include="dbo\Tables\dbo.TreatmentArea.sql" />
+    <Build Include="dbo\Tables\dbo.TreatmentCode.sql" />
+    <Build Include="dbo\Tables\dbo.TreatmentDetailedActivityType.sql" />
+    <Build Include="dbo\Tables\dbo.TreatmentType.sql" />
+    <Build Include="dbo\Tables\dbo.TreatmentUpdate.sql" />
+    <Build Include="dbo\Views\dbo.vArcOnlineRawJsonImportIndex.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerCounty.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerFindYourForester.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerPriorityLandscape.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerProjectLocationDetailed.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerProjectLocationSimple.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerProjectTreatment.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerRegion.sql" />
+    <Build Include="dbo\Views\dbo.vGeoServerWashingtonLegislativeDistrict.sql" />
+    <Build Include="dbo\Views\dbo.vSocrataDataMartRawJsonImportIndex.sql" />
+    <Build Include="dbo\Views\dbo.vTotalTreatedAcresByProject.sql" />
+    <Build Include="dbo\Functions\dbo.TrimX.sql" />
+    <Build Include="dbo\Functions\dbo.fConvertDateTimeUtcToPacificStandardTime.sql" />
+    <Build Include="dbo\Functions\dbo.fGetBoundingBoxForProjectIdList.sql" />
+    <Build Include="dbo\Functions\dbo.fGetCalendarMonthIndexFromMonthString.sql" />
+    <Build Include="dbo\Functions\dbo.fGetColumnNamesForTable.sql" />
+    <Build Include="dbo\Functions\dbo.fGetCurrentFiscalYearBiennium.sql" />
+    <Build Include="dbo\Functions\dbo.fGetFiscalYearBienniumForDate.sql" />
+    <Build Include="dbo\Functions\dbo.fGetProjectDnrUploadRegion.sql" />
+    <Build Include="dbo\Functions\dbo.fGetProjectPriorityLandscape.sql" />
+    <Build Include="dbo\Functions\dbo.fGetUploadProgramCounty.sql" />
+    <Build Include="dbo\Functions\dbo.fnSplitString.sql" />
+    <Build Include="dbo\Functions\dbo.fRemoveLeadingZeroes.sql" />
+    <Build Include="dbo\Functions\dbo.fUnixTimeToDateTime2.sql" />
+    <Build Include="dbo\Functions\dbo.LTrimX.sql" />
+    <Build Include="dbo\Functions\dbo.RTrimX.sql" />
+    <Build Include="dbo\Procs\pVendorImportJson.sql" />
+    <Build Include="dbo\Procs\dbo.pClearGisImportTables.sql" />
+    <Build Include="dbo\Procs\dbo.pGeospatial_SpatialIndexCreate.sql" />
+    <Build Include="dbo\Procs\dbo.pHangFireClearJobQueue.sql" />
+    <Build Include="dbo\Procs\dbo.pHangFireRescheduleJobs.sql" />
+    <Build Include="dbo\Procs\dbo.pImportLoaTabularData.sql" />
+    <Build Include="dbo\Procs\dbo.procImportGisTableToGisFeature.sql" />
+    <Build Include="dbo\Procs\dbo.procImportTreatmentsFromGisUploadAttempt.sql" />
+    <Build Include="dbo\Procs\pArcOnlineFundSourceExpenditureImportJson.sql" />
+    <Build Include="dbo\Procs\pArcOnlineMarkJsonImportStatus.sql" />
+    <Build Include="dbo\Procs\pArcOnlineProgramIndexImportJson.sql" />
+    <Build Include="dbo\Procs\pArcOnlineProjectCodeImportJson.sql" />
+    <Build Include="dbo\Procs\pArcOnlineVendorImportJson.sql" />
+    <Build Include="dbo\Procs\pBulkDeleteProjects.sql" />
+    <Build Include="dbo\Procs\pClearArcOnlineFinanceApiRawJsonImportsTable.sql" />
+    <Build Include="dbo\Procs\pClearAuditLogTable.sql" />
+    <Build Include="dbo\Procs\pClearFundSourceAllocationExpenditureTables.sql" />
+    <Build Include="dbo\Procs\pClearOutdatedArcOnlineFinanceApiRawJsonImports.sql" />
+    <Build Include="dbo\Procs\pClearOutdatedSocrataDataMartRawJsonImports.sql" />
+    <Build Include="dbo\Procs\pClearSocrataDataMartRawJsonImportsTable.sql" />
+    <Build Include="dbo\Procs\pFundSourceExpenditureImportJson.sql" />
+    <Build Include="dbo\Procs\pLatestSuccessfulJsonImportInfoForBienniumAndImportTableType.sql" />
+    <Build Include="dbo\Procs\pLatestSuccessfulJsonImportInfoForBienniumAndImportTableTypeFromArcOnlineFinanceApi.sql" />
+    <Build Include="dbo\Procs\pMarkJsonImportStatus.sql" />
+    <Build Include="dbo\Procs\pProgramIndexImportJson.sql" />
+    <Build Include="dbo\Procs\pProjectCodeImportJson.sql" />
+    <Build Include="dbo\Procs\pSetMeToWADNRAdminRole.sql" />
+    <None Include="Scripts\Utility\Copy Tenant Full.sql" />
+    <None Include="Scripts\Utility\delete projects.sql" />
+    <None Include="Scripts\Utility\find tables with 0 records.sql" />
+    <None Include="Scripts\Utility\RestoreDatabase.sql" />
+    <None Include="Scripts\Utility\script to find empty projectLocationPoints and fill them in.sql" />
+    <None Include="Scripts\Utility\script to fix AreProjectLocationsBad unit test bad locations.sql" />
+    <None Include="Scripts\Utility\UpdateTenantAttributes.sql" />
+    <Build Include="HangFire\Tables\HangFire.AggregatedCounter.sql" />
+    <Build Include="HangFire\Tables\HangFire.Counter.sql" />
+    <Build Include="HangFire\Tables\HangFire.Hash.sql" />
+    <Build Include="HangFire\Tables\HangFire.Job.sql" />
+    <Build Include="HangFire\Tables\HangFire.JobParameter.sql" />
+    <Build Include="HangFire\Tables\HangFire.JobQueue.sql" />
+    <Build Include="HangFire\Tables\HangFire.List.sql" />
+    <Build Include="HangFire\Tables\HangFire.Schema.sql" />
+    <Build Include="HangFire\Tables\HangFire.Server.sql" />
+    <Build Include="HangFire\Tables\HangFire.Set.sql" />
+    <Build Include="HangFire\Tables\HangFire.State.sql" />
+    <Build Include="dbo\User Defined Types\html.sql" />
+    <Build Include="dbo\User Defined Types\IDList.sql" />
+    <Build Include="HangFire\HangFire.sql" />
+    <Build Include="dbo\Views\dbo.vLoaStageFundSourceAllocation.sql" />
+    <Build Include="dbo\Views\dbo.vLoaStageFundSourceAllocationByProgramIndexProjectCode.sql" />
+    <Build Include="dbo\Views\dbo.vLoaStageProjectFundSourceAllocation.sql" />
+    <Build Include="dbo\Views\dbo.vSingularFundSourceAllocation.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\130\SqlSchemas\master.dacpac">
+      <HintPath>$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\130\SqlSchemas\master.dacpac</HintPath>
+      <SuppressMissingDependenciesErrors>False</SuppressMissingDependenciesErrors>
+      <DatabaseVariableLiteralValue>master</DatabaseVariableLiteralValue>
+    </ArtifactReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="WADNR.Database.publish.xml" />
+  </ItemGroup>
+</Project>
