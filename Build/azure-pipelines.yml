@@ -2,7 +2,7 @@ trigger: none
 
 variables:
   team: 'h2o'
-  projectNumber: 'D020211952.00'
+  projectNumber: 'D020201674.00'
 
   azureApplicationTFStateResourceGroup: 'esa-$(Environment)'
   TfStateStorageAccountName: 'esatfstate$(Environment)'
