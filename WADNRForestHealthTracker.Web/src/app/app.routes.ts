@@ -10,7 +10,7 @@ export const routes: Routes = [
     // { path: "signin-oidc", loadComponent: () => import("./pages/login-callback/login-callback.component").then((m) => m.LoginCallbackComponent) },
     {
         path: ``,
-        title: "Stormwater Tools",
+        title: "WADNR Forest Health Tracker",
         loadComponent: () => import("./pages/site-layout/site-layout.component").then((m) => m.SiteLayoutComponent),
         children: [
             { path: "", loadComponent: () => import("./pages/home/home-index/home-index.component").then((m) => m.HomeIndexComponent) },
@@ -23,6 +23,11 @@ export const routes: Routes = [
                 path: "labels-and-definitions",
                 title: "Labels and Definitions",
                 loadComponent: () => import("./pages/field-definition-list/field-definition-list.component").then((m) => m.FieldDefinitionListComponent),
+            },
+            {
+                path: "programs",
+                title: "Programs",
+                loadComponent: () => import("./pages/programs/programs.component").then((m) => m.ProgramsComponent),
             },
         ],
     },

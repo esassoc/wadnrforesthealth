@@ -4,6 +4,7 @@ api.module.ts
 api/custom-rich-text.service.ts
 api/field-definition.service.ts
 api/file-resource.service.ts
+api/program.service.ts
 configuration.ts
 encoder.ts
 model/agreement-fund-source-allocation.ts
@@ -121,6 +122,7 @@ model/ordinates.ts
 model/organization-boundary-staging.ts
 model/organization-code-enum.ts
 model/organization-code.ts
+model/organization-lookup-item.ts
 model/organization-type-relationship-type.ts
 model/organization-type.ts
 model/organization.ts
@@ -137,6 +139,8 @@ model/precision-models.ts
 model/priority-landscape-category.ts
 model/priority-landscape-file-resource.ts
 model/priority-landscape.ts
+model/program-detail.ts
+model/program-grid-row.ts
 model/program-index.ts
 model/program-notification-configuration.ts
 model/program-notification-sent-project.ts
@@ -144,6 +148,7 @@ model/program-notification-sent.ts
 model/program-notification-type-enum.ts
 model/program-notification-type.ts
 model/program-person.ts
+model/program-upsert-request.ts
 model/program.ts
 model/project-approval-status-enum.ts
 model/project-approval-status.ts

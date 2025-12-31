@@ -27,7 +27,6 @@ export class FieldDefinitionListComponent implements OnInit {
     constructor(private fieldDefinitionService: FieldDefinitionService, private cdr: ChangeDetectorRef) {}
 
     ngOnInit() {
-        this.fieldDefinitionsGrid?.api.showLoadingOverlay();
         this.fieldDefinitionService.listFieldDefinition().subscribe((fieldDefinitions) => {
             this.fieldDefinitions = fieldDefinitions;
             this.rowData = fieldDefinitions;
