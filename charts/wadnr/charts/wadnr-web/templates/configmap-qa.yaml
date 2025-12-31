@@ -11,7 +11,6 @@ data:
   mainAppApiUrl: "https://{{ .Values.global.domains.api }}"
   createAccountRedirectUrl: "https://{{ .Values.global.domains.web }}/create-user-callback"
   geoserverMapServiceUrl: "https://{{ .Values.global.domains.geoserver }}/geoserver/WADNRForestHealth"
-  mainSiteUrl: "https://{{ .Values.global.domains.web }}"
   keystone_clientId: "LakeTahoeInfoNew"
   keystone_issuer: "https://identity-qa.sitkatech.com"
   keystone_redirectUriRelative: "/signin-oidc"

@@ -102,8 +102,6 @@ namespace WADNR.Web
             Staging = bool.Parse(configuration["Staging"]);
             Dev = bool.Parse(configuration["Dev"]);
             MainAppApiUrl = configuration["MainAppApiUrl"];
-            MainSiteUrl = configuration["MainSiteUrl"];
-            Pre2007ProjectCount = int.Parse(configuration["Pre2007ProjectCount"]);
             CreateAccountRedirectUrl = configuration["CreateAccountRedirectUrl"];
             GeoserverMapServiceUrl = configuration["GeoserverMapServiceUrl"];
             KeystoneAuthConfiguration = new KeystoneAuthConfigurationDto(configuration);
@@ -117,10 +115,6 @@ namespace WADNR.Web
         public bool Dev { get; set; }
         [JsonPropertyName("mainAppApiUrl")]
         public string MainAppApiUrl { get; set; }
-        [JsonPropertyName("mainSiteUrl")]
-        public string MainSiteUrl { get; set; }
-        [JsonPropertyName("pre2007ProjectCount")]
-        public int Pre2007ProjectCount { get; set; }
         [JsonPropertyName("createAccountRedirectUrl")]
         public string CreateAccountRedirectUrl { get; set; }
         [JsonPropertyName("geoserverMapServiceUrl")]
