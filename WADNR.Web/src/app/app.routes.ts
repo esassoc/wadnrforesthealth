@@ -15,18 +15,34 @@ export const routes: Routes = [
         children: [
             { path: "", loadComponent: () => import("./pages/home/home-index/home-index.component").then((m) => m.HomeIndexComponent) },
             { path: "about", loadComponent: () => import("./pages/about/about.component").then((m) => m.AboutComponent) },
-            { path: "about-forest-health-tracker", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+            {
+                path: "about-forest-health-tracker",
+                loadComponent: () => import("./shared/components/custom-page/custom-page.component").then((m) => m.CustomPageComponent),
+                data: { customPageID: 16 },
+            },
             { path: "additional-resources", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
             { path: "agreements", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
             { path: "contributing-organizations", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
             { path: "counties", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
-            { path: "data-dictionary", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+            {
+                path: "data-dictionary",
+                loadComponent: () => import("./shared/components/custom-page/custom-page.component").then((m) => m.CustomPageComponent),
+                data: { customPageID: 14 },
+            },
             { path: "dnr-upland-regions", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
             { path: "find-your-forester", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
             { path: "forest-health-monitoring", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
-            { path: "frequently-asked-questions", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+            {
+                path: "frequently-asked-questions",
+                loadComponent: () => import("./shared/components/custom-page/custom-page.component").then((m) => m.CustomPageComponent),
+                data: { customPageID: 21 },
+            },
             { path: "fund-sources", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
-            { path: "glossary", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+            {
+                path: "glossary",
+                loadComponent: () => import("./shared/components/custom-page/custom-page.component").then((m) => m.CustomPageComponent),
+                data: { customPageID: 15 },
+            },
             { path: "interactions-events", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
             {
                 path: "labels-and-definitions",

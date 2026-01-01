@@ -11,11 +11,11 @@ h6 {
 
 .page-title {
     font-weight: 600;
-    font-size: var(--type-size-400);
+    font-size: var(--type-size-700);
     padding-bottom: 0.5rem;
-    color: var(--primary);
+    color: var(--brown-800);
 
-    @include desktop-small {
+    @include desktop-small-max {
         font-size: var(--type-size-400);
     }
 

@@ -7,48 +7,31 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { CustomPageImage } from './custom-page-image';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
-export class CustomPage { 
-    readonly HasPageContent?: boolean;
+export class CustomPageDetail { 
     CustomPageID?: number;
     CustomPageDisplayName?: string | null;
     CustomPageVanityUrl?: string | null;
     CustomPageDisplayTypeID?: number;
     CustomPageContent?: string | null;
     CustomPageNavigationSectionID?: number;
-    CustomPageImages?: Array<CustomPageImage> | null;
-    readonly PrimaryKey?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
 }
 
-export interface CustomPageForm { 
-    HasPageContent?: FormControl<boolean>;
+export interface CustomPageDetailForm { 
     CustomPageID?: FormControl<number>;
     CustomPageDisplayName?: FormControl<string>;
     CustomPageVanityUrl?: FormControl<string>;
     CustomPageDisplayTypeID?: FormControl<number>;
     CustomPageContent?: FormControl<string>;
     CustomPageNavigationSectionID?: FormControl<number>;
-    CustomPageImages?: FormControl<Array<CustomPageImage>>;
-    PrimaryKey?: FormControl<number>;
 }
 
-export class CustomPageFormControls { 
-    public static HasPageContent = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
+export class CustomPageDetailFormControls { 
     public static CustomPageID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
@@ -66,8 +49,6 @@ export class CustomPageFormControls {
             nonNullable: false,
             validators: 
             [
-                Validators.minLength(0),
-                Validators.maxLength(100),
             ],
         }
     );
@@ -78,8 +59,6 @@ export class CustomPageFormControls {
             nonNullable: false,
             validators: 
             [
-                Validators.minLength(0),
-                Validators.maxLength(100),
             ],
         }
     );
@@ -104,26 +83,6 @@ export class CustomPageFormControls {
         }
     );
     public static CustomPageNavigationSectionID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static CustomPageImages = (value: FormControlState<Array<CustomPageImage>> | Array<CustomPageImage> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<CustomPageImage>>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static PrimaryKey = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

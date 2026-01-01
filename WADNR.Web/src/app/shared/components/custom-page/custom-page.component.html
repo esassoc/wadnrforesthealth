@@ -1,0 +1,7 @@
+<div [loadingSpinner]="{ isLoading, loadingHeight: 100 }">
+    @if (customPage$ | async; as customPage) {
+    <page-header [pageTitle]="customPage.CustomPageDisplayName ?? ''"></page-header>
+    <div class="copy copy-3" [innerHtml]="safeHtml(customPage.CustomPageContent)"></div>
+    <ng-content></ng-content>
+    }
+</div>

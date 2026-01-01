@@ -6,7 +6,7 @@
         <h3 class="page-tab">{{ preTitle }}</h3>
         }
         <div [ngClass]="templateRight ? 'flex-between no-wrap' : ''">
-            <h1 class="page-title">
+            <h2 class="page-title">
                 <span>
                     @if (icon) {
                     <icon class="page-header-icon" [icon]="icon"></icon>
@@ -17,7 +17,7 @@
                 @if (templateTitleAppend) {
                 <ng-container [ngTemplateOutlet]="templateTitleAppend"></ng-container>
                 }
-            </h1>
+            </h2>
             @if (templateRight) {
             <div>
                 <ng-container [ngTemplateOutlet]="templateRight"></ng-container>

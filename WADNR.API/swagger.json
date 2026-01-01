@@ -5,6 +5,47 @@
     "version": "1.0"
   },
   "paths": {
+    "/custom-pages/{customPageID}": {
+      "get": {
+        "tags": [
+          "CustomPage"
+        ],
+        "operationId": "Get_CustomPage",
+        "parameters": [
+          {
+            "name": "customPageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomPageDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomPageDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomPageDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/custom-rich-texts/{customRichTextTypeID}": {
       "get": {
         "tags": [
@@ -1202,6 +1243,10 @@
       "CustomPage": {
         "type": "object",
         "properties": {
+          "HasPageContent": {
+            "type": "boolean",
+            "readOnly": true
+          },
           "CustomPageID": {
             "type": "integer",
             "format": "int32"
@@ -1241,6 +1286,36 @@
             "type": "integer",
             "format": "int32",
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomPageDetail": {
+        "type": "object",
+        "properties": {
+          "CustomPageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CustomPageDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CustomPageVanityUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "CustomPageDisplayTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CustomPageContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "CustomPageNavigationSectionID": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -11085,6 +11160,9 @@
     }
   },
   "tags": [
+    {
+      "name": "CustomPage"
+    },
     {
       "name": "CustomRichText"
     },
