@@ -22,6 +22,7 @@ export * from './county';
 export * from './custom-page';
 export * from './custom-page-detail';
 export * from './custom-page-image';
+export * from './custom-page-menu-item';
 export * from './dnr-upland-region';
 export * from './dnr-upland-region-content-image';
 export * from './dimension';

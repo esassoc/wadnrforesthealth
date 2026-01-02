@@ -14,4 +14,11 @@ public static class CustomPageProjections
         CustomPageContent = x.CustomPageContent,
         CustomPageNavigationSectionID = x.CustomPageNavigationSectionID
     };
+
+    public static readonly Expression<Func<CustomPage, CustomPageMenuItem>> AsMenuItem = x => new CustomPageMenuItem
+    {
+        CustomPageID = x.CustomPageID,
+        CustomPageDisplayName = x.CustomPageDisplayName,
+        CustomPageVanityUrl = x.CustomPageVanityUrl
+    };
 }

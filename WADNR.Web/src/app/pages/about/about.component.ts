@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
 import { CustomPageComponent } from "src/app/shared/components/custom-page/custom-page.component";
 
 @Component({
@@ -11,8 +10,6 @@ import { CustomPageComponent } from "src/app/shared/components/custom-page/custo
 })
 export class AboutComponent implements OnInit {
     constructor() {}
-
-    public customPageID: number = FirmaPageTypeEnum.FindYourForester;
 
     ngOnInit(): void {}
 }

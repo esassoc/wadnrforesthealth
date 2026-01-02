@@ -32,6 +32,7 @@ model/country.ts
 model/county.ts
 model/custom-page-detail.ts
 model/custom-page-image.ts
+model/custom-page-menu-item.ts
 model/custom-page.ts
 model/dimension.ts
 model/division-enum.ts

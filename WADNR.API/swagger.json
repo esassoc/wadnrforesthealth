@@ -5,20 +5,19 @@
     "version": "1.0"
   },
   "paths": {
-    "/custom-pages/{customPageID}": {
+    "/custom-pages/{vanityUrl}": {
       "get": {
         "tags": [
           "CustomPage"
         ],
-        "operationId": "Get_CustomPage",
+        "operationId": "GetByVanityUrl_CustomPage",
         "parameters": [
           {
-            "name": "customPageID",
+            "name": "vanityUrl",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
             }
           }
         ],
@@ -39,6 +38,95 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CustomPageDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/custom-pages/navigation-section/{customPageNavigationSectionID}": {
+      "get": {
+        "tags": [
+          "CustomPage"
+        ],
+        "operationId": "GetByCustomPageNavigationSectionID_CustomPage",
+        "parameters": [
+          {
+            "name": "customPageNavigationSectionID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomPageMenuItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomPageMenuItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomPageMenuItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/custom-pages/menu-item": {
+      "get": {
+        "tags": [
+          "CustomPage"
+        ],
+        "operationId": "ListAsMenuItem_CustomPage",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomPageMenuItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomPageMenuItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomPageMenuItem"
+                  }
                 }
               }
             }
@@ -1345,6 +1433,24 @@
             "type": "integer",
             "format": "int32",
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomPageMenuItem": {
+        "type": "object",
+        "properties": {
+          "CustomPageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CustomPageDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CustomPageVanityUrl": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
