@@ -42,6 +42,7 @@ export const routes: Routes = [
             { path: "projects-by-theme", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
             { path: "projects-by-type", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
             { path: "shared-stewardship", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+            { path: "not-found", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
             { path: "**", loadComponent: () => import("./shared/components/custom-page/custom-page.component").then((m) => m.CustomPageComponent) },
         ],
     },
