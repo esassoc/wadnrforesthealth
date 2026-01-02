@@ -23,7 +23,11 @@ export const routes: Routes = [
             { path: "find-your-forester", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
             { path: "forest-health-monitoring", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
             { path: "fund-sources", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
-            { path: "interactions-events", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+            {
+                path: "interactions-events",
+                title: "Interactions/Events",
+                loadComponent: () => import("./pages/interactions-events/interactions-events.component").then((m) => m.InteractionsEventsComponent),
+            },
             {
                 path: "labels-and-definitions",
                 title: "Labels and Definitions",

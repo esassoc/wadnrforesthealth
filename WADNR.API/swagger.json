@@ -308,6 +308,213 @@
         }
       }
     },
+    "/interaction-events": {
+      "get": {
+        "tags": [
+          "InteractionEvent"
+        ],
+        "operationId": "List_InteractionEvent",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InteractionEventGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InteractionEventGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InteractionEventGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "InteractionEvent"
+        ],
+        "operationId": "Create_InteractionEvent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InteractionEventUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InteractionEventUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InteractionEventUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InteractionEventDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InteractionEventDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InteractionEventDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/interaction-events/{interactionEventID}": {
+      "get": {
+        "tags": [
+          "InteractionEvent"
+        ],
+        "operationId": "Get_InteractionEvent",
+        "parameters": [
+          {
+            "name": "interactionEventID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InteractionEventDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InteractionEventDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InteractionEventDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "InteractionEvent"
+        ],
+        "operationId": "Update_InteractionEvent",
+        "parameters": [
+          {
+            "name": "interactionEventID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InteractionEventUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InteractionEventUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InteractionEventUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InteractionEventDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InteractionEventDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InteractionEventDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "InteractionEvent"
+        ],
+        "operationId": "Delete_InteractionEvent",
+        "parameters": [
+          {
+            "name": "interactionEventID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/programs": {
       "get": {
         "tags": [
@@ -4744,6 +4951,37 @@
         },
         "additionalProperties": false
       },
+      "InteractionEventDetail": {
+        "type": "object",
+        "properties": {
+          "InteractionEventID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "InteractionEventTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "StaffPersonID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "InteractionEventTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "InteractionEventDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "InteractionEventDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
       "InteractionEventFileResource": {
         "type": "object",
         "properties": {
@@ -4781,6 +5019,34 @@
           },
           "InteractionEvent": {
             "$ref": "#/components/schemas/InteractionEvent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InteractionEventGridRow": {
+        "type": "object",
+        "properties": {
+          "InteractionEventID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "InteractionEventTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "InteractionEventDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "InteractionEventDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "StaffPerson": {
+            "$ref": "#/components/schemas/PersonLookupItem"
+          },
+          "InteractionEventType": {
+            "$ref": "#/components/schemas/InteractionEventTypeLookupItem"
           }
         },
         "additionalProperties": false
@@ -4857,6 +5123,47 @@
           "ResearchMonitoring"
         ],
         "type": "string"
+      },
+      "InteractionEventTypeLookupItem": {
+        "type": "object",
+        "properties": {
+          "InteractionEventTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "InteractionEventTypeDisplayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InteractionEventUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "InteractionEventTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "StaffPersonID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "InteractionEventTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "InteractionEventDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "InteractionEventDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
       },
       "Invoice": {
         "type": "object",
@@ -6294,6 +6601,20 @@
             "type": "string",
             "nullable": true,
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonLookupItem": {
+        "type": "object",
+        "properties": {
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FullName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -11277,6 +11598,9 @@
     },
     {
       "name": "FileResource"
+    },
+    {
+      "name": "InteractionEvent"
     },
     {
       "name": "Program"

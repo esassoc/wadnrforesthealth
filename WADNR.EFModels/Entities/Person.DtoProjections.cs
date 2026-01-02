@@ -20,4 +20,9 @@ public static class PersonProjections
         WebServiceAccessToken = x.WebServiceAccessToken,
     };
 
+    public static readonly Expression<Func<Person, PersonLookupItem>> AsLookupItem = x => new PersonLookupItem
+    {
+        PersonID = x.PersonID,
+        FullName = x.FirstName + " " + x.LastName
+    };
 }

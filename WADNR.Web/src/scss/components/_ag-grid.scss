@@ -3,15 +3,15 @@ ag-grid-angular {
     --ag-cell-horizontal-padding: 0.625rem;
     --ag-accent-color: #0d5b73;
     --ag-header-height: 3rem;
-    --ag-header-background-color: #666666;
-    --ag-header-text-color: #ffffff;
-    --ag-header-column-border: 1px solid #004e66;
-    --ag-header-cell-hover-background-color: #15637b;
-    --ag-header-cell-moving-background-color: #15637b;
+    --ag-header-background-color: #f8f8f8;
+    --ag-header-text-color: #000;
+    // --ag-header-column-border: 1px solid #004e66;
+    // --ag-header-cell-hover-background-color: #15637b;
+    // --ag-header-cell-moving-background-color: #15637b;
     --ag-row-height: 2.75rem;
     --ag-row-hover-color: rgba(#0d5b73, 0.05);
-    --ag-font-size: 0.75rem;
-    --ag-font-family: var(--lexend);
+    --ag-font-size: 0.9rem;
+    --ag-font-family: var(--ptsans);
 
     .ag-body-viewport.ag-selectable .ag-cell-wrapper {
         overflow: hidden;
@@ -34,7 +34,7 @@ ag-grid-angular {
         }
 
         &-icon {
-            color: var(--white);
+            color: var(--ag-header-text-color);
         }
 
         .flex {
@@ -70,6 +70,8 @@ ag-grid-angular {
     .ag-cell {
         display: flex;
         align-items: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
 
         &:focus-within {
             outline: none !important;
@@ -89,7 +91,7 @@ ag-grid-angular {
 
     .ag-icon-filter:before {
         font-size: 0.7rem;
-        color: var(--white);
+        color: var(--ag-header-text-color);
     }
 
     .ag-filter-active .ag-icon-filter {
@@ -108,7 +110,7 @@ ag-grid-angular {
     .ag-icon-asc:before,
     .ag-icon-desc:before,
     .ag-icon-menu:before {
-        color: #fff;
+        color: var(--ag-header-text-color);
     }
 
     .ag-filter {

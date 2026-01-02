@@ -28,10 +28,11 @@ public class FieldDefinitionController(
 
 
     [HttpGet("{fieldDefinitionID}")]
-    [EntityNotFound(typeof(FieldDefinitionDatum), "fieldDefinitionID")]
+    //MP 1/2/26 This doesn't work here because FieldDefinitionID is not the PK for FieldDefinitionDatum
+    //[EntityNotFound(typeof(FieldDefinitionDatum), "fieldDefinitionID")]
     public async Task<ActionResult<FieldDefinitionDatumDetail>> Get([FromRoute] int fieldDefinitionID)
     {
         var entity = await FieldDefinitionData.GetByFieldDefinitionAsDetailAsync(DbContext, fieldDefinitionID);
-        return Ok(entity);
+        return RequireNotNullThrowNotFound(entity, "FieldDefinitionDatum", fieldDefinitionID);
     }
 }

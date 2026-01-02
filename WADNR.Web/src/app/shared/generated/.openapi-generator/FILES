@@ -5,6 +5,7 @@ api/custom-page.service.ts
 api/custom-rich-text.service.ts
 api/field-definition.service.ts
 api/file-resource.service.ts
+api/interaction-event.service.ts
 api/program.service.ts
 api/system-info.service.ts
 configuration.ts
@@ -103,10 +104,14 @@ model/gis-upload-attempt.ts
 model/gis-upload-program-merge-grouping.ts
 model/gis-upload-source-organization.ts
 model/interaction-event-contact.ts
+model/interaction-event-detail.ts
 model/interaction-event-file-resource.ts
+model/interaction-event-grid-row.ts
 model/interaction-event-project.ts
 model/interaction-event-type-enum.ts
+model/interaction-event-type-lookup-item.ts
 model/interaction-event-type.ts
+model/interaction-event-upsert-request.ts
 model/interaction-event.ts
 model/invoice-approval-status.ts
 model/invoice-match-amount-type-enum.ts
@@ -132,6 +137,7 @@ model/organization-type.ts
 model/organization.ts
 model/person-allowed-authenticator.ts
 model/person-detail.ts
+model/person-lookup-item.ts
 model/person-role.ts
 model/person-steward-organization.ts
 model/person-steward-region.ts
