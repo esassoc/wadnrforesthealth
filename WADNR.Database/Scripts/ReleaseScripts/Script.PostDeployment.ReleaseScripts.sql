@@ -1,0 +1,13 @@
+/*
+Post-Deployment Script
+--------------------------------------------------------------------------------------
+This file is generated on every build, DO NOT modify.
+--------------------------------------------------------------------------------------
+*/
+
+PRINT N'WADNR.Database - Script.PostDeployment.ReleaseScripts.sql';
+GO
+
+:r ".\0001 - Update FieldDefinitionDatum to use the default values from fielddefinition.sql"
+GO
+

@@ -864,12 +864,6 @@ public partial class WADNRDbContext : DbContext
         {
             entity.HasKey(e => e.OrganizationID).HasName("PK_Organization_OrganizationID");
 
-            entity.ToTable("Organization", tb =>
-                {
-                    tb.HasTrigger("trPreventDeleteOfUnknownOrganization");
-                    tb.HasTrigger("trPreventUpdateOfUnknownOrganization");
-                });
-
             entity.HasOne(d => d.LogoFileResource).WithMany(p => p.Organizations).HasConstraintName("FK_Organization_FileResource_LogoFileResourceID_FileResourceID");
 
             entity.HasOne(d => d.OrganizationType).WithMany(p => p.Organizations).OnDelete(DeleteBehavior.ClientSetNull);

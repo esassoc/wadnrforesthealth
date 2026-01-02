@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{b01f4ee0-8013-4b8d-a2ca-41d7672a205c}</ProjectGuid>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql170DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
@@ -22,8 +22,6 @@
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
-    <TargetFrameworkProfile />
-    <DelayedDurability>FORCED</DelayedDurability>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -71,10 +69,29 @@
     <Folder Include="Scripts\Utility" />
     <Folder Include="dbo\Triggers" />
     <Folder Include="dbo\User Defined Types" />
+    <Folder Include="Scripts\PreReleaseScripts\" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="dbo\Triggers\dbo.trPreventDeleteOfUnknownOrganization.sql" />
-    <Build Include="dbo\Triggers\dbo.trPreventUpdateOfUnknownOrganization.sql" />
+    <None Include="LtInfo.Database.publish.xml" />
+    <None Include="Scripts\PreReleaseScripts\README.md" />
+    <None Include="Scripts\ReleaseScripts\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\LookupTables\Script.PostDeployment.LookupTables.sql" />
+    <None Include="Scripts\PreReleaseScripts\Script.PreDeployment.ReleaseScripts.sql" />
+    <None Include="Scripts\ReleaseScripts\Script.PostDeployment.ReleaseScripts.sql" />
+    <None Include="Scripts\Utility\Script.PostDeployment.Utility.sql" />
+    <Build Include="HangFire\HangFire.sql" />
+    <Build Include="dbo\User Defined Types\html.sql" />
+    <Build Include="dbo\User Defined Types\IDList.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PreDeploy Include="Scripts\Script.PreDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Scripts\LookupTables\dbo.ActivityType.sql" />
     <None Include="Scripts\LookupTables\dbo.AgreementPersonRole.sql" />
     <None Include="Scripts\LookupTables\dbo.ArcOnlineFinanceApiRawJsonImportTableType.sql" />
@@ -402,22 +419,62 @@
     <Build Include="HangFire\Tables\HangFire.Server.sql" />
     <Build Include="HangFire\Tables\HangFire.Set.sql" />
     <Build Include="HangFire\Tables\HangFire.State.sql" />
-    <Build Include="dbo\User Defined Types\html.sql" />
-    <Build Include="dbo\User Defined Types\IDList.sql" />
-    <Build Include="HangFire\HangFire.sql" />
     <Build Include="dbo\Views\dbo.vLoaStageFundSourceAllocation.sql" />
     <Build Include="dbo\Views\dbo.vLoaStageFundSourceAllocationByProgramIndexProjectCode.sql" />
     <Build Include="dbo\Views\dbo.vLoaStageProjectFundSourceAllocation.sql" />
     <Build Include="dbo\Views\dbo.vSingularFundSourceAllocation.sql" />
   </ItemGroup>
   <ItemGroup>
-    <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\130\SqlSchemas\master.dacpac">
-      <HintPath>$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\130\SqlSchemas\master.dacpac</HintPath>
-      <SuppressMissingDependenciesErrors>False</SuppressMissingDependenciesErrors>
-      <DatabaseVariableLiteralValue>master</DatabaseVariableLiteralValue>
-    </ArtifactReference>
+    <None Include="Scripts\ReleaseScripts\0001 - Update FieldDefinitionDatum to use the default values from fielddefinition.sql" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="WADNR.Database.publish.xml" />
-  </ItemGroup>
+  <UsingTask TaskName="ScriptDeploymentGenerator" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <releaseScriptFolder ParameterType="System.String" Required="true" />
+      <releaseScriptFileName ParameterType="System.String" Required="true" />
+      <projectName ParameterType="System.String" Required="true" />
+      <title ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment" Language="cs"><![CDATA[
+
+        var files = Directory.GetFiles(releaseScriptFolder, "*.sql");
+        StringBuilder sb = new StringBuilder();
+
+        sb.AppendLine("/*");
+        sb.AppendLine(title + " Script");
+        sb.AppendLine("--------------------------------------------------------------------------------------");
+        sb.AppendLine("This file is generated on every build, DO NOT modify.");
+        sb.AppendLine("--------------------------------------------------------------------------------------");
+        sb.AppendLine("*/");
+        sb.AppendLine("");
+        sb.AppendLine("PRINT N'" + projectName + " - " + releaseScriptFileName +"';");
+        sb.AppendLine("GO");
+        sb.AppendLine("");
+
+        foreach (var file in files.OrderBy(f => f))
+        {
+            if (file.Contains(releaseScriptFileName))
+            {
+              continue;
+            }
+
+            var fileName = file.Replace(releaseScriptFolder, "");
+
+            sb.AppendLine(":r \"." + fileName + "\"");
+            sb.AppendLine("GO");
+                    
+        }
+        using (System.IO.StreamWriter file = new System.IO.StreamWriter(Path.Combine(releaseScriptFolder, releaseScriptFileName)))
+        {
+          file.WriteLine(sb.ToString()); 
+        }
+
+]]></Code>
+    </Task>
+  </UsingTask>
+  <Target Name="CustomBuildStep" BeforeTargets="BeforeBuild">
+    <ScriptDeploymentGenerator projectName="$(MSBuildProjectName)" title="Post-Deployment" releaseScriptFolder="Scripts\\ReleaseScripts" releaseScriptFileName="Script.PostDeployment.ReleaseScripts.sql" />
+    <ScriptDeploymentGenerator projectName="$(MSBuildProjectName)" title="Pre-Deployment" releaseScriptFolder="Scripts\\PreReleaseScripts" releaseScriptFileName="Script.PreDeployment.ReleaseScripts.sql" />
+    <ScriptDeploymentGenerator projectName="$(MSBuildProjectName)" title="Lookup-Table" releaseScriptFolder="Scripts\\LookupTables" releaseScriptFileName="Script.PostDeployment.LookupTables.sql" />
+  </Target>
 </Project>

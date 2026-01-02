@@ -1,7 +1,6 @@
 
 merge into dbo.AgreementPersonRole as Target
 using (values
-
            (1, 'ContractManager', 'Contract Manager'),
            (2, 'ProjectManager', 'Project Manager'),
            (3, 'ProjectCoordinator', 'Project Coordinator'),
