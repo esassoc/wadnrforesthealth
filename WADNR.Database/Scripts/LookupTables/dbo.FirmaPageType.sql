@@ -48,7 +48,7 @@ on Target.FirmaPageTypeID = Source.FirmaPageTypeID
 when matched then
     update set
         FirmaPageTypeName = Source.FirmaPageTypeName,
-        FirmaPageTypeDisplayName = Source.FirmaPageDisplayName,
+        FirmaPageTypeDisplayName = Source.FirmaPageTypeDisplayName,
         FirmaPageRenderTypeID = Source.FirmaPageRenderTypeID
 when not matched by target then
     insert (FirmaPageTypeID, FirmaPageTypeName, FirmaPageTypeDisplayName, FirmaPageRenderTypeID)

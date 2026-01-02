@@ -1,4 +1,3 @@
-SET IDENTITY_INSERT dbo.FocusAreaStatus ON;
 merge into dbo.FocusAreaStatus as Target
 using (values
 (1, 'Planned', 'Planned'),
@@ -15,4 +14,3 @@ when not matched by target then
     values (FocusAreaStatusID, FocusAreaStatusName, FocusAreaStatusDisplayName)
 when not matched by source then
     delete;
-SET IDENTITY_INSERT dbo.FocusAreaStatus OFF;

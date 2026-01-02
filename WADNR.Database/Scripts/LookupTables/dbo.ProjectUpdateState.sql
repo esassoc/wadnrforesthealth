@@ -9,11 +9,11 @@ using (values
            (4, 'Approved', 'Approved')
 )
     as Source (ProjectUpdateStateID, ProjectUpdateStateName, ProjectUpdateStateDisplayName)
-on Target.ActivityTypeID = Source.ActivityTypeID
+on Target.ProjectUpdateStateID = Source.ProjectUpdateStateID
 when matched then
     update set
-               ActivityTypeName = Source.ActivityTypeName,
-               ActivityTypeDisplayName = Source.ActivityTypeDisplayName
+               ProjectUpdateStateName = Source.ProjectUpdateStateName,
+               ProjectUpdateStateDisplayName = Source.ProjectUpdateStateDisplayName
 when not matched by target then
     insert (ProjectUpdateStateID, ProjectUpdateStateName, ProjectUpdateStateDisplayName)
     values (ProjectUpdateStateID, ProjectUpdateStateName, ProjectUpdateStateDisplayName)

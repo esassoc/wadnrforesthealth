@@ -1,5 +1,5 @@
 CREATE TABLE [dbo].[ProjectUpdateSection](
-    [ProjectUpdateSectionID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_ProjectUpdateSection_ProjectUpdateSectionID] PRIMARY KEY,
+    [ProjectUpdateSectionID] [int] NOT NULL CONSTRAINT [PK_ProjectUpdateSection_ProjectUpdateSectionID] PRIMARY KEY,
     [ProjectUpdateSectionName] [varchar](50) NOT NULL CONSTRAINT [AK_ProjectUpdateSection_ProjectUpdateSectionName] UNIQUE,
     [ProjectUpdateSectionDisplayName] [varchar](50) NOT NULL CONSTRAINT [AK_ProjectUpdateSection_ProjectUpdateSectionDisplayName] UNIQUE,
     [SortOrder] [int] NOT NULL,

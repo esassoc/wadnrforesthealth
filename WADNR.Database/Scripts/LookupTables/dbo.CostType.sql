@@ -1,7 +1,6 @@
 
 --If you are adding a new CostType, make sure you update the following check constraints(if needed):
 --CK_InvoiceLineItem_CostTypeValues
-SET IDENTITY_INSERT dbo.CostType ON;
 merge into dbo.CostType as Target
 using (values
 (1, 'Indirect Costs', 'IndirectCosts', 1, 60),
@@ -26,5 +25,4 @@ when not matched by target then
     values (CostTypeID, CostTypeDisplayName, CostTypeName, IsValidInvoiceLineItemCostType, SortOrder)
 when not matched by source then
     delete;
-SET IDENTITY_INSERT dbo.CostType OFF;
 
