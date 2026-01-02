@@ -8,6 +8,7 @@ api/file-resource.service.ts
 api/interaction-event.service.ts
 api/program.service.ts
 api/system-info.service.ts
+api/tag.service.ts
 configuration.ts
 encoder.ts
 model/agreement-fund-source-allocation.ts
@@ -235,6 +236,9 @@ model/system-info-detail.ts
 model/tabular-data-import-table-type-enum.ts
 model/tabular-data-import-table-type.ts
 model/tabular-data-import.ts
+model/tag-detail.ts
+model/tag-grid-row.ts
+model/tag-upsert-request.ts
 model/tag.ts
 model/taxonomy-branch.ts
 model/taxonomy-level.ts

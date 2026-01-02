@@ -41,7 +41,7 @@ export class ProgramsComponent {
             // Program name as a link to the program detail using ProgramID
             this.utilityFunctions.createLinkColumnDef("Name", "ProgramName", "ProgramID", {
                 InRouterLink: "/programs/",
-                //FieldDefinitionType: "Program",
+                FieldDefinitionType: "Program",
             }),
             // Short name
             this.utilityFunctions.createBasicColumnDef("Short Name", "ProgramShortName"),
