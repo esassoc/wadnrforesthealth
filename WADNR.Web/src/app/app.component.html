@@ -1,7 +1,13 @@
-<!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
-@if (!isIframe) {
-<router-outlet></router-outlet>
-}
+<header-nav></header-nav>
+
+<main class="site">
+    <div class="site-wrapper">
+        <!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
+        @if (!isIframe) {
+        <router-outlet></router-outlet>
+        }
+    </div>
+</main>
 
 <footer class="site-footer grid-12">
     <div class="credits copy copy-3">

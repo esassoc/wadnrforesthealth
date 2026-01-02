@@ -73,7 +73,7 @@ export class CustomRichTextComponent implements OnInit, AfterViewChecked, OnDest
     }
 
     public showEditButton(): boolean {
-        return true;
+        return false;
         // return this.authenticationService.isUserAnAdministrator(this.currentUser);
     }
 

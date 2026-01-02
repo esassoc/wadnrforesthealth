@@ -5,13 +5,14 @@ import { environment } from "../environments/environment";
 import { Router, RouteConfigLoadStart, RouteConfigLoadEnd, NavigationEnd, RouterOutlet } from "@angular/router";
 import { BusyService } from "./shared/services";
 import { Title } from "@angular/platform-browser";
+import { HeaderNavComponent } from "./shared/components";
 
 @Component({
     selector: "app-root",
     templateUrl: "./app.component.html",
     styleUrls: ["./app.component.scss"],
 
-    imports: [RouterOutlet],
+    imports: [RouterOutlet, HeaderNavComponent],
 })
 export class AppComponent {
     public isIframe = false;

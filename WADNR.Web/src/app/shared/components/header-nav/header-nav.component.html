@@ -61,3 +61,98 @@
         </ul>
     </div>
 </nav>
+
+<header class="site-header">
+    @if (navigationMenus$ | async; as navigationMenus) {
+    <nav class="secondary-nav">
+        <div style="width: 100%">
+            <ul class="secondary-nav__links">
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0);" [dropdownToggle]="aboutMenu" class="nav-link dropdown-toggle">About <icon icon="AngleDown"></icon></a>
+                    <ul #aboutMenu class="dropdown-menu">
+                        @for (menuItem of navigationMenus.about; track menuItem.CustomPageID ?? menuItem.CustomPageVanityUrl) {
+                        <li>
+                            <a [routerLink]="vanityUrlToRouterLink(menuItem.CustomPageVanityUrl)" class="dropdown-item">{{ menuItem.CustomPageDisplayName }}</a>
+                        </li>
+                        }
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0);" [dropdownToggle]="projectsMenu" class="nav-link dropdown-toggle">Projects <icon icon="AngleDown"></icon></a>
+                    <ul #projectsMenu class="dropdown-menu">
+                        <li><a [routerLink]="['/projects/map']" class="dropdown-item">Project Map</a></li>
+                        <li class="divider"></li>
+                        <li><a [routerLink]="['/projects']" class="dropdown-item">Full Project List</a></li>
+                        <li><a [routerLink]="['/projects-by-type']" class="dropdown-item">Projects By Type</a></li>
+                        <li><a [routerLink]="['/projects-by-theme']" class="dropdown-item">Projects By Theme</a></li>
+                        <li><a [routerLink]="['/project-tags']" class="dropdown-item">Project Tags</a></li>
+                        <li class="divider"></li>
+                        <li><a [routerLink]="['/interactions-events']" class="dropdown-item">Full Interactions/Events List</a></li>
+                        <li class="divider"></li>
+                        @for (menuItem of navigationMenus.projects; track menuItem.CustomPageID ?? menuItem.CustomPageVanityUrl) {
+                        <li>
+                            <a [routerLink]="vanityUrlToRouterLink(menuItem.CustomPageVanityUrl)" class="dropdown-item">{{ menuItem.CustomPageDisplayName }}</a>
+                        </li>
+                        }
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0);" [dropdownToggle]="financialsMenu" class="nav-link dropdown-toggle">Financials <icon icon="AngleDown"></icon></a>
+                    <ul #financialsMenu class="dropdown-menu">
+                        <li><a [routerLink]="['/fund-sources']" class="dropdown-item">Full Fund Source List</a></li>
+                        <li class="divider"></li>
+                        <li><a [routerLink]="['/agreements']" class="dropdown-item">Full Agreement List</a></li>
+                        @if (navigationMenus.financials.length > 0) {
+                        <li class="divider"></li>
+                        @for (menuItem of navigationMenus.financials; track menuItem.CustomPageID ?? menuItem.CustomPageVanityUrl) {
+                        <li>
+                            <a [routerLink]="vanityUrlToRouterLink(menuItem.CustomPageVanityUrl)" class="dropdown-item">{{ menuItem.CustomPageDisplayName }}</a>
+                        </li>
+                        } }
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0);" [dropdownToggle]="programMenu" class="nav-link dropdown-toggle">Program Info<icon icon="AngleDown"></icon></a>
+                    <ul #programMenu class="dropdown-menu">
+                        <li><a [routerLink]="['/find-your-forester']" class="dropdown-item">Find Your Forester</a></li>
+                        <li><a [routerLink]="['/programs']" class="dropdown-item">Programs</a></li>
+                        <li class="divider"></li>
+                        <li><a [routerLink]="['/priority-landscapes']" class="dropdown-item">Priority Landscapes</a></li>
+                        <li><a [routerLink]="['/dnr-upland-regions']" class="dropdown-item">DNR Upland Regions</a></li>
+                        <li><a [routerLink]="['/counties']" class="dropdown-item">Counties</a></li>
+                        <li class="divider"></li>
+                        <li><a [routerLink]="['/contributing-organizations']" class="dropdown-item">Contributing Organizations</a></li>
+                        <li class="divider"></li>
+                        @for (menuItem of navigationMenus.programInfo; track menuItem.CustomPageID ?? menuItem.CustomPageVanityUrl) {
+                        <li>
+                            <a [routerLink]="vanityUrlToRouterLink(menuItem.CustomPageVanityUrl)" class="dropdown-item">{{ menuItem.CustomPageDisplayName }}</a>
+                        </li>
+                        }
+                    </ul>
+                </li>
+                <!-- first right-aligned item -->
+                <li class="nav-item secondary-nav__right-start">
+                    <a [routerLink]="['/not-found']" routerLinkActive="active" class="nav-link">Log In</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0);" [dropdownToggle]="helpMenu" class="nav-link dropdown-toggle">Help <icon icon="AngleDown"></icon></a>
+                    <ul #helpMenu class="dropdown-menu dropdown-menu-right">
+                        <li><a [routerLink]="['/fund-sources']" class="dropdown-item">Request Support</a></li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="https://esassoc.com/services/technology/esa-software-platforms/projectfirma/" class="dropdown-item" target="_blank"
+                                >About Project Firma <icon icon="ExternalLink"></icon
+                            ></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    }
+</header>
+<main class="site">
+    <div class="site-wrapper">
+        <router-outlet></router-outlet>
+    </div>
+</main>
