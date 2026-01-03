@@ -308,6 +308,213 @@
         }
       }
     },
+    "/fund-sources": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "List_FundSource",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "Create_FundSource",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fund-sources/{fundSourceID}": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "Get_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "Update_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "Delete_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/interaction-events": {
       "get": {
         "tags": [
@@ -4118,6 +4325,67 @@
         ],
         "type": "string"
       },
+      "FundSourceDetail": {
+        "type": "object",
+        "properties": {
+          "FundSourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "StartDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EndDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ConditionsAndRequirements": {
+            "type": "string",
+            "nullable": true
+          },
+          "ComplianceNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "CFDANumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceTypeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ShortName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TotalAwardAmount": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
       "FundSourceFileResource": {
         "type": "object",
         "properties": {
@@ -4155,6 +4423,58 @@
           },
           "FundSource": {
             "$ref": "#/components/schemas/FundSource"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceGridRow": {
+        "type": "object",
+        "properties": {
+          "FundSourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ShortName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TotalAwardAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "CFDANumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "StartDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EndDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "FundSourceStatusName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceTypeDisplay": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4316,6 +4636,63 @@
               "$ref": "#/components/schemas/FundSource"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "FundSourceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "StartDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EndDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ConditionsAndRequirements": {
+            "type": "string",
+            "nullable": true
+          },
+          "ComplianceNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "CFDANumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceTypeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ShortName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TotalAwardAmount": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false
@@ -11859,6 +12236,9 @@
     },
     {
       "name": "FileResource"
+    },
+    {
+      "name": "FundSource"
     },
     {
       "name": "InteractionEvent"

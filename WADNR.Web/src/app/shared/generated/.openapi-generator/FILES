@@ -5,6 +5,7 @@ api/custom-page.service.ts
 api/custom-rich-text.service.ts
 api/field-definition.service.ts
 api/file-resource.service.ts
+api/fund-source.service.ts
 api/interaction-event.service.ts
 api/program.service.ts
 api/system-info.service.ts
@@ -82,12 +83,15 @@ model/fund-source-allocation-program-manager.ts
 model/fund-source-allocation-source-enum.ts
 model/fund-source-allocation-source.ts
 model/fund-source-allocation.ts
+model/fund-source-detail.ts
 model/fund-source-file-resource.ts
+model/fund-source-grid-row.ts
 model/fund-source-note-internal.ts
 model/fund-source-note.ts
 model/fund-source-status-enum.ts
 model/fund-source-status.ts
 model/fund-source-type.ts
+model/fund-source-upsert-request.ts
 model/fund-source.ts
 model/funding-source-enum.ts
 model/funding-source.ts

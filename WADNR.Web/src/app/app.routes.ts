@@ -18,7 +18,7 @@ export const routes: Routes = [
     { path: "dnr-upland-regions", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "find-your-forester", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "forest-health-monitoring", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
-    { path: "fund-sources", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    { path: "fund-sources", title: "Fund Sources", loadComponent: () => import("./pages/fund-sources/fund-sources.component").then((m) => m.FundSourcesComponent) },
     {
         path: "interactions-events",
         title: "Interactions/Events",
