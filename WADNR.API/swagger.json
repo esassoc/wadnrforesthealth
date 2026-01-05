@@ -929,6 +929,213 @@
         }
       }
     },
+    "/organizations": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "List_Organization",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "Create_Organization",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organizations/{organizationID}": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "Get_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "Update_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "Delete_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/programs": {
       "get": {
         "tags": [
@@ -6929,6 +7136,90 @@
         ],
         "type": "string"
       },
+      "OrganizationDetail": {
+        "type": "object",
+        "properties": {
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OrganizationGuid": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationAbbreviation": {
+            "type": "string",
+            "nullable": true
+          },
+          "SectorID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PrimaryContactPersonID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "IsActive": {
+            "type": "boolean"
+          },
+          "OrganizationUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "LogoFileResourceInfoID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "IsUserAccountOrganization": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrganizationGridRow": {
+        "type": "object",
+        "properties": {
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationShortName": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsActive": {
+            "type": "boolean"
+          },
+          "OrganizationTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "AssociatedProjectsCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AssociatedFundSourcesCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AssociatedUsersCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "OrganizationLookupItem": {
         "type": "object",
         "properties": {
@@ -7024,6 +7315,41 @@
           },
           "RelationshipType": {
             "$ref": "#/components/schemas/RelationshipType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrganizationUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationShortName": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsActive": {
+            "type": "boolean"
+          },
+          "OrganizationUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "PrimaryContactPersonID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "OrganizationTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "VendorID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -12697,6 +13023,9 @@
     },
     {
       "name": "InteractionEvent"
+    },
+    {
+      "name": "Organization"
     },
     {
       "name": "Program"

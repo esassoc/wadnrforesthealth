@@ -36,8 +36,6 @@ export class ProgramsComponent {
 
     ngOnInit(): void {
         this.columnDefs = [
-            // Primary identifier (hidden or shown as needed)
-            this.utilityFunctions.createBasicColumnDef("Program ID", "ProgramID", { Width: 100 }),
             // Program name as a link to the program detail using ProgramID
             this.utilityFunctions.createLinkColumnDef("Name", "ProgramName", "ProgramID", {
                 InRouterLink: "/programs/",

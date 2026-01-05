@@ -8,6 +8,7 @@ api/field-definition.service.ts
 api/file-resource.service.ts
 api/fund-source.service.ts
 api/interaction-event.service.ts
+api/organization.service.ts
 api/program.service.ts
 api/system-info.service.ts
 api/tag.service.ts
@@ -141,9 +142,12 @@ model/ordinates.ts
 model/organization-boundary-staging.ts
 model/organization-code-enum.ts
 model/organization-code.ts
+model/organization-detail.ts
+model/organization-grid-row.ts
 model/organization-lookup-item.ts
 model/organization-type-relationship-type.ts
 model/organization-type.ts
+model/organization-upsert-request.ts
 model/organization.ts
 model/person-allowed-authenticator.ts
 model/person-detail.ts

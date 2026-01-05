@@ -568,6 +568,13 @@ export class UtilityFunctionsService {
             return;
         }
 
+        if (params.WrapHeaderText !== undefined) {
+            colDef.wrapHeaderText = params.WrapHeaderText;
+        }
+        if (params.AutoHeaderHeight !== undefined) {
+            colDef.autoHeaderHeight = params.AutoHeaderHeight;
+        }
+
         if (params.FieldDefinitionType) {
             colDef.headerComponentParams = {
                 innerHeaderComponent: FieldDefinitionGridHeaderComponent,
@@ -677,6 +684,8 @@ export interface LtinfoColumnDefParams {
     Width?: number;
     MaxWidth?: number;
     Hide?: boolean;
+    WrapHeaderText?: boolean; // When true, header text wraps (default: false)
+    AutoHeaderHeight?: boolean; // When true, header row height grows to fit wrapped header text (default: false)
     FieldDefinitionType?: string;
     FieldDefinitionLabelOverride?: string;
     UseCustomDropdownFilter?: boolean; // use to enable CustomDropdownFilter without specifying a field

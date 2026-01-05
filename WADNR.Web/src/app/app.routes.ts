@@ -13,7 +13,6 @@ export const routes: Routes = [
     { path: "about", loadComponent: () => import("./pages/about/about.component").then((m) => m.AboutComponent) },
     { path: "additional-resources", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "agreements", title: "Agreements", loadComponent: () => import("./pages/agreements/agreements.component").then((m) => m.AgreementsComponent) },
-    { path: "contributing-organizations", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "counties", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "dnr-upland-regions", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "find-your-forester", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
@@ -32,6 +31,11 @@ export const routes: Routes = [
     {
         path: `labels-and-definitions/:${routeParams.definitionID}`,
         loadComponent: () => import("./pages/field-definition-edit/field-definition-edit.component").then((m) => m.FieldDefinitionEditComponent),
+    },
+    {
+        path: "organizations",
+        title: "Contributing Organizations",
+        loadComponent: () => import("./pages/organizations/organizations.component").then((m) => m.OrganizationsComponent),
     },
     { path: "prescribed-fire-seasonal-plans", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "priority-landscapes", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },

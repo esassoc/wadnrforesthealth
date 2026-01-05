@@ -46,6 +46,19 @@ ag-grid-angular {
         }
     }
 
+    // Support ag-Grid's built-in `wrapHeaderText` / `autoHeaderHeight`.
+    // Our header components use flex layouts that can inadvertently prevent wrapping.
+    .ag-header-cell.ag-header-cell-wrap-text {
+        .ag-header-cell-label,
+        .ag-header-cell-text {
+            white-space: normal;
+        }
+
+        .ag-header-cell-label {
+            align-items: flex-start;
+        }
+    }
+
     .ag-row {
         border-bottom: 1px solid rgba(var(--black-rgb), 0.15);
 

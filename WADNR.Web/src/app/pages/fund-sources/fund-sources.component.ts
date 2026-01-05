@@ -31,7 +31,6 @@ export class FundSourcesComponent {
                 InRouterLink: "/fund-sources/",
             }),
             this.utilityFunctions.createBasicColumnDef("CFDA #", "CFDANumber", {
-                Width: 120,
                 FieldDefinitionType: "CFDA",
                 FieldDefinitionLabelOverride: "Federal Assistance Listing",
             }),
@@ -41,25 +40,20 @@ export class FundSourcesComponent {
             }),
             this.utilityFunctions.createCurrencyColumnDef("Total Award", "TotalAwardAmount", {
                 MaxDecimalPlacesToDisplay: 2,
-                Width: 140,
             }),
             this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy", {
                 FieldDefinitionType: "FundSourceStartDate",
-                Width: 120,
             }),
             this.utilityFunctions.createDateColumnDef("End Date", "EndDate", "M/d/yyyy", {
                 FieldDefinitionType: "FundSourceEndDate",
-                Width: 120,
             }),
             this.utilityFunctions.createBasicColumnDef("Status", "FundSourceStatusName", {
                 FieldDefinitionType: "FundSourceStatus",
                 CustomDropdownFilterField: "FundSourceStatusName",
-                Width: 140,
             }),
             this.utilityFunctions.createBasicColumnDef("Type", "FundSourceTypeDisplay", {
                 FieldDefinitionType: "FundSourceType",
                 CustomDropdownFilterField: "FundSourceTypeDisplay",
-                Width: 160,
             }),
         ];
 

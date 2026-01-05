@@ -12,18 +12,20 @@
     overflow: hidden;
     font-weight: bold;
     display: flex;
+    flex-wrap: wrap;
 }
 
 #filter-select-buttons label {
-    padding: 5px 0;
+    padding: 5px;
     margin: 0;
     min-height: 27px;
     height: 27px;
-    flex: 1 1 0;
-    min-width: 0;
+    flex: 1 0 auto;
+    min-width: max-content;
     display: flex;
     align-items: center;
     justify-content: center;
+    white-space: nowrap;
 }
 
 #filter-select-buttons label[for="select"] {

@@ -201,13 +201,40 @@ export class WADNRGridComponent implements OnInit, OnChanges {
 
     public resizeGridColumns() {
         if (this.suppressColumnSizing) return;
+        if (!this.gridApi || !this.autoSizeStrategy) return;
 
         if (this.autoSizeStrategy.type == "fitCellContents") {
-            this.gridApi?.autoSizeAllColumns();
+            this.autoSizeColumnsRespectingExplicitWidths();
         } else if (this.autoSizeStrategy.type == "fitGridWidth") {
             // This will size columns to fit the grid width, but it may not be perfect
             // as it doesn't account for the number of columns and their widths.
             this.gridApi?.sizeColumnsToFit();
+        }
+    }
+
+    private autoSizeColumnsRespectingExplicitWidths(): void {
+        if (!this.gridApi) return;
+
+        const explicitWidthKeys = new Set<string>();
+        for (const def of this.columnDefs ?? []) {
+            const key = (def as any)?.colId ?? (def as any)?.field;
+            const explicitWidth = (def as any)?.width ?? (def as any)?.initialWidth;
+            if (key && explicitWidth !== undefined && explicitWidth !== null) {
+                explicitWidthKeys.add(String(key));
+            }
+        }
+
+        const keysToAutoSize: string[] = [];
+        for (const col of this.gridApi.getColumns() ?? []) {
+            const def: any = col.getColDef();
+            const key = def?.colId ?? def?.field;
+            if (!key) continue;
+            if (explicitWidthKeys.has(String(key))) continue;
+            keysToAutoSize.push(String(key));
+        }
+
+        if (keysToAutoSize.length > 0) {
+            this.gridApi.autoSizeColumns(keysToAutoSize);
         }
     }
 
@@ -235,7 +262,11 @@ export class WADNRGridComponent implements OnInit, OnChanges {
     }
 
     public onRowDataUpdated(event: RowDataUpdatedEvent) {
-        event.api.autoSizeAllColumns();
+        if (!this.suppressColumnSizing && this.autoSizeStrategy?.type === "fitCellContents") {
+            this.autoSizeColumnsRespectingExplicitWidths();
+        } else if (!this.suppressColumnSizing && this.autoSizeStrategy?.type === "fitGridWidth") {
+            event.api.sizeColumnsToFit();
+        }
         if (event.api.isRowDataEmpty()) {
             event.api.showNoRowsOverlay();
             if (!this.gridLoaded) {
@@ -280,7 +311,12 @@ export class WADNRGridComponent implements OnInit, OnChanges {
 
     public handleScreenSizeChangedEvent() {
         if (this.gridApi) {
-            this.gridApi.autoSizeAllColumns();
+            if (this.suppressColumnSizing) return;
+            if (this.autoSizeStrategy?.type === "fitCellContents") {
+                this.autoSizeColumnsRespectingExplicitWidths();
+            } else if (this.autoSizeStrategy?.type === "fitGridWidth") {
+                this.gridApi.sizeColumnsToFit();
+            }
         }
     }
 
