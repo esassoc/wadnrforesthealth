@@ -21,7 +21,6 @@ public static class CustomPages
         var items = await dbContext.CustomPages
             .AsNoTracking()
             .Where(x => x.CustomPageNavigationSectionID == customPageNavigationSectionID)
-            .OrderBy(x => x.CustomPageDisplayName)
             .Select(CustomPageProjections.AsMenuItem)
             .ToListAsync();
 

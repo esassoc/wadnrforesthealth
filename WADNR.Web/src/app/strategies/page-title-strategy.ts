@@ -14,7 +14,7 @@ export class PageTitleStrategy extends TitleStrategy {
             const fullTitle = titles.join(" | ");
             this.title.setTitle(`${fullTitle}`);
         } else {
-            this.title.setTitle(`LT Info`);
+            this.title.setTitle(`Washington Dept. of Natural Resources`);
         }
     }
 

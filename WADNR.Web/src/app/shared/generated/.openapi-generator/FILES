@@ -1,6 +1,7 @@
 .gitignore
 api.base.service.ts
 api.module.ts
+api/agreement.service.ts
 api/custom-page.service.ts
 api/custom-rich-text.service.ts
 api/field-definition.service.ts
@@ -12,13 +13,16 @@ api/system-info.service.ts
 api/tag.service.ts
 configuration.ts
 encoder.ts
+model/agreement-detail.ts
 model/agreement-fund-source-allocation.ts
+model/agreement-grid-row.ts
 model/agreement-person-role-enum.ts
 model/agreement-person-role.ts
 model/agreement-person.ts
 model/agreement-project.ts
 model/agreement-status.ts
 model/agreement-type.ts
+model/agreement-upsert-request.ts
 model/agreement.ts
 model/audit-log-event-type-enum.ts
 model/audit-log-event-type.ts
@@ -86,6 +90,7 @@ model/fund-source-allocation.ts
 model/fund-source-detail.ts
 model/fund-source-file-resource.ts
 model/fund-source-grid-row.ts
+model/fund-source-lookup-item.ts
 model/fund-source-note-internal.ts
 model/fund-source-note.ts
 model/fund-source-status-enum.ts

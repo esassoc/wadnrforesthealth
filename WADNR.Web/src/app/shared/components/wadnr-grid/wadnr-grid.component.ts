@@ -67,13 +67,24 @@ export class WADNRGridComponent implements OnInit, OnChanges {
     @Input() getRowId: GetRowIdFunc;
     @Input() gridOptions: GridOptions;
 
+    @Input() pinnedTotalsRow?: {
+        /** Dot-path field(s) to sum (e.g. "AgreementAmount" or "Organization.OrganizationID"). */
+        fields: string[];
+        /** Optional label shown in the pinned row. If omitted, no label cell is set. */
+        label?: string;
+        /** Dot-path field to place the label in (defaults to first column field, if any). */
+        labelField?: string;
+        /** When true (default), totals reflect the currently filtered rows. */
+        filteredOnly?: boolean;
+    };
+
     @Input() rowSelection: RowSelectionOptions;
     // setting default will override passed rowSelectionOptions
     @Input() defaultRowSelection: RowSelectionMode;
 
     // our stuff
     @Input() width: string = "100%";
-    @Input() height: string = "720px";
+    @Input() height: string = "500px";
     @Input() downloadFileName: string = "grid-data";
     @Input() colIDsToExclude: string[] = [];
     @Input() hideDownloadButton: boolean = false;
@@ -86,6 +97,7 @@ export class WADNRGridComponent implements OnInit, OnChanges {
     @Input() overrideDefaultGridHeader: boolean = false;
     @Input() unsetHeaderGridActionWidth: boolean = false;
     @Input() showMultiRowSelectActions: boolean = true;
+    @Input() gridTitle: string = "";
 
     private gridApi: GridApi;
     public gridLoaded: boolean = false;
@@ -151,12 +163,18 @@ export class WADNRGridComponent implements OnInit, OnChanges {
             this.gridApi?.setGridOption("loading", true);
             this.gridApi?.updateGridOptions({ rowData: this.rowData });
             this.gridApi?.setGridOption("loading", false);
+            this.updatePinnedTotalsRow();
         }
 
         if (changes.columnDefs) {
             this.gridApi?.setGridOption("loading", true);
             this.gridApi?.updateGridOptions({ columnDefs: this.columnDefs });
             this.gridApi?.setGridOption("loading", false);
+            this.updatePinnedTotalsRow();
+        }
+
+        if (changes.pinnedTotalsRow) {
+            this.updatePinnedTotalsRow();
         }
     }
 
@@ -164,6 +182,8 @@ export class WADNRGridComponent implements OnInit, OnChanges {
         this.gridReady.emit(event);
 
         this.gridApi = event.api;
+
+        this.updatePinnedTotalsRow();
     }
 
     public onFirstDataRendered(event: FirstDataRenderedEvent) {
@@ -171,6 +191,8 @@ export class WADNRGridComponent implements OnInit, OnChanges {
         this.gridRefReady.emit(this.gridref);
         this.resizeGridColumns();
         this.gridLoaded = true;
+
+        this.updatePinnedTotalsRow();
     }
 
     public onGridColumnsChanged(event: GridColumnsChangedEvent) {
@@ -208,6 +230,8 @@ export class WADNRGridComponent implements OnInit, OnChanges {
             filteredRowsCount++;
         });
         this.filteredRowsCount = filteredRowsCount;
+
+        this.updatePinnedTotalsRow();
     }
 
     public onRowDataUpdated(event: RowDataUpdatedEvent) {
@@ -221,6 +245,8 @@ export class WADNRGridComponent implements OnInit, OnChanges {
         } else {
             event.api.hideOverlay();
         }
+
+        this.updatePinnedTotalsRow();
     }
 
     oncellEditingStarted(event: CellEditingStartedEvent) {
@@ -233,6 +259,8 @@ export class WADNRGridComponent implements OnInit, OnChanges {
 
     onCellValueChanged(event: CellValueChangedEvent) {
         this.cellValueChanged.emit(event);
+
+        this.updatePinnedTotalsRow();
     }
 
     onSelectAll() {
@@ -254,5 +282,80 @@ export class WADNRGridComponent implements OnInit, OnChanges {
         if (this.gridApi) {
             this.gridApi.autoSizeAllColumns();
         }
+    }
+
+    private updatePinnedTotalsRow(): void {
+        if (!this.gridApi) return;
+
+        const config = this.pinnedTotalsRow;
+        if (!config || !Array.isArray(config.fields) || config.fields.length === 0) {
+            this.gridApi.setGridOption("pinnedBottomRowData", undefined);
+            return;
+        }
+
+        const fieldsToSum = config.fields;
+        const useFilteredOnly = config.filteredOnly !== false;
+
+        const sums: Record<string, number> = {};
+        for (const field of fieldsToSum) {
+            sums[field] = 0;
+        }
+
+        const addRow = (data: any) => {
+            if (!data) return;
+            for (const field of fieldsToSum) {
+                const rawValue = this.getValueByPath(data, field);
+                const numericValue = this.toFiniteNumber(rawValue);
+                if (numericValue === null) continue;
+                sums[field] += numericValue;
+            }
+        };
+
+        if (useFilteredOnly) {
+            this.gridApi.forEachNodeAfterFilter((node) => {
+                if (node.group) return;
+                addRow(node.data);
+            });
+        } else {
+            this.gridApi.forEachNode((node) => {
+                if (node.group) return;
+                addRow(node.data);
+            });
+        }
+
+        const pinnedRow: Record<string, any> = {};
+
+        if (config.label !== undefined) {
+            const labelField = config.labelField ?? (Array.isArray(this.columnDefs) ? (this.columnDefs.find((cd: any) => !!cd?.field)?.field as string) : undefined);
+
+            if (labelField) {
+                pinnedRow[labelField] = config.label;
+            }
+        }
+
+        for (const field of fieldsToSum) {
+            pinnedRow[field] = sums[field];
+        }
+
+        this.gridApi.setGridOption("pinnedBottomRowData", [pinnedRow]);
+    }
+
+    private getValueByPath(obj: any, path: string): any {
+        if (!obj || !path) return null;
+        if (!path.includes(".")) return obj[path];
+        return path.split(".").reduce((acc: any, key: string) => (acc == null ? null : acc[key]), obj);
+    }
+
+    private toFiniteNumber(value: any): number | null {
+        if (value == null) return null;
+        if (typeof value === "number") return Number.isFinite(value) ? value : null;
+        if (typeof value === "string") {
+            const trimmed = value.trim();
+            if (!trimmed) return null;
+            const normalized = trimmed.replace(/,/g, "");
+            const num = Number(normalized);
+            return Number.isFinite(num) ? num : null;
+        }
+        return null;
     }
 }

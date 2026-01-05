@@ -1,4 +1,6 @@
-@if (!overrideDefaultGridHeader && gridLoaded) {
+@if (this.gridTitle != null && this.gridTitle !== '') {
+<h2 class="grid-title">{{ gridTitle }}</h2>
+} @if (!overrideDefaultGridHeader && gridLoaded) {
 <wadnr-grid-header
     [grid]="gridref"
     [rowDataCount]="rowData?.length"
