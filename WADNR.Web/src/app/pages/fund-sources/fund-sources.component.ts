@@ -53,10 +53,12 @@ export class FundSourcesComponent {
             }),
             this.utilityFunctions.createBasicColumnDef("Status", "FundSourceStatusName", {
                 FieldDefinitionType: "FundSourceStatus",
+                CustomDropdownFilterField: "FundSourceStatusName",
                 Width: 140,
             }),
             this.utilityFunctions.createBasicColumnDef("Type", "FundSourceTypeDisplay", {
                 FieldDefinitionType: "FundSourceType",
+                CustomDropdownFilterField: "FundSourceTypeDisplay",
                 Width: 160,
             }),
         ];

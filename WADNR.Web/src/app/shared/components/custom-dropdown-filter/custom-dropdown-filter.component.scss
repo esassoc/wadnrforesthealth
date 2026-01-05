@@ -42,4 +42,13 @@
     border: 1px solid var(--secondary);
     max-height: 125px;
     overflow: auto;
+
+    div {
+        display: flex;
+        align-items: center;
+
+        label.blank-option {
+            font-style: italic;
+        }
+    }
 }

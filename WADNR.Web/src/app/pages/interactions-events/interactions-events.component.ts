@@ -43,8 +43,11 @@ export class InteractionsEventsComponent {
             this.utilityFunctions.createDateColumnDef("Date", "InteractionEventDate", "M/d/yyyy"),
             this.utilityFunctions.createBasicColumnDef("Type", "InteractionEventType.InteractionEventTypeDisplayName", {
                 FieldDefinitionType: "InteractionEventType",
+                CustomDropdownFilterField: "InteractionEventType.InteractionEventTypeDisplayName",
             }),
-            this.utilityFunctions.createBasicColumnDef("Staff Person", "StaffPerson.FullName"),
+            this.utilityFunctions.createBasicColumnDef("Staff Person", "StaffPerson.FullName", {
+                CustomDropdownFilterField: "StaffPerson.FullName",
+            }),
         ];
 
         this.interactionEvents$ = this.InteractionEventService.listInteractionEvent();

@@ -2,13 +2,13 @@ import { Component } from "@angular/core";
 import { AgFilterComponent } from "ag-grid-angular";
 import { IDoesFilterPassParams, RowNode } from "ag-grid-community";
 import { FormsModule } from "@angular/forms";
-
+import { NgClass } from "@angular/common";
 
 @Component({
     selector: "qanat-custom-dropdown-filter",
     templateUrl: "./custom-dropdown-filter.component.html",
     styleUrls: ["./custom-dropdown-filter.component.scss"],
-    imports: [FormsModule]
+    imports: [FormsModule, NgClass],
 })
 export class CustomDropdownFilterComponent implements AgFilterComponent {
     params;
@@ -147,16 +147,16 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
 
     getDropdownValues() {
         // sort numbers numerically (not as strings). Check the first and last item of the array because there can be at most one "null" element
-        if(this.dropdownValues.length > 0 && (typeof(this.dropdownValues[0]) == 'number' || typeof(this.dropdownValues[this.dropdownValues.length - 1]) == 'number')){
-            return this.dropdownValues.sort(function(a, b) { 
-                if(a != null && b != null){
-                    return a - b; 
+        if (this.dropdownValues.length > 0 && (typeof this.dropdownValues[0] == "number" || typeof this.dropdownValues[this.dropdownValues.length - 1] == "number")) {
+            return this.dropdownValues.sort(function (a, b) {
+                if (a != null && b != null) {
+                    return a - b;
                 }
                 // sort the null/blank item first
-                if(a == null){
-                    return -1
+                if (a == null) {
+                    return -1;
                 }
-                return 1
+                return 1;
             });
         }
         return this.dropdownValues.sort();

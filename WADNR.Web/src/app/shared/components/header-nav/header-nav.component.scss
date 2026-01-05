@@ -503,6 +503,8 @@
         font-size: 0.875rem;
         &:hover {
             background: var(--brown-800);
+            color: var(--white);
+            text-decoration: none;
         }
 
         icon {
