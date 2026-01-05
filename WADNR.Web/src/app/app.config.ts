@@ -1,5 +1,5 @@
 import { ApplicationConfig, ErrorHandler, importProvidersFrom, inject, provideAppInitializer } from "@angular/core";
-import { RouterModule, TitleStrategy, provideRouter, withComponentInputBinding } from "@angular/router";
+import { TitleStrategy, provideRouter, withComponentInputBinding, withInMemoryScrolling, withRouterConfig } from "@angular/router";
 
 import { routes } from "./app.routes";
 import { DecimalPipe, CurrencyPipe, DatePipe, PercentPipe } from "@angular/common";
@@ -23,19 +23,22 @@ import { SumPipe } from "./shared/pipes/sum.pipe";
 
 export const appConfig: ApplicationConfig = {
     providers: [
-        provideRouter(routes, withComponentInputBinding()),
+        provideRouter(
+            routes,
+            withComponentInputBinding(),
+            withRouterConfig({
+                paramsInheritanceStrategy: "always",
+            }),
+            withInMemoryScrolling({
+                scrollPositionRestoration: "enabled",
+                anchorScrolling: "enabled",
+            })
+        ),
         importProvidersFrom(
             ApiModule.forRoot(() => {
                 return new Configuration({
                     basePath: `${environment.mainAppApiUrl}`,
                 });
-            })
-        ),
-        importProvidersFrom(
-            RouterModule.forRoot(routes, {
-                paramsInheritanceStrategy: "always",
-                scrollPositionRestoration: "enabled",
-                anchorScrolling: "enabled",
             })
         ),
         importProvidersFrom(OAuthModule.forRoot()),
