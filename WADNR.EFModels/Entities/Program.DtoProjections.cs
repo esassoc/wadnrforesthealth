@@ -14,7 +14,7 @@ public static class ProgramProjections
     public static readonly Expression<Func<Program, ProgramGridRow>> AsGridRow = x => new ProgramGridRow
     {
         ProgramID = x.ProgramID,
-        ProgramName = x.ProgramName,
+        ProgramName = x.ProgramName ?? "(default)",
         ProgramShortName = x.ProgramShortName,
         IsActive = x.ProgramIsActive,
         IsDefaultProgramForImportOnly = x.IsDefaultProgramForImportOnly,

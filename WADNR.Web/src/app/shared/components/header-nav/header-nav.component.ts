@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { environment } from "src/environments/environment";
 import { AsyncPipe, CommonModule } from "@angular/common";
-import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
+import { RouterLink, RouterLinkActive } from "@angular/router";
 import { DropdownToggleDirective } from "src/app/shared/directives/dropdown-toggle.directive";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { CustomPageNavigationSectionEnum } from "src/app/shared/generated/enum/custom-page-navigation-section-enum";
@@ -14,7 +14,7 @@ import { catchError, shareReplay } from "rxjs/operators";
     selector: "header-nav",
     templateUrl: "./header-nav.component.html",
     styleUrls: ["./header-nav.component.scss"],
-    imports: [CommonModule, AsyncPipe, RouterLink, RouterLinkActive, RouterOutlet, DropdownToggleDirective, IconComponent],
+    imports: [CommonModule, AsyncPipe, RouterLink, RouterLinkActive, DropdownToggleDirective, IconComponent],
 })
 export class HeaderNavComponent implements OnInit {
     public navigationMenus$: Observable<{

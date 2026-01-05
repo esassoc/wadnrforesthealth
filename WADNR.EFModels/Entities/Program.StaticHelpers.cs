@@ -8,6 +8,7 @@ public static class Programs
     public static async Task<List<ProgramGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
     {
         var entities = await dbContext.Programs.AsNoTracking().Select(ProgramProjections.AsGridRow)
+            .OrderBy(x => x.ProgramName)
             .ToListAsync();
         return entities;
     }

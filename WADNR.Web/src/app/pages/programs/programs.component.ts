@@ -36,16 +36,15 @@ export class ProgramsComponent {
 
     ngOnInit(): void {
         this.columnDefs = [
-            // Program name as a link to the program detail using ProgramID
-            this.utilityFunctions.createLinkColumnDef("Name", "ProgramName", "ProgramID", {
+            this.utilityFunctions.createLinkColumnDef("Program", "ProgramName", "ProgramID", {
                 InRouterLink: "/programs/",
-                FieldDefinitionType: "Program",
             }),
-            // Short name
+            this.utilityFunctions.createLinkColumnDef("Organization", "Organization.OrganizationName", "Organization.OrganizationID", {
+                InRouterLink: "/organizations/",
+                FieldDefinitionType: "Organization",
+                FieldDefinitionLabelOverride: "Parent Organization",
+            }),
             this.utilityFunctions.createBasicColumnDef("Short Name", "ProgramShortName"),
-            // Organization - nested object, display OrganizationName
-            this.utilityFunctions.createBasicColumnDef("Organization", "Organization.OrganizationName"),
-            // Project count as a numeric (right aligned)
             this.utilityFunctions.createYearColumnDef("Project Count", "ProjectCount", { Width: 120 }),
             // Flags
             this.utilityFunctions.createBooleanColumnDef("Active?", "IsActive"),
