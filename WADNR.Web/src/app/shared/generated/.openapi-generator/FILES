@@ -9,6 +9,7 @@ api/file-resource.service.ts
 api/fund-source.service.ts
 api/interaction-event.service.ts
 api/organization.service.ts
+api/priority-landscape.service.ts
 api/program.service.ts
 api/project.service.ts
 api/system-info.service.ts
@@ -163,8 +164,11 @@ model/point.ts
 model/precision-model.ts
 model/precision-models.ts
 model/priority-landscape-category.ts
+model/priority-landscape-detail.ts
 model/priority-landscape-file-resource.ts
+model/priority-landscape-grid-row.ts
 model/priority-landscape-lookup-item.ts
+model/priority-landscape-upsert-request.ts
 model/priority-landscape.ts
 model/program-detail.ts
 model/program-grid-row.ts

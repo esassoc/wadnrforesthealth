@@ -52,6 +52,8 @@ export class Organization {
     ProjectOrganizationUpdates?: Array<ProjectOrganizationUpdate> | null;
     ProjectOrganizations?: Array<ProjectOrganization> | null;
     Vendor?: Vendor;
+    readonly IsUnknown?: boolean;
+    readonly DisplayName?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -85,6 +87,8 @@ export interface OrganizationForm {
     ProjectOrganizationUpdates?: FormControl<Array<ProjectOrganizationUpdate>>;
     ProjectOrganizations?: FormControl<Array<ProjectOrganization>>;
     Vendor?: FormControl<Vendor>;
+    IsUnknown?: FormControl<boolean>;
+    DisplayName?: FormControl<string>;
 }
 
 export class OrganizationFormControls { 
@@ -355,6 +359,26 @@ export class OrganizationFormControls {
         }
     );
     public static Vendor = (value: FormControlState<Vendor> | Vendor = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Vendor>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static IsUnknown = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static DisplayName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

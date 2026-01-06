@@ -1136,6 +1136,213 @@
         }
       }
     },
+    "/priority-landscapes": {
+      "get": {
+        "tags": [
+          "PriorityLandscape"
+        ],
+        "operationId": "List_PriorityLandscape",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PriorityLandscapeGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PriorityLandscapeGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PriorityLandscapeGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "PriorityLandscape"
+        ],
+        "operationId": "Create_PriorityLandscape",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriorityLandscapeUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriorityLandscapeUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriorityLandscapeUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriorityLandscapeDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriorityLandscapeDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriorityLandscapeDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/priority-landscapes/{priorityLandscapeID}": {
+      "get": {
+        "tags": [
+          "PriorityLandscape"
+        ],
+        "operationId": "Get_PriorityLandscape",
+        "parameters": [
+          {
+            "name": "priorityLandscapeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriorityLandscapeDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriorityLandscapeDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriorityLandscapeDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "PriorityLandscape"
+        ],
+        "operationId": "Update_PriorityLandscape",
+        "parameters": [
+          {
+            "name": "priorityLandscapeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriorityLandscapeUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriorityLandscapeUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriorityLandscapeUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriorityLandscapeDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriorityLandscapeDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriorityLandscapeDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "PriorityLandscape"
+        ],
+        "operationId": "Delete_PriorityLandscape",
+        "parameters": [
+          {
+            "name": "priorityLandscapeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/programs": {
       "get": {
         "tags": [
@@ -8591,6 +8798,29 @@
         },
         "additionalProperties": false
       },
+      "PriorityLandscapeDetail": {
+        "type": "object",
+        "properties": {
+          "PriorityLandscapeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PriorityLandscapeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "PriorityLandscapeDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "PlanYear": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PriorityLandscapeFileResource": {
         "type": "object",
         "properties": {
@@ -8632,6 +8862,33 @@
         },
         "additionalProperties": false
       },
+      "PriorityLandscapeGridRow": {
+        "type": "object",
+        "properties": {
+          "PriorityLandscapeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PriorityLandscapeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "PlanYear": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PriorityLandscapeCategoryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "PriorityLandscapeLookupItem": {
         "type": "object",
         "properties": {
@@ -8641,6 +8898,25 @@
           },
           "PriorityLandscapeName": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PriorityLandscapeUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "PriorityLandscapeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "PriorityLandscapeDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "PlanYear": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },
@@ -13483,6 +13759,9 @@
     },
     {
       "name": "Organization"
+    },
+    {
+      "name": "PriorityLandscape"
     },
     {
       "name": "Program"

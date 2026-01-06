@@ -37,7 +37,7 @@ export class WADNRMapComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() boundingBox: BoundingBoxDto;
     @Input() mapHeight: string = "500px";
     @Input() selectedTileLayer: string = "Terrain";
-    @Input() showLegend: boolean = true;
+    @Input() showLegend: boolean = false;
     @Input() legendPosition: ControlPosition = "topleft";
     @Input() disableMapInteraction: boolean = false; // disables all interaction when true
     @Output() onMapLoad: EventEmitter<WADNRMapInitEvent> = new EventEmitter();

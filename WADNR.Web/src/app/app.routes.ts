@@ -38,7 +38,11 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/organizations/organizations.component").then((m) => m.OrganizationsComponent),
     },
     { path: "prescribed-fire-seasonal-plans", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
-    { path: "priority-landscapes", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    {
+        path: "priority-landscapes",
+        title: "Priority Landscapes",
+        loadComponent: () => import("./pages/priority-landscapes/priority-landscapes.component").then((m) => m.PriorityLandscapesComponent),
+    },
     { path: "programs", title: "Programs", loadComponent: () => import("./pages/programs/programs.component").then((m) => m.ProgramsComponent) },
     { path: "tags", title: "Tags", loadComponent: () => import("./pages/tags/tags.component").then((m) => m.TagsComponent) },
     { path: "projects", title: "Full Project List", loadComponent: () => import("./pages/projects/projects.component").then((m) => m.ProjectsComponent) },

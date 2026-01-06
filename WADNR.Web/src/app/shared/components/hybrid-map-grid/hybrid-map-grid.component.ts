@@ -4,9 +4,9 @@ import { WADNRGridComponent } from "../wadnr-grid/wadnr-grid.component";
 import { WADNRGridHeaderComponent } from "../wadnr-grid-header/wadnr-grid-header.component";
 import { IconComponent } from "../icon/icon.component";
 import { AgGridAngular } from "ag-grid-angular";
-import { WADNRMapInitEvent, WADNRMapComponent } from "../leaflet/wadnr-map/wadnr-map.component";
 import { Map } from "leaflet";
 import { AgGridHelper } from "../../helpers/ag-grid-helper";
+import { WADNRMapComponent, WADNRMapInitEvent } from "../leaflet/wadnr-map/wadnr-map.component";
 
 @Component({
     selector: "hybrid-map-grid",

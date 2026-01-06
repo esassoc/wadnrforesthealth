@@ -53,6 +53,8 @@ export class Program {
     ProjectUpdatePrograms?: Array<ProjectUpdateProgram> | null;
     TreatmentUpdates?: Array<TreatmentUpdate> | null;
     Treatments?: Array<Treatment> | null;
+    readonly InternalDisplayName?: string | null;
+    readonly DisplayName?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -89,6 +91,8 @@ export interface ProgramForm {
     ProjectUpdatePrograms?: FormControl<Array<ProjectUpdateProgram>>;
     TreatmentUpdates?: FormControl<Array<TreatmentUpdate>>;
     Treatments?: FormControl<Array<Treatment>>;
+    InternalDisplayName?: FormControl<string>;
+    DisplayName?: FormControl<string>;
 }
 
 export class ProgramFormControls { 
@@ -387,6 +391,26 @@ export class ProgramFormControls {
         }
     );
     public static Treatments = (value: FormControlState<Array<Treatment>> | Array<Treatment> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<Treatment>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static InternalDisplayName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static DisplayName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
