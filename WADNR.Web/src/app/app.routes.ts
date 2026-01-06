@@ -13,7 +13,11 @@ export const routes: Routes = [
     { path: "about", loadComponent: () => import("./pages/about/about.component").then((m) => m.AboutComponent) },
     { path: "additional-resources", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "agreements", title: "Agreements", loadComponent: () => import("./pages/agreements/agreements.component").then((m) => m.AgreementsComponent) },
-    { path: "counties", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    {
+        path: "counties",
+        title: "Counties",
+        loadComponent: () => import("./pages/counties/counties.component").then((m) => m.CountiesComponent),
+    },
     {
         path: "dnr-upland-regions",
         title: "DNR Upland Regions",

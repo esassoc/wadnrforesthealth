@@ -23,6 +23,6 @@ public static class DNRUplandRegionProjections
         DNRUplandRegionID = x.DNRUplandRegionID,
         DNRUplandRegionName = x.DNRUplandRegionName,
         ProjectCount = x.ProjectRegions
-            .Count()
+            .Count(pr => pr.Project.ProjectApprovalStatusID == Projects.ApprovedStatusId && !pr.Project.ProjectType.LimitVisibilityToAdmin)
     };
 }

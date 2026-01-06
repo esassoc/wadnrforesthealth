@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WADNR.Models.DataTransferObjects;
 
@@ -5,10 +6,17 @@ namespace WADNR.EFModels.Entities;
 
 public static class Projects
 {
+    // Shared EF-usable definition and constant for active projects
+    public const int ApprovedStatusId = (int)ProjectApprovalStatusEnum.Approved;
+
+    public static readonly Expression<Func<Project, bool>> IsActiveProjectExpr =
+        p => p.ProjectApprovalStatusID == ApprovedStatusId && !p.ProjectType.LimitVisibilityToAdmin;
+
     public static async Task<List<ProjectGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
     {
         var projects = await dbContext.Projects
             .AsNoTracking()
+            .Where(IsActiveProjectExpr)
             .OrderBy(x => x.ProjectName)
             .Select(ProjectProjections.AsGridRow)
             .ToListAsync();
@@ -41,6 +49,7 @@ public static class Projects
     {
         var entity = await dbContext.Projects
             .AsNoTracking()
+            .Where(IsActiveProjectExpr)
             .Where(x => x.ProjectID == projectID)
             .Select(ProjectProjections.AsDetail)
             .SingleOrDefaultAsync();

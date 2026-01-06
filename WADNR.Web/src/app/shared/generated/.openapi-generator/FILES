@@ -2,6 +2,7 @@
 api.base.service.ts
 api.module.ts
 api/agreement.service.ts
+api/county.service.ts
 api/custom-page.service.ts
 api/custom-rich-text.service.ts
 api/dnr-upland-region.service.ts
@@ -40,7 +41,10 @@ model/coordinate.ts
 model/cost-type-enum.ts
 model/cost-type.ts
 model/country.ts
+model/county-detail.ts
+model/county-grid-row.ts
 model/county-lookup-item.ts
+model/county-upsert-request.ts
 model/county.ts
 model/custom-page-detail.ts
 model/custom-page-image.ts

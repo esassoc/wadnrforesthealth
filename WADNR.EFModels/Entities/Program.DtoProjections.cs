@@ -23,7 +23,9 @@ public static class ProgramProjections
             OrganizationID = x.Organization.OrganizationID,
             OrganizationName = x.Organization.OrganizationName
         },
-        ProjectCount = x.ProjectPrograms.Count()
+        ProjectCount = x.ProjectPrograms
+            .Count(pp => pp.Project.ProjectApprovalStatusID == Projects.ApprovedStatusId &&
+                         !pp.Project.ProjectType.LimitVisibilityToAdmin)
     };
 
     public static readonly Expression<Func<Program, ProgramLookupItem>> AsLookupItem = x => new ProgramLookupItem
