@@ -34,7 +34,8 @@ app-root {
 
         & > *:not(router-outlet) {
             display: grid;
-            height: 100%;
+            // MP 1/6/26 This is producing weird layouts at big screen sizes. Commenting out for now, but might save someone someday.
+            // height: 100%;
         }
     }
 
@@ -52,7 +53,8 @@ app-root {
 }
 
 @media print {
-    .site-header, .site-footer {
+    .site-header,
+    .site-footer {
         display: none !important;
     }
 }

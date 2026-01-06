@@ -1343,6 +1343,213 @@
         }
       }
     },
+    "/projects": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "List_Project",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "Create_Project",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "Get_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "Update_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "Delete_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "tags": [
@@ -2590,6 +2797,20 @@
             "type": "integer",
             "format": "int32",
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CountyLookupItem": {
+        "type": "object",
+        "properties": {
+          "CountyID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CountyName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -7059,6 +7280,15 @@
           },
           "Vendor": {
             "$ref": "#/components/schemas/Vendor"
+          },
+          "IsUnknown": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -8402,6 +8632,20 @@
         },
         "additionalProperties": false
       },
+      "PriorityLandscapeLookupItem": {
+        "type": "object",
+        "properties": {
+          "PriorityLandscapeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PriorityLandscapeName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Program": {
         "type": "object",
         "properties": {
@@ -8549,6 +8793,16 @@
               "$ref": "#/components/schemas/Treatment"
             },
             "nullable": true
+          },
+          "InternalDisplayName": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -8660,6 +8914,20 @@
             "items": {
               "$ref": "#/components/schemas/Invoice"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProgramLookupItem": {
+        "type": "object",
+        "properties": {
+          "ProgramID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProgramName": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -9437,6 +9705,43 @@
         },
         "additionalProperties": false
       },
+      "ProjectDetail": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "PlannedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectDocument": {
         "type": "object",
         "properties": {
@@ -9816,6 +10121,51 @@
           },
           "ProjectUpdateBatch": {
             "$ref": "#/components/schemas/ProjectUpdateBatch"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectType": {
+            "$ref": "#/components/schemas/ProjectTypeLookupItem"
+          },
+          "ProjectStage": {
+            "$ref": "#/components/schemas/ProjectStageLookupItem"
+          },
+          "TotalTreatedAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "LeadImplementerOrganization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "Programs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProgramLookupItem"
+            },
+            "nullable": true
+          },
+          "PriorityLandscape": {
+            "$ref": "#/components/schemas/PriorityLandscapeLookupItem"
+          },
+          "County": {
+            "$ref": "#/components/schemas/CountyLookupItem"
           }
         },
         "additionalProperties": false
@@ -10920,6 +11270,20 @@
         ],
         "type": "string"
       },
+      "ProjectStageLookupItem": {
+        "type": "object",
+        "properties": {
+          "ProjectStageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectStageName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectStewardshipAreaType": {
         "type": "object",
         "properties": {
@@ -11041,6 +11405,20 @@
           },
           "TaxonomyBranch": {
             "$ref": "#/components/schemas/TaxonomyBranch"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectTypeLookupItem": {
+        "type": "object",
+        "properties": {
+          "ProjectTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectTypeName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -11519,6 +11897,85 @@
           "Approved"
         ],
         "type": "string"
+      },
+      "ProjectUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectStageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "PlannedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectLocationSimpleTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectApprovalStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProposingPersonID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProposingDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "SubmissionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ApprovalDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "FocusAreaID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "RecurrenceInterval": {
         "type": "object",
@@ -13029,6 +13486,9 @@
     },
     {
       "name": "Program"
+    },
+    {
+      "name": "Project"
     },
     {
       "name": "SystemInfo"

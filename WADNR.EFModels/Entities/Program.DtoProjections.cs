@@ -25,4 +25,10 @@ public static class ProgramProjections
         },
         ProjectCount = x.ProjectPrograms.Count()
     };
+
+    public static readonly Expression<Func<Program, ProgramLookupItem>> AsLookupItem = x => new ProgramLookupItem
+    {
+        ProgramID = x.ProgramID,
+        ProgramName = x.DisplayName
+    };
 }

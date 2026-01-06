@@ -45,7 +45,7 @@ export class CustomPageComponent implements OnInit {
                     catchError((error: unknown) => {
                         this.isLoading = false;
                         if (error instanceof HttpErrorResponse && error.status === 404) {
-                            this.router.navigateByUrl("/not-found");
+                            this.router.navigateByUrl("/not-found", { replaceUrl: true });
                         }
                         return of(null);
                     })
