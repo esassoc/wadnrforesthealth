@@ -139,7 +139,7 @@ export class UtilityFunctionsService {
         return fieldValue;
     }
 
-    public decimalComparator(id1: string, id2: string) {
+    public decimalComparator(id1: any, id2: any) {
         if (!id1) {
             return -1;
         }
@@ -147,8 +147,11 @@ export class UtilityFunctionsService {
             return 1;
         }
 
-        const value1 = parseFloat(id1.replace(",", ""));
-        const value2 = parseFloat(id2.replace(",", ""));
+        const id1Cleaned = typeof id1 === "string" ? id1.replace(/,/g, "") : id1;
+        const id2Cleaned = typeof id2 === "string" ? id2.replace(/,/g, "") : id2;
+
+        const value1 = parseFloat(id1Cleaned);
+        const value2 = parseFloat(id2Cleaned);
         return value1 == value2 ? 0 : value1 > value2 ? 1 : -1;
     }
 
