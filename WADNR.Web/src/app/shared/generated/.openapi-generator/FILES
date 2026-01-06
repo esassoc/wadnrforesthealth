@@ -4,6 +4,7 @@ api.module.ts
 api/agreement.service.ts
 api/custom-page.service.ts
 api/custom-rich-text.service.ts
+api/dnr-upland-region.service.ts
 api/field-definition.service.ts
 api/file-resource.service.ts
 api/fund-source.service.ts
@@ -49,6 +50,9 @@ model/dimension.ts
 model/division-enum.ts
 model/division.ts
 model/dnr-upland-region-content-image.ts
+model/dnr-upland-region-detail.ts
+model/dnr-upland-region-grid-row.ts
+model/dnr-upland-region-upsert-request.ts
 model/dnr-upland-region.ts
 model/elevation-model.ts
 model/envelope.ts

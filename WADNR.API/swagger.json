@@ -382,6 +382,213 @@
         }
       }
     },
+    "/dnr-upland-regions": {
+      "get": {
+        "tags": [
+          "DNRUplandRegion"
+        ],
+        "operationId": "List_DNRUplandRegion",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DNRUplandRegionGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DNRUplandRegionGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DNRUplandRegionGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "DNRUplandRegion"
+        ],
+        "operationId": "Create_DNRUplandRegion",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DNRUplandRegionUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DNRUplandRegionUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DNRUplandRegionUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DNRUplandRegionDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DNRUplandRegionDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DNRUplandRegionDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dnr-upland-regions/{dnrUplandRegionID}": {
+      "get": {
+        "tags": [
+          "DNRUplandRegion"
+        ],
+        "operationId": "Get_DNRUplandRegion",
+        "parameters": [
+          {
+            "name": "dnrUplandRegionID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DNRUplandRegionDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DNRUplandRegionDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DNRUplandRegionDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "DNRUplandRegion"
+        ],
+        "operationId": "Update_DNRUplandRegion",
+        "parameters": [
+          {
+            "name": "dnrUplandRegionID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DNRUplandRegionUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DNRUplandRegionUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DNRUplandRegionUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DNRUplandRegionDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DNRUplandRegionDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DNRUplandRegionDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "DNRUplandRegion"
+        ],
+        "operationId": "Delete_DNRUplandRegion",
+        "parameters": [
+          {
+            "name": "dnrUplandRegionID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/field-definitions": {
       "get": {
         "tags": [
@@ -3301,6 +3508,104 @@
             "type": "integer",
             "format": "int32",
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DNRUplandRegionDetail": {
+        "type": "object",
+        "properties": {
+          "DNRUplandRegionID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DNRUplandRegionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "DNRUplandRegionAbbrev": {
+            "type": "string",
+            "nullable": true
+          },
+          "RegionAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "RegionCity": {
+            "type": "string",
+            "nullable": true
+          },
+          "RegionState": {
+            "type": "string",
+            "nullable": true
+          },
+          "RegionZip": {
+            "type": "string",
+            "nullable": true
+          },
+          "RegionPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "RegionEmail": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DNRUplandRegionGridRow": {
+        "type": "object",
+        "properties": {
+          "DNRUplandRegionID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DNRUplandRegionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DNRUplandRegionUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "DNRUplandRegionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "DNRUplandRegionAbbrev": {
+            "type": "string",
+            "nullable": true
+          },
+          "RegionAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "RegionCity": {
+            "type": "string",
+            "nullable": true
+          },
+          "RegionState": {
+            "type": "string",
+            "nullable": true
+          },
+          "RegionZip": {
+            "type": "string",
+            "nullable": true
+          },
+          "RegionPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "RegionEmail": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -13744,6 +14049,9 @@
     },
     {
       "name": "CustomRichText"
+    },
+    {
+      "name": "DNRUplandRegion"
     },
     {
       "name": "FieldDefinition"

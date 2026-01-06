@@ -17,8 +17,7 @@ public static class PriorityLandscapeProjections
     {
         PriorityLandscapeID = x.PriorityLandscapeID,
         PriorityLandscapeName = x.PriorityLandscapeName,
-        PlanYear = x.PlanYear,
         PriorityLandscapeCategoryName = x.PriorityLandscapeCategory == null ? null : x.PriorityLandscapeCategory.PriorityLandscapeCategoryDisplayName,
-        ProjectCount = x.ProjectPriorityLandscapes.Count
+        ProjectCount = x.ProjectPriorityLandscapes.Count()
     };
 }

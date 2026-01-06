@@ -14,7 +14,11 @@ export const routes: Routes = [
     { path: "additional-resources", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "agreements", title: "Agreements", loadComponent: () => import("./pages/agreements/agreements.component").then((m) => m.AgreementsComponent) },
     { path: "counties", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
-    { path: "dnr-upland-regions", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    {
+        path: "dnr-upland-regions",
+        title: "DNR Upland Regions",
+        loadComponent: () => import("./pages/dnr-upland-regions/dnr-upland-regions.component").then((m) => m.DNRUplandRegionsComponent),
+    },
     { path: "find-your-forester", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "forest-health-monitoring", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "fund-sources", title: "Fund Sources", loadComponent: () => import("./pages/fund-sources/fund-sources.component").then((m) => m.FundSourcesComponent) },
