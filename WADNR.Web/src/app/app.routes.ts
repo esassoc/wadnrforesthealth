@@ -3,6 +3,7 @@ import { Routes } from "@angular/router";
 export const routeParams = {
     definitionID: "definitionID",
     projectID: "projectID",
+    countyID: "countyID",
 };
 
 export const routes: Routes = [
@@ -17,6 +18,11 @@ export const routes: Routes = [
         path: "counties",
         title: "Counties",
         loadComponent: () => import("./pages/counties/counties.component").then((m) => m.CountiesComponent),
+    },
+    {
+        path: `counties/:${routeParams.countyID}`,
+        title: "County Detail",
+        loadComponent: () => import("./pages/counties/county-detail/county-detail.component").then((m) => m.CountyDetailComponent),
     },
     {
         path: "dnr-upland-regions",

@@ -193,6 +193,7 @@ export * from './project-image-timing';
 export * from './project-image-timing-enum';
 export * from './project-image-update';
 export * from './project-import-block-list';
+export * from './project-index-grid-row';
 export * from './project-internal-note';
 export * from './project-location';
 export * from './project-location-simple-type';

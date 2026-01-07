@@ -12,13 +12,19 @@ public static class Projects
     public static readonly Expression<Func<Project, bool>> IsActiveProjectExpr =
         p => p.ProjectApprovalStatusID == ApprovedStatusId && !p.ProjectType.LimitVisibilityToAdmin;
 
-    public static async Task<List<ProjectGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
+    public static decimal GetTotalAmount(Project project)
+    {
+        return project.ProjectFundSourceAllocationRequests
+            .Sum(r => r.TotalAmount ?? 0m);
+    }
+
+    public static async Task<List<ProjectIndexGridRow>> ListAsIndexGridRowAsync(WADNRDbContext dbContext)
     {
         var projects = await dbContext.Projects
             .AsNoTracking()
             .Where(IsActiveProjectExpr)
             .OrderBy(x => x.ProjectName)
-            .Select(ProjectProjections.AsGridRow)
+            .Select(ProjectProjections.AsIndexGridRow)
             .ToListAsync();
 
         var totals = await dbContext.vTotalTreatedAcresByProjects
@@ -43,6 +49,20 @@ public static class Projects
         }
 
         return projects;
+    }
+
+    public static async Task<List<ProjectGridRow>> ListAsGridRowAsync<TLink>(
+        IQueryable<TLink> linkQuery,
+        Expression<Func<TLink, Project>> projectSelector)
+    {
+        var projects = linkQuery
+            .Select(projectSelector); // IQueryable<Project>
+
+        return await projects
+            .AsNoTracking()
+            .Where(IsActiveProjectExpr)
+            .Select(ProjectProjections.AsProjectGridRow)
+            .ToListAsync();
     }
 
     public static async Task<ProjectDetail?> GetByIDAsDetailAsync(WADNRDbContext dbContext, int projectID)

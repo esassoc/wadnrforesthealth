@@ -25,7 +25,7 @@
 <div class="grid-12 mt-3">
     <div class="tab-nav-panel" [class.g-col-6]="selectedPanel === 'Hybrid'" [class.g-col-12]="selectedPanel === 'Grid'" [class.hidden]="selectedPanel === 'Map'">
         <wadnr-grid
-            height="675px"
+            [height]="mapHeight"
             [rowData]="rowData"
             [columnDefs]="columnDefs"
             [overrideDefaultGridHeader]="true"

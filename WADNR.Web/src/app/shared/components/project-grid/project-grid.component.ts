@@ -2,9 +2,8 @@ import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { DialogService } from "@ngneat/dialog";
 import { ColDef } from "ag-grid-community";
-import { ProjectGridDto } from "../../generated/model/project-grid-dto";
+import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
-import { FieldDefinitionEnum } from "src/app/shared/generated/enum/field-definition-enum";
 
 @Component({
     selector: "project-grid",
@@ -14,15 +13,20 @@ import { FieldDefinitionEnum } from "src/app/shared/generated/enum/field-definit
     styleUrls: ["./project-grid.component.scss"],
 })
 export class ProjectGridComponent implements OnInit {
-    @Input() public rowData: ProjectGridDto[] | null = null;
+    @Input() public rowData: ProjectGridRow[] | null = null;
     @Input() public downloadFileName: string = "projects";
 
     @Output() public selectionChanged: EventEmitter<any> = new EventEmitter<any>();
 
-    // selected rows from the grid
-    public selectedRows: ProjectGridDto[] = [];
+    public pinnedTotalsRow = {
+        fields: ["EstimatedTotalCost", "TotalAmount"],
+        filteredOnly: true,
+    };
 
-    public columnDefs: ColDef<ProjectGridDto>[] = [];
+    // selected rows from the grid
+    public selectedRows: ProjectGridRow[] = [];
+
+    public columnDefs: ColDef<ProjectGridRow>[] = [];
 
     constructor(private dialogService: DialogService, private utilityFunctions: UtilityFunctionsService) {}
 
@@ -32,54 +36,40 @@ export class ProjectGridComponent implements OnInit {
 
     private createDefaultColumnDefs(): ColDef[] {
         return [
-            this.utilityFunctions.createLinkColumnDef("Number", "ProjectNumber", "ProjectNumber", {
-                InRouterLink: "/projects/fact-sheet/",
-                FieldDefinitionType: FieldDefinitionEnum[FieldDefinitionEnum.ProjectNumber],
-            }),
-            this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectNumber", {
-                InRouterLink: "/projects/fact-sheet/",
-                FieldDefinitionType: FieldDefinitionEnum[FieldDefinitionEnum.ProjectName],
-            }),
-            this.utilityFunctions.createLinkColumnDef("Lead", "LeadImplementerName", "LeadImplementerOrganizationID", {
-                InRouterLink: "/organizations/",
-                FieldDefinitionType: FieldDefinitionEnum[FieldDefinitionEnum.LeadImplementer],
-            }),
-            this.utilityFunctions.createBasicColumnDef("Stage", "Stage", { FieldDefinitionType: FieldDefinitionEnum[FieldDefinitionEnum.Stage] }),
-            this.utilityFunctions.createYearColumnDef("Planning/Design Start", "PlanningDesignStartYear", {
-                FieldDefinitionType: FieldDefinitionEnum[FieldDefinitionEnum.PlanningDesignStartYear],
-            }),
-            this.utilityFunctions.createYearColumnDef("Implementation Start", "ImplementationStartYear", {
-                FieldDefinitionType: FieldDefinitionEnum[FieldDefinitionEnum.ImplementationStartYear],
-            }),
-            this.utilityFunctions.createYearColumnDef("Completion Year", "CompletionYear", { FieldDefinitionType: FieldDefinitionEnum[FieldDefinitionEnum.CompletionYear] }),
-            this.utilityFunctions.createDecimalColumnDef("Estimated Total Cost", "EstimatedTotalCost", {
-                MaxDecimalPlacesToDisplay: 0,
-                FieldDefinitionType: FieldDefinitionEnum[FieldDefinitionEnum.EstimatedTotalCost],
-            }),
-            this.utilityFunctions.createDecimalColumnDef("Secured Funding", "SecuredFunding", {
-                MaxDecimalPlacesToDisplay: 0,
-                FieldDefinitionType: FieldDefinitionEnum[FieldDefinitionEnum.SecuredFunding],
-            }),
-            this.utilityFunctions.createDecimalColumnDef("Unfunded Need", "UnfundedNeed", {
-                MaxDecimalPlacesToDisplay: 0,
-                FieldDefinitionType: FieldDefinitionEnum[FieldDefinitionEnum.UnfundedNeed],
-            }),
-            this.utilityFunctions.createDecimalColumnDef("Reported Expenditure", "ReportedExpenditure", {
-                MaxDecimalPlacesToDisplay: 0,
-                FieldDefinitionType: FieldDefinitionEnum[FieldDefinitionEnum.ReportedExpenditure],
-            }),
-            this.utilityFunctions.createDecimalColumnDef("Estimated Annual Operating Cost", "EstimatedAnnualOperatingCost", {
-                MaxDecimalPlacesToDisplay: 0,
-                FieldDefinitionType: FieldDefinitionEnum[FieldDefinitionEnum.EstimatedAnnualOperatingCost],
-            }),
-            this.utilityFunctions.createDecimalColumnDef("Calculated Total Remaining Operating Cost", "CalculatedTotalRemainingOperatingCost", {
-                MaxDecimalPlacesToDisplay: 0,
-                FieldDefinitionType: FieldDefinitionEnum[FieldDefinitionEnum.CalculatedTotalRemainingOperatingCost],
-            }),
-            this.utilityFunctions.createMultiLinkColumnDef("Tags", "Tags", "ProjectTagID", "TagName", {
+            this.utilityFunctions.createLinkColumnDef("FHT Project Number", "FhtProjectNumber", "ProjectID", {
                 InRouterLink: "/projects/",
-                FieldDefinitionType: FieldDefinitionEnum[FieldDefinitionEnum.Tags],
+                FieldDefinitionType: "FhtProjectNumber",
             }),
+            this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", {
+                InRouterLink: "/projects/",
+                FieldDefinitionType: "ProjectName",
+            }),
+            this.utilityFunctions.createLinkColumnDef("Primary Contact Organization", "PrimaryContactOrganization.OrganizationName", "PrimaryContactOrganization.OrganizationID", {
+                InRouterLink: "/organizations/",
+                FieldDefinitionType: "PrimaryContactOrganization",
+                CustomDropdownFilterField: "PrimaryContactOrganization.OrganizationName",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Project Stage", "ProjectStage.ProjectStageName", {
+                FieldDefinitionType: "ProjectStage",
+                CustomDropdownFilterField: "ProjectStage.ProjectStageName",
+            }),
+            this.utilityFunctions.createDateColumnDef("Initiation Date", "ProjectInitiationDate", "M/d/yyyy", {
+                FieldDefinitionType: "ProjectInitiationDate",
+            }),
+            this.utilityFunctions.createDateColumnDef("Expiration Date", "ExpirationDate", "M/d/yyyy", {
+                FieldDefinitionType: "ExpirationDate",
+            }),
+            this.utilityFunctions.createDateColumnDef("Completion Date", "CompletionDate", "M/d/yyyy", {
+                FieldDefinitionType: "CompletionDate",
+            }),
+            this.utilityFunctions.createCurrencyColumnDef("Estimated Total Cost", "EstimatedTotalCost", {
+                MaxDecimalPlacesToDisplay: 0,
+                FieldDefinitionType: "EstimatedTotalCost",
+            }),
+            this.utilityFunctions.createCurrencyColumnDef("Total Amount", "TotalAmount", {
+                MaxDecimalPlacesToDisplay: 0,
+            }),
+            this.utilityFunctions.createBasicColumnDef("Project Description", "ProjectDescription", { FieldDefinitionType: "ProjectDescription" }),
         ];
     }
 }

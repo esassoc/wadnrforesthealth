@@ -19,7 +19,7 @@ export class CountiesLayerComponent {
     readonly WFS_FEATURE_TYPE = "WADNRForestHealth:County";
     readonly WMS_LAYER_NAME = "WADNRForestHealth:County";
     readonly IDENTIFIER_PROPERTY = "CountyID";
-    readonly OVERLAY_LABEL = "Counties";
+    readonly OVERLAY_LABEL = "All Washington Counties";
     readonly WMS_STYLE = "washington_county";
     readonly DEFAULT_SELECTED_STYLE: L.PathOptions = {
         color: "#fcfc12",
@@ -38,6 +38,8 @@ export class CountiesLayerComponent {
     @Input() filterToIDs: number[];
     @Input() displayOnLoad: boolean = true;
     @Input() allowMultipleSelect: boolean = false;
+    /** Controls whether the underlying WMS overlay auto-zooms when first added to the layer control. */
+    @Input() fitBoundsOnWmsAddToControl: boolean = true;
 
     // Internal multi-select state (exposed for template binding)
     public selectedIDsState: number[] = [];

@@ -213,6 +213,7 @@ model/project-image-timing.ts
 model/project-image-update.ts
 model/project-image.ts
 model/project-import-block-list.ts
+model/project-index-grid-row.ts
 model/project-internal-note.ts
 model/project-location-simple-type-enum.ts
 model/project-location-simple-type.ts

@@ -9,7 +9,7 @@ import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-g
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
-import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row";
+import { ProjectIndexGridRow } from "src/app/shared/generated/model/project-index-grid-row";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
 import { FieldDefinitionEnum } from "src/app/shared/generated/model/field-definition-enum";
 
@@ -19,7 +19,7 @@ import { FieldDefinitionEnum } from "src/app/shared/generated/model/field-defini
     templateUrl: "./projects.component.html",
 })
 export class ProjectsComponent {
-    public projects$: Observable<ProjectGridRow[]>;
+    public projects$: Observable<ProjectIndexGridRow[]>;
     public columnDefs: ColDef[];
     public customRichTextTypeID = FirmaPageTypeEnum.FullProjectList;
     public blah = FieldDefinitionEnum.Program;

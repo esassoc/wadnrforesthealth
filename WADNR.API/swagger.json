@@ -419,6 +419,56 @@
         }
       }
     },
+    "/counties/{countyID}/projects": {
+      "get": {
+        "tags": [
+          "County"
+        ],
+        "operationId": "ListProjectsForCountyID_County",
+        "parameters": [
+          {
+            "name": "countyID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/custom-pages/{vanityUrl}": {
       "get": {
         "tags": [
@@ -1978,7 +2028,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectGridRow"
+                    "$ref": "#/components/schemas/ProjectIndexGridRow"
                   }
                 }
               },
@@ -1986,7 +2036,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectGridRow"
+                    "$ref": "#/components/schemas/ProjectIndexGridRow"
                   }
                 }
               },
@@ -1994,7 +2044,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectGridRow"
+                    "$ref": "#/components/schemas/ProjectIndexGridRow"
                   }
                 }
               }
@@ -10978,32 +11028,40 @@
             "type": "string",
             "nullable": true
           },
-          "ProjectType": {
-            "$ref": "#/components/schemas/ProjectTypeLookupItem"
+          "PrimaryContactOrganization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
           },
           "ProjectStage": {
             "$ref": "#/components/schemas/ProjectStageLookupItem"
           },
-          "TotalTreatedAcres": {
+          "ProjectInitiationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EstimatedTotalCost": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
-          "LeadImplementerOrganization": {
-            "$ref": "#/components/schemas/OrganizationLookupItem"
-          },
-          "Programs": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProgramLookupItem"
-            },
+          "TotalAmount": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
-          "PriorityLandscape": {
-            "$ref": "#/components/schemas/PriorityLandscapeLookupItem"
-          },
-          "County": {
-            "$ref": "#/components/schemas/CountyLookupItem"
+          "ProjectDescription": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -11222,6 +11280,51 @@
           },
           "Project": {
             "$ref": "#/components/schemas/Project"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectIndexGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectType": {
+            "$ref": "#/components/schemas/ProjectTypeLookupItem"
+          },
+          "ProjectStage": {
+            "$ref": "#/components/schemas/ProjectStageLookupItem"
+          },
+          "TotalTreatedAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "LeadImplementerOrganization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "Programs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProgramLookupItem"
+            },
+            "nullable": true
+          },
+          "PriorityLandscape": {
+            "$ref": "#/components/schemas/PriorityLandscapeLookupItem"
+          },
+          "County": {
+            "$ref": "#/components/schemas/CountyLookupItem"
           }
         },
         "additionalProperties": false

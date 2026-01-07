@@ -16,7 +16,7 @@ public static class ProjectProjections
         FhtProjectNumber = x.FhtProjectNumber
     };
 
-    public static readonly Expression<Func<Project, ProjectGridRow>> AsGridRow = x => new ProjectGridRow
+    public static readonly Expression<Func<Project, ProjectIndexGridRow>> AsIndexGridRow = x => new ProjectIndexGridRow
     {
         ProjectID = x.ProjectID,
         ProjectName = x.ProjectName,
@@ -61,5 +61,33 @@ public static class ProjectProjections
                 CountyName = pc.County.CountyName
             })
             .FirstOrDefault()
+    };
+
+    public static readonly Expression<Func<Project, ProjectGridRow>> AsProjectGridRow = x => new ProjectGridRow
+    {
+        ProjectID = x.ProjectID,
+        ProjectName = x.ProjectName,
+        FhtProjectNumber = x.FhtProjectNumber,
+        PrimaryContactOrganization = x.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => new OrganizationLookupItem
+            {
+                OrganizationID = po.Organization.OrganizationID,
+                OrganizationName = po.Organization.DisplayName
+            })
+            .SingleOrDefault(),
+        ProjectStage = new ProjectStageLookupItem
+        {
+            ProjectStageID = x.ProjectStageID,
+            ProjectStageName = x.ProjectStage.ProjectStageName
+        },
+        ProjectInitiationDate = x.PlannedDate,
+        ExpirationDate = x.ExpirationDate,
+        CompletionDate = x.CompletionDate,
+        EstimatedTotalCost = x.EstimatedTotalCost,
+        TotalAmount = x.ProjectFundSourceAllocationRequests.Any()
+            ? x.ProjectFundSourceAllocationRequests.Sum(r => (decimal?)r.TotalAmount)
+            : null,
+        ProjectDescription = x.ProjectDescription
     };
 }

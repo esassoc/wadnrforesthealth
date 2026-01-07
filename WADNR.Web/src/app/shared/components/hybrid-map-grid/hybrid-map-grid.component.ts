@@ -20,7 +20,7 @@ export class HybridMapGridComponent implements OnInit, OnChanges {
     @Input() downloadFileName: string;
     @Input() selectedValue: number = null;
     @Input() entityIDField: string = "";
-    @Input() mapHeight: string = "720px";
+    @Input() mapHeight: string = "500px";
     @Input() sizeColumnsToFitGrid: boolean = false;
 
     @Output() gridReady: EventEmitter<GridReadyEvent> = new EventEmitter();

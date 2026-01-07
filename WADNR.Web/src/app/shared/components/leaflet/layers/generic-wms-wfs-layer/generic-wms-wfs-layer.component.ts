@@ -25,6 +25,14 @@ export class GenericWmsWfsLayerComponent extends MapLayerBase implements OnChang
     @Input() wfsFeatureType: string;
     @Input() identifierProperty: string;
     @Input() overlayLabel: string;
+    /**
+     * When true, the component will auto-zoom (fitBounds) to the WMS layer's bounding box
+     * when the overlay is first added to the layer control.
+     *
+     * Disable this when you have another layer (e.g., a single-feature WFS highlight) that
+     * should control the initial zoom.
+     */
+    @Input() fitBoundsOnWmsAddToControl: boolean = true;
     @Input() selectedStyle: L.PathOptions = {
         color: "#fcfc12",
         weight: 2,
@@ -61,12 +69,14 @@ export class GenericWmsWfsLayerComponent extends MapLayerBase implements OnChang
         }
         // Add to layerControl only once, after both layer and layerControl are available
         if (this.layer && this.layerControl && !this.overlayAddedToControl && this.addToLayerControl) {
-            // make a wfs call with the wms options to get bounding box to zoom to
-            this.wfsService.getBoundingBox(this.wfsFeatureType, this.cqlFilter).subscribe((bbox) => {
-                if (bbox) {
-                    this.map.fitBounds(bbox);
-                }
-            });
+            if (this.fitBoundsOnWmsAddToControl) {
+                // make a wfs call with the wms options to get bounding box to zoom to
+                this.wfsService.getBoundingBox(this.wfsFeatureType, this.cqlFilter).subscribe((bbox) => {
+                    if (bbox) {
+                        this.map.fitBounds(bbox);
+                    }
+                });
+            }
             this.layerControl.addOverlay(this.layer, this.overlayLabel);
             this.overlayAddedToControl = true;
         }

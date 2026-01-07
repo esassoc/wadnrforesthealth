@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -7,6 +8,7 @@ using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
+using Microsoft.EntityFrameworkCore;
 
 namespace WADNR.API.Controllers;
 
@@ -36,6 +38,17 @@ public class CountyController(
             return NotFound();
         }
         return Ok(entity);
+    }
+
+    [HttpGet("{countyID}/projects")]
+    public async Task<ActionResult<IEnumerable<ProjectGridRow>>> ListProjectsForCountyID([FromRoute] int countyID)
+    {
+        var linkQuery = DbContext.ProjectCounties
+            .Where(pc => pc.CountyID == countyID);
+
+        var projects = await Projects.ListAsGridRowAsync(linkQuery, pc => pc.Project);
+
+        return Ok(projects);
     }
 
     [HttpPost]
