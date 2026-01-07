@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.PriorityLandscape;
 
 namespace WADNR.EFModels.Entities;
 
@@ -10,7 +11,13 @@ public static class PriorityLandscapeProjections
         PriorityLandscapeID = x.PriorityLandscapeID,
         PriorityLandscapeName = x.PriorityLandscapeName,
         PriorityLandscapeDescription = x.PriorityLandscapeDescription,
-        PlanYear = x.PlanYear
+        PriorityLandscapeCategory = x.PriorityLandscapeCategory == null ? null : new PriorityLandscapeCategoryLookupItem
+        {
+            PriorityLandscapeCategoryID = x.PriorityLandscapeCategory.PriorityLandscapeCategoryID,
+            PriorityLandscapeCategoryDisplayName = x.PriorityLandscapeCategory.PriorityLandscapeCategoryDisplayName     
+        },
+        PriorityLandscapeExternalResources = x.PriorityLandscapeExternalResources,
+        PriorityLandscapeAboveMapText = x.PriorityLandscapeAboveMapText
     };
 
     public static readonly Expression<Func<PriorityLandscape, PriorityLandscapeGridRow>> AsGridRow = x => new PriorityLandscapeGridRow

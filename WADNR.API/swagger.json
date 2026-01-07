@@ -444,7 +444,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectGridRow"
+                    "$ref": "#/components/schemas/ProjectCountyDetailGridRow"
                   }
                 }
               },
@@ -452,7 +452,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectGridRow"
+                    "$ref": "#/components/schemas/ProjectCountyDetailGridRow"
                   }
                 }
               },
@@ -460,7 +460,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectGridRow"
+                    "$ref": "#/components/schemas/ProjectCountyDetailGridRow"
                   }
                 }
               }
@@ -931,7 +931,7 @@
         "tags": [
           "FileResource"
         ],
-        "operationId": "DisplayResource_FileResource",
+        "operationId": "DownloadFileResource_FileResource",
         "parameters": [
           {
             "name": "fileResourceGuidAsString",
@@ -944,7 +944,27 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
           }
         }
       }
@@ -1807,6 +1827,106 @@
         }
       }
     },
+    "/priority-landscapes/{priorityLandscapeID}/projects": {
+      "get": {
+        "tags": [
+          "PriorityLandscape"
+        ],
+        "operationId": "ListProjectsForPriorityLandscapeID_PriorityLandscape",
+        "parameters": [
+          {
+            "name": "priorityLandscapeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/priority-landscapes/{priorityLandscapeID}/file-resources": {
+      "get": {
+        "tags": [
+          "PriorityLandscape"
+        ],
+        "operationId": "ListFileResourcesForPriorityLandscapeID_PriorityLandscape",
+        "parameters": [
+          {
+            "name": "priorityLandscapeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FileResourceDetail"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FileResourceDetail"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FileResourceDetail"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/programs": {
       "get": {
         "tags": [
@@ -2028,7 +2148,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectIndexGridRow"
+                    "$ref": "#/components/schemas/ProjectGridRow"
                   }
                 }
               },
@@ -2036,7 +2156,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectIndexGridRow"
+                    "$ref": "#/components/schemas/ProjectGridRow"
                   }
                 }
               },
@@ -2044,7 +2164,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectIndexGridRow"
+                    "$ref": "#/components/schemas/ProjectGridRow"
                   }
                 }
               }
@@ -4668,6 +4788,36 @@
               "$ref": "#/components/schemas/SystemAttribute"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FileResourceDetail": {
+        "type": "object",
+        "properties": {
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceGUID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "FileResourceMIMETypeDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -9410,6 +9560,20 @@
         },
         "additionalProperties": false
       },
+      "PriorityLandscapeCategoryLookupItem": {
+        "type": "object",
+        "properties": {
+          "PriorityLandscapeCategoryID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PriorityLandscapeCategoryDisplayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PriorityLandscapeDetail": {
         "type": "object",
         "properties": {
@@ -9425,9 +9589,15 @@
             "type": "string",
             "nullable": true
           },
-          "PlanYear": {
-            "type": "integer",
-            "format": "int32",
+          "PriorityLandscapeCategory": {
+            "$ref": "#/components/schemas/PriorityLandscapeCategoryLookupItem"
+          },
+          "PriorityLandscapeExternalResources": {
+            "type": "string",
+            "nullable": true
+          },
+          "PriorityLandscapeAboveMapText": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -10564,6 +10734,59 @@
         },
         "additionalProperties": false
       },
+      "ProjectCountyDetailGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "PrimaryContactOrganization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "ProjectStage": {
+            "$ref": "#/components/schemas/ProjectStageLookupItem"
+          },
+          "ProjectInitiationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectCountyUpdate": {
         "type": "object",
         "properties": {
@@ -11028,40 +11251,32 @@
             "type": "string",
             "nullable": true
           },
-          "PrimaryContactOrganization": {
-            "$ref": "#/components/schemas/OrganizationLookupItem"
+          "ProjectType": {
+            "$ref": "#/components/schemas/ProjectTypeLookupItem"
           },
           "ProjectStage": {
             "$ref": "#/components/schemas/ProjectStageLookupItem"
           },
-          "ProjectInitiationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "ExpirationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "CompletionDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "EstimatedTotalCost": {
+          "TotalTreatedAcres": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
-          "TotalAmount": {
-            "type": "number",
-            "format": "double",
+          "LeadImplementerOrganization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "Programs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProgramLookupItem"
+            },
             "nullable": true
           },
-          "ProjectDescription": {
-            "type": "string",
-            "nullable": true
+          "PriorityLandscape": {
+            "$ref": "#/components/schemas/PriorityLandscapeLookupItem"
+          },
+          "County": {
+            "$ref": "#/components/schemas/CountyLookupItem"
           }
         },
         "additionalProperties": false
@@ -11280,51 +11495,6 @@
           },
           "Project": {
             "$ref": "#/components/schemas/Project"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ProjectIndexGridRow": {
-        "type": "object",
-        "properties": {
-          "ProjectID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ProjectName": {
-            "type": "string",
-            "nullable": true
-          },
-          "FhtProjectNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "ProjectType": {
-            "$ref": "#/components/schemas/ProjectTypeLookupItem"
-          },
-          "ProjectStage": {
-            "$ref": "#/components/schemas/ProjectStageLookupItem"
-          },
-          "TotalTreatedAcres": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "LeadImplementerOrganization": {
-            "$ref": "#/components/schemas/OrganizationLookupItem"
-          },
-          "Programs": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProgramLookupItem"
-            },
-            "nullable": true
-          },
-          "PriorityLandscape": {
-            "$ref": "#/components/schemas/PriorityLandscapeLookupItem"
-          },
-          "County": {
-            "$ref": "#/components/schemas/CountyLookupItem"
           }
         },
         "additionalProperties": false

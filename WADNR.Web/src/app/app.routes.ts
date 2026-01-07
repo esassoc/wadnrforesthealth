@@ -4,6 +4,7 @@ export const routeParams = {
     definitionID: "definitionID",
     projectID: "projectID",
     countyID: "countyID",
+    priorityLandscapeID: "priorityLandscapeID",
 };
 
 export const routes: Routes = [
@@ -56,6 +57,11 @@ export const routes: Routes = [
         path: "priority-landscapes",
         title: "Priority Landscapes",
         loadComponent: () => import("./pages/priority-landscapes/priority-landscapes.component").then((m) => m.PriorityLandscapesComponent),
+    },
+    {
+        path: `priority-landscapes/:${routeParams.priorityLandscapeID}`,
+        title: "Priority Landscape Detail",
+        loadComponent: () => import("./pages/priority-landscapes/priority-landscape-detail/priority-landscape-detail.component").then((m) => m.PriorityLandscapeDetailComponent),
     },
     { path: "programs", title: "Programs", loadComponent: () => import("./pages/programs/programs.component").then((m) => m.ProgramsComponent) },
     { path: "tags", title: "Tags", loadComponent: () => import("./pages/tags/tags.component").then((m) => m.TagsComponent) },

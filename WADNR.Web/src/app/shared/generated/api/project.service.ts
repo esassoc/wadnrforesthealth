@@ -17,7 +17,7 @@ import { Observable }                                        from 'rxjs';
 // @ts-ignore
 import { ProjectDetail } from '../model/project-detail';
 // @ts-ignore
-import { ProjectIndexGridRow } from '../model/project-index-grid-row';
+import { ProjectGridRow } from '../model/project-grid-row';
 // @ts-ignore
 import { ProjectUpsertRequest } from '../model/project-upsert-request';
 
@@ -212,9 +212,9 @@ export class ProjectService extends BaseService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listProject(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ProjectIndexGridRow>>;
-    public listProject(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ProjectIndexGridRow>>>;
-    public listProject(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ProjectIndexGridRow>>>;
+    public listProject(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ProjectGridRow>>;
+    public listProject(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ProjectGridRow>>>;
+    public listProject(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ProjectGridRow>>>;
     public listProject(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
@@ -246,7 +246,7 @@ export class ProjectService extends BaseService {
 
         let localVarPath = `/projects`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Array<ProjectIndexGridRow>>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<Array<ProjectGridRow>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

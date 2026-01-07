@@ -5,25 +5,26 @@ import { distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, s
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { Map } from "leaflet";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
-import { ProjectGridComponent } from "src/app/shared/components/project-grid/project-grid.component";
 import { CountyService } from "src/app/shared/generated/api/county.service";
 import { CountyDetail } from "src/app/shared/generated/model/county-detail";
-import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row";
+import { ProjectCountyDetailGridRow } from "src/app/shared/generated/model/project-county-detail-grid-row";
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
-import { CountiesComponent } from "../counties.component";
 import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
+import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
+import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { ColDef } from "node_modules/ag-grid-community/dist/types/src/entities/colDef";
 
 @Component({
     selector: "county-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, ProjectGridComponent, BreadcrumbComponent, WADNRMapComponent, CountiesLayerComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRMapComponent, CountiesLayerComponent, WADNRGridComponent],
     templateUrl: "./county-detail.component.html",
     styleUrls: ["./county-detail.component.scss"],
 })
 export class CountyDetailComponent {
     /** Loads both calls together so the page can render once. */
-    public countyDetailPageData$: Observable<{ county: CountyDetail; projects: ProjectGridRow[] }>;
+    public countyDetailPageData$: Observable<{ county: CountyDetail; projects: ProjectCountyDetailGridRow[] }>;
     public countyID$: Observable<number>;
 
     public map: Map;
@@ -31,8 +32,13 @@ export class CountyDetailComponent {
     public mapIsReady: boolean = false;
     public highlightedCountyLayerMode = OverlayMode.Single;
     public allCountiesLayerMode = OverlayMode.ReferenceOnly;
+    public columnDefs: ColDef<ProjectCountyDetailGridRow>[] = [];
+    public pinnedTotalsRow = {
+        fields: ["EstimatedTotalCost", "TotalAmount"],
+        filteredOnly: true,
+    };
 
-    constructor(private route: ActivatedRoute, private countyService: CountyService) {}
+    constructor(private route: ActivatedRoute, private countyService: CountyService, private utilityFunctions: UtilityFunctionsService) {}
 
     ngOnInit(): void {
         this.countyID$ = this.route.paramMap.pipe(
@@ -50,6 +56,43 @@ export class CountyDetailComponent {
             ),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        this.columnDefs = [
+            this.utilityFunctions.createLinkColumnDef("FHT Project Number", "FhtProjectNumber", "ProjectID", {
+                InRouterLink: "/projects/",
+                FieldDefinitionType: "FhtProjectNumber",
+            }),
+            this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", {
+                InRouterLink: "/projects/",
+                FieldDefinitionType: "ProjectName",
+            }),
+            this.utilityFunctions.createLinkColumnDef("Primary Contact Organization", "PrimaryContactOrganization.OrganizationName", "PrimaryContactOrganization.OrganizationID", {
+                InRouterLink: "/organizations/",
+                FieldDefinitionType: "PrimaryContactOrganization",
+                CustomDropdownFilterField: "PrimaryContactOrganization.OrganizationName",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Project Stage", "ProjectStage.ProjectStageName", {
+                FieldDefinitionType: "ProjectStage",
+                CustomDropdownFilterField: "ProjectStage.ProjectStageName",
+            }),
+            this.utilityFunctions.createDateColumnDef("Initiation Date", "ProjectInitiationDate", "M/d/yyyy", {
+                FieldDefinitionType: "ProjectInitiationDate",
+            }),
+            this.utilityFunctions.createDateColumnDef("Expiration Date", "ExpirationDate", "M/d/yyyy", {
+                FieldDefinitionType: "ExpirationDate",
+            }),
+            this.utilityFunctions.createDateColumnDef("Completion Date", "CompletionDate", "M/d/yyyy", {
+                FieldDefinitionType: "CompletionDate",
+            }),
+            this.utilityFunctions.createCurrencyColumnDef("Estimated Total Cost", "EstimatedTotalCost", {
+                MaxDecimalPlacesToDisplay: 0,
+                FieldDefinitionType: "EstimatedTotalCost",
+            }),
+            this.utilityFunctions.createCurrencyColumnDef("Total Amount", "TotalAmount", {
+                MaxDecimalPlacesToDisplay: 0,
+            }),
+            this.utilityFunctions.createBasicColumnDef("Project Description", "ProjectDescription", { FieldDefinitionType: "ProjectDescription" }),
+        ];
     }
 
     handleMapReady(event: any) {

@@ -18,11 +18,6 @@ export class ProjectGridComponent implements OnInit {
 
     @Output() public selectionChanged: EventEmitter<any> = new EventEmitter<any>();
 
-    public pinnedTotalsRow = {
-        fields: ["EstimatedTotalCost", "TotalAmount"],
-        filteredOnly: true,
-    };
-
     // selected rows from the grid
     public selectedRows: ProjectGridRow[] = [];
 
@@ -40,36 +35,34 @@ export class ProjectGridComponent implements OnInit {
                 InRouterLink: "/projects/",
                 FieldDefinitionType: "FhtProjectNumber",
             }),
-            this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", {
-                InRouterLink: "/projects/",
-                FieldDefinitionType: "ProjectName",
-            }),
-            this.utilityFunctions.createLinkColumnDef("Primary Contact Organization", "PrimaryContactOrganization.OrganizationName", "PrimaryContactOrganization.OrganizationID", {
-                InRouterLink: "/organizations/",
-                FieldDefinitionType: "PrimaryContactOrganization",
-                CustomDropdownFilterField: "PrimaryContactOrganization.OrganizationName",
+            this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", { InRouterLink: "/projects/", FieldDefinitionType: "ProjectName" }),
+            this.utilityFunctions.createBasicColumnDef("Project Type", "ProjectType.ProjectTypeName", {
+                FieldDefinitionType: "ProjectType",
+                CustomDropdownFilterField: "ProjectType.ProjectTypeName",
             }),
             this.utilityFunctions.createBasicColumnDef("Project Stage", "ProjectStage.ProjectStageName", {
                 FieldDefinitionType: "ProjectStage",
                 CustomDropdownFilterField: "ProjectStage.ProjectStageName",
             }),
-            this.utilityFunctions.createDateColumnDef("Initiation Date", "ProjectInitiationDate", "M/d/yyyy", {
-                FieldDefinitionType: "ProjectInitiationDate",
+            this.utilityFunctions.createDecimalColumnDef("Total Treated Acres", "TotalTreatedAcres", {
+                MaxDecimalPlacesToDisplay: 2,
+                Width: 160,
+                FieldDefinitionType: "ProjectTotalCompletedTreatmentAcres",
             }),
-            this.utilityFunctions.createDateColumnDef("Expiration Date", "ExpirationDate", "M/d/yyyy", {
-                FieldDefinitionType: "ExpirationDate",
+            this.utilityFunctions.createBasicColumnDef("Lead Implementer Organization", "LeadImplementerOrganization.OrganizationName", {
+                CustomDropdownFilterField: "LeadImplementerOrganization.OrganizationName",
             }),
-            this.utilityFunctions.createDateColumnDef("Completion Date", "CompletionDate", "M/d/yyyy", {
-                FieldDefinitionType: "CompletionDate",
+            this.utilityFunctions.createMultiLinkColumnDef("Programs", "Programs", "ProgramID", "ProgramName", { InRouterLink: "/programs/", FieldDefinitionType: "Program" }),
+            this.utilityFunctions.createBasicColumnDef("Priority Landscape", "PriorityLandscape.PriorityLandscapeName", {
+                FieldDefinitionType: "PriorityLandscape",
+                FieldDefinitionLabelOverride: "Associated Priority Landscape",
+                CustomDropdownFilterField: "PriorityLandscape.PriorityLandscapeName",
             }),
-            this.utilityFunctions.createCurrencyColumnDef("Estimated Total Cost", "EstimatedTotalCost", {
-                MaxDecimalPlacesToDisplay: 0,
-                FieldDefinitionType: "EstimatedTotalCost",
+            this.utilityFunctions.createBasicColumnDef("County", "County.CountyName", {
+                FieldDefinitionType: "County",
+                FieldDefinitionLabelOverride: "Associated County",
+                CustomDropdownFilterField: "County.CountyName",
             }),
-            this.utilityFunctions.createCurrencyColumnDef("Total Amount", "TotalAmount", {
-                MaxDecimalPlacesToDisplay: 0,
-            }),
-            this.utilityFunctions.createBasicColumnDef("Project Description", "ProjectDescription", { FieldDefinitionType: "ProjectDescription" }),
         ];
     }
 }

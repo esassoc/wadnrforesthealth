@@ -12,56 +12,14 @@ public static class Projects
     public static readonly Expression<Func<Project, bool>> IsActiveProjectExpr =
         p => p.ProjectApprovalStatusID == ApprovedStatusId && !p.ProjectType.LimitVisibilityToAdmin;
 
-    public static decimal GetTotalAmount(Project project)
+    public static async Task<List<ProjectCountyDetailGridRow>> ListAsCountyDetailGridRowAsync(WADNRDbContext dbContext, int countyID)
     {
-        return project.ProjectFundSourceAllocationRequests
-            .Sum(r => r.TotalAmount ?? 0m);
-    }
-
-    public static async Task<List<ProjectIndexGridRow>> ListAsIndexGridRowAsync(WADNRDbContext dbContext)
-    {
-        var projects = await dbContext.Projects
+        return await dbContext.ProjectCounties
+            .Where(pc => pc.CountyID == countyID)
+            .Select(pc => pc.Project)
             .AsNoTracking()
             .Where(IsActiveProjectExpr)
-            .OrderBy(x => x.ProjectName)
-            .Select(ProjectProjections.AsIndexGridRow)
-            .ToListAsync();
-
-        var totals = await dbContext.vTotalTreatedAcresByProjects
-            .AsNoTracking()
-            .ToListAsync();
-
-        var totalsByProjectId = totals.ToDictionary(
-            t => t.ProjectID,
-            t => t.TotalTreatedAcres
-        );
-
-        foreach (var p in projects)
-        {
-            if (totalsByProjectId.TryGetValue(p.ProjectID, out var total))
-            {
-                p.TotalTreatedAcres = total;
-            }
-            else
-            {
-                p.TotalTreatedAcres = 0m;
-            }
-        }
-
-        return projects;
-    }
-
-    public static async Task<List<ProjectGridRow>> ListAsGridRowAsync<TLink>(
-        IQueryable<TLink> linkQuery,
-        Expression<Func<TLink, Project>> projectSelector)
-    {
-        var projects = linkQuery
-            .Select(projectSelector); // IQueryable<Project>
-
-        return await projects
-            .AsNoTracking()
-            .Where(IsActiveProjectExpr)
-            .Select(ProjectProjections.AsProjectGridRow)
+            .Select(ProjectProjections.AsProjectCountyDetailGridRow)
             .ToListAsync();
     }
 
@@ -134,4 +92,36 @@ public static class Projects
             .ExecuteDeleteAsync();
         return deletedCount > 0;
     }
+
+    public static async Task<List<ProjectGridRow>> ListAsGridRowAsync(
+        IQueryable<Project> projectsQuery,
+        WADNRDbContext dbContext)
+    {
+        var projects = await projectsQuery
+            .AsNoTracking()
+            .Where(IsActiveProjectExpr)
+            .OrderBy(x => x.ProjectName)
+            .Select(ProjectProjections.AsGridRow)
+            .ToListAsync();
+
+        var totals = await dbContext.vTotalTreatedAcresByProjects
+            .AsNoTracking()
+            .ToListAsync();
+
+        var totalsByProjectId = totals.ToDictionary(
+            t => t.ProjectID,
+            t => t.TotalTreatedAcres
+        );
+
+        foreach (var p in projects)
+        {
+            p.TotalTreatedAcres = totalsByProjectId.TryGetValue(p.ProjectID, out var total) ? total : 0m;
+        }
+
+        return projects;
+    }
+
+    // Convenience overload for all projects
+    public static Task<List<ProjectGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
+        => ListAsGridRowAsync(dbContext.Projects, dbContext);
 }

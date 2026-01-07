@@ -16,7 +16,7 @@ public static class ProjectProjections
         FhtProjectNumber = x.FhtProjectNumber
     };
 
-    public static readonly Expression<Func<Project, ProjectIndexGridRow>> AsIndexGridRow = x => new ProjectIndexGridRow
+    public static readonly Expression<Func<Project, ProjectGridRow>> AsGridRow = x => new ProjectGridRow
     {
         ProjectID = x.ProjectID,
         ProjectName = x.ProjectName,
@@ -63,7 +63,7 @@ public static class ProjectProjections
             .FirstOrDefault()
     };
 
-    public static readonly Expression<Func<Project, ProjectGridRow>> AsProjectGridRow = x => new ProjectGridRow
+    public static readonly Expression<Func<Project, ProjectCountyDetailGridRow>> AsProjectCountyDetailGridRow = x => new ProjectCountyDetailGridRow
     {
         ProjectID = x.ProjectID,
         ProjectName = x.ProjectName,

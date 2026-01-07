@@ -20,9 +20,9 @@ public class ProjectController(
     : SitkaController<ProjectController>(dbContext, logger, keystoneService, configuration)
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProjectIndexGridRow>>> List()
+    public async Task<ActionResult<IEnumerable<ProjectGridRow>>> List()
     {
-        var projects = await Projects.ListAsIndexGridRowAsync(DbContext);
+        var projects = await Projects.ListAsGridRowAsync(DbContext);
         return Ok(projects);
     }
 

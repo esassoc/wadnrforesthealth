@@ -10,17 +10,13 @@ export class PageTitleStrategy extends TitleStrategy {
 
     override updateTitle(routerState: RouterStateSnapshot) {
         const titles = this.getTitleHierarchyFromActivatedRouteShapshot(routerState);
-        if (titles.length > 0) {
-            const fullTitle = titles.join(" | ");
-            this.title.setTitle(`${fullTitle}`);
-        } else {
-            this.title.setTitle(`Washington Dept. of Natural Resources`);
-        }
+        const fullTitle = titles.join(" | ");
+        this.title.setTitle(`${fullTitle}`);
     }
 
     private getTitleHierarchyFromActivatedRouteShapshot(routerStateSnapshot: RouterStateSnapshot): string[] {
         let activatedRouteSnapshot = routerStateSnapshot.root;
-        let titles = [];
+        let titles = ["Washington Dept. of Natural Resources"];
         let params = [];
         while (activatedRouteSnapshot.firstChild != null) {
             activatedRouteSnapshot = activatedRouteSnapshot.firstChild;

@@ -7,45 +7,43 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { ProjectTypeLookupItem } from './project-type-lookup-item';
 import { OrganizationLookupItem } from './organization-lookup-item';
-import { PriorityLandscapeLookupItem } from './priority-landscape-lookup-item';
-import { CountyLookupItem } from './county-lookup-item';
-import { ProgramLookupItem } from './program-lookup-item';
 import { ProjectStageLookupItem } from './project-stage-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
-export class ProjectIndexGridRow { 
+export class ProjectCountyDetailGridRow { 
     ProjectID?: number;
     ProjectName?: string | null;
     FhtProjectNumber?: string | null;
-    ProjectType?: ProjectTypeLookupItem;
+    PrimaryContactOrganization?: OrganizationLookupItem;
     ProjectStage?: ProjectStageLookupItem;
-    TotalTreatedAcres?: number | null;
-    LeadImplementerOrganization?: OrganizationLookupItem;
-    Programs?: Array<ProgramLookupItem> | null;
-    PriorityLandscape?: PriorityLandscapeLookupItem;
-    County?: CountyLookupItem;
+    ProjectInitiationDate?: string | null;
+    ExpirationDate?: string | null;
+    CompletionDate?: string | null;
+    EstimatedTotalCost?: number | null;
+    TotalAmount?: number | null;
+    ProjectDescription?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
 }
 
-export interface ProjectIndexGridRowForm { 
+export interface ProjectCountyDetailGridRowForm { 
     ProjectID?: FormControl<number>;
     ProjectName?: FormControl<string>;
     FhtProjectNumber?: FormControl<string>;
-    ProjectType?: FormControl<ProjectTypeLookupItem>;
+    PrimaryContactOrganization?: FormControl<OrganizationLookupItem>;
     ProjectStage?: FormControl<ProjectStageLookupItem>;
-    TotalTreatedAcres?: FormControl<number>;
-    LeadImplementerOrganization?: FormControl<OrganizationLookupItem>;
-    Programs?: FormControl<Array<ProgramLookupItem>>;
-    PriorityLandscape?: FormControl<PriorityLandscapeLookupItem>;
-    County?: FormControl<CountyLookupItem>;
+    ProjectInitiationDate?: FormControl<string>;
+    ExpirationDate?: FormControl<string>;
+    CompletionDate?: FormControl<string>;
+    EstimatedTotalCost?: FormControl<number>;
+    TotalAmount?: FormControl<number>;
+    ProjectDescription?: FormControl<string>;
 }
 
-export class ProjectIndexGridRowFormControls { 
+export class ProjectCountyDetailGridRowFormControls { 
     public static ProjectID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
@@ -76,7 +74,7 @@ export class ProjectIndexGridRowFormControls {
             ],
         }
     );
-    public static ProjectType = (value: FormControlState<ProjectTypeLookupItem> | ProjectTypeLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<ProjectTypeLookupItem>(
+    public static PrimaryContactOrganization = (value: FormControlState<OrganizationLookupItem> | OrganizationLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<OrganizationLookupItem>(
         value,
         formControlOptions ?? 
         {
@@ -96,7 +94,7 @@ export class ProjectIndexGridRowFormControls {
             ],
         }
     );
-    public static TotalTreatedAcres = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static ProjectInitiationDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -106,7 +104,7 @@ export class ProjectIndexGridRowFormControls {
             ],
         }
     );
-    public static LeadImplementerOrganization = (value: FormControlState<OrganizationLookupItem> | OrganizationLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<OrganizationLookupItem>(
+    public static ExpirationDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -116,7 +114,7 @@ export class ProjectIndexGridRowFormControls {
             ],
         }
     );
-    public static Programs = (value: FormControlState<Array<ProgramLookupItem>> | Array<ProgramLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<ProgramLookupItem>>(
+    public static CompletionDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -126,7 +124,7 @@ export class ProjectIndexGridRowFormControls {
             ],
         }
     );
-    public static PriorityLandscape = (value: FormControlState<PriorityLandscapeLookupItem> | PriorityLandscapeLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<PriorityLandscapeLookupItem>(
+    public static EstimatedTotalCost = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -136,7 +134,17 @@ export class ProjectIndexGridRowFormControls {
             ],
         }
     );
-    public static County = (value: FormControlState<CountyLookupItem> | CountyLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<CountyLookupItem>(
+    public static TotalAmount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectDescription = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

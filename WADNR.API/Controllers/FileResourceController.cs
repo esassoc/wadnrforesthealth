@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using WADNR.API.Services;
 using WADNR.EFModels.Entities;
@@ -24,7 +25,8 @@ public class FileResourceController(
     : SitkaController<FileResourceController>(dbContext, logger, keystoneService, configuration)
 {
     [HttpGet("{fileResourceGuidAsString}")]
-    public async Task<IActionResult> DisplayResource(string fileResourceGuidAsString)
+    [ProducesResponseType(typeof(FileStreamResult), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> DownloadFileResource(string fileResourceGuidAsString)
     {
         var fileResource = await DbContext.FileResources.AsNoTracking().FirstOrDefaultAsync(x => x.FileResourceGUID.ToString() == fileResourceGuidAsString);
 

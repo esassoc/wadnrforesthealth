@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { PriorityLandscapeCategoryLookupItem } from './priority-landscape-category-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
@@ -14,7 +15,9 @@ export class PriorityLandscapeDetail {
     PriorityLandscapeID?: number;
     PriorityLandscapeName?: string | null;
     PriorityLandscapeDescription?: string | null;
-    PlanYear?: number | null;
+    PriorityLandscapeCategory?: PriorityLandscapeCategoryLookupItem;
+    PriorityLandscapeExternalResources?: string | null;
+    PriorityLandscapeAboveMapText?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -24,7 +27,9 @@ export interface PriorityLandscapeDetailForm {
     PriorityLandscapeID?: FormControl<number>;
     PriorityLandscapeName?: FormControl<string>;
     PriorityLandscapeDescription?: FormControl<string>;
-    PlanYear?: FormControl<number>;
+    PriorityLandscapeCategory?: FormControl<PriorityLandscapeCategoryLookupItem>;
+    PriorityLandscapeExternalResources?: FormControl<string>;
+    PriorityLandscapeAboveMapText?: FormControl<string>;
 }
 
 export class PriorityLandscapeDetailFormControls { 
@@ -58,7 +63,27 @@ export class PriorityLandscapeDetailFormControls {
             ],
         }
     );
-    public static PlanYear = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static PriorityLandscapeCategory = (value: FormControlState<PriorityLandscapeCategoryLookupItem> | PriorityLandscapeCategoryLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<PriorityLandscapeCategoryLookupItem>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PriorityLandscapeExternalResources = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PriorityLandscapeAboveMapText = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -7,6 +8,7 @@ using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.FileResource;
 
 namespace WADNR.API.Controllers;
 
@@ -74,5 +76,27 @@ public class PriorityLandscapeController(
             return NotFound();
         }
         return NoContent();
+    }
+
+    [HttpGet("{priorityLandscapeID}/projects")]
+    public async Task<ActionResult<IEnumerable<ProjectGridRow>>> ListProjectsForPriorityLandscapeID([FromRoute] int priorityLandscapeID)
+    {
+        var linkQuery = DbContext.ProjectPriorityLandscapes
+            .Where(ppl => ppl.PriorityLandscapeID == priorityLandscapeID)
+            .Select(ppl => ppl.Project);
+
+        var projects = await Projects.ListAsGridRowAsync(
+            linkQuery,
+            DbContext
+        );
+
+        return Ok(projects);
+    }
+
+    [HttpGet("{priorityLandscapeID}/file-resources")]
+    public async Task<ActionResult<IEnumerable<FileResourceDetail>>> ListFileResourcesForPriorityLandscapeID([FromRoute] int priorityLandscapeID)
+    {
+        var resources = await FileResources.ListForPriorityLandscapeIDAsync(DbContext, priorityLandscapeID);
+        return Ok(resources);
     }
 }

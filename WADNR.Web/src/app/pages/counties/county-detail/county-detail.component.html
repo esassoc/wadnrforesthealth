@@ -17,7 +17,7 @@
         <div class="card">
             <div class="card-header"><span class="card-title">Projects</span></div>
             <div class="card-body">
-                <project-grid [rowData]="vm.projects" defaultRowSelection="multiRow"> </project-grid>
+                <wadnr-grid [rowData]="vm.projects" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" [downloadFileName]="'projects'"></wadnr-grid>
             </div>
         </div>
     </div>

@@ -34,6 +34,7 @@ export class PriorityLandscapesLayerComponent {
     @Input() sortOrder: number = 1;
     /** Canonical selection for this layer. When mode === Single, array should be 0 or 1 length. */
     @Input() selectedIDs?: number[];
+    @Input() fitBoundsOnWmsAddToControl: boolean = true;
     @Output() selectedIDsChange = new EventEmitter<number[]>();
     @Input() filterToIDs: number[];
     @Input() displayOnLoad: boolean = true;

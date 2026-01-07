@@ -3,5 +3,5 @@
 <app-alert-display></app-alert-display>
 
 <div class="page-body">
-    <wadnr-grid [rowData]="projects$ | async" [columnDefs]="columnDefs" downloadFileName="projects"></wadnr-grid>
+    <project-grid [rowData]="projects$ | async" defaultRowSelection="multiRow"> </project-grid>
 </div>

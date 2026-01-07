@@ -41,12 +41,9 @@ public class CountyController(
     }
 
     [HttpGet("{countyID}/projects")]
-    public async Task<ActionResult<IEnumerable<ProjectGridRow>>> ListProjectsForCountyID([FromRoute] int countyID)
+    public async Task<ActionResult<IEnumerable<ProjectCountyDetailGridRow>>> ListProjectsForCountyID([FromRoute] int countyID)
     {
-        var linkQuery = DbContext.ProjectCounties
-            .Where(pc => pc.CountyID == countyID);
-
-        var projects = await Projects.ListAsGridRowAsync(linkQuery, pc => pc.Project);
+        var projects = await Projects.ListAsCountyDetailGridRowAsync(DbContext, countyID);
 
         return Ok(projects);
     }

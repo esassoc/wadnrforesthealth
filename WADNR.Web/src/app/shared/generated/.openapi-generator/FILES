@@ -67,6 +67,7 @@ model/field-definition-datum.ts
 model/field-definition-detail.ts
 model/field-definition-enum.ts
 model/field-definition.ts
+model/file-resource-detail.ts
 model/file-resource-mime-type-enum.ts
 model/file-resource-mime-type.ts
 model/file-resource.ts
@@ -171,6 +172,7 @@ model/person.ts
 model/point.ts
 model/precision-model.ts
 model/precision-models.ts
+model/priority-landscape-category-lookup-item.ts
 model/priority-landscape-category.ts
 model/priority-landscape-detail.ts
 model/priority-landscape-file-resource.ts
@@ -194,6 +196,7 @@ model/project-approval-status-enum.ts
 model/project-approval-status.ts
 model/project-classification.ts
 model/project-code.ts
+model/project-county-detail-grid-row.ts
 model/project-county-update.ts
 model/project-county.ts
 model/project-detail.ts
@@ -213,7 +216,6 @@ model/project-image-timing.ts
 model/project-image-update.ts
 model/project-image.ts
 model/project-import-block-list.ts
-model/project-index-grid-row.ts
 model/project-internal-note.ts
 model/project-location-simple-type-enum.ts
 model/project-location-simple-type.ts
