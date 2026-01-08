@@ -5,3 +5,5 @@ CREATE TABLE [dbo].[ProjectCounty](
     CONSTRAINT [AK_ProjectCounty_ProjectID_CountyID] UNIQUE ([ProjectID], [CountyID])
 )
 GO
+CREATE NONCLUSTERED INDEX IX_ProjectCounty_ProjectID ON dbo.ProjectCounty(ProjectID) INCLUDE (CountyID);
+GO

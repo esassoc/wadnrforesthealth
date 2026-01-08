@@ -1258,13 +1258,9 @@ public partial class WADNRDbContext : DbContext
         {
             entity.HasKey(e => e.ProjectPersonID).HasName("PK_ProjectPerson_ProjectPersonID");
 
-            entity.HasIndex(e => e.ProjectID, "UNQ_ProjectPerson_ProjectPersonRelationshipTypeID")
-                .IsUnique()
-                .HasFilter("([ProjectPersonRelationshipTypeID]=(1))");
-
             entity.HasOne(d => d.Person).WithMany(p => p.ProjectPeople).OnDelete(DeleteBehavior.ClientSetNull);
 
-            entity.HasOne(d => d.Project).WithOne(p => p.ProjectPerson).OnDelete(DeleteBehavior.ClientSetNull);
+            entity.HasOne(d => d.Project).WithMany(p => p.ProjectPeople).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<ProjectPersonUpdate>(entity =>

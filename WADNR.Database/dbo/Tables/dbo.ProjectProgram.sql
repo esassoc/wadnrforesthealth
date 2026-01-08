@@ -5,3 +5,5 @@ CREATE TABLE [dbo].[ProjectProgram](
     CONSTRAINT [AK_ProjectProgram_ProjectID_ProgramID] UNIQUE ([ProjectID], [ProgramID])
 )
 GO
+CREATE NONCLUSTERED INDEX IX_ProjectProgram_ProjectID ON dbo.ProjectProgram(ProjectID) INCLUDE (ProgramID);
+GO

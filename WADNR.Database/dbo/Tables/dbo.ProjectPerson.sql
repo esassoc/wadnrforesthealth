@@ -6,5 +6,5 @@ CREATE TABLE [dbo].[ProjectPerson](
     [CreatedAsPartOfBulkImport] [bit] NULL
 )
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UNQ_ProjectPerson_ProjectPersonRelationshipTypeID] ON [dbo].[ProjectPerson]([ProjectID]) WHERE ([ProjectPersonRelationshipTypeID]=(1))
-GO
+--CREATE UNIQUE NONCLUSTERED INDEX [UNQ_ProjectPerson_ProjectPersonRelationshipTypeID] ON [dbo].[ProjectPerson]([ProjectID]) WHERE ([ProjectPersonRelationshipTypeID]=(1))
+--GO

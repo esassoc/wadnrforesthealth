@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -74,5 +75,19 @@ public class DNRUplandRegionController(
             return NotFound();
         }
         return NoContent();
+    }
+
+    [HttpGet("{dnrUplandRegionID}/projects")]
+    public async Task<ActionResult<IEnumerable<ProjectDNRUplandRegionDetailGridRow>>> ListProjectsForDNRUplandRegionID([FromRoute] int dnrUplandRegionID)
+    {
+        var items = await Projects.ListAsDNRUplandDetailGridRowAsync(DbContext, dnrUplandRegionID);
+        return Ok(items);
+    }
+
+    [HttpGet("{dnrUplandRegionID}/fund-source-allocations")]
+    public async Task<ActionResult<IEnumerable<FundSourceAllocationDNRUplandRegionDetailGridRow>>> ListFundSourceAllocationsForDNRUplandRegionID([FromRoute] int dnrUplandRegionID)
+    {
+        var rows = await FundSourceAllocations.ListByDnrUplandRegionActiveAsync(DbContext, dnrUplandRegionID);
+        return Ok(rows);
     }
 }

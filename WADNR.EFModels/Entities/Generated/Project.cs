@@ -169,7 +169,7 @@ public partial class Project
     public virtual ICollection<ProjectOrganization> ProjectOrganizations { get; set; } = new List<ProjectOrganization>();
 
     [InverseProperty("Project")]
-    public virtual ProjectPerson? ProjectPerson { get; set; }
+    public virtual ICollection<ProjectPerson> ProjectPeople { get; set; } = new List<ProjectPerson>();
 
     [InverseProperty("Project")]
     public virtual ICollection<ProjectPriorityLandscape> ProjectPriorityLandscapes { get; set; } = new List<ProjectPriorityLandscape>();

@@ -90,4 +90,75 @@ public static class ProjectProjections
             : null,
         ProjectDescription = x.ProjectDescription
     };
+
+    public static readonly Expression<Func<Project, ProjectDNRUplandRegionDetailGridRow>> AsDnrUplandRegionDetailGridRow = x => new ProjectDNRUplandRegionDetailGridRow
+    {
+        ProjectID = x.ProjectID,
+        ProjectName = x.ProjectName,
+        LeadImplementer = x.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => new OrganizationLookupItem
+            {
+                OrganizationID = po.Organization.OrganizationID,
+                OrganizationName = po.Organization.DisplayName
+            }).SingleOrDefault(),
+        Programs = x.ProjectPrograms
+            .Select(pp => new ProgramLookupItem
+            {
+                ProgramID = pp.Program.ProgramID,
+                ProgramName = pp.Program.IsDefaultProgramForImportOnly
+                    ? pp.Program.Organization.DisplayName
+                    : (
+                        pp.Program.ProgramName
+                        + (!string.IsNullOrWhiteSpace(pp.Program.ProgramShortName) ? " (" + pp.Program.ProgramShortName + ")" : string.Empty)
+                        + (!pp.Program.ProgramIsActive ? " (Inactive)" : string.Empty)
+                      )
+            }).ToList(),
+        Counties = x.ProjectCounties
+            .Select(pc => new CountyLookupItem
+            {
+                CountyID = pc.County.CountyID,
+                CountyName = pc.County.CountyName
+            }).ToList(),
+        PrimaryContact = x.ProjectPeople
+            .Where(pp => pp.ProjectPersonRelationshipTypeID == ProjectPersonRelationshipType.PrimaryContact.ProjectPersonRelationshipTypeID)
+            .Select(pp => new PersonLookupItem
+            {
+                PersonID = pp.Person.PersonID,
+                FullName = pp.Person.FirstName + " " + pp.Person.LastName
+            })
+            .SingleOrDefault()
+            ?? x.ProjectOrganizations
+                .Where(po => po.RelationshipType.IsPrimaryContact && po.Organization.PrimaryContactPerson != null)
+                .Select(po => new PersonLookupItem
+                {
+                    PersonID = po.Organization.PrimaryContactPerson!.PersonID,
+                    FullName = po.Organization.PrimaryContactPerson!.FirstName + " " + po.Organization.PrimaryContactPerson!.LastName
+                })
+                .FirstOrDefault(),
+        TotalTreatedAcres = x.Treatments.Sum(t => (decimal?)(t.TreatmentTreatedAcres ?? 0)),
+        ProjectType = new ProjectTypeLookupItem
+        {
+            ProjectTypeID = x.ProjectType.ProjectTypeID,
+            ProjectTypeName = x.ProjectType.ProjectTypeName
+        },
+        ProjectStage = new ProjectStageLookupItem
+        {
+            ProjectStageID = x.ProjectStage.ProjectStageID,
+            ProjectStageName = x.ProjectStage.ProjectStageName
+        },
+        ProjectApplicationDate = x.SubmissionDate,
+        ProjectInitiationDate = x.PlannedDate,
+        ProjectExpiryDate = x.ExpirationDate,
+        ProjectCompletionDate = x.CompletionDate,
+        TotalPaymentAmount = x.InvoicePaymentRequests.SelectMany(ipr => ipr.Invoices).Sum(inv => inv.PaymentAmount ?? 0),
+        TotalMatchAmount = x.InvoicePaymentRequests.SelectMany(ipr => ipr.Invoices).Sum(inv => inv.MatchAmount ?? 0),
+        PercentageMatch = x.PercentageMatch,
+        ExpectedFundingFundSourceAllocations = x.ProjectFundSourceAllocationRequests
+            .Select(r => new FundSourceAllocationLookupItem
+            {
+                FundSourceAllocationID = r.FundSourceAllocation.FundSourceAllocationID,
+                FundSourceAllocationName = r.FundSourceAllocation.FundSourceAllocationName
+            }).ToList()
+    };
 }

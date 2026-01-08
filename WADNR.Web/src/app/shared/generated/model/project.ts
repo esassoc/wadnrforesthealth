@@ -100,7 +100,7 @@ export class Project {
     ProjectLocations?: Array<ProjectLocation> | null;
     ProjectNotes?: Array<ProjectNote> | null;
     ProjectOrganizations?: Array<ProjectOrganization> | null;
-    ProjectPerson?: ProjectPerson;
+    ProjectPeople?: Array<ProjectPerson> | null;
     ProjectPriorityLandscapes?: Array<ProjectPriorityLandscape> | null;
     ProjectPrograms?: Array<ProjectProgram> | null;
     ProjectRegions?: Array<ProjectRegion> | null;
@@ -172,7 +172,7 @@ export interface ProjectForm {
     ProjectLocations?: FormControl<Array<ProjectLocation>>;
     ProjectNotes?: FormControl<Array<ProjectNote>>;
     ProjectOrganizations?: FormControl<Array<ProjectOrganization>>;
-    ProjectPerson?: FormControl<ProjectPerson>;
+    ProjectPeople?: FormControl<Array<ProjectPerson>>;
     ProjectPriorityLandscapes?: FormControl<Array<ProjectPriorityLandscape>>;
     ProjectPrograms?: FormControl<Array<ProjectProgram>>;
     ProjectRegions?: FormControl<Array<ProjectRegion>>;
@@ -763,7 +763,7 @@ export class ProjectFormControls {
             ],
         }
     );
-    public static ProjectPerson = (value: FormControlState<ProjectPerson> | ProjectPerson = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<ProjectPerson>(
+    public static ProjectPeople = (value: FormControlState<Array<ProjectPerson>> | Array<ProjectPerson> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<ProjectPerson>>(
         value,
         formControlOptions ?? 
         {

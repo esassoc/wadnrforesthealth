@@ -105,6 +105,78 @@ export class UtilityFunctionsService {
         return path.reduce((obj, key) => (obj != null ? obj[key] : null), containingFieldName ? params[containingFieldName] : params);
     }
 
+    /**
+     * Resolves a dotted path that may traverse arrays. If an array is encountered at any point in the path,
+     * it will resolve the remaining path for each element and return a flattened array of results.
+     */
+    public defaultValueGetterWithArraySupport(params: ValueGetterParams, fieldName: string, containingFieldName: string = "data"): any {
+        const path = fieldName.split(".").filter((x) => !!x);
+        const root = containingFieldName ? params[containingFieldName] : params;
+
+        const resolve = (value: any, remainingPath: string[]): any => {
+            if (value == null) {
+                return null;
+            }
+            if (remainingPath.length === 0) {
+                return value;
+            }
+            if (Array.isArray(value)) {
+                return value.reduce((acc, item) => {
+                    const resolved = resolve(item, remainingPath);
+                    if (Array.isArray(resolved)) {
+                        acc.push(...resolved);
+                    } else {
+                        acc.push(resolved);
+                    }
+                    return acc;
+                }, [] as any[]);
+            }
+
+            const [head, ...tail] = remainingPath;
+            return resolve(value?.[head], tail);
+        };
+
+        return resolve(root, path);
+    }
+
+    /**
+     * Like createBasicColumnDef, but supports dot-paths that traverse arrays by joining results into a single string.
+     * Example: fieldName "a.b.c" where b is a list will render "c1, c2, c3".
+     */
+    public createJoinedBasicColumnDef(headerName: string, fieldName: string, joinedParams?: JoinedListColumnDefParams): ColDef {
+        const delimiter = joinedParams?.Delimiter ?? ", ";
+        const distinct = joinedParams?.Distinct ?? false;
+        const sortValues = joinedParams?.SortValues ?? false;
+
+        const toStrings = (value: any): string[] => {
+            const values = Array.isArray(value) ? value : [value];
+            const strings = values
+                .map((v) => (v == null ? null : String(v)))
+                .map((v) => (v != null ? v.trim() : null))
+                .filter((v): v is string => !!v);
+            const deduped = distinct ? Array.from(new Set(strings)) : strings;
+            return sortValues ? [...deduped].sort() : deduped;
+        };
+
+        const colDef: ColDef = {
+            field: fieldName,
+            headerName: headerName,
+            valueGetter: (params) => {
+                const raw = this.defaultValueGetterWithArraySupport(params, fieldName);
+                const parts = toStrings(raw);
+                return parts.length ? parts.join(delimiter) : null;
+            },
+            filterValueGetter: (params) => {
+                const raw = this.defaultValueGetterWithArraySupport(params, fieldName);
+                const parts = toStrings(raw);
+                return parts.length ? parts.join(delimiter) : null;
+            },
+        };
+
+        this.applyDefaultLtinfoColumnDefParams(colDef, joinedParams);
+        return colDef;
+    }
+
     public createBasicColumnDef(headerName: string, fieldName: string, colDefParams?: LtinfoColumnDefParams): ColDef {
         const colDef: ColDef = {
             field: fieldName,
@@ -717,6 +789,15 @@ export interface LinkColumnDefParams extends LtinfoColumnDefParams {
 export interface MultiLinkColumnDefParams extends LtinfoColumnDefParams {
     InRouterLink?: string;
     InRouterLinkHandler?: (params: any) => string;
+}
+
+export interface JoinedListColumnDefParams extends LtinfoColumnDefParams {
+    /** String used to join values when a list is encountered (default: ", ") */
+    Delimiter?: string;
+    /** Remove duplicates before joining (default: false) */
+    Distinct?: boolean;
+    /** Sort values lexicographically before joining (default: false) */
+    SortValues?: boolean;
 }
 
 export interface DecimalColumnDefParams extends LtinfoColumnDefParams {

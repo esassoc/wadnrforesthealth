@@ -4,6 +4,7 @@ export const routeParams = {
     definitionID: "definitionID",
     projectID: "projectID",
     countyID: "countyID",
+    dnrUplandRegionID: "dnrUplandRegionID",
     priorityLandscapeID: "priorityLandscapeID",
 };
 
@@ -29,6 +30,11 @@ export const routes: Routes = [
         path: "dnr-upland-regions",
         title: "DNR Upland Regions",
         loadComponent: () => import("./pages/dnr-upland-regions/dnr-upland-regions.component").then((m) => m.DNRUplandRegionsComponent),
+    },
+    {
+        path: `dnr-upland-regions/:${routeParams.dnrUplandRegionID}`,
+        title: "DNR Upland Region Detail",
+        loadComponent: () => import("./pages/dnr-upland-regions/dnr-upland-region-detail.component").then((m) => m.DNRUplandRegionDetailComponent),
     },
     { path: "find-your-forester", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "forest-health-monitoring", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },

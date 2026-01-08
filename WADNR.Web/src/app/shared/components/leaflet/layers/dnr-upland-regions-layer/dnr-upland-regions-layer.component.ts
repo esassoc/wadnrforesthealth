@@ -32,6 +32,8 @@ export class DNRUplandRegionsLayerComponent {
     @Input() map: L.Map;
     @Input() layerControl: any;
     @Input() sortOrder: number = 1;
+    /** When true, the layer will auto-zoom (fitBounds) when its WMS overlay is added to the layer control. */
+    @Input() fitBoundsOnWmsAddToControl: boolean = true;
     /** Canonical selection for this layer. When mode === Single, array should be 0 or 1 length. */
     @Input() selectedIDs?: number[];
     @Output() selectedIDsChange = new EventEmitter<number[]>();

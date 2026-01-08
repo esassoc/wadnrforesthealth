@@ -846,6 +846,106 @@
         }
       }
     },
+    "/dnr-upland-regions/{dnrUplandRegionID}/projects": {
+      "get": {
+        "tags": [
+          "DNRUplandRegion"
+        ],
+        "operationId": "ListProjectsForDNRUplandRegionID_DNRUplandRegion",
+        "parameters": [
+          {
+            "name": "dnrUplandRegionID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectDNRUplandRegionDetailGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectDNRUplandRegionDetailGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectDNRUplandRegionDetailGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dnr-upland-regions/{dnrUplandRegionID}/fund-source-allocations": {
+      "get": {
+        "tags": [
+          "DNRUplandRegion"
+        ],
+        "operationId": "ListFundSourceAllocationsForDNRUplandRegionID_DNRUplandRegion",
+        "parameters": [
+          {
+            "name": "dnrUplandRegionID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationDNRUplandRegionDetailGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationDNRUplandRegionDetailGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationDNRUplandRegionDetailGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/field-definitions": {
       "get": {
         "tags": [
@@ -5782,6 +5882,74 @@
         },
         "additionalProperties": false
       },
+      "FundSourceAllocationDNRUplandRegionDetailGridRow": {
+        "type": "object",
+        "properties": {
+          "FundSourceAllocationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceAllocationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceEndDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "HasFundFSPs": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "FundSourceAllocationPriorityDetail": {
+            "$ref": "#/components/schemas/FundSourceAllocationPriorityDetail"
+          },
+          "ProgramIndexLookupItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProgramIndexLookupItem"
+            },
+            "nullable": true
+          },
+          "ProjectCodeLookupItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectCodeLookupItem"
+            },
+            "nullable": true
+          },
+          "FundSource": {
+            "$ref": "#/components/schemas/FundSourceLookupItem"
+          },
+          "FundSourceAllocationSource": {
+            "$ref": "#/components/schemas/FundSourceAllocationSourceLookupItem"
+          },
+          "ExpectedFundingByProject": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "AllocationAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "BudgetLineItem": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "LikelyToUsePeople": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonLookupItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FundSourceAllocationExpenditure": {
         "type": "object",
         "properties": {
@@ -5898,6 +6066,20 @@
           },
           "Person": {
             "$ref": "#/components/schemas/Person"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceAllocationLookupItem": {
+        "type": "object",
+        "properties": {
+          "FundSourceAllocationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceAllocationName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -6034,6 +6216,25 @@
         },
         "additionalProperties": false
       },
+      "FundSourceAllocationPriorityDetail": {
+        "type": "object",
+        "properties": {
+          "FundSourceAllocationPriorityID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FundSourceAllocationPriorityName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceAllocationPriorityColor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FundSourceAllocationProgramIndexProjectCode": {
         "type": "object",
         "properties": {
@@ -6159,6 +6360,20 @@
           "Other"
         ],
         "type": "string"
+      },
+      "FundSourceAllocationSourceLookupItem": {
+        "type": "object",
+        "properties": {
+          "FundSourceAllocationSourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceAllocationSourceDisplayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "FundSourceDetail": {
         "type": "object",
@@ -9977,6 +10192,20 @@
         },
         "additionalProperties": false
       },
+      "ProgramIndexLookupItem": {
+        "type": "object",
+        "properties": {
+          "ProgramIndexID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProgramIndexCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProgramLookupItem": {
         "type": "object",
         "properties": {
@@ -10518,8 +10747,12 @@
             },
             "nullable": true
           },
-          "ProjectPerson": {
-            "$ref": "#/components/schemas/ProjectPerson"
+          "ProjectPeople": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectPerson"
+            },
+            "nullable": true
           },
           "ProjectPriorityLandscapes": {
             "type": "array",
@@ -10705,6 +10938,20 @@
         },
         "additionalProperties": false
       },
+      "ProjectCodeLookupItem": {
+        "type": "object",
+        "properties": {
+          "ProjectCodeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectCodeName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectCounty": {
         "type": "object",
         "properties": {
@@ -10812,6 +11059,91 @@
           },
           "ProjectUpdateBatch": {
             "$ref": "#/components/schemas/ProjectUpdateBatch"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectDNRUplandRegionDetailGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "LeadImplementer": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "Programs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProgramLookupItem"
+            },
+            "nullable": true
+          },
+          "Counties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountyLookupItem"
+            },
+            "nullable": true
+          },
+          "PrimaryContact": {
+            "$ref": "#/components/schemas/PersonLookupItem"
+          },
+          "TotalTreatedAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectType": {
+            "$ref": "#/components/schemas/ProjectTypeLookupItem"
+          },
+          "ProjectStage": {
+            "$ref": "#/components/schemas/ProjectStageLookupItem"
+          },
+          "ProjectApplicationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ProjectInitiationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ProjectExpiryDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ProjectCompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "TotalPaymentAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "TotalMatchAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "PercentageMatch": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ExpectedFundingFundSourceAllocations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

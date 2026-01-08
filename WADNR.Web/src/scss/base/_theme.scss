@@ -126,7 +126,7 @@
 
     --wadnr-orange: #e49937;
     --wadnr-green: #89bf40;
-    --wadnr-blue: #2f3f56;
+    --wadnr-blue: var(--blue-800);
     --wadnr-olive: #646820;
     --wadnr-brown: #9a610a;
 
@@ -199,8 +199,8 @@
     --ptsans: "PT Sans", "myriad pro", Arial;
 
     /* cards */
-    --card-header-bg-color: #969eac;
-    --card-header-border-color: #969eac;
+    --card-header-bg-color: var(--wadnr-blue);
+    --card-header-border-color: var(--wadnr-blue);
     --card-title-text-color: var(--white);
     --card-body-bg-color: #f7f7f7;
     --card-border-color: var(--gray-100);

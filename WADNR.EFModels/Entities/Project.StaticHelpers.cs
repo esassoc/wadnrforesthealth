@@ -1,5 +1,6 @@
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Linq.Expressions;
 using WADNR.Models.DataTransferObjects;
 
 namespace WADNR.EFModels.Entities;
@@ -21,6 +22,31 @@ public static class Projects
             .Where(IsActiveProjectExpr)
             .Select(ProjectProjections.AsProjectCountyDetailGridRow)
             .ToListAsync();
+    }
+
+    public static async Task<List<ProjectDNRUplandRegionDetailGridRow>> ListAsDNRUplandDetailGridRowAsync(WADNRDbContext dbContext, int dnrUplandRegionID)
+    {
+
+        var rows = await dbContext.Projects
+            .Where(p => p.ProjectRegions.Any(x => x.DNRUplandRegionID == dnrUplandRegionID))
+            .AsNoTracking()
+            .Where(IsActiveProjectExpr)
+            .OrderBy(x => x.ProjectName)
+            .Select(ProjectProjections.AsDnrUplandRegionDetailGridRow)
+            .ToListAsync();
+
+        var totals = await dbContext.vTotalTreatedAcresByProjects
+            .AsNoTracking()
+            .ToListAsync();
+
+        var totalsByProjectId = totals.ToDictionary(t => t.ProjectID, t => t.TotalTreatedAcres ?? 0m);
+
+        foreach (var r in rows)
+        {
+            r.TotalTreatedAcres = totalsByProjectId.TryGetValue(r.ProjectID, out var total) ? total : 0m;
+        }
+
+        return rows;
     }
 
     public static async Task<ProjectDetail?> GetByIDAsDetailAsync(WADNRDbContext dbContext, int projectID)

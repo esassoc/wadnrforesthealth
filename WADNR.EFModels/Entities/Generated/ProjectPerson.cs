@@ -25,6 +25,6 @@ public partial class ProjectPerson
     public virtual Person Person { get; set; } = null!;
 
     [ForeignKey("ProjectID")]
-    [InverseProperty("ProjectPerson")]
+    [InverseProperty("ProjectPeople")]
     public virtual Project Project { get; set; } = null!;
 }
