@@ -91,6 +91,7 @@ export class DNRUplandRegionDetailComponent {
             this.utilityFunctions.createMultiLinkColumnDef("Programs", "Programs", "ProgramID", "ProgramName", {
                 InRouterLink: "/programs/",
                 FieldDefinitionType: "Program",
+                CustomDropdownFilterField: "Programs.ProgramName",
             }),
             this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", {
                 InRouterLink: "/projects/",
@@ -99,6 +100,7 @@ export class DNRUplandRegionDetailComponent {
             this.utilityFunctions.createMultiLinkColumnDef("Counties", "Counties", "CountyID", "CountyName", {
                 InRouterLink: "/counties/",
                 FieldDefinitionType: "County",
+                CustomDropdownFilterField: "Counties.CountyName",
             }),
             this.utilityFunctions.createLinkColumnDef("Primary Contact", "PrimaryContact.FullName", "PrimaryContact.PersonID", {
                 InRouterLink: "/users/",
@@ -106,8 +108,8 @@ export class DNRUplandRegionDetailComponent {
             }),
             this.utilityFunctions.createDecimalColumnDef("Total Treated Acres", "TotalTreatedAcres", {
                 MaxDecimalPlacesToDisplay: 2,
-                Width: 160,
                 FieldDefinitionType: "ProjectTotalCompletedTreatmentAcres",
+                FieldDefinitionLabelOverride: "Total Treated Acres",
             }),
             this.utilityFunctions.createBasicColumnDef("Project Type", "ProjectType.ProjectTypeName", {
                 FieldDefinitionType: "ProjectType",
@@ -133,14 +135,15 @@ export class DNRUplandRegionDetailComponent {
             this.utilityFunctions.createCurrencyColumnDef("Total Payment", "TotalPaymentAmount", {
                 MaxDecimalPlacesToDisplay: 2,
                 FieldDefinitionType: "PaymentAmount",
+                FieldDefinitionLabelOverride: "Total Payment Amounts",
             }),
             this.utilityFunctions.createCurrencyColumnDef("Total Match", "TotalMatchAmount", {
                 MaxDecimalPlacesToDisplay: 2,
                 FieldDefinitionType: "MatchAmount",
+                FieldDefinitionLabelOverride: "Total Match Amounts",
             }),
             this.utilityFunctions.createDecimalColumnDef("Percentage Match", "PercentageMatch", {
                 MaxDecimalPlacesToDisplay: 2,
-                Width: 110,
                 FieldDefinitionType: "PercentageMatch",
             }),
             this.utilityFunctions.createMultiLinkColumnDef(
@@ -151,6 +154,8 @@ export class DNRUplandRegionDetailComponent {
                 {
                     InRouterLink: "/counties/",
                     FieldDefinitionType: "FundSourceAllocation",
+                    FieldDefinitionLabelOverride: "WA DNR Fund Source Allocation",
+                    CustomDropdownFilterField: "ExpectedFundingFundSourceAllocations.FundSourceAllocationName",
                 }
             ),
         ];

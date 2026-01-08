@@ -24,17 +24,55 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
     };
 
     agInit(params): void {
+        debugger;
         this.params = params;
 
         if (params.colDef.filterParams) {
             this.field = params.colDef.filterParams.field;
+            //MP 1/8/26 This is mostly just an optional override, but we can probably get rid of it at some point. The function is array-aware.
             this.columnContainsMultipleValues = params.colDef.filterParams.columnContainsMultipleValues;
         }
 
+        this.initFilter();
+    }
+
+    private initFilter(): void {
+        this.dropdownValues = [];
+        this.state.filterOptions = {};
+
+        let encounteredArray = false;
+
+        this.params.api.forEachNode((rowNode) => {
+            const nodeValue = this.getNodeValue(rowNode);
+            const values = this.normalizeToArrayIfNeeded(nodeValue);
+
+            if (Array.isArray(nodeValue)) {
+                encounteredArray = true;
+            }
+
+            values.forEach((value) => {
+                const extracted = this.ensurePrimitiveValue(value);
+                if (!this.dropdownValues.includes(extracted)) {
+                    this.dropdownValues.push(extracted);
+                }
+            });
+        });
+
+        // If the resolved field value is an array anywhere (e.g., Programs.ProgramName), treat the column as multi-value.
+        this.columnContainsMultipleValues = !!this.columnContainsMultipleValues || encounteredArray;
+
         if (this.columnContainsMultipleValues) {
-            this.initMultipleValueColumnFilter();
+            this.state.selectAll = false;
+            this.state.deselectAll = true;
+            this.dropdownValues.forEach((element) => {
+                this.state.filterOptions[this.getOptionKey(element)] = false;
+            });
         } else {
-            this.initSingleValueColumnFilter();
+            this.state.selectAll = true;
+            this.state.deselectAll = false;
+            this.dropdownValues.forEach((element) => {
+                this.state.filterOptions[this.getOptionKey(element)] = true;
+            });
         }
     }
 
@@ -48,7 +86,7 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
 
         // Initialize the checked state for each option.
         this.dropdownValues.forEach((element) => {
-            this.state.filterOptions[element] = true;
+            this.state.filterOptions[this.getOptionKey(element)] = true;
         });
     }
 
@@ -61,16 +99,17 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
             if (!Array.isArray(columnValue)) {
                 throw "Value getter for multiple column filter needs to return an array";
             }
-            columnValue.forEach((x) => {
-                if (!this.dropdownValues.includes(x)) {
-                    this.dropdownValues.push(x);
+
+            this.extractMultipleValues(columnValue).forEach((value) => {
+                if (!this.dropdownValues.includes(value)) {
+                    this.dropdownValues.push(value);
                 }
             });
         });
 
         // Initialize the unchecked state for multiple value columns
         this.dropdownValues.forEach((element) => {
-            this.state.filterOptions[element] = false;
+            this.state.filterOptions[this.getOptionKey(element)] = false;
         });
     }
 
@@ -89,21 +128,21 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
     }
 
     doesfilterPassMultipleValues(filterParams: IDoesFilterPassParams): boolean {
-        let valueArray = this.getNodeValue(filterParams.node as RowNode<any>);
-        let filterPasses;
+        const rawValue = this.getNodeValue(filterParams.node as RowNode<any>);
+        const rawValueArray = this.normalizeToArrayIfNeeded(rawValue);
+        const valueArray = this.extractMultipleValues(rawValueArray);
+        let filterPasses: boolean;
 
         // if strict we need to compare all true filter options and see if the valueArray contains them all
         if (this.state.strict) {
-            let checkedOptions = [];
-            for (const [key, value] of Object.entries(this.state.filterOptions)) {
-                if (value) {
-                    checkedOptions.push(key);
-                }
-            }
-            filterPasses = checkedOptions.every((name) => valueArray.includes(name));
+            const checkedOptionKeys = Object.entries(this.state.filterOptions)
+                .filter(([_, isChecked]) => !!isChecked)
+                .map(([key]) => key);
+            const valueKeySet = new Set(valueArray.map((v) => this.getOptionKey(v)));
+            filterPasses = checkedOptionKeys.every((key) => valueKeySet.has(key));
         } else {
             // if not strict we can just see if the valueArray contains at least one of the selected filter options
-            filterPasses = valueArray.some((name) => this.state.filterOptions[name]);
+            filterPasses = valueArray.some((value) => this.state.filterOptions[this.getOptionKey(value)]);
         }
 
         return filterPasses;
@@ -111,24 +150,108 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
 
     doesFilterPassSingleValue(filterParams: IDoesFilterPassParams): boolean {
         let value = this.getNodeValue(filterParams.node as RowNode<any>);
-        if (this.state.filterOptions[value] == null) {
+        const key = this.getOptionKey(value);
+        if (this.state.filterOptions[key] == null) {
             return false;
         }
-        return this.state.filterOptions[value] ? true : false;
+        return this.state.filterOptions[key] ? true : false;
     }
 
     private getNodeValue(rowNode: RowNode) {
         if (this.field) {
-            return this.getPropertyValue(rowNode.data, this.field, "");
-        } else if (this.params.colDef.valueGetter) {
+            return this.getPropertyValue(rowNode.data, this.field, null);
+        }
+        if (this.params?.colDef?.valueGetter) {
             return this.params.colDef.valueGetter(rowNode);
         }
 
-        return this.getPropertyValue(rowNode.data, this.field, "");
+        return rowNode.data;
     }
 
     private getPropertyValue(object, path, defaultValue) {
-        return path.split(".").reduce((o, p) => (o ? o[p] : defaultValue), object);
+        if (!path) {
+            return defaultValue;
+        }
+        return this.getPropertyValueFromParts(object, path.split("."), defaultValue);
+    }
+
+    private getPropertyValueFromParts(current: any, pathParts: string[], defaultValue: any): any {
+        if (current === undefined) {
+            return defaultValue;
+        }
+        if (current === null) {
+            return null;
+        }
+        if (pathParts.length === 0) {
+            return current;
+        }
+
+        // If we hit an array while traversing, apply the remaining path to each item.
+        if (Array.isArray(current)) {
+            const mapped = current.map((item) => this.getPropertyValueFromParts(item, pathParts, defaultValue)).filter((v) => v !== undefined);
+            return mapped.flatMap((v) => (Array.isArray(v) ? v : [v]));
+        }
+
+        const [head, ...tail] = pathParts;
+        return this.getPropertyValueFromParts(current?.[head], tail, defaultValue);
+    }
+
+    private extractMultipleValues(valueArray: any[]): any[] {
+        return valueArray.map((item) => this.ensurePrimitiveValue(item)).filter((v) => v !== undefined);
+    }
+
+    private ensurePrimitiveValue(item: any): any {
+        if (item === undefined) {
+            return undefined;
+        }
+        if (item === null) {
+            return null;
+        }
+        if (this.isPrimitive(item)) {
+            return item;
+        }
+
+        throw "Custom dropdown filter expected primitive values. If your field resolves to an array of objects, include the nested property in the field path (e.g., Programs.ProgramName)";
+    }
+
+    private normalizeToArrayIfNeeded(value: any): any[] {
+        if (Array.isArray(value)) {
+            return value;
+        }
+        return [value];
+    }
+
+    private isPrimitive(value: any): boolean {
+        const t = typeof value;
+        return t === "string" || t === "number" || t === "boolean";
+    }
+
+    getOptionKey(value: any): string {
+        if (value === null) {
+            return "null";
+        }
+        if (value === undefined) {
+            return "undefined";
+        }
+        const t = typeof value;
+        if (t === "string") {
+            return `string:${value}`;
+        }
+        if (t === "number") {
+            return `number:${value}`;
+        }
+        if (t === "boolean") {
+            return `boolean:${value}`;
+        }
+        return `other:${String(value)}`;
+    }
+
+    isBlankOption(value: any): boolean {
+        return value == null || (typeof value === "string" && value.trim().length === 0);
+    }
+
+    getOptionLabel(value: any): string {
+        return this.isBlankOption(value) ? "(Blank)" : String(value);
     }
 
     getModel() {
@@ -166,7 +289,7 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
         this.state.selectAll = true;
         this.state.deselectAll = true;
         for (let element of this.dropdownValues) {
-            if (this.state.filterOptions[element]) {
+            if (this.state.filterOptions[this.getOptionKey(element)]) {
                 this.state.deselectAll = false;
             } else {
                 this.state.selectAll = false;
@@ -206,7 +329,7 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
 
     private updateFilterSelection() {
         this.dropdownValues.forEach((element) => {
-            this.state.filterOptions[element] = this.state.selectAll;
+            this.state.filterOptions[this.getOptionKey(element)] = this.state.selectAll;
         });
 
         this.params.filterChangedCallback();

@@ -8,10 +8,8 @@
     <div id="filter-options" class="pt-2 pl-2 pb-2 pr-2">
         @for (element of getDropdownValues(); track element) {
         <div>
-            <input type="checkbox" name="{{ element }}" [(ngModel)]="state.filterOptions[element]" (ngModelChange)="updateFilter()" checked />
-            <label for="{{ element }}" class="ml-2" [ngClass]="{ 'blank-option': !element || element.trim().length === 0 }">{{
-                !element || element.trim().length === 0 ? "(Blank)" : element
-            }}</label>
+            <input type="checkbox" name="{{ getOptionKey(element) }}" [(ngModel)]="state.filterOptions[getOptionKey(element)]" (ngModelChange)="updateFilter()" checked />
+            <label for="{{ getOptionKey(element) }}" class="ml-2" [ngClass]="{ 'blank-option': isBlankOption(element) }">{{ getOptionLabel(element) }}</label>
         </div>
         }
     </div>
