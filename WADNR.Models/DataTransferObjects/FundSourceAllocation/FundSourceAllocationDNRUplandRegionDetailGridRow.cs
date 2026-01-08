@@ -9,13 +9,12 @@ public class FundSourceAllocationDNRUplandRegionDetailGridRow
     public string? FundSourceAllocationName { get; set; }
     public DateTime? FundSourceEndDate { get; set; }
     public bool? HasFundFSPs { get; set; }
-    public FundSourceAllocationPriorityDetail FundSourceAllocationPriorityDetail { get; set; } = new FundSourceAllocationPriorityDetail();
-    public List<ProgramIndexLookupItem> ProgramIndexLookupItems { get; set; } = new List<ProgramIndexLookupItem>();
-    public List<ProjectCodeLookupItem> ProjectCodeLookupItems { get; set; } = new List<ProjectCodeLookupItem>();
+    public FundSourceAllocationPriorityDetail FundSourceAllocationPriority { get; set; } = new FundSourceAllocationPriorityDetail();
+    public List<ProgramIndexLookupItem> ProgramIndices { get; set; } = new List<ProgramIndexLookupItem>();
+    public List<ProjectCodeLookupItem> ProjectCodes { get; set; } = new List<ProjectCodeLookupItem>();
     public FundSourceLookupItem FundSource { get; set; } = new FundSourceLookupItem();
     public FundSourceAllocationSourceLookupItem? FundSourceAllocationSource { get; set; }
-    public decimal? ExpectedFundingByProject { get; set; }
     public decimal? AllocationAmount { get; set; }
-    public decimal? BudgetLineItem { get; set; }
+    public decimal? AllocationPercentage { get; set; }
     public List<PersonLookupItem> LikelyToUsePeople { get; set; } = new List<PersonLookupItem>();
 }

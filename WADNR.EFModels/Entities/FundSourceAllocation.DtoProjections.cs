@@ -13,13 +13,13 @@ public static class FundSourceAllocationProjections
         FundSourceAllocationName = x.FundSourceAllocationName,
         FundSourceEndDate = x.EndDate,
         HasFundFSPs = x.HasFundFSPs,
-        FundSourceAllocationPriorityDetail = new FundSourceAllocationPriorityDetail
+        FundSourceAllocationPriority = new FundSourceAllocationPriorityDetail
         {
             FundSourceAllocationPriorityID = x.FundSourceAllocationPriorityID,
             FundSourceAllocationPriorityName = x.FundSourceAllocationPriority != null ? x.FundSourceAllocationPriority.FundSourceAllocationPriorityNumber.ToString() : null,
             FundSourceAllocationPriorityColor = x.FundSourceAllocationPriority != null ? x.FundSourceAllocationPriority.FundSourceAllocationPriorityColor : null
         },
-        ProgramIndexLookupItems = x.FundSourceAllocationProgramIndexProjectCodes
+        ProgramIndices = x.FundSourceAllocationProgramIndexProjectCodes
             .Where(y => y.ProgramIndex != null)
             .Select(y => new ProgramIndexLookupItem
             {
@@ -27,7 +27,7 @@ public static class FundSourceAllocationProjections
                 ProgramIndexCode = y.ProgramIndex.ProgramIndexCode
             })
             .ToList(),
-        ProjectCodeLookupItems = x.FundSourceAllocationProgramIndexProjectCodes
+        ProjectCodes = x.FundSourceAllocationProgramIndexProjectCodes
             .Where(y => y.ProjectCode != null)
             .Select(y => new ProjectCodeLookupItem
             {
@@ -48,12 +48,24 @@ public static class FundSourceAllocationProjections
                 FundSourceAllocationSourceDisplayName = x.FundSourceAllocationSource.FundSourceAllocationSourceDisplayName
             }
             : null,
-        ExpectedFundingByProject = x.ProjectFundSourceAllocationRequests.Sum(y => (decimal?)y.PayAmount) ?? 0m,
         AllocationAmount = x.AllocationAmount,
-        BudgetLineItem = x.FundSourceAllocationBudgetLineItems
-            .Where(bli => bli.CostTypeID == CostType.Contractual.CostTypeID)
-            .Select(bli => (decimal?)bli.FundSourceAllocationBudgetLineItemAmount)
-            .SingleOrDefault(),
+        AllocationPercentage =
+            (
+                (x.FundSourceAllocationBudgetLineItems
+                    .Where(b => b.CostTypeID == (int)CostTypeEnum.Contractual)
+                    .Select(b => (decimal?)b.FundSourceAllocationBudgetLineItemAmount)
+                    .Sum() ?? 0m)
+            ) == 0m
+            ? (decimal?)null
+            : Math.Round(
+                (
+                    (x.ProjectFundSourceAllocationRequests.Select(r => (decimal?)r.PayAmount).Sum() ?? 0m)
+                    /
+                    (x.FundSourceAllocationBudgetLineItems
+                        .Where(b => b.CostTypeID == (int)CostTypeEnum.Contractual)
+                        .Select(b => (decimal?)b.FundSourceAllocationBudgetLineItemAmount)
+                        .Sum() ?? 0m)
+                ) * 100m, 2),
         LikelyToUsePeople = x.LikelyToUse == true
             ? x.FundSourceAllocationLikelyPeople
                 .Select(lp => new PersonLookupItem

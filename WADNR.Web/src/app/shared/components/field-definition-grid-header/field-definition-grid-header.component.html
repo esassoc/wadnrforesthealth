@@ -2,9 +2,10 @@
     <div #header class="custom-header-label">
         <field-definition [fieldDefinition]="params.fieldDefinitionType" [labelOverride]="params.labelOverride" [inline]="false" [useBodyContainer]="true"></field-definition>
     </div>
-    @if (filtered) {
+    <!-- MP 1/8/26 And this one! See below comment -->
+    <!-- @if (filtered) {
     <div class="filter-indicator">*</div>
-    }
+    } -->
 
     <!-- MP 1/8/26 Same with this one ¯\(ツ)/¯. See below comment -->
     <!-- <div [hidden]="!params.enableSorting" class="sort-buttons">

@@ -5902,17 +5902,17 @@
             "type": "boolean",
             "nullable": true
           },
-          "FundSourceAllocationPriorityDetail": {
+          "FundSourceAllocationPriority": {
             "$ref": "#/components/schemas/FundSourceAllocationPriorityDetail"
           },
-          "ProgramIndexLookupItems": {
+          "ProgramIndices": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ProgramIndexLookupItem"
             },
             "nullable": true
           },
-          "ProjectCodeLookupItems": {
+          "ProjectCodes": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ProjectCodeLookupItem"
@@ -5925,17 +5925,12 @@
           "FundSourceAllocationSource": {
             "$ref": "#/components/schemas/FundSourceAllocationSourceLookupItem"
           },
-          "ExpectedFundingByProject": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
           "AllocationAmount": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
-          "BudgetLineItem": {
+          "AllocationPercentage": {
             "type": "number",
             "format": "double",
             "nullable": true

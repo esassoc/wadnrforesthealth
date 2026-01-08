@@ -24,6 +24,37 @@ import { FundSourceAllocationDNRUplandRegionDetailGridRow } from "src/app/shared
     styleUrls: ["./dnr-upland-region-detail.component.scss"],
 })
 export class DNRUplandRegionDetailComponent {
+    private readonly allocationColor: Record<number, string> = {
+        0: "#00B050",
+        10: "#22B756",
+        20: "#44BF5D",
+        30: "#66C764",
+        40: "#88CF6B",
+        50: "#AAD772",
+        60: "#CCDF79",
+        70: "#EEE780",
+        80: "#FFDC7C",
+        90: "#FFBD6A",
+        100: "#FF9D59",
+        110: "#FF7E47",
+        120: "#FF5E35",
+        130: "#FF3F24",
+        140: "#FF2012",
+        150: "#FF0000",
+    };
+
+    private getAllocationColor(percentage: number | null | undefined): string {
+        // Bucket to the nearest 10 (then clamp to [0, 150]).
+        // Example: 24 -> 20, 25 -> 30
+        if (percentage == null) {
+            return this.allocationColor[150];
+        }
+        let integerLookup = Math.round((percentage ?? 0) / 10) * 10;
+        integerLookup = Math.min(integerLookup, 150);
+        integerLookup = Math.max(integerLookup, 0);
+        return this.allocationColor[integerLookup] ?? this.allocationColor[150];
+    }
+
     /** Loads the upland region details so the page can render once. */
     public dnrUplandRegionDetailPageData$: Observable<{
         dnrUplandRegion: DNRUplandRegionDetail;
@@ -46,7 +77,7 @@ export class DNRUplandRegionDetailComponent {
 
     public fundSourceAllocationColumnDefs: ColDef<FundSourceAllocationDNRUplandRegionDetailGridRow>[] = [];
     public fundSourceAllocationPinnedTotalsRow = {
-        fields: ["ExpectedFundingByProject", "AllocationAmount", "BudgetLineItem"],
+        fields: ["AllocationAmount"],
         filteredOnly: true,
     };
 
@@ -163,11 +194,19 @@ export class DNRUplandRegionDetailComponent {
 
     private createFundSourceAllocationColumnDefs(): ColDef<FundSourceAllocationDNRUplandRegionDetailGridRow>[] {
         return [
-            this.utilityFunctions.createBasicColumnDef("Priority", "FundSourceAllocationPriorityDetail.FundSourceAllocationPriorityName", {
+            this.utilityFunctions.createBasicColumnDef("Priority", "FundSourceAllocationPriority.FundSourceAllocationPriorityName", {
                 FieldDefinitionType: "FundSourceAllocationPriority",
+                CustomDropdownFilterField: "FundSourceAllocationPriority.FundSourceAllocationPriorityName",
+                CellStyle: (params) => {
+                    if (params?.node?.rowPinned) {
+                        return {};
+                    }
+                    const bg = params?.data?.FundSourceAllocationPriority?.FundSourceAllocationPriorityColor;
+                    return bg ? { "background-color": bg } : {};
+                },
             }),
-            this.utilityFunctions.createJoinedBasicColumnDef("Program Index", "ProgramIndexLookupItems.ProgramIndexCode"),
-            this.utilityFunctions.createJoinedBasicColumnDef("Project Code", "ProjectCodeLookupItems.ProjectCodeName"),
+            this.utilityFunctions.createJoinedBasicColumnDef("Program Index", "ProgramIndices.ProgramIndexCode"),
+            this.utilityFunctions.createJoinedBasicColumnDef("Project Code", "ProjectCodes.ProjectCodeName"),
             this.utilityFunctions.createBasicColumnDef("Fund Source Number", "FundSource.FundSourceNumber", {
                 FieldDefinitionType: "FundSourceNumber",
             }),
@@ -176,19 +215,40 @@ export class DNRUplandRegionDetailComponent {
             }),
             this.utilityFunctions.createBooleanColumnDef("Fund FSPs?", "HasFundFSPs", {
                 FieldDefinitionType: "FundSourceAllocationFundFSPs",
+                CustomDropdownFilterField: "HasFundFSPs",
             }),
             this.utilityFunctions.createBasicColumnDef("Fund Source Allocation", "FundSourceAllocationName", {
                 FieldDefinitionType: "FundSourceAllocationName",
             }),
             this.utilityFunctions.createBasicColumnDef("Source", "FundSourceAllocationSource.FundSourceAllocationSourceDisplayName", {
                 FieldDefinitionType: "FundSourceAllocationSource",
+                CustomDropdownFilterField: "FundSourceAllocationSource.FundSourceAllocationSourceDisplayName",
             }),
-
+            this.utilityFunctions.createBasicColumnDef("Allocation", "AllocationPercentage", {
+                FieldDefinitionType: "FundSourceAllocationAllocation",
+                FieldDefinitionLabelOverride: "Allocation",
+                ValueGetter: (params) => {
+                    if (params?.node?.rowPinned) {
+                        return null;
+                    }
+                    const value = params?.data?.AllocationPercentage;
+                    return value == null ? "N/A - Cannot divide by 0" : `${value}%`;
+                },
+                CellStyle: (params) => {
+                    if (params?.node?.rowPinned) {
+                        return {};
+                    }
+                    const bg = this.getAllocationColor(params?.data?.AllocationPercentage);
+                    return { "background-color": bg };
+                },
+            }),
             this.utilityFunctions.createCurrencyColumnDef("Allocation Amount", "AllocationAmount", {
                 MaxDecimalPlacesToDisplay: 2,
             }),
-            this.utilityFunctions.createMultiLinkColumnDef("Likely To Use People", "LikelyToUsePeople", "PersonID", "FullName", {
+            this.utilityFunctions.createMultiLinkColumnDef("Likely To Use", "LikelyToUsePeople", "PersonID", "FullName", {
                 InRouterLink: "/users/",
+                FieldDefinitionType: "FundSourceAllocationLikelyToUse",
+                CustomDropdownFilterField: "LikelyToUsePeople.FullName",
             }),
         ];
     }

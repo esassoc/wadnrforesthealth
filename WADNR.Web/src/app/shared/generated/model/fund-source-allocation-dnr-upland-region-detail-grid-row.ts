@@ -21,14 +21,13 @@ export class FundSourceAllocationDNRUplandRegionDetailGridRow {
     FundSourceAllocationName?: string | null;
     FundSourceEndDate?: string | null;
     HasFundFSPs?: boolean | null;
-    FundSourceAllocationPriorityDetail?: FundSourceAllocationPriorityDetail;
-    ProgramIndexLookupItems?: Array<ProgramIndexLookupItem> | null;
-    ProjectCodeLookupItems?: Array<ProjectCodeLookupItem> | null;
+    FundSourceAllocationPriority?: FundSourceAllocationPriorityDetail;
+    ProgramIndices?: Array<ProgramIndexLookupItem> | null;
+    ProjectCodes?: Array<ProjectCodeLookupItem> | null;
     FundSource?: FundSourceLookupItem;
     FundSourceAllocationSource?: FundSourceAllocationSourceLookupItem;
-    ExpectedFundingByProject?: number | null;
     AllocationAmount?: number | null;
-    BudgetLineItem?: number | null;
+    AllocationPercentage?: number | null;
     LikelyToUsePeople?: Array<PersonLookupItem> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -40,14 +39,13 @@ export interface FundSourceAllocationDNRUplandRegionDetailGridRowForm {
     FundSourceAllocationName?: FormControl<string>;
     FundSourceEndDate?: FormControl<string>;
     HasFundFSPs?: FormControl<boolean>;
-    FundSourceAllocationPriorityDetail?: FormControl<FundSourceAllocationPriorityDetail>;
-    ProgramIndexLookupItems?: FormControl<Array<ProgramIndexLookupItem>>;
-    ProjectCodeLookupItems?: FormControl<Array<ProjectCodeLookupItem>>;
+    FundSourceAllocationPriority?: FormControl<FundSourceAllocationPriorityDetail>;
+    ProgramIndices?: FormControl<Array<ProgramIndexLookupItem>>;
+    ProjectCodes?: FormControl<Array<ProjectCodeLookupItem>>;
     FundSource?: FormControl<FundSourceLookupItem>;
     FundSourceAllocationSource?: FormControl<FundSourceAllocationSourceLookupItem>;
-    ExpectedFundingByProject?: FormControl<number>;
     AllocationAmount?: FormControl<number>;
-    BudgetLineItem?: FormControl<number>;
+    AllocationPercentage?: FormControl<number>;
     LikelyToUsePeople?: FormControl<Array<PersonLookupItem>>;
 }
 
@@ -92,7 +90,7 @@ export class FundSourceAllocationDNRUplandRegionDetailGridRowFormControls {
             ],
         }
     );
-    public static FundSourceAllocationPriorityDetail = (value: FormControlState<FundSourceAllocationPriorityDetail> | FundSourceAllocationPriorityDetail = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<FundSourceAllocationPriorityDetail>(
+    public static FundSourceAllocationPriority = (value: FormControlState<FundSourceAllocationPriorityDetail> | FundSourceAllocationPriorityDetail = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<FundSourceAllocationPriorityDetail>(
         value,
         formControlOptions ?? 
         {
@@ -102,7 +100,7 @@ export class FundSourceAllocationDNRUplandRegionDetailGridRowFormControls {
             ],
         }
     );
-    public static ProgramIndexLookupItems = (value: FormControlState<Array<ProgramIndexLookupItem>> | Array<ProgramIndexLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<ProgramIndexLookupItem>>(
+    public static ProgramIndices = (value: FormControlState<Array<ProgramIndexLookupItem>> | Array<ProgramIndexLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<ProgramIndexLookupItem>>(
         value,
         formControlOptions ?? 
         {
@@ -112,7 +110,7 @@ export class FundSourceAllocationDNRUplandRegionDetailGridRowFormControls {
             ],
         }
     );
-    public static ProjectCodeLookupItems = (value: FormControlState<Array<ProjectCodeLookupItem>> | Array<ProjectCodeLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<ProjectCodeLookupItem>>(
+    public static ProjectCodes = (value: FormControlState<Array<ProjectCodeLookupItem>> | Array<ProjectCodeLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<ProjectCodeLookupItem>>(
         value,
         formControlOptions ?? 
         {
@@ -142,16 +140,6 @@ export class FundSourceAllocationDNRUplandRegionDetailGridRowFormControls {
             ],
         }
     );
-    public static ExpectedFundingByProject = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
     public static AllocationAmount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
@@ -162,7 +150,7 @@ export class FundSourceAllocationDNRUplandRegionDetailGridRowFormControls {
             ],
         }
     );
-    public static BudgetLineItem = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static AllocationPercentage = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
