@@ -15,9 +15,8 @@ public static class Projects
 
     public static async Task<List<ProjectCountyDetailGridRow>> ListAsCountyDetailGridRowAsync(WADNRDbContext dbContext, int countyID)
     {
-        return await dbContext.ProjectCounties
-            .Where(pc => pc.CountyID == countyID)
-            .Select(pc => pc.Project)
+        return await dbContext.Projects
+            .Where(p => p.ProjectCounties.Any(pc => pc.CountyID == countyID))
             .AsNoTracking()
             .Where(IsActiveProjectExpr)
             .Select(ProjectProjections.AsProjectCountyDetailGridRow)
@@ -35,11 +34,7 @@ public static class Projects
             .Select(ProjectProjections.AsDnrUplandRegionDetailGridRow)
             .ToListAsync();
 
-        var totals = await dbContext.vTotalTreatedAcresByProjects
-            .AsNoTracking()
-            .ToListAsync();
-
-        var totalsByProjectId = totals.ToDictionary(t => t.ProjectID, t => t.TotalTreatedAcres ?? 0m);
+        var totalsByProjectId = await GetTotalTreatedAcresByProjectAsync(dbContext);
 
         foreach (var r in rows)
         {
@@ -130,14 +125,7 @@ public static class Projects
             .Select(ProjectProjections.AsGridRow)
             .ToListAsync();
 
-        var totals = await dbContext.vTotalTreatedAcresByProjects
-            .AsNoTracking()
-            .ToListAsync();
-
-        var totalsByProjectId = totals.ToDictionary(
-            t => t.ProjectID,
-            t => t.TotalTreatedAcres
-        );
+        var totalsByProjectId = await GetTotalTreatedAcresByProjectAsync(dbContext);
 
         foreach (var p in projects)
         {
@@ -150,4 +138,13 @@ public static class Projects
     // Convenience overload for all projects
     public static Task<List<ProjectGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
         => ListAsGridRowAsync(dbContext.Projects, dbContext);
+
+    private static async Task<Dictionary<int, decimal>> GetTotalTreatedAcresByProjectAsync(WADNRDbContext dbContext)
+    {
+        var totals = await dbContext.vTotalTreatedAcresByProjects
+            .AsNoTracking()
+            .ToListAsync();
+
+        return totals.ToDictionary(t => t.ProjectID, t => t.TotalTreatedAcres ?? 0m);
+    }
 }
