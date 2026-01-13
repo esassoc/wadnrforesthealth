@@ -427,6 +427,9 @@
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\0001 - Update FieldDefinitionDatum to use the default values from fielddefinition.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\ReleaseScripts\0002 - Add FirmaPage for Classifications.sql" />
+  </ItemGroup>
   <UsingTask TaskName="ScriptDeploymentGenerator" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
       <releaseScriptFolder ParameterType="System.String" Required="true" />

@@ -52,7 +52,8 @@ export const FirmaPageTypeEnum = {
     ReportAddReport: 'ReportAddReport',
     Vendor: 'Vendor',
     ProjectCreateInstructions: 'ProjectCreateInstructions',
-    ProjectUpdateInstructions: 'ProjectUpdateInstructions'
+    ProjectUpdateInstructions: 'ProjectUpdateInstructions',
+    Classifications: 'Classifications'
 } as const;
 export type FirmaPageTypeEnum = typeof FirmaPageTypeEnum[keyof typeof FirmaPageTypeEnum];
 

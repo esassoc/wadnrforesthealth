@@ -8,6 +8,7 @@ namespace WADNR.EFModels.Entities;
 
 [Table("ProjectCounty")]
 [Index("ProjectID", "CountyID", Name = "AK_ProjectCounty_ProjectID_CountyID", IsUnique = true)]
+[Index("ProjectID", Name = "IX_ProjectCounty_ProjectID")]
 public partial class ProjectCounty
 {
     [Key]

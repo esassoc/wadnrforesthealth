@@ -74,7 +74,11 @@ export const routes: Routes = [
     { path: "tags", title: "Tags", loadComponent: () => import("./pages/tags/tags.component").then((m) => m.TagsComponent) },
     { path: "projects", title: "Full Project List", loadComponent: () => import("./pages/projects/projects.component").then((m) => m.ProjectsComponent) },
     { path: "projects/map", loadComponent: () => import("./pages/projects/projects-map/projects-map.component").then((m) => m.ProjectsMapComponent) },
-    { path: "projects-by-theme", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    {
+        path: "projects-by-theme",
+        title: "Projects By Theme",
+        loadComponent: () => import("./pages/classifications/classifications.component").then((m) => m.ClassificationsComponent),
+    },
     { path: "projects-by-type", loadComponent: () => import("./pages/taxonomy/taxonomy.component").then((m) => m.TaxonomyComponent) },
     { path: `projects-types/:${routeParams.projectTypeID}`, loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "shared-stewardship", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },

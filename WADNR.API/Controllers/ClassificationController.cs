@@ -26,6 +26,13 @@ public class ClassificationController(
         return Ok(rows);
     }
 
+    [HttpGet("/with-project-count")]
+    public async Task<ActionResult<IEnumerable<ClassificationWithProjectCount>>> ListWithProjectCount()
+    {
+        var rows = await Classifications.ListAsWithProjectCountAsync(DbContext);
+        return Ok(rows);
+    }
+
     [HttpGet("{classificationID}")]
     [EntityNotFound(typeof(Classification), "classificationID")]
     public async Task<ActionResult<ClassificationDetail>> Get([FromRoute] int classificationID)

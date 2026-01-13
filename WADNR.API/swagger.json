@@ -298,6 +298,45 @@
         }
       }
     },
+    "/with-project-count": {
+      "get": {
+        "tags": [
+          "Classification"
+        ],
+        "operationId": "ListWithProjectCount_Classification",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationWithProjectCount"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationWithProjectCount"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationWithProjectCount"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/classifications/{classificationID}": {
       "get": {
         "tags": [
@@ -4151,6 +4190,37 @@
         },
         "additionalProperties": false
       },
+      "ClassificationWithProjectCount": {
+        "type": "object",
+        "properties": {
+          "ClassificationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ThemeColor": {
+            "type": "string",
+            "nullable": true
+          },
+          "ClassificationSortOrder": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ClassificationDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "Coordinate": {
         "type": "object",
         "properties": {
@@ -5937,7 +6007,8 @@
           "ReportAddReport",
           "Vendor",
           "ProjectCreateInstructions",
-          "ProjectUpdateInstructions"
+          "ProjectUpdateInstructions",
+          "Classifications"
         ],
         "type": "string"
       },

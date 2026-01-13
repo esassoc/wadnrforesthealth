@@ -1,0 +1,27 @@
+<page-header pageTitle="Projects By Theme" [customRichTextTypeID]="customRichTextTypeID"></page-header>
+
+<app-alert-display></app-alert-display>
+
+<div class="page-body">
+    @if (classifications$ | async; as classifications) {
+    <div class="classifications-grid" role="list">
+        @for (classification of classifications; track classification.ClassificationID) {
+        <a class="classifications-tile" role="listitem" [routerLink]="['/classifications', classification?.ClassificationID]" [style.backgroundColor]="tileColor(classification)">
+            <div class="classifications-tile__content">
+                <div class="classifications-tile__title">{{ classification.DisplayName }}</div>
+                <div class="classifications-tile__count">{{ classification.ProjectCount ?? 0 }} projects</div>
+            </div>
+
+            <div class="classifications-tile__hover">
+                <div class="classifications-tile__hover-title">{{ classification.DisplayName }}</div>
+                <div class="classifications-tile__hover-description">
+                    {{ classification.ClassificationDescription | truncateWords : 28 }}
+                </div>
+            </div>
+        </a>
+        }
+    </div>
+    } @else {
+    <div>Loading…</div>
+    }
+</div>

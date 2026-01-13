@@ -54,6 +54,7 @@ namespace WADNR.EFModels.Entities
         public static readonly FirmaPageTypeVendor Vendor = FirmaPageTypeVendor.Instance;
         public static readonly FirmaPageTypeProjectCreateInstructions ProjectCreateInstructions = FirmaPageTypeProjectCreateInstructions.Instance;
         public static readonly FirmaPageTypeProjectUpdateInstructions ProjectUpdateInstructions = FirmaPageTypeProjectUpdateInstructions.Instance;
+        public static readonly FirmaPageTypeClassifications Classifications = FirmaPageTypeClassifications.Instance;
 
         public static readonly List<FirmaPageType> All;
         public static readonly ReadOnlyDictionary<int, FirmaPageType> AllLookupDictionary;
@@ -63,7 +64,7 @@ namespace WADNR.EFModels.Entities
         /// </summary>
         static FirmaPageType()
         {
-            All = new List<FirmaPageType> { HomePage, DemoScript, InternalSetupNotes, FullProjectList, ProjectTypeList, TaxonomyBranchList, TaxonomyTrunkList, OrganizationsList, MyProjects, ProjectMap, HomeMapInfo, HomeAdditionalInfo, FeaturedProjectList, FullProjectListSimple, Taxonomy, TagList, ManageUpdateNotifications, ProjectStewardOrganizationList, EnterHistoricProjectInstructions, PendingProjects, Training, CustomFooter, FactSheetCustomText, FocusAreasList, FullFundSourceList, FullFundSourceAllocationList, RegionsList, PriorityLandscapesList, FullAgreementList, InteractionEventList, GisUploadAttemptInstructions, ProgramsList, UploadLoaTabularDataExcel, ManageFindYourForester, FindYourForester, ExternalMapLayers, County, Reports, ReportProjects, ReportAddReport, Vendor, ProjectCreateInstructions, ProjectUpdateInstructions };
+            All = new List<FirmaPageType> { HomePage, DemoScript, InternalSetupNotes, FullProjectList, ProjectTypeList, TaxonomyBranchList, TaxonomyTrunkList, OrganizationsList, MyProjects, ProjectMap, HomeMapInfo, HomeAdditionalInfo, FeaturedProjectList, FullProjectListSimple, Taxonomy, TagList, ManageUpdateNotifications, ProjectStewardOrganizationList, EnterHistoricProjectInstructions, PendingProjects, Training, CustomFooter, FactSheetCustomText, FocusAreasList, FullFundSourceList, FullFundSourceAllocationList, RegionsList, PriorityLandscapesList, FullAgreementList, InteractionEventList, GisUploadAttemptInstructions, ProgramsList, UploadLoaTabularDataExcel, ManageFindYourForester, FindYourForester, ExternalMapLayers, County, Reports, ReportProjects, ReportAddReport, Vendor, ProjectCreateInstructions, ProjectUpdateInstructions, Classifications };
             AllLookupDictionary = new ReadOnlyDictionary<int, FirmaPageType>(All.ToDictionary(x => x.FirmaPageTypeID));
         }
 
@@ -135,6 +136,8 @@ namespace WADNR.EFModels.Entities
         {
             switch (enumValue)
             {
+                case FirmaPageTypeEnum.Classifications:
+                    return Classifications;
                 case FirmaPageTypeEnum.County:
                     return County;
                 case FirmaPageTypeEnum.CustomFooter:
@@ -271,7 +274,8 @@ namespace WADNR.EFModels.Entities
         ReportAddReport = 73,
         Vendor = 74,
         ProjectCreateInstructions = 75,
-        ProjectUpdateInstructions = 76
+        ProjectUpdateInstructions = 76,
+        Classifications = 77
     }
 
     public partial class FirmaPageTypeHomePage : FirmaPageType
@@ -530,5 +534,11 @@ namespace WADNR.EFModels.Entities
     {
         private FirmaPageTypeProjectUpdateInstructions(int firmaPageTypeID, string firmaPageTypeName, string firmaPageTypeDisplayName, int firmaPageRenderTypeID) : base(firmaPageTypeID, firmaPageTypeName, firmaPageTypeDisplayName, firmaPageRenderTypeID) {}
         public static readonly FirmaPageTypeProjectUpdateInstructions Instance = new FirmaPageTypeProjectUpdateInstructions(76, @"ProjectUpdateInstructions", @"Project Update Instructions", 2);
+    }
+
+    public partial class FirmaPageTypeClassifications : FirmaPageType
+    {
+        private FirmaPageTypeClassifications(int firmaPageTypeID, string firmaPageTypeName, string firmaPageTypeDisplayName, int firmaPageRenderTypeID) : base(firmaPageTypeID, firmaPageTypeName, firmaPageTypeDisplayName, firmaPageRenderTypeID) {}
+        public static readonly FirmaPageTypeClassifications Instance = new FirmaPageTypeClassifications(77, @"Classifications", @"Classifications", 1);
     }
 }

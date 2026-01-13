@@ -10,4 +10,6 @@ GO
 
 :r ".\0001 - Update FieldDefinitionDatum to use the default values from fielddefinition.sql"
 GO
+:r ".\0002 - Add FirmaPage for Classifications.sql"
+GO
 

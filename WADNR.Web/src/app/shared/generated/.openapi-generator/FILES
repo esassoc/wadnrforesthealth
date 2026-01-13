@@ -40,6 +40,7 @@ model/classification-grid-row.ts
 model/classification-lookup-item.ts
 model/classification-system.ts
 model/classification-upsert-request.ts
+model/classification-with-project-count.ts
 model/classification.ts
 model/coordinate-sequence-factory.ts
 model/coordinate-sequence.ts

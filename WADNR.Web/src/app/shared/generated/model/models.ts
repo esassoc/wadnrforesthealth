@@ -19,6 +19,7 @@ export * from './classification-grid-row';
 export * from './classification-lookup-item';
 export * from './classification-system';
 export * from './classification-upsert-request';
+export * from './classification-with-project-count';
 export * from './coordinate';
 export * from './coordinate-sequence';
 export * from './coordinate-sequence-factory';

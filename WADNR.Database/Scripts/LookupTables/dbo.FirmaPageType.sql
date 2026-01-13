@@ -42,7 +42,8 @@ using (values
 (73, 'ReportAddReport', 'Add a Report', 2),
 (74, 'Vendor', 'Vendors', 1),
 (75, 'ProjectCreateInstructions', 'Project Create Instructions', 2),
-(76, 'ProjectUpdateInstructions', 'Project Update Instructions', 2)
+(76, 'ProjectUpdateInstructions', 'Project Update Instructions', 2),
+(77, 'Classifications', 'Classifications', 1)
 ) as Source (FirmaPageTypeID, FirmaPageTypeName, FirmaPageTypeDisplayName, FirmaPageRenderTypeID)
 on Target.FirmaPageTypeID = Source.FirmaPageTypeID
 when matched then

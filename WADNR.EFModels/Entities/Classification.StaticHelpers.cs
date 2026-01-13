@@ -12,6 +12,11 @@ public static class Classifications
             .OrderBy(x => x.ClassificationSortOrder).ThenBy(x => x.DisplayName)
             .ToListAsync();
 
+    public static async Task<List<ClassificationWithProjectCount>> ListAsWithProjectCountAsync(WADNRDbContext dbContext)
+        => await ClassificationProjections.AsWithProjectCount(dbContext.Classifications.AsNoTracking())
+            .OrderBy(x => x.ClassificationSortOrder).ThenBy(x => x.DisplayName)
+            .ToListAsync();
+
     public static async Task<ClassificationDetail?> GetByIDAsDetailAsync(WADNRDbContext dbContext, int id)
         => await ClassificationProjections.AsDetail(dbContext.Classifications.AsNoTracking().Where(x => x.ClassificationID == id))
             .SingleOrDefaultAsync();

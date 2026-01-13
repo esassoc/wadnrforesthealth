@@ -48,7 +48,8 @@ export enum FirmaPageTypeEnum {
   ReportAddReport = 73,
   Vendor = 74,
   ProjectCreateInstructions = 75,
-  ProjectUpdateInstructions = 76
+  ProjectUpdateInstructions = 76,
+  Classifications = 77
 }
 
 export const FirmaPageTypes: LookupTableEntry[]  = [
@@ -94,6 +95,7 @@ export const FirmaPageTypes: LookupTableEntry[]  = [
   { Name: "ReportAddReport", DisplayName: "Add a Report", Value: 73, SortOrder: 730 },
   { Name: "Vendor", DisplayName: "Vendors", Value: 74, SortOrder: 740 },
   { Name: "ProjectCreateInstructions", DisplayName: "Project Create Instructions", Value: 75, SortOrder: 750 },
-  { Name: "ProjectUpdateInstructions", DisplayName: "Project Update Instructions", Value: 76, SortOrder: 760 }
+  { Name: "ProjectUpdateInstructions", DisplayName: "Project Update Instructions", Value: 76, SortOrder: 760 },
+  { Name: "Classifications", DisplayName: "Classifications", Value: 77, SortOrder: 770 }
 ];
 export const FirmaPageTypesAsSelectDropdownOptions = FirmaPageTypes.map((x) => ({ Value: x.Value, Label: x.DisplayName, SortOrder: x.SortOrder } as SelectDropdownOption));

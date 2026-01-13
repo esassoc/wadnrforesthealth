@@ -27,4 +27,19 @@ public static class ClassificationProjections
             KeyImageFileResourceID = c.KeyImageFileResourceID,
             ClassificationSortOrder = c.ClassificationSortOrder
         });
+
+    public static IQueryable<ClassificationWithProjectCount> AsWithProjectCount(IQueryable<Classification> query)
+        => query.Select(x => new ClassificationWithProjectCount
+        {
+            ClassificationID = x.ClassificationID,
+            DisplayName = x.DisplayName,
+            ThemeColor = x.ThemeColor,
+            ClassificationSortOrder = x.ClassificationSortOrder,
+            ClassificationDescription = x.ClassificationDescription,
+            ProjectCount = x.ProjectClassifications
+                .Where(p => p.Project.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Approved && !p.Project.ProjectType.LimitVisibilityToAdmin)
+                .Select(x => x.ProjectID)
+                .Distinct()
+                .Count()
+        });
 }
