@@ -3,6 +3,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
+import { IconComponent, IconInterface } from "src/app/shared/components/icon/icon.component";
 
 export interface SimpleTreeNode {
     title: string;
@@ -21,13 +22,16 @@ export interface SimpleTreeNode {
         href?: string;
         routerLink?: any;
         target?: string;
+        icon?: typeof IconInterface;
+        /** Optional additional CSS classes for this title part */
+        additionalCssClasses?: string[];
     }>;
 }
 
 @Component({
     selector: "simple-tree",
     standalone: true,
-    imports: [FormsModule, RouterModule],
+    imports: [FormsModule, RouterModule, IconComponent],
     templateUrl: "./simple-tree.component.html",
     styleUrls: ["./simple-tree.component.scss"],
 })
@@ -119,6 +123,30 @@ export class SimpleTreeComponent implements OnInit, OnChanges {
         } else {
             this.expandedKeys.add(key);
         }
+    }
+
+    expandAll() {
+        this.expandedKeys.clear();
+        const roots = this.nodes || [];
+
+        const walk = (items: SimpleTreeNode[] | undefined) => {
+            if (!items || items.length === 0) {
+                return;
+            }
+            for (const n of items) {
+                const hasChildren = !!(n.children && n.children.length);
+                if (hasChildren && n.key) {
+                    this.expandedKeys.add(n.key);
+                    walk(n.children);
+                }
+            }
+        };
+
+        walk(roots);
+    }
+
+    collapseAll() {
+        this.expandedKeys.clear();
     }
 
     onNodeClick(node: SimpleTreeNode) {
@@ -235,8 +263,8 @@ export class SimpleTreeComponent implements OnInit, OnChanges {
 
             for (const r of roots) {
                 if (search(r, key)) {
-                    // extract id portion from root.key e.g. 'area-12' -> '12'
-                    const m = (r.key || "").match(/^[^-]+-(.+)$/);
+                    // extract id portion from root.key e.g. 'area-12' -> '12', 'project-type-12' -> '12'
+                    const m = (r.key || "").match(/-([^-]+)$/);
                     return m ? m[1] : null;
                 }
             }
@@ -267,7 +295,7 @@ export class SimpleTreeComponent implements OnInit, OnChanges {
     public getRootId(item: { node: SimpleTreeNode; depth: number } | null): string | null {
         if (!item || item.depth !== 0) return null;
         const key = item.node?.key || "";
-        const m = key.match(/^[^-]+-(.+)$/);
+        const m = key.match(/-([^-]+)$/);
         return m ? m[1] : null;
     }
 

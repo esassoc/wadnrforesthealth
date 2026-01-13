@@ -26,6 +26,13 @@ public class ProjectTypeController(
         return Ok(rows);
     }
 
+    [HttpGet("taxonomy")]
+    public async Task<ActionResult<IEnumerable<ProjectTypeTaxonomy>>> Taxonomy()
+    {
+        var projectTypeTaxonomies = await ProjectTypes.ListTaxonomyAsync(DbContext);
+        return Ok(projectTypeTaxonomies);
+    }
+
     [HttpGet("{projectTypeID}")]
     [EntityNotFound(typeof(ProjectType), "projectTypeID")]
     public async Task<ActionResult<ProjectTypeDetail>> Get([FromRoute] int projectTypeID)

@@ -2853,6 +2853,45 @@
         }
       }
     },
+    "/project-types/taxonomy": {
+      "get": {
+        "tags": [
+          "ProjectType"
+        ],
+        "operationId": "Taxonomy_ProjectType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectTypeTaxonomy"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectTypeTaxonomy"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectTypeTaxonomy"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/project-types/{projectTypeID}": {
       "get": {
         "tags": [
@@ -12893,6 +12932,20 @@
         },
         "additionalProperties": false
       },
+      "ProjectLookupItem": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectMapPopup": {
         "type": "object",
         "properties": {
@@ -13662,6 +13715,27 @@
           },
           "ProjectTypeName": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectTypeTaxonomy": {
+        "type": "object",
+        "properties": {
+          "ProjectTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Projects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectLookupItem"
+            },
             "nullable": true
           }
         },

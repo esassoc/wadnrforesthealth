@@ -16,6 +16,11 @@ public static class ProjectTypes
         => await ProjectTypeProjections.AsDetail(dbContext.ProjectTypes.AsNoTracking().Where(x => x.ProjectTypeID == id))
             .SingleOrDefaultAsync();
 
+    public static async Task<List<ProjectTypeTaxonomy>> ListTaxonomyAsync(WADNRDbContext dbContext)
+        => await ProjectTypeProjections.AsTaxonomy(dbContext.ProjectTypes.AsNoTracking())
+            .OrderBy(x => x.ProjectTypeName)
+            .ToListAsync();
+
     public static async Task<ProjectTypeDetail?> CreateAsync(WADNRDbContext dbContext, ProjectTypeUpsertRequest dto)
     {
         var entity = new ProjectType

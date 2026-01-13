@@ -28,4 +28,19 @@ public static class ProjectTypeProjections
             ProjectTypeSortOrder = pt.ProjectTypeSortOrder,
             LimitVisibilityToAdmin = pt.LimitVisibilityToAdmin
         });
+
+    public static IQueryable<ProjectTypeTaxonomy> AsTaxonomy(IQueryable<ProjectType> query)
+        => query.Select(f => new ProjectTypeTaxonomy
+        {
+            ProjectTypeID = f.ProjectTypeID,
+            ProjectTypeName = f.ProjectTypeName,
+            Projects = f.Projects
+                .OrderBy(p => p.ProjectName)
+                .Select(x => new ProjectLookupItem
+                {
+                    ProjectID = x.ProjectID,
+                    ProjectName = x.ProjectName
+                })
+                .ToList()
+        });
 }

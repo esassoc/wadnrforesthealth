@@ -1,5 +1,9 @@
 <div class="simple-tree-root" [class.simple-tree--top-level-border-enabled]="showTopLevelBorder || topLevelBorder">
     <div class="simple-tree-search">
+        <div class="simple-tree-search__actions">
+            <button type="button" class="btn btn-sm btn-primary" (click)="expandAll()">Expand All</button>
+            <button type="button" class="btn btn-sm btn-primary" (click)="collapseAll()">Collapse All</button>
+        </div>
         <input type="text" placeholder="Search..." [(ngModel)]="searchTerm" aria-label="Search tree" />
     </div>
 
@@ -29,16 +33,22 @@
                 @if (item.node.titleParts && item.node.titleParts.length) {
                 <span class="simple-tree__title" [class.simple-tree__leaf]="!item.hasChildren" [class.simple-tree__match]="searchTerm && item.node.count">
                     @for (part of item.node.titleParts; track part.text) { @if (part.routerLink) {
-                    <a [routerLink]="part.routerLink" (click)="$event.stopPropagation()">{{ part.text }}</a>
+                    <a [routerLink]="part.routerLink" [attr.class]="part.additionalCssClasses?.join(' ')" (click)="$event.stopPropagation()">
+                        {{ part.text }} @if (part.icon) { <span class="simple-tree__part-icon"><icon [icon]="part.icon"></icon></span> }
+                    </a>
                     } @else if (part.href) {
-                    <a [href]="part.href" [attr.target]="part.target" (click)="$event.stopPropagation()">{{ part.text }}</a>
+                    <a [href]="part.href" [attr.target]="part.target" [attr.class]="part.additionalCssClasses?.join(' ')" (click)="$event.stopPropagation()">
+                        {{ part.text }} @if (part.icon) { <span class="simple-tree__part-icon"><icon [icon]="part.icon"></icon></span> }
+                    </a>
                     } @else {
-                    <span>{{ part.text }}</span>
+                    <span [attr.class]="part.additionalCssClasses?.join(' ')">
+                        {{ part.text }} @if (part.icon) { <span class="simple-tree__part-icon"><icon [icon]="part.icon"></icon></span> }
+                    </span>
                     } }
                 </span>
                 } @else if (item.node.routerLink) {
                 <a
-                    class="simple-tree__title"
+                    class="simple-tree__title btn btn-sm"
                     [class.simple-tree__leaf]="!item.hasChildren"
                     [class.simple-tree__match]="searchTerm && item.node.count"
                     [routerLink]="item.node.routerLink"
@@ -88,11 +98,17 @@
                 <span class="simple-tree__title" [class.simple-tree__leaf]="!item.hasChildren" [class.simple-tree__match]="searchTerm && item.node.count">
                     @if(item.hasChildren && item.node.count) { <span class="simple-tree__badge">{{ item.node.count }}</span> } @for (part of item.node.titleParts; track part.text)
                     { @if (part.routerLink) {
-                    <a [routerLink]="part.routerLink" (click)="$event.stopPropagation()">{{ part.text }}</a>
+                    <a [routerLink]="part.routerLink" [attr.class]="part.additionalCssClasses?.join(' ')" (click)="$event.stopPropagation()">
+                        {{ part.text }} @if (part.icon) { <span class="simple-tree__part-icon"><icon [icon]="part.icon"></icon></span> }
+                    </a>
                     } @else if (part.href) {
-                    <a [href]="part.href" [attr.target]="part.target" (click)="$event.stopPropagation()">{{ part.text }}</a>
+                    <a [href]="part.href" [attr.target]="part.target" [attr.class]="part.additionalCssClasses?.join(' ')" (click)="$event.stopPropagation()">
+                        {{ part.text }} @if (part.icon) { <span class="simple-tree__part-icon"><icon [icon]="part.icon"></icon></span> }
+                    </a>
                     } @else {
-                    <span>{{ part.text }}</span>
+                    <span [attr.class]="part.additionalCssClasses?.join(' ')">
+                        {{ part.text }} @if (part.icon) { <span class="simple-tree__part-icon"><icon [icon]="part.icon"></icon></span> }
+                    </span>
                     } }
                 </span>
                 } @else {

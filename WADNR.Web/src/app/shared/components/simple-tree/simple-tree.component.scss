@@ -2,10 +2,21 @@
     padding: 0.5rem;
 }
 .simple-tree-search {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.simple-tree-search__actions {
+    display: inline-flex;
+    gap: 0.5rem;
+    flex: 0 0 auto;
 }
 .simple-tree-search input {
-    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
     padding: 0.4rem;
     box-sizing: border-box;
 }
@@ -38,6 +49,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 14px;
+}
+
+.simple-tree__part-icon {
+    display: inline-flex;
+    margin-left: 0.25rem;
 }
 .simple-tree__badge {
     display: inline-flex;

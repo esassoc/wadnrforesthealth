@@ -240,6 +240,7 @@ model/project-location-type-enum.ts
 model/project-location-type.ts
 model/project-location-update.ts
 model/project-location.ts
+model/project-lookup-item.ts
 model/project-map-popup.ts
 model/project-note-update.ts
 model/project-note.ts
@@ -264,6 +265,7 @@ model/project-tag.ts
 model/project-type-detail.ts
 model/project-type-grid-row.ts
 model/project-type-lookup-item.ts
+model/project-type-taxonomy.ts
 model/project-type-upsert-request.ts
 model/project-type.ts
 model/project-update-batch.ts

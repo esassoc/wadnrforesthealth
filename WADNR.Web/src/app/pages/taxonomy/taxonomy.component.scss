@@ -1,0 +1,150 @@
+.taxonomy__title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.simple-tree {
+    max-width: 800px;
+}
+
+/* Example: per-project-type border colors when top-level borders are enabled. 
+   The tree adds `simple-tree--top-level-border-enabled` to the root when `showTopLevelBorder` is true,
+   and each top-level node has `data-root-id` with the root id and `data-depth` attribute.
+   You can customize the map below with your project type ids and colors. */
+
+$project-type-colors: (
+    2218: #0000ff,
+    2221: #989696,
+    2222: #008000,
+    2225: #ffa500,
+    2226: #398039,
+    2228: #008000,
+    2229: #008000,
+    2230: #0000ff,
+    2231: #5e18eb,
+);
+
+// Reserve a consistent right-side slot so the Map button aligns
+// even when count badges have different widths (or are missing).
+$taxonomy-badge-slot-width: 4.25rem;
+
+simple-tree ::ng-deep {
+    .simple-tree {
+        &__header {
+            position: relative;
+            padding-right: $taxonomy-badge-slot-width;
+        }
+
+        &__badge {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 0 !important;
+        }
+
+        &__title {
+            display: flex;
+            width: 100%;
+            flex: 1 1 auto;
+            min-width: 0;
+
+            a {
+                display: flex;
+                align-items: center;
+                min-width: 0;
+            }
+
+            // Ensure the non-map title portion can shrink/ellipsis while the map button stays right-aligned.
+            a:not(.map-btn) {
+                flex: 1 1 auto;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            a.map-btn {
+                flex: 0 0 auto;
+                margin-left: auto;
+            }
+        }
+    }
+    div.simple-tree--top-level-border-enabled {
+        // per-item borders: left/right on every grouped item, top on group-start, bottom on group-end
+        .simple-tree__node--root-group {
+            border-left: 4px solid rgba(0, 0, 0, 0.06);
+            border-right: 4px solid rgba(0, 0, 0, 0.06);
+            padding: 0.25rem 0.5rem;
+            margin: 0.15rem 0;
+            background: #fff;
+            background-clip: padding-box;
+            position: relative;
+            z-index: 2;
+        }
+
+        .simple-tree__group-start.simple-tree__node--root-group {
+            border-top: 4px solid rgba(0, 0, 0, 0.06);
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .simple-tree__group-end.simple-tree__node--root-group {
+            border-bottom: 4px solid rgba(0, 0, 0, 0.06);
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        // collapse gaps between adjacent grouped nodes for a seamless box
+        .simple-tree__node--root-group + .simple-tree__node--root-group {
+            /* overlap by the border thickness to remove the visible seam */
+            margin-top: -4px;
+        }
+
+        // add a subtle 1px dotted inner separator between grouped items
+        .simple-tree__node--root-group + .simple-tree__node--root-group::before {
+            content: "";
+            position: absolute;
+            top: -2px; /* position over the overlap area */
+            left: 0.5rem;
+            right: 0.5rem;
+            height: 1px;
+            border-bottom: 1px dotted rgba(0, 0, 0, 0.12);
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        // per-root color overrides from the map
+        @each $id, $color in $project-type-colors {
+            [data-root-id="#{$id}"].simple-tree__node--root-group {
+                border-left-color: $color;
+                border-right-color: $color;
+            }
+
+            // Map button styling within a root group
+            [data-root-id="#{$id}"].simple-tree__node--root-group .map-btn {
+                background-color: $color;
+                color: var(--white);
+                border: 1px solid darken($color, 10%);
+                margin-left: auto;
+                text-decoration: none;
+            }
+            [data-root-id="#{$id}"].simple-tree__group-start.simple-tree__node--root-group {
+                border-top-color: $color;
+                box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.02) inset;
+            }
+            [data-root-id="#{$id}"].simple-tree__group-end.simple-tree__node--root-group {
+                border-bottom-color: $color;
+            }
+            // color the dotted separator to match the group's color but subtly
+            [data-root-id="#{$id}"].simple-tree__node--root-group + .simple-tree__node--root-group::before {
+                border-bottom-color: rgba(red($color), green($color), blue($color), 0.32);
+            }
+        }
+
+        // hover highlight for group start
+        .simple-tree__group-start.simple-tree__node--root-group:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+    }
+}
