@@ -24,6 +24,7 @@ import { ProjectTypeService } from "src/app/shared/generated/api/project-type.se
 import { ClassificationService } from "src/app/shared/generated/api/classification.service";
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { ProjectsLayerComponent } from "src/app/shared/components/leaflet/layers/projects-layer/projects-layer.component";
+import { MapSearchComponent } from "src/app/shared/components/leaflet/map-search/map-search.component";
 import * as L from "leaflet";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 // ButtonLoadingDirective removed from imports because it's not used in this template
@@ -33,7 +34,18 @@ import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
     standalone: true,
     templateUrl: "./projects-map.component.html",
     styleUrls: ["./projects-map.component.scss"],
-    imports: [AsyncPipe, LoadingDirective, CommonModule, ReactiveFormsModule, NgSelectModule, PageHeaderComponent, SimpleTreeComponent, WADNRMapComponent, ProjectsLayerComponent],
+    imports: [
+        AsyncPipe,
+        LoadingDirective,
+        CommonModule,
+        ReactiveFormsModule,
+        NgSelectModule,
+        PageHeaderComponent,
+        SimpleTreeComponent,
+        WADNRMapComponent,
+        ProjectsLayerComponent,
+        MapSearchComponent,
+    ],
 })
 export class ProjectsMapComponent implements OnInit {
     public customRichTextTypeID: number = FirmaPageTypeEnum.ProjectMap;

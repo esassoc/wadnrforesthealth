@@ -59,19 +59,19 @@
     input[type="tel"],
     input[type="date"],
     .custom-file-upload {
-        height: 3rem;
-        line-height: 3rem;
-        font-size: var(--type-size-300);
+        height: 2rem;
+        line-height: 2rem;
+        font-size: var(--type-size-200);
     }
 
     select {
         background: var(--white);
-        height: 3rem;
-        font-size: var(--type-size-300);
+        height: 2rem;
+        font-size: var(--type-size-200);
 
         &.small {
-            height: 2.5rem;
-            font-size: var(--type-size-200);
+            height: 1.5rem;
+            font-size: var(--type-size-100);
         }
     }
 
@@ -83,7 +83,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        height: 3rem;
+        height: 2rem;
 
         padding-right: 0;
         overflow: hidden;
@@ -95,7 +95,7 @@
 
     parcel-typeahead {
         .ng-select.ng-select-single .ng-select-container {
-            height: 42px;
+            height: 28px;
         }
         .ng-select-focused .ng-placeholder {
             opacity: 0;

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
+import { Component, EventEmitter, HostBinding, Input, Output, ViewChild } from "@angular/core";
 import { FormControl, NG_VALUE_ACCESSOR, FormsModule, ReactiveFormsModule, FormArray } from "@angular/forms";
 import { TinyMceConfigPipe } from "src/app/shared/pipes/tiny-mce-config.pipe";
 import { RequiredPipe } from "src/app/shared/pipes/required.pipe";
@@ -42,6 +42,7 @@ export class FormFieldComponent {
     @Input() fieldDefinitionName: string;
     @Input() toggleHeight: string = "";
     @Input() mask: string;
+    @Input() horizontal: boolean = false;
 
     // for select dropdown
     @Input() formInputOptions: FormInputOption[];
@@ -67,6 +68,10 @@ export class FormFieldComponent {
 
         this.onChange(val);
         this.onTouch(val);
+    }
+
+    @HostBinding("class.horizontal") get isHorizontal() {
+        return this.horizontal;
     }
 
     public isDisabled: boolean = false;

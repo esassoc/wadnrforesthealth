@@ -54,6 +54,24 @@
         }
     }
 
+    .map-legend-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .map-legend-row .map-legend {
+        margin-top: 0.5rem;
+    }
+
+    .map-legend-row .regional-toggle__button {
+        margin-top: 0.5rem;
+        margin-left: auto;
+        text-align: right;
+    }
+
     .controls-row {
         display: flex;
         gap: 1rem;

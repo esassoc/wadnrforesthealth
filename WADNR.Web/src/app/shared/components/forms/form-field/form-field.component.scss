@@ -4,6 +4,49 @@
     height: 100%;
 }
 
+:host.horizontal {
+    .field {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        font-size: clamp(0.72rem, 0.62rem + 0.52vw, 0.94rem);
+        line-height: 1.375em;
+
+        &-label,
+        field-definition {
+            flex: 0 0 auto;
+            padding-bottom: 0;
+            text-transform: none;
+            margin-bottom: 0;
+            margin-right: var(--spacing-400);
+
+            ::ng-deep .field-definition-label {
+                font-weight: bold;
+            }
+        }
+
+        &-label {
+            font-weight: bold;
+        }
+
+        &:not(&-label),
+        input,
+        select,
+        textarea,
+        ng-select,
+        app-typeahead {
+            flex: 1 1 auto;
+            margin-bottom: 0;
+            min-width: 0;
+        }
+
+        .units-wrapper {
+            flex-grow: 1;
+            min-width: 0;
+        }
+    }
+}
+
 .units-wrapper {
     position: relative;
     display: flex;
