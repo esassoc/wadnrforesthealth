@@ -2,6 +2,7 @@
 api.base.service.ts
 api.module.ts
 api/agreement.service.ts
+api/classification.service.ts
 api/county.service.ts
 api/custom-page.service.ts
 api/custom-rich-text.service.ts
@@ -13,6 +14,7 @@ api/interaction-event.service.ts
 api/organization.service.ts
 api/priority-landscape.service.ts
 api/program.service.ts
+api/project-type.service.ts
 api/project.service.ts
 api/system-info.service.ts
 api/tag.service.ts
@@ -33,7 +35,11 @@ model/audit-log-event-type-enum.ts
 model/audit-log-event-type.ts
 model/audit-log.ts
 model/authenticator.ts
+model/classification-detail.ts
+model/classification-grid-row.ts
+model/classification-lookup-item.ts
 model/classification-system.ts
+model/classification-upsert-request.ts
 model/classification.ts
 model/coordinate-sequence-factory.ts
 model/coordinate-sequence.ts
@@ -130,6 +136,8 @@ model/gis-upload-attempt-gis-metadata-attribute.ts
 model/gis-upload-attempt.ts
 model/gis-upload-program-merge-grouping.ts
 model/gis-upload-source-organization.ts
+model/i-attributes-table.ts
+model/i-feature.ts
 model/interaction-event-contact.ts
 model/interaction-event-detail.ts
 model/interaction-event-file-resource.ts
@@ -232,6 +240,7 @@ model/project-location-type-enum.ts
 model/project-location-type.ts
 model/project-location-update.ts
 model/project-location.ts
+model/project-map-popup.ts
 model/project-note-update.ts
 model/project-note.ts
 model/project-organization-update.ts
@@ -245,13 +254,17 @@ model/project-priority-landscape.ts
 model/project-program.ts
 model/project-region-update.ts
 model/project-region.ts
+model/project-simple-tree.ts
 model/project-stage-enum.ts
 model/project-stage-lookup-item.ts
 model/project-stage.ts
 model/project-stewardship-area-type-enum.ts
 model/project-stewardship-area-type.ts
 model/project-tag.ts
+model/project-type-detail.ts
+model/project-type-grid-row.ts
 model/project-type-lookup-item.ts
+model/project-type-upsert-request.ts
 model/project-type.ts
 model/project-update-batch.ts
 model/project-update-history.ts

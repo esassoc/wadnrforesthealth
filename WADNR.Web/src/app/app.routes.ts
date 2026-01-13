@@ -6,6 +6,7 @@ export const routeParams = {
     countyID: "countyID",
     dnrUplandRegionID: "dnrUplandRegionID",
     priorityLandscapeID: "priorityLandscapeID",
+    projectTypeID: "projectTypeID",
 };
 
 export const routes: Routes = [
@@ -72,9 +73,10 @@ export const routes: Routes = [
     { path: "programs", title: "Programs", loadComponent: () => import("./pages/programs/programs.component").then((m) => m.ProgramsComponent) },
     { path: "tags", title: "Tags", loadComponent: () => import("./pages/tags/tags.component").then((m) => m.TagsComponent) },
     { path: "projects", title: "Full Project List", loadComponent: () => import("./pages/projects/projects.component").then((m) => m.ProjectsComponent) },
-    { path: "projects/map", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    { path: "projects/map", loadComponent: () => import("./pages/projects/projects-map/projects-map.component").then((m) => m.ProjectsMapComponent) },
     { path: "projects-by-theme", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "projects-by-type", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    { path: `projects-types/:${routeParams.projectTypeID}`, loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "shared-stewardship", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "not-found", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "**", loadComponent: () => import("./shared/components/custom-page/custom-page.component").then((m) => m.CustomPageComponent) },

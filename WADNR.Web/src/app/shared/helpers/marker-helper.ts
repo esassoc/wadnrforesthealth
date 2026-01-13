@@ -2,6 +2,8 @@ import * as L from "leaflet";
 declare var require: any;
 
 export class MarkerHelper {
+    private static readonly circleDivIconCache = new Map<string, L.DivIcon>();
+
     // Dynamic SVG marker icon generator
     public static svgMarkerIcon(color: string): L.Icon {
         const svg = `<svg width="59" height="76" viewBox="0 0 59 76" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -29,6 +31,27 @@ export class MarkerHelper {
             iconAnchor: [10, 29],
             popupAnchor: [0, -36],
         });
+    }
+
+    public static circleDivIcon(color: string, size: number = 8): L.DivIcon {
+        const key = String(color || "");
+        const cached = this.circleDivIconCache.get(key);
+        if (cached) {
+            return cached;
+        }
+
+        // Use a DivIcon so we still create L.Marker instances for markercluster,
+        // while visually resembling the circle-marker style.
+        const clampedSize = Math.max(1, Number(size) || 8);
+        const icon = L.divIcon({
+            className: "",
+            html: `<div style="width:${clampedSize}px;height:${clampedSize}px;border-radius:50%;background:${key};border:1px solid ${key};"></div>`,
+            iconSize: [clampedSize, clampedSize],
+            iconAnchor: [clampedSize / 2, clampedSize / 2],
+        });
+
+        this.circleDivIconCache.set(key, icon);
+        return icon;
     }
     //Known bug in leaflet that during bundling the default image locations can get messed up
     //https://stackoverflow.com/questions/41144319/leaflet-marker-not-found-production-env

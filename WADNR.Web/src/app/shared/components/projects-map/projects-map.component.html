@@ -1,1 +1,17 @@
-<wadnr-map (onMapLoad)="handleMapReady($event)" [mapHeight]="mapHeight" [disableMapInteraction]="disableMapInteraction" [showLegend]="false"> </wadnr-map>
+<wadnr-map (onMapLoad)="handleMapReady($event)" [mapHeight]="mapHeight" [disableMapInteraction]="disableMapInteraction" [showLegend]="false">
+    @if (map) {
+    <projects-layer
+        [map]="map"
+        [layerControl]="layerControl"
+        [controlTitle]="controlTitle"
+        [projectPoints]="projectPoints"
+        [filterPropertyName]="filterPropertyName"
+        [filterPropertyValues]="filterPropertyValues"
+        [colorByPropertyName]="colorByPropertyName"
+        [legendColorsToUse]="legendColorsToUse"
+        [debugLogs]="debugLogs"
+        [clusterPoints]="cluster"
+        (markerClicked)="markerClicked.emit($event)">
+    </projects-layer>
+    }
+</wadnr-map>

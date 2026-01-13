@@ -19,10 +19,10 @@ export class LeafletHelperService {
     } as L.MapOptions;
 
     public static readonly defaultBoundingBox = new BoundingBoxDto({
-        Left: -120.180229,
-        Top: 39.304957,
-        Right: -119.902373,
-        Bottom: 38.88616,
+        Left: -124.848,
+        Top: 49.002,
+        Right: -116.916,
+        Bottom: 45.543,
     });
 
     public readonly blueIcon = L.icon({

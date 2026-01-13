@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NetTopologySuite.Features;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.EFModels.Entities;
@@ -36,6 +39,18 @@ public class ProjectController(
             return NotFound();
         }
 
+        return Ok(entity);
+    }
+
+    [HttpGet("{projectID}/map-popup")]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<ProjectMapPopup>> GetAsMapPopup([FromRoute] int projectID)
+    {
+        var entity = await Projects.GetByIDAsMapPopupAsync(DbContext, projectID);
+        if (entity == null)
+        {
+            return NotFound();
+        }
         return Ok(entity);
     }
 
@@ -78,5 +93,47 @@ public class ProjectController(
         }
 
         return NoContent();
+    }
+
+    [HttpGet("mapped-point/feature-collection")]
+    public async Task<ActionResult<FeatureCollection>> ListMappedPointsFeatureCollection()
+    {
+        var projectsThatShouldShowOnMap = DbContext.Projects
+            .AsNoTracking()
+            .Include(x => x.ProjectOrganizations)
+            .Include(x => x.ProjectPrograms)
+            .Include(x => x.ProjectClassifications);
+
+        var featureCollection = new FeatureCollection();
+        var mappedPointFeatures = await projectsThatShouldShowOnMap
+            .Where(x => x.ProjectLocationPoint != null)
+            .Select(x =>
+                new Feature(x.ProjectLocationPoint, new AttributesTable
+                {
+                    { "ProjectID", x.ProjectID },
+                    { "ProjectStageID", x.ProjectStageID },
+                    { "ProjectTypeID", x.ProjectTypeID},
+                    { "OrganizationID", x.ProjectOrganizations
+                        .Where(po => po.RelationshipType.IsPrimaryContact)
+                        .Select(po => po.Organization.OrganizationID)
+                        .SingleOrDefault() },
+                    { "ProgramID", string.Join(",", x.ProjectPrograms.Select(y => y.ProgramID)) },
+                    { "ClassificationID", string.Join(",", x.ProjectClassifications.Select(y => y.ClassificationID)) },
+
+                })
+            ).ToListAsync();
+        foreach (var feature in mappedPointFeatures)
+        {
+            featureCollection.Add(feature);
+        }
+
+        return Ok(featureCollection);
+    }
+
+    [HttpGet("no-simple-location")]
+    public async Task<ActionResult<IEnumerable<ProjectSimpleTree>>> ListProjectsWithNoSimpleLocation()
+    {
+        var projects = await Projects.ListWithNoSimpleLocationAsProjectSimpleTree(DbContext);
+        return Ok(projects);
     }
 }

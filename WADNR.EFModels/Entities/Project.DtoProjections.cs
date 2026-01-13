@@ -13,7 +13,38 @@ public static class ProjectProjections
         PlannedDate = x.PlannedDate,
         CompletionDate = x.CompletionDate,
         EstimatedTotalCost = x.EstimatedTotalCost,
-        FhtProjectNumber = x.FhtProjectNumber
+        FhtProjectNumber = x.FhtProjectNumber,
+    };
+
+    public static readonly Expression<Func<Project, ProjectMapPopup>> AsMapPopup = x => new ProjectMapPopup
+    {
+        ProjectID = x.ProjectID,
+        ProjectName = x.ProjectName,
+        Duration = x.Duration,
+        ProjectType = new ProjectTypeLookupItem
+        {
+            ProjectTypeID = x.ProjectType.ProjectTypeID,
+            ProjectTypeName = x.ProjectType.ProjectTypeName
+        },
+        ProjectStage = new ProjectStageLookupItem
+        {
+            ProjectStageID = x.ProjectStage.ProjectStageID,
+            ProjectStageName = x.ProjectStage.ProjectStageName
+        },
+        LeadImplementer = x.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => new OrganizationLookupItem
+            {
+                OrganizationID = po.Organization.OrganizationID,
+                OrganizationName = po.Organization.DisplayName
+            })
+            .SingleOrDefault(),
+        Classifications = x.ProjectClassifications
+            .Select(pc => new ClassificationLookupItem
+            {
+                ClassificationID = pc.Classification.ClassificationID,
+                DisplayName = pc.Classification.DisplayName
+            }).ToList()
     };
 
     public static readonly Expression<Func<Project, ProjectGridRow>> AsGridRow = x => new ProjectGridRow
@@ -101,7 +132,8 @@ public static class ProjectProjections
             {
                 OrganizationID = po.Organization.OrganizationID,
                 OrganizationName = po.Organization.DisplayName
-            }).SingleOrDefault(),
+            })
+            .SingleOrDefault(),
         Programs = x.ProjectPrograms
             .Select(pp => new ProgramLookupItem
             {
@@ -160,5 +192,16 @@ public static class ProjectProjections
                 FundSourceAllocationID = r.FundSourceAllocation.FundSourceAllocationID,
                 FundSourceAllocationName = r.FundSourceAllocation.FundSourceAllocationName
             }).ToList()
+    };
+
+    public static readonly Expression<Func<Project, ProjectSimpleTree>> AsProjectSimpleTree = x => new ProjectSimpleTree
+    {
+        ProjectID = x.ProjectID,
+        ProjectName = x.ProjectName,
+        ProjectType = new ProjectTypeLookupItem
+        {
+            ProjectTypeID = x.ProjectType.ProjectTypeID,
+            ProjectTypeName = x.ProjectType.ProjectTypeName
+        }
     };
 }

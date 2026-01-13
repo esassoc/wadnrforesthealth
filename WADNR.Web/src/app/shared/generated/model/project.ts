@@ -110,6 +110,7 @@ export class Project {
     ProposingPerson?: Person;
     ReviewedByPerson?: Person;
     Treatments?: Array<Treatment> | null;
+    readonly Duration?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -182,6 +183,7 @@ export interface ProjectForm {
     ProposingPerson?: FormControl<Person>;
     ReviewedByPerson?: FormControl<Person>;
     Treatments?: FormControl<Array<Treatment>>;
+    Duration?: FormControl<string>;
 }
 
 export class ProjectFormControls { 
@@ -854,6 +856,16 @@ export class ProjectFormControls {
         }
     );
     public static Treatments = (value: FormControlState<Array<Treatment>> | Array<Treatment> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<Treatment>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Duration = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

@@ -1,0 +1,30 @@
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using WADNR.Models.DataTransferObjects;
+
+namespace WADNR.EFModels.Entities;
+
+public static class ClassificationProjections
+{
+    public static IQueryable<ClassificationGridRow> AsGridRow(IQueryable<Classification> query)
+        => query.Select(c => new ClassificationGridRow
+        {
+            ClassificationID = c.ClassificationID,
+            DisplayName = c.DisplayName,
+            ThemeColor = c.ThemeColor,
+            ClassificationSortOrder = c.ClassificationSortOrder
+        });
+
+    public static IQueryable<ClassificationDetail> AsDetail(IQueryable<Classification> query)
+        => query.Select(c => new ClassificationDetail
+        {
+            ClassificationID = c.ClassificationID,
+            ClassificationSystemID = c.ClassificationSystemID,
+            DisplayName = c.DisplayName,
+            ClassificationDescription = c.ClassificationDescription,
+            ThemeColor = c.ThemeColor,
+            GoalStatement = c.GoalStatement,
+            KeyImageFileResourceID = c.KeyImageFileResourceID,
+            ClassificationSortOrder = c.ClassificationSortOrder
+        });
+}

@@ -1,0 +1,78 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using WADNR.API.Services;
+using WADNR.API.Services.Attributes;
+using WADNR.EFModels.Entities;
+using WADNR.Models.DataTransferObjects;
+
+namespace WADNR.API.Controllers;
+
+[ApiController]
+[Route("classifications")]
+public class ClassificationController(
+    WADNRDbContext dbContext,
+    ILogger<ClassificationController> logger,
+    KeystoneService keystoneService,
+    IOptions<WADNRConfiguration> configuration)
+    : SitkaController<ClassificationController>(dbContext, logger, keystoneService, configuration)
+{
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<ClassificationGridRow>>> List()
+    {
+        var rows = await Classifications.ListAsGridRowAsync(DbContext);
+        return Ok(rows);
+    }
+
+    [HttpGet("{classificationID}")]
+    [EntityNotFound(typeof(Classification), "classificationID")]
+    public async Task<ActionResult<ClassificationDetail>> Get([FromRoute] int classificationID)
+    {
+        var entity = await Classifications.GetByIDAsDetailAsync(DbContext, classificationID);
+        if (entity == null)
+        {
+            return NotFound();
+        }
+        return Ok(entity);
+    }
+
+    [HttpPost]
+    //[AdminFeature]
+    public async Task<ActionResult<ClassificationDetail>> Create([FromBody] ClassificationUpsertRequest dto)
+    {
+        var created = await Classifications.CreateAsync(DbContext, dto);
+        if (created == null)
+        {
+            return BadRequest();
+        }
+        return CreatedAtAction(nameof(Get), new { classificationID = created.ClassificationID }, created);
+    }
+
+    [HttpPut("{classificationID}")]
+    //[AdminFeature]
+    [EntityNotFound(typeof(Classification), "classificationID")]
+    public async Task<ActionResult<ClassificationDetail>> Update([FromRoute] int classificationID, [FromBody] ClassificationUpsertRequest dto)
+    {
+        var updated = await Classifications.UpdateAsync(DbContext, classificationID, dto);
+        if (updated == null)
+        {
+            return NotFound();
+        }
+        return Ok(updated);
+    }
+
+    [HttpDelete("{classificationID}")]
+    //[AdminFeature]
+    [EntityNotFound(typeof(Classification), "classificationID")]
+    public async Task<IActionResult> Delete([FromRoute] int classificationID)
+    {
+        var deleted = await Classifications.DeleteAsync(DbContext, classificationID);
+        if (!deleted)
+        {
+            return NotFound();
+        }
+        return NoContent();
+    }
+}

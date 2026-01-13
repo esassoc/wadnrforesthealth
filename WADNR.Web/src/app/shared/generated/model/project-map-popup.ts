@@ -7,20 +7,19 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { ProjectTypeLookupItem } from './project-type-lookup-item';
 import { OrganizationLookupItem } from './organization-lookup-item';
 import { ClassificationLookupItem } from './classification-lookup-item';
+import { ProjectStageLookupItem } from './project-stage-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
-export class ProjectDetail { 
+export class ProjectMapPopup { 
     ProjectID?: number;
     ProjectName?: string | null;
-    ProjectDescription?: string | null;
-    PlannedDate?: string | null;
-    CompletionDate?: string | null;
     Duration?: string | null;
-    EstimatedTotalCost?: number | null;
-    FhtProjectNumber?: string | null;
+    ProjectType?: ProjectTypeLookupItem;
+    ProjectStage?: ProjectStageLookupItem;
     LeadImplementer?: OrganizationLookupItem;
     Classifications?: Array<ClassificationLookupItem> | null;
     constructor(obj?: any) {
@@ -28,20 +27,17 @@ export class ProjectDetail {
     }
 }
 
-export interface ProjectDetailForm { 
+export interface ProjectMapPopupForm { 
     ProjectID?: FormControl<number>;
     ProjectName?: FormControl<string>;
-    ProjectDescription?: FormControl<string>;
-    PlannedDate?: FormControl<string>;
-    CompletionDate?: FormControl<string>;
     Duration?: FormControl<string>;
-    EstimatedTotalCost?: FormControl<number>;
-    FhtProjectNumber?: FormControl<string>;
+    ProjectType?: FormControl<ProjectTypeLookupItem>;
+    ProjectStage?: FormControl<ProjectStageLookupItem>;
     LeadImplementer?: FormControl<OrganizationLookupItem>;
     Classifications?: FormControl<Array<ClassificationLookupItem>>;
 }
 
-export class ProjectDetailFormControls { 
+export class ProjectMapPopupFormControls { 
     public static ProjectID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
@@ -62,36 +58,6 @@ export class ProjectDetailFormControls {
             ],
         }
     );
-    public static ProjectDescription = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static PlannedDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static CompletionDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
     public static Duration = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
@@ -102,7 +68,7 @@ export class ProjectDetailFormControls {
             ],
         }
     );
-    public static EstimatedTotalCost = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static ProjectType = (value: FormControlState<ProjectTypeLookupItem> | ProjectTypeLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<ProjectTypeLookupItem>(
         value,
         formControlOptions ?? 
         {
@@ -112,7 +78,7 @@ export class ProjectDetailFormControls {
             ],
         }
     );
-    public static FhtProjectNumber = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static ProjectStage = (value: FormControlState<ProjectStageLookupItem> | ProjectStageLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<ProjectStageLookupItem>(
         value,
         formControlOptions ?? 
         {

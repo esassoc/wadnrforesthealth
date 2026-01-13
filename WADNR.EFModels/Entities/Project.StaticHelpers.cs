@@ -13,6 +13,17 @@ public static class Projects
     public static readonly Expression<Func<Project, bool>> IsActiveProjectExpr =
         p => p.ProjectApprovalStatusID == ApprovedStatusId && !p.ProjectType.LimitVisibilityToAdmin;
 
+    // Reusable projection for the project's lead implementer organization (primary contact org)
+    public static readonly Expression<Func<Project, OrganizationLookupItem?>> LeadImplementerOrganizationExpr = p =>
+        p.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => new OrganizationLookupItem
+            {
+                OrganizationID = po.Organization.OrganizationID,
+                OrganizationName = po.Organization.DisplayName
+            })
+            .SingleOrDefault();
+
     public static async Task<List<ProjectCountyDetailGridRow>> ListAsCountyDetailGridRowAsync(WADNRDbContext dbContext, int countyID)
     {
         return await dbContext.Projects
@@ -139,6 +150,20 @@ public static class Projects
     public static Task<List<ProjectGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
         => ListAsGridRowAsync(dbContext.Projects, dbContext);
 
+    public static async Task<List<ProjectSimpleTree>> ListWithNoSimpleLocationAsProjectSimpleTree(
+        WADNRDbContext dbContext)
+    {
+        var projects = await dbContext.Projects
+            .AsNoTracking()
+            .Where(x => x.ProjectLocationPoint == null)
+            .Where(IsActiveProjectExpr)
+            .OrderBy(x => x.ProjectName)
+            .Select(ProjectProjections.AsProjectSimpleTree)
+            .ToListAsync();
+
+        return projects;
+    }
+
     private static async Task<Dictionary<int, decimal>> GetTotalTreatedAcresByProjectAsync(WADNRDbContext dbContext)
     {
         var totals = await dbContext.vTotalTreatedAcresByProjects
@@ -146,5 +171,15 @@ public static class Projects
             .ToListAsync();
 
         return totals.ToDictionary(t => t.ProjectID, t => t.TotalTreatedAcres ?? 0m);
+    }
+
+    public static async Task<ProjectMapPopup?> GetByIDAsMapPopupAsync(WADNRDbContext dbContext, int projectID)
+    {
+        return await dbContext.Projects
+            .AsNoTracking()
+            .Where(IsActiveProjectExpr)
+            .Where(x => x.ProjectID == projectID)
+            .Select(ProjectProjections.AsMapPopup)
+            .SingleOrDefaultAsync();
     }
 }

@@ -7,6 +7,9 @@ public class ProjectDetail
     public string? ProjectDescription { get; set; }
     public DateTime? PlannedDate { get; set; }
     public DateTime? CompletionDate { get; set; }
+    public string Duration { get; set; }
     public decimal? EstimatedTotalCost { get; set; }
     public string FhtProjectNumber { get; set; } = string.Empty;
+    public OrganizationLookupItem LeadImplementer { get; set; }
+    public List<ClassificationLookupItem> Classifications { get; set; }
 }
