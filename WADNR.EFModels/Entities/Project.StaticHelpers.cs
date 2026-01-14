@@ -222,4 +222,15 @@ public static class Projects
 
         return featureCollection;
     }
+
+    public static async Task<List<ProjectClassificationDetailGridRow>> ListAsClassificationDetailGridRowAsync(WADNRDbContext dbContext, int classificationID)
+    {
+        return await dbContext.ProjectClassifications
+            .Where(pc => pc.ClassificationID == classificationID)
+            .AsNoTracking()
+            .Where(pc => pc.Project.ProjectApprovalStatusID == ApprovedStatusId && !pc.Project.ProjectType.LimitVisibilityToAdmin)
+            .OrderBy(pc => pc.Project.ProjectName)
+            .Select(ProjectProjections.AsProjectClassificationDetailGridRow)
+            .ToListAsync();
+    }
 }

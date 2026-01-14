@@ -7,6 +7,7 @@ export const routeParams = {
     dnrUplandRegionID: "dnrUplandRegionID",
     priorityLandscapeID: "priorityLandscapeID",
     projectTypeID: "projectTypeID",
+    classificationID: "classificationID",
 };
 
 export const routes: Routes = [
@@ -78,6 +79,11 @@ export const routes: Routes = [
         path: "projects-by-theme",
         title: "Projects By Theme",
         loadComponent: () => import("./pages/classifications/classifications.component").then((m) => m.ClassificationsComponent),
+    },
+    {
+        path: `classifications/:${routeParams.classificationID}`,
+        title: "Theme Detail",
+        loadComponent: () => import("./pages/classifications/classification-detail/classification-detail.component").then((m) => m.ClassificationDetailComponent),
     },
     { path: "projects-by-type", loadComponent: () => import("./pages/taxonomy/taxonomy.component").then((m) => m.TaxonomyComponent) },
     {

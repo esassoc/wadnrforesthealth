@@ -1,0 +1,14 @@
+.theme-color-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.theme-color-swatch {
+    width: var(--type-size-200);
+    height: var(--type-size-200);
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    display: inline-block;
+    flex: 0 0 auto;
+}

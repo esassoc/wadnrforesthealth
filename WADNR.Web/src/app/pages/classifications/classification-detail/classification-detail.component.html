@@ -1,0 +1,56 @@
+@if (classificationDetailPageData$ | async; as vm) {
+<breadcrumb [items]="[{ label: 'Projects By Theme', url: '/projects-by-theme' }, { label: vm.classification.DisplayName || '—' }]" [linkLast]="false"></breadcrumb>
+<page-header pageTitle="{{ vm.classification.DisplayName || '—' }}"> </page-header>
+<div class="grid-12">
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Basics</span></div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="ClassificationName" labelOverride="Theme Name"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ vm.classification.DisplayName || "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong>Theme Color</strong>
+                    </div>
+                    <div class="g-col-8">
+                        <span class="theme-color-row">
+                            <span
+                                class="theme-color-swatch"
+                                [style.backgroundColor]="vm.classification.ThemeColor || 'transparent'"
+                                [attr.aria-label]="'Theme color swatch: ' + (vm.classification.ThemeColor || 'none')"></span>
+                            <span>{{ vm.classification.ThemeColor ?? "—" }}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><field-definition fieldDefinition="ClassificationDescription" labelOverride="Theme Description"></field-definition></span>
+            </div>
+            <div class="card-body">
+                @if (vm.classification.ClassificationDescription) {
+                <div [innerHTML]="vm.classification.ClassificationDescription"></div>
+                } @else {
+                <span>—</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Projects</span></div>
+            <div class="card-body">
+                <wadnr-grid [rowData]="vm.projects" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" [downloadFileName]="'projects'"></wadnr-grid>
+            </div>
+        </div>
+    </div>
+</div>
+}

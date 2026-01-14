@@ -458,6 +458,56 @@
         }
       }
     },
+    "/classifications/{classificationID}/projects": {
+      "get": {
+        "tags": [
+          "Classification"
+        ],
+        "operationId": "ListProjectsForClassificationID_Classification",
+        "parameters": [
+          {
+            "name": "classificationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectClassificationDetailGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectClassificationDetailGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectClassificationDetailGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/counties": {
       "get": {
         "tags": [
@@ -11760,6 +11810,39 @@
           },
           "Project": {
             "$ref": "#/components/schemas/Project"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectClassificationDetailGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "PrimaryContactOrganization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "ProjectStage": {
+            "$ref": "#/components/schemas/ProjectStageLookupItem"
+          },
+          "ProjectInitiationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ProjectThemeNotes": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

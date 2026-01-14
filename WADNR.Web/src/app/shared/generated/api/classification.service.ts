@@ -22,6 +22,8 @@ import { ClassificationGridRow } from '../model/classification-grid-row';
 import { ClassificationUpsertRequest } from '../model/classification-upsert-request';
 // @ts-ignore
 import { ClassificationWithProjectCount } from '../model/classification-with-project-count';
+// @ts-ignore
+import { ProjectClassificationDetailGridRow } from '../model/project-classification-detail-grid-row';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -249,6 +251,61 @@ export class ClassificationService extends BaseService {
         let localVarPath = `/classifications`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Array<ClassificationGridRow>>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param classificationID 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public listProjectsForClassificationIDClassification(classificationID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ProjectClassificationDetailGridRow>>;
+    public listProjectsForClassificationIDClassification(classificationID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ProjectClassificationDetailGridRow>>>;
+    public listProjectsForClassificationIDClassification(classificationID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ProjectClassificationDetailGridRow>>>;
+    public listProjectsForClassificationIDClassification(classificationID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (classificationID === null || classificationID === undefined) {
+            throw new Error('Required parameter classificationID was null or undefined when calling listProjectsForClassificationIDClassification.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/classifications/${this.configuration.encodeParam({name: "classificationID", value: classificationID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/projects`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<ProjectClassificationDetailGridRow>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

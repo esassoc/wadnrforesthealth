@@ -82,4 +82,11 @@ public class ClassificationController(
         }
         return NoContent();
     }
+
+    [HttpGet("{classificationID}/projects")]
+    public async Task<ActionResult<IEnumerable<ProjectClassificationDetailGridRow>>> ListProjectsForClassificationID([FromRoute] int classificationID)
+    {
+        var projects = await Projects.ListAsClassificationDetailGridRowAsync(DbContext, classificationID);
+        return Ok(projects);
+    }
 }

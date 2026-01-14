@@ -187,6 +187,7 @@ export * from './project';
 export * from './project-approval-status';
 export * from './project-approval-status-enum';
 export * from './project-classification';
+export * from './project-classification-detail-grid-row';
 export * from './project-code';
 export * from './project-code-lookup-item';
 export * from './project-county';

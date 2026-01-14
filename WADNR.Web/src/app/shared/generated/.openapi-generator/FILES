@@ -208,6 +208,7 @@ model/program-upsert-request.ts
 model/program.ts
 model/project-approval-status-enum.ts
 model/project-approval-status.ts
+model/project-classification-detail-grid-row.ts
 model/project-classification.ts
 model/project-code-lookup-item.ts
 model/project-code.ts

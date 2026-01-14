@@ -232,4 +232,26 @@ public static class ProjectProjections
             ProjectTypeName = x.ProjectType.ProjectTypeName
         }
     };
+
+    public static readonly Expression<Func<ProjectClassification, ProjectClassificationDetailGridRow>> AsProjectClassificationDetailGridRow = x => new ProjectClassificationDetailGridRow
+    {
+        ProjectID = x.ProjectID,
+        ProjectName = x.Project.ProjectName,
+        FhtProjectNumber = x.Project.FhtProjectNumber,
+        PrimaryContactOrganization = x.Project.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => new OrganizationLookupItem
+            {
+                OrganizationID = po.Organization.OrganizationID,
+                OrganizationName = po.Organization.DisplayName
+            })
+            .SingleOrDefault(),
+        ProjectStage = new ProjectStageLookupItem
+        {
+            ProjectStageID = x.Project.ProjectStageID,
+            ProjectStageName = x.Project.ProjectStage.ProjectStageName
+        },
+        ProjectInitiationDate = x.Project.PlannedDate,
+        ProjectThemeNotes = x.ProjectClassificationNotes
+    };
 }
