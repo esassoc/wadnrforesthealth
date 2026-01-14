@@ -254,6 +254,7 @@ model/project-person.ts
 model/project-priority-landscape-update.ts
 model/project-priority-landscape.ts
 model/project-program.ts
+model/project-project-type-detail-grid-row.ts
 model/project-region-update.ts
 model/project-region.ts
 model/project-simple-tree.ts

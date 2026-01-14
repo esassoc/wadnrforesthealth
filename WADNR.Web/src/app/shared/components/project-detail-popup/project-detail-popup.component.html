@@ -1,6 +1,8 @@
 <div class="popup-wrapper" [loadingSpinner]="{ isLoading, loadingHeight: 225 }">
-    @if (project$ | async; as project) {
-    <a class="project-title" routerLink="project/{{ project.ProjectID }}">{{ project.ProjectName }}</a>
+    @if (project$ | async; as project) { @if (!showDetails) {
+    <a class="project-title project-title__compact" [routerLink]="['/projects', project.ProjectID]">{{ project.ProjectName }}</a>
+    } @else {
+    <a class="project-title" [routerLink]="['/projects', project.ProjectID]">{{ project.ProjectName }}</a>
     <div class="popup-body">
         <dl class="grid-12">
             <dt class="g-col-6">Duration</dt>
@@ -21,5 +23,5 @@
             <a [routerLink]="['/projects', project.ProjectID]">Project Detail page</a>
         </div>
     </div>
-    }
+    } }
 </div>

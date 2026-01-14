@@ -1,0 +1,11 @@
+<div class="map-legend">
+    <h4>{{ title }}</h4>
+    <ul class="legend-list">
+        @for (item of entries; track item.id) {
+        <li class="legend-item">
+            <div [innerHTML]="item.html"></div>
+            <span class="legend-label">{{ item.label }}</span>
+        </li>
+        }
+    </ul>
+</div>

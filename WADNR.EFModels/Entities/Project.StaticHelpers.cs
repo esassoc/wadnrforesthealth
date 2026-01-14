@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using NetTopologySuite.Features;
 using System.Linq;
 using System.Linq.Expressions;
 using WADNR.Models.DataTransferObjects;
@@ -31,6 +33,16 @@ public static class Projects
             .AsNoTracking()
             .Where(IsActiveProjectExpr)
             .Select(ProjectProjections.AsProjectCountyDetailGridRow)
+            .ToListAsync();
+    }
+
+    public static async Task<List<ProjectProjectTypeDetailGridRow>> ListAsProjectTypeDetailGridRowAsync(WADNRDbContext dbContext, int projectTypeID)
+    {
+        return await dbContext.Projects
+            .Where(p => p.ProjectTypeID == projectTypeID)
+            .AsNoTracking()
+            .Where(IsActiveProjectExpr)
+            .Select(ProjectProjections.AsProjectProjectTypeDetailGridRow)
             .ToListAsync();
     }
 
@@ -181,5 +193,33 @@ public static class Projects
             .Where(x => x.ProjectID == projectID)
             .Select(ProjectProjections.AsMapPopup)
             .SingleOrDefaultAsync();
+    }
+
+    public static async Task<FeatureCollection> MapProjectFeatureCollection(IIncludableQueryable<Project, ICollection<ProjectClassification>> projectsThatShouldShowOnMap)
+    {
+        var featureCollection = new FeatureCollection();
+        var mappedPointFeatures = await projectsThatShouldShowOnMap
+            .Where(x => x.ProjectLocationPoint != null)
+            .Select(x =>
+                new Feature(x.ProjectLocationPoint, new AttributesTable
+                {
+                    { "ProjectID", x.ProjectID },
+                    { "ProjectStageID", x.ProjectStageID },
+                    { "ProjectTypeID", x.ProjectTypeID},
+                    { "OrganizationID", x.ProjectOrganizations
+                        .Where(po => po.RelationshipType.IsPrimaryContact)
+                        .Select(po => po.Organization.OrganizationID)
+                        .SingleOrDefault() },
+                    { "ProgramID", string.Join(",", x.ProjectPrograms.Select(y => y.ProgramID)) },
+                    { "ClassificationID", string.Join(",", x.ProjectClassifications.Select(y => y.ClassificationID)) },
+
+                })
+            ).ToListAsync();
+        foreach (var feature in mappedPointFeatures)
+        {
+            featureCollection.Add(feature);
+        }
+
+        return featureCollection;
     }
 }

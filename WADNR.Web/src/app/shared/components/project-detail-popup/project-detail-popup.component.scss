@@ -4,6 +4,29 @@
     display: flex;
 }
 
+:host.project-detail-popup__compact {
+    /* Let Leaflet's popup content padding/margins size the bubble.
+         We only ensure our content has no fixed width and is centered. */
+    margin: 0;
+    display: inline-block;
+
+    .popup-wrapper {
+        width: 150px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .project-title__compact {
+        border-bottom: 0;
+        padding-bottom: 0;
+        display: inline-flex;
+        font-weight: 700;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+}
+
 .popup-wrapper {
     width: 700px;
     display: flex;
@@ -19,6 +42,15 @@
 .project-title {
     border-bottom: 1px solid rgba(var(--black-rgb), 0.05);
     padding-bottom: 1rem;
+
+    &__compact {
+        border-bottom: none;
+        padding-bottom: 0;
+        display: inline-flex;
+        font-weight: 700;
+        white-space: nowrap;
+        text-decoration: none;
+    }
 }
 
 .popup-body {

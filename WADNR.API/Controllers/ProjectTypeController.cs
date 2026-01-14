@@ -1,12 +1,16 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
+using NetTopologySuite.Features;
+
 
 namespace WADNR.API.Controllers;
 
@@ -43,6 +47,30 @@ public class ProjectTypeController(
             return NotFound();
         }
         return Ok(entity);
+    }
+
+    [HttpGet("{projectTypeID}/projects")]
+    public async Task<ActionResult<IEnumerable<ProjectProjectTypeDetailGridRow>>> ListProjectsForProjectTypeID([FromRoute] int projectTypeID)
+    {
+        var projects = await Projects.ListAsProjectTypeDetailGridRowAsync(DbContext, projectTypeID);
+
+        return Ok(projects);
+    }
+
+    [HttpGet("{projectTypeID}/projects/mapped-point/feature-collection")]
+    public async Task<ActionResult<FeatureCollection>> ListProjectMappedPointsFeatureCollectionForProjectTypeID(
+        [FromRoute] int projectTypeID)
+    {
+        var projectsThatShouldShowOnMap = DbContext.Projects
+            .Where(x => x.ProjectTypeID == projectTypeID)
+            .AsNoTracking()
+            .Include(x => x.ProjectOrganizations)
+            .Include(x => x.ProjectPrograms)
+            .Include(x => x.ProjectClassifications);
+
+        var featureCollection = await Projects.MapProjectFeatureCollection(projectsThatShouldShowOnMap);
+
+        return Ok(featureCollection);
     }
 
     [HttpPost]

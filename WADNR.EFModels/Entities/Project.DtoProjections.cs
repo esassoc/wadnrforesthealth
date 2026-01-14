@@ -122,6 +122,34 @@ public static class ProjectProjections
         ProjectDescription = x.ProjectDescription
     };
 
+    public static readonly Expression<Func<Project, ProjectProjectTypeDetailGridRow>> AsProjectProjectTypeDetailGridRow = x => new ProjectProjectTypeDetailGridRow
+    {
+        ProjectID = x.ProjectID,
+        ProjectName = x.ProjectName,
+        FhtProjectNumber = x.FhtProjectNumber,
+        PrimaryContactOrganization = x.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => new OrganizationLookupItem
+            {
+                OrganizationID = po.Organization.OrganizationID,
+                OrganizationName = po.Organization.DisplayName
+            })
+            .SingleOrDefault(),
+        ProjectStage = new ProjectStageLookupItem
+        {
+            ProjectStageID = x.ProjectStageID,
+            ProjectStageName = x.ProjectStage.ProjectStageName
+        },
+        ProjectInitiationDate = x.PlannedDate,
+        ExpirationDate = x.ExpirationDate,
+        CompletionDate = x.CompletionDate,
+        EstimatedTotalCost = x.EstimatedTotalCost,
+        TotalAmount = x.ProjectFundSourceAllocationRequests.Any()
+            ? x.ProjectFundSourceAllocationRequests.Sum(r => (decimal?)r.TotalAmount)
+            : null,
+        ProjectDescription = x.ProjectDescription
+    };
+
     public static readonly Expression<Func<Project, ProjectDNRUplandRegionDetailGridRow>> AsDnrUplandRegionDetailGridRow = x => new ProjectDNRUplandRegionDetailGridRow
     {
         ProjectID = x.ProjectID,

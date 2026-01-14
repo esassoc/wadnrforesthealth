@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NetTopologySuite.Features;
@@ -104,28 +105,7 @@ public class ProjectController(
             .Include(x => x.ProjectPrograms)
             .Include(x => x.ProjectClassifications);
 
-        var featureCollection = new FeatureCollection();
-        var mappedPointFeatures = await projectsThatShouldShowOnMap
-            .Where(x => x.ProjectLocationPoint != null)
-            .Select(x =>
-                new Feature(x.ProjectLocationPoint, new AttributesTable
-                {
-                    { "ProjectID", x.ProjectID },
-                    { "ProjectStageID", x.ProjectStageID },
-                    { "ProjectTypeID", x.ProjectTypeID},
-                    { "OrganizationID", x.ProjectOrganizations
-                        .Where(po => po.RelationshipType.IsPrimaryContact)
-                        .Select(po => po.Organization.OrganizationID)
-                        .SingleOrDefault() },
-                    { "ProgramID", string.Join(",", x.ProjectPrograms.Select(y => y.ProgramID)) },
-                    { "ClassificationID", string.Join(",", x.ProjectClassifications.Select(y => y.ClassificationID)) },
-
-                })
-            ).ToListAsync();
-        foreach (var feature in mappedPointFeatures)
-        {
-            featureCollection.Add(feature);
-        }
+        var featureCollection = await Projects.MapProjectFeatureCollection(projectsThatShouldShowOnMap);
 
         return Ok(featureCollection);
     }

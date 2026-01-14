@@ -30,7 +30,7 @@ export class ProjectsLayerComponent extends MapLayerBase implements AfterViewIni
         return this._filterPropertyValues;
     }
 
-    @Input() colorByPropertyName: string;
+    @Input() colorByPropertyName: string = "ProjectStageID";
     //When displaying a large amount of points, rendering as circle markers improves performance
     @Input() renderAsCircleMarkers: boolean = false;
     // Circle markers can make it hard/impossible to drag the map when points cover the viewport.
@@ -43,6 +43,7 @@ export class ProjectsLayerComponent extends MapLayerBase implements AfterViewIni
 
     /** Whether to cluster point markers or render them individually */
     @Input() clusterPoints: boolean = false;
+    @Input() showDetailedPopup: boolean = true;
 
     /** Container layer (cluster group or feature group) */
     public layer: any;
@@ -86,7 +87,7 @@ export class ProjectsLayerComponent extends MapLayerBase implements AfterViewIni
     private bindPopupAndEvents(layer: L.Layer, feature: any): void {
         const projectID = feature?.properties?.ProjectID;
         if (projectID != null && (layer as any).bindPopup) {
-            const tag = `<project-detail-popup-custom-element project-id="${projectID}"></project-detail-popup-custom-element>`;
+            const tag = `<project-detail-popup-custom-element project-id="${projectID}" show-details="${String(this.showDetailedPopup)}"></project-detail-popup-custom-element>`;
             (layer as any).bindPopup(tag, { maxWidth: 475, keepInView: false, autoPan: false });
         }
 
@@ -466,8 +467,10 @@ export class ProjectsLayerComponent extends MapLayerBase implements AfterViewIni
             return;
         }
 
-        const tag = `<project-detail-popup-custom-element project-id="${String(projectID)}"></project-detail-popup-custom-element>`;
-        L.popup({ maxWidth: 475, keepInView: false, autoPan: false }).setLatLng(best.latlng).setContent(tag).openOn(this.map);
+        const tag = `<project-detail-popup-custom-element project-id="${String(projectID)}" show-details="${String(
+            this.showDetailedPopup
+        )}"></project-detail-popup-custom-element>`;
+        const popup = L.popup({ maxWidth: 475, keepInView: false, autoPan: false, className: "project-detail-popup" }).setLatLng(best.latlng).setContent(tag).openOn(this.map);
 
         this.markerClicked.emit({ projectID: String(projectID), latlng: best.latlng });
     }

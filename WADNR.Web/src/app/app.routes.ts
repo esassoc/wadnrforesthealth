@@ -80,7 +80,11 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/classifications/classifications.component").then((m) => m.ClassificationsComponent),
     },
     { path: "projects-by-type", loadComponent: () => import("./pages/taxonomy/taxonomy.component").then((m) => m.TaxonomyComponent) },
-    { path: `projects-types/:${routeParams.projectTypeID}`, loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    {
+        path: `project-types/:${routeParams.projectTypeID}`,
+        title: "Project Type Detail",
+        loadComponent: () => import("./pages/project-types/project-type-detail/project-type-detail.component").then((m) => m.ProjectTypeDetailComponent),
+    },
     { path: "shared-stewardship", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "not-found", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "**", loadComponent: () => import("./shared/components/custom-page/custom-page.component").then((m) => m.CustomPageComponent) },

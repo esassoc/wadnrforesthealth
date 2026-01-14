@@ -44,7 +44,7 @@
                     }
                 </div>
                 <div class="control-group control-group--inline" style="position: relative">
-                    <a role="button" class="btn btn-link regional-toggle__button" (click)="toggleSharePopup()">Link to this map</a>
+                    <a role="button" class="btn btn-link no-simple-location-toggle__button" (click)="toggleSharePopup()">Link to this map</a>
                     @if(showSharePopup) {
                     <div
                         class="share-popup"
@@ -87,21 +87,11 @@
     <div class="map-and-list" [loadingSpinner]="{ isLoading: !(projectPoints$ | async) }">
         <div class="map-area" [class.map-area--with-list]="showProjectWithNoSimpleLocationList">
             <div class="map-legend-row">
-                <div class="map-legend map-legend__project-stage">
-                    <h4>Project Stage</h4>
-                    <ul class="legend-list">
-                        @for (item of (legendEntries('ProjectStageID')); track item.id) {
-                        <li class="legend-item">
-                            <div [innerHTML]="item.html"></div>
-                            <span class="legend-label">{{ item.label }}</span>
-                        </li>
-                        }
-                    </ul>
-                </div>
+                <project-stage-map-legend />
 
                 <button
                     type="button"
-                    class="btn btn-link regional-toggle__button"
+                    class="btn btn-link no-simple-location-toggle__button"
                     (click)="toggleProjectsWithNoSimpleLocationList()"
                     aria-expanded="{{ showProjectWithNoSimpleLocationList }}">
                     {{ showProjectWithNoSimpleLocationList ? "Hide Projects with no Simple Location" : "Show Projects with no Simple Location" }}
@@ -125,17 +115,20 @@
             </wadnr-map>
         </div>
 
-        <!-- Sliding side panel for regional projects (replaces old aside.regional-list) -->
-        <aside class="regional-side-panel" [class.regional-side-panel--open]="showProjectWithNoSimpleLocationList" aria-hidden="{{ !showProjectWithNoSimpleLocationList }}">
-            <div class="regional-side-panel__header">Some Projects do not have a simple location and are not represented by a point on the map, but are listed here.</div>
+        <!-- Sliding side panel for no-simple-location projects (replaces old aside.no-simple-location-list) -->
+        <aside
+            class="no-simple-location-side-panel"
+            [class.no-simple-location-side-panel--open]="showProjectWithNoSimpleLocationList"
+            aria-hidden="{{ !showProjectWithNoSimpleLocationList }}">
+            <div class="no-simple-location-side-panel__header">Some Projects do not have a simple location and are not represented by a point on the map, but are listed here.</div>
 
-            <div class="regional-side-panel__body">
+            <div class="no-simple-location-side-panel__body">
                 @if (noSimpleLocationTree$ | async; as treeNodes) {
-                <div class="regional-fancytree-container">
+                <div class="no-simple-location-fancytree-container">
                     <simple-tree [nodes]="treeNodes" [initialExpandedDepth]="1"></simple-tree>
                 </div>
                 } @else {
-                <div class="regional-side-panel__empty">No regional projects found.</div>
+                <div class="no-simple-location-side-panel__empty">No no-simple-location projects found.</div>
                 }
             </div>
         </aside>

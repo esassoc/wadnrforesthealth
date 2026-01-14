@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, booleanAttribute } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Observable } from "rxjs";
 import { shareReplay, tap } from "rxjs/operators";
@@ -14,12 +14,16 @@ import { CommaJoinPipe } from "src/app/shared/pipes/comma-join.pipe";
     imports: [CommonModule, LoadingDirective, RouterLink, CommaJoinPipe],
     templateUrl: "./project-detail-popup.component.html",
     styleUrls: ["./project-detail-popup.component.scss"],
+    host: {
+        "[class.project-detail-popup__compact]": "!showDetails",
+    },
 })
 export class ProjectDetailPopupComponent implements OnInit {
     project$: Observable<ProjectMapPopup>;
     isLoading: boolean = true;
 
     @Input() projectId: number;
+    @Input({ transform: booleanAttribute }) showDetails: boolean = true;
 
     constructor(private projectService: ProjectService) {}
 

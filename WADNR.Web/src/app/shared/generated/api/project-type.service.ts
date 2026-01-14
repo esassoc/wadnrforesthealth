@@ -15,6 +15,10 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
+import { IFeature } from '../model/i-feature';
+// @ts-ignore
+import { ProjectProjectTypeDetailGridRow } from '../model/project-project-type-detail-grid-row';
+// @ts-ignore
 import { ProjectTypeDetail } from '../model/project-type-detail';
 // @ts-ignore
 import { ProjectTypeGridRow } from '../model/project-type-grid-row';
@@ -211,6 +215,61 @@ export class ProjectTypeService extends BaseService {
     }
 
     /**
+     * @param projectTypeID 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public listProjectMappedPointsFeatureCollectionForProjectTypeIDProjectType(projectTypeID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<IFeature>>;
+    public listProjectMappedPointsFeatureCollectionForProjectTypeIDProjectType(projectTypeID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<IFeature>>>;
+    public listProjectMappedPointsFeatureCollectionForProjectTypeIDProjectType(projectTypeID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<IFeature>>>;
+    public listProjectMappedPointsFeatureCollectionForProjectTypeIDProjectType(projectTypeID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (projectTypeID === null || projectTypeID === undefined) {
+            throw new Error('Required parameter projectTypeID was null or undefined when calling listProjectMappedPointsFeatureCollectionForProjectTypeIDProjectType.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/project-types/${this.configuration.encodeParam({name: "projectTypeID", value: projectTypeID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/projects/mapped-point/feature-collection`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<IFeature>>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
@@ -249,6 +308,61 @@ export class ProjectTypeService extends BaseService {
         let localVarPath = `/project-types`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Array<ProjectTypeGridRow>>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param projectTypeID 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public listProjectsForProjectTypeIDProjectType(projectTypeID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ProjectProjectTypeDetailGridRow>>;
+    public listProjectsForProjectTypeIDProjectType(projectTypeID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ProjectProjectTypeDetailGridRow>>>;
+    public listProjectsForProjectTypeIDProjectType(projectTypeID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ProjectProjectTypeDetailGridRow>>>;
+    public listProjectsForProjectTypeIDProjectType(projectTypeID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (projectTypeID === null || projectTypeID === undefined) {
+            throw new Error('Required parameter projectTypeID was null or undefined when calling listProjectsForProjectTypeIDProjectType.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/project-types/${this.configuration.encodeParam({name: "projectTypeID", value: projectTypeID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/projects`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<ProjectProjectTypeDetailGridRow>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

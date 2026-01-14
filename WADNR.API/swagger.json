@@ -3052,6 +3052,106 @@
         }
       }
     },
+    "/project-types/{projectTypeID}/projects": {
+      "get": {
+        "tags": [
+          "ProjectType"
+        ],
+        "operationId": "ListProjectsForProjectTypeID_ProjectType",
+        "parameters": [
+          {
+            "name": "projectTypeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectProjectTypeDetailGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectProjectTypeDetailGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectProjectTypeDetailGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-types/{projectTypeID}/projects/mapped-point/feature-collection": {
+      "get": {
+        "tags": [
+          "ProjectType"
+        ],
+        "operationId": "ListProjectMappedPointsFeatureCollectionForProjectTypeID_ProjectType",
+        "parameters": [
+          {
+            "name": "projectTypeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "tags": [
@@ -13447,6 +13547,59 @@
           },
           "Project": {
             "$ref": "#/components/schemas/Project"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectProjectTypeDetailGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "PrimaryContactOrganization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "ProjectStage": {
+            "$ref": "#/components/schemas/ProjectStageLookupItem"
+          },
+          "ProjectInitiationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

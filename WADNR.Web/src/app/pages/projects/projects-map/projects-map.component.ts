@@ -9,10 +9,9 @@ import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { ProjectLocationFilterTypes } from "src/app/shared/generated/enum/project-location-filter-type-enum";
 import { ProjectColorByTypes } from "src/app/shared/generated/enum/project-color-by-type-enum";
 import { SelectDropdownOption, FormInputOption, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
-import { LegendColors } from "src/app/shared/models/legend-colors";
+import { Palette } from "src/app/shared/models/legend-colors";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { Router, ActivatedRoute } from "@angular/router";
-import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
 import { ProjectStagesAsSelectDropdownOptions } from "src/app/shared/generated/enum/project-stage-enum";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
@@ -25,8 +24,8 @@ import { ClassificationService } from "src/app/shared/generated/api/classificati
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { ProjectsLayerComponent } from "src/app/shared/components/leaflet/layers/projects-layer/projects-layer.component";
 import { MapSearchComponent } from "src/app/shared/components/leaflet/map-search/map-search.component";
+import { ProjectStageMapLegendComponent } from "src/app/shared/components/project-stage-map-legend/project-stage-map-legend.component";
 import * as L from "leaflet";
-import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 // ButtonLoadingDirective removed from imports because it's not used in this template
 
 @Component({
@@ -45,6 +44,7 @@ import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
         WADNRMapComponent,
         ProjectsLayerComponent,
         MapSearchComponent,
+        ProjectStageMapLegendComponent,
     ],
 })
 export class ProjectsMapComponent implements OnInit {
@@ -52,7 +52,7 @@ export class ProjectsMapComponent implements OnInit {
     public projectPoints$: Observable<IFeature[]>;
     public mapHeight = "700px";
     // legend colors keyed by property name. Each inner map is id -> color (string keys)
-    public legendColorsToUse: LegendColors = {
+    public legendColorsToUse: Record<string, Palette> = {
         ProjectStageID: { "2": "#80B2FF", "3": "#1975FF", "4": "#000066", "5": "#D6D6D6" },
     };
     public cluster: boolean = false;
@@ -110,7 +110,6 @@ export class ProjectsMapComponent implements OnInit {
         private programService: ProgramService,
         private classificationService: ClassificationService,
         private organizationService: OrganizationService,
-        private sanitizer: DomSanitizer,
         private router: Router,
         private route: ActivatedRoute
     ) {
@@ -213,7 +212,7 @@ export class ProjectsMapComponent implements OnInit {
                     if (selType === "ProjectTypeID") availableValues = (this._projectTypeCache || []).map((o) => String(o.Value));
                     else if (selType === "ProgramID") availableValues = (this._programCache || []).map((o) => String(o.Value));
                     else if (selType === "ClassificationID") availableValues = (this._classificationCache || []).map((o) => String(o.Value));
-                    else if (selType === "ProjectStageID") availableValues = (this._projectStageCache || []).map((o) => String(o.Value));
+                    else if (selType === "ProjectStageID") availableValues = (this.projectStageCache || []).map((o) => String(o.Value));
                     else if (selType === "OrganizationID") availableValues = (this._organizationCache || []).map((o) => String(o.Value));
                     const intersection = this._selectedFilterValuesCache.filter((v) => availableValues.includes(String(v)));
                     if (intersection.length) {
@@ -234,7 +233,7 @@ export class ProjectsMapComponent implements OnInit {
                 if (t === "ProjectTypeID") return d.projectTypes || [];
                 if (t === "ProgramID") return d.programs || [];
                 if (t === "ClassificationID") return d.classifications || [];
-                if (t === "ProjectStageID") return this._projectStageCache || [];
+                if (t === "ProjectStageID") return this.projectStageCache || [];
                 if (t === "OrganizationID") return d.organizations || [];
                 return [];
             }),
@@ -280,7 +279,7 @@ export class ProjectsMapComponent implements OnInit {
     private _programCache: SelectDropdownOption[] = [];
     private _classificationCache: SelectDropdownOption[] = [];
     private _organizationCache: SelectDropdownOption[] = [];
-    private _projectStageCache: SelectDropdownOption[] = ProjectStagesAsSelectDropdownOptions.filter((x) => x.Label !== "Terminated" && x.Label !== "Deferred");
+    public projectStageCache: SelectDropdownOption[] = ProjectStagesAsSelectDropdownOptions.filter((x) => x.Label !== "Terminated" && x.Label !== "Deferred");
 
     public get selectedFilterValues(): string[] {
         // return the cached array reference (stable unless values actually change)
@@ -394,8 +393,8 @@ export class ProjectsMapComponent implements OnInit {
             this.filterValueOptions = this._classificationCache;
             if (shouldSetDefaults) this.form.get("filterValues")?.setValue(this._classificationCache.map((o) => String(o.Value)));
         } else if (t === "ProjectStageID") {
-            this.filterValueOptions = this._projectStageCache;
-            if (shouldSetDefaults) this.form.get("filterValues")?.setValue(this._projectStageCache.map((o) => String(o.Value)));
+            this.filterValueOptions = this.projectStageCache;
+            if (shouldSetDefaults) this.form.get("filterValues")?.setValue(this.projectStageCache.map((o) => String(o.Value)));
         } else if (t === "OrganizationID") {
             this.filterValueOptions = this._organizationCache;
             if (shouldSetDefaults) this.form.get("filterValues")?.setValue(this._organizationCache.map((o) => String(o.Value)));
@@ -516,38 +515,6 @@ export class ProjectsMapComponent implements OnInit {
             this._filterValuesSub.unsubscribe();
             this._filterValuesSub = null;
         }
-    }
-
-    // Resolve a legend label (id -> human label) for a given property name using
-    // the cached domain lists. Returns the key itself when no label is found.
-    public legendLabel(propertyName: string | undefined, key: string): string {
-        if (!propertyName || !key) return key;
-        const k = String(key);
-        if (propertyName === "ProjectTypeID") {
-            const found = this._projectTypeCache.find((x) => String(x.Value) === k);
-            return found ? found.Label : k;
-        }
-        if (propertyName === "ProjectStageID") {
-            const found = this._projectStageCache.find((x) => String(x.Value) === k);
-            return found ? found.Label : k;
-        }
-        if (propertyName === "OrganizationID") {
-            const found = this._organizationCache.find((x) => String(x.Value) === k);
-            return found ? found.Label : k;
-        }
-        return k;
-    }
-
-    // Return legend entries for a given propertyName as an array of { id, html, label }
-    public legendEntries(propertyName: string | undefined): Array<{ id: string; html: SafeHtml; label: string }> {
-        if (!propertyName) return [];
-        const palette = (this.legendColorsToUse && (this.legendColorsToUse as any)[propertyName]) || {};
-        return Object.keys(palette || {}).map((k) => {
-            const color = palette[k];
-            const icon = MarkerHelper.circleDivIcon(color) as any;
-            const rawHtml: string = String(icon?.options?.html ?? "");
-            return { id: k, html: this.sanitizer.bypassSecurityTrustHtml(rawHtml), label: this.legendLabel(propertyName, k) };
-        });
     }
 
     // Select all available filter values (useful for ng-select "Select All")

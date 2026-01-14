@@ -1,6 +1,6 @@
 namespace WADNR.Models.DataTransferObjects;
 
-public class ProjectCountyDetailGridRow
+public class ProjectProjectTypeDetailGridRow
 {
     public int ProjectID { get; set; }
     public string ProjectName { get; set; } = string.Empty;

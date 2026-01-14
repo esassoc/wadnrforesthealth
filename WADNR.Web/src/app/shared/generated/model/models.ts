@@ -232,6 +232,7 @@ export * from './project-person-update';
 export * from './project-priority-landscape';
 export * from './project-priority-landscape-update';
 export * from './project-program';
+export * from './project-project-type-detail-grid-row';
 export * from './project-region';
 export * from './project-region-update';
 export * from './project-simple-tree';

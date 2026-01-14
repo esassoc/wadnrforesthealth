@@ -38,19 +38,23 @@
         }
     </ng-template>
     @if (!inline) { @if (showEditButton()) {
-    <span style="overflow: hidden; text-overflow: ellipsis">
-        {{ getLabelText() }}
-        <i class="fas fa-question-circle small" style="cursor: help" [popper]="popContent" [useBodyContainer]="useBodyContainer" [popperTitle]="popTitle"></i>
+    <span class="field-definition-label">
+        <span class="field-definition-label__text">{{ getLabelText() }}</span>
+        <span class="field-definition-label__icon">
+            <i class="fas fa-question-circle small" style="cursor: help" [popper]="popContent" [useBodyContainer]="useBodyContainer" [popperTitle]="popTitle"></i>
+        </span>
     </span>
     } @if (!showEditButton()) {
-    <span>
-        {{ getLabelText() }}
-        <i
-            class="fas fa-question-circle small"
-            style="cursor: help"
-            [popper]="popContent"
-            [useBodyContainer]="useBodyContainer"
-            [popperTitle]="fieldDefinitionDatum.FieldDefinition.FieldDefinitionDisplayName"></i>
+    <span class="field-definition-label">
+        <span class="field-definition-label__text">{{ getLabelText() }}</span>
+        <span class="field-definition-label__icon">
+            <i
+                class="fas fa-question-circle small"
+                style="cursor: help"
+                [popper]="popContent"
+                [useBodyContainer]="useBodyContainer"
+                [popperTitle]="fieldDefinitionDatum.FieldDefinition.FieldDefinitionDisplayName"></i>
+        </span>
     </span>
     } } @else {
     <div class="inline-display flex-start pt-2">

@@ -42,6 +42,12 @@
             font-size: var(--type-size-200);
             transform: translateY(-6px);
         }
+
+        // Don't shift icons that are part of the field-definition label UI.
+        // (Those icons should be vertically centered with their label text.)
+        field-definition i {
+            transform: none;
+        }
     }
 
     &-body {

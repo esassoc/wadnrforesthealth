@@ -4,6 +4,16 @@
     display: inline-block;
 }
 
+.field-definition-label {
+    display: inline-flex;
+    align-items: center;
+}
+
+.field-definition-label__icon {
+    display: inline-flex;
+    align-items: center;
+}
+
 .inline-display {
     align-items: start;
     column-gap: 0.8rem;
