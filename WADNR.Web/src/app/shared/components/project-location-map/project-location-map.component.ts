@@ -6,6 +6,8 @@ import { IFeature } from "src/app/shared/generated/model/i-feature";
 import * as L from "leaflet";
 import { Subscription, of } from "rxjs";
 import { catchError } from "rxjs/operators";
+import { buildPopupCacheKey, PopupDataCacheService } from "src/app/shared/services/popup-data-cache.service";
+import { bindTwoPhaseCustomElementPopup, DEFAULT_LEAFLET_POPUP_OPTIONS } from "src/app/shared/helpers/leaflet-two-phase-popup";
 
 @Component({
     selector: "project-location-map",
@@ -27,7 +29,9 @@ export class ProjectLocationMapComponent implements OnChanges, OnDestroy {
     private projectsLayer: L.Layer | null = null;
     private subs: Subscription[] = [];
 
-    constructor(private projectService: ProjectService) {}
+    private readonly cacheTagName = "project-detail-popup-custom-element";
+
+    constructor(private projectService: ProjectService, private popupCache: PopupDataCacheService) {}
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes["projectID"]) {
@@ -86,8 +90,20 @@ export class ProjectLocationMapComponent implements OnChanges, OnDestroy {
                 const marker = L.marker(latlng as any);
                 const projectID = feature?.properties?.ProjectID ?? feature?.properties?.projectId ?? null;
                 if (projectID != null) {
-                    const tag = `<project-detail-popup-custom-element project-id="${projectID}"></project-detail-popup-custom-element>`;
-                    marker.bindPopup(tag, { maxWidth: 475, keepInView: false, autoPan: false });
+                    const projectIdNum = Number(projectID);
+                    if (Number.isFinite(projectIdNum)) {
+                        bindTwoPhaseCustomElementPopup(marker, {
+                            popupOptions: DEFAULT_LEAFLET_POPUP_OPTIONS,
+                            customElementTagName: this.cacheTagName,
+                            customElementAttributes: {
+                                "project-id": projectIdNum,
+                            },
+                            cacheKey: buildPopupCacheKey(this.cacheTagName, projectIdNum),
+                            cache: this.popupCache,
+                            fetcher: () => this.projectService.getAsMapPopupProject(projectIdNum),
+                            getMap: () => this.map,
+                        });
+                    }
                 }
                 marker.on("click", (ev: any) => {
                     if (projectID != null) this.markerClicked.emit({ projectID: String(projectID), latlng: ev.latlng });

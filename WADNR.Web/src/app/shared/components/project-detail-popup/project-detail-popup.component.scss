@@ -11,7 +11,7 @@
     display: inline-block;
 
     .popup-wrapper {
-        width: 150px;
+        width: auto;
         padding: 0;
         display: inline-flex;
         align-items: center;
@@ -28,7 +28,7 @@
 }
 
 .popup-wrapper {
-    width: 700px;
+    width: auto;
     display: flex;
     flex-direction: column;
     gap: 0rem;

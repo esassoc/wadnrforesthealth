@@ -5,6 +5,13 @@ import { MapLayerBase } from "../map-layer-base.component";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
 import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
 import { Subject, Subscription, debounceTime } from "rxjs";
+import { ProjectService } from "src/app/shared/generated/api/project.service";
+import { buildPopupCacheKey, PopupDataCacheService } from "src/app/shared/services/popup-data-cache.service";
+import {
+    DEFAULT_LEAFLET_POPUP_OPTIONS,
+    bindTwoPhaseCustomElementPopup,
+    openTwoPhaseCustomElementPopupAt,
+} from "src/app/shared/helpers/leaflet-two-phase-popup";
 
 @Component({
     selector: "projects-layer",
@@ -69,6 +76,14 @@ export class ProjectsLayerComponent extends MapLayerBase implements AfterViewIni
     private hoverRafId: number | null = null;
     private lastHoverEv: L.LeafletMouseEvent | null = null;
 
+    private readonly popupOptions: L.PopupOptions = DEFAULT_LEAFLET_POPUP_OPTIONS;
+
+    private readonly cacheTagName = "project-detail-popup-custom-element";
+
+    constructor(private projectService: ProjectService, private popupCache: PopupDataCacheService) {
+        super();
+    }
+
     private get isCircleMode(): boolean {
         // MarkerClusterGroup expects L.Marker instances.
         return !!this.renderAsCircleMarkers && !this.clusterPoints;
@@ -86,9 +101,20 @@ export class ProjectsLayerComponent extends MapLayerBase implements AfterViewIni
 
     private bindPopupAndEvents(layer: L.Layer, feature: any): void {
         const projectID = feature?.properties?.ProjectID;
-        if (projectID != null && (layer as any).bindPopup) {
-            const tag = `<project-detail-popup-custom-element project-id="${projectID}" show-details="${String(this.showDetailedPopup)}"></project-detail-popup-custom-element>`;
-            (layer as any).bindPopup(tag, { maxWidth: 475, keepInView: false, autoPan: false });
+        const projectIdNum = projectID != null ? Number(projectID) : null;
+        if (projectIdNum != null && Number.isFinite(projectIdNum) && (layer as any).bindPopup) {
+            bindTwoPhaseCustomElementPopup(layer, {
+                popupOptions: this.popupOptions,
+                customElementTagName: this.cacheTagName,
+                customElementAttributes: {
+                    "project-id": projectIdNum,
+                    "show-details": String(this.showDetailedPopup),
+                },
+                cacheId: projectIdNum,
+                cache: this.popupCache,
+                fetcher: () => this.projectService.getAsMapPopupProject(projectIdNum),
+                getMap: () => this.map,
+            });
         }
 
         layer.on("click", (ev: any) => {
@@ -467,10 +493,24 @@ export class ProjectsLayerComponent extends MapLayerBase implements AfterViewIni
             return;
         }
 
-        const tag = `<project-detail-popup-custom-element project-id="${String(projectID)}" show-details="${String(
-            this.showDetailedPopup
-        )}"></project-detail-popup-custom-element>`;
-        const popup = L.popup({ maxWidth: 475, keepInView: false, autoPan: false, className: "project-detail-popup" }).setLatLng(best.latlng).setContent(tag).openOn(this.map);
+        const projectIdNum = Number(projectID);
+        if (!Number.isFinite(projectIdNum)) {
+            return;
+        }
+
+        // Circle hit-test popups don't go through bindPopup.
+        openTwoPhaseCustomElementPopupAt(best.latlng, {
+            popupOptions: this.popupOptions,
+            customElementTagName: this.cacheTagName,
+            customElementAttributes: {
+                "project-id": projectIdNum,
+                "show-details": String(this.showDetailedPopup),
+            },
+            cacheId: projectIdNum,
+            cache: this.popupCache,
+            fetcher: () => this.projectService.getAsMapPopupProject(projectIdNum),
+            getMap: () => this.map,
+        });
 
         this.markerClicked.emit({ projectID: String(projectID), latlng: best.latlng });
     }
