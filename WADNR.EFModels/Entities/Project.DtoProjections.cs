@@ -144,9 +144,7 @@ public static class ProjectProjections
         ExpirationDate = x.ExpirationDate,
         CompletionDate = x.CompletionDate,
         EstimatedTotalCost = x.EstimatedTotalCost,
-        TotalAmount = x.ProjectFundSourceAllocationRequests.Any()
-            ? x.ProjectFundSourceAllocationRequests.Sum(r => (decimal?)r.TotalAmount)
-            : null,
+        TotalAmount = null,
         ProjectDescription = x.ProjectDescription
     };
 

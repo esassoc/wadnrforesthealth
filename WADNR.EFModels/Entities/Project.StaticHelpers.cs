@@ -38,12 +38,22 @@ public static class Projects
 
     public static async Task<List<ProjectProjectTypeDetailGridRow>> ListAsProjectTypeDetailGridRowAsync(WADNRDbContext dbContext, int projectTypeID)
     {
-        return await dbContext.Projects
+        var rows = await dbContext.Projects
             .Where(p => p.ProjectTypeID == projectTypeID)
             .AsNoTracking()
             .Where(IsActiveProjectExpr)
+            .OrderBy(x => x.ProjectName)
             .Select(ProjectProjections.AsProjectProjectTypeDetailGridRow)
             .ToListAsync();
+
+        var totalsByProjectId = await GetTotalFundingByProjectAsync(dbContext);
+
+        foreach (var r in rows)
+        {
+            r.TotalAmount = totalsByProjectId.TryGetValue(r.ProjectID, out var total) ? total : null;
+        }
+
+        return rows;
     }
 
     public static async Task<List<ProjectDNRUplandRegionDetailGridRow>> ListAsDNRUplandDetailGridRowAsync(WADNRDbContext dbContext, int dnrUplandRegionID)
@@ -263,5 +273,20 @@ public static class Projects
             .ToListAsync();
 
         return classifications;
+    }
+
+    private static async Task<Dictionary<int, decimal?>> GetTotalFundingByProjectAsync(WADNRDbContext dbContext)
+    {
+        var totals = await dbContext.ProjectFundSourceAllocationRequests
+            .AsNoTracking()
+            .GroupBy(r => r.ProjectID)
+            .Select(g => new
+            {
+                ProjectID = g.Key,
+                TotalAmount = g.Sum(x => (decimal?)x.TotalAmount)
+            })
+            .ToListAsync();
+
+        return totals.ToDictionary(x => x.ProjectID, x => x.TotalAmount);
     }
 }
