@@ -76,6 +76,11 @@ export const routes: Routes = [
     { path: "projects", title: "Full Project List", loadComponent: () => import("./pages/projects/projects.component").then((m) => m.ProjectsComponent) },
     { path: "projects/map", loadComponent: () => import("./pages/projects/projects-map/projects-map.component").then((m) => m.ProjectsMapComponent) },
     {
+        path: `projects/fact-sheet/:${routeParams.projectID}`,
+        title: "Project Fact Sheet",
+        loadComponent: () => import("./pages/projects/project-fact-sheet/project-fact-sheet.component").then((m) => m.ProjectFactSheetComponent),
+    },
+    {
         path: "projects-by-theme",
         title: "Projects By Theme",
         loadComponent: () => import("./pages/classifications/classifications.component").then((m) => m.ClassificationsComponent),

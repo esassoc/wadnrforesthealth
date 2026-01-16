@@ -7,7 +7,7 @@ import * as L from "leaflet";
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
-import { ProjectsLayerComponent } from "src/app/shared/components/leaflet/layers/projects-layer/projects-layer.component";
+import { ProjectLocationsSimpleLayerComponent } from "src/app/shared/components/leaflet/layers/project-locations-simple-layer/project-locations-simple-layer.component";
 import { ProjectStageMapLegendComponent } from "src/app/shared/components/project-stage-map-legend/project-stage-map-legend.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
@@ -22,7 +22,16 @@ import { Palette } from "src/app/shared/models/legend-colors";
 @Component({
     selector: "project-type-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRGridComponent, FieldDefinitionComponent, WADNRMapComponent, ProjectsLayerComponent, ProjectStageMapLegendComponent],
+    imports: [
+        PageHeaderComponent,
+        AsyncPipe,
+        BreadcrumbComponent,
+        WADNRGridComponent,
+        FieldDefinitionComponent,
+        WADNRMapComponent,
+        ProjectLocationsSimpleLayerComponent,
+        ProjectStageMapLegendComponent,
+    ],
     templateUrl: "./project-type-detail.component.html",
     styleUrls: ["./project-type-detail.component.scss"],
 })

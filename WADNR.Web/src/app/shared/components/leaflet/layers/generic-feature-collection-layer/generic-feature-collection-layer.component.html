@@ -1,0 +1,26 @@
+<ng-template #layerName>
+    <span class="legend-item">
+        @if (legendGeometry === "point") {
+        <img class="legend-marker" [src]="markerIconUrl" alt="" />
+        } @else {
+
+        <span class="legend-swatch" [style.border]="'2px solid ' + resolvedLayerColor">
+            <span class="legend-swatch-fill" [style.backgroundColor]="resolvedLayerColor" [style.opacity]="legendFillOpacity"></span>
+        </span>
+        }
+        <span class="legend-title">{{ resolvedLayerName }}</span>
+    </span>
+</ng-template>
+
+<ng-template #legend>
+    <div class="legend-item">
+        <span class="legend-swatch" [style.border]="'2px solid ' + resolvedLayerColor">
+            @if (legendGeometry === "point") {
+            <img class="legend-marker" [src]="markerIconUrl" alt="" />
+            } @else {
+            <span class="legend-swatch-fill" [style.backgroundColor]="resolvedLayerColor" [style.opacity]="legendFillOpacity"></span>
+            }
+        </span>
+        <span class="legend-title">{{ resolvedLayerName }}</span>
+    </div>
+</ng-template>

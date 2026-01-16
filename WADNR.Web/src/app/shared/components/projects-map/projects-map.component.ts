@@ -3,13 +3,13 @@ import * as L from "leaflet";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
 
 import { WADNRMapComponent } from "../leaflet/wadnr-map/wadnr-map.component";
-import { ProjectsLayerComponent } from "../leaflet/layers/projects-layer/projects-layer.component";
+import { ProjectLocationsSimpleLayerComponent } from "../leaflet/layers/project-locations-simple-layer/project-locations-simple-layer.component";
 
 @Component({
     selector: "projects-map",
     templateUrl: "./projects-map.component.html",
     styleUrls: ["./projects-map.component.scss"],
-    imports: [WADNRMapComponent, ProjectsLayerComponent],
+    imports: [WADNRMapComponent, ProjectLocationsSimpleLayerComponent],
 })
 export class ProjectsMapSharedComponent {
     @Output() markerClicked: EventEmitter<{ projectID: string; latlng: L.LatLng }> = new EventEmitter();

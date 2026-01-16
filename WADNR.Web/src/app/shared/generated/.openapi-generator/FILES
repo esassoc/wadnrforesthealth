@@ -16,6 +16,7 @@ api/priority-landscape.service.ts
 api/program.service.ts
 api/project-type.service.ts
 api/project.service.ts
+api/sitka-capture.service.ts
 api/system-info.service.ts
 api/tag.service.ts
 configuration.ts
@@ -35,6 +36,7 @@ model/audit-log-event-type-enum.ts
 model/audit-log-event-type.ts
 model/audit-log.ts
 model/authenticator.ts
+model/capture-post-data.ts
 model/classification-detail.ts
 model/classification-grid-row.ts
 model/classification-lookup-item.ts
@@ -124,6 +126,7 @@ model/fund-source-upsert-request.ts
 model/fund-source.ts
 model/funding-source-enum.ts
 model/funding-source.ts
+model/generic-layer.ts
 model/geometry-factory.ts
 model/geometry.ts
 model/gis-cross-walk-default.ts
@@ -176,6 +179,7 @@ model/organization-upsert-request.ts
 model/organization.ts
 model/person-allowed-authenticator.ts
 model/person-detail.ts
+model/person-lookup-item-with-email.ts
 model/person-lookup-item.ts
 model/person-role.ts
 model/person-steward-organization.ts
@@ -223,11 +227,13 @@ model/project-document-update.ts
 model/project-document.ts
 model/project-external-link-update.ts
 model/project-external-link.ts
+model/project-fact-sheet.ts
 model/project-fund-source-allocation-request-update.ts
 model/project-fund-source-allocation-request.ts
 model/project-funding-source-update.ts
 model/project-funding-source.ts
 model/project-grid-row.ts
+model/project-image-grid-row.ts
 model/project-image-timing-enum.ts
 model/project-image-timing.ts
 model/project-image-update.ts
@@ -267,6 +273,7 @@ model/project-stewardship-area-type.ts
 model/project-tag.ts
 model/project-type-detail.ts
 model/project-type-grid-row.ts
+model/project-type-lookup-item-with-color.ts
 model/project-type-lookup-item.ts
 model/project-type-taxonomy.ts
 model/project-type-upsert-request.ts

@@ -100,7 +100,7 @@
 
             <wadnr-map [mapHeight]="mapHeight" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
                 @if(mapIsReady) {
-                <projects-layer
+                <project-locations-simple-layer
                     [map]="map"
                     [layerControl]="layerControl"
                     [projectPoints]="projectPoints$ | async"
@@ -110,7 +110,7 @@
                     [filterPropertyValues]="selectedFilterValues"
                     [clusterPoints]="form.get('cluster')?.value ?? cluster"
                     [renderAsCircleMarkers]="true">
-                </projects-layer>
+                </project-locations-simple-layer>
                 }
             </wadnr-map>
         </div>

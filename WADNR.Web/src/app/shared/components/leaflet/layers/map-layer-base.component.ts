@@ -9,8 +9,10 @@ export class MapLayerBase implements IMapLayer, OnDestroy {
     @Input() displayOnLoad: boolean = false;
     @Input() sortOrder: number;
 
-    @ViewChild("layerName") layerTemplate!: TemplateRef<any>;
-    @ViewChild("legend") legendTemplate!: TemplateRef<any>;
+    // NOTE: Some inheritors call initLayer() from ngOnChanges, before AfterViewInit.
+    // Using static: true ensures the templates are available early.
+    @ViewChild("layerName", { static: true }) layerTemplate?: TemplateRef<any>;
+    @ViewChild("legend", { static: true }) legendTemplate?: TemplateRef<any>;
     layer: any;
 
     constructor() {}
@@ -26,9 +28,13 @@ export class MapLayerBase implements IMapLayer, OnDestroy {
 
     initLayer(): void {
         if (this.checkForMissingInputs()) {
-            const viewRef = this.layerTemplate.createEmbeddedView(null);
+            const viewRef = this.layerTemplate!.createEmbeddedView(null);
             viewRef.detectChanges();
-            const layerHtml = viewRef.rootNodes[0].innerText;
+            const rootNode: any = viewRef.rootNodes[0];
+            // Use HTML so consumers can include swatches/icons in the overlay label.
+            // Fallback to text if the root node isn't an element.
+            const layerHtml = rootNode?.outerHTML ?? rootNode?.textContent ?? rootNode?.innerText;
+            viewRef.destroy();
             if (this.sortOrder) {
                 this.layer.sortOrder = this.sortOrder;
             }
@@ -36,8 +42,10 @@ export class MapLayerBase implements IMapLayer, OnDestroy {
                 const legendViewRef = this.legendTemplate.createEmbeddedView(null);
                 if (legendViewRef) {
                     legendViewRef.detectChanges();
-                    const legendHtml = legendViewRef.rootNodes[0].outerHTML;
+                    const legendRootNode: any = legendViewRef.rootNodes[0];
+                    const legendHtml = legendRootNode?.outerHTML ?? legendRootNode?.textContent ?? legendRootNode?.innerText;
                     this.layer["legendHtml"] = legendHtml;
+                    legendViewRef.destroy();
                 }
             }
 
@@ -62,6 +70,7 @@ export class MapLayerBase implements IMapLayer, OnDestroy {
             console.error(
                 "could not find the layerName template within the child class, make sure to implement a <ng-template #layerName></ng-template> that has a single root element."
             );
+            inputsAreValid = false;
         }
         return inputsAreValid;
     }

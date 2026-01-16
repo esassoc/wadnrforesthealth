@@ -28,6 +28,9 @@ export class ProjectImage {
     FileResource?: FileResource;
     Project?: Project;
     ProjectImageUpdates?: Array<ProjectImageUpdate> | null;
+    readonly CreatedDate?: string;
+    readonly FileResourceGuid?: string;
+    readonly CaptionOnFullView?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -47,6 +50,9 @@ export interface ProjectImageForm {
     FileResource?: FormControl<FileResource>;
     Project?: FormControl<Project>;
     ProjectImageUpdates?: FormControl<Array<ProjectImageUpdate>>;
+    CreatedDate?: FormControl<string>;
+    FileResourceGuid?: FormControl<string>;
+    CaptionOnFullView?: FormControl<string>;
 }
 
 export class ProjectImageFormControls { 
@@ -175,6 +181,36 @@ export class ProjectImageFormControls {
         }
     );
     public static ProjectImageUpdates = (value: FormControlState<Array<ProjectImageUpdate>> | Array<ProjectImageUpdate> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<ProjectImageUpdate>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CreatedDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FileResourceGuid = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CaptionOnFullView = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

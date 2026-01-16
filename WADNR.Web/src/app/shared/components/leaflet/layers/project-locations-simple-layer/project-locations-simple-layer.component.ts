@@ -7,18 +7,14 @@ import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { buildPopupCacheKey, PopupDataCacheService } from "src/app/shared/services/popup-data-cache.service";
-import {
-    DEFAULT_LEAFLET_POPUP_OPTIONS,
-    bindTwoPhaseCustomElementPopup,
-    openTwoPhaseCustomElementPopupAt,
-} from "src/app/shared/helpers/leaflet-two-phase-popup";
+import { DEFAULT_LEAFLET_POPUP_OPTIONS, bindTwoPhaseCustomElementPopup, openTwoPhaseCustomElementPopupAt } from "src/app/shared/helpers/leaflet-two-phase-popup";
 
 @Component({
-    selector: "projects-layer",
-    templateUrl: "./projects-layer.component.html",
-    styleUrls: ["./projects-layer.component.scss"],
+    selector: "project-locations-simple-layer",
+    templateUrl: "./project-locations-simple-layer.component.html",
+    styleUrls: ["./project-locations-simple-layer.component.scss"],
 })
-export class ProjectsLayerComponent extends MapLayerBase implements AfterViewInit, OnChanges, OnDestroy {
+export class ProjectLocationsSimpleLayerComponent extends MapLayerBase implements AfterViewInit, OnChanges, OnDestroy {
     /** Layer control label */
     @Input() controlTitle: string = "Mapped Projects";
 

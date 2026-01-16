@@ -2737,6 +2737,47 @@
         }
       }
     },
+    "/projects/{projectID}/fact-sheet": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetForFactSheet_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFactSheet"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFactSheet"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFactSheet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects/{projectID}/map-popup": {
       "get": {
         "tags": [
@@ -2848,6 +2889,156 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/ProjectSimpleTree"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/images": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListImages_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectImageGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectImageGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectImageGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/classifications": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListClassifications_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/locations/generic-layers": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListLocationsAsGenericLayers_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GenericLayer"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GenericLayer"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GenericLayer"
                   }
                 }
               }
@@ -3195,6 +3386,58 @@
                   "items": {
                     "$ref": "#/components/schemas/IFeature"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sitkacapture/generate-pdf": {
+      "post": {
+        "tags": [
+          "SitkaCapture"
+        ],
+        "operationId": "GeneratePdf_SitkaCapture",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CapturePostData"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CapturePostData"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CapturePostData"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
                 }
               }
             }
@@ -4121,6 +4364,48 @@
             "type": "integer",
             "format": "int32",
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CapturePostData": {
+        "type": "object",
+        "properties": {
+          "cssStrings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "cssUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "cssSelector": {
+            "type": "string",
+            "nullable": true
+          },
+          "html": {
+            "type": "string",
+            "nullable": true
+          },
+          "timeoutInMilliseconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "debug": {
+            "type": "boolean"
+          },
+          "debugNetwork": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -7700,6 +7985,27 @@
         ],
         "type": "string"
       },
+      "GenericLayer": {
+        "type": "object",
+        "properties": {
+          "LayerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "LayerColor": {
+            "type": "string",
+            "nullable": true
+          },
+          "Features": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IFeature"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Geometry": {
         "type": "object",
         "properties": {
@@ -10322,6 +10628,24 @@
         },
         "additionalProperties": false
       },
+      "PersonLookupItemWithEmail": {
+        "type": "object",
+        "properties": {
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PersonRole": {
         "type": "object",
         "properties": {
@@ -12377,6 +12701,40 @@
         },
         "additionalProperties": false
       },
+      "ProjectFactSheet": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectType": {
+            "$ref": "#/components/schemas/ProjectTypeLookupItemWithColor"
+          },
+          "LeadImplementer": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "PrimaryContact": {
+            "$ref": "#/components/schemas/PersonLookupItemWithEmail"
+          },
+          "ProjectStage": {
+            "$ref": "#/components/schemas/ProjectStageLookupItem"
+          },
+          "Duration": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectFundSourceAllocationRequest": {
         "type": "object",
         "properties": {
@@ -12650,6 +13008,66 @@
               "$ref": "#/components/schemas/ProjectImageUpdate"
             },
             "nullable": true
+          },
+          "CreatedDate": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "FileResourceGuid": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "CaptionOnFullView": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectImageGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectImageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Caption": {
+            "type": "string",
+            "nullable": true
+          },
+          "Credit": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsKeyPhoto": {
+            "type": "boolean"
+          },
+          "ExcludeFromFactSheet": {
+            "type": "boolean"
+          },
+          "ProjectImageTimingID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "CreatedDate": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -14021,6 +14439,24 @@
             "format": "int32"
           },
           "ProjectTypeName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectTypeLookupItemWithColor": {
+        "type": "object",
+        "properties": {
+          "ProjectTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ThemeColor": {
             "type": "string",
             "nullable": true
           }
@@ -16163,6 +16599,9 @@
     },
     {
       "name": "ProjectType"
+    },
+    {
+      "name": "SitkaCapture"
     },
     {
       "name": "SystemInfo"

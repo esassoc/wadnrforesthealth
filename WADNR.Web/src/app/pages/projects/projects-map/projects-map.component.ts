@@ -22,7 +22,7 @@ import { OrganizationService } from "src/app/shared/generated/api/organization.s
 import { ProjectTypeService } from "src/app/shared/generated/api/project-type.service";
 import { ClassificationService } from "src/app/shared/generated/api/classification.service";
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
-import { ProjectsLayerComponent } from "src/app/shared/components/leaflet/layers/projects-layer/projects-layer.component";
+import { ProjectLocationsSimpleLayerComponent } from "src/app/shared/components/leaflet/layers/project-locations-simple-layer/project-locations-simple-layer.component";
 import { MapSearchComponent } from "src/app/shared/components/leaflet/map-search/map-search.component";
 import { ProjectStageMapLegendComponent } from "src/app/shared/components/project-stage-map-legend/project-stage-map-legend.component";
 import * as L from "leaflet";
@@ -42,7 +42,7 @@ import * as L from "leaflet";
         PageHeaderComponent,
         SimpleTreeComponent,
         WADNRMapComponent,
-        ProjectsLayerComponent,
+        ProjectLocationsSimpleLayerComponent,
         MapSearchComponent,
         ProjectStageMapLegendComponent,
     ],

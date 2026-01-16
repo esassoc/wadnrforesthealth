@@ -254,4 +254,40 @@ public static class ProjectProjections
         ProjectInitiationDate = x.Project.PlannedDate,
         ProjectThemeNotes = x.ProjectClassificationNotes
     };
+
+    public static readonly Expression<Func<Project, ProjectFactSheet>> AsFactSheet = x => new ProjectFactSheet
+    {
+        ProjectID = x.ProjectID,
+        ProjectName = x.ProjectName,
+        ProjectDescription = x.ProjectDescription,
+        ProjectType = new ProjectTypeLookupItemWithColor
+        {
+            ProjectTypeID = x.ProjectType.ProjectTypeID,
+            ProjectTypeName = x.ProjectType.ProjectTypeName,
+            ThemeColor = x.ProjectType.ThemeColor
+        },
+        LeadImplementer = x.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => new OrganizationLookupItem
+            {
+                OrganizationID = po.Organization.OrganizationID,
+                OrganizationName = po.Organization.DisplayName
+            })
+            .SingleOrDefault()!,
+        PrimaryContact = x.ProjectPeople
+            .Where(pp => pp.ProjectPersonRelationshipTypeID == ProjectPersonRelationshipType.PrimaryContact.ProjectPersonRelationshipTypeID)
+            .Select(pp => new PersonLookupItemWithEmail()
+            {
+                PersonID = pp.Person.PersonID,
+                FullName = pp.Person.FirstName + " " + pp.Person.LastName,
+                Email = pp.Person.Email
+            })
+            .SingleOrDefault()!,
+        ProjectStage = new ProjectStageLookupItem
+        {
+            ProjectStageID = x.ProjectStage.ProjectStageID,
+            ProjectStageName = x.ProjectStage.ProjectStageName
+        },
+        Duration = x.Duration
+    };
 }

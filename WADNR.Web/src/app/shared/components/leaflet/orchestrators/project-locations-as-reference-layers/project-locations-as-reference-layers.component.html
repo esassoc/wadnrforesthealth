@@ -1,0 +1,12 @@
+@if (layers$ | async; as layers) {
+    @for (l of layers; track l.layerName) {
+        <generic-feature-collection-layer
+            [map]="map"
+            [layerControl]="layerControl"
+            [displayOnLoad]="displayOnLoad"
+            [layerName]="l.layerName"
+            [layerColor]="l.layerColor"
+            [featureCollection]="l.featureCollection">
+        </generic-feature-collection-layer>
+    }
+}

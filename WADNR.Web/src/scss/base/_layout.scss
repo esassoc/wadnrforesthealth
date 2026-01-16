@@ -53,8 +53,10 @@ app-root {
 }
 
 @media print {
-    .site-header,
-    .site-footer {
+    header-nav,
+    footer,
+    .leaflet-control-container,
+    .map-footer {
         display: none !important;
     }
 }

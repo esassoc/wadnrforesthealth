@@ -233,4 +233,35 @@ public static class Projects
             .Select(ProjectProjections.AsProjectClassificationDetailGridRow)
             .ToListAsync();
     }
+
+    public static async Task<ProjectFactSheet?> GetByIDAsFactSheetAsync(WADNRDbContext dbContext, int projectID)
+    {
+        var entity = await dbContext.Projects
+            .AsNoTracking()
+            .Where(IsActiveProjectExpr)
+            .Where(x => x.ProjectID == projectID)
+            .Select(ProjectProjections.AsFactSheet)
+            .SingleOrDefaultAsync();
+
+        return entity;
+    }
+
+    public static async Task<List<ClassificationLookupItem>> ListClassificationsAsLookupItemByProjectIDAsync(WADNRDbContext dbContext, int projectID)
+    {
+        var classifications = await dbContext.Projects
+            .AsNoTracking()
+            .Where(IsActiveProjectExpr)
+            .Where(x => x.ProjectID == projectID)
+            .SelectMany(x => x.ProjectClassifications.Select(pc => pc.Classification))
+            .Select(c => new ClassificationLookupItem
+            {
+                ClassificationID = c.ClassificationID,
+                DisplayName = c.DisplayName
+            })
+            .Distinct()
+            .OrderBy(x => x.DisplayName)
+            .ToListAsync();
+
+        return classifications;
+    }
 }
