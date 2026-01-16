@@ -1,0 +1,34 @@
+@if (tag$ | async; as tag) {
+<breadcrumb [items]="[{ label: 'Tags', url: '/tags' }, { label: tag.TagName }]" [linkLast]="false"></breadcrumb>
+<page-header pageTitle="{{ tag.TagName }}"> </page-header>
+
+<div class="grid-12">
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Basics</span></div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="TagName"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ tag.TagName || "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="TagDescription"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ tag.TagDescription || "—" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Projects</span></div>
+            <div class="card-body">
+                <wadnr-grid [rowData]="projects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" [downloadFileName]="'projects'"></wadnr-grid>
+            </div>
+        </div>
+    </div>
+</div>
+}

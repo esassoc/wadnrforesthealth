@@ -288,4 +288,30 @@ public static class ProjectProjections
         },
         Duration = x.Duration
     };
+
+    public static readonly Expression<Func<Project, ProjectTagDetailGridRow>> AsProjectTagDetailGridRow = x => new ProjectTagDetailGridRow
+    {
+        ProjectID = x.ProjectID,
+        ProjectName = x.ProjectName,
+        FhtProjectNumber = x.FhtProjectNumber,
+        PrimaryContactOrganization = x.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => new OrganizationLookupItem
+            {
+                OrganizationID = po.Organization.OrganizationID,
+                OrganizationName = po.Organization.DisplayName
+            })
+            .SingleOrDefault(),
+        ProjectStage = new ProjectStageLookupItem
+        {
+            ProjectStageID = x.ProjectStageID,
+            ProjectStageName = x.ProjectStage.ProjectStageName
+        },
+        ProjectInitiationDate = x.PlannedDate,
+        ExpirationDate = x.ExpirationDate,
+        CompletionDate = x.CompletionDate,
+        EstimatedTotalCost = x.EstimatedTotalCost,
+        TotalAmount = null,
+        ProjectDescription = x.ProjectDescription
+    };
 }

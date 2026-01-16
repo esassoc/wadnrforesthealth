@@ -2,59 +2,53 @@ import { AsyncPipe } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { distinctUntilChanged, filter, map, Observable, shareReplay, switchMap } from "rxjs";
+
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
-import { Map } from "leaflet";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
-import { CountyService } from "src/app/shared/generated/api/county.service";
-import { CountyDetail } from "src/app/shared/generated/model/county-detail";
-import { ProjectCountyDetailGridRow } from "src/app/shared/generated/model/project-county-detail-grid-row";
-import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
-import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
-import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
-import { ColDef } from "node_modules/ag-grid-community/dist/types/src/entities/colDef";
+import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
+
+import { TagService } from "src/app/shared/generated/api/tag.service";
+import { TagDetail } from "src/app/shared/generated/model/tag-detail";
+import { ProjectTagDetailGridRow } from "src/app/shared/generated/model/project-tag-detail-grid-row";
+import { ColDef } from "ag-grid-community";
 
 @Component({
-    selector: "county-detail",
+    selector: "tag-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRMapComponent, CountiesLayerComponent, WADNRGridComponent],
-    templateUrl: "./county-detail.component.html",
-    styleUrls: ["./county-detail.component.scss"],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent],
+    templateUrl: "./tag-detail.component.html",
+    styleUrls: ["./tag-detail.component.scss"],
 })
-export class CountyDetailComponent {
-    public countyID$: Observable<number>;
-    public county$: Observable<CountyDetail>;
-    public projects$: Observable<ProjectCountyDetailGridRow[]>;
+export class TagDetailComponent {
+    public tagID$: Observable<number>;
+    public tag$: Observable<TagDetail>;
+    public projects$: Observable<ProjectTagDetailGridRow[]>;
 
-    public map: Map;
-    public layerControl: L.Control.Layers;
-    public mapIsReady: boolean = false;
-    public highlightedCountyLayerMode = OverlayMode.Single;
-    public allCountiesLayerMode = OverlayMode.ReferenceOnly;
-    public columnDefs: ColDef<ProjectCountyDetailGridRow>[] = [];
+    public columnDefs: ColDef<ProjectTagDetailGridRow>[] = [];
     public pinnedTotalsRow = {
         fields: ["EstimatedTotalCost", "TotalAmount"],
         filteredOnly: true,
     };
 
-    constructor(private route: ActivatedRoute, private countyService: CountyService, private utilityFunctions: UtilityFunctionsService) {}
+    constructor(private route: ActivatedRoute, private tagService: TagService, private utilityFunctions: UtilityFunctionsService) {}
 
     ngOnInit(): void {
-        this.countyID$ = this.route.paramMap.pipe(
-            map((p) => (p.get("countyID") ? Number(p.get("countyID")) : null)),
-            filter((countyID): countyID is number => countyID != null && !Number.isNaN(countyID)),
+        this.tagID$ = this.route.paramMap.pipe(
+            map((p) => (p.get("tagID") ? Number(p.get("tagID")) : null)),
+            filter((tagID): tagID is number => tagID != null && !Number.isNaN(tagID)),
             distinctUntilChanged(),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.county$ = this.countyID$.pipe(
-            switchMap((countyID) => this.countyService.getCounty(countyID)),
+        this.tag$ = this.tagID$.pipe(
+            switchMap((tagID) => this.tagService.getTag(tagID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.projects$ = this.countyID$.pipe(
-            switchMap((countyID) => this.countyService.listProjectsForCountyIDCounty(countyID)),
+        this.projects$ = this.tagID$.pipe(
+            switchMap((tagID) => this.tagService.listProjectsForTagIDTag(tagID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -94,11 +88,5 @@ export class CountyDetailComponent {
             }),
             this.utilityFunctions.createBasicColumnDef("Project Description", "ProjectDescription", { FieldDefinitionType: "ProjectDescription" }),
         ];
-    }
-
-    handleMapReady(event: any) {
-        this.map = event.map;
-        this.layerControl = event.layerControl;
-        this.mapIsReady = true;
     }
 }

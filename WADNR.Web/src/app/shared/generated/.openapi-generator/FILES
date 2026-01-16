@@ -270,6 +270,7 @@ model/project-stage-lookup-item.ts
 model/project-stage.ts
 model/project-stewardship-area-type-enum.ts
 model/project-stewardship-area-type.ts
+model/project-tag-detail-grid-row.ts
 model/project-tag.ts
 model/project-type-detail.ts
 model/project-type-grid-row.ts

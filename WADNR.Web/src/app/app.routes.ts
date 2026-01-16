@@ -8,6 +8,7 @@ export const routeParams = {
     priorityLandscapeID: "priorityLandscapeID",
     projectTypeID: "projectTypeID",
     classificationID: "classificationID",
+    tagID: "tagID",
 };
 
 export const routes: Routes = [
@@ -73,6 +74,11 @@ export const routes: Routes = [
     },
     { path: "programs", title: "Programs", loadComponent: () => import("./pages/programs/programs.component").then((m) => m.ProgramsComponent) },
     { path: "tags", title: "Tags", loadComponent: () => import("./pages/tags/tags.component").then((m) => m.TagsComponent) },
+    {
+        path: `tags/:${routeParams.tagID}`,
+        title: "Tag Detail",
+        loadComponent: () => import("./pages/tags/tag-detail/tag-detail.component").then((m) => m.TagDetailComponent),
+    },
     { path: "projects", title: "Full Project List", loadComponent: () => import("./pages/projects/projects.component").then((m) => m.ProjectsComponent) },
     { path: "projects/map", loadComponent: () => import("./pages/projects/projects-map/projects-map.component").then((m) => m.ProjectsMapComponent) },
     {

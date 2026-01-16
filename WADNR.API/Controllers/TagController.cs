@@ -75,4 +75,11 @@ public class TagController(
         }
         return NoContent();
     }
+
+    [HttpGet("{tagID}/projects")]
+    public async Task<ActionResult<IEnumerable<ProjectTagDetailGridRow>>> ListProjectsForTagID([FromRoute] int tagID)
+    {
+        var projects = await Projects.ListAsTagDetailGridRowAsync(DbContext, tagID);
+        return Ok(projects);
+    }
 }

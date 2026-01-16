@@ -248,6 +248,7 @@ export * from './project-stage-lookup-item';
 export * from './project-stewardship-area-type';
 export * from './project-stewardship-area-type-enum';
 export * from './project-tag';
+export * from './project-tag-detail-grid-row';
 export * from './project-type';
 export * from './project-type-detail';
 export * from './project-type-grid-row';

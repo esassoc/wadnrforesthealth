@@ -3681,6 +3681,56 @@
           }
         }
       }
+    },
+    "/tags/{tagID}/projects": {
+      "get": {
+        "tags": [
+          "Tag"
+        ],
+        "operationId": "ListProjectsForTagID_Tag",
+        "parameters": [
+          {
+            "name": "tagID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectTagDetailGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectTagDetailGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectTagDetailGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -14304,6 +14354,59 @@
           },
           "Tag": {
             "$ref": "#/components/schemas/Tag"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectTagDetailGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "PrimaryContactOrganization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "ProjectStage": {
+            "$ref": "#/components/schemas/ProjectStageLookupItem"
+          },
+          "ProjectInitiationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

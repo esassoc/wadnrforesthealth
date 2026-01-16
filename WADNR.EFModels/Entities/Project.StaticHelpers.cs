@@ -339,4 +339,24 @@ public static class Projects
 
         return totals.ToDictionary(x => x.ProjectID, x => x.TotalAmount);
     }
+
+    public static async Task<List<ProjectTagDetailGridRow>> ListAsTagDetailGridRowAsync(WADNRDbContext dbContext, int tagID)
+    {
+        var rows = await dbContext.Projects
+            .Where(p => p.ProjectTags.Any(pt => pt.TagID == tagID))
+            .AsNoTracking()
+            .Where(IsActiveProjectExpr)
+            .OrderBy(x => x.ProjectName)
+            .Select(ProjectProjections.AsProjectTagDetailGridRow)
+            .ToListAsync();
+
+        var totalsByProjectId = await GetTotalFundingByProjectAsync(dbContext);
+
+        foreach (var r in rows)
+        {
+            r.TotalAmount = totalsByProjectId.TryGetValue(r.ProjectID, out var total) ? total : null;
+        }
+
+        return rows;
+    }
 }
