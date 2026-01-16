@@ -56,14 +56,6 @@ simple-tree ::ng-deep {
                 min-width: 0;
             }
 
-            // Ensure the non-map title portion can shrink/ellipsis while the map button stays right-aligned.
-            a:not(.map-btn) {
-                flex: 1 1 auto;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-
             a.map-btn {
                 flex: 0 0 auto;
                 margin-left: auto;

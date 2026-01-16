@@ -69,7 +69,9 @@
                 <span class="simple-tree__title" [class.simple-tree__leaf]="!item.hasChildren" [class.simple-tree__match]="searchTerm && item.node.count">
                     {{ item.node.title }}
                 </span>
-                } @if (item.hasChildren && item.node.count) { <span class="simple-tree__badge">{{ item.node.count }}</span> }
+                }
+                <span class="simple-tree__title-spacer"> </span>
+                @if (item.hasChildren && item.node.count) { <span class="simple-tree__badge">{{ item.node.count }}</span> }
             </div>
         </li>
         }

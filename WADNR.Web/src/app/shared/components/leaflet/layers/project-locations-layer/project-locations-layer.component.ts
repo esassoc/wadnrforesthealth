@@ -10,11 +10,11 @@ import { buildPopupCacheKey, PopupDataCacheService } from "src/app/shared/servic
 import { DEFAULT_LEAFLET_POPUP_OPTIONS, bindTwoPhaseCustomElementPopup, openTwoPhaseCustomElementPopupAt } from "src/app/shared/helpers/leaflet-two-phase-popup";
 
 @Component({
-    selector: "project-locations-simple-layer",
-    templateUrl: "./project-locations-simple-layer.component.html",
-    styleUrls: ["./project-locations-simple-layer.component.scss"],
+    selector: "project-locations-layer",
+    templateUrl: "./project-locations-layer.component.html",
+    styleUrls: ["./project-locations-layer.component.scss"],
 })
-export class ProjectLocationsSimpleLayerComponent extends MapLayerBase implements AfterViewInit, OnChanges, OnDestroy {
+export class ProjectLocationsLayerComponent extends MapLayerBase implements AfterViewInit, OnChanges, OnDestroy {
     /** Layer control label */
     @Input() controlTitle: string = "Mapped Projects";
 

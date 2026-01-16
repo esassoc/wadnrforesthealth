@@ -35,7 +35,7 @@ export class TaxonomyComponent {
             // project type base and parts
             const ptName = a.ProjectTypeName;
             const ptParts: any[] = [];
-            ptParts.push({ text: ptName, routerLink: ["/project-types", a.ProjectTypeID] });
+            ptParts.push({ text: ptName, routerLink: ["/project-types", a.ProjectTypeID], additionalCssClasses: ["no-flex"] });
             ptParts.push({
                 text: "Map",
                 href: [`/projects/map?filterType=ProjectTypeID&filterValues=${a.ProjectTypeID}`],
@@ -51,7 +51,7 @@ export class TaxonomyComponent {
                 const nameText = proj.ProjectName;
 
                 const parts: any[] = [];
-                parts.push({ text: nameText, routerLink: ["/projects", proj.ProjectID] });
+                parts.push({ text: nameText, routerLink: ["/projects/fact-sheet", proj.ProjectID] });
 
                 return {
                     title: nameText,
