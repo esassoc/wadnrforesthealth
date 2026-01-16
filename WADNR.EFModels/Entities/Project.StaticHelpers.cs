@@ -205,29 +205,79 @@ public static class Projects
             .SingleOrDefaultAsync();
     }
 
-    public static async Task<FeatureCollection> MapProjectFeatureCollection(IIncludableQueryable<Project, ICollection<ProjectClassification>> projectsThatShouldShowOnMap)
+    private sealed class ProjectTypeDetailProjectMapPointBaseRow
     {
-        var featureCollection = new FeatureCollection();
-        var mappedPointFeatures = await projectsThatShouldShowOnMap
-            .Where(x => x.ProjectLocationPoint != null)
-            .Select(x =>
-                new Feature(x.ProjectLocationPoint, new AttributesTable
-                {
-                    { "ProjectID", x.ProjectID },
-                    { "ProjectStageID", x.ProjectStageID },
-                    { "ProjectTypeID", x.ProjectTypeID},
-                    { "OrganizationID", x.ProjectOrganizations
-                        .Where(po => po.RelationshipType.IsPrimaryContact)
-                        .Select(po => po.Organization.OrganizationID)
-                        .SingleOrDefault() },
-                    { "ProgramID", string.Join(",", x.ProjectPrograms.Select(y => y.ProgramID)) },
-                    { "ClassificationID", string.Join(",", x.ProjectClassifications.Select(y => y.ClassificationID)) },
+        public int ProjectID { get; init; }
+        public int ProjectStageID { get; init; }
+        public int ProjectTypeID { get; init; }
+        public int? OrganizationID { get; init; }
+        public NetTopologySuite.Geometries.Geometry ProjectLocationPoint { get; init; } = null!;
+    }
 
-                })
-            ).ToListAsync();
-        foreach (var feature in mappedPointFeatures)
+    public static async Task<FeatureCollection> MapProjectFeatureCollection(IQueryable<Project> projectsThatShouldShowOnMap)
+    {
+        var baseRows = await projectsThatShouldShowOnMap
+            .AsNoTracking()
+            .Where(x => x.ProjectLocationPoint != null)
+            .Select(x => new ProjectTypeDetailProjectMapPointBaseRow
+            {
+                ProjectID = x.ProjectID,
+                ProjectStageID = x.ProjectStageID,
+                ProjectTypeID = x.ProjectTypeID,
+                OrganizationID = x.ProjectOrganizations
+                    .Where(po => po.RelationshipType.IsPrimaryContact)
+                    .Select(po => (int?)po.OrganizationID)
+                    .FirstOrDefault(),
+                ProjectLocationPoint = x.ProjectLocationPoint!
+            })
+            .ToListAsync();
+
+        if (baseRows.Count == 0)
         {
-            featureCollection.Add(feature);
+            return new FeatureCollection();
+        }
+
+        var projectIds = baseRows.Select(r => r.ProjectID).ToList();
+
+        var programPairs = await projectsThatShouldShowOnMap
+            .AsNoTracking()
+            .Where(p => projectIds.Contains(p.ProjectID))
+            .SelectMany(p => p.ProjectPrograms.Select(pp => new { p.ProjectID, pp.ProgramID }))
+            .ToListAsync();
+
+        var programCsvByProjectId = programPairs
+            .GroupBy(x => x.ProjectID)
+            .ToDictionary(
+                g => g.Key,
+                g => string.Join(",", g.Select(x => x.ProgramID).Distinct().OrderBy(id => id)));
+
+        var classificationPairs = await projectsThatShouldShowOnMap
+            .AsNoTracking()
+            .Where(p => projectIds.Contains(p.ProjectID))
+            .SelectMany(p => p.ProjectClassifications.Select(pc => new { p.ProjectID, pc.ClassificationID }))
+            .ToListAsync();
+
+        var classificationCsvByProjectId = classificationPairs
+            .GroupBy(x => x.ProjectID)
+            .ToDictionary(
+                g => g.Key,
+                g => string.Join(",", g.Select(x => x.ClassificationID).Distinct().OrderBy(id => id)));
+
+        var featureCollection = new FeatureCollection();
+
+        foreach (var r in baseRows)
+        {
+            var attributes = new AttributesTable
+            {
+                { "ProjectID", r.ProjectID },
+                { "ProjectStageID", r.ProjectStageID },
+                { "ProjectTypeID", r.ProjectTypeID },
+                { "OrganizationID", r.OrganizationID ?? 0 },
+                { "ProgramID", programCsvByProjectId.TryGetValue(r.ProjectID, out var prog) ? prog : string.Empty },
+                { "ClassificationID", classificationCsvByProjectId.TryGetValue(r.ProjectID, out var cls) ? cls : string.Empty },
+            };
+
+            featureCollection.Add(new Feature(r.ProjectLocationPoint, attributes));
         }
 
         return featureCollection;

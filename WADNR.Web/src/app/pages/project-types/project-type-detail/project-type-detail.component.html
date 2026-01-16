@@ -42,24 +42,24 @@
                     <project-stage-map-legend />
                 </div>
 
-                <wadnr-map [mapHeight]="mapHeight" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
-                    @if(mapIsReady) { @if (projectPoints$ | async; as projectPoints) {
-                    <project-locations-simple-layer
-                        [map]="map"
-                        [layerControl]="layerControl"
-                        [projectPoints]="projectPoints"
-                        [colorByPropertyName]="'ProjectStageID'"
-                        [legendColorsToUse]="legendColorsToUse"
-                        [filterPropertyName]="''"
-                        [filterPropertyValues]="[]"
-                        [clusterPoints]="false"
-                        [renderAsCircleMarkers]="true"
-                        [showDetailedPopup]="false">
-                    </project-locations-simple-layer>
-                    } @else {
-                    <span>Loading map points…</span>
-                    } }
-                </wadnr-map>
+                <div class="map-area" [loadingSpinner]="{ isLoading: !mapIsReady || !(projectPoints$ | async), loadingHeight: 450 }">
+                    <wadnr-map [mapHeight]="mapHeight" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
+                        @if(mapIsReady) {
+                        <project-locations-simple-layer
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [projectPoints]="projectPoints$ | async"
+                            [colorByPropertyName]="'ProjectStageID'"
+                            [legendColorsToUse]="legendColorsToUse"
+                            [filterPropertyName]="''"
+                            [filterPropertyValues]="[]"
+                            [clusterPoints]="false"
+                            [renderAsCircleMarkers]="true"
+                            [showDetailedPopup]="false">
+                        </project-locations-simple-layer>
+                        }
+                    </wadnr-map>
+                </div>
                 <span>
                     Some Projects operate over larger areas and are not represented on the map, but are listed in the Project grid below. A
                     <a href="/projects/map?filterType=ProjectTypeID&filterValues={{ projectType.ProjectTypeID }}">full-screen, filterable version of this map</a> is also available.
@@ -71,11 +71,7 @@
         <div class="card">
             <div class="card-header"><span class="card-title">Projects</span></div>
             <div class="card-body">
-                @if (projects$ | async; as projects) {
-                <wadnr-grid [rowData]="projects" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" [downloadFileName]="'projects'"></wadnr-grid>
-                } @else {
-                <span>Loading projects…</span>
-                }
+                <wadnr-grid [rowData]="projects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" [downloadFileName]="'projects'"></wadnr-grid>
             </div>
         </div>
     </div>

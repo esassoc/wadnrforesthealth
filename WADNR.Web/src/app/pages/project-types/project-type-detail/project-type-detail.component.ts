@@ -18,6 +18,7 @@ import { ProjectTypeDetail } from "src/app/shared/generated/model/project-type-d
 import { ColDef } from "ag-grid-community";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 import { Palette, PROJECT_STAGE_LEGEND_COLORS } from "src/app/shared/models/legend-colors";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 @Component({
     selector: "project-type-detail",
@@ -26,6 +27,7 @@ import { Palette, PROJECT_STAGE_LEGEND_COLORS } from "src/app/shared/models/lege
         PageHeaderComponent,
         AsyncPipe,
         BreadcrumbComponent,
+        LoadingDirective,
         WADNRGridComponent,
         FieldDefinitionComponent,
         WADNRMapComponent,

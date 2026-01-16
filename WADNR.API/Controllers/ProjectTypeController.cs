@@ -63,10 +63,8 @@ public class ProjectTypeController(
     {
         var projectsThatShouldShowOnMap = DbContext.Projects
             .Where(x => x.ProjectTypeID == projectTypeID)
-            .AsNoTracking()
-            .Include(x => x.ProjectOrganizations)
-            .Include(x => x.ProjectPrograms)
-            .Include(x => x.ProjectClassifications);
+            .Where(Projects.IsActiveProjectExpr)
+            .AsNoTracking();
 
         var featureCollection = await Projects.MapProjectFeatureCollection(projectsThatShouldShowOnMap);
 

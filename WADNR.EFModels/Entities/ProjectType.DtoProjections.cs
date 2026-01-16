@@ -35,6 +35,7 @@ public static class ProjectTypeProjections
             ProjectTypeID = f.ProjectTypeID,
             ProjectTypeName = f.ProjectTypeName,
             Projects = f.Projects
+                .Where(p => p.ProjectApprovalStatusID == Projects.ApprovedStatusId && !p.ProjectType.LimitVisibilityToAdmin)
                 .OrderBy(p => p.ProjectName)
                 .Select(x => new ProjectLookupItem
                 {
