@@ -4,6 +4,7 @@ import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 
 import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
 import { ProjectStagesAsSelectDropdownOptions } from "src/app/shared/generated/enum/project-stage-enum";
+import { PROJECT_STAGE_PALETTE } from "src/app/shared/models/legend-colors";
 
 @Component({
     selector: "project-stage-map-legend",
@@ -15,12 +16,7 @@ import { ProjectStagesAsSelectDropdownOptions } from "src/app/shared/generated/e
 export class ProjectStageMapLegendComponent {
     public readonly title: string = "Project Stage";
 
-    private readonly palette: Record<string, string> = {
-        "2": "#80B2FF",
-        "3": "#1975FF",
-        "4": "#000066",
-        "5": "#D6D6D6",
-    };
+    private readonly palette = PROJECT_STAGE_PALETTE;
 
     private readonly labels = ProjectStagesAsSelectDropdownOptions.filter((x) => x.Label !== "Terminated" && x.Label !== "Deferred");
 

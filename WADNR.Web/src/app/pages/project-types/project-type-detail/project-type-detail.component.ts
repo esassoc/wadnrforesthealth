@@ -1,7 +1,7 @@
 import { AsyncPipe } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, switchMap } from "rxjs";
+import { distinctUntilChanged, filter, map, Observable, shareReplay, switchMap } from "rxjs";
 import * as L from "leaflet";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
@@ -17,7 +17,7 @@ import { ProjectProjectTypeDetailGridRow } from "src/app/shared/generated/model/
 import { ProjectTypeDetail } from "src/app/shared/generated/model/project-type-detail";
 import { ColDef } from "ag-grid-community";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
-import { Palette } from "src/app/shared/models/legend-colors";
+import { Palette, PROJECT_STAGE_LEGEND_COLORS } from "src/app/shared/models/legend-colors";
 
 @Component({
     selector: "project-type-detail",
@@ -36,9 +36,10 @@ import { Palette } from "src/app/shared/models/legend-colors";
     styleUrls: ["./project-type-detail.component.scss"],
 })
 export class ProjectTypeDetailComponent {
-    /** Loads the project type and its projects together so the page can render once. */
-    public projectTypeDetailPageData$: Observable<{ projectType: ProjectTypeDetail; projects: ProjectProjectTypeDetailGridRow[]; projectPoints: IFeature[] }>;
     public projectTypeID$: Observable<number>;
+    public projectType$: Observable<ProjectTypeDetail>;
+    public projects$: Observable<ProjectProjectTypeDetailGridRow[]>;
+    public projectPoints$: Observable<IFeature[]>;
 
     public columnDefs: ColDef<ProjectProjectTypeDetailGridRow>[] = [];
     public pinnedTotalsRow = {
@@ -50,9 +51,7 @@ export class ProjectTypeDetailComponent {
     public map: L.Map;
     public mapIsReady: boolean = false;
     public layerControl: any;
-    public legendColorsToUse: Record<string, Palette> = {
-        ProjectStageID: { "2": "#80B2FF", "3": "#1975FF", "4": "#000066", "5": "#D6D6D6" },
-    };
+    public legendColorsToUse: Record<string, Palette> = PROJECT_STAGE_LEGEND_COLORS;
 
     constructor(private route: ActivatedRoute, private projectTypeService: ProjectTypeService, private utilityFunctions: UtilityFunctionsService) {}
 
@@ -60,17 +59,22 @@ export class ProjectTypeDetailComponent {
         this.projectTypeID$ = this.route.paramMap.pipe(
             map((p) => (p.get("projectTypeID") ? Number(p.get("projectTypeID")) : null)),
             filter((projectTypeID): projectTypeID is number => projectTypeID != null && !Number.isNaN(projectTypeID)),
-            distinctUntilChanged()
+            distinctUntilChanged(),
+            shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.projectTypeDetailPageData$ = this.projectTypeID$.pipe(
-            switchMap((projectTypeID) =>
-                forkJoin({
-                    projectType: this.projectTypeService.getProjectType(projectTypeID),
-                    projects: this.projectTypeService.listProjectsForProjectTypeIDProjectType(projectTypeID),
-                    projectPoints: this.projectTypeService.listProjectMappedPointsFeatureCollectionForProjectTypeIDProjectType(projectTypeID),
-                })
-            ),
+        this.projectType$ = this.projectTypeID$.pipe(
+            switchMap((projectTypeID) => this.projectTypeService.getProjectType(projectTypeID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.projects$ = this.projectTypeID$.pipe(
+            switchMap((projectTypeID) => this.projectTypeService.listProjectsForProjectTypeIDProjectType(projectTypeID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.projectPoints$ = this.projectTypeID$.pipe(
+            switchMap((projectTypeID) => this.projectTypeService.listProjectMappedPointsFeatureCollectionForProjectTypeIDProjectType(projectTypeID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 

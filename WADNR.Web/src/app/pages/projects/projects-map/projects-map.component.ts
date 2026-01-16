@@ -9,7 +9,7 @@ import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { ProjectLocationFilterTypes } from "src/app/shared/generated/enum/project-location-filter-type-enum";
 import { ProjectColorByTypes } from "src/app/shared/generated/enum/project-color-by-type-enum";
 import { SelectDropdownOption, FormInputOption, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
-import { Palette } from "src/app/shared/models/legend-colors";
+import { Palette, PROJECT_STAGE_LEGEND_COLORS } from "src/app/shared/models/legend-colors";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { Router, ActivatedRoute } from "@angular/router";
 import { ProjectStagesAsSelectDropdownOptions } from "src/app/shared/generated/enum/project-stage-enum";
@@ -52,9 +52,7 @@ export class ProjectsMapComponent implements OnInit {
     public projectPoints$: Observable<IFeature[]>;
     public mapHeight = "700px";
     // legend colors keyed by property name. Each inner map is id -> color (string keys)
-    public legendColorsToUse: Record<string, Palette> = {
-        ProjectStageID: { "2": "#80B2FF", "3": "#1975FF", "4": "#000066", "5": "#D6D6D6" },
-    };
+    public legendColorsToUse: Record<string, Palette> = PROJECT_STAGE_LEGEND_COLORS;
     public cluster: boolean = false;
     public FormFieldType = FormFieldType;
 
