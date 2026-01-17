@@ -7,6 +7,8 @@ using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
+using NetTopologySuite.Features;
+using WADNR.Models.DataTransferObjects.FileResource;
 
 namespace WADNR.API.Controllers;
 
@@ -74,5 +76,37 @@ public class InteractionEventController(
             return NotFound();
         }
         return NoContent();
+    }
+
+    [HttpGet("{interactionEventID}/projects")]
+    [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
+    public async Task<ActionResult<IEnumerable<ProjectLookupItem>>> ListProjectsForInteractionEventID([FromRoute] int interactionEventID)
+    {
+        var projects = await InteractionEvents.ListProjectsAsLookupItemAsync(DbContext, interactionEventID);
+        return Ok(projects);
+    }
+
+    [HttpGet("{interactionEventID}/contacts")]
+    [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
+    public async Task<ActionResult<IEnumerable<PersonLookupItem>>> ListContactsForInteractionEventID([FromRoute] int interactionEventID)
+    {
+        var contacts = await InteractionEvents.ListContactsAsLookupItemAsync(DbContext, interactionEventID);
+        return Ok(contacts);
+    }
+
+    [HttpGet("{interactionEventID}/simple-location/feature-collection")]
+    [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
+    public async Task<ActionResult<FeatureCollection>> GetSimpleLocationForInteractionEventID([FromRoute] int interactionEventID)
+    {
+        var fc = await InteractionEvents.GetSimpleLocationAsFeatureCollectionAsync(DbContext, interactionEventID);
+        return Ok(fc);
+    }
+
+    [HttpGet("{interactionEventID}/file-resources")]
+    [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
+    public async Task<ActionResult<IEnumerable<FileResourceInteractionEventDetail>>> ListFileResourcesForInteractionEventID([FromRoute] int interactionEventID)
+    {
+        var resources = await FileResources.ListForInteractionEventIDAsync(DbContext, interactionEventID);
+        return Ok(resources);
     }
 }

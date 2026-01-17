@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Features;
 using WADNR.Models.DataTransferObjects;
 
 namespace WADNR.EFModels.Entities;
@@ -60,5 +61,62 @@ public static class InteractionEvents
             .Where(x => x.InteractionEventID == interactionEventID)
             .ExecuteDeleteAsync();
         return deletedCount > 0;
+    }
+
+    public static async Task<List<ProjectLookupItem>> ListProjectsAsLookupItemAsync(WADNRDbContext dbContext, int interactionEventID)
+    {
+        var projects = await dbContext.Projects
+            .AsNoTracking()
+            .Where(Projects.IsActiveProjectExpr)
+            .Where(p => p.InteractionEventProjects.Any(iep => iep.InteractionEventID == interactionEventID))
+            .OrderBy(p => p.ProjectName)
+            .Select(ProjectProjections.AsLookupItem)
+            .ToListAsync();
+
+        return projects;
+    }
+
+    public static async Task<List<PersonLookupItem>> ListContactsAsLookupItemAsync(WADNRDbContext dbContext, int interactionEventID)
+    {
+        var contacts = await dbContext.People
+            .AsNoTracking()
+            .Where(p => p.InteractionEventContacts.Any(iec => iec.InteractionEventID == interactionEventID))
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
+            .Select(PersonProjections.AsLookupItem)
+            .ToListAsync();
+
+        return contacts;
+    }
+
+    public static async Task<NetTopologySuite.Geometries.Geometry?> GetSimpleLocationAsync(WADNRDbContext dbContext, int interactionEventID)
+    {
+        return await dbContext.InteractionEvents
+            .AsNoTracking()
+            .Where(x => x.InteractionEventID == interactionEventID)
+            .Select(x => x.InteractionEventLocationSimple)
+            .SingleOrDefaultAsync();
+    }
+
+    public static async Task<FeatureCollection> GetSimpleLocationAsFeatureCollectionAsync(WADNRDbContext dbContext, int interactionEventID)
+    {
+        var location = await dbContext.InteractionEvents
+            .AsNoTracking()
+            .Where(x => x.InteractionEventID == interactionEventID)
+            .Select(x => x.InteractionEventLocationSimple)
+            .SingleOrDefaultAsync();
+
+        var featureCollection = new FeatureCollection();
+        if (location == null)
+        {
+            return featureCollection;
+        }
+
+        featureCollection.Add(new Feature(location, new AttributesTable
+        {
+            { "InteractionEventID", interactionEventID }
+        }));
+
+        return featureCollection;
     }
 }

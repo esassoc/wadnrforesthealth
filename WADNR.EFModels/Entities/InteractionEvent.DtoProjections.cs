@@ -9,11 +9,22 @@ public static class InteractionEventProjections
         x => new InteractionEventDetail
         {
             InteractionEventID = x.InteractionEventID,
-            InteractionEventTypeID = x.InteractionEventTypeID,
-            StaffPersonID = x.StaffPersonID,
             InteractionEventTitle = x.InteractionEventTitle,
             InteractionEventDescription = x.InteractionEventDescription,
             InteractionEventDate = x.InteractionEventDate,
+            InteractionEventType = new InteractionEventTypeLookupItem
+            {
+                InteractionEventTypeID = x.InteractionEventType.InteractionEventTypeID,
+                InteractionEventTypeDisplayName = x.InteractionEventType.InteractionEventTypeDisplayName
+            },
+            StaffPerson = x.StaffPerson == null
+                ? null
+                : new PersonLookupItem
+                {
+                    PersonID = x.StaffPerson.PersonID,
+                    FullName = x.StaffPerson.FirstName + " " + x.StaffPerson.LastName
+                },
+            HasSimpleLocation = x.InteractionEventLocationSimple != null,
             // geometry serialized elsewhere as needed
         };
 

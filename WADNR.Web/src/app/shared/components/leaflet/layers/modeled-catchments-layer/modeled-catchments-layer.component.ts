@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { GenericWmsWfsLayerComponent } from "../generic-wms-wfs-layer/generic-wms-wfs-layer.component";
 import { OverlayMode } from "../generic-wms-wfs-layer/overlay-mode.enum";
 import * as L from "leaflet";
+import { MAP_SELECTED_COLOR } from "src/app/shared/models/map-colors";
 
 @Component({
     selector: "modeled-catchments-layer",
@@ -22,7 +23,7 @@ export class ModeledCatchmentsLayerComponent {
     readonly OVERLAY_LABEL = "Urban Catchments";
     readonly WMS_STYLE = "modeled_catchments";
     readonly DEFAULT_SELECTED_STYLE: L.PathOptions = {
-        color: "#fcfc12",
+        color: MAP_SELECTED_COLOR,
         weight: 2,
         opacity: 0.65,
         fillOpacity: 0.1,

@@ -6,7 +6,17 @@ namespace WADNR.EFModels.Entities;
 
 public static class FileResourceProjections
 {
-    public static readonly Expression<Func<PriorityLandscapeFileResource, FileResourceDetail>> AsDetail = x => new FileResourceDetail
+    public static readonly Expression<Func<PriorityLandscapeFileResource, FileResourcePriorityLandscapeDetail>> AsPriorityLandscapeDetail = x => new FileResourcePriorityLandscapeDetail
+    {
+        FileResourceID = x.FileResource.FileResourceID,
+        FileResourceGUID = x.FileResource.FileResourceGUID,
+        DisplayName = x.DisplayName,
+        Description = x.Description,
+        FileResourceMIMETypeDisplayName = x.FileResource.FileResourceMimeType.FileResourceMimeTypeDisplayName,
+        CreateDate = x.FileResource.CreateDate
+    };
+
+    public static readonly Expression<Func<InteractionEventFileResource, FileResourceInteractionEventDetail>> AsInteractionEventDetail = x => new FileResourceInteractionEventDetail
     {
         FileResourceID = x.FileResource.FileResourceID,
         FileResourceGUID = x.FileResource.FileResourceGUID,

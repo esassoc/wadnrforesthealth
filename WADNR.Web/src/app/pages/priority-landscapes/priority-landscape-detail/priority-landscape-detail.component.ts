@@ -1,11 +1,10 @@
 import { FileResourceService } from "src/app/shared/generated/api/file-resource.service";
-import { HttpContext } from "@angular/common/http";
 import { AsyncPipe, DatePipe } from "@angular/common";
 import { Component } from "@angular/core";
 import { DomSanitizer, SafeHtml, SafeResourceUrl } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
 import { Map } from "leaflet";
-import { distinctUntilChanged, filter, forkJoin, map, Observable, of, shareReplay, switchMap } from "rxjs";
+import { distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, switchMap } from "rxjs";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -17,9 +16,9 @@ import { PriorityLandscapeDetail } from "src/app/shared/generated/model/priority
 import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row";
 import { ProjectGridComponent } from "src/app/shared/components/project-grid/project-grid.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
-import { FileResourceDetail } from "src/app/shared/generated/model/file-resource-detail";
 import { getFileResourceUrlFromBase } from "src/app/shared/utils/file-resource-utils";
 import { environment } from "src/environments/environment";
+import { FileResourcePriorityLandscapeDetail } from "src/app/shared/generated/model/file-resource-priority-landscape-detail";
 
 @Component({
     selector: "priority-landscape-detail",
@@ -33,7 +32,7 @@ export class PriorityLandscapeDetailComponent {
     public priorityLandscapeDetailPageData$: Observable<{
         priorityLandscape: PriorityLandscapeDetail;
         projects: ProjectGridRow[];
-        fileResources: import("src/app/shared/generated/model/file-resource-detail").FileResourceDetail[];
+        fileResources: FileResourcePriorityLandscapeDetail[];
     }>;
     public priorityLandscapeID$: Observable<number>;
 
@@ -44,12 +43,7 @@ export class PriorityLandscapeDetailComponent {
     public highlightedPriorityLandscapeLayerMode = OverlayMode.Single;
     public allPriorityLandscapesLayerMode = OverlayMode.ReferenceOnly;
 
-    constructor(
-        private route: ActivatedRoute,
-        private priorityLandscapeService: PriorityLandscapeService,
-        private sanitizer: DomSanitizer,
-        private fileResourceService: FileResourceService
-    ) {}
+    constructor(private route: ActivatedRoute, private priorityLandscapeService: PriorityLandscapeService, private sanitizer: DomSanitizer) {}
 
     public sanitizeHtml(html: string | null | undefined): SafeHtml {
         return html ? this.sanitizer.bypassSecurityTrustHtml(html) : "";

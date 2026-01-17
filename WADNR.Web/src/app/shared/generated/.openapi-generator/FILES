@@ -76,9 +76,10 @@ model/field-definition-datum.ts
 model/field-definition-detail.ts
 model/field-definition-enum.ts
 model/field-definition.ts
-model/file-resource-detail.ts
+model/file-resource-interaction-event-detail.ts
 model/file-resource-mime-type-enum.ts
 model/file-resource-mime-type.ts
+model/file-resource-priority-landscape-detail.ts
 model/file-resource.ts
 model/firma-home-page-image.ts
 model/firma-page-detail.ts

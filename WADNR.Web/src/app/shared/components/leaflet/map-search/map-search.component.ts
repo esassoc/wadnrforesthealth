@@ -7,6 +7,7 @@ import { BehaviorSubject, Subscription } from "rxjs";
 import { finalize, take, timeout } from "rxjs/operators";
 import { WamasService } from "src/app/shared/services/wamas.service";
 import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
+import { MAP_SELECTED_COLOR } from "src/app/shared/models/map-colors";
 
 @Component({
     selector: "map-search",
@@ -116,7 +117,7 @@ export class MapSearchComponent implements OnDestroy {
             this.geocodeMarker = null;
         }
 
-        this.geocodeMarker = L.marker(latlng, { icon: MarkerHelper.svgMarkerIcon("#fcfc12") }).addTo(this.map);
+        this.geocodeMarker = L.marker(latlng, { icon: MarkerHelper.svgMarkerIcon(MAP_SELECTED_COLOR) }).addTo(this.map);
         this.map.flyTo(latlng, Number(this.zoom) || 12);
     }
 

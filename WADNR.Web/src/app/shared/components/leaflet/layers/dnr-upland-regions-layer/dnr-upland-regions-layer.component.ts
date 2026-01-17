@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
 import * as L from "leaflet";
 import { GenericWmsWfsLayerComponent } from "../generic-wms-wfs-layer/generic-wms-wfs-layer.component";
 import { OverlayMode } from "../generic-wms-wfs-layer/overlay-mode.enum";
+import { MAP_SELECTED_COLOR } from "src/app/shared/models/map-colors";
 
 @Component({
     selector: "dnr-upland-regions-layer",
@@ -22,7 +23,7 @@ export class DNRUplandRegionsLayerComponent {
     readonly OVERLAY_LABEL = "DNR Upland Regions";
     readonly WMS_STYLE = "region";
     readonly DEFAULT_SELECTED_STYLE: L.PathOptions = {
-        color: "#fcfc12",
+        color: MAP_SELECTED_COLOR,
         weight: 2,
         opacity: 0.65,
         fillOpacity: 0.1,

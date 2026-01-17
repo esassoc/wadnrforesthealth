@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
+import { AfterViewInit, Component, EventEmitter, Input, NgZone, OnDestroy, OnInit, Output } from "@angular/core";
 
 import { Control, LeafletEvent, Map, MapOptions, DomUtil, ControlPosition } from "leaflet";
 import "src/scripts/leaflet.groupedlayercontrol.js";
@@ -49,6 +49,8 @@ export class WADNRMapComponent implements OnInit, AfterViewInit, OnDestroy {
     public legendControl: Control;
     public legendItems: LegendItem[] = [];
 
+    private onMapLoadEmitted = false;
+
     // public allSearchResults: Feature[] = [];
     // public searchString = new FormControl({ value: null, disabled: false });
     // public searchResults$: Observable<FeatureCollection>;
@@ -57,7 +59,21 @@ export class WADNRMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public cursorStyle: string = "grab";
 
-    constructor(public nominatimService: NominatimService, public leafletHelperService: LeafletHelperService, private sanitizer: DomSanitizer) {}
+    constructor(public nominatimService: NominatimService, public leafletHelperService: LeafletHelperService, private sanitizer: DomSanitizer, private zone: NgZone) {}
+
+    private emitOnMapLoadOnce(): void {
+        if (this.onMapLoadEmitted) {
+            return;
+        }
+        if (!this.map) {
+            return;
+        }
+
+        this.onMapLoadEmitted = true;
+        this.zone.run(() => {
+            this.onMapLoad.emit(new WADNRMapInitEvent(this.map, this.layerControl));
+        });
+    }
 
     ngAfterViewInit(): void {
         const mapOptions: MapOptions = {
@@ -97,18 +113,23 @@ export class WADNRMapComponent implements OnInit, AfterViewInit, OnDestroy {
             }).addTo(this.map);
         }
 
-        this.map.on("load", (event: LeafletEvent) => {
-            this.onMapLoad.emit(new WADNRMapInitEvent(this.map, this.layerControl));
+        // Leaflet events often fire outside Angular; emit inside NgZone so parent bindings update.
+        this.map.on("load", (_event: LeafletEvent) => {
+            this.emitOnMapLoadOnce();
         });
 
         if (!this.disableMapInteraction) {
             this.map.on("overlayadd", (event: L.LayersControlEvent) => {
-                this.legendItems = this.createLegendItems();
-                this.onOverlayToggle.emit(event);
+                this.zone.run(() => {
+                    this.legendItems = this.createLegendItems();
+                    this.onOverlayToggle.emit(event);
+                });
             });
             this.map.on("overlayremove", (event: L.LayersControlEvent) => {
-                this.legendItems = this.createLegendItems();
-                this.onOverlayToggle.emit(event);
+                this.zone.run(() => {
+                    this.legendItems = this.createLegendItems();
+                    this.onOverlayToggle.emit(event);
+                });
             });
         }
 
@@ -123,6 +144,10 @@ export class WADNRMapComponent implements OnInit, AfterViewInit, OnDestroy {
             ],
             null
         );
+
+        // If the map is initialized while hidden (0x0), Leaflet's 'load' may not fire.
+        // Emit once after initialization so consuming components can add layers immediately.
+        this.emitOnMapLoadOnce();
 
         if (this.showLegend && !this.disableMapInteraction) {
             const legendControl = Control.extend({

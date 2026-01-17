@@ -15,7 +15,7 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
-import { FileResourceDetail } from '../model/file-resource-detail';
+import { FileResourcePriorityLandscapeDetail } from '../model/file-resource-priority-landscape-detail';
 // @ts-ignore
 import { PriorityLandscapeDetail } from '../model/priority-landscape-detail';
 // @ts-ignore
@@ -217,9 +217,9 @@ export class PriorityLandscapeService extends BaseService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listFileResourcesForPriorityLandscapeIDPriorityLandscape(priorityLandscapeID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FileResourceDetail>>;
-    public listFileResourcesForPriorityLandscapeIDPriorityLandscape(priorityLandscapeID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FileResourceDetail>>>;
-    public listFileResourcesForPriorityLandscapeIDPriorityLandscape(priorityLandscapeID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FileResourceDetail>>>;
+    public listFileResourcesForPriorityLandscapeIDPriorityLandscape(priorityLandscapeID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FileResourcePriorityLandscapeDetail>>;
+    public listFileResourcesForPriorityLandscapeIDPriorityLandscape(priorityLandscapeID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FileResourcePriorityLandscapeDetail>>>;
+    public listFileResourcesForPriorityLandscapeIDPriorityLandscape(priorityLandscapeID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FileResourcePriorityLandscapeDetail>>>;
     public listFileResourcesForPriorityLandscapeIDPriorityLandscape(priorityLandscapeID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (priorityLandscapeID === null || priorityLandscapeID === undefined) {
             throw new Error('Required parameter priorityLandscapeID was null or undefined when calling listFileResourcesForPriorityLandscapeIDPriorityLandscape.');
@@ -254,7 +254,7 @@ export class PriorityLandscapeService extends BaseService {
 
         let localVarPath = `/priority-landscapes/${this.configuration.encodeParam({name: "priorityLandscapeID", value: priorityLandscapeID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/file-resources`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Array<FileResourceDetail>>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<Array<FileResourcePriorityLandscapeDetail>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

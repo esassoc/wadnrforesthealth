@@ -24,6 +24,7 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
 
     private geoJsonLayer: L.GeoJSON | null = null;
     private overlayInitialized = false;
+    private lastLegendGeometry: GenericFeatureCollectionLayerComponent["legendGeometry"] | null = null;
 
     ngAfterViewInit(): void {
         this.updateLegendGeometry();
@@ -35,6 +36,41 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
         this.updateLegendGeometry();
         this.tryInitializeOverlay();
         this.refreshData();
+    }
+
+    /**
+     * Leaflet layer controls snapshot the overlay label/legend HTML at addOverlay() time.
+     * If legendGeometry changes after data arrives, we need to re-register the overlay so
+     * the control picks up the updated HTML.
+     */
+    private refreshOverlayLabelAndLegendHtml(): void {
+        if (!this.layer || !this.layerControl || !this.layerTemplate) {
+            return;
+        }
+
+        const viewRef = this.layerTemplate.createEmbeddedView(null);
+        viewRef.detectChanges();
+        const rootNode: any = viewRef.rootNodes[0];
+        const layerHtml = rootNode?.outerHTML ?? rootNode?.textContent ?? rootNode?.innerText;
+        viewRef.destroy();
+
+        if (this.legendTemplate) {
+            const legendViewRef = this.legendTemplate.createEmbeddedView(null);
+            legendViewRef.detectChanges();
+            const legendRootNode: any = legendViewRef.rootNodes[0];
+            const legendHtml = legendRootNode?.outerHTML ?? legendRootNode?.textContent ?? legendRootNode?.innerText;
+            this.layer["legendHtml"] = legendHtml;
+            legendViewRef.destroy();
+        }
+
+        try {
+            // Remove/re-add so the control updates the displayed label HTML.
+            this.layerControl.removeLayer(this.layer);
+        } catch {}
+
+        try {
+            this.layerControl.addOverlay(this.layer, layerHtml);
+        } catch {}
     }
 
     public get legendFillOpacity(): number {
@@ -279,10 +315,20 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
     private updateLegendGeometry(): void {
         const normalized = this.normalizeFeatureCollection(this.featureCollection as any);
         const features = normalized?.features ?? [];
-        const hasPolygon = features.some((f: any) => f?.geometry?.type === "Polygon" || f?.geometry?.type === "MultiPolygon");
-        const hasLine = features.some((f: any) => f?.geometry?.type === "LineString" || f?.geometry?.type === "MultiLineString");
-        const hasPoint = features.some((f: any) => f?.geometry?.type === "Point" || f?.geometry?.type === "MultiPoint");
+        const hasPolygon = features.some((f: any) => {
+            const t = String(f?.geometry?.type ?? "").toLowerCase();
+            return t === "polygon" || t === "multipolygon";
+        });
+        const hasLine = features.some((f: any) => {
+            const t = String(f?.geometry?.type ?? "").toLowerCase();
+            return t === "linestring" || t === "multilinestring";
+        });
+        const hasPoint = features.some((f: any) => {
+            const t = String(f?.geometry?.type ?? "").toLowerCase();
+            return t === "point" || t === "multipoint";
+        });
 
+        const previous = this.legendGeometry;
         // Prefer polygon styling if any polygons are present.
         if (hasPolygon) {
             this.legendGeometry = "polygon";
@@ -293,6 +339,11 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
         } else {
             this.legendGeometry = "polygon";
         }
+
+        if (this.overlayInitialized && (this.lastLegendGeometry == null || previous !== this.legendGeometry || this.lastLegendGeometry !== this.legendGeometry)) {
+            this.refreshOverlayLabelAndLegendHtml();
+        }
+        this.lastLegendGeometry = this.legendGeometry;
     }
 
     private buildPathStyle(feature?: Feature): L.PathOptions {

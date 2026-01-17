@@ -10,7 +10,7 @@
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
-export class FileResourceDetail { 
+export class FileResourcePriorityLandscapeDetail { 
     FileResourceID?: number;
     FileResourceGUID?: string;
     DisplayName?: string | null;
@@ -22,7 +22,7 @@ export class FileResourceDetail {
     }
 }
 
-export interface FileResourceDetailForm { 
+export interface FileResourcePriorityLandscapeDetailForm { 
     FileResourceID?: FormControl<number>;
     FileResourceGUID?: FormControl<string>;
     DisplayName?: FormControl<string>;
@@ -31,7 +31,7 @@ export interface FileResourceDetailForm {
     CreateDate?: FormControl<string>;
 }
 
-export class FileResourceDetailFormControls { 
+export class FileResourcePriorityLandscapeDetailFormControls { 
     public static FileResourceID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 

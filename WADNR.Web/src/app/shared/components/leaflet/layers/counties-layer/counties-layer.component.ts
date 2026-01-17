@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
 import * as L from "leaflet";
 import { GenericWmsWfsLayerComponent } from "../generic-wms-wfs-layer/generic-wms-wfs-layer.component";
 import { OverlayMode } from "../generic-wms-wfs-layer/overlay-mode.enum";
+import { MAP_SELECTED_COLOR } from "src/app/shared/models/map-colors";
 
 @Component({
     selector: "counties-layer",
@@ -22,7 +23,7 @@ export class CountiesLayerComponent {
     readonly OVERLAY_LABEL = "All Washington Counties";
     readonly WMS_STYLE = "washington_county";
     readonly DEFAULT_SELECTED_STYLE: L.PathOptions = {
-        color: "#fcfc12",
+        color: MAP_SELECTED_COLOR,
         weight: 2,
         opacity: 0.65,
         fillOpacity: 0.1,

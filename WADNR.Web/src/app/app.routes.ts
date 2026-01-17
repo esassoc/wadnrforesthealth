@@ -9,6 +9,7 @@ export const routeParams = {
     projectTypeID: "projectTypeID",
     classificationID: "classificationID",
     tagID: "tagID",
+    interactionEventID: "interactionEventID",
 };
 
 export const routes: Routes = [
@@ -46,6 +47,11 @@ export const routes: Routes = [
         path: "interactions-events",
         title: "Interactions/Events",
         loadComponent: () => import("./pages/interactions-events/interactions-events.component").then((m) => m.InteractionsEventsComponent),
+    },
+    {
+        path: `interactions-events/:${routeParams.interactionEventID}`,
+        title: "Interaction/Event Detail",
+        loadComponent: () => import("./pages/interactions-events/interaction-event-detail/interaction-event-detail.component").then((m) => m.InteractionEventDetailComponent),
     },
     {
         path: "labels-and-definitions",

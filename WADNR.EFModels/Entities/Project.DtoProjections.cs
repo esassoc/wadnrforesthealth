@@ -314,4 +314,10 @@ public static class ProjectProjections
         TotalAmount = null,
         ProjectDescription = x.ProjectDescription
     };
+
+    public static readonly Expression<Func<Project, ProjectLookupItem>> AsLookupItem = x => new ProjectLookupItem
+    {
+        ProjectID = x.ProjectID,
+        ProjectName = x.ProjectName
+    };
 }

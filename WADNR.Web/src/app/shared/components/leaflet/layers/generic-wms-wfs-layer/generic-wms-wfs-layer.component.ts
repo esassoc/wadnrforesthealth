@@ -4,6 +4,7 @@ import * as L from "leaflet";
 import { MapLayerBase } from "../map-layer-base.component";
 import { WfsService } from "src/app/shared/services/wfs.service";
 import { GroupByPipe } from "src/app/shared/pipes/group-by.pipe";
+import { MAP_SELECTED_COLOR } from "src/app/shared/models/map-colors";
 
 @Component({
     selector: "generic-wms-wfs-layer",
@@ -34,7 +35,7 @@ export class GenericWmsWfsLayerComponent extends MapLayerBase implements OnChang
      */
     @Input() fitBoundsOnWmsAddToControl: boolean = true;
     @Input() selectedStyle: L.PathOptions = {
-        color: "#fcfc12",
+        color: MAP_SELECTED_COLOR,
         weight: 2,
         opacity: 0.65,
         fillOpacity: 0.1,

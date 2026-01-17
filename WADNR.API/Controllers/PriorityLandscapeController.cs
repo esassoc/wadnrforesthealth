@@ -94,7 +94,7 @@ public class PriorityLandscapeController(
     }
 
     [HttpGet("{priorityLandscapeID}/file-resources")]
-    public async Task<ActionResult<IEnumerable<FileResourceDetail>>> ListFileResourcesForPriorityLandscapeID([FromRoute] int priorityLandscapeID)
+    public async Task<ActionResult<IEnumerable<FileResourcePriorityLandscapeDetail>>> ListFileResourcesForPriorityLandscapeID([FromRoute] int priorityLandscapeID)
     {
         var resources = await FileResources.ListForPriorityLandscapeIDAsync(DbContext, priorityLandscapeID);
         return Ok(resources);

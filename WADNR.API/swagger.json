@@ -1809,6 +1809,206 @@
         }
       }
     },
+    "/interaction-events/{interactionEventID}/projects": {
+      "get": {
+        "tags": [
+          "InteractionEvent"
+        ],
+        "operationId": "ListProjectsForInteractionEventID_InteractionEvent",
+        "parameters": [
+          {
+            "name": "interactionEventID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/interaction-events/{interactionEventID}/contacts": {
+      "get": {
+        "tags": [
+          "InteractionEvent"
+        ],
+        "operationId": "ListContactsForInteractionEventID_InteractionEvent",
+        "parameters": [
+          {
+            "name": "interactionEventID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/interaction-events/{interactionEventID}/simple-location/feature-collection": {
+      "get": {
+        "tags": [
+          "InteractionEvent"
+        ],
+        "operationId": "GetSimpleLocationForInteractionEventID_InteractionEvent",
+        "parameters": [
+          {
+            "name": "interactionEventID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/interaction-events/{interactionEventID}/file-resources": {
+      "get": {
+        "tags": [
+          "InteractionEvent"
+        ],
+        "operationId": "ListFileResourcesForInteractionEventID_InteractionEvent",
+        "parameters": [
+          {
+            "name": "interactionEventID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FileResourceInteractionEventDetail"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FileResourceInteractionEventDetail"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FileResourceInteractionEventDetail"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/organizations": {
       "get": {
         "tags": [
@@ -2298,7 +2498,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FileResourceDetail"
+                    "$ref": "#/components/schemas/FileResourcePriorityLandscapeDetail"
                   }
                 }
               },
@@ -2306,7 +2506,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FileResourceDetail"
+                    "$ref": "#/components/schemas/FileResourcePriorityLandscapeDetail"
                   }
                 }
               },
@@ -2314,7 +2514,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FileResourceDetail"
+                    "$ref": "#/components/schemas/FileResourcePriorityLandscapeDetail"
                   }
                 }
               }
@@ -6132,7 +6332,7 @@
         },
         "additionalProperties": false
       },
-      "FileResourceDetail": {
+      "FileResourceInteractionEventDetail": {
         "type": "object",
         "properties": {
           "FileResourceID": {
@@ -6233,6 +6433,36 @@
           "TXT"
         ],
         "type": "string"
+      },
+      "FileResourcePriorityLandscapeDetail": {
+        "type": "object",
+        "properties": {
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceGUID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "FileResourceMIMETypeDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
       },
       "FirmaHomePageImage": {
         "type": "object",
@@ -8889,15 +9119,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "InteractionEventTypeID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "StaffPersonID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
           "InteractionEventTitle": {
             "type": "string",
             "nullable": true
@@ -8909,6 +9130,15 @@
           "InteractionEventDate": {
             "type": "string",
             "format": "date-time"
+          },
+          "HasSimpleLocation": {
+            "type": "boolean"
+          },
+          "InteractionEventType": {
+            "$ref": "#/components/schemas/InteractionEventTypeLookupItem"
+          },
+          "StaffPerson": {
+            "$ref": "#/components/schemas/PersonLookupItem"
           }
         },
         "additionalProperties": false

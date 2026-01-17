@@ -7,16 +7,19 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { InteractionEventTypeLookupItem } from './interaction-event-type-lookup-item';
+import { PersonLookupItem } from './person-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class InteractionEventDetail { 
     InteractionEventID?: number;
-    InteractionEventTypeID?: number;
-    StaffPersonID?: number | null;
     InteractionEventTitle?: string | null;
     InteractionEventDescription?: string | null;
     InteractionEventDate?: string;
+    HasSimpleLocation?: boolean;
+    InteractionEventType?: InteractionEventTypeLookupItem;
+    StaffPerson?: PersonLookupItem;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -24,35 +27,16 @@ export class InteractionEventDetail {
 
 export interface InteractionEventDetailForm { 
     InteractionEventID?: FormControl<number>;
-    InteractionEventTypeID?: FormControl<number>;
-    StaffPersonID?: FormControl<number>;
     InteractionEventTitle?: FormControl<string>;
     InteractionEventDescription?: FormControl<string>;
     InteractionEventDate?: FormControl<string>;
+    HasSimpleLocation?: FormControl<boolean>;
+    InteractionEventType?: FormControl<InteractionEventTypeLookupItem>;
+    StaffPerson?: FormControl<PersonLookupItem>;
 }
 
 export class InteractionEventDetailFormControls { 
     public static InteractionEventID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static InteractionEventTypeID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static StaffPersonID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -83,6 +67,36 @@ export class InteractionEventDetailFormControls {
         }
     );
     public static InteractionEventDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static HasSimpleLocation = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static InteractionEventType = (value: FormControlState<InteractionEventTypeLookupItem> | InteractionEventTypeLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<InteractionEventTypeLookupItem>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static StaffPerson = (value: FormControlState<PersonLookupItem> | PersonLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<PersonLookupItem>(
         value,
         formControlOptions ?? 
         {
