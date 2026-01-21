@@ -1,21 +1,19 @@
 @if (organization$ | async; as organization) {
 <breadcrumb [items]="[{ label: 'Contributing Organizations', url: '/organizations' }, { label: organization.OrganizationName }]" [linkLast]="false"></breadcrumb>
-<page-header pageTitle="{{ organization.OrganizationName }}">
-    <div class="header-actions">
-        <button class="btn btn-primary" (click)="openEditModal(organization)">
-            <icon icon="Configure"></icon> Edit
-        </button>
-        <button class="btn btn-danger" (click)="confirmDelete(organization)">
-            <icon icon="Delete"></icon> Delete
-        </button>
-    </div>
-</page-header>
+<page-header pageTitle="{{ organization.OrganizationName }}"></page-header>
 
 <div class="grid-12">
     <!-- Basics Card -->
     <div class="g-col-6">
         <div class="card">
-            <div class="card-header"><span class="card-title">Basics</span></div>
+            <div class="card-header">
+                <span class="card-title">
+                    <a href="javascript:void(0)" (click)="openEditModal(organization)" title="Edit Organization" style="color: inherit;">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    Basics
+                </span>
+            </div>
             <div class="card-body">
                 <div class="grid-12">
                     @if (organization.LogoFileResourceUrl) {
