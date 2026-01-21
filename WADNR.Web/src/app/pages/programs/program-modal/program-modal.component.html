@@ -1,0 +1,75 @@
+<div class="modal-header">
+    <h3>{{ modalTitle }}</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.ProgramName"
+            fieldLabel="Program Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter program name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ProgramShortName"
+            fieldLabel="Program Short Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter short name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.OrganizationID"
+            fieldLabel="Parent Organization"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="organizationOptions"
+            formInputOptionLabel="Label"
+            formInputOptionValue="Value"
+            placeholder="Select organization">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ProgramPrimaryContactPersonID"
+            fieldLabel="Primary Contact"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="personOptions"
+            formInputOptionLabel="Label"
+            formInputOptionValue="Value"
+            placeholder="Select primary contact">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ProgramIsActive"
+            fieldLabel="Is Active"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.IsDefaultProgramForImportOnly"
+            fieldLabel="Is Default for Bulk Import Only"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ProgramNotes"
+            fieldLabel="Program Notes"
+            [type]="FormFieldType.Textarea"
+            placeholder="Enter program notes">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Save' }}
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>

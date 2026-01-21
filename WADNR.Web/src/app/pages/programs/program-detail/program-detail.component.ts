@@ -1,8 +1,9 @@
 import { AsyncPipe } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, shareReplay, switchMap } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, switchMap } from "rxjs";
 import { ColDef } from "ag-grid-community";
+import { DialogService } from "@ngneat/dialog";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -11,8 +12,11 @@ import { UtilityFunctionsService } from "src/app/services/utility-functions.serv
 import { environment } from "src/environments/environment";
 
 import { ProgramService } from "src/app/shared/generated/api/program.service";
+import { OrganizationService } from "src/app/shared/generated/api/organization.service";
+import { PersonService } from "src/app/shared/generated/api/person.service";
 import { ProgramDetail } from "src/app/shared/generated/model/program-detail";
 import { ProjectProgramDetailGridRow } from "src/app/shared/generated/model/project-program-detail-grid-row";
+import { ProgramModalComponent, ProgramModalData } from "../program-modal/program-modal.component";
 
 @Component({
     selector: "program-detail",
@@ -33,7 +37,10 @@ export class ProgramDetailComponent {
     constructor(
         private route: ActivatedRoute,
         private programService: ProgramService,
-        private utilityFunctions: UtilityFunctionsService
+        private organizationService: OrganizationService,
+        private personService: PersonService,
+        private utilityFunctions: UtilityFunctionsService,
+        private dialogService: DialogService
     ) {}
 
     ngOnInit(): void {
@@ -44,8 +51,8 @@ export class ProgramDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.program$ = this.programID$.pipe(
-            switchMap((programID) => this.programService.getProgram(programID)),
+        this.program$ = combineLatest([this.programID$, this.refreshData$]).pipe(
+            switchMap(([programID]) => this.programService.getProgram(programID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -86,5 +93,28 @@ export class ProgramDetailComponent {
                 FieldDefinitionType: "Program",
             }),
         ];
+    }
+
+    openEditModal(program: ProgramDetail): void {
+        forkJoin({
+            organizations: this.organizationService.listOrganization(),
+            people: this.personService.listPerson()
+        }).subscribe(({ organizations, people }) => {
+            const dialogRef = this.dialogService.open(ProgramModalComponent, {
+                data: {
+                    mode: "edit",
+                    program: program,
+                    organizations: organizations,
+                    people: people
+                } as ProgramModalData,
+                size: "md"
+            });
+
+            dialogRef.afterClosed$.subscribe(result => {
+                if (result) {
+                    this.refreshData$.next();
+                }
+            });
+        });
     }
 }
