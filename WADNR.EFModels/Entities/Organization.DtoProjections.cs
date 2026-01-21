@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Linq.Expressions;
 using WADNR.Models.DataTransferObjects;
 
@@ -26,7 +27,28 @@ public static class OrganizationProjections
         OrganizationShortName = x.OrganizationShortName,
         IsActive = x.IsActive,
         OrganizationTypeName = x.OrganizationType.OrganizationTypeName,
-        AssociatedProjectsCount = x.ProjectOrganizations.Count,
+        //MP 1/21/26 Because of the way EF Core translates queries, we have to specifically omit geometries for the union.
+        //So only get what we need.
+        AssociatedProjectsCount = x.ProjectOrganizations
+            .Select(po => new
+            {
+                po.Project.ProjectID,
+                po.Project.ProjectApprovalStatusID,
+                po.Project.ProjectType.LimitVisibilityToAdmin
+            })
+            .Union(
+                x.FundSourceAllocations
+                    .SelectMany(fsa => fsa.ProjectFundSourceAllocationRequests)
+                    .Select(r => new
+                    {
+                        r.Project.ProjectID,
+                        r.Project.ProjectApprovalStatusID,
+                        r.Project.ProjectType.LimitVisibilityToAdmin
+                    }))
+            .Where(p => p.ProjectApprovalStatusID == Projects.ApprovedStatusId && !p.LimitVisibilityToAdmin)
+            .Select(p => p.ProjectID)
+            .Distinct()
+            .Count(),
         AssociatedFundSourcesCount = x.FundSources.Count,
         AssociatedUsersCount = x.People.Count
     };
