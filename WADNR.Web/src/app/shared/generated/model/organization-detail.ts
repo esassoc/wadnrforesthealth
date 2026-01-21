@@ -7,6 +7,8 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { PersonWithStatus } from './person-with-status';
+import { FundSourceAllocationLookupItem } from './fund-source-allocation-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
@@ -14,13 +16,26 @@ export class OrganizationDetail {
     OrganizationID?: number;
     OrganizationGuid?: string | null;
     OrganizationName?: string | null;
-    OrganizationAbbreviation?: string | null;
-    SectorID?: number;
+    OrganizationShortName?: string | null;
+    OrganizationTypeID?: number;
+    OrganizationTypeName?: string | null;
     PrimaryContactPersonID?: number | null;
+    PrimaryContactPersonFullName?: string | null;
+    PrimaryContactPersonOrganization?: string | null;
     IsActive?: boolean;
     OrganizationUrl?: string | null;
-    LogoFileResourceInfoID?: number | null;
-    IsUserAccountOrganization?: boolean;
+    LogoFileResourceID?: number | null;
+    LogoFileResourceUrl?: string | null;
+    VendorID?: number | null;
+    VendorName?: string | null;
+    VendorNumber?: string | null;
+    IsEditable?: boolean;
+    HasOrganizationBoundary?: boolean;
+    FundSourceAllocations?: Array<FundSourceAllocationLookupItem> | null;
+    People?: Array<PersonWithStatus> | null;
+    NumberOfStewardedProjects?: number;
+    NumberOfLeadImplementedProjects?: number;
+    NumberOfProjectsContributedTo?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -30,13 +45,26 @@ export interface OrganizationDetailForm {
     OrganizationID?: FormControl<number>;
     OrganizationGuid?: FormControl<string>;
     OrganizationName?: FormControl<string>;
-    OrganizationAbbreviation?: FormControl<string>;
-    SectorID?: FormControl<number>;
+    OrganizationShortName?: FormControl<string>;
+    OrganizationTypeID?: FormControl<number>;
+    OrganizationTypeName?: FormControl<string>;
     PrimaryContactPersonID?: FormControl<number>;
+    PrimaryContactPersonFullName?: FormControl<string>;
+    PrimaryContactPersonOrganization?: FormControl<string>;
     IsActive?: FormControl<boolean>;
     OrganizationUrl?: FormControl<string>;
-    LogoFileResourceInfoID?: FormControl<number>;
-    IsUserAccountOrganization?: FormControl<boolean>;
+    LogoFileResourceID?: FormControl<number>;
+    LogoFileResourceUrl?: FormControl<string>;
+    VendorID?: FormControl<number>;
+    VendorName?: FormControl<string>;
+    VendorNumber?: FormControl<string>;
+    IsEditable?: FormControl<boolean>;
+    HasOrganizationBoundary?: FormControl<boolean>;
+    FundSourceAllocations?: FormControl<Array<FundSourceAllocationLookupItem>>;
+    People?: FormControl<Array<PersonWithStatus>>;
+    NumberOfStewardedProjects?: FormControl<number>;
+    NumberOfLeadImplementedProjects?: FormControl<number>;
+    NumberOfProjectsContributedTo?: FormControl<number>;
 }
 
 export class OrganizationDetailFormControls { 
@@ -70,7 +98,7 @@ export class OrganizationDetailFormControls {
             ],
         }
     );
-    public static OrganizationAbbreviation = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static OrganizationShortName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -80,7 +108,17 @@ export class OrganizationDetailFormControls {
             ],
         }
     );
-    public static SectorID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static OrganizationTypeID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static OrganizationTypeName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -91,6 +129,26 @@ export class OrganizationDetailFormControls {
         }
     );
     public static PrimaryContactPersonID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PrimaryContactPersonFullName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PrimaryContactPersonOrganization = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -120,7 +178,7 @@ export class OrganizationDetailFormControls {
             ],
         }
     );
-    public static LogoFileResourceInfoID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static LogoFileResourceID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -130,7 +188,107 @@ export class OrganizationDetailFormControls {
             ],
         }
     );
-    public static IsUserAccountOrganization = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+    public static LogoFileResourceUrl = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static VendorID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static VendorName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static VendorNumber = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static IsEditable = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static HasOrganizationBoundary = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceAllocations = (value: FormControlState<Array<FundSourceAllocationLookupItem>> | Array<FundSourceAllocationLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<FundSourceAllocationLookupItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static People = (value: FormControlState<Array<PersonWithStatus>> | Array<PersonWithStatus> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<PersonWithStatus>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static NumberOfStewardedProjects = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static NumberOfLeadImplementedProjects = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static NumberOfProjectsContributedTo = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

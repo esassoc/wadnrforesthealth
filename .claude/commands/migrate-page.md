@@ -19,6 +19,18 @@ Identify and document:
 - Related entities and their relationships
 - Authorization/permission requirements
 
+### Identify Components Requiring Specialized Skills
+
+Based on your analysis, note which of these components the page contains:
+
+| Component Found | Specialized Skill | When to Use |
+|-----------------|-------------------|-------------|
+| Data tables/grids | `/migrate-grid` | Index pages, detail pages with related entity lists |
+| Maps with boundaries/locations | `/migrate-map` | Pages showing spatial data |
+| Create/Edit forms | `/crud-modal` | Pages with New/Edit functionality |
+
+Document which skills you'll need for this migration.
+
 ## 2. Plan API Layer
 
 Before writing code, plan the artifacts needed:
@@ -79,24 +91,41 @@ Verify the generated files in `WADNR.Web/src/app/shared/generated/`.
 
 ## 5. Create Angular Components
 
-### 5.1 Component Files
+### 5.1 Component Structure
 Location: `WADNR.Web/src/app/pages/{entity}/`
 
-Create:
-- `{entity}.component.ts` - Main component with routing
-- `{entity}.component.html` - Template (NO Bootstrap!)
-- `{entity}.component.scss` - Styles if needed
-- `{entity}-list/` subfolder for list view if separate
-- `{entity}-detail/` subfolder for detail view if separate
+Create the folder structure based on identified components:
+- `{entity}-list/` - If page has a main grid (use `/migrate-grid`)
+- `{entity}-detail/` - If page has a detail view
+- `{entity}-modal/` - If page needs create/edit forms (use `/crud-modal`)
 
-### 5.2 Component Requirements
-- Use standalone components with explicit imports
-- Use `@Input()` with `BehaviorSubject` pattern for route params
-- Use `grid-12` layout system, NOT Bootstrap
-- Use `<wadnr-grid>` for tables
-- Use `<icon>` component for icons
+All components must be standalone with explicit imports. Use `@Input()` with `BehaviorSubject` pattern for route params.
 
-### 5.3 Route Configuration
+### 5.2 Grids
+
+If the page contains data grids, follow the `/migrate-grid` skill for:
+- Column definition patterns
+- DTO design for grid rows
+- Projection expressions
+- WADNRGridComponent usage
+
+### 5.3 Maps
+
+If the page contains maps, follow the `/migrate-map` skill for:
+- GeoJSON endpoint patterns
+- WADNRMapComponent integration
+- Layer component usage
+- Bounding box handling
+
+### 5.4 CRUD Modals
+
+If the page needs create/edit/delete functionality, follow the `/crud-modal` skill for:
+- Modal component structure
+- Form creation with generated helpers
+- Validation patterns
+- Delete confirmation patterns
+
+### 5.5 Route Configuration
 Add route to `WADNR.Web/src/app/app.routes.ts`:
 
 ```typescript
@@ -150,10 +179,29 @@ npm start
 
 ## Checklist Before Completion
 
+### Core Migration
 - [ ] All CRUD operations migrated
 - [ ] No Bootstrap classes used (grid-12, card system only)
 - [ ] Route params use `@Input()` + `BehaviorSubject` pattern
 - [ ] All queries use `.AsNoTracking().Select()` projections
+
+### If Page Has Grids (per /migrate-grid)
+- [ ] Column parity verified with legacy
+- [ ] Filtering/sorting works
+- [ ] Links navigate correctly
+
+### If Page Has Maps (per /migrate-map)
+- [ ] All layers display correctly
+- [ ] Bounds/zoom behavior correct
+- [ ] Layer toggle works (if applicable)
+
+### If Page Has CRUD (per /crud-modal)
+- [ ] Create flow works
+- [ ] Edit flow works
+- [ ] Delete confirmation works
+- [ ] Form validation displays correctly
+
+### Final
 - [ ] API tests pass
 - [ ] Angular tests pass
 - [ ] Legacy code deprecated/removed

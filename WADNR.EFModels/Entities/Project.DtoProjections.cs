@@ -320,4 +320,42 @@ public static class ProjectProjections
         ProjectID = x.ProjectID,
         ProjectName = x.ProjectName
     };
+
+    public static Expression<Func<Project, ProjectOrganizationDetailGridRow>> AsProjectOrganizationDetailGridRow(int organizationID) => x => new ProjectOrganizationDetailGridRow
+    {
+        ProjectID = x.ProjectID,
+        ProjectName = x.ProjectName,
+        FhtProjectNumber = x.FhtProjectNumber,
+        PrimaryContactOrganization = x.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => new OrganizationLookupItem
+            {
+                OrganizationID = po.Organization.OrganizationID,
+                OrganizationName = po.Organization.DisplayName
+            })
+            .SingleOrDefault(),
+        ProjectStewardOrganization = x.ProjectOrganizations
+            .Where(po => po.RelationshipType.CanStewardProjects)
+            .Select(po => new OrganizationLookupItem
+            {
+                OrganizationID = po.Organization.OrganizationID,
+                OrganizationName = po.Organization.DisplayName
+            })
+            .SingleOrDefault(),
+        ProjectStage = new ProjectStageLookupItem
+        {
+            ProjectStageID = x.ProjectStageID,
+            ProjectStageName = x.ProjectStage.ProjectStageName
+        },
+        RelationshipTypes = string.Join(", ", x.ProjectOrganizations
+            .Where(po => po.OrganizationID == organizationID)
+            .Select(po => po.RelationshipType.RelationshipTypeName)),
+        ProjectInitiationDate = x.PlannedDate,
+        ExpirationDate = x.ExpirationDate,
+        CompletionDate = x.CompletionDate,
+        EstimatedTotalCost = x.EstimatedTotalCost,
+        TotalAmount = null,
+        ProjectDescription = x.ProjectDescription,
+        PhotoCount = x.ProjectImages.Count
+    };
 }

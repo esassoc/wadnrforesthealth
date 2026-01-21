@@ -11,6 +11,7 @@ export const routeParams = {
     tagID: "tagID",
     interactionEventID: "interactionEventID",
     agreementID: "agreementID",
+    organizationID: "organizationID",
 };
 
 export const routes: Routes = [
@@ -72,6 +73,11 @@ export const routes: Routes = [
         path: "organizations",
         title: "Contributing Organizations",
         loadComponent: () => import("./pages/organizations/organizations.component").then((m) => m.OrganizationsComponent),
+    },
+    {
+        path: `organizations/:${routeParams.organizationID}`,
+        title: "Contributing Organization Detail",
+        loadComponent: () => import("./pages/organizations/organization-detail/organization-detail.component").then((m) => m.OrganizationDetailComponent),
     },
     { path: "prescribed-fire-seasonal-plans", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     {

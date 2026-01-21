@@ -135,4 +135,14 @@ public static class Agreements
 
         return items;
     }
+
+    public static async Task<List<AgreementGridRow>> ListAsGridRowByOrganizationIDAsync(WADNRDbContext dbContext, int organizationID)
+    {
+        var entities = await dbContext.Agreements
+            .AsNoTracking()
+            .Where(x => x.OrganizationID == organizationID)
+            .Select(AgreementProjections.AsGridRow)
+            .ToListAsync();
+        return entities;
+    }
 }

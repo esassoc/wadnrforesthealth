@@ -79,4 +79,15 @@ public static class Programs
             programs.SingleOrDefault(x => x.ProgramID != currentProgramID && string.Equals(x.ProgramName, programName, StringComparison.InvariantCultureIgnoreCase));
         return program == null;
     }
+
+    public static async Task<List<ProgramGridRow>> ListAsGridRowByOrganizationIDAsync(WADNRDbContext dbContext, int organizationID)
+    {
+        var entities = await dbContext.Programs
+            .AsNoTracking()
+            .Where(x => x.OrganizationID == organizationID)
+            .Select(ProgramProjections.AsGridRow)
+            .OrderBy(x => x.ProgramName)
+            .ToListAsync();
+        return entities;
+    }
 }

@@ -396,6 +396,26 @@ this.columns = [
 </div>
 ```
 
+### Card Header Guidelines
+
+**Card titles should use hardcoded text**, not `<field-definition>` components:
+
+```html
+<!-- CORRECT: Hardcoded title -->
+<div class="card-header">
+  <span class="card-title">Projects</span>
+</div>
+
+<!-- WRONG: Don't use field-definition for card titles -->
+<div class="card-header">
+  <span class="card-title">
+    <field-definition fieldDefinition="Project"></field-definition>s
+  </span>
+</div>
+```
+
+The `<field-definition>` component adds a help icon with popover, which is appropriate for form field labels but not for card/section titles. Legacy code uses `GetFieldDefinitionLabelPluralized()` which only outputs plain text.
+
 ---
 
 ## Testing Patterns

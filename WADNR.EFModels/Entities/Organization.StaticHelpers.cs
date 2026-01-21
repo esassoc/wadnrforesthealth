@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Features;
 using WADNR.Models.DataTransferObjects;
 
 namespace WADNR.EFModels.Entities;
@@ -67,5 +68,68 @@ public static class Organizations
             .Where(x => x.OrganizationID == organizationID)
             .ExecuteDeleteAsync();
         return deletedCount > 0;
+    }
+
+    public static async Task<FeatureCollection> GetBoundaryAsFeatureCollectionAsync(WADNRDbContext dbContext, int organizationID)
+    {
+        var entity = await dbContext.Organizations
+            .AsNoTracking()
+            .Where(x => x.OrganizationID == organizationID && x.OrganizationBoundary != null)
+            .Select(x => new { x.OrganizationID, x.OrganizationName, x.OrganizationBoundary, LegendColor = x.OrganizationType != null ? x.OrganizationType.LegendColor : null })
+            .SingleOrDefaultAsync();
+
+        if (entity?.OrganizationBoundary == null)
+        {
+            return new FeatureCollection();
+        }
+
+        var attributes = new AttributesTable
+        {
+            { "OrganizationID", entity.OrganizationID },
+            { "OrganizationName", entity.OrganizationName },
+            { "LegendColor", entity.LegendColor }
+        };
+
+        var featureCollection = new FeatureCollection();
+        featureCollection.Add(new Feature(entity.OrganizationBoundary, attributes));
+        return featureCollection;
+    }
+
+    public static async Task<FeatureCollection> GetProjectLocationsAsFeatureCollectionAsync(WADNRDbContext dbContext, int organizationID)
+    {
+        // Get all projects with location points associated with this organization
+        var projects = await dbContext.ProjectOrganizations
+            .AsNoTracking()
+            .Where(po => po.OrganizationID == organizationID && po.Project.ProjectLocationPoint != null)
+            .Select(po => new
+            {
+                po.Project.ProjectID,
+                po.Project.ProjectName,
+                po.Project.ProjectLocationPoint,
+                po.Project.ProjectStageID
+            })
+            .Distinct()
+            .ToListAsync();
+
+        if (projects.Count == 0)
+        {
+            return new FeatureCollection();
+        }
+
+        var featureCollection = new FeatureCollection();
+
+        foreach (var p in projects)
+        {
+            var attributes = new AttributesTable
+            {
+                { "ProjectID", p.ProjectID },
+                { "ProjectName", p.ProjectName },
+                { "ProjectStageID", p.ProjectStageID }
+            };
+
+            featureCollection.Add(new Feature(p.ProjectLocationPoint!, attributes));
+        }
+
+        return featureCollection;
     }
 }

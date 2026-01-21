@@ -2366,6 +2366,306 @@
         }
       }
     },
+    "/organizations/{organizationID}/programs": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "ListProgramsForOrganization_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organizations/{organizationID}/projects": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "ListProjectsForOrganization_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectOrganizationDetailGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectOrganizationDetailGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectOrganizationDetailGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organizations/{organizationID}/projects/pending": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "ListPendingProjectsForOrganization_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectOrganizationDetailGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectOrganizationDetailGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectOrganizationDetailGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organizations/{organizationID}/agreements": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "ListAgreementsForOrganization_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organizations/{organizationID}/boundary": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "GetBoundary_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organizations/{organizationID}/project-locations": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "GetProjectLocations_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/priority-landscapes": {
       "get": {
         "tags": [
@@ -10311,17 +10611,29 @@
             "type": "string",
             "nullable": true
           },
-          "OrganizationAbbreviation": {
+          "OrganizationShortName": {
             "type": "string",
             "nullable": true
           },
-          "SectorID": {
+          "OrganizationTypeID": {
             "type": "integer",
             "format": "int32"
+          },
+          "OrganizationTypeName": {
+            "type": "string",
+            "nullable": true
           },
           "PrimaryContactPersonID": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "PrimaryContactPersonFullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "PrimaryContactPersonOrganization": {
+            "type": "string",
             "nullable": true
           },
           "IsActive": {
@@ -10331,13 +10643,59 @@
             "type": "string",
             "nullable": true
           },
-          "LogoFileResourceInfoID": {
+          "LogoFileResourceID": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "IsUserAccountOrganization": {
+          "LogoFileResourceUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "VendorName": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsEditable": {
             "type": "boolean"
+          },
+          "HasOrganizationBoundary": {
+            "type": "boolean"
+          },
+          "FundSourceAllocations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+            },
+            "nullable": true
+          },
+          "People": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonWithStatus"
+            },
+            "nullable": true
+          },
+          "NumberOfStewardedProjects": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NumberOfLeadImplementedProjects": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NumberOfProjectsContributedTo": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -11288,6 +11646,23 @@
           },
           "TaxonomyBranch": {
             "$ref": "#/components/schemas/TaxonomyBranch"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonWithStatus": {
+        "type": "object",
+        "properties": {
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FullNameFirstLast": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsActive": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -14320,6 +14695,70 @@
           },
           "RelationshipType": {
             "$ref": "#/components/schemas/RelationshipType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectOrganizationDetailGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "PrimaryContactOrganization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "ProjectStewardOrganization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "ProjectStage": {
+            "$ref": "#/components/schemas/ProjectStageLookupItem"
+          },
+          "RelationshipTypes": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectInitiationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "PhotoCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

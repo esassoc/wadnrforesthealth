@@ -251,7 +251,13 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
     }
 
     getOptionLabel(value: any): string {
-        return this.isBlankOption(value) ? "(Blank)" : String(value);
+        if (this.isBlankOption(value)) {
+            return "(Blank)";
+        }
+        if (typeof value === "boolean") {
+            return value ? "Yes" : "No";
+        }
+        return String(value);
     }
 
     getModel() {

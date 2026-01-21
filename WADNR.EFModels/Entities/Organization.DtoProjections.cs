@@ -11,13 +11,51 @@ public static class OrganizationProjections
         OrganizationID = x.OrganizationID,
         OrganizationGuid = x.OrganizationGuid,
         OrganizationName = x.OrganizationName,
-        OrganizationAbbreviation = x.OrganizationShortName,
-        SectorID = x.OrganizationTypeID,
+        OrganizationShortName = x.OrganizationShortName,
+        OrganizationTypeID = x.OrganizationTypeID,
+        OrganizationTypeName = x.OrganizationType.OrganizationTypeName,
         PrimaryContactPersonID = x.PrimaryContactPersonID,
+        PrimaryContactPersonFullName = x.PrimaryContactPerson != null
+            ? x.PrimaryContactPerson.FirstName + " " + x.PrimaryContactPerson.LastName
+            : null,
+        PrimaryContactPersonOrganization = x.PrimaryContactPerson != null && x.PrimaryContactPerson.Organization != null
+            ? x.PrimaryContactPerson.Organization.OrganizationName
+            : null,
         IsActive = x.IsActive,
         OrganizationUrl = x.OrganizationUrl,
-        LogoFileResourceInfoID = x.LogoFileResourceID,
-        IsUserAccountOrganization = x.IsEditable
+        LogoFileResourceID = x.LogoFileResourceID,
+        LogoFileResourceUrl = x.LogoFileResource != null
+            ? x.LogoFileResource.FileResourceGUID.ToString()
+            : null,
+        VendorID = x.VendorID,
+        VendorName = x.Vendor != null ? x.Vendor.VendorName : null,
+        VendorNumber = x.Vendor != null
+            ? x.Vendor.StatewideVendorNumber + "-" + x.Vendor.StatewideVendorNumberSuffix
+            : null,
+        IsEditable = x.IsEditable,
+        HasOrganizationBoundary = x.OrganizationBoundary != null,
+        FundSourceAllocations = x.FundSourceAllocations
+            .OrderBy(f => f.FundSourceAllocationName)
+            .Select(f => new FundSourceAllocationLookupItem
+            {
+                FundSourceAllocationID = f.FundSourceAllocationID,
+                FundSourceAllocationName = f.FundSourceAllocationName ?? string.Empty
+            }).ToList(),
+        People = x.People
+            .Where(p => p.IsActive)
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
+            .Select(p => new PersonWithStatus
+            {
+                PersonID = p.PersonID,
+                FullNameFirstLast = p.FirstName + " " + p.LastName,
+                IsActive = p.IsActive
+            }).ToList(),
+        NumberOfStewardedProjects = x.ProjectOrganizations
+            .Count(po => po.RelationshipType.CanStewardProjects),
+        NumberOfLeadImplementedProjects = x.ProjectOrganizations
+            .Count(po => po.RelationshipType.IsPrimaryContact),
+        NumberOfProjectsContributedTo = x.ProjectOrganizations.Count
     };
 
     public static readonly Expression<Func<Organization, OrganizationGridRow>> AsGridRow = x => new OrganizationGridRow

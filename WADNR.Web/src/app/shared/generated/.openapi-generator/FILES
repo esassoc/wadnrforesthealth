@@ -193,6 +193,7 @@ model/person-role.ts
 model/person-steward-organization.ts
 model/person-steward-region.ts
 model/person-steward-taxonomy-branch.ts
+model/person-with-status.ts
 model/person.ts
 model/point.ts
 model/precision-model.ts
@@ -260,6 +261,7 @@ model/project-lookup-item.ts
 model/project-map-popup.ts
 model/project-note-update.ts
 model/project-note.ts
+model/project-organization-detail-grid-row.ts
 model/project-organization-update.ts
 model/project-organization.ts
 model/project-person-relationship-type-enum.ts
@@ -331,6 +333,4 @@ model/treatment-update.ts
 model/treatment.ts
 model/vendor.ts
 param.ts
-provide-api.ts
-query.params.ts
 variables.ts

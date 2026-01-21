@@ -359,4 +359,44 @@ public static class Projects
 
         return rows;
     }
+
+    public static async Task<List<ProjectOrganizationDetailGridRow>> ListAsOrganizationDetailGridRowAsync(WADNRDbContext dbContext, int organizationID)
+    {
+        var rows = await dbContext.Projects
+            .Where(p => p.ProjectOrganizations.Any(po => po.OrganizationID == organizationID))
+            .AsNoTracking()
+            .Where(IsActiveProjectExpr)
+            .OrderBy(x => x.ProjectName)
+            .Select(ProjectProjections.AsProjectOrganizationDetailGridRow(organizationID))
+            .ToListAsync();
+
+        var totalsByProjectId = await GetTotalFundingByProjectAsync(dbContext);
+
+        foreach (var r in rows)
+        {
+            r.TotalAmount = totalsByProjectId.TryGetValue(r.ProjectID, out var total) ? total : null;
+        }
+
+        return rows;
+    }
+
+    public static async Task<List<ProjectOrganizationDetailGridRow>> ListPendingAsOrganizationDetailGridRowAsync(WADNRDbContext dbContext, int organizationID)
+    {
+        var rows = await dbContext.Projects
+            .Where(p => p.ProjectOrganizations.Any(po => po.OrganizationID == organizationID))
+            .AsNoTracking()
+            .Where(p => p.ProjectApprovalStatusID != ApprovedStatusId && !p.ProjectType.LimitVisibilityToAdmin)
+            .OrderBy(x => x.ProjectName)
+            .Select(ProjectProjections.AsProjectOrganizationDetailGridRow(organizationID))
+            .ToListAsync();
+
+        var totalsByProjectId = await GetTotalFundingByProjectAsync(dbContext);
+
+        foreach (var r in rows)
+        {
+            r.TotalAmount = totalsByProjectId.TryGetValue(r.ProjectID, out var total) ? total : null;
+        }
+
+        return rows;
+    }
 }
