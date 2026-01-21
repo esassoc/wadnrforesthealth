@@ -7,12 +7,17 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { AgreementTypeLookupItem } from './agreement-type-lookup-item';
+import { DNRUplandRegionLookupItem } from './dnr-upland-region-lookup-item';
+import { FileResourceLookupItem } from './file-resource-lookup-item';
+import { OrganizationLookupItem } from './organization-lookup-item';
+import { AgreementStatusLookupItem } from './agreement-status-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class AgreementDetail { 
     AgreementID?: number;
-    AgreementTypeID?: number;
+    AgreementType?: AgreementTypeLookupItem;
     AgreementTitle?: string | null;
     AgreementNumber?: string | null;
     StartDate?: string | null;
@@ -20,16 +25,14 @@ export class AgreementDetail {
     AgreementAmount?: number | null;
     ExpendedAmount?: number | null;
     BalanceAmount?: number | null;
-    DNRUplandRegionID?: number | null;
+    DNRUplandRegion?: DNRUplandRegionLookupItem;
     FirstBillDueOn?: string | null;
     Notes?: string | null;
-    OrganizationID?: number;
-    AgreementStatusID?: number | null;
-    AgreementFileResourceID?: number | null;
-    AgreementTypeName?: string | null;
-    AgreementStatusName?: string | null;
-    OrganizationName?: string | null;
-    DNRUplandRegionName?: string | null;
+    ContributingOrganization?: OrganizationLookupItem;
+    AgreementStatus?: AgreementStatusLookupItem;
+    FileResource?: FileResourceLookupItem;
+    ProgramIndices?: string | null;
+    ProjectCodes?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -37,7 +40,7 @@ export class AgreementDetail {
 
 export interface AgreementDetailForm { 
     AgreementID?: FormControl<number>;
-    AgreementTypeID?: FormControl<number>;
+    AgreementType?: FormControl<AgreementTypeLookupItem>;
     AgreementTitle?: FormControl<string>;
     AgreementNumber?: FormControl<string>;
     StartDate?: FormControl<string>;
@@ -45,16 +48,14 @@ export interface AgreementDetailForm {
     AgreementAmount?: FormControl<number>;
     ExpendedAmount?: FormControl<number>;
     BalanceAmount?: FormControl<number>;
-    DNRUplandRegionID?: FormControl<number>;
+    DNRUplandRegion?: FormControl<DNRUplandRegionLookupItem>;
     FirstBillDueOn?: FormControl<string>;
     Notes?: FormControl<string>;
-    OrganizationID?: FormControl<number>;
-    AgreementStatusID?: FormControl<number>;
-    AgreementFileResourceID?: FormControl<number>;
-    AgreementTypeName?: FormControl<string>;
-    AgreementStatusName?: FormControl<string>;
-    OrganizationName?: FormControl<string>;
-    DNRUplandRegionName?: FormControl<string>;
+    ContributingOrganization?: FormControl<OrganizationLookupItem>;
+    AgreementStatus?: FormControl<AgreementStatusLookupItem>;
+    FileResource?: FormControl<FileResourceLookupItem>;
+    ProgramIndices?: FormControl<string>;
+    ProjectCodes?: FormControl<string>;
 }
 
 export class AgreementDetailFormControls { 
@@ -68,7 +69,7 @@ export class AgreementDetailFormControls {
             ],
         }
     );
-    public static AgreementTypeID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static AgreementType = (value: FormControlState<AgreementTypeLookupItem> | AgreementTypeLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<AgreementTypeLookupItem>(
         value,
         formControlOptions ?? 
         {
@@ -148,7 +149,7 @@ export class AgreementDetailFormControls {
             ],
         }
     );
-    public static DNRUplandRegionID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static DNRUplandRegion = (value: FormControlState<DNRUplandRegionLookupItem> | DNRUplandRegionLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<DNRUplandRegionLookupItem>(
         value,
         formControlOptions ?? 
         {
@@ -178,7 +179,7 @@ export class AgreementDetailFormControls {
             ],
         }
     );
-    public static OrganizationID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static ContributingOrganization = (value: FormControlState<OrganizationLookupItem> | OrganizationLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<OrganizationLookupItem>(
         value,
         formControlOptions ?? 
         {
@@ -188,7 +189,7 @@ export class AgreementDetailFormControls {
             ],
         }
     );
-    public static AgreementStatusID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static AgreementStatus = (value: FormControlState<AgreementStatusLookupItem> | AgreementStatusLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<AgreementStatusLookupItem>(
         value,
         formControlOptions ?? 
         {
@@ -198,7 +199,7 @@ export class AgreementDetailFormControls {
             ],
         }
     );
-    public static AgreementFileResourceID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static FileResource = (value: FormControlState<FileResourceLookupItem> | FileResourceLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<FileResourceLookupItem>(
         value,
         formControlOptions ?? 
         {
@@ -208,7 +209,7 @@ export class AgreementDetailFormControls {
             ],
         }
     );
-    public static AgreementTypeName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static ProgramIndices = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -218,27 +219,7 @@ export class AgreementDetailFormControls {
             ],
         }
     );
-    public static AgreementStatusName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static OrganizationName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static DNRUplandRegionName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static ProjectCodes = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

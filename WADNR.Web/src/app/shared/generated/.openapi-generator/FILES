@@ -21,6 +21,7 @@ api/system-info.service.ts
 api/tag.service.ts
 configuration.ts
 encoder.ts
+model/agreement-contact-grid-row.ts
 model/agreement-detail.ts
 model/agreement-fund-source-allocation.ts
 model/agreement-grid-row.ts
@@ -28,7 +29,10 @@ model/agreement-person-role-enum.ts
 model/agreement-person-role.ts
 model/agreement-person.ts
 model/agreement-project.ts
+model/agreement-role-lookup-item.ts
+model/agreement-status-lookup-item.ts
 model/agreement-status.ts
+model/agreement-type-lookup-item.ts
 model/agreement-type.ts
 model/agreement-upsert-request.ts
 model/agreement.ts
@@ -65,6 +69,7 @@ model/division.ts
 model/dnr-upland-region-content-image.ts
 model/dnr-upland-region-detail.ts
 model/dnr-upland-region-grid-row.ts
+model/dnr-upland-region-lookup-item.ts
 model/dnr-upland-region-upsert-request.ts
 model/dnr-upland-region.ts
 model/elevation-model.ts
@@ -77,6 +82,7 @@ model/field-definition-detail.ts
 model/field-definition-enum.ts
 model/field-definition.ts
 model/file-resource-interaction-event-detail.ts
+model/file-resource-lookup-item.ts
 model/file-resource-mime-type-enum.ts
 model/file-resource-mime-type.ts
 model/file-resource-priority-landscape-detail.ts
@@ -180,6 +186,7 @@ model/organization-upsert-request.ts
 model/organization.ts
 model/person-allowed-authenticator.ts
 model/person-detail.ts
+model/person-first-name-last-name.ts
 model/person-lookup-item-with-email.ts
 model/person-lookup-item.ts
 model/person-role.ts

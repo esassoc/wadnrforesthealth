@@ -79,4 +79,28 @@ public class AgreementController(
 
         return NoContent();
     }
+
+    [HttpGet("{agreementID}/fund-source-allocations")]
+    [EntityNotFound(typeof(Agreement), "agreementID")]
+    public async Task<ActionResult<IEnumerable<FundSourceAllocationLookupItem>>> ListFundSourceAllocations([FromRoute] int agreementID)
+    {
+        var items = await Agreements.ListFundSourceAllocationsAsLookupItemByAgreementIDAsync(DbContext, agreementID);
+        return Ok(items);
+    }
+
+    [HttpGet("{agreementID}/projects")]
+    [EntityNotFound(typeof(Agreement), "agreementID")]
+    public async Task<ActionResult<IEnumerable<ProjectLookupItem>>> ListProjects([FromRoute] int agreementID)
+    {
+        var items = await Agreements.ListProjectsAsLookupItemByAgreementIDAsync(DbContext, agreementID);
+        return Ok(items);
+    }
+
+    [HttpGet("{agreementID}/contacts")]
+    [EntityNotFound(typeof(Agreement), "agreementID")]
+    public async Task<ActionResult<IEnumerable<AgreementContactGridRow>>> ListContacts([FromRoute] int agreementID)
+    {
+        var items = await Agreements.ListContactsAsGridRowByAgreementIDAsync(DbContext, agreementID);
+        return Ok(items);
+    }
 }

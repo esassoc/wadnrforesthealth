@@ -79,4 +79,60 @@ public static class Agreements
             .ExecuteDeleteAsync();
         return deletedCount > 0;
     }
+
+    public static async Task<List<FundSourceAllocationLookupItem>> ListFundSourceAllocationsAsLookupItemByAgreementIDAsync(
+        WADNRDbContext dbContext,
+        int agreementID)
+    {
+        var items = await dbContext.AgreementFundSourceAllocations
+            .AsNoTracking()
+            .Where(x => x.AgreementID == agreementID)
+            .Select(x => x.FundSourceAllocation)
+            .Select(FundSourceAllocationProjections.AsLookupItem)
+            .Distinct()
+            .OrderBy(x => x.FundSourceAllocationName)
+            .ToListAsync();
+
+        return items;
+    }
+
+    public static async Task<List<ProjectLookupItem>> ListProjectsAsLookupItemByAgreementIDAsync(
+        WADNRDbContext dbContext,
+        int agreementID)
+    {
+        var items = await dbContext.AgreementProjects
+            .AsNoTracking()
+            .Where(x => x.AgreementID == agreementID)
+            .Select(x => x.Project)
+            .Where(Projects.IsActiveProjectExpr)
+            .Select(ProjectProjections.AsLookupItem)
+            .Distinct()
+            .OrderBy(x => x.ProjectName)
+            .ToListAsync();
+
+        return items;
+    }
+
+    public static async Task<List<AgreementContactGridRow>> ListContactsAsGridRowByAgreementIDAsync(
+        WADNRDbContext dbContext,
+        int agreementID)
+    {
+        //MP 1/20/26 This feels excessive, as we're doing this only to facilitate the AgreementPersonRole entity.
+        //Should maybe remove AgreementPersonRole as a lookup item and maybe that would make it no longer think it's a computed field?
+        //But I need to keep moving and for now this is fine.
+        var rawItems = await dbContext.AgreementPeople
+            .AsNoTracking()
+            .Where(x => x.AgreementID == agreementID)
+            .Select(AgreementProjections.AsContactGridRowRaw)
+            .ToListAsync();
+
+        var items = rawItems
+            .Select(AgreementProjections.ToContactGridRow)
+            .OrderBy(x => x.Person.LastName)
+            .ThenBy(x => x.Person.FirstName)
+            .ThenBy(x => x.AgreementRole.AgreementPersonRoleDisplayName)
+            .ToList();
+
+        return items;
+    }
 }

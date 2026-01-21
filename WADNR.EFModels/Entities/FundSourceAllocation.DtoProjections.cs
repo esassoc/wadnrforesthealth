@@ -83,4 +83,10 @@ public static class FundSourceAllocationProjections
                     }
                 }
     };
+
+    public static readonly Expression<Func<FundSourceAllocation, FundSourceAllocationLookupItem>> AsLookupItem = x => new FundSourceAllocationLookupItem
+    {
+        FundSourceAllocationID = x.FundSourceAllocationID,
+        FundSourceAllocationName = x.FundSource.FundSourceNumber + " " + x.FundSourceAllocationName
+    };
 }

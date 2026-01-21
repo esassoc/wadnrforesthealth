@@ -10,6 +10,7 @@ export const routeParams = {
     classificationID: "classificationID",
     tagID: "tagID",
     interactionEventID: "interactionEventID",
+    agreementID: "agreementID",
 };
 
 export const routes: Routes = [
@@ -19,6 +20,11 @@ export const routes: Routes = [
     { path: "", loadComponent: () => import("./pages/home/home-index/home-index.component").then((m) => m.HomeIndexComponent) },
     { path: "about", loadComponent: () => import("./pages/about/about.component").then((m) => m.AboutComponent) },
     { path: "additional-resources", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    {
+        path: `agreements/:${routeParams.agreementID}`,
+        title: "Agreement Detail",
+        loadComponent: () => import("./pages/agreements/agreement-detail/agreement-detail.component").then((m) => m.AgreementDetailComponent),
+    },
     { path: "agreements", title: "Agreements", loadComponent: () => import("./pages/agreements/agreements.component").then((m) => m.AgreementsComponent) },
     {
         path: "counties",

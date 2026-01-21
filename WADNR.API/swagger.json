@@ -212,6 +212,156 @@
         }
       }
     },
+    "/agreements/{agreementID}/fund-source-allocations": {
+      "get": {
+        "tags": [
+          "Agreement"
+        ],
+        "operationId": "ListFundSourceAllocations_Agreement",
+        "parameters": [
+          {
+            "name": "agreementID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agreements/{agreementID}/projects": {
+      "get": {
+        "tags": [
+          "Agreement"
+        ],
+        "operationId": "ListProjects_Agreement",
+        "parameters": [
+          {
+            "name": "agreementID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agreements/{agreementID}/contacts": {
+      "get": {
+        "tags": [
+          "Agreement"
+        ],
+        "operationId": "ListContacts_Agreement",
+        "parameters": [
+          {
+            "name": "agreementID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementContactGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementContactGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementContactGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/classifications": {
       "get": {
         "tags": [
@@ -4055,6 +4205,21 @@
         },
         "additionalProperties": false
       },
+      "AgreementContactGridRow": {
+        "type": "object",
+        "properties": {
+          "Person": {
+            "$ref": "#/components/schemas/PersonFirstNameLastName"
+          },
+          "AgreementRole": {
+            "$ref": "#/components/schemas/AgreementRoleLookupItem"
+          },
+          "ContributingOrganization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          }
+        },
+        "additionalProperties": false
+      },
       "AgreementDetail": {
         "type": "object",
         "properties": {
@@ -4062,9 +4227,8 @@
             "type": "integer",
             "format": "int32"
           },
-          "AgreementTypeID": {
-            "type": "integer",
-            "format": "int32"
+          "AgreementType": {
+            "$ref": "#/components/schemas/AgreementTypeLookupItem"
           },
           "AgreementTitle": {
             "type": "string",
@@ -4099,10 +4263,8 @@
             "format": "double",
             "nullable": true
           },
-          "DNRUplandRegionID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+          "DNRUplandRegion": {
+            "$ref": "#/components/schemas/DNRUplandRegionLookupItem"
           },
           "FirstBillDueOn": {
             "type": "string",
@@ -4113,33 +4275,20 @@
             "type": "string",
             "nullable": true
           },
-          "OrganizationID": {
-            "type": "integer",
-            "format": "int32"
+          "ContributingOrganization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
           },
-          "AgreementStatusID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+          "AgreementStatus": {
+            "$ref": "#/components/schemas/AgreementStatusLookupItem"
           },
-          "AgreementFileResourceID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+          "FileResource": {
+            "$ref": "#/components/schemas/FileResourceLookupItem"
           },
-          "AgreementTypeName": {
+          "ProgramIndices": {
             "type": "string",
             "nullable": true
           },
-          "AgreementStatusName": {
-            "type": "string",
-            "nullable": true
-          },
-          "OrganizationName": {
-            "type": "string",
-            "nullable": true
-          },
-          "DNRUplandRegionName": {
+          "ProjectCodes": {
             "type": "string",
             "nullable": true
           }
@@ -4348,6 +4497,20 @@
         },
         "additionalProperties": false
       },
+      "AgreementRoleLookupItem": {
+        "type": "object",
+        "properties": {
+          "AgreementPersonRoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AgreementPersonRoleDisplayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "AgreementStatus": {
         "type": "object",
         "properties": {
@@ -4372,6 +4535,20 @@
             "type": "integer",
             "format": "int32",
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgreementStatusLookupItem": {
+        "type": "object",
+        "properties": {
+          "AgreementStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AgreementStatusName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4406,6 +4583,20 @@
             "type": "integer",
             "format": "int32",
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgreementTypeLookupItem": {
+        "type": "object",
+        "properties": {
+          "AgreementTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AgreementTypeName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5539,6 +5730,20 @@
         },
         "additionalProperties": false
       },
+      "DNRUplandRegionLookupItem": {
+        "type": "object",
+        "properties": {
+          "DNRUplandRegionID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DNRUplandRegionName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DNRUplandRegionUpsertRequest": {
         "type": "object",
         "properties": {
@@ -6358,6 +6563,33 @@
           "CreateDate": {
             "type": "string",
             "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FileResourceLookupItem": {
+        "type": "object",
+        "properties": {
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceGUID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "OriginalBaseFilename": {
+            "type": "string",
+            "nullable": true
+          },
+          "OriginalFileExtension": {
+            "type": "string",
+            "nullable": true
+          },
+          "OriginalCompleteFileName": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -10890,6 +11122,24 @@
             "type": "string",
             "nullable": true,
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonFirstNameLastName": {
+        "type": "object",
+        "properties": {
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FirstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "LastName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
