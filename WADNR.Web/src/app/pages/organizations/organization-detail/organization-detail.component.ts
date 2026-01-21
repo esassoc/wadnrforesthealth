@@ -1,7 +1,7 @@
 import { AsyncPipe } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, startWith, switchMap, tap } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, startWith, switchMap } from "rxjs";
 import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap, Control, LatLngBounds } from "leaflet";
 import { DialogService } from "@ngneat/dialog";
@@ -12,7 +12,9 @@ import { FieldDefinitionComponent } from "src/app/shared/components/field-defini
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
+import { ProjectLocationsSimpleLayerComponent } from "src/app/shared/components/leaflet/layers/project-locations-simple-layer/project-locations-simple-layer.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
+import { Palette, PROJECT_STAGE_LEGEND_COLORS } from "src/app/shared/models/legend-colors";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { AlertService } from "src/app/shared/services/alert.service";
@@ -33,7 +35,7 @@ import { OrganizationModalComponent, OrganizationModalData } from "../organizati
 @Component({
     selector: "organization-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, IconComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ProjectLocationsSimpleLayerComponent, IconComponent],
     templateUrl: "./organization-detail.component.html",
     styleUrls: ["./organization-detail.component.scss"],
 })
@@ -48,14 +50,15 @@ export class OrganizationDetailComponent {
     // Map properties
     public boundaryFeatures$: Observable<IFeature[]>;
     public projectLocationFeatures$: Observable<IFeature[]>;
+    public hasSpatialData$: Observable<boolean>;
     public map: LeafletMap;
     public layerControl: Control.Layers;
     public mapIsReady: boolean = false;
-    public hasSpatialData: boolean = false;
 
     public programColumnDefs: ColDef<ProgramGridRow>[] = [];
     public projectColumnDefs: ColDef<ProjectOrganizationDetailGridRow>[] = [];
     public agreementColumnDefs: ColDef<AgreementGridRow>[] = [];
+    public legendColorsToUse: Record<string, Palette> = PROJECT_STAGE_LEGEND_COLORS;
 
     private refreshData$ = new BehaviorSubject<void>(undefined);
 
@@ -104,23 +107,28 @@ export class OrganizationDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        // Map feature observables - these will be available after running gen-model
+        // Map feature observables
         this.boundaryFeatures$ = this.organizationID$.pipe(
             switchMap((organizationID) => this.organizationService.getBoundaryOrganization(organizationID)),
-            tap((features) => {
-                if (features && features.length > 0) {
-                    this.hasSpatialData = true;
-                }
-            }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
         this.projectLocationFeatures$ = this.organizationID$.pipe(
             switchMap((organizationID) => this.organizationService.getProjectLocationsOrganization(organizationID)),
-            tap((features) => {
-                if (features && features.length > 0) {
-                    this.hasSpatialData = true;
-                }
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        // Determine if map should be shown based on presence of spatial data from API calls
+        // Note: API returns FeatureCollection object, but TypeScript types it as IFeature[]
+        // Handle both cases: array or FeatureCollection object with features property
+        this.hasSpatialData$ = combineLatest([
+            this.boundaryFeatures$.pipe(startWith([] as IFeature[])),
+            this.projectLocationFeatures$.pipe(startWith([] as IFeature[]))
+        ]).pipe(
+            map(([boundary, locations]) => {
+                const boundaryCount = Array.isArray(boundary) ? boundary.length : ((boundary as any)?.features?.length ?? 0);
+                const locationsCount = Array.isArray(locations) ? locations.length : ((locations as any)?.features?.length ?? 0);
+                return boundaryCount > 0 || locationsCount > 0;
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
@@ -329,7 +337,6 @@ export class OrganizationDetailComponent {
                         AlertContext.Success,
                         true
                     ));
-                    this.hasSpatialData = false;
                     this.refreshData$.next();
                 },
                 error: (err) => {

@@ -112,18 +112,19 @@ public static class Organizations
 
     public static async Task<FeatureCollection> GetProjectLocationsAsFeatureCollectionAsync(WADNRDbContext dbContext, int organizationID)
     {
-        // Get all projects with location points associated with this organization
-        var projects = await dbContext.ProjectOrganizations
+        // Query from Projects directly to avoid DISTINCT on geometry columns
+        // (SQL Server cannot use DISTINCT on geometry types)
+        var projects = await dbContext.Projects
             .AsNoTracking()
-            .Where(po => po.OrganizationID == organizationID && po.Project.ProjectLocationPoint != null)
-            .Select(po => new
+            .Where(p => p.ProjectLocationPoint != null &&
+                        p.ProjectOrganizations.Any(po => po.OrganizationID == organizationID))
+            .Select(p => new
             {
-                po.Project.ProjectID,
-                po.Project.ProjectName,
-                po.Project.ProjectLocationPoint,
-                po.Project.ProjectStageID
+                p.ProjectID,
+                p.ProjectName,
+                p.ProjectLocationPoint,
+                p.ProjectStageID
             })
-            .Distinct()
             .ToListAsync();
 
         if (projects.Count == 0)
