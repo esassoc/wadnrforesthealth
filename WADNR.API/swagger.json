@@ -3330,6 +3330,56 @@
         }
       }
     },
+    "/programs/{programID}/notifications": {
+      "get": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "ListNotifications_Program",
+        "parameters": [
+          {
+            "name": "programID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramNotificationGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramNotificationGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramNotificationGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects": {
       "get": {
         "tags": [
@@ -12654,6 +12704,28 @@
             "items": {
               "$ref": "#/components/schemas/ProgramNotificationSent"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProgramNotificationGridRow": {
+        "type": "object",
+        "properties": {
+          "ProgramNotificationConfigurationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProgramNotificationTypeDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RecurrenceIntervalInYears": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NotificationEmailText": {
+            "type": "string",
             "nullable": true
           }
         },

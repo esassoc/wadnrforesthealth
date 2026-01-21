@@ -16,6 +16,7 @@ import { OrganizationService } from "src/app/shared/generated/api/organization.s
 import { PersonService } from "src/app/shared/generated/api/person.service";
 import { ProgramDetail } from "src/app/shared/generated/model/program-detail";
 import { ProjectProgramDetailGridRow } from "src/app/shared/generated/model/project-program-detail-grid-row";
+import { ProgramNotificationGridRow } from "src/app/shared/generated/model/program-notification-grid-row";
 import { ProgramModalComponent, ProgramModalData } from "../program-modal/program-modal.component";
 
 @Component({
@@ -29,8 +30,10 @@ export class ProgramDetailComponent {
     public programID$: Observable<number>;
     public program$: Observable<ProgramDetail>;
     public projects$: Observable<ProjectProgramDetailGridRow[]>;
+    public notifications$: Observable<ProgramNotificationGridRow[]>;
 
     public projectColumnDefs: ColDef<ProjectProgramDetailGridRow>[] = [];
+    public notificationColumnDefs: ColDef<ProgramNotificationGridRow>[] = [];
 
     private refreshData$ = new BehaviorSubject<void>(undefined);
 
@@ -61,7 +64,13 @@ export class ProgramDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.notifications$ = this.programID$.pipe(
+            switchMap((programID) => this.programService.listNotificationsProgram(programID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
         this.projectColumnDefs = this.createProjectColumnDefs();
+        this.notificationColumnDefs = this.createNotificationColumnDefs();
     }
 
     getFileUrl(fileResourceUrl: string | null | undefined): string | null {
@@ -92,6 +101,14 @@ export class ProgramDetailComponent {
             this.utilityFunctions.createBasicColumnDef("Programs", "Programs", {
                 FieldDefinitionType: "Program",
             }),
+        ];
+    }
+
+    private createNotificationColumnDefs(): ColDef<ProgramNotificationGridRow>[] {
+        return [
+            this.utilityFunctions.createBasicColumnDef("Type", "ProgramNotificationTypeDisplayName"),
+            this.utilityFunctions.createBasicColumnDef("Recurrence Interval (Years)", "RecurrenceIntervalInYears"),
+            this.utilityFunctions.createBasicColumnDef("Email Text", "NotificationEmailText"),
         ];
     }
 

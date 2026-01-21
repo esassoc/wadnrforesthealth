@@ -215,6 +215,7 @@ model/program-index-lookup-item.ts
 model/program-index.ts
 model/program-lookup-item.ts
 model/program-notification-configuration.ts
+model/program-notification-grid-row.ts
 model/program-notification-sent-project.ts
 model/program-notification-sent.ts
 model/program-notification-type-enum.ts

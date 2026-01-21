@@ -190,6 +190,7 @@ export * from './program-index';
 export * from './program-index-lookup-item';
 export * from './program-lookup-item';
 export * from './program-notification-configuration';
+export * from './program-notification-grid-row';
 export * from './program-notification-sent';
 export * from './program-notification-sent-project';
 export * from './program-notification-type';

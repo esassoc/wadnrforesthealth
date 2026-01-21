@@ -117,4 +117,32 @@ public static class Programs
 
         return projects;
     }
+
+    public static async Task<List<ProgramNotificationGridRow>> ListNotificationsForProgramAsync(WADNRDbContext dbContext, int programID)
+    {
+        var rawNotifications = await dbContext.ProgramNotificationConfigurations
+            .AsNoTracking()
+            .Where(pnc => pnc.ProgramID == programID)
+            .Select(pnc => new
+            {
+                pnc.ProgramNotificationConfigurationID,
+                pnc.ProgramNotificationTypeID,
+                pnc.RecurrenceIntervalID,
+                pnc.NotificationEmailText
+            })
+            .ToListAsync();
+
+        var notifications = rawNotifications
+            .Select(pnc => new ProgramNotificationGridRow
+            {
+                ProgramNotificationConfigurationID = pnc.ProgramNotificationConfigurationID,
+                ProgramNotificationTypeDisplayName = ProgramNotificationType.AllLookupDictionary[pnc.ProgramNotificationTypeID].ProgramNotificationTypeDisplayName,
+                RecurrenceIntervalInYears = RecurrenceInterval.AllLookupDictionary[pnc.RecurrenceIntervalID].RecurrenceIntervalInYears,
+                NotificationEmailText = pnc.NotificationEmailText
+            })
+            .OrderBy(n => n.ProgramNotificationTypeDisplayName)
+            .ToList();
+
+        return notifications;
+    }
 }

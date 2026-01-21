@@ -83,4 +83,12 @@ public class ProgramController(
         var projects = await Programs.ListProjectsForProgramAsync(DbContext, programID);
         return Ok(projects);
     }
+
+    [HttpGet("{programID}/notifications")]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
+    public async Task<ActionResult<IEnumerable<ProgramNotificationGridRow>>> ListNotifications([FromRoute] int programID)
+    {
+        var notifications = await Programs.ListNotificationsForProgramAsync(DbContext, programID);
+        return Ok(notifications);
+    }
 }

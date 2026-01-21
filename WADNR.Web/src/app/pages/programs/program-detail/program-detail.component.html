@@ -116,5 +116,28 @@
         </div>
     </div>
     }
+
+    <!-- Notifications Grid Card -->
+    @if (notifications$ | async; as notifications) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Notifications</span>
+            </div>
+            <div class="card-body">
+                @if (notifications.length > 0) {
+                    <wadnr-grid
+                        [rowData]="notifications"
+                        [columnDefs]="notificationColumnDefs"
+                        height="300px"
+                        downloadFileName="Program_Notifications">
+                    </wadnr-grid>
+                } @else {
+                    <p class="system-text">No notifications configured for this program.</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
 </div>
 }
