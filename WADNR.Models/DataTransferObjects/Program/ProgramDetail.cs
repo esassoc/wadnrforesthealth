@@ -37,4 +37,5 @@ public class ProgramDetail
     // GDB Import Configuration
     public GdbImportBasics? GdbImportBasics { get; set; }
     public List<GdbDefaultMappingItem> GdbDefaultMappings { get; set; } = new();
+    public List<GdbCrosswalkItem> GdbCrosswalkValues { get; set; } = new();
 }

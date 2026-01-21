@@ -135,6 +135,7 @@ model/fund-source-upsert-request.ts
 model/fund-source.ts
 model/funding-source-enum.ts
 model/funding-source.ts
+model/gdb-crosswalk-item.ts
 model/gdb-default-mapping-item.ts
 model/gdb-import-basics.ts
 model/generic-layer.ts

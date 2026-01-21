@@ -30,6 +30,9 @@ public static class Programs
 
             // Fetch GDB Default Mappings
             entity.GdbDefaultMappings = await ListGdbDefaultMappingsForProgramAsync(dbContext, entity.GdbImportBasics.GisUploadSourceOrganizationID);
+
+            // Fetch GDB Crosswalk Values
+            entity.GdbCrosswalkValues = await ListGdbCrosswalkValuesForProgramAsync(dbContext, entity.GdbImportBasics.GisUploadSourceOrganizationID);
         }
 
         return entity;
@@ -62,6 +65,38 @@ public static class Programs
             .ToList();
 
         return mappings;
+    }
+
+    public static async Task<List<GdbCrosswalkItem>> ListGdbCrosswalkValuesForProgramAsync(WADNRDbContext dbContext, int gisUploadSourceOrganizationID)
+    {
+        var rawCrosswalks = await dbContext.GisCrossWalkDefaults
+            .AsNoTracking()
+            .Where(c => c.GisUploadSourceOrganizationID == gisUploadSourceOrganizationID)
+            .Select(c => new
+            {
+                c.GisCrossWalkDefaultID,
+                c.FieldDefinitionID,
+                c.GisCrossWalkSourceValue,
+                c.GisCrossWalkMappedValue
+            })
+            .ToListAsync();
+
+        var crosswalks = rawCrosswalks
+            .Select(c => new GdbCrosswalkItem
+            {
+                GisCrossWalkDefaultID = c.GisCrossWalkDefaultID,
+                FieldDefinitionID = c.FieldDefinitionID,
+                FieldDefinitionDisplayName = FieldDefinition.AllLookupDictionary.TryGetValue(c.FieldDefinitionID, out var fd)
+                    ? fd.FieldDefinitionDisplayName
+                    : $"Unknown ({c.FieldDefinitionID})",
+                GisCrossWalkSourceValue = c.GisCrossWalkSourceValue,
+                GisCrossWalkMappedValue = c.GisCrossWalkMappedValue
+            })
+            .OrderBy(c => c.FieldDefinitionDisplayName)
+            .ThenBy(c => c.GisCrossWalkSourceValue)
+            .ToList();
+
+        return crosswalks;
     }
 
     public static async Task<ProgramDetail?> CreateAsync(WADNRDbContext dbContext, ProgramUpsertRequest dto, int callingPersonID)

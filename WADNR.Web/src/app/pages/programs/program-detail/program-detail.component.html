@@ -285,6 +285,90 @@
             </div>
         </div>
     </div>
+
+    <!-- GDB Import Crosswalk Values Card -->
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">GDB Import Crosswalk Values</span>
+            </div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <!-- Project Stage Crosswalks -->
+                    <div class="g-col-6">
+                        <strong>Project Stage</strong>
+                        @if (getCrosswalksByField(program.GdbCrosswalkValues, 'Project Stage').length > 0) {
+                            <div class="grid-12" style="margin-top: 0.5rem;">
+                                <div class="g-col-6 field-label">Source Value</div>
+                                <div class="g-col-6 field-label">Forest Health Tracker Value</div>
+                                @for (crosswalk of getCrosswalksByField(program.GdbCrosswalkValues, 'Project Stage'); track crosswalk.GisCrossWalkDefaultID) {
+                                    <div class="g-col-6">{{ crosswalk.GisCrossWalkSourceValue }}</div>
+                                    <div class="g-col-6">{{ crosswalk.GisCrossWalkMappedValue }}</div>
+                                }
+                            </div>
+                        } @else {
+                            <p class="system-text">No crosswalk values configured.</p>
+                        }
+                    </div>
+
+                    <!-- Lead Implementer Organization Crosswalks -->
+                    <div class="g-col-6">
+                        <strong>Lead Implementer Organization</strong>
+                        @if (getCrosswalksByField(program.GdbCrosswalkValues, 'Lead Implementer Organization').length > 0) {
+                            <div class="grid-12" style="margin-top: 0.5rem;">
+                                <div class="g-col-6 field-label">Source Value</div>
+                                <div class="g-col-6 field-label">Forest Health Tracker Value</div>
+                                @for (crosswalk of getCrosswalksByField(program.GdbCrosswalkValues, 'Lead Implementer Organization'); track crosswalk.GisCrossWalkDefaultID) {
+                                    <div class="g-col-6">{{ crosswalk.GisCrossWalkSourceValue }}</div>
+                                    <div class="g-col-6">{{ crosswalk.GisCrossWalkMappedValue }}</div>
+                                }
+                            </div>
+                        } @else {
+                            <p class="system-text">No crosswalk values configured.</p>
+                        }
+                    </div>
+
+                    <!-- Treatment Type Crosswalks (only if NOT flattened) -->
+                    @if (program.GdbImportBasics?.ImportIsFlattened === false) {
+                        <div class="g-col-12"><hr /></div>
+                        <div class="g-col-12"><strong>Import is NOT flattened - Additional Crosswalks</strong></div>
+
+                        <div class="g-col-6">
+                            <strong>Treatment Type</strong>
+                            @if (getCrosswalksByField(program.GdbCrosswalkValues, 'Treatment Type').length > 0) {
+                                <div class="grid-12" style="margin-top: 0.5rem;">
+                                    <div class="g-col-6 field-label">Source Value</div>
+                                    <div class="g-col-6 field-label">Forest Health Tracker Value</div>
+                                    @for (crosswalk of getCrosswalksByField(program.GdbCrosswalkValues, 'Treatment Type'); track crosswalk.GisCrossWalkDefaultID) {
+                                        <div class="g-col-6">{{ crosswalk.GisCrossWalkSourceValue }}</div>
+                                        <div class="g-col-6">{{ crosswalk.GisCrossWalkMappedValue }}</div>
+                                    }
+                                </div>
+                            } @else {
+                                <p class="system-text">No crosswalk values configured.</p>
+                            }
+                        </div>
+
+                        <div class="g-col-6">
+                            <strong>Treatment Detailed Activity Type</strong>
+                            @if (getCrosswalksByField(program.GdbCrosswalkValues, 'Treatment Detailed Activity Type').length > 0) {
+                                <div class="grid-12" style="margin-top: 0.5rem;">
+                                    <div class="g-col-6 field-label">Source Value</div>
+                                    <div class="g-col-6 field-label">Forest Health Tracker Value</div>
+                                    @for (crosswalk of getCrosswalksByField(program.GdbCrosswalkValues, 'Treatment Detailed Activity Type'); track crosswalk.GisCrossWalkDefaultID) {
+                                        <div class="g-col-6">{{ crosswalk.GisCrossWalkSourceValue }}</div>
+                                        <div class="g-col-6">{{ crosswalk.GisCrossWalkMappedValue }}</div>
+                                    }
+                                </div>
+                            } @else {
+                                <p class="system-text">No crosswalk values configured.</p>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
     }
 </div>
 }

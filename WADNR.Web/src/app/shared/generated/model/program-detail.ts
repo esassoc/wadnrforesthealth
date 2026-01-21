@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { GdbCrosswalkItem } from './gdb-crosswalk-item';
 import { GdbDefaultMappingItem } from './gdb-default-mapping-item';
 import { GdbImportBasics } from './gdb-import-basics';
 import { PersonLookupItem } from './person-lookup-item';
@@ -35,6 +36,7 @@ export class ProgramDetail {
     ProjectCount?: number;
     GdbImportBasics?: GdbImportBasics;
     GdbDefaultMappings?: Array<GdbDefaultMappingItem> | null;
+    GdbCrosswalkValues?: Array<GdbCrosswalkItem> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -62,6 +64,7 @@ export interface ProgramDetailForm {
     ProjectCount?: FormControl<number>;
     GdbImportBasics?: FormControl<GdbImportBasics>;
     GdbDefaultMappings?: FormControl<Array<GdbDefaultMappingItem>>;
+    GdbCrosswalkValues?: FormControl<Array<GdbCrosswalkItem>>;
 }
 
 export class ProgramDetailFormControls { 
@@ -266,6 +269,16 @@ export class ProgramDetailFormControls {
         }
     );
     public static GdbDefaultMappings = (value: FormControlState<Array<GdbDefaultMappingItem>> | Array<GdbDefaultMappingItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<GdbDefaultMappingItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static GdbCrosswalkValues = (value: FormControlState<Array<GdbCrosswalkItem>> | Array<GdbCrosswalkItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<GdbCrosswalkItem>>(
         value,
         formControlOptions ?? 
         {

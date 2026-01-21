@@ -8997,6 +8997,32 @@
         ],
         "type": "string"
       },
+      "GdbCrosswalkItem": {
+        "type": "object",
+        "properties": {
+          "GisCrossWalkDefaultID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FieldDefinitionID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FieldDefinitionDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "GisCrossWalkSourceValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "GisCrossWalkMappedValue": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "GdbDefaultMappingItem": {
         "type": "object",
         "properties": {
@@ -12624,6 +12650,13 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/GdbDefaultMappingItem"
+            },
+            "nullable": true
+          },
+          "GdbCrosswalkValues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GdbCrosswalkItem"
             },
             "nullable": true
           }

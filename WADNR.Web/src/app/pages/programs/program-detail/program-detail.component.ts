@@ -18,6 +18,7 @@ import { ProgramDetail } from "src/app/shared/generated/model/program-detail";
 import { ProjectProgramDetailGridRow } from "src/app/shared/generated/model/project-program-detail-grid-row";
 import { ProgramNotificationGridRow } from "src/app/shared/generated/model/program-notification-grid-row";
 import { GdbDefaultMappingItem } from "src/app/shared/generated/model/gdb-default-mapping-item";
+import { GdbCrosswalkItem } from "src/app/shared/generated/model/gdb-crosswalk-item";
 import { ProgramModalComponent, ProgramModalData } from "../program-modal/program-modal.component";
 
 @Component({
@@ -140,5 +141,10 @@ export class ProgramDetailComponent {
         if (!mappings) return "—";
         const mapping = mappings.find(m => m.FieldDefinitionDisplayName === fieldDisplayName);
         return mapping?.GisDefaultMappingColumnName || "—";
+    }
+
+    getCrosswalksByField(crosswalks: GdbCrosswalkItem[] | undefined, fieldDisplayName: string): GdbCrosswalkItem[] {
+        if (!crosswalks) return [];
+        return crosswalks.filter(c => c.FieldDefinitionDisplayName === fieldDisplayName);
     }
 }

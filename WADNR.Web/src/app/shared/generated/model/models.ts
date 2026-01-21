@@ -110,6 +110,7 @@ export * from './fund-source-type';
 export * from './fund-source-upsert-request';
 export * from './funding-source';
 export * from './funding-source-enum';
+export * from './gdb-crosswalk-item';
 export * from './gdb-default-mapping-item';
 export * from './gdb-import-basics';
 export * from './generic-layer';
