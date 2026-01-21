@@ -120,8 +120,13 @@
     <!-- Map Card - Project Locations and Boundary -->
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header flex-between">
                 <span class="card-title">Project Locations and Boundary</span>
+                @if (organization.HasOrganizationBoundary) {
+                    <button class="btn btn-danger btn-sm" (click)="confirmDeleteBoundary(organization)">
+                        <icon icon="Delete"></icon> Delete Boundary
+                    </button>
+                }
             </div>
             <div class="card-body">
                 @if (organization.HasOrganizationBoundary || hasSpatialData) {

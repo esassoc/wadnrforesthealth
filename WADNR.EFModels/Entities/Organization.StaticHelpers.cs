@@ -70,6 +70,21 @@ public static class Organizations
         return deletedCount > 0;
     }
 
+    public static async Task<bool> DeleteBoundaryAsync(WADNRDbContext dbContext, int organizationID)
+    {
+        var entity = await dbContext.Organizations
+            .FirstOrDefaultAsync(x => x.OrganizationID == organizationID);
+
+        if (entity == null)
+        {
+            return false;
+        }
+
+        entity.OrganizationBoundary = null;
+        await dbContext.SaveChangesAsync();
+        return true;
+    }
+
     public static async Task<FeatureCollection> GetBoundaryAsFeatureCollectionAsync(WADNRDbContext dbContext, int organizationID)
     {
         var entity = await dbContext.Organizations

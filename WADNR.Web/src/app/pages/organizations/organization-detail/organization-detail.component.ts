@@ -311,4 +311,35 @@ export class OrganizationDetailComponent {
             });
         }
     }
+
+    async confirmDeleteBoundary(organization: OrganizationDetail): Promise<void> {
+        const confirmed = await this.confirmService.confirm({
+            title: "Delete Organization Boundary",
+            message: `Are you sure you want to delete the boundary for "${organization.OrganizationName}"? This action cannot be undone.`,
+            buttonTextYes: "Delete",
+            buttonClassYes: "btn-danger",
+            buttonTextNo: "Cancel"
+        });
+
+        if (confirmed) {
+            this.organizationService.deleteBoundaryOrganization(organization.OrganizationID).subscribe({
+                next: () => {
+                    this.alertService.pushAlert(new Alert(
+                        "Organization boundary deleted successfully.",
+                        AlertContext.Success,
+                        true
+                    ));
+                    this.hasSpatialData = false;
+                    this.refreshData$.next();
+                },
+                error: (err) => {
+                    this.alertService.pushAlert(new Alert(
+                        err?.error?.message ?? "Failed to delete organization boundary.",
+                        AlertContext.Danger,
+                        true
+                    ));
+                }
+            });
+        }
+    }
 }

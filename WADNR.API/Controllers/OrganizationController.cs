@@ -121,6 +121,20 @@ public class OrganizationController(
         return Ok(features);
     }
 
+    [HttpDelete("{organizationID}/boundary")]
+    //[AdminFeature]
+    [EntityNotFound(typeof(Organization), "organizationID")]
+    public async Task<IActionResult> DeleteBoundary([FromRoute] int organizationID)
+    {
+        var deleted = await Organizations.DeleteBoundaryAsync(DbContext, organizationID);
+        if (!deleted)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+
     [HttpGet("{organizationID}/project-locations")]
     [EntityNotFound(typeof(Organization), "organizationID")]
     public async Task<ActionResult<FeatureCollection>> GetProjectLocations([FromRoute] int organizationID)
