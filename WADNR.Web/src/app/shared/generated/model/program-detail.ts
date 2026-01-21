@@ -7,6 +7,8 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { GdbDefaultMappingItem } from './gdb-default-mapping-item';
+import { GdbImportBasics } from './gdb-import-basics';
 import { PersonLookupItem } from './person-lookup-item';
 
 
@@ -31,6 +33,8 @@ export class ProgramDetail {
     ProgramExampleGeospatialUploadFileName?: string | null;
     ProgramEditors?: Array<PersonLookupItem> | null;
     ProjectCount?: number;
+    GdbImportBasics?: GdbImportBasics;
+    GdbDefaultMappings?: Array<GdbDefaultMappingItem> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -56,6 +60,8 @@ export interface ProgramDetailForm {
     ProgramExampleGeospatialUploadFileName?: FormControl<string>;
     ProgramEditors?: FormControl<Array<PersonLookupItem>>;
     ProjectCount?: FormControl<number>;
+    GdbImportBasics?: FormControl<GdbImportBasics>;
+    GdbDefaultMappings?: FormControl<Array<GdbDefaultMappingItem>>;
 }
 
 export class ProgramDetailFormControls { 
@@ -240,6 +246,26 @@ export class ProgramDetailFormControls {
         }
     );
     public static ProjectCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static GdbImportBasics = (value: FormControlState<GdbImportBasics> | GdbImportBasics = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<GdbImportBasics>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static GdbDefaultMappings = (value: FormControlState<Array<GdbDefaultMappingItem>> | Array<GdbDefaultMappingItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<GdbDefaultMappingItem>>(
         value,
         formControlOptions ?? 
         {

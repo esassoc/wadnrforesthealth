@@ -58,7 +58,28 @@ public static class ProgramProjections
         // Counts
         ProjectCount = x.ProjectPrograms
             .Count(pp => pp.Project.ProjectApprovalStatusID == Projects.ApprovedStatusId &&
-                         !pp.Project.ProjectType.LimitVisibilityToAdmin)
+                         !pp.Project.ProjectType.LimitVisibilityToAdmin),
+
+        // GDB Import Basics (from GisUploadSourceOrganization)
+        GdbImportBasics = x.GisUploadSourceOrganization != null ? new GdbImportBasics
+        {
+            GisUploadSourceOrganizationID = x.GisUploadSourceOrganization.GisUploadSourceOrganizationID,
+            ProjectTypeDefaultName = x.GisUploadSourceOrganization.ProjectTypeDefaultName,
+            TreatmentTypeDefaultName = x.GisUploadSourceOrganization.TreatmentTypeDefaultName,
+            ImportIsFlattened = x.GisUploadSourceOrganization.ImportIsFlattened,
+            AdjustProjectTypeBasedOnTreatmentTypes = x.GisUploadSourceOrganization.AdjustProjectTypeBasedOnTreatmentTypes,
+            ProjectStageDefaultID = x.GisUploadSourceOrganization.ProjectStageDefaultID,
+            ProjectStageDefaultName = null, // Populated in static helper
+            DataDeriveProjectStage = x.GisUploadSourceOrganization.DataDeriveProjectStage,
+            DefaultLeadImplementerOrganizationName = x.GisUploadSourceOrganization.DefaultLeadImplementerOrganization.OrganizationName,
+            ImportAsDetailedLocationInsteadOfTreatments = x.GisUploadSourceOrganization.ImportAsDetailedLocationInsteadOfTreatments,
+            ImportAsDetailedLocationInAdditionToTreatments = x.GisUploadSourceOrganization.ImportAsDetailedLocationInAdditionToTreatments,
+            ProjectDescriptionDefaultText = x.GisUploadSourceOrganization.ProjectDescriptionDefaultText,
+            ApplyStartDateToProject = x.GisUploadSourceOrganization.ApplyStartDateToProject,
+            ApplyCompletedDateToProject = x.GisUploadSourceOrganization.ApplyCompletedDateToProject,
+            ApplyStartDateToTreatments = x.GisUploadSourceOrganization.ApplyStartDateToTreatments,
+            ApplyEndDateToTreatments = x.GisUploadSourceOrganization.ApplyEndDateToTreatments
+        } : null
     };
 
     public static readonly Expression<Func<Program, ProgramGridRow>> AsGridRow = x => new ProgramGridRow

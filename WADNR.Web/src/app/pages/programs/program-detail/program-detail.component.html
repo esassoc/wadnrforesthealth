@@ -139,5 +139,152 @@
         </div>
     </div>
     }
+
+    <!-- GDB Import Basics Card -->
+    @if (program.GdbImportBasics) {
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">GDB Import Basics</span>
+            </div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-6 field-label">Project Type Default Name</div>
+                    <div class="g-col-6">{{ program.GdbImportBasics.ProjectTypeDefaultName || "—" }}</div>
+
+                    <div class="g-col-6 field-label">Treatment Type Default Name</div>
+                    <div class="g-col-6">{{ program.GdbImportBasics.TreatmentTypeDefaultName || "—" }}</div>
+
+                    <div class="g-col-6 field-label">Import Is Flattened</div>
+                    <div class="g-col-6">{{ program.GdbImportBasics.ImportIsFlattened === true ? 'Yes' : program.GdbImportBasics.ImportIsFlattened === false ? 'No' : '—' }}</div>
+
+                    <div class="g-col-6 field-label">Adjust Project Type Based On Treatment Types</div>
+                    <div class="g-col-6">{{ program.GdbImportBasics.AdjustProjectTypeBasedOnTreatmentTypes ? 'Yes' : 'No' }}</div>
+
+                    <div class="g-col-6 field-label">Project Stage Default</div>
+                    <div class="g-col-6">{{ program.GdbImportBasics.ProjectStageDefaultName || "—" }}</div>
+
+                    <div class="g-col-6 field-label">Data Derive Project Stage</div>
+                    <div class="g-col-6">{{ program.GdbImportBasics.DataDeriveProjectStage ? 'Yes' : 'No' }}</div>
+
+                    <div class="g-col-6 field-label">Default Lead Implementer Organization</div>
+                    <div class="g-col-6">{{ program.GdbImportBasics.DefaultLeadImplementerOrganizationName || "—" }}</div>
+
+                    <div class="g-col-6 field-label">Import As Detailed Location Instead Of Treatments</div>
+                    <div class="g-col-6">{{ program.GdbImportBasics.ImportAsDetailedLocationInsteadOfTreatments ? 'Yes' : 'No' }}</div>
+
+                    <div class="g-col-6 field-label">Import As Detailed Location In Addition To Treatments</div>
+                    <div class="g-col-6">{{ program.GdbImportBasics.ImportAsDetailedLocationInAdditionToTreatments ? 'Yes' : 'No' }}</div>
+
+                    <div class="g-col-6 field-label">Apply Start Date To Project</div>
+                    <div class="g-col-6">{{ program.GdbImportBasics.ApplyStartDateToProject ? 'Yes' : 'No' }}</div>
+
+                    <div class="g-col-6 field-label">Apply Completed Date To Project</div>
+                    <div class="g-col-6">{{ program.GdbImportBasics.ApplyCompletedDateToProject ? 'Yes' : 'No' }}</div>
+
+                    <div class="g-col-6 field-label">Apply Start Date To Treatments</div>
+                    <div class="g-col-6">{{ program.GdbImportBasics.ApplyStartDateToTreatments ? 'Yes' : 'No' }}</div>
+
+                    <div class="g-col-6 field-label">Apply End Date To Treatments</div>
+                    <div class="g-col-6">{{ program.GdbImportBasics.ApplyEndDateToTreatments ? 'Yes' : 'No' }}</div>
+
+                    <div class="g-col-6 field-label">Project Description Default Text</div>
+                    <div class="g-col-6">{{ program.GdbImportBasics.ProjectDescriptionDefaultText || "—" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GDB Import Default Mappings Card -->
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">GDB Import Default Mappings</span>
+            </div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <!-- Always displayed fields -->
+                    <div class="g-col-6 field-label">Project Identifier Column</div>
+                    <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Project Identifier') }}</div>
+
+                    <div class="g-col-6 field-label">Project Name Column</div>
+                    <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Project Name') }}</div>
+
+                    <div class="g-col-6 field-label">Completion Date Column</div>
+                    <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Completion Date') }}</div>
+
+                    <div class="g-col-6 field-label">Start Date Column</div>
+                    <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Planned Date') }}</div>
+
+                    <div class="g-col-6 field-label">Project Stage Column</div>
+                    <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Project Stage') }}</div>
+
+                    <div class="g-col-6 field-label">Footprint Acres Column</div>
+                    <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Footprint Acres') }}</div>
+
+                    <div class="g-col-6 field-label">Private Landowner Column</div>
+                    <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Landowner') }}</div>
+
+                    <div class="g-col-6 field-label">Lead Implementer Column</div>
+                    <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Lead Implementer Organization') }}</div>
+
+                    <!-- Conditional fields based on ImportIsFlattened -->
+                    <div class="g-col-12"><hr /></div>
+
+                    @if (program.GdbImportBasics?.ImportIsFlattened === false) {
+                        <div class="g-col-12"><strong>Import is NOT flattened</strong></div>
+
+                        <div class="g-col-6 field-label">Treatment Type Column</div>
+                        <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Treatment Type') }}</div>
+
+                        <div class="g-col-6 field-label">Treatment Detailed Activity Type Column</div>
+                        <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Treatment Detailed Activity Type') }}</div>
+
+                        <div class="g-col-6 field-label">Treated Acres Column</div>
+                        <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Treated Acres') }}</div>
+                    } @else if (program.GdbImportBasics?.ImportIsFlattened === true) {
+                        <div class="g-col-12"><strong>Import IS flattened</strong></div>
+
+                        <div class="g-col-6 field-label">Pruning Acres Column</div>
+                        <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Pruning Acres') }}</div>
+
+                        <div class="g-col-6 field-label">Thinning Acres Column</div>
+                        <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Thinning Acres') }}</div>
+
+                        <div class="g-col-6 field-label">Chipping Acres Column</div>
+                        <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Chipping Acres') }}</div>
+
+                        <div class="g-col-6 field-label">Mastication Acres Column</div>
+                        <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Mastication Acres') }}</div>
+
+                        <div class="g-col-6 field-label">Grazing Acres Column</div>
+                        <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Grazing Acres') }}</div>
+
+                        <div class="g-col-6 field-label">Lop And Scatter Acres Column</div>
+                        <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Lop And Scatter Acres') }}</div>
+
+                        <div class="g-col-6 field-label">Biomass Removal Acres Column</div>
+                        <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Biomass Removal Acres') }}</div>
+
+                        <div class="g-col-6 field-label">Hand Pile Acres Column</div>
+                        <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Hand Pile Acres') }}</div>
+
+                        <div class="g-col-6 field-label">Hand Pile Burn Acres Column</div>
+                        <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Hand Pile Burn Acres') }}</div>
+
+                        <div class="g-col-6 field-label">Machine Pile Burn Acres Column</div>
+                        <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Machine Pile Burn Acres') }}</div>
+
+                        <div class="g-col-6 field-label">Broadcast Burn Acres Column</div>
+                        <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Broadcast Burn Acres') }}</div>
+
+                        <div class="g-col-6 field-label">Other Acres Column</div>
+                        <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Other Treatment Acres') }}</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    }
 </div>
 }

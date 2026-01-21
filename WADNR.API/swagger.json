@@ -8997,6 +8997,90 @@
         ],
         "type": "string"
       },
+      "GdbDefaultMappingItem": {
+        "type": "object",
+        "properties": {
+          "GisDefaultMappingID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FieldDefinitionID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FieldDefinitionDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "GisDefaultMappingColumnName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GdbImportBasics": {
+        "type": "object",
+        "properties": {
+          "GisUploadSourceOrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectTypeDefaultName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentTypeDefaultName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ImportIsFlattened": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "AdjustProjectTypeBasedOnTreatmentTypes": {
+            "type": "boolean"
+          },
+          "ProjectStageDefaultID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectStageDefaultName": {
+            "type": "string",
+            "nullable": true
+          },
+          "DataDeriveProjectStage": {
+            "type": "boolean"
+          },
+          "DefaultLeadImplementerOrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ImportAsDetailedLocationInsteadOfTreatments": {
+            "type": "boolean"
+          },
+          "ImportAsDetailedLocationInAdditionToTreatments": {
+            "type": "boolean"
+          },
+          "ProjectDescriptionDefaultText": {
+            "type": "string",
+            "nullable": true
+          },
+          "ApplyStartDateToProject": {
+            "type": "boolean"
+          },
+          "ApplyCompletedDateToProject": {
+            "type": "boolean"
+          },
+          "ApplyStartDateToTreatments": {
+            "type": "boolean"
+          },
+          "ApplyEndDateToTreatments": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "GenericLayer": {
         "type": "object",
         "properties": {
@@ -12532,6 +12616,16 @@
           "ProjectCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "GdbImportBasics": {
+            "$ref": "#/components/schemas/GdbImportBasics"
+          },
+          "GdbDefaultMappings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GdbDefaultMappingItem"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

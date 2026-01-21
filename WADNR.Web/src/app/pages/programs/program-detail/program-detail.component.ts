@@ -17,6 +17,7 @@ import { PersonService } from "src/app/shared/generated/api/person.service";
 import { ProgramDetail } from "src/app/shared/generated/model/program-detail";
 import { ProjectProgramDetailGridRow } from "src/app/shared/generated/model/project-program-detail-grid-row";
 import { ProgramNotificationGridRow } from "src/app/shared/generated/model/program-notification-grid-row";
+import { GdbDefaultMappingItem } from "src/app/shared/generated/model/gdb-default-mapping-item";
 import { ProgramModalComponent, ProgramModalData } from "../program-modal/program-modal.component";
 
 @Component({
@@ -133,5 +134,11 @@ export class ProgramDetailComponent {
                 }
             });
         });
+    }
+
+    getMappingColumnName(mappings: GdbDefaultMappingItem[] | undefined, fieldDisplayName: string): string {
+        if (!mappings) return "—";
+        const mapping = mappings.find(m => m.FieldDefinitionDisplayName === fieldDisplayName);
+        return mapping?.GisDefaultMappingColumnName || "—";
     }
 }

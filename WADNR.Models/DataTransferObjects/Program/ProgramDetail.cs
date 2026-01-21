@@ -33,4 +33,8 @@ public class ProgramDetail
 
     // Counts
     public int ProjectCount { get; set; }
+
+    // GDB Import Configuration
+    public GdbImportBasics? GdbImportBasics { get; set; }
+    public List<GdbDefaultMappingItem> GdbDefaultMappings { get; set; } = new();
 }

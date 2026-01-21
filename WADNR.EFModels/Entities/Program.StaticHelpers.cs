@@ -17,7 +17,51 @@ public static class Programs
     {
         var entity = await dbContext.Programs.AsNoTracking().Where(x => x.ProgramID == programID).Select(ProgramProjections.AsDetail)
             .SingleOrDefaultAsync();
+
+        if (entity == null) return null;
+
+        // Populate lookup values for GDB Import Basics
+        if (entity.GdbImportBasics != null)
+        {
+            if (ProjectStage.AllLookupDictionary.TryGetValue(entity.GdbImportBasics.ProjectStageDefaultID, out var projectStage))
+            {
+                entity.GdbImportBasics.ProjectStageDefaultName = projectStage.ProjectStageName;
+            }
+
+            // Fetch GDB Default Mappings
+            entity.GdbDefaultMappings = await ListGdbDefaultMappingsForProgramAsync(dbContext, entity.GdbImportBasics.GisUploadSourceOrganizationID);
+        }
+
         return entity;
+    }
+
+    public static async Task<List<GdbDefaultMappingItem>> ListGdbDefaultMappingsForProgramAsync(WADNRDbContext dbContext, int gisUploadSourceOrganizationID)
+    {
+        var rawMappings = await dbContext.GisDefaultMappings
+            .AsNoTracking()
+            .Where(m => m.GisUploadSourceOrganizationID == gisUploadSourceOrganizationID)
+            .Select(m => new
+            {
+                m.GisDefaultMappingID,
+                m.FieldDefinitionID,
+                m.GisDefaultMappingColumnName
+            })
+            .ToListAsync();
+
+        var mappings = rawMappings
+            .Select(m => new GdbDefaultMappingItem
+            {
+                GisDefaultMappingID = m.GisDefaultMappingID,
+                FieldDefinitionID = m.FieldDefinitionID,
+                FieldDefinitionDisplayName = FieldDefinition.AllLookupDictionary.TryGetValue(m.FieldDefinitionID, out var fd)
+                    ? fd.FieldDefinitionDisplayName
+                    : $"Unknown ({m.FieldDefinitionID})",
+                GisDefaultMappingColumnName = m.GisDefaultMappingColumnName
+            })
+            .OrderBy(m => m.FieldDefinitionDisplayName)
+            .ToList();
+
+        return mappings;
     }
 
     public static async Task<ProgramDetail?> CreateAsync(WADNRDbContext dbContext, ProgramUpsertRequest dto, int callingPersonID)
