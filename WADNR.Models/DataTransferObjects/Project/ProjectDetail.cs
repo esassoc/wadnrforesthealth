@@ -46,6 +46,14 @@ public class ProjectDetail
 
     // Classifications (for themes)
     public List<ClassificationLookupItem> Classifications { get; set; } = new();
+
+    // Funding
+    public List<string> FundingSources { get; set; } = new();
+    public string? FundingSourceNotes { get; set; }
+    public List<FundSourceAllocationRequestItem> FundSourceAllocationRequests { get; set; } = new();
+
+    // Associated Agreements
+    public List<AgreementLookupItem> Agreements { get; set; } = new();
 }
 
 public class ProjectOrganizationItem
@@ -72,4 +80,22 @@ public class TagLookupItem
 {
     public int TagID { get; set; }
     public string TagName { get; set; } = string.Empty;
+}
+
+public class FundSourceAllocationRequestItem
+{
+    public int ProjectFundSourceAllocationRequestID { get; set; }
+    public int FundSourceAllocationID { get; set; }
+    public string FundSourceAllocationName { get; set; } = string.Empty;
+    public string FundSourceName { get; set; } = string.Empty;
+    public decimal? MatchAmount { get; set; }
+    public decimal? PayAmount { get; set; }
+    public decimal? TotalAmount { get; set; }
+}
+
+public class AgreementLookupItem
+{
+    public int AgreementID { get; set; }
+    public string AgreementTitle { get; set; } = string.Empty;
+    public string? AgreementNumber { get; set; }
 }

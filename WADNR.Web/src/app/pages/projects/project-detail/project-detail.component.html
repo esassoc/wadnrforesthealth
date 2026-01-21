@@ -165,5 +165,107 @@
             </div>
         </div>
     </div>
+
+    <!-- Funding Card -->
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Funding</span>
+            </div>
+            <div class="card-body">
+                <div class="grid-12">
+                    @if (project.EstimatedTotalCost) {
+                    <div class="g-col-3 field-label">Estimated Total Cost</div>
+                    <div class="g-col-9">{{ formatCurrency(project.EstimatedTotalCost) }}</div>
+                    }
+
+                    <div class="g-col-3 field-label">Funding Source</div>
+                    <div class="g-col-9">
+                        @if (project.FundingSources && project.FundingSources.length > 0) {
+                            {{ project.FundingSources.join(', ') }}
+                        } @else {
+                            —
+                        }
+                    </div>
+
+                    <div class="g-col-3 field-label">Funding Source Note</div>
+                    <div class="g-col-9">{{ project.FundingSourceNotes || 'None entered' }}</div>
+                </div>
+
+                <hr />
+
+                @if (project.FundSourceAllocationRequests && project.FundSourceAllocationRequests.length > 0) {
+                    <p>The table below shows the identified fund source allocations contributing to the project cost. This may not be a comprehensive list of all project funding sources, nor an estimate of the full project cost.</p>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Fund Source Allocation</th>
+                                @if (hasMatchPayAmounts(project.FundSourceAllocationRequests)) {
+                                    <th style="text-align: right;">Match Amount</th>
+                                    <th style="text-align: right;">Pay Amount</th>
+                                }
+                                <th style="text-align: right;">Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (request of project.FundSourceAllocationRequests; track request.ProjectFundSourceAllocationRequestID) {
+                                <tr>
+                                    <td>{{ request.FundSourceName }} - {{ request.FundSourceAllocationName }}</td>
+                                    @if (hasMatchPayAmounts(project.FundSourceAllocationRequests)) {
+                                        <td style="text-align: right;">{{ formatCurrency(request.MatchAmount) }}</td>
+                                        <td style="text-align: right;">{{ formatCurrency(request.PayAmount) }}</td>
+                                    }
+                                    <td style="text-align: right;">{{ formatCurrency(request.TotalAmount) }}</td>
+                                </tr>
+                            }
+                            <tr class="totals-row">
+                                <th style="text-align: right;">Total</th>
+                                @if (hasMatchPayAmounts(project.FundSourceAllocationRequests)) {
+                                    <th style="text-align: right;">{{ formatCurrency(getFundingTotals(project.FundSourceAllocationRequests).matchTotal) }}</th>
+                                    <th style="text-align: right;">{{ formatCurrency(getFundingTotals(project.FundSourceAllocationRequests).payTotal) }}</th>
+                                }
+                                <th style="text-align: right;">{{ formatCurrency(getFundingTotals(project.FundSourceAllocationRequests).total) }}</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                } @else {
+                    <p class="system-text">No Fund Source Allocation identified for this Project.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Associated Agreements Card -->
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Agreements Associated to this Project</span>
+            </div>
+            <div class="card-body">
+                @if (project.Agreements && project.Agreements.length > 0) {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Agreement</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (agreement of project.Agreements; track agreement.AgreementID) {
+                                <tr>
+                                    <td>
+                                        <a [routerLink]="['/agreements', agreement.AgreementID]">
+                                            {{ agreement.AgreementNumber ? agreement.AgreementNumber + ' - ' : '' }}{{ agreement.AgreementTitle }}
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                } @else {
+                    <p class="system-text">No Agreements associated with this project.</p>
+                }
+            </div>
+        </div>
+    </div>
 </div>
 }

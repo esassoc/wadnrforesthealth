@@ -10,6 +10,7 @@ import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectDetail } from "src/app/shared/generated/model/project-detail";
 import { ProjectOrganizationItem } from "src/app/shared/generated/model/project-organization-item";
 import { ProjectPersonItem } from "src/app/shared/generated/model/project-person-item";
+import { FundSourceAllocationRequestItem } from "src/app/shared/generated/model/fund-source-allocation-request-item";
 
 @Component({
     selector: "project-detail",
@@ -109,5 +110,23 @@ export class ProjectDetailComponent {
     formatPercentage(value: number | null | undefined): string {
         if (value == null) return "—";
         return `${value}%`;
+    }
+
+    // Calculate totals for fund source allocation requests
+    getFundingTotals(requests: FundSourceAllocationRequestItem[] | null | undefined): { matchTotal: number; payTotal: number; total: number } {
+        if (!requests || requests.length === 0) {
+            return { matchTotal: 0, payTotal: 0, total: 0 };
+        }
+        return {
+            matchTotal: requests.reduce((sum, r) => sum + (r.MatchAmount ?? 0), 0),
+            payTotal: requests.reduce((sum, r) => sum + (r.PayAmount ?? 0), 0),
+            total: requests.reduce((sum, r) => sum + (r.TotalAmount ?? 0), 0)
+        };
+    }
+
+    // Check if match/pay amounts are relevant (any non-zero values)
+    hasMatchPayAmounts(requests: FundSourceAllocationRequestItem[] | null | undefined): boolean {
+        if (!requests || requests.length === 0) return false;
+        return requests.some(r => (r.MatchAmount ?? 0) !== 0 || (r.PayAmount ?? 0) !== 0);
     }
 }

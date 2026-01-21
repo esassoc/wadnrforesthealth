@@ -66,5 +66,10 @@
         &:last-child {
             border-bottom: none;
         }
+
+        &.totals-row {
+            background-color: #f8f9fa;
+            border-top: 2px solid #dee2e6;
+        }
     }
 }

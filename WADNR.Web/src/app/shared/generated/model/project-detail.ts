@@ -10,11 +10,13 @@
 import { ProjectTypeLookupItem } from './project-type-lookup-item';
 import { OrganizationLookupItem } from './organization-lookup-item';
 import { ProjectOrganizationItem } from './project-organization-item';
+import { FundSourceAllocationRequestItem } from './fund-source-allocation-request-item';
 import { ProjectPersonItem } from './project-person-item';
 import { ClassificationLookupItem } from './classification-lookup-item';
 import { TagLookupItem } from './tag-lookup-item';
 import { ProgramLookupItem } from './program-lookup-item';
 import { ProjectStageLookupItem } from './project-stage-lookup-item';
+import { AgreementLookupItem } from './agreement-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
@@ -40,6 +42,10 @@ export class ProjectDetail {
     People?: Array<ProjectPersonItem> | null;
     Tags?: Array<TagLookupItem> | null;
     Classifications?: Array<ClassificationLookupItem> | null;
+    FundingSources?: Array<string> | null;
+    FundingSourceNotes?: string | null;
+    FundSourceAllocationRequests?: Array<FundSourceAllocationRequestItem> | null;
+    Agreements?: Array<AgreementLookupItem> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -67,6 +73,10 @@ export interface ProjectDetailForm {
     People?: FormControl<Array<ProjectPersonItem>>;
     Tags?: FormControl<Array<TagLookupItem>>;
     Classifications?: FormControl<Array<ClassificationLookupItem>>;
+    FundingSources?: FormControl<Array<string>>;
+    FundingSourceNotes?: FormControl<string>;
+    FundSourceAllocationRequests?: FormControl<Array<FundSourceAllocationRequestItem>>;
+    Agreements?: FormControl<Array<AgreementLookupItem>>;
 }
 
 export class ProjectDetailFormControls { 
@@ -271,6 +281,46 @@ export class ProjectDetailFormControls {
         }
     );
     public static Classifications = (value: FormControlState<Array<ClassificationLookupItem>> | Array<ClassificationLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<ClassificationLookupItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundingSources = (value: FormControlState<Array<string>> | Array<string> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<string>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundingSourceNotes = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceAllocationRequests = (value: FormControlState<Array<FundSourceAllocationRequestItem>> | Array<FundSourceAllocationRequestItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<FundSourceAllocationRequestItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Agreements = (value: FormControlState<Array<AgreementLookupItem>> | Array<AgreementLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<AgreementLookupItem>>(
         value,
         formControlOptions ?? 
         {

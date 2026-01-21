@@ -4893,6 +4893,24 @@
         },
         "additionalProperties": false
       },
+      "AgreementLookupItem": {
+        "type": "object",
+        "properties": {
+          "AgreementID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AgreementTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "AgreementNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "AgreementPerson": {
         "type": "object",
         "properties": {
@@ -8495,6 +8513,43 @@
           },
           "Person": {
             "$ref": "#/components/schemas/Person"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceAllocationRequestItem": {
+        "type": "object",
+        "properties": {
+          "ProjectFundSourceAllocationRequestID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceAllocationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceAllocationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "MatchAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "PayAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -13879,6 +13934,31 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ClassificationLookupItem"
+            },
+            "nullable": true
+          },
+          "FundingSources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "FundingSourceNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceAllocationRequests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FundSourceAllocationRequestItem"
+            },
+            "nullable": true
+          },
+          "Agreements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgreementLookupItem"
             },
             "nullable": true
           }

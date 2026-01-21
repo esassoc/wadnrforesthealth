@@ -104,6 +104,33 @@ public static class ProjectProjections
                 ClassificationID = pc.Classification.ClassificationID,
                 DisplayName = pc.Classification.DisplayName
             })
+            .ToList(),
+
+        // Funding Source Notes
+        FundingSourceNotes = x.ProjectFundingSourceNotes,
+
+        // Fund Source Allocation Requests
+        FundSourceAllocationRequests = x.ProjectFundSourceAllocationRequests
+            .Select(r => new FundSourceAllocationRequestItem
+            {
+                ProjectFundSourceAllocationRequestID = r.ProjectFundSourceAllocationRequestID,
+                FundSourceAllocationID = r.FundSourceAllocationID,
+                FundSourceAllocationName = r.FundSourceAllocation.FundSourceAllocationName ?? string.Empty,
+                FundSourceName = r.FundSourceAllocation.FundSource.FundSourceName,
+                MatchAmount = r.MatchAmount,
+                PayAmount = r.PayAmount,
+                TotalAmount = r.TotalAmount
+            })
+            .ToList(),
+
+        // Associated Agreements
+        Agreements = x.AgreementProjects
+            .Select(ap => new AgreementLookupItem
+            {
+                AgreementID = ap.Agreement.AgreementID,
+                AgreementTitle = ap.Agreement.AgreementTitle ?? string.Empty,
+                AgreementNumber = ap.Agreement.AgreementNumber
+            })
             .ToList()
     };
 

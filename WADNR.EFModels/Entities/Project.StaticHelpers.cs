@@ -85,6 +85,23 @@ public static class Projects
             .Where(x => x.ProjectID == projectID)
             .Select(ProjectProjections.AsDetail)
             .SingleOrDefaultAsync();
+
+        if (entity == null) return null;
+
+        // Populate FundingSources from the static lookup table
+        var fundingSourceIds = await dbContext.ProjectFundingSources
+            .AsNoTracking()
+            .Where(pfs => pfs.ProjectID == projectID)
+            .Select(pfs => pfs.FundingSourceID)
+            .ToListAsync();
+
+        entity.FundingSources = fundingSourceIds
+            .Select(id => FundingSource.AllLookupDictionary.TryGetValue(id, out var fs) ? fs.FundingSourceDisplayName : null)
+            .Where(name => name != null)
+            .Cast<string>()
+            .OrderBy(name => name)
+            .ToList();
+
         return entity;
     }
 

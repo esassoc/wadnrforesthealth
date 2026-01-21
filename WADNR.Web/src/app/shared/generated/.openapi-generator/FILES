@@ -27,6 +27,7 @@ model/agreement-contact-grid-row.ts
 model/agreement-detail.ts
 model/agreement-fund-source-allocation.ts
 model/agreement-grid-row.ts
+model/agreement-lookup-item.ts
 model/agreement-person-role-enum.ts
 model/agreement-person-role.ts
 model/agreement-person.ts
@@ -118,6 +119,7 @@ model/fund-source-allocation-priority-detail.ts
 model/fund-source-allocation-priority.ts
 model/fund-source-allocation-program-index-project-code.ts
 model/fund-source-allocation-program-manager.ts
+model/fund-source-allocation-request-item.ts
 model/fund-source-allocation-source-enum.ts
 model/fund-source-allocation-source-lookup-item.ts
 model/fund-source-allocation-source.ts
