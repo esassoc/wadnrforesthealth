@@ -1,0 +1,69 @@
+<div class="modal-header">
+    <h3>{{ modalTitle }}</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.OrganizationName"
+            fieldLabel="Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter organization name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.OrganizationShortName"
+            fieldLabel="Short Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter short name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.OrganizationTypeID"
+            fieldDefinitionName="OrganizationType"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="organizationTypeOptions"
+            formInputOptionLabel="Label"
+            formInputOptionValue="Value"
+            placeholder="Select organization type">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.PrimaryContactPersonID"
+            fieldDefinitionName="OrganizationPrimaryContact"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="personOptions"
+            formInputOptionLabel="Label"
+            formInputOptionValue="Value"
+            placeholder="Select primary contact">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.OrganizationUrl"
+            fieldLabel="Home Page"
+            [type]="FormFieldType.Text"
+            placeholder="https://example.com">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.IsActive"
+            fieldLabel="Is Active"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Save' }}
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>

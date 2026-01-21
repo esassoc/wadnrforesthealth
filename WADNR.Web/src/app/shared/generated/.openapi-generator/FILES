@@ -11,7 +11,9 @@ api/field-definition.service.ts
 api/file-resource.service.ts
 api/fund-source.service.ts
 api/interaction-event.service.ts
+api/organization-type.service.ts
 api/organization.service.ts
+api/person.service.ts
 api/priority-landscape.service.ts
 api/program.service.ts
 api/project-type.service.ts
@@ -180,6 +182,7 @@ model/organization-code.ts
 model/organization-detail.ts
 model/organization-grid-row.ts
 model/organization-lookup-item.ts
+model/organization-type-lookup-item.ts
 model/organization-type-relationship-type.ts
 model/organization-type.ts
 model/organization-upsert-request.ts

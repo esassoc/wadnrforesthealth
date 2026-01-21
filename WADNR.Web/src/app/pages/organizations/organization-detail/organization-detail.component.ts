@@ -1,9 +1,10 @@
 import { AsyncPipe } from "@angular/common";
 import { Component } from "@angular/core";
-import { ActivatedRoute, RouterLink } from "@angular/router";
-import { distinctUntilChanged, filter, map, Observable, shareReplay, switchMap, tap } from "rxjs";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, startWith, switchMap, tap } from "rxjs";
 import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap, Control, LatLngBounds } from "leaflet";
+import { DialogService } from "@ngneat/dialog";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -11,20 +12,28 @@ import { FieldDefinitionComponent } from "src/app/shared/components/field-defini
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
+import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
+import { AlertService } from "src/app/shared/services/alert.service";
+import { Alert } from "src/app/shared/models/alert";
+import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { environment } from "src/environments/environment";
 
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
+import { OrganizationTypeService } from "src/app/shared/generated/api/organization-type.service";
+import { PersonService } from "src/app/shared/generated/api/person.service";
 import { OrganizationDetail } from "src/app/shared/generated/model/organization-detail";
 import { ProgramGridRow } from "src/app/shared/generated/model/program-grid-row";
 import { ProjectOrganizationDetailGridRow } from "src/app/shared/generated/model/project-organization-detail-grid-row";
 import { AgreementGridRow } from "src/app/shared/generated/model/agreement-grid-row";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
+import { OrganizationModalComponent, OrganizationModalData } from "../organization-modal/organization-modal.component";
 
 @Component({
     selector: "organization-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, FieldDefinitionComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, IconComponent],
     templateUrl: "./organization-detail.component.html",
     styleUrls: ["./organization-detail.component.scss"],
 })
@@ -48,10 +57,18 @@ export class OrganizationDetailComponent {
     public projectColumnDefs: ColDef<ProjectOrganizationDetailGridRow>[] = [];
     public agreementColumnDefs: ColDef<AgreementGridRow>[] = [];
 
+    private refreshData$ = new BehaviorSubject<void>(undefined);
+
     constructor(
         private route: ActivatedRoute,
+        private router: Router,
         private organizationService: OrganizationService,
-        private utilityFunctions: UtilityFunctionsService
+        private organizationTypeService: OrganizationTypeService,
+        private personService: PersonService,
+        private utilityFunctions: UtilityFunctionsService,
+        private dialogService: DialogService,
+        private confirmService: ConfirmService,
+        private alertService: AlertService
     ) {}
 
     ngOnInit(): void {
@@ -62,8 +79,8 @@ export class OrganizationDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.organization$ = this.organizationID$.pipe(
-            switchMap((organizationID) => this.organizationService.getOrganization(organizationID)),
+        this.organization$ = combineLatest([this.organizationID$, this.refreshData$]).pipe(
+            switchMap(([organizationID]) => this.organizationService.getOrganization(organizationID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -239,6 +256,59 @@ export class OrganizationDetailComponent {
     handleBoundaryDataBounds(bounds: LatLngBounds | null): void {
         if (bounds && this.map) {
             this.map.fitBounds(bounds, { padding: [20, 20] });
+        }
+    }
+
+    openEditModal(organization: OrganizationDetail): void {
+        forkJoin({
+            organizationTypes: this.organizationTypeService.listOrganizationType(),
+            people: this.personService.listPerson()
+        }).subscribe(({ organizationTypes, people }) => {
+            const dialogRef = this.dialogService.open(OrganizationModalComponent, {
+                data: {
+                    mode: "edit",
+                    organization: organization,
+                    organizationTypes: organizationTypes,
+                    people: people
+                } as OrganizationModalData,
+                size: "md"
+            });
+
+            dialogRef.afterClosed$.subscribe(result => {
+                if (result) {
+                    this.refreshData$.next();
+                }
+            });
+        });
+    }
+
+    async confirmDelete(organization: OrganizationDetail): Promise<void> {
+        const confirmed = await this.confirmService.confirm({
+            title: "Delete Contributing Organization",
+            message: `Are you sure you want to delete "${organization.OrganizationName}"? This action cannot be undone.`,
+            buttonTextYes: "Delete",
+            buttonClassYes: "btn-danger",
+            buttonTextNo: "Cancel"
+        });
+
+        if (confirmed) {
+            this.organizationService.deleteOrganization(organization.OrganizationID).subscribe({
+                next: () => {
+                    this.alertService.pushAlert(new Alert(
+                        "Contributing Organization deleted successfully.",
+                        AlertContext.Success,
+                        true
+                    ));
+                    this.router.navigate(["/organizations"]);
+                },
+                error: (err) => {
+                    this.alertService.pushAlert(new Alert(
+                        err?.error?.message ?? "Failed to delete Contributing Organization.",
+                        AlertContext.Danger,
+                        true
+                    ));
+                }
+            });
         }
     }
 }

@@ -7,6 +7,10 @@
 .field-definition-label {
     display: inline-flex;
     align-items: center;
+
+    &__text {
+        font-weight: bold;
+    }
 }
 
 .field-definition-label__icon {

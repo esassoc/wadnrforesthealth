@@ -158,6 +158,7 @@ export * from './organization-detail';
 export * from './organization-grid-row';
 export * from './organization-lookup-item';
 export * from './organization-type';
+export * from './organization-type-lookup-item';
 export * from './organization-type-relationship-type';
 export * from './organization-upsert-request';
 export * from './person';

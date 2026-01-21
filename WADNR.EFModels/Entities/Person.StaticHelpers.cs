@@ -5,6 +5,18 @@ namespace WADNR.EFModels.Entities;
 
 public static class People
 {
+    public static async Task<List<PersonLookupItem>> ListAsLookupItemAsync(WADNRDbContext dbContext)
+    {
+        var items = await dbContext.People
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.LastName)
+            .ThenBy(x => x.FirstName)
+            .Select(PersonProjections.AsLookupItem)
+            .ToListAsync();
+        return items;
+    }
+
     public static async Task<PersonDetail?> GetByIDAsDetailAsync(WADNRDbContext dbContext, int personID)
     {
         var person = await dbContext.People

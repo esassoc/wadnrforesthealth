@@ -2666,6 +2666,84 @@
         }
       }
     },
+    "/organization-types": {
+      "get": {
+        "tags": [
+          "OrganizationType"
+        ],
+        "operationId": "List_OrganizationType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationTypeLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationTypeLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationTypeLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/people": {
+      "get": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "List_Person",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/priority-landscapes": {
       "get": {
         "tags": [
@@ -10807,6 +10885,20 @@
         },
         "additionalProperties": false
       },
+      "OrganizationTypeLookupItem": {
+        "type": "object",
+        "properties": {
+          "OrganizationTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OrganizationTypeName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "OrganizationTypeRelationshipType": {
         "type": "object",
         "properties": {
@@ -17609,6 +17701,12 @@
     },
     {
       "name": "Organization"
+    },
+    {
+      "name": "OrganizationType"
+    },
+    {
+      "name": "Person"
     },
     {
       "name": "PriorityLandscape"

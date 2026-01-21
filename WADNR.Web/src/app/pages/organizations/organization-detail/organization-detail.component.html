@@ -1,6 +1,15 @@
 @if (organization$ | async; as organization) {
 <breadcrumb [items]="[{ label: 'Contributing Organizations', url: '/organizations' }, { label: organization.OrganizationName }]" [linkLast]="false"></breadcrumb>
-<page-header pageTitle="{{ organization.OrganizationName }}"></page-header>
+<page-header pageTitle="{{ organization.OrganizationName }}">
+    <div class="header-actions">
+        <button class="btn btn-primary" (click)="openEditModal(organization)">
+            <icon icon="Configure"></icon> Edit
+        </button>
+        <button class="btn btn-danger" (click)="confirmDelete(organization)">
+            <icon icon="Delete"></icon> Delete
+        </button>
+    </div>
+</page-header>
 
 <div class="grid-12">
     <!-- Basics Card -->
