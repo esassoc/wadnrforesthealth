@@ -7,21 +7,38 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { ProjectTypeLookupItem } from './project-type-lookup-item';
 import { OrganizationLookupItem } from './organization-lookup-item';
+import { ProjectOrganizationItem } from './project-organization-item';
+import { ProjectPersonItem } from './project-person-item';
 import { ClassificationLookupItem } from './classification-lookup-item';
+import { TagLookupItem } from './tag-lookup-item';
+import { ProgramLookupItem } from './program-lookup-item';
+import { ProjectStageLookupItem } from './project-stage-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class ProjectDetail { 
     ProjectID?: number;
     ProjectName?: string | null;
-    ProjectDescription?: string | null;
+    FhtProjectNumber?: string | null;
+    ProjectGisIdentifier?: string | null;
+    ProjectType?: ProjectTypeLookupItem;
+    ProjectStage?: ProjectStageLookupItem;
     PlannedDate?: string | null;
     CompletionDate?: string | null;
+    ExpirationDate?: string | null;
     Duration?: string | null;
+    ProjectDescription?: string | null;
     EstimatedTotalCost?: number | null;
-    FhtProjectNumber?: string | null;
+    PercentageMatch?: number | null;
+    FocusAreaID?: number | null;
+    FocusAreaName?: string | null;
     LeadImplementer?: OrganizationLookupItem;
+    Programs?: Array<ProgramLookupItem> | null;
+    Organizations?: Array<ProjectOrganizationItem> | null;
+    People?: Array<ProjectPersonItem> | null;
+    Tags?: Array<TagLookupItem> | null;
     Classifications?: Array<ClassificationLookupItem> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -31,13 +48,24 @@ export class ProjectDetail {
 export interface ProjectDetailForm { 
     ProjectID?: FormControl<number>;
     ProjectName?: FormControl<string>;
-    ProjectDescription?: FormControl<string>;
+    FhtProjectNumber?: FormControl<string>;
+    ProjectGisIdentifier?: FormControl<string>;
+    ProjectType?: FormControl<ProjectTypeLookupItem>;
+    ProjectStage?: FormControl<ProjectStageLookupItem>;
     PlannedDate?: FormControl<string>;
     CompletionDate?: FormControl<string>;
+    ExpirationDate?: FormControl<string>;
     Duration?: FormControl<string>;
+    ProjectDescription?: FormControl<string>;
     EstimatedTotalCost?: FormControl<number>;
-    FhtProjectNumber?: FormControl<string>;
+    PercentageMatch?: FormControl<number>;
+    FocusAreaID?: FormControl<number>;
+    FocusAreaName?: FormControl<string>;
     LeadImplementer?: FormControl<OrganizationLookupItem>;
+    Programs?: FormControl<Array<ProgramLookupItem>>;
+    Organizations?: FormControl<Array<ProjectOrganizationItem>>;
+    People?: FormControl<Array<ProjectPersonItem>>;
+    Tags?: FormControl<Array<TagLookupItem>>;
     Classifications?: FormControl<Array<ClassificationLookupItem>>;
 }
 
@@ -62,7 +90,37 @@ export class ProjectDetailFormControls {
             ],
         }
     );
-    public static ProjectDescription = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static FhtProjectNumber = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectGisIdentifier = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectType = (value: FormControlState<ProjectTypeLookupItem> | ProjectTypeLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<ProjectTypeLookupItem>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectStage = (value: FormControlState<ProjectStageLookupItem> | ProjectStageLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<ProjectStageLookupItem>(
         value,
         formControlOptions ?? 
         {
@@ -92,7 +150,27 @@ export class ProjectDetailFormControls {
             ],
         }
     );
+    public static ExpirationDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
     public static Duration = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectDescription = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -112,7 +190,27 @@ export class ProjectDetailFormControls {
             ],
         }
     );
-    public static FhtProjectNumber = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static PercentageMatch = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FocusAreaID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FocusAreaName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -123,6 +221,46 @@ export class ProjectDetailFormControls {
         }
     );
     public static LeadImplementer = (value: FormControlState<OrganizationLookupItem> | OrganizationLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<OrganizationLookupItem>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Programs = (value: FormControlState<Array<ProgramLookupItem>> | Array<ProgramLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<ProgramLookupItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Organizations = (value: FormControlState<Array<ProjectOrganizationItem>> | Array<ProjectOrganizationItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<ProjectOrganizationItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static People = (value: FormControlState<Array<ProjectPersonItem>> | Array<ProjectPersonItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<ProjectPersonItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Tags = (value: FormControlState<Array<TagLookupItem>> | Array<TagLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<TagLookupItem>>(
         value,
         formControlOptions ?? 
         {

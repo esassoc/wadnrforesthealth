@@ -13788,9 +13788,19 @@
             "type": "string",
             "nullable": true
           },
-          "ProjectDescription": {
+          "FhtProjectNumber": {
             "type": "string",
             "nullable": true
+          },
+          "ProjectGisIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectType": {
+            "$ref": "#/components/schemas/ProjectTypeLookupItem"
+          },
+          "ProjectStage": {
+            "$ref": "#/components/schemas/ProjectStageLookupItem"
           },
           "PlannedDate": {
             "type": "string",
@@ -13802,7 +13812,16 @@
             "format": "date-time",
             "nullable": true
           },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectDescription": {
             "type": "string",
             "nullable": true
           },
@@ -13811,12 +13830,50 @@
             "format": "double",
             "nullable": true
           },
-          "FhtProjectNumber": {
+          "PercentageMatch": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "FocusAreaID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FocusAreaName": {
             "type": "string",
             "nullable": true
           },
           "LeadImplementer": {
             "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "Programs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProgramLookupItem"
+            },
+            "nullable": true
+          },
+          "Organizations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectOrganizationItem"
+            },
+            "nullable": true
+          },
+          "People": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectPersonItem"
+            },
+            "nullable": true
+          },
+          "Tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagLookupItem"
+            },
+            "nullable": true
           },
           "Classifications": {
             "type": "array",
@@ -15198,6 +15255,35 @@
         },
         "additionalProperties": false
       },
+      "ProjectOrganizationItem": {
+        "type": "object",
+        "properties": {
+          "ProjectOrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RelationshipTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsPrimaryContact": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectOrganizationUpdate": {
         "type": "object",
         "properties": {
@@ -15270,6 +15356,36 @@
           },
           "Project": {
             "$ref": "#/components/schemas/Project"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectPersonItem": {
+        "type": "object",
+        "properties": {
+          "ProjectPersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PersonFullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RelationshipTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "SortOrder": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -17327,6 +17443,20 @@
           "ProjectCount": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TagLookupItem": {
+        "type": "object",
+        "properties": {
+          "TagID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TagName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

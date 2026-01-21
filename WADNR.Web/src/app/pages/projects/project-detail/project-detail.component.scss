@@ -1,0 +1,70 @@
+.stage-breadcrumb {
+    margin-bottom: 1rem;
+
+    .stage-item {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background-color: #e9ecef;
+        border-radius: 4px;
+        font-weight: 500;
+
+        &.current {
+            background-color: #28a745;
+            color: white;
+        }
+    }
+}
+
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    .btn-tag {
+        background-color: #e9ecef;
+        border: 1px solid #ced4da;
+        color: #495057;
+
+        &:hover {
+            background-color: #dee2e6;
+            text-decoration: none;
+        }
+    }
+}
+
+.list-unstyled {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+
+    li {
+        margin-bottom: 0.25rem;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 0;
+
+    th, td {
+        padding: 0.5rem;
+        vertical-align: top;
+    }
+
+    thead th {
+        border-bottom: 2px solid #dee2e6;
+        font-weight: 600;
+    }
+
+    tbody tr {
+        border-bottom: 1px solid #dee2e6;
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+}

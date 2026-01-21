@@ -111,6 +111,11 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/projects/project-fact-sheet/project-fact-sheet.component").then((m) => m.ProjectFactSheetComponent),
     },
     {
+        path: `projects/:${routeParams.projectID}`,
+        title: "Project Detail",
+        loadComponent: () => import("./pages/projects/project-detail/project-detail.component").then((m) => m.ProjectDetailComponent),
+    },
+    {
         path: "projects-by-theme",
         title: "Projects By Theme",
         loadComponent: () => import("./pages/classifications/classifications.component").then((m) => m.ClassificationsComponent),

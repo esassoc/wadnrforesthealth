@@ -7,13 +7,104 @@ public static class ProjectProjections
 {
     public static readonly Expression<Func<Project, ProjectDetail>> AsDetail = x => new ProjectDetail
     {
+        // Core identifiers
         ProjectID = x.ProjectID,
         ProjectName = x.ProjectName,
-        ProjectDescription = x.ProjectDescription,
+        FhtProjectNumber = x.FhtProjectNumber,
+        ProjectGisIdentifier = x.ProjectGisIdentifier,
+
+        // Type and Stage
+        ProjectType = new ProjectTypeLookupItem
+        {
+            ProjectTypeID = x.ProjectType.ProjectTypeID,
+            ProjectTypeName = x.ProjectType.ProjectTypeName
+        },
+        ProjectStage = new ProjectStageLookupItem
+        {
+            ProjectStageID = x.ProjectStage.ProjectStageID,
+            ProjectStageName = x.ProjectStage.ProjectStageName
+        },
+
+        // Dates
         PlannedDate = x.PlannedDate,
         CompletionDate = x.CompletionDate,
+        ExpirationDate = x.ExpirationDate,
+        Duration = x.Duration,
+
+        // Description
+        ProjectDescription = x.ProjectDescription,
+
+        // Financial
         EstimatedTotalCost = x.EstimatedTotalCost,
-        FhtProjectNumber = x.FhtProjectNumber,
+        PercentageMatch = x.PercentageMatch,
+
+        // Focus Area
+        FocusAreaID = x.FocusAreaID,
+        FocusAreaName = x.FocusArea != null ? x.FocusArea.FocusAreaName : null,
+
+        // Lead Implementer
+        LeadImplementer = x.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => new OrganizationLookupItem
+            {
+                OrganizationID = po.Organization.OrganizationID,
+                OrganizationName = po.Organization.DisplayName
+            })
+            .FirstOrDefault(),
+
+        // Programs
+        Programs = x.ProjectPrograms
+            .Where(pp => !pp.Program.IsDefaultProgramForImportOnly)
+            .Select(pp => new ProgramLookupItem
+            {
+                ProgramID = pp.Program.ProgramID,
+                ProgramName = pp.Program.DisplayName
+            })
+            .ToList(),
+
+        // Organizations
+        Organizations = x.ProjectOrganizations
+            .Select(po => new ProjectOrganizationItem
+            {
+                ProjectOrganizationID = po.ProjectOrganizationID,
+                OrganizationID = po.Organization.OrganizationID,
+                OrganizationName = po.Organization.DisplayName,
+                RelationshipTypeID = po.RelationshipTypeID,
+                RelationshipTypeName = po.RelationshipType.RelationshipTypeName,
+                IsPrimaryContact = po.RelationshipType.IsPrimaryContact
+            })
+            .ToList(),
+
+        // People
+        People = x.ProjectPeople
+            .Select(pp => new ProjectPersonItem
+            {
+                ProjectPersonID = pp.ProjectPersonID,
+                PersonID = pp.Person.PersonID,
+                PersonFullName = pp.Person.FirstName + " " + pp.Person.LastName,
+                RelationshipTypeID = pp.ProjectPersonRelationshipTypeID,
+                RelationshipTypeName = pp.ProjectPersonRelationshipType.ProjectPersonRelationshipTypeDisplayName,
+                SortOrder = pp.ProjectPersonRelationshipType.SortOrder
+            })
+            .ToList(),
+
+        // Tags
+        Tags = x.ProjectTags
+            .Select(pt => new TagLookupItem
+            {
+                TagID = pt.Tag.TagID,
+                TagName = pt.Tag.TagName
+            })
+            .ToList(),
+
+        // Classifications
+        Classifications = x.ProjectClassifications
+            .Select(pc => new ClassificationLookupItem
+            {
+                ClassificationID = pc.Classification.ClassificationID,
+                DisplayName = pc.Classification.DisplayName
+            })
+            .ToList()
     };
 
     public static readonly Expression<Func<Project, ProjectMapPopup>> AsMapPopup = x => new ProjectMapPopup

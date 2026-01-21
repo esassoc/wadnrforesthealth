@@ -269,8 +269,10 @@ model/project-map-popup.ts
 model/project-note-update.ts
 model/project-note.ts
 model/project-organization-detail-grid-row.ts
+model/project-organization-item.ts
 model/project-organization-update.ts
 model/project-organization.ts
+model/project-person-item.ts
 model/project-person-relationship-type-enum.ts
 model/project-person-relationship-type.ts
 model/project-person-update.ts
@@ -326,6 +328,7 @@ model/tabular-data-import-table-type.ts
 model/tabular-data-import.ts
 model/tag-detail.ts
 model/tag-grid-row.ts
+model/tag-lookup-item.ts
 model/tag-upsert-request.ts
 model/tag.ts
 model/taxonomy-branch.ts

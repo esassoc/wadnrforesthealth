@@ -1,0 +1,169 @@
+@if (project$ | async; as project) {
+<breadcrumb [items]="[{ label: 'Projects', url: '/projects' }, { label: project.ProjectName || 'Project' }]" [linkLast]="false"></breadcrumb>
+<page-header pageTitle="{{ project.ProjectName }}"></page-header>
+
+<!-- Project Stage Breadcrumb -->
+@if (project.ProjectStage) {
+<div class="stage-breadcrumb">
+    <span class="stage-item current">{{ project.ProjectStage.ProjectStageName }}</span>
+</div>
+}
+
+<div class="grid-12">
+    <!-- Basics Card -->
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Basics</span>
+            </div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4 field-label">Project Stage</div>
+                    <div class="g-col-8">{{ project.ProjectStage?.ProjectStageName || "—" }}</div>
+
+                    <div class="g-col-4 field-label">Project Initiation Date</div>
+                    <div class="g-col-8">{{ formatDate(project.PlannedDate) }}</div>
+
+                    <div class="g-col-4 field-label">Completion Date</div>
+                    <div class="g-col-8">{{ formatDate(project.CompletionDate) }}</div>
+
+                    <div class="g-col-4 field-label">Lead Implementer Organization</div>
+                    <div class="g-col-8">
+                        @if (project.LeadImplementer) {
+                            <a [routerLink]="['/organizations', project.LeadImplementer.OrganizationID]">{{ project.LeadImplementer.OrganizationName }}</a>
+                        } @else {
+                            —
+                        }
+                    </div>
+
+                    <div class="g-col-12"><hr /></div>
+
+                    <div class="g-col-4 field-label">Project Description</div>
+                    <div class="g-col-8">{{ project.ProjectDescription || "—" }}</div>
+
+                    <div class="g-col-4 field-label">Expiration Date</div>
+                    <div class="g-col-8">{{ formatDate(project.ExpirationDate) }}</div>
+
+                    <div class="g-col-4 field-label">Focus Area</div>
+                    <div class="g-col-8">{{ project.FocusAreaName || "—" }}</div>
+
+                    <div class="g-col-4 field-label">Program</div>
+                    <div class="g-col-8">
+                        @if (project.Programs && project.Programs.length > 0) {
+                            @for (program of project.Programs; track program.ProgramID; let last = $last) {
+                                <a [routerLink]="['/programs', program.ProgramID]">{{ program.ProgramName }}</a>@if (!last) {, }
+                            }
+                        } @else {
+                            —
+                        }
+                    </div>
+
+                    <div class="g-col-4 field-label">Percentage Match</div>
+                    <div class="g-col-8">{{ formatPercentage(project.PercentageMatch) }}</div>
+
+                    @if (project.ProjectGisIdentifier) {
+                    <div class="g-col-4 field-label">Project Identifier</div>
+                    <div class="g-col-8">{{ project.ProjectGisIdentifier }}</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tags Card -->
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Tags</span>
+            </div>
+            <div class="card-body">
+                @if (project.Tags && project.Tags.length > 0) {
+                    <div class="tags-list">
+                        @for (tag of project.Tags; track tag.TagID) {
+                            <a [routerLink]="['/tags', tag.TagID]" class="btn btn-sm btn-tag">{{ tag.TagName }}</a>
+                        }
+                    </div>
+                } @else {
+                    <p class="system-text">No tags assigned to this project.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Organizations Card -->
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Organizations</span>
+            </div>
+            <div class="card-body">
+                @if (project.Organizations && project.Organizations.length > 0) {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Relationship Type</th>
+                                <th>Organization</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (group of getOrganizationsByRelationshipType(project.Organizations); track group.relationshipType) {
+                                <tr>
+                                    <td>{{ group.organizations.length > 1 ? group.relationshipType + 's' : group.relationshipType }}</td>
+                                    <td>
+                                        <ul class="list-unstyled">
+                                            @for (org of group.organizations; track org.ProjectOrganizationID) {
+                                                <li>
+                                                    <a [routerLink]="['/organizations', org.OrganizationID]">{{ org.OrganizationName }}</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                } @else {
+                    <p class="system-text">No organizations set for this project.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Contacts Card -->
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Contacts</span>
+            </div>
+            <div class="card-body">
+                @if (project.People && project.People.length > 0) {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Relationship Type</th>
+                                <th>Contact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (group of getPeopleByRelationshipType(project.People); track group.relationshipType) {
+                                <tr>
+                                    <td>{{ group.people.length > 1 ? group.relationshipType + 's' : group.relationshipType }}</td>
+                                    <td>
+                                        <ul class="list-unstyled">
+                                            @for (person of group.people; track person.ProjectPersonID) {
+                                                <li>{{ person.PersonFullName }}</li>
+                                            }
+                                        </ul>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                } @else {
+                    <p class="system-text">No contacts set for this project.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+}
