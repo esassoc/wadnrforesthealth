@@ -3280,6 +3280,56 @@
         }
       }
     },
+    "/programs/{programID}/projects": {
+      "get": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "ListProjects_Program",
+        "parameters": [
+          {
+            "name": "programID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectProgramDetailGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectProgramDetailGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectProgramDetailGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects": {
       "get": {
         "tags": [
@@ -12360,6 +12410,78 @@
           "ProgramName": {
             "type": "string",
             "nullable": true
+          },
+          "ProgramShortName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramIsActive": {
+            "type": "boolean"
+          },
+          "IsDefaultProgramForImportOnly": {
+            "type": "boolean"
+          },
+          "ProgramNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "PrimaryContactPersonID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PrimaryContactPersonFullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "PrimaryContactPersonOrganization": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramFileResourceID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProgramFileResourceUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramFileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramExampleGeospatialUploadFileResourceID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProgramExampleGeospatialUploadFileResourceUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramExampleGeospatialUploadFileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramEditors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonLookupItem"
+            },
+            "nullable": true
+          },
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -15131,6 +15253,39 @@
           },
           "Project": {
             "$ref": "#/components/schemas/Project"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectProgramDetailGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectGisIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectStage": {
+            "$ref": "#/components/schemas/ProjectStageLookupItem"
+          },
+          "Programs": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

@@ -1,0 +1,115 @@
+@if (program$ | async; as program) {
+<breadcrumb [items]="[{ label: 'Programs', url: '/programs' }, { label: program.ProgramName || '(default)' }]" [linkLast]="false"></breadcrumb>
+<page-header pageTitle="{{ program.ProgramName || '(default)' }}"></page-header>
+
+<div class="grid-12">
+    <!-- Basics Card -->
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Basics</span>
+            </div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-6 field-label">Program Name</div>
+                    <div class="g-col-6">{{ program.ProgramName || "(default)" }}</div>
+
+                    <div class="g-col-6 field-label">Program Short Name</div>
+                    <div class="g-col-6">{{ program.ProgramShortName || "—" }}</div>
+
+                    <div class="g-col-6 field-label">Parent Organization</div>
+                    <div class="g-col-6">
+                        @if (program.OrganizationID) {
+                            <a [routerLink]="['/organizations', program.OrganizationID]">{{ program.OrganizationName }}</a>
+                        } @else {
+                            —
+                        }
+                    </div>
+
+                    <div class="g-col-6 field-label">Primary Contact</div>
+                    <div class="g-col-6">
+                        @if (program.PrimaryContactPersonFullName) {
+                            {{ program.PrimaryContactPersonFullName }}
+                            @if (program.PrimaryContactPersonOrganization) {
+                                ({{ program.PrimaryContactPersonOrganization }})
+                            }
+                        } @else {
+                            —
+                        }
+                    </div>
+
+                    <div class="g-col-6 field-label">Is Active</div>
+                    <div class="g-col-6">{{ program.ProgramIsActive ? 'Yes' : 'No' }}</div>
+
+                    <div class="g-col-6 field-label">Is Default for Bulk Import Only</div>
+                    <div class="g-col-6">{{ program.IsDefaultProgramForImportOnly ? 'Yes' : 'No' }}</div>
+
+                    <div class="g-col-6 field-label">Program Notes</div>
+                    <div class="g-col-6">{{ program.ProgramNotes || "—" }}</div>
+
+                    <div class="g-col-6 field-label">Program File</div>
+                    <div class="g-col-6">
+                        @if (program.ProgramFileName && program.ProgramFileResourceUrl) {
+                            <a [href]="getFileUrl(program.ProgramFileResourceUrl)" target="_blank">{{ program.ProgramFileName }}</a>
+                        } @else {
+                            No documents uploaded yet.
+                        }
+                    </div>
+
+                    <div class="g-col-6 field-label">Program Example Geospatial Data File</div>
+                    <div class="g-col-6">
+                        @if (program.ProgramExampleGeospatialUploadFileName && program.ProgramExampleGeospatialUploadFileResourceUrl) {
+                            <a [href]="getFileUrl(program.ProgramExampleGeospatialUploadFileResourceUrl)" target="_blank">{{ program.ProgramExampleGeospatialUploadFileName }}</a>
+                        } @else {
+                            No example geospatial documents uploaded yet.
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Program Editors Card -->
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Program Editors</span>
+            </div>
+            <div class="card-body">
+                @if (program.ProgramEditors && program.ProgramEditors.length > 0) {
+                    <ul>
+                        @for (editor of program.ProgramEditors; track editor.PersonID) {
+                            <li>{{ editor.FullName }}</li>
+                        }
+                    </ul>
+                } @else {
+                    <p class="system-text">No Program Editors assigned to this Program.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects Grid Card -->
+    @if (projects$ | async; as projects) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Projects Associated with this Program</span>
+            </div>
+            <div class="card-body">
+                @if (projects.length > 0) {
+                    <wadnr-grid
+                        [rowData]="projects"
+                        [columnDefs]="projectColumnDefs"
+                        height="400px"
+                        downloadFileName="Program_Projects">
+                    </wadnr-grid>
+                } @else {
+                    <p class="system-text">No Projects associated with this Program.</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
+</div>
+}

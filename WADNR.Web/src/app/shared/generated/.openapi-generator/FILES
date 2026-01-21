@@ -273,6 +273,7 @@ model/project-person-update.ts
 model/project-person.ts
 model/project-priority-landscape-update.ts
 model/project-priority-landscape.ts
+model/project-program-detail-grid-row.ts
 model/project-program.ts
 model/project-project-type-detail-grid-row.ts
 model/project-region-update.ts

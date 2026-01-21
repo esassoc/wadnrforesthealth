@@ -12,6 +12,7 @@ export const routeParams = {
     interactionEventID: "interactionEventID",
     agreementID: "agreementID",
     organizationID: "organizationID",
+    programID: "programID",
 };
 
 export const routes: Routes = [
@@ -91,6 +92,11 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/priority-landscapes/priority-landscape-detail/priority-landscape-detail.component").then((m) => m.PriorityLandscapeDetailComponent),
     },
     { path: "programs", title: "Programs", loadComponent: () => import("./pages/programs/programs.component").then((m) => m.ProgramsComponent) },
+    {
+        path: `programs/:${routeParams.programID}`,
+        title: "Program Detail",
+        loadComponent: () => import("./pages/programs/program-detail/program-detail.component").then((m) => m.ProgramDetailComponent),
+    },
     { path: "tags", title: "Tags", loadComponent: () => import("./pages/tags/tags.component").then((m) => m.TagsComponent) },
     {
         path: `tags/:${routeParams.tagID}`,

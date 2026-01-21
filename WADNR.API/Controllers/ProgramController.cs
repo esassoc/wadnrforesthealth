@@ -27,7 +27,7 @@ public class ProgramController(
     }
 
     [HttpGet("{programID}")]
-    [EntityNotFound(typeof(Program), "programID")]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<ActionResult<ProgramDetail>> Get([FromRoute] int programID)
     {
         var entity = await Programs.GetByIDAsDetailAsync(DbContext, programID);
@@ -52,7 +52,7 @@ public class ProgramController(
 
     [HttpPut("{programID}")]
     //[AdminFeature]
-    [EntityNotFound(typeof(Program), "programID")]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<ActionResult<ProgramDetail>> Update([FromRoute] int programID, [FromBody] ProgramUpsertRequest dto)
     {
         var updated = await Programs.UpdateAsync(DbContext, programID, dto, CallingUser.PersonID);
@@ -65,7 +65,7 @@ public class ProgramController(
 
     [HttpDelete("{programID}")]
     //[AdminFeature]
-    [EntityNotFound(typeof(Program), "programID")]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<IActionResult> Delete([FromRoute] int programID)
     {
         var deleted = await Programs.DeleteAsync(DbContext, programID);
@@ -74,5 +74,13 @@ public class ProgramController(
             return NotFound();
         }
         return NoContent();
+    }
+
+    [HttpGet("{programID}/projects")]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
+    public async Task<ActionResult<IEnumerable<ProjectProgramDetailGridRow>>> ListProjects([FromRoute] int programID)
+    {
+        var projects = await Programs.ListProjectsForProgramAsync(DbContext, programID);
+        return Ok(projects);
     }
 }

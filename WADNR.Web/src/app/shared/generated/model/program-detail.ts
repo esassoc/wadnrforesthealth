@@ -7,12 +7,30 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { PersonLookupItem } from './person-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class ProgramDetail { 
     ProgramID?: number;
     ProgramName?: string | null;
+    ProgramShortName?: string | null;
+    ProgramIsActive?: boolean;
+    IsDefaultProgramForImportOnly?: boolean;
+    ProgramNotes?: string | null;
+    OrganizationID?: number;
+    OrganizationName?: string | null;
+    PrimaryContactPersonID?: number | null;
+    PrimaryContactPersonFullName?: string | null;
+    PrimaryContactPersonOrganization?: string | null;
+    ProgramFileResourceID?: number | null;
+    ProgramFileResourceUrl?: string | null;
+    ProgramFileName?: string | null;
+    ProgramExampleGeospatialUploadFileResourceID?: number | null;
+    ProgramExampleGeospatialUploadFileResourceUrl?: string | null;
+    ProgramExampleGeospatialUploadFileName?: string | null;
+    ProgramEditors?: Array<PersonLookupItem> | null;
+    ProjectCount?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -21,6 +39,23 @@ export class ProgramDetail {
 export interface ProgramDetailForm { 
     ProgramID?: FormControl<number>;
     ProgramName?: FormControl<string>;
+    ProgramShortName?: FormControl<string>;
+    ProgramIsActive?: FormControl<boolean>;
+    IsDefaultProgramForImportOnly?: FormControl<boolean>;
+    ProgramNotes?: FormControl<string>;
+    OrganizationID?: FormControl<number>;
+    OrganizationName?: FormControl<string>;
+    PrimaryContactPersonID?: FormControl<number>;
+    PrimaryContactPersonFullName?: FormControl<string>;
+    PrimaryContactPersonOrganization?: FormControl<string>;
+    ProgramFileResourceID?: FormControl<number>;
+    ProgramFileResourceUrl?: FormControl<string>;
+    ProgramFileName?: FormControl<string>;
+    ProgramExampleGeospatialUploadFileResourceID?: FormControl<number>;
+    ProgramExampleGeospatialUploadFileResourceUrl?: FormControl<string>;
+    ProgramExampleGeospatialUploadFileName?: FormControl<string>;
+    ProgramEditors?: FormControl<Array<PersonLookupItem>>;
+    ProjectCount?: FormControl<number>;
 }
 
 export class ProgramDetailFormControls { 
@@ -35,6 +70,176 @@ export class ProgramDetailFormControls {
         }
     );
     public static ProgramName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProgramShortName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProgramIsActive = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static IsDefaultProgramForImportOnly = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProgramNotes = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static OrganizationID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static OrganizationName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PrimaryContactPersonID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PrimaryContactPersonFullName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PrimaryContactPersonOrganization = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProgramFileResourceID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProgramFileResourceUrl = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProgramFileName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProgramExampleGeospatialUploadFileResourceID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProgramExampleGeospatialUploadFileResourceUrl = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProgramExampleGeospatialUploadFileName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProgramEditors = (value: FormControlState<Array<PersonLookupItem>> | Array<PersonLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<PersonLookupItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

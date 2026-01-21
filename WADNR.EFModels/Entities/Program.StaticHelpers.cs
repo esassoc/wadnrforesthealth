@@ -90,4 +90,31 @@ public static class Programs
             .ToListAsync();
         return entities;
     }
+
+    public static async Task<List<ProjectProgramDetailGridRow>> ListProjectsForProgramAsync(WADNRDbContext dbContext, int programID)
+    {
+        var projects = await dbContext.ProjectPrograms
+            .AsNoTracking()
+            .Where(pp => pp.ProgramID == programID &&
+                         pp.Project.ProjectApprovalStatusID == Projects.ApprovedStatusId &&
+                         !pp.Project.ProjectType.LimitVisibilityToAdmin)
+            .Select(pp => new ProjectProgramDetailGridRow
+            {
+                ProjectID = pp.Project.ProjectID,
+                ProjectGisIdentifier = pp.Project.ProjectGisIdentifier,
+                FhtProjectNumber = pp.Project.FhtProjectNumber ?? string.Empty,
+                ProjectName = pp.Project.ProjectName,
+                ProjectTypeName = pp.Project.ProjectType.ProjectTypeName,
+                ProjectStage = new ProjectStageLookupItem
+                {
+                    ProjectStageID = pp.Project.ProjectStage.ProjectStageID,
+                    ProjectStageName = pp.Project.ProjectStage.ProjectStageName
+                },
+                Programs = string.Join(", ", pp.Project.ProjectPrograms.Select(p => p.Program.ProgramName ?? "(default)"))
+            })
+            .OrderBy(p => p.ProjectName)
+            .ToListAsync();
+
+        return projects;
+    }
 }
