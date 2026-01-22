@@ -4147,6 +4147,156 @@
         }
       }
     },
+    "/projects/{projectID}/update-history": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListUpdateHistory_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectUpdateHistoryGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectUpdateHistoryGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectUpdateHistoryGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/notifications": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListNotifications_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectNotificationGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectNotificationGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectNotificationGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/audit-logs": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListAuditLogs_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectAuditLogGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectAuditLogGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectAuditLogGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/project-types": {
       "get": {
         "tags": [
@@ -13748,6 +13898,48 @@
         ],
         "type": "string"
       },
+      "ProjectAuditLogGridRow": {
+        "type": "object",
+        "properties": {
+          "AuditLogID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AuditLogDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "PersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "AuditLogEventTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TableName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ColumnName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OriginalValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "NewValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "AuditDescription": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectClassification": {
         "type": "object",
         "properties": {
@@ -15564,6 +15756,28 @@
         },
         "additionalProperties": false
       },
+      "ProjectNotificationGridRow": {
+        "type": "object",
+        "properties": {
+          "NotificationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NotificationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "NotificationTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "PersonName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectOrganization": {
         "type": "object",
         "properties": {
@@ -16937,6 +17151,28 @@
           },
           "UpdatePerson": {
             "$ref": "#/components/schemas/Person"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateHistoryGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "LastUpdateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "LastUpdatePersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectUpdateStateName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

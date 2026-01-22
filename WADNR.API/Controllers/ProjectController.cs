@@ -229,4 +229,28 @@ public class ProjectController(
         var links = await Projects.ListExternalLinksForProjectAsync(DbContext, projectID);
         return Ok(links);
     }
+
+    [HttpGet("{projectID}/update-history")]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<IEnumerable<ProjectUpdateHistoryGridRow>>> ListUpdateHistory([FromRoute] int projectID)
+    {
+        var updates = await Projects.ListUpdateHistoryForProjectAsync(DbContext, projectID);
+        return Ok(updates);
+    }
+
+    [HttpGet("{projectID}/notifications")]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<IEnumerable<ProjectNotificationGridRow>>> ListNotifications([FromRoute] int projectID)
+    {
+        var notifications = await Projects.ListNotificationsForProjectAsync(DbContext, projectID);
+        return Ok(notifications);
+    }
+
+    [HttpGet("{projectID}/audit-logs")]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<IEnumerable<ProjectAuditLogGridRow>>> ListAuditLogs([FromRoute] int projectID)
+    {
+        var logs = await Projects.ListAuditLogsForProjectAsync(DbContext, projectID);
+        return Ok(logs);
+    }
 }

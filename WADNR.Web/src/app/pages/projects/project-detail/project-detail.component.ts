@@ -21,6 +21,9 @@ import { ProjectImageGridRow } from "src/app/shared/generated/model/project-imag
 import { ProjectDocumentGridRow } from "src/app/shared/generated/model/project-document-grid-row";
 import { ProjectNoteGridRow } from "src/app/shared/generated/model/project-note-grid-row";
 import { ProjectExternalLinkGridRow } from "src/app/shared/generated/model/project-external-link-grid-row";
+import { ProjectUpdateHistoryGridRow } from "src/app/shared/generated/model/project-update-history-grid-row";
+import { ProjectNotificationGridRow } from "src/app/shared/generated/model/project-notification-grid-row";
+import { ProjectAuditLogGridRow } from "src/app/shared/generated/model/project-audit-log-grid-row";
 
 @Component({
     selector: "project-detail",
@@ -45,12 +48,18 @@ export class ProjectDetailComponent {
     public documents$: Observable<ProjectDocumentGridRow[]>;
     public notes$: Observable<ProjectNoteGridRow[]>;
     public externalLinks$: Observable<ProjectExternalLinkGridRow[]>;
+    public updateHistory$: Observable<ProjectUpdateHistoryGridRow[]>;
+    public notifications$: Observable<ProjectNotificationGridRow[]>;
+    public auditLogs$: Observable<ProjectAuditLogGridRow[]>;
 
     public treatmentColumnDefs: ColDef<TreatmentGridRow>[] = [];
     public interactionEventColumnDefs: ColDef<InteractionEventGridRow>[] = [];
     public imageColumnDefs: ColDef<ProjectImageGridRow>[] = [];
     public documentColumnDefs: ColDef<ProjectDocumentGridRow>[] = [];
     public noteColumnDefs: ColDef<ProjectNoteGridRow>[] = [];
+    public updateHistoryColumnDefs: ColDef<ProjectUpdateHistoryGridRow>[] = [];
+    public notificationColumnDefs: ColDef<ProjectNotificationGridRow>[] = [];
+    public auditLogColumnDefs: ColDef<ProjectAuditLogGridRow>[] = [];
 
     constructor(
         private projectService: ProjectService,
@@ -104,11 +113,29 @@ export class ProjectDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.updateHistory$ = this.projectID$.pipe(
+            switchMap((projectID) => this.projectService.listUpdateHistoryProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.notifications$ = this.projectID$.pipe(
+            switchMap((projectID) => this.projectService.listNotificationsProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.auditLogs$ = this.projectID$.pipe(
+            switchMap((projectID) => this.projectService.listAuditLogsProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
         this.treatmentColumnDefs = this.createTreatmentColumnDefs();
         this.interactionEventColumnDefs = this.createInteractionEventColumnDefs();
         this.imageColumnDefs = this.createImageColumnDefs();
         this.documentColumnDefs = this.createDocumentColumnDefs();
         this.noteColumnDefs = this.createNoteColumnDefs();
+        this.updateHistoryColumnDefs = this.createUpdateHistoryColumnDefs();
+        this.notificationColumnDefs = this.createNotificationColumnDefs();
+        this.auditLogColumnDefs = this.createAuditLogColumnDefs();
     }
 
     private createTreatmentColumnDefs(): ColDef<TreatmentGridRow>[] {
@@ -165,6 +192,34 @@ export class ProjectDetailComponent {
             this.utilityFunctions.createDateColumnDef("Created", "CreateDate", "short"),
             this.utilityFunctions.createBasicColumnDef("Updated By", "UpdatedByPersonName"),
             this.utilityFunctions.createDateColumnDef("Updated", "UpdateDate", "short"),
+        ];
+    }
+
+    private createUpdateHistoryColumnDefs(): ColDef<ProjectUpdateHistoryGridRow>[] {
+        return [
+            this.utilityFunctions.createDateColumnDef("Last Update", "LastUpdateDate", "short"),
+            this.utilityFunctions.createBasicColumnDef("Updated By", "LastUpdatePersonName"),
+            this.utilityFunctions.createBasicColumnDef("Status", "ProjectUpdateStateName"),
+        ];
+    }
+
+    private createNotificationColumnDefs(): ColDef<ProjectNotificationGridRow>[] {
+        return [
+            this.utilityFunctions.createDateColumnDef("Date", "NotificationDate", "short"),
+            this.utilityFunctions.createBasicColumnDef("Type", "NotificationTypeName"),
+            this.utilityFunctions.createBasicColumnDef("Sent To", "PersonName"),
+        ];
+    }
+
+    private createAuditLogColumnDefs(): ColDef<ProjectAuditLogGridRow>[] {
+        return [
+            this.utilityFunctions.createDateColumnDef("Date", "AuditLogDate", "short"),
+            this.utilityFunctions.createBasicColumnDef("User", "PersonName"),
+            this.utilityFunctions.createBasicColumnDef("Event", "AuditLogEventTypeName"),
+            this.utilityFunctions.createBasicColumnDef("Table", "TableName"),
+            this.utilityFunctions.createBasicColumnDef("Column", "ColumnName"),
+            this.utilityFunctions.createBasicColumnDef("Original Value", "OriginalValue"),
+            this.utilityFunctions.createBasicColumnDef("New Value", "NewValue"),
         ];
     }
 

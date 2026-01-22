@@ -592,4 +592,107 @@ public static class Projects
 
         return links;
     }
+
+    public static async Task<List<ProjectUpdateHistoryGridRow>> ListUpdateHistoryForProjectAsync(WADNRDbContext dbContext, int projectID)
+    {
+        var rawUpdates = await dbContext.ProjectUpdateBatches
+            .AsNoTracking()
+            .Where(b => b.ProjectID == projectID)
+            .Select(b => new
+            {
+                b.ProjectUpdateBatchID,
+                b.LastUpdateDate,
+                b.ProjectUpdateStateID,
+                LastUpdatePersonFirstName = b.LastUpdatePerson.FirstName,
+                LastUpdatePersonLastName = b.LastUpdatePerson.LastName
+            })
+            .OrderByDescending(b => b.LastUpdateDate)
+            .ToListAsync();
+
+        var updates = rawUpdates
+            .Select(b => new ProjectUpdateHistoryGridRow
+            {
+                ProjectUpdateBatchID = b.ProjectUpdateBatchID,
+                LastUpdateDate = b.LastUpdateDate,
+                LastUpdatePersonName = $"{b.LastUpdatePersonFirstName} {b.LastUpdatePersonLastName}",
+                ProjectUpdateStateName = ProjectUpdateState.AllLookupDictionary.TryGetValue(b.ProjectUpdateStateID, out var state)
+                    ? state.ProjectUpdateStateDisplayName
+                    : $"Unknown ({b.ProjectUpdateStateID})"
+            })
+            .ToList();
+
+        return updates;
+    }
+
+    public static async Task<List<ProjectNotificationGridRow>> ListNotificationsForProjectAsync(WADNRDbContext dbContext, int projectID)
+    {
+        var rawNotifications = await dbContext.NotificationProjects
+            .AsNoTracking()
+            .Where(np => np.ProjectID == projectID)
+            .Select(np => new
+            {
+                np.Notification.NotificationID,
+                np.Notification.NotificationDate,
+                np.Notification.NotificationTypeID,
+                PersonFirstName = np.Notification.Person.FirstName,
+                PersonLastName = np.Notification.Person.LastName
+            })
+            .OrderByDescending(np => np.NotificationDate)
+            .ToListAsync();
+
+        var notifications = rawNotifications
+            .Select(n => new ProjectNotificationGridRow
+            {
+                NotificationID = n.NotificationID,
+                NotificationDate = n.NotificationDate,
+                PersonName = $"{n.PersonFirstName} {n.PersonLastName}",
+                NotificationTypeName = NotificationType.AllLookupDictionary.TryGetValue(n.NotificationTypeID, out var notifType)
+                    ? notifType.NotificationTypeDisplayName
+                    : $"Unknown ({n.NotificationTypeID})"
+            })
+            .ToList();
+
+        return notifications;
+    }
+
+    public static async Task<List<ProjectAuditLogGridRow>> ListAuditLogsForProjectAsync(WADNRDbContext dbContext, int projectID)
+    {
+        var rawLogs = await dbContext.AuditLogs
+            .AsNoTracking()
+            .Where(a => a.ProjectID == projectID)
+            .Select(a => new
+            {
+                a.AuditLogID,
+                a.AuditLogDate,
+                a.AuditLogEventTypeID,
+                a.TableName,
+                a.ColumnName,
+                a.OriginalValue,
+                a.NewValue,
+                a.AuditDescription,
+                PersonFirstName = a.Person.FirstName,
+                PersonLastName = a.Person.LastName
+            })
+            .OrderByDescending(a => a.AuditLogDate)
+            .ToListAsync();
+
+        var logs = rawLogs
+            .Select(a => new ProjectAuditLogGridRow
+            {
+                AuditLogID = a.AuditLogID,
+                AuditLogDate = a.AuditLogDate,
+                PersonName = $"{a.PersonFirstName} {a.PersonLastName}",
+                AuditLogEventTypeName = AuditLogEventType.AllLookupDictionary.TryGetValue(a.AuditLogEventTypeID, out var eventType)
+                    ? eventType.AuditLogEventTypeDisplayName
+                    : $"Unknown ({a.AuditLogEventTypeID})",
+                TableName = a.TableName,
+                ColumnName = a.ColumnName,
+                OriginalValue = a.OriginalValue,
+                NewValue = a.NewValue,
+                AuditDescription = a.AuditDescription
+            })
+            .ToList();
+
+        return logs;
+    }
 }

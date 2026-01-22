@@ -452,5 +452,79 @@
         </div>
     </div>
     }
+
+    <!-- Administrative Section Header -->
+    <div class="g-col-12">
+        <h2 class="section-header">Administrative</h2>
+    </div>
+
+    <!-- Project Update History Card -->
+    @if (updateHistory$ | async; as updateHistory) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Project Update History</span>
+            </div>
+            <div class="card-body">
+                @if (updateHistory.length > 0) {
+                    <wadnr-grid
+                        [rowData]="updateHistory"
+                        [columnDefs]="updateHistoryColumnDefs"
+                        height="300px"
+                        downloadFileName="Project_UpdateHistory">
+                    </wadnr-grid>
+                } @else {
+                    <p class="system-text">No update history for this project.</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- System Communications Card -->
+    @if (notifications$ | async; as notifications) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">System Communications</span>
+            </div>
+            <div class="card-body">
+                @if (notifications.length > 0) {
+                    <wadnr-grid
+                        [rowData]="notifications"
+                        [columnDefs]="notificationColumnDefs"
+                        height="300px"
+                        downloadFileName="Project_Notifications">
+                    </wadnr-grid>
+                } @else {
+                    <p class="system-text">No system communications for this project.</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Audit Log Card -->
+    @if (auditLogs$ | async; as auditLogs) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Audit Log</span>
+            </div>
+            <div class="card-body">
+                @if (auditLogs.length > 0) {
+                    <wadnr-grid
+                        [rowData]="auditLogs"
+                        [columnDefs]="auditLogColumnDefs"
+                        height="300px"
+                        downloadFileName="Project_AuditLog">
+                    </wadnr-grid>
+                } @else {
+                    <p class="system-text">No audit log entries for this project.</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
 </div>
 }

@@ -230,6 +230,7 @@ model/program-upsert-request.ts
 model/program.ts
 model/project-approval-status-enum.ts
 model/project-approval-status.ts
+model/project-audit-log-grid-row.ts
 model/project-classification-detail-grid-row.ts
 model/project-classification.ts
 model/project-code-lookup-item.ts
@@ -273,6 +274,7 @@ model/project-map-popup.ts
 model/project-note-grid-row.ts
 model/project-note-update.ts
 model/project-note.ts
+model/project-notification-grid-row.ts
 model/project-organization-detail-grid-row.ts
 model/project-organization-item.ts
 model/project-organization-update.ts
@@ -305,6 +307,7 @@ model/project-type-taxonomy.ts
 model/project-type-upsert-request.ts
 model/project-type.ts
 model/project-update-batch.ts
+model/project-update-history-grid-row.ts
 model/project-update-history.ts
 model/project-update-program.ts
 model/project-update-state-enum.ts
