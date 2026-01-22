@@ -313,5 +313,60 @@
         </div>
     </div>
     }
+
+    <!-- Classifications Card -->
+    @if (classifications$ | async; as classifications) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Classifications</span>
+            </div>
+            <div class="card-body">
+                @if (classifications.length > 0) {
+                    <div class="tags-list">
+                        @for (classification of classifications; track classification.ClassificationID) {
+                            <span class="btn btn-sm btn-tag">{{ classification.DisplayName }}</span>
+                        }
+                    </div>
+                } @else {
+                    <p class="system-text">No classifications assigned to this project.</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Images Card -->
+    @if (images$ | async; as images) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Photos</span>
+            </div>
+            <div class="card-body">
+                @if (images.length > 0) {
+                    <div class="image-gallery">
+                        @for (image of images; track image.ProjectImageID) {
+                            <div class="image-item">
+                                <img [src]="'/api/FileResource/' + image.FileResourceGuid" [alt]="image.Caption || 'Project photo'" class="project-image" />
+                                @if (image.Caption) {
+                                    <div class="image-caption">{{ image.Caption }}</div>
+                                }
+                                @if (image.Credit) {
+                                    <div class="image-credit">Credit: {{ image.Credit }}</div>
+                                }
+                                @if (image.IsKeyPhoto) {
+                                    <span class="key-photo-badge">Key Photo</span>
+                                }
+                            </div>
+                        }
+                    </div>
+                } @else {
+                    <p class="system-text">No photos uploaded for this project.</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
 </div>
 }

@@ -16,6 +16,8 @@ import { ProjectPersonItem } from "src/app/shared/generated/model/project-person
 import { FundSourceAllocationRequestItem } from "src/app/shared/generated/model/fund-source-allocation-request-item";
 import { TreatmentGridRow } from "src/app/shared/generated/model/treatment-grid-row";
 import { InteractionEventGridRow } from "src/app/shared/generated/model/interaction-event-grid-row";
+import { ClassificationLookupItem } from "src/app/shared/generated/model/classification-lookup-item";
+import { ProjectImageGridRow } from "src/app/shared/generated/model/project-image-grid-row";
 
 @Component({
     selector: "project-detail",
@@ -35,9 +37,12 @@ export class ProjectDetailComponent {
     public project$: Observable<ProjectDetail>;
     public treatments$: Observable<TreatmentGridRow[]>;
     public interactionEvents$: Observable<InteractionEventGridRow[]>;
+    public classifications$: Observable<ClassificationLookupItem[]>;
+    public images$: Observable<ProjectImageGridRow[]>;
 
     public treatmentColumnDefs: ColDef<TreatmentGridRow>[] = [];
     public interactionEventColumnDefs: ColDef<InteractionEventGridRow>[] = [];
+    public imageColumnDefs: ColDef<ProjectImageGridRow>[] = [];
 
     constructor(
         private projectService: ProjectService,
@@ -66,8 +71,19 @@ export class ProjectDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.classifications$ = this.projectID$.pipe(
+            switchMap((projectID) => this.projectService.listClassificationsProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.images$ = this.projectID$.pipe(
+            switchMap((projectID) => this.projectService.listImagesProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
         this.treatmentColumnDefs = this.createTreatmentColumnDefs();
         this.interactionEventColumnDefs = this.createInteractionEventColumnDefs();
+        this.imageColumnDefs = this.createImageColumnDefs();
     }
 
     private createTreatmentColumnDefs(): ColDef<TreatmentGridRow>[] {
@@ -97,6 +113,15 @@ export class ProjectDetailComponent {
             this.utilityFunctions.createDateColumnDef("Date", "InteractionEventDate", "short"),
             this.utilityFunctions.createBasicColumnDef("Staff Person", "StaffPerson.FullName"),
             this.utilityFunctions.createBasicColumnDef("Description", "InteractionEventDescription"),
+        ];
+    }
+
+    private createImageColumnDefs(): ColDef<ProjectImageGridRow>[] {
+        return [
+            this.utilityFunctions.createBasicColumnDef("Caption", "Caption"),
+            this.utilityFunctions.createBasicColumnDef("Credit", "Credit"),
+            this.utilityFunctions.createBooleanColumnDef("Key Photo", "IsKeyPhoto"),
+            this.utilityFunctions.createDateColumnDef("Created", "CreatedDate", "short"),
         ];
     }
 
