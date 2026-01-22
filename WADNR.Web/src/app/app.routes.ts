@@ -18,6 +18,7 @@ export const routeParams = {
     personID: "personID",
     taxonomyBranchID: "taxonomyBranchID",
     taxonomyTrunkID: "taxonomyTrunkID",
+    roleID: "roleID",
 };
 
 export const routes: Routes = [
@@ -132,6 +133,16 @@ export const routes: Routes = [
         path: `taxonomy-trunks/:${routeParams.taxonomyTrunkID}`,
         title: "Taxonomy Trunk Detail",
         loadComponent: () => import("./pages/taxonomy-trunks/taxonomy-trunk-detail/taxonomy-trunk-detail.component").then((m) => m.TaxonomyTrunkDetailComponent),
+    },
+    {
+        path: "roles",
+        title: "Roles",
+        loadComponent: () => import("./pages/roles/roles.component").then((m) => m.RolesComponent),
+    },
+    {
+        path: `roles/:${routeParams.roleID}`,
+        title: "Role Detail",
+        loadComponent: () => import("./pages/roles/role-detail/role-detail.component").then((m) => m.RoleDetailComponent),
     },
     { path: "vendors", title: "Vendors", loadComponent: () => import("./pages/vendors/vendors.component").then((m) => m.VendorsComponent) },
     { path: "people", title: "Users and Contacts", loadComponent: () => import("./pages/people/people.component").then((m) => m.PeopleComponent) },

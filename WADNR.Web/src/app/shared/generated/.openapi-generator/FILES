@@ -18,6 +18,7 @@ api/priority-landscape.service.ts
 api/program.service.ts
 api/project-type.service.ts
 api/project.service.ts
+api/role.service.ts
 api/sitka-capture.service.ts
 api/system-info.service.ts
 api/tag.service.ts
@@ -335,7 +336,9 @@ model/report-template-model-type-enum.ts
 model/report-template-model-type.ts
 model/report-template-model.ts
 model/report-template.ts
+model/role-detail.ts
 model/role-enum.ts
+model/role-grid-row.ts
 model/role.ts
 model/state-province.ts
 model/support-request-log.ts

@@ -5223,6 +5223,136 @@
         }
       }
     },
+    "/roles": {
+      "get": {
+        "tags": [
+          "Role"
+        ],
+        "operationId": "List_Role",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoleGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoleGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoleGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/roles/{roleID}": {
+      "get": {
+        "tags": [
+          "Role"
+        ],
+        "operationId": "GetByID_Role",
+        "parameters": [
+          {
+            "name": "roleID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/roles/{roleID}/people": {
+      "get": {
+        "tags": [
+          "Role"
+        ],
+        "operationId": "ListPeople_Role",
+        "parameters": [
+          {
+            "name": "roleID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sitkacapture/generate-pdf": {
       "post": {
         "tags": [
@@ -19645,6 +19775,42 @@
         },
         "additionalProperties": false
       },
+      "RoleDetail": {
+        "type": "object",
+        "properties": {
+          "RoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RoleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RoleDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RoleDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsBaseRole": {
+            "type": "boolean"
+          },
+          "PeopleCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "People": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonLookupItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "RoleEnum": {
         "enum": [
           "Admin",
@@ -19659,6 +19825,35 @@
           "CanAddEditUsersContactsOrganizations"
         ],
         "type": "string"
+      },
+      "RoleGridRow": {
+        "type": "object",
+        "properties": {
+          "RoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RoleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RoleDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RoleDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsBaseRole": {
+            "type": "boolean"
+          },
+          "PeopleCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
       },
       "StateProvince": {
         "type": "object",
@@ -21663,6 +21858,9 @@
     },
     {
       "name": "ProjectType"
+    },
+    {
+      "name": "Role"
     },
     {
       "name": "SitkaCapture"
