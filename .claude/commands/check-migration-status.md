@@ -4,7 +4,7 @@ When the user invokes `/check-migration-status`:
 
 ## Overview
 
-This skill audits the migration progress from ASP.NET MVC (ProjectFirma.Web) to Angular 21 + ASP.NET Core 10 API. It identifies which entities have been migrated, which are in progress, and which still need migration.
+This skill audits the migration progress from legacy MVC to Angular + ASP.NET Core API. It identifies which entities have been migrated, which are in progress, and which still need migration.
 
 ## Steps to Execute
 
@@ -12,19 +12,19 @@ This skill audits the migration progress from ASP.NET MVC (ProjectFirma.Web) to 
 
 List all controllers in the legacy MVC project:
 ```
-Source/ProjectFirma.Web/Controllers/
+{LegacyPath}/Controllers/
 ```
 
 For each controller, gather:
 - Controller name (e.g., `ProjectController.cs`)
 - Number of action methods (complexity indicator)
-- Number of views in `Source/ProjectFirma.Web/Views/{Entity}/`
+- Number of views in `{LegacyPath}/Views/{Entity}/`
 
 ### 2. Inventory New API Controllers
 
 List all controllers in the new API project:
 ```
-WADNR.API/Controllers/
+{ApiProject}/Controllers/
 ```
 
 Note which entity each controller handles.
@@ -33,7 +33,7 @@ Note which entity each controller handles.
 
 List all page components in:
 ```
-WADNR.Web/src/app/pages/
+{FrontendProject}/src/app/pages/
 ```
 
 Check `app.routes.ts` for registered routes.
@@ -92,9 +92,9 @@ Generated: {current date}
 
 | Entity | Legacy | Views | API | Angular | Status | Priority |
 |--------|--------|-------|-----|---------|--------|----------|
-| Project | ✅ | 12 | ✅ | ✅ | Migrated | - |
-| Agreement | ✅ | 8 | ✅ | ❌ | Partial | High |
-| Vendor | ✅ | 5 | ❌ | ❌ | Not Started | Medium |
+| Project | Yes | 12 | Yes | Yes | Migrated | - |
+| Agreement | Yes | 8 | Yes | No | Partial | High |
+| Vendor | Yes | 5 | No | No | Not Started | Medium |
 | ... | ... | ... | ... | ... | ... | ... |
 
 ## Recommendations

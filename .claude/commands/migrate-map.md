@@ -4,7 +4,7 @@ When the user invokes `/migrate-map <EntityName>`:
 
 ## Overview
 
-This skill guides the migration of Leaflet maps from legacy MVC views to Angular using the `WADNRMapComponent` and associated layer components.
+This skill guides the migration of Leaflet maps from legacy MVC views to Angular using the map component and associated layer components.
 
 ---
 
@@ -12,13 +12,13 @@ This skill guides the migration of Leaflet maps from legacy MVC views to Angular
 
 First, examine the legacy MVC implementation:
 
-- **Views**: Look for map containers in `Source/ProjectFirma.Web/Views/{Entity}/`
+- **Views**: Look for map containers in `{LegacyPath}/Views/{Entity}/`
   - Search for `<div id="*Map*">` or similar map containers
   - Check for `leaflet` or map-related classes
-- **JavaScript**: Search `Source/ProjectFirma.Web/Scripts/` for map initialization
+- **JavaScript**: Search `{LegacyPath}/Scripts/` for map initialization
   - Look for `L.map()`, `L.geoJSON()`, `L.tileLayer()` calls
   - Identify layer sources (WMS, GeoJSON, markers)
-- **Controllers**: Check `Source/ProjectFirma.Web/Controllers/{Entity}Controller.cs`
+- **Controllers**: Check `{LegacyPath}/Controllers/{Entity}Controller.cs`
   - Look for methods returning GeoJSON or map data
   - Identify boundary/location data retrieval patterns
 
@@ -61,7 +61,7 @@ public async Task<ActionResult<FeatureCollection>> GetLocations([FromRoute] int 
 ```csharp
 // In {Entity}.StaticHelpers.cs
 public static async Task<FeatureCollection> GetBoundaryAsFeatureCollectionAsync(
-    WADNRDbContext dbContext, int entityID)
+    {DbContext} dbContext, int entityID)
 {
     var entity = await dbContext.Entities
         .AsNoTracking()
@@ -109,7 +109,7 @@ BoundingBox = x.EntityBoundary != null
 
 | Component | Selector | Purpose |
 |-----------|----------|---------|
-| `WADNRMapComponent` | `wadnr-map` | Base map container |
+| `MapComponent` | `{MapComponent}` | Base map container |
 | `GenericFeatureCollectionLayerComponent` | `generic-feature-collection-layer` | Custom GeoJSON layers |
 | `CountiesLayerComponent` | `counties-layer` | County boundaries (WMS) |
 | `PriorityLandscapesLayerComponent` | `priority-landscapes-layer` | Priority landscapes (WMS) |
@@ -123,14 +123,14 @@ BoundingBox = x.EntityBoundary != null
 import { Component } from "@angular/core";
 import { Observable } from "rxjs";
 import { Map } from "leaflet";
-import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
+import { MapComponent, MapInitEvent } from "src/app/shared/components/leaflet/map/map.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
 
 @Component({
     // ...
     imports: [
-        WADNRMapComponent,
+        MapComponent,
         GenericFeatureCollectionLayerComponent,
         // other layer components as needed
     ],
@@ -157,7 +157,7 @@ export class EntityDetailComponent {
         );
     }
 
-    handleMapReady(event: WADNRMapInitEvent): void {
+    handleMapReady(event: MapInitEvent): void {
         this.map = event.map;
         this.layerControl = event.layerControl;
         this.mapIsReady = true;
@@ -173,7 +173,7 @@ export class EntityDetailComponent {
 <div class="card">
     <div class="card-header"><span class="card-title">Map</span></div>
     <div class="card-body">
-        <wadnr-map
+        <{MapComponent}
             [mapHeight]="'400px'"
             [selectedTileLayer]="'Terrain'"
             [boundingBox]="entity.BoundingBox"
@@ -204,7 +204,7 @@ export class EntityDetailComponent {
             </generic-feature-collection-layer>
             }
 
-        </wadnr-map>
+        </{MapComponent}>
     </div>
 </div>
 }
@@ -246,7 +246,7 @@ public allFeaturesMode = OverlayMode.All;              // All features displayed
 
 ---
 
-## 6. WADNRMapComponent Configuration Reference
+## 6. Map Component Configuration Reference
 
 ### Input Properties
 
@@ -264,7 +264,7 @@ public allFeaturesMode = OverlayMode.All;              // All features displayed
 
 | Output | Type | Description |
 |--------|------|-------------|
-| `onMapLoad` | `WADNRMapInitEvent` | Fired when map is ready; provides `map` and `layerControl` |
+| `onMapLoad` | `MapInitEvent` | Fired when map is ready; provides `map` and `layerControl` |
 | `onOverlayToggle` | `LayersControlEvent` | Fired when overlay is toggled |
 | `onLegendControlReady` | `Control` | Fired when legend control is ready |
 
@@ -305,9 +305,9 @@ public allFeaturesMode = OverlayMode.All;              // All features displayed
 <div class="card">
     <div class="card-header"><span class="card-title">Location</span></div>
     <div class="card-body">
-        <wadnr-map ...>
+        <{MapComponent} ...>
             <!-- layers -->
-        </wadnr-map>
+        </{MapComponent}>
     </div>
 </div>
 } @else {
@@ -328,7 +328,7 @@ public allFeaturesMode = OverlayMode.All;              // All features displayed
 - [ ] Created API endpoints for custom GeoJSON data (if needed)
 - [ ] Added `HasBoundary`/`HasLocations` flags to detail DTO
 - [ ] Added `BoundingBox` to detail DTO (if applicable)
-- [ ] Added `WADNRMapComponent` to component imports
+- [ ] Added map component to component imports
 - [ ] Added appropriate layer components to imports
 - [ ] Implemented `handleMapReady` method
 - [ ] Set up feature observables for custom layers
@@ -357,5 +357,5 @@ public allFeaturesMode = OverlayMode.All;              // All features displayed
 - Ensure parent container has defined height
 
 ### Wrong initial bounds
-- Pass `boundingBox` input to WADNRMapComponent
+- Pass `boundingBox` input to map component
 - Or let layer component handle bounds with `fitBoundsOnWmsAddToControl`

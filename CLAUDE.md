@@ -2,6 +2,24 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Variables
+
+These variables are used by migration skills (`.claude/commands/*.md`). When copying skills to a new project, update these values to match your project structure.
+
+| Variable | Value | Description |
+|----------|-------|-------------|
+| `{ApiProject}` | WADNR.API | ASP.NET Core Web API project |
+| `{FrontendProject}` | WADNR.Web | Angular frontend project |
+| `{EFModelsProject}` | WADNR.EFModels | Entity Framework models project |
+| `{ModelsProject}` | WADNR.Models | DTOs project |
+| `{DbContext}` | WADNRDbContext | EF DbContext class name |
+| `{LegacyPath}` | Source/ProjectFirma.Web | Legacy MVC project path |
+| `{GridComponent}` | wadnr-grid | Grid component selector |
+| `{MapComponent}` | wadnr-map | Map component selector |
+| `{BaseController}` | SitkaController\<T\> | Base controller class |
+
+---
+
 ## Project Overview
 
 WA DNR Forest Health Tracker is a conservation and natural resource project tracking application. It tracks project lifecycles from planning through design to final reporting for Washington State Department of Natural Resources.

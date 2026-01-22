@@ -6,10 +6,10 @@ When the user invokes `/migrate-page <EntityName>`:
 
 First, thoroughly examine the existing MVC implementation:
 
-- Read the legacy controller: `Source/ProjectFirma.Web/Controllers/{Entity}Controller.cs`
-- Read all views in: `Source/ProjectFirma.Web/Views/{Entity}/`
-- Check for partials in: `Source/ProjectFirma.Web/Views/Shared/` that may be used
-- Look for JavaScript in: `Source/ProjectFirma.Web/Scripts/` related to the entity
+- Read the legacy controller: `{LegacyPath}/Controllers/{Entity}Controller.cs`
+- Read all views in: `{LegacyPath}/Views/{Entity}/`
+- Check for partials in: `{LegacyPath}/Views/Shared/` that may be used
+- Look for JavaScript in: `{LegacyPath}/Scripts/` related to the entity
 
 Identify and document:
 - All CRUD operations (Index, Detail, New, Edit, Delete)
@@ -51,18 +51,18 @@ Before writing code, plan the artifacts needed:
 Create the following files in order:
 
 ### 3.1 DTOs
-Location: `WADNR.Models/DataTransferObjects/{Entity}/`
+Location: `{ModelsProject}/DataTransferObjects/{Entity}/`
 - `{Entity}GridRowDto.cs`
 - `{Entity}DetailDto.cs`
 - `{Entity}UpsertRequestDto.cs`
 
 ### 3.2 Projections
-Location: `WADNR.EFModels/Entities/{Entity}.DtoProjections.cs`
+Location: `{EFModelsProject}/Entities/{Entity}.DtoProjections.cs`
 - Use `Expression<Func<Entity, DTO>>` pattern
 - Include `AsGridRow` and `AsDetail` projections
 
 ### 3.3 Static Helpers
-Location: `WADNR.EFModels/Entities/{Entity}.StaticHelpers.cs`
+Location: `{EFModelsProject}/Entities/{Entity}.StaticHelpers.cs`
 - `ListAsGridRowAsync()`
 - `GetByIDAsDetailAsync()`
 - `CreateAsync()`
@@ -70,8 +70,8 @@ Location: `WADNR.EFModels/Entities/{Entity}.StaticHelpers.cs`
 - `DeleteAsync()`
 
 ### 3.4 Controller
-Location: `WADNR.API/Controllers/{Entity}Controller.cs`
-- Extend `SitkaController<T>` with primary constructor
+Location: `{ApiProject}/Controllers/{Entity}Controller.cs`
+- Extend `{BaseController}` with primary constructor
 - Implement endpoints matching the DTOs
 
 ## 4. Generate TypeScript
@@ -80,19 +80,19 @@ After API code is complete:
 
 ```powershell
 # Build the API to generate swagger.json
-dotnet build WADNR.API
+dotnet build {ApiProject}
 
 # Generate TypeScript models
-cd WADNR.Web
+cd {FrontendProject}
 npm run gen-model
 ```
 
-Verify the generated files in `WADNR.Web/src/app/shared/generated/`.
+Verify the generated files in `{FrontendProject}/src/app/shared/generated/`.
 
 ## 5. Create Angular Components
 
 ### 5.1 Component Structure
-Location: `WADNR.Web/src/app/pages/{entity}/`
+Location: `{FrontendProject}/src/app/pages/{entity}/`
 
 Create the folder structure based on identified components:
 - `{entity}-list/` - If page has a main grid (use `/migrate-grid`)
@@ -107,13 +107,13 @@ If the page contains data grids, follow the `/migrate-grid` skill for:
 - Column definition patterns
 - DTO design for grid rows
 - Projection expressions
-- WADNRGridComponent usage
+- Grid component usage
 
 ### 5.3 Maps
 
 If the page contains maps, follow the `/migrate-map` skill for:
 - GeoJSON endpoint patterns
-- WADNRMapComponent integration
+- Map component integration
 - Layer component usage
 - Bounding box handling
 
@@ -126,7 +126,7 @@ If the page needs create/edit/delete functionality, follow the `/crud-modal` ski
 - Delete confirmation patterns
 
 ### 5.5 Route Configuration
-Add route to `WADNR.Web/src/app/app.routes.ts`:
+Add route to `{FrontendProject}/src/app/app.routes.ts`:
 
 ```typescript
 {
@@ -143,7 +143,7 @@ Add route to `WADNR.Web/src/app/app.routes.ts`:
 ## 6. Write Tests
 
 ### 6.1 API Tests (MSTest)
-Location: `WADNR.API.Tests/Controllers/{Entity}ControllerTests.cs`
+Location: `{ApiProject}.Tests/Controllers/{Entity}ControllerTests.cs`
 - Test all controller actions
 - Use in-memory database
 - Test success and error cases
@@ -158,7 +158,7 @@ Location: Same folder as component with `.spec.ts` extension
 ## 7. Remove/Deprecate Legacy Code
 
 After migration is complete and tested:
-- Add `[Obsolete("Migrated to Angular - WADNR.Web")]` attribute to legacy controller
+- Add `[Obsolete("Migrated to Angular - {FrontendProject}")]` attribute to legacy controller
 - Or remove legacy controller/views entirely if safe
 - Update any internal links to point to new Angular routes
 
@@ -169,7 +169,7 @@ After migration is complete and tested:
 dotnet test
 
 # Run Angular tests
-cd WADNR.Web
+cd {FrontendProject}
 npm test
 
 # Manual verification

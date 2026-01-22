@@ -4,7 +4,7 @@ When the user invokes `/migrate-grid <EntityName> <GridName>`:
 
 ## Overview
 
-This skill guides the migration of data grids from legacy MVC views to Angular using the `WADNRGridComponent`, ensuring complete column parity with the legacy implementation.
+This skill guides the migration of data grids from legacy MVC views to Angular using the grid component, ensuring complete column parity with the legacy implementation.
 
 ---
 
@@ -14,10 +14,10 @@ First, thoroughly examine the legacy MVC grid:
 
 ### Find Legacy Grid Views
 
-- **Index views**: `Source/ProjectFirma.Web/Views/{Entity}/Index.cshtml`
-- **Detail views**: `Source/ProjectFirma.Web/Views/{Entity}/Detail.cshtml`
-- **Partial views**: `Source/ProjectFirma.Web/Views/{Entity}/*Grid*.cshtml`
-- **Shared partials**: `Source/ProjectFirma.Web/Views/Shared/*Grid*.cshtml`
+- **Index views**: `{LegacyPath}/Views/{Entity}/Index.cshtml`
+- **Detail views**: `{LegacyPath}/Views/{Entity}/Detail.cshtml`
+- **Partial views**: `{LegacyPath}/Views/{Entity}/*Grid*.cshtml`
+- **Shared partials**: `{LegacyPath}/Views/Shared/*Grid*.cshtml`
 
 ### Document Every Column
 
@@ -52,8 +52,8 @@ Create a column inventory table:
 ### DTO Structure
 
 ```csharp
-// In WADNR.Models/DataTransferObjects/{Entity}/{Entity}GridRowDto.cs
-namespace WADNR.Models.DataTransferObjects;
+// In {ModelsProject}/DataTransferObjects/{Entity}/{Entity}GridRowDto.cs
+namespace {ModelsProject}.DataTransferObjects;
 
 public class EntityGridRowDto
 {
@@ -97,7 +97,7 @@ public class OrganizationSimpleDto
 ## 3. Create Projection Expression
 
 ```csharp
-// In WADNR.EFModels/Entities/{Entity}.DtoProjections.cs
+// In {EFModelsProject}/Entities/{Entity}.DtoProjections.cs
 public static class EntityProjections
 {
     public static Expression<Func<Entity, EntityGridRowDto>> AsGridRow => x => new EntityGridRowDto
@@ -133,10 +133,10 @@ public static class EntityProjections
 ## 4. Create Static Helper Method
 
 ```csharp
-// In WADNR.EFModels/Entities/{PluralEntity}.cs
+// In {EFModelsProject}/Entities/{PluralEntity}.cs
 public static class Entities
 {
-    public static async Task<List<EntityGridRowDto>> ListAsGridRowAsync(WADNRDbContext dbContext)
+    public static async Task<List<EntityGridRowDto>> ListAsGridRowAsync({DbContext} dbContext)
     {
         return await dbContext.Entities
             .AsNoTracking()
@@ -146,7 +146,7 @@ public static class Entities
 
     // For filtered grids (e.g., entities for a specific parent)
     public static async Task<List<EntityGridRowDto>> ListByParentIDAsGridRowAsync(
-        WADNRDbContext dbContext, int parentID)
+        {DbContext} dbContext, int parentID)
     {
         return await dbContext.Entities
             .AsNoTracking()
@@ -162,7 +162,7 @@ public static class Entities
 ## 5. Add API Endpoint
 
 ```csharp
-// In WADNR.API/Controllers/{Entity}Controller.cs
+// In {ApiProject}/Controllers/{Entity}Controller.cs
 [HttpGet]
 public async Task<ActionResult<List<EntityGridRowDto>>> List()
 {
@@ -346,13 +346,13 @@ this.utilityFunctions.createBasicColumnDef("Agreement Type", "AgreementTypeName"
 **When to use dropdown filters:**
 | Column Type | Use Dropdown Filter? | Example |
 |-------------|---------------------|---------|
-| Boolean (Yes/No) | ✅ Yes | IsActive, IsComplete |
-| Status/Stage | ✅ Yes | ProjectStage, AgreementStatus |
-| Type/Category | ✅ Yes | OrganizationType, FundSourceType |
-| Linked entity name | ✅ Yes | Organization.OrganizationName |
-| Free-form text | ❌ No | Description, Notes |
-| Numbers | ❌ No | Amount, Count |
-| Dates | ❌ No | StartDate, CreatedDate |
+| Boolean (Yes/No) | Yes | IsActive, IsComplete |
+| Status/Stage | Yes | ProjectStage, AgreementStatus |
+| Type/Category | Yes | OrganizationType, FundSourceType |
+| Linked entity name | Yes | Organization.OrganizationName |
+| Free-form text | No | Description, Notes |
+| Numbers | No | Amount, Count |
+| Dates | No | StartDate, CreatedDate |
 
 ---
 
@@ -444,7 +444,7 @@ this.utilityFunctions.createBasicColumnDef("Short Name", "ProgramShortName"),
 
 ### Common Mistakes to Avoid
 
-❌ **Wrong**: Always adding `FieldDefinitionLabelOverride` when using `FieldDefinitionType`
+**Wrong**: Always adding `FieldDefinitionLabelOverride` when using `FieldDefinitionType`
 ```typescript
 // DON'T do this if legacy uses ToGridHeaderString() without override
 this.utilityFunctions.createBasicColumnDef("Stage", "ProjectStage", {
@@ -453,7 +453,7 @@ this.utilityFunctions.createBasicColumnDef("Stage", "ProjectStage", {
 }),
 ```
 
-✅ **Correct**: Only add override when legacy explicitly overrides
+**Correct**: Only add override when legacy explicitly overrides
 ```typescript
 // DO this - let field definition control the label
 this.utilityFunctions.createBasicColumnDef("Project Stage", "ProjectStage", {
@@ -471,11 +471,11 @@ this.utilityFunctions.createBasicColumnDef("Project Stage", "ProjectStage", {
 <div class="card">
     <div class="card-header"><span class="card-title">Entities</span></div>
     <div class="card-body">
-        <wadnr-grid
+        <{GridComponent}
             [rowData]="entities$ | async"
             [columnDefs]="columnDefs"
             [downloadFileName]="'entities'">
-        </wadnr-grid>
+        </{GridComponent}>
     </div>
 </div>
 ```
@@ -483,13 +483,13 @@ this.utilityFunctions.createBasicColumnDef("Project Stage", "ProjectStage", {
 ### Grid with Height and Totals Row
 
 ```html
-<wadnr-grid
+<{GridComponent}
     [rowData]="entities$ | async"
     [columnDefs]="columnDefs"
     [height]="'400px'"
     [pinnedTotalsRow]="pinnedTotalsRow"
     [downloadFileName]="'entities'">
-</wadnr-grid>
+</{GridComponent}>
 ```
 
 ```typescript
@@ -504,17 +504,17 @@ public pinnedTotalsRow = {
 ### Grid with Row Selection
 
 ```html
-<wadnr-grid
+<{GridComponent}
     [rowData]="entities$ | async"
     [columnDefs]="columnDefs"
     [defaultRowSelection]="'multiRow'"
     (selectionChanged)="onSelectionChanged($event)">
-</wadnr-grid>
+</{GridComponent}>
 ```
 
 ---
 
-## 8. WADNRGridComponent Input Reference
+## 8. Grid Component Input Reference
 
 | Input | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -633,10 +633,10 @@ confirmDelete(entity: EntityGridRowDto): void {
 - [ ] Created projection expression
 - [ ] Created static helper method(s)
 - [ ] Added API endpoint(s)
-- [ ] Ran `dotnet build WADNR.API` to generate swagger.json
+- [ ] Ran `dotnet build {ApiProject}` to generate swagger.json
 - [ ] Ran `npm run gen-model` to generate TypeScript models
 - [ ] Created column definitions using UtilityFunctionsService
-- [ ] Added WADNRGridComponent to template
+- [ ] Added grid component to template
 - [ ] Verified column parity with legacy grid
 - [ ] Verified filtering works
 - [ ] Verified sorting works
