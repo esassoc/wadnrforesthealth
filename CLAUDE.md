@@ -181,6 +181,34 @@ public class EntityController(WADNRDbContext dbContext, ILogger<EntityController
 - `{Entity}UpsertRequestDto` - Create/update requests
 - `{Entity}LookupItemDto` - Dropdown/select options
 
+### Method Naming Conventions
+
+Use verb prefixes that indicate return cardinality:
+
+| Prefix | Returns | Examples |
+|--------|---------|----------|
+| `Get...` | Single item (or null) | `GetByIDAsDetailAsync`, `GetByEmailAsDetailAsync` |
+| `List...` | Collection (`List<T>`, `IEnumerable<T>`) | `ListAsGridRowAsync`, `ListForPersonAsGridRowAsync` |
+
+**Always include the `As{DtoType}` suffix** to indicate what DTO is returned:
+- `ListAsGridRowAsync` - returns grid row DTOs
+- `ListForPersonAsGridRowAsync` - returns grid row DTOs filtered by person
+- `GetByIDAsDetailAsync` - returns detail DTO
+
+**Method placement**: Place methods in the **target entity's** StaticHelpers, not the filter entity's. The entity being queried owns its query logic:
+
+```csharp
+// GOOD - Each entity owns its queries
+var projects = await Projects.ListForPersonAsGridRowAsync(dbContext, personID);
+var agreements = await Agreements.ListForPersonAsGridRowAsync(dbContext, personID);
+var events = await InteractionEvents.ListForPersonAsGridRowAsync(dbContext, personID);
+
+// BAD - Person shouldn't know how to query other entities
+var projects = await People.ListProjectsForPersonAsync(dbContext, personID);
+```
+
+This follows single responsibility - if `AgreementProjections.AsGridRow` changes, only `Agreements.StaticHelpers` needs updating.
+
 ### Static Helper Class Pattern
 
 Create `{PluralEntity}.cs` in `WADNR.EFModels/Entities/`:
@@ -258,6 +286,29 @@ public static class EntityProjections
 - **ALWAYS** use `.Select(Projection)` instead of `.Include()` for DTOs
 - **NEVER** return EF entities directly from controllers
 - **AVOID** N+1 queries by projecting related data in the same query
+- **NEVER** use `.Distinct()` on entities that contain geometry/geography columns - SQL Server cannot compare spatial types. Instead, select distinct IDs first, then query by those IDs:
+
+```csharp
+// BAD - Will fail if Entity has geometry columns
+var items = await dbContext.JoinTable
+    .Where(j => j.SomeID == id)
+    .Select(j => j.Entity)
+    .Distinct()  // ERROR: geometry cannot be compared
+    .Select(EntityProjections.AsGridRow)
+    .ToListAsync();
+
+// GOOD - Get distinct IDs first, then query
+var entityIDs = await dbContext.JoinTable
+    .Where(j => j.SomeID == id)
+    .Select(j => j.EntityID)
+    .Distinct()
+    .ToListAsync();
+
+var items = await dbContext.Entities
+    .Where(e => entityIDs.Contains(e.EntityID))
+    .Select(EntityProjections.AsGridRow)
+    .ToListAsync();
+```
 
 ---
 

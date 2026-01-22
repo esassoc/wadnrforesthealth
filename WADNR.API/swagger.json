@@ -3196,6 +3196,156 @@
         }
       }
     },
+    "/people/{personID}/projects": {
+      "get": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "ListProjects_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/people/{personID}/agreements": {
+      "get": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "ListAgreements_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/people/{personID}/interaction-events": {
+      "get": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "ListInteractionEvents_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InteractionEventGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InteractionEventGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InteractionEventGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/priority-landscapes": {
       "get": {
         "tags": [
@@ -13103,11 +13253,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "PersonGuid": {
-            "type": "string",
-            "format": "uuid"
-          },
           "FirstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "MiddleName": {
             "type": "string",
             "nullable": true
           },
@@ -13123,13 +13273,13 @@
             "type": "string",
             "nullable": true
           },
-          "PasswordPdfK2SaltHash": {
+          "PersonAddress": {
             "type": "string",
             "nullable": true
           },
-          "EIPRoleID": {
-            "type": "integer",
-            "format": "int32"
+          "Notes": {
+            "type": "string",
+            "nullable": true
           },
           "CreateDate": {
             "type": "string",
@@ -13148,49 +13298,57 @@
           "IsActive": {
             "type": "boolean"
           },
+          "ReceiveSupportEmails": {
+            "type": "boolean"
+          },
           "OrganizationID": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "LTInfoRoleID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ParcelTrackerRoleID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "WebServiceAccessToken": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "LoginName": {
+          "OrganizationName": {
             "type": "string",
             "nullable": true
           },
-          "StormwaterRoleID": {
+          "VendorID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "VendorName": {
+            "type": "string",
+            "nullable": true
+          },
+          "AddedByPersonID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "AddedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "BaseRoleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "SupplementalRoles": {
+            "type": "string",
+            "nullable": true
+          },
+          "PrimaryContactOrganizationCount": {
             "type": "integer",
             "format": "int32"
           },
-          "MonitoringRoleID": {
+          "ProjectCount": {
             "type": "integer",
             "format": "int32"
           },
-          "TransportationRoleID": {
+          "AgreementCount": {
             "type": "integer",
             "format": "int32"
           },
-          "LakeClarityTrackerRoleID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ThresholdRoleID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ClimateResilienceRoleID": {
+          "InteractionEventCount": {
             "type": "integer",
             "format": "int32"
           },
@@ -13198,6 +13356,35 @@
             "type": "string",
             "nullable": true,
             "readOnly": true
+          },
+          "FullNameFirstLastAndMiddle": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "PrimaryContactOrganizations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrganizationLookupItem"
+            },
+            "nullable": true
+          },
+          "AssignedPrograms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProgramLookupItem"
+            },
+            "nullable": true
+          },
+          "Authenticators": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "IsFullUser": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

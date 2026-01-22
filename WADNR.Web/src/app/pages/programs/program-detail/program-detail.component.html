@@ -33,8 +33,8 @@
 
                     <div class="g-col-6 field-label">Primary Contact</div>
                     <div class="g-col-6">
-                        @if (program.PrimaryContactPersonFullName) {
-                            {{ program.PrimaryContactPersonFullName }}
+                        @if (program.PrimaryContactPersonID) {
+                            <a [routerLink]="['/people', program.PrimaryContactPersonID]">{{ program.PrimaryContactPersonFullName }}</a>
                             @if (program.PrimaryContactPersonOrganization) {
                                 ({{ program.PrimaryContactPersonOrganization }})
                             }
@@ -84,7 +84,7 @@
                 @if (program.ProgramEditors && program.ProgramEditors.length > 0) {
                     <ul>
                         @for (editor of program.ProgramEditors; track editor.PersonID) {
-                            <li>{{ editor.FullName }}</li>
+                            <li><a [routerLink]="['/people', editor.PersonID]">{{ editor.FullName }}</a></li>
                         }
                     </ul>
                 } @else {

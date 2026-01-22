@@ -145,4 +145,23 @@ public static class Agreements
             .ToListAsync();
         return entities;
     }
+
+    public static async Task<List<AgreementGridRow>> ListForPersonAsGridRowAsync(WADNRDbContext dbContext, int personID)
+    {
+        // Get distinct agreement IDs first to avoid DISTINCT on entity with potential geometry columns
+        var agreementIDs = await dbContext.AgreementPeople
+            .AsNoTracking()
+            .Where(ap => ap.PersonID == personID)
+            .Select(ap => ap.AgreementID)
+            .Distinct()
+            .ToListAsync();
+
+        var agreements = await dbContext.Agreements
+            .AsNoTracking()
+            .Where(a => agreementIDs.Contains(a.AgreementID))
+            .Select(AgreementProjections.AsGridRow)
+            .ToListAsync();
+
+        return agreements;
+    }
 }

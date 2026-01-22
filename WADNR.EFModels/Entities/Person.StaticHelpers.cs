@@ -61,6 +61,33 @@ public static class People
             .Where(x => x.PersonID == personID)
             .Select(PersonProjections.AsDetail)
             .SingleOrDefaultAsync();
+
+        if (person == null) return null;
+
+        // Get person roles and resolve from static lookup
+        var personRoleIDs = await dbContext.PersonRoles
+            .AsNoTracking()
+            .Where(pr => pr.PersonID == personID)
+            .Select(pr => pr.RoleID)
+            .ToListAsync();
+
+        var roleLookup = Role.AllLookupDictionary;
+        var roles = personRoleIDs
+            .Select(roleID => roleLookup.TryGetValue(roleID, out var role) ? role : null)
+            .Where(r => r != null)
+            .ToList();
+
+        var baseRole = roles.FirstOrDefault(r => r!.IsBaseRole);
+        var supplementalRoles = roles.Where(r => !r!.IsBaseRole).ToList();
+
+        person.BaseRoleName = baseRole?.RoleDisplayName;
+        person.SupplementalRoles = supplementalRoles.Any()
+            ? string.Join(", ", supplementalRoles.Select(r => r!.RoleDisplayName))
+            : null;
+
+        // A "full user" has a base role that is not Unassigned
+        person.IsFullUser = baseRole != null && baseRole != Role.Unassigned;
+
         return person;
     }
 

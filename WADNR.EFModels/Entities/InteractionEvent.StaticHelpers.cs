@@ -119,4 +119,23 @@ public static class InteractionEvents
 
         return featureCollection;
     }
+
+    public static async Task<List<InteractionEventGridRow>> ListForPersonAsGridRowAsync(WADNRDbContext dbContext, int personID)
+    {
+        // Get distinct interaction event IDs first to avoid DISTINCT on entity with potential geometry columns
+        var eventIDs = await dbContext.InteractionEventContacts
+            .AsNoTracking()
+            .Where(iec => iec.PersonID == personID)
+            .Select(iec => iec.InteractionEventID)
+            .Distinct()
+            .ToListAsync();
+
+        var events = await dbContext.InteractionEvents
+            .AsNoTracking()
+            .Where(ie => eventIDs.Contains(ie.InteractionEventID))
+            .Select(InteractionEventProjections.AsGridRow)
+            .ToListAsync();
+
+        return events;
+    }
 }

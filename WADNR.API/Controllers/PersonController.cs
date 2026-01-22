@@ -44,4 +44,28 @@ public class PersonController(
         }
         return Ok(person);
     }
+
+    [HttpGet("{personID}/projects")]
+    [EntityNotFound(typeof(Person), "personID")]
+    public async Task<ActionResult<IEnumerable<ProjectGridRow>>> ListProjects([FromRoute] int personID)
+    {
+        var projects = await Projects.ListForPersonAsGridRowAsync(DbContext, personID);
+        return Ok(projects);
+    }
+
+    [HttpGet("{personID}/agreements")]
+    [EntityNotFound(typeof(Person), "personID")]
+    public async Task<ActionResult<IEnumerable<AgreementGridRow>>> ListAgreements([FromRoute] int personID)
+    {
+        var agreements = await Agreements.ListForPersonAsGridRowAsync(DbContext, personID);
+        return Ok(agreements);
+    }
+
+    [HttpGet("{personID}/interaction-events")]
+    [EntityNotFound(typeof(Person), "personID")]
+    public async Task<ActionResult<IEnumerable<InteractionEventGridRow>>> ListInteractionEvents([FromRoute] int personID)
+    {
+        var events = await InteractionEvents.ListForPersonAsGridRowAsync(DbContext, personID);
+        return Ok(events);
+    }
 }

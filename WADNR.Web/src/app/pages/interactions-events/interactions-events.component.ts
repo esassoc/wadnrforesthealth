@@ -45,7 +45,8 @@ export class InteractionsEventsComponent {
                 FieldDefinitionType: "InteractionEventType",
                 CustomDropdownFilterField: "InteractionEventType.InteractionEventTypeDisplayName",
             }),
-            this.utilityFunctions.createBasicColumnDef("Staff Person", "StaffPerson.FullName", {
+            this.utilityFunctions.createLinkColumnDef("Staff Person", "StaffPerson.FullName", "StaffPerson.PersonID", {
+                InRouterLink: "/people/",
                 CustomDropdownFilterField: "StaffPerson.FullName",
             }),
         ];

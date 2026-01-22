@@ -7,34 +7,43 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { OrganizationLookupItem } from './organization-lookup-item';
+import { ProgramLookupItem } from './program-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class PersonDetail { 
     PersonID?: number;
-    PersonGuid?: string;
     FirstName?: string | null;
+    MiddleName?: string | null;
     LastName?: string | null;
     Email?: string | null;
     Phone?: string | null;
-    PasswordPdfK2SaltHash?: string | null;
-    EIPRoleID?: number;
+    PersonAddress?: string | null;
+    Notes?: string | null;
     CreateDate?: string;
     UpdateDate?: string | null;
     LastActivityDate?: string | null;
     IsActive?: boolean;
+    ReceiveSupportEmails?: boolean;
     OrganizationID?: number | null;
-    LTInfoRoleID?: number;
-    ParcelTrackerRoleID?: number;
-    WebServiceAccessToken?: string | null;
-    LoginName?: string | null;
-    StormwaterRoleID?: number;
-    MonitoringRoleID?: number;
-    TransportationRoleID?: number;
-    LakeClarityTrackerRoleID?: number;
-    ThresholdRoleID?: number;
-    ClimateResilienceRoleID?: number;
+    OrganizationName?: string | null;
+    VendorID?: number | null;
+    VendorName?: string | null;
+    AddedByPersonID?: number | null;
+    AddedByPersonName?: string | null;
+    BaseRoleName?: string | null;
+    SupplementalRoles?: string | null;
+    PrimaryContactOrganizationCount?: number;
+    ProjectCount?: number;
+    AgreementCount?: number;
+    InteractionEventCount?: number;
     readonly FullName?: string | null;
+    readonly FullNameFirstLastAndMiddle?: string | null;
+    PrimaryContactOrganizations?: Array<OrganizationLookupItem> | null;
+    AssignedPrograms?: Array<ProgramLookupItem> | null;
+    Authenticators?: Array<string> | null;
+    IsFullUser?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -42,29 +51,36 @@ export class PersonDetail {
 
 export interface PersonDetailForm { 
     PersonID?: FormControl<number>;
-    PersonGuid?: FormControl<string>;
     FirstName?: FormControl<string>;
+    MiddleName?: FormControl<string>;
     LastName?: FormControl<string>;
     Email?: FormControl<string>;
     Phone?: FormControl<string>;
-    PasswordPdfK2SaltHash?: FormControl<string>;
-    EIPRoleID?: FormControl<number>;
+    PersonAddress?: FormControl<string>;
+    Notes?: FormControl<string>;
     CreateDate?: FormControl<string>;
     UpdateDate?: FormControl<string>;
     LastActivityDate?: FormControl<string>;
     IsActive?: FormControl<boolean>;
+    ReceiveSupportEmails?: FormControl<boolean>;
     OrganizationID?: FormControl<number>;
-    LTInfoRoleID?: FormControl<number>;
-    ParcelTrackerRoleID?: FormControl<number>;
-    WebServiceAccessToken?: FormControl<string>;
-    LoginName?: FormControl<string>;
-    StormwaterRoleID?: FormControl<number>;
-    MonitoringRoleID?: FormControl<number>;
-    TransportationRoleID?: FormControl<number>;
-    LakeClarityTrackerRoleID?: FormControl<number>;
-    ThresholdRoleID?: FormControl<number>;
-    ClimateResilienceRoleID?: FormControl<number>;
+    OrganizationName?: FormControl<string>;
+    VendorID?: FormControl<number>;
+    VendorName?: FormControl<string>;
+    AddedByPersonID?: FormControl<number>;
+    AddedByPersonName?: FormControl<string>;
+    BaseRoleName?: FormControl<string>;
+    SupplementalRoles?: FormControl<string>;
+    PrimaryContactOrganizationCount?: FormControl<number>;
+    ProjectCount?: FormControl<number>;
+    AgreementCount?: FormControl<number>;
+    InteractionEventCount?: FormControl<number>;
     FullName?: FormControl<string>;
+    FullNameFirstLastAndMiddle?: FormControl<string>;
+    PrimaryContactOrganizations?: FormControl<Array<OrganizationLookupItem>>;
+    AssignedPrograms?: FormControl<Array<ProgramLookupItem>>;
+    Authenticators?: FormControl<Array<string>>;
+    IsFullUser?: FormControl<boolean>;
 }
 
 export class PersonDetailFormControls { 
@@ -78,7 +94,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static PersonGuid = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static FirstName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -88,7 +104,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static FirstName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static MiddleName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -128,7 +144,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static PasswordPdfK2SaltHash = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static PersonAddress = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -138,7 +154,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static EIPRoleID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static Notes = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -188,6 +204,16 @@ export class PersonDetailFormControls {
             ],
         }
     );
+    public static ReceiveSupportEmails = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
     public static OrganizationID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
@@ -198,7 +224,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static LTInfoRoleID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static OrganizationName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -208,7 +234,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static ParcelTrackerRoleID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static VendorID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -218,7 +244,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static WebServiceAccessToken = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static VendorName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -228,7 +254,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static LoginName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static AddedByPersonID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -238,7 +264,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static StormwaterRoleID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static AddedByPersonName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -248,7 +274,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static MonitoringRoleID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static BaseRoleName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -258,7 +284,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static TransportationRoleID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static SupplementalRoles = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -268,7 +294,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static LakeClarityTrackerRoleID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static PrimaryContactOrganizationCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -278,7 +304,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static ThresholdRoleID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static ProjectCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -288,7 +314,17 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static ClimateResilienceRoleID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static AgreementCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static InteractionEventCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -299,6 +335,56 @@ export class PersonDetailFormControls {
         }
     );
     public static FullName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FullNameFirstLastAndMiddle = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PrimaryContactOrganizations = (value: FormControlState<Array<OrganizationLookupItem>> | Array<OrganizationLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<OrganizationLookupItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static AssignedPrograms = (value: FormControlState<Array<ProgramLookupItem>> | Array<ProgramLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<ProgramLookupItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Authenticators = (value: FormControlState<Array<string>> | Array<string> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<string>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static IsFullUser = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

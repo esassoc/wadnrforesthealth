@@ -68,7 +68,9 @@ export class VendorDetailComponent {
 
     private createPersonColumnDefs(): ColDef<VendorPersonGridRow>[] {
         return [
-            this.utilityFunctions.createBasicColumnDef("Name", "FullName"),
+            this.utilityFunctions.createLinkColumnDef("Name", "FullName", "PersonID", {
+                InRouterLink: "/people/",
+            }),
             this.utilityFunctions.createBasicColumnDef("Email", "Email"),
             this.utilityFunctions.createBasicColumnDef("Phone", "Phone"),
         ];

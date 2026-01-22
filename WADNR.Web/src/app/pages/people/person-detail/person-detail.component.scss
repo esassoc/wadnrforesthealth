@@ -1,0 +1,29 @@
+.kv-pair-list {
+    display: grid;
+    grid-template-columns: minmax(140px, auto) 1fr;
+    gap: 0.5rem 1rem;
+    margin: 0;
+
+    dt {
+        font-weight: 600;
+        color: var(--bs-secondary-color);
+    }
+
+    dd {
+        margin: 0;
+    }
+}
+
+.list-unstyled {
+    list-style: none;
+    padding-left: 0;
+}
+
+.text-muted {
+    color: var(--bs-secondary-color);
+    font-style: italic;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}

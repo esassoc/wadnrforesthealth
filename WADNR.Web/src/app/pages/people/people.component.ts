@@ -25,8 +25,12 @@ export class PeopleComponent {
 
     ngOnInit(): void {
         this.columnDefs = [
-            this.utilityFunctions.createBasicColumnDef("Last Name", "LastName"),
-            this.utilityFunctions.createBasicColumnDef("First Name", "FirstName"),
+            this.utilityFunctions.createLinkColumnDef("Last Name", "LastName", "PersonID", {
+                InRouterLink: "/people/",
+            }),
+            this.utilityFunctions.createLinkColumnDef("First Name", "FirstName", "PersonID", {
+                InRouterLink: "/people/",
+            }),
             this.utilityFunctions.createBasicColumnDef("Email", "Email"),
             this.utilityFunctions.createLinkColumnDef("Organization", "OrganizationName", "OrganizationID", {
                 InRouterLink: "/organizations/",
@@ -43,7 +47,9 @@ export class PeopleComponent {
             }),
             this.utilityFunctions.createBasicColumnDef("Primary Contact For", "PrimaryContactOrganizationCount"),
             this.utilityFunctions.createDateColumnDef("Added On", "CreateDate", "M/d/yyyy"),
-            this.utilityFunctions.createBasicColumnDef("Added By", "AddedByPersonName"),
+            this.utilityFunctions.createLinkColumnDef("Added By", "AddedByPersonName", "AddedByPersonID", {
+                InRouterLink: "/people/",
+            }),
         ];
 
         this.people$ = this.personService.listPerson();

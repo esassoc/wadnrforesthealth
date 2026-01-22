@@ -37,8 +37,8 @@
                         <field-definition fieldDefinition="OrganizationPrimaryContact"></field-definition>
                     </div>
                     <div class="g-col-6">
-                        @if (organization.PrimaryContactPersonFullName) {
-                            {{ organization.PrimaryContactPersonFullName }}
+                        @if (organization.PrimaryContactPersonID) {
+                            <a [routerLink]="['/people', organization.PrimaryContactPersonID]">{{ organization.PrimaryContactPersonFullName }}</a>
                             @if (organization.PrimaryContactPersonOrganization) {
                                 ({{ organization.PrimaryContactPersonOrganization }})
                             }
@@ -270,7 +270,7 @@
                 @if (organization.People && organization.People.length > 0) {
                     <ul>
                         @for (person of organization.People; track person.PersonID) {
-                            <li>{{ person.FullNameFirstLast }}</li>
+                            <li><a [routerLink]="['/people', person.PersonID]">{{ person.FullNameFirstLast }}</a></li>
                         }
                     </ul>
                 } @else {

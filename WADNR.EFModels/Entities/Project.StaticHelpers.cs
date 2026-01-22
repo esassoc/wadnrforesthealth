@@ -695,4 +695,23 @@ public static class Projects
 
         return logs;
     }
+
+    public static async Task<List<ProjectGridRow>> ListForPersonAsGridRowAsync(WADNRDbContext dbContext, int personID)
+    {
+        // Get distinct project IDs first to avoid DISTINCT on geometry columns
+        var projectIDs = await dbContext.ProjectPeople
+            .AsNoTracking()
+            .Where(pp => pp.PersonID == personID)
+            .Select(pp => pp.ProjectID)
+            .Distinct()
+            .ToListAsync();
+
+        var projects = await dbContext.Projects
+            .AsNoTracking()
+            .Where(p => projectIDs.Contains(p.ProjectID))
+            .Select(ProjectProjections.AsGridRow)
+            .ToListAsync();
+
+        return projects;
+    }
 }

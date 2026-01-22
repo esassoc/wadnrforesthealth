@@ -35,7 +35,7 @@ import { OrganizationModalComponent, OrganizationModalData } from "../organizati
 @Component({
     selector: "organization-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ProjectLocationsSimpleLayerComponent, IconComponent],
+    imports: [PageHeaderComponent, AsyncPipe, RouterLink, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ProjectLocationsSimpleLayerComponent, IconComponent],
     templateUrl: "./organization-detail.component.html",
     styleUrls: ["./organization-detail.component.scss"],
 })

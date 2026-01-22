@@ -15,6 +15,7 @@ export const routeParams = {
     programID: "programID",
     fundSourceID: "fundSourceID",
     vendorID: "vendorID",
+    personID: "personID",
 };
 
 export const routes: Routes = [
@@ -112,6 +113,11 @@ export const routes: Routes = [
     },
     { path: "vendors", title: "Vendors", loadComponent: () => import("./pages/vendors/vendors.component").then((m) => m.VendorsComponent) },
     { path: "people", title: "Users and Contacts", loadComponent: () => import("./pages/people/people.component").then((m) => m.PeopleComponent) },
+    {
+        path: `people/:${routeParams.personID}`,
+        title: "User/Contact Detail",
+        loadComponent: () => import("./pages/people/person-detail/person-detail.component").then((m) => m.PersonDetailComponent),
+    },
     {
         path: `vendors/:${routeParams.vendorID}`,
         title: "Vendor Detail",
