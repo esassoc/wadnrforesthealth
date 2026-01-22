@@ -5908,6 +5908,263 @@
         }
       }
     },
+    "/taxonomy-trunks": {
+      "get": {
+        "tags": [
+          "TaxonomyTrunk"
+        ],
+        "operationId": "List_TaxonomyTrunk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaxonomyTrunkGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaxonomyTrunkGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaxonomyTrunkGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "TaxonomyTrunk"
+        ],
+        "operationId": "Create_TaxonomyTrunk",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxonomyTrunkUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxonomyTrunkUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxonomyTrunkUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyTrunkDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyTrunkDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyTrunkDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/taxonomy-trunks/{taxonomyTrunkID}": {
+      "get": {
+        "tags": [
+          "TaxonomyTrunk"
+        ],
+        "operationId": "GetByID_TaxonomyTrunk",
+        "parameters": [
+          {
+            "name": "taxonomyTrunkID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyTrunkDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyTrunkDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyTrunkDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "TaxonomyTrunk"
+        ],
+        "operationId": "Update_TaxonomyTrunk",
+        "parameters": [
+          {
+            "name": "taxonomyTrunkID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxonomyTrunkUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxonomyTrunkUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxonomyTrunkUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyTrunkDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyTrunkDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyTrunkDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "TaxonomyTrunk"
+        ],
+        "operationId": "Delete_TaxonomyTrunk",
+        "parameters": [
+          {
+            "name": "taxonomyTrunkID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/taxonomy-trunks/{taxonomyTrunkID}/projects": {
+      "get": {
+        "tags": [
+          "TaxonomyTrunk"
+        ],
+        "operationId": "ListProjects_TaxonomyTrunk",
+        "parameters": [
+          {
+            "name": "taxonomyTrunkID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/taxonomy-trunks/lookup": {
       "get": {
         "tags": [
@@ -20020,6 +20277,96 @@
         },
         "additionalProperties": false
       },
+      "TaxonomyTrunkDetail": {
+        "type": "object",
+        "properties": {
+          "TaxonomyTrunkID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TaxonomyTrunkName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaxonomyTrunkDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaxonomyTrunkCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "ThemeColor": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaxonomyTrunkSortOrder": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TaxonomyBranches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaxonomyBranchLookupItem"
+            },
+            "nullable": true
+          },
+          "ProjectTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectTypeLookupItem"
+            },
+            "nullable": true
+          },
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "HasProjects": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TaxonomyTrunkGridRow": {
+        "type": "object",
+        "properties": {
+          "TaxonomyTrunkID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TaxonomyTrunkName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaxonomyTrunkCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaxonomyTrunkSortOrder": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TaxonomyBranchCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TaxonomyBranches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaxonomyBranchLookupItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TaxonomyTrunkLookupItem": {
         "type": "object",
         "properties": {
@@ -20029,6 +20376,41 @@
           },
           "TaxonomyTrunkName": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TaxonomyTrunkUpsertRequest": {
+        "required": [
+          "TaxonomyTrunkName"
+        ],
+        "type": "object",
+        "properties": {
+          "TaxonomyTrunkName": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "TaxonomyTrunkDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaxonomyTrunkCode": {
+            "maxLength": 10,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "ThemeColor": {
+            "maxLength": 20,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "TaxonomyTrunkSortOrder": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },

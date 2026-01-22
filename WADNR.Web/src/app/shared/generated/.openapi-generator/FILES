@@ -356,7 +356,10 @@ model/taxonomy-branch-lookup-item.ts
 model/taxonomy-branch-upsert-request.ts
 model/taxonomy-branch.ts
 model/taxonomy-level.ts
+model/taxonomy-trunk-detail.ts
+model/taxonomy-trunk-grid-row.ts
 model/taxonomy-trunk-lookup-item.ts
+model/taxonomy-trunk-upsert-request.ts
 model/taxonomy-trunk.ts
 model/treatment-code-enum.ts
 model/treatment-code.ts
