@@ -46,3 +46,9 @@ bin
 obj
 /Build/temp
 /WADNR.API/appsecrets.json
+/node_modules/.bin
+/node_modules
+/bun.lock
+/package-lock.json
+/package.json
+/WADNR.GeoServer/data_dir/gwc/diskquota_page_store_hsql
