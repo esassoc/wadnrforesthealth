@@ -46,6 +46,7 @@ bin
 obj
 /Build/temp
 /WADNR.API/appsecrets.json
+/WADNR.API/dotnet-tools.json
 /node_modules/.bin
 /node_modules
 /bun.lock
