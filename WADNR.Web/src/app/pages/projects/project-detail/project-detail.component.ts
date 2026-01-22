@@ -18,6 +18,9 @@ import { TreatmentGridRow } from "src/app/shared/generated/model/treatment-grid-
 import { InteractionEventGridRow } from "src/app/shared/generated/model/interaction-event-grid-row";
 import { ClassificationLookupItem } from "src/app/shared/generated/model/classification-lookup-item";
 import { ProjectImageGridRow } from "src/app/shared/generated/model/project-image-grid-row";
+import { ProjectDocumentGridRow } from "src/app/shared/generated/model/project-document-grid-row";
+import { ProjectNoteGridRow } from "src/app/shared/generated/model/project-note-grid-row";
+import { ProjectExternalLinkGridRow } from "src/app/shared/generated/model/project-external-link-grid-row";
 
 @Component({
     selector: "project-detail",
@@ -39,10 +42,15 @@ export class ProjectDetailComponent {
     public interactionEvents$: Observable<InteractionEventGridRow[]>;
     public classifications$: Observable<ClassificationLookupItem[]>;
     public images$: Observable<ProjectImageGridRow[]>;
+    public documents$: Observable<ProjectDocumentGridRow[]>;
+    public notes$: Observable<ProjectNoteGridRow[]>;
+    public externalLinks$: Observable<ProjectExternalLinkGridRow[]>;
 
     public treatmentColumnDefs: ColDef<TreatmentGridRow>[] = [];
     public interactionEventColumnDefs: ColDef<InteractionEventGridRow>[] = [];
     public imageColumnDefs: ColDef<ProjectImageGridRow>[] = [];
+    public documentColumnDefs: ColDef<ProjectDocumentGridRow>[] = [];
+    public noteColumnDefs: ColDef<ProjectNoteGridRow>[] = [];
 
     constructor(
         private projectService: ProjectService,
@@ -81,9 +89,26 @@ export class ProjectDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.documents$ = this.projectID$.pipe(
+            switchMap((projectID) => this.projectService.listDocumentsProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.notes$ = this.projectID$.pipe(
+            switchMap((projectID) => this.projectService.listNotesProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.externalLinks$ = this.projectID$.pipe(
+            switchMap((projectID) => this.projectService.listExternalLinksProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
         this.treatmentColumnDefs = this.createTreatmentColumnDefs();
         this.interactionEventColumnDefs = this.createInteractionEventColumnDefs();
         this.imageColumnDefs = this.createImageColumnDefs();
+        this.documentColumnDefs = this.createDocumentColumnDefs();
+        this.noteColumnDefs = this.createNoteColumnDefs();
     }
 
     private createTreatmentColumnDefs(): ColDef<TreatmentGridRow>[] {
@@ -122,6 +147,24 @@ export class ProjectDetailComponent {
             this.utilityFunctions.createBasicColumnDef("Credit", "Credit"),
             this.utilityFunctions.createBooleanColumnDef("Key Photo", "IsKeyPhoto"),
             this.utilityFunctions.createDateColumnDef("Created", "CreatedDate", "short"),
+        ];
+    }
+
+    private createDocumentColumnDefs(): ColDef<ProjectDocumentGridRow>[] {
+        return [
+            this.utilityFunctions.createBasicColumnDef("Document Name", "DisplayName"),
+            this.utilityFunctions.createBasicColumnDef("Description", "Description"),
+            this.utilityFunctions.createBasicColumnDef("Type", "DocumentTypeName"),
+        ];
+    }
+
+    private createNoteColumnDefs(): ColDef<ProjectNoteGridRow>[] {
+        return [
+            this.utilityFunctions.createBasicColumnDef("Note", "Note"),
+            this.utilityFunctions.createBasicColumnDef("Created By", "CreatedByPersonName"),
+            this.utilityFunctions.createDateColumnDef("Created", "CreateDate", "short"),
+            this.utilityFunctions.createBasicColumnDef("Updated By", "UpdatedByPersonName"),
+            this.utilityFunctions.createDateColumnDef("Updated", "UpdateDate", "short"),
         ];
     }
 

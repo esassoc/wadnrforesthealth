@@ -368,5 +368,89 @@
         </div>
     </div>
     }
+
+    <!-- Documents Card -->
+    @if (documents$ | async; as documents) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Documents</span>
+            </div>
+            <div class="card-body">
+                @if (documents.length > 0) {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Document</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (doc of documents; track doc.ProjectDocumentID) {
+                                <tr>
+                                    <td>
+                                        <a [href]="'/api/FileResource/' + doc.FileResourceGuid" target="_blank">{{ doc.DisplayName }}</a>
+                                    </td>
+                                    <td>{{ doc.DocumentTypeName || '—' }}</td>
+                                    <td>{{ doc.Description || '—' }}</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                } @else {
+                    <p class="system-text">No documents uploaded for this project.</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Notes Card -->
+    @if (notes$ | async; as notes) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Notes</span>
+            </div>
+            <div class="card-body">
+                @if (notes.length > 0) {
+                    <wadnr-grid
+                        [rowData]="notes"
+                        [columnDefs]="noteColumnDefs"
+                        height="300px"
+                        downloadFileName="Project_Notes">
+                    </wadnr-grid>
+                } @else {
+                    <p class="system-text">No notes recorded for this project.</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- External Links Card -->
+    @if (externalLinks$ | async; as externalLinks) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">External Links</span>
+            </div>
+            <div class="card-body">
+                @if (externalLinks.length > 0) {
+                    <ul class="external-links-list">
+                        @for (link of externalLinks; track link.ProjectExternalLinkID) {
+                            <li>
+                                <a [href]="link.ExternalLinkUrl" target="_blank" rel="noopener noreferrer">{{ link.ExternalLinkLabel }}</a>
+                            </li>
+                        }
+                    </ul>
+                } @else {
+                    <p class="system-text">No external links for this project.</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
 </div>
 }

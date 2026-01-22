@@ -205,4 +205,28 @@ public class ProjectController(
 
         return Ok(genericLayers);
     }
+
+    [HttpGet("{projectID}/documents")]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<IEnumerable<ProjectDocumentGridRow>>> ListDocuments([FromRoute] int projectID)
+    {
+        var documents = await Projects.ListDocumentsForProjectAsync(DbContext, projectID);
+        return Ok(documents);
+    }
+
+    [HttpGet("{projectID}/notes")]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<IEnumerable<ProjectNoteGridRow>>> ListNotes([FromRoute] int projectID)
+    {
+        var notes = await Projects.ListNotesForProjectAsync(DbContext, projectID);
+        return Ok(notes);
+    }
+
+    [HttpGet("{projectID}/external-links")]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<IEnumerable<ProjectExternalLinkGridRow>>> ListExternalLinks([FromRoute] int projectID)
+    {
+        var links = await Projects.ListExternalLinksForProjectAsync(DbContext, projectID);
+        return Ok(links);
+    }
 }

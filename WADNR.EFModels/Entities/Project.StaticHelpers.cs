@@ -517,4 +517,79 @@ public static class Projects
 
         return rows;
     }
+
+    public static async Task<List<ProjectDocumentGridRow>> ListDocumentsForProjectAsync(WADNRDbContext dbContext, int projectID)
+    {
+        var rawDocuments = await dbContext.ProjectDocuments
+            .AsNoTracking()
+            .Where(d => d.ProjectID == projectID)
+            .Select(d => new
+            {
+                d.ProjectDocumentID,
+                d.DisplayName,
+                d.Description,
+                d.ProjectDocumentTypeID,
+                d.FileResourceID,
+                FileResourceGuid = d.FileResource.FileResourceGUID.ToString()
+            })
+            .ToListAsync();
+
+        var documents = rawDocuments
+            .Select(d => new ProjectDocumentGridRow
+            {
+                ProjectDocumentID = d.ProjectDocumentID,
+                DisplayName = d.DisplayName,
+                Description = d.Description,
+                DocumentTypeName = d.ProjectDocumentTypeID.HasValue && ProjectDocumentType.AllLookupDictionary.TryGetValue(d.ProjectDocumentTypeID.Value, out var dt)
+                    ? dt.ProjectDocumentTypeDisplayName
+                    : null,
+                FileResourceID = d.FileResourceID,
+                FileResourceGuid = d.FileResourceGuid
+            })
+            .OrderBy(d => d.DisplayName)
+            .ToList();
+
+        return documents;
+    }
+
+    public static async Task<List<ProjectNoteGridRow>> ListNotesForProjectAsync(WADNRDbContext dbContext, int projectID)
+    {
+        var notes = await dbContext.ProjectNotes
+            .AsNoTracking()
+            .Where(n => n.ProjectID == projectID)
+            .Select(n => new ProjectNoteGridRow
+            {
+                ProjectNoteID = n.ProjectNoteID,
+                Note = n.Note,
+                CreatedByPersonName = n.CreatePerson != null
+                    ? n.CreatePerson.FirstName + " " + n.CreatePerson.LastName
+                    : null,
+                CreateDate = n.CreateDate,
+                UpdatedByPersonName = n.UpdatePerson != null
+                    ? n.UpdatePerson.FirstName + " " + n.UpdatePerson.LastName
+                    : null,
+                UpdateDate = n.UpdateDate
+            })
+            .OrderByDescending(n => n.CreateDate)
+            .ToListAsync();
+
+        return notes;
+    }
+
+    public static async Task<List<ProjectExternalLinkGridRow>> ListExternalLinksForProjectAsync(WADNRDbContext dbContext, int projectID)
+    {
+        var links = await dbContext.ProjectExternalLinks
+            .AsNoTracking()
+            .Where(l => l.ProjectID == projectID)
+            .Select(l => new ProjectExternalLinkGridRow
+            {
+                ProjectExternalLinkID = l.ProjectExternalLinkID,
+                ExternalLinkLabel = l.ExternalLinkLabel,
+                ExternalLinkUrl = l.ExternalLinkUrl
+            })
+            .OrderBy(l => l.ExternalLinkLabel)
+            .ToListAsync();
+
+        return links;
+    }
 }

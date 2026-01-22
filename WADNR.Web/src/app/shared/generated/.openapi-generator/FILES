@@ -239,10 +239,12 @@ model/project-county-update.ts
 model/project-county.ts
 model/project-detail.ts
 model/project-dnr-upland-region-detail-grid-row.ts
+model/project-document-grid-row.ts
 model/project-document-type-enum.ts
 model/project-document-type.ts
 model/project-document-update.ts
 model/project-document.ts
+model/project-external-link-grid-row.ts
 model/project-external-link-update.ts
 model/project-external-link.ts
 model/project-fact-sheet.ts
@@ -268,6 +270,7 @@ model/project-location-update.ts
 model/project-location.ts
 model/project-lookup-item.ts
 model/project-map-popup.ts
+model/project-note-grid-row.ts
 model/project-note-update.ts
 model/project-note.ts
 model/project-organization-detail-grid-row.ts
