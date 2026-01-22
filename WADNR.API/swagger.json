@@ -19740,6 +19740,10 @@
             "type": "integer",
             "format": "int32"
           },
+          "TreatmentAreaName": {
+            "type": "string",
+            "nullable": true
+          },
           "TreatmentTypeName": {
             "type": "string",
             "nullable": true
@@ -19767,6 +19771,16 @@
             "format": "double",
             "nullable": true
           },
+          "CostPerAcre": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "TreatmentNotes": {
             "type": "string",
             "nullable": true
@@ -19778,6 +19792,9 @@
           "TreatmentCodeName": {
             "type": "string",
             "nullable": true
+          },
+          "ImportedFromGis": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

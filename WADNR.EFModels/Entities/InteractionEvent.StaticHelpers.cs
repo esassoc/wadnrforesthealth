@@ -138,4 +138,54 @@ public static class InteractionEvents
 
         return events;
     }
+
+    public static async Task<List<InteractionEventGridRow>> ListForProjectAsGridRowAsync(WADNRDbContext dbContext, int projectID)
+    {
+        var rawEvents = await dbContext.InteractionEventProjects
+            .AsNoTracking()
+            .Where(iep => iep.ProjectID == projectID && iep.InteractionEvent != null)
+            .Select(iep => new
+            {
+                InteractionEventID = iep.InteractionEvent!.InteractionEventID,
+                InteractionEventTitle = iep.InteractionEvent.InteractionEventTitle,
+                InteractionEventDescription = iep.InteractionEvent.InteractionEventDescription,
+                InteractionEventDate = iep.InteractionEvent.InteractionEventDate,
+                InteractionEventTypeID = iep.InteractionEvent.InteractionEventTypeID,
+                StaffPersonID = iep.InteractionEvent.StaffPersonID,
+                StaffPersonFirstName = iep.InteractionEvent.StaffPerson != null ? iep.InteractionEvent.StaffPerson.FirstName : null,
+                StaffPersonLastName = iep.InteractionEvent.StaffPerson != null ? iep.InteractionEvent.StaffPerson.LastName : null
+            })
+            .ToListAsync();
+
+        var events = rawEvents
+            .Select(e => new InteractionEventGridRow
+            {
+                InteractionEventID = e.InteractionEventID,
+                InteractionEventTitle = e.InteractionEventTitle ?? string.Empty,
+                InteractionEventDescription = e.InteractionEventDescription,
+                InteractionEventDate = e.InteractionEventDate,
+                InteractionEventType = InteractionEventType.AllLookupDictionary.TryGetValue(e.InteractionEventTypeID, out var iet)
+                    ? new InteractionEventTypeLookupItem
+                    {
+                        InteractionEventTypeID = iet.InteractionEventTypeID,
+                        InteractionEventTypeDisplayName = iet.InteractionEventTypeDisplayName
+                    }
+                    : new InteractionEventTypeLookupItem
+                    {
+                        InteractionEventTypeID = e.InteractionEventTypeID,
+                        InteractionEventTypeDisplayName = $"Unknown ({e.InteractionEventTypeID})"
+                    },
+                StaffPerson = e.StaffPersonID.HasValue
+                    ? new PersonLookupItem
+                    {
+                        PersonID = e.StaffPersonID.Value,
+                        FullName = $"{e.StaffPersonFirstName} {e.StaffPersonLastName}"
+                    }
+                    : null
+            })
+            .OrderByDescending(e => e.InteractionEventDate)
+            .ToList();
+
+        return events;
+    }
 }

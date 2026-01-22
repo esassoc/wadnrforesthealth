@@ -12,15 +12,19 @@
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class TreatmentGridRow { 
     TreatmentID?: number;
+    TreatmentAreaName?: string | null;
     TreatmentTypeName?: string | null;
     TreatmentDetailedActivityTypeName?: string | null;
     TreatmentStartDate?: string | null;
     TreatmentEndDate?: string | null;
     TreatmentFootprintAcres?: number;
     TreatmentTreatedAcres?: number | null;
+    CostPerAcre?: number | null;
+    TotalCost?: number | null;
     TreatmentNotes?: string | null;
     ProgramName?: string | null;
     TreatmentCodeName?: string | null;
+    ImportedFromGis?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -28,19 +32,33 @@ export class TreatmentGridRow {
 
 export interface TreatmentGridRowForm { 
     TreatmentID?: FormControl<number>;
+    TreatmentAreaName?: FormControl<string>;
     TreatmentTypeName?: FormControl<string>;
     TreatmentDetailedActivityTypeName?: FormControl<string>;
     TreatmentStartDate?: FormControl<string>;
     TreatmentEndDate?: FormControl<string>;
     TreatmentFootprintAcres?: FormControl<number>;
     TreatmentTreatedAcres?: FormControl<number>;
+    CostPerAcre?: FormControl<number>;
+    TotalCost?: FormControl<number>;
     TreatmentNotes?: FormControl<string>;
     ProgramName?: FormControl<string>;
     TreatmentCodeName?: FormControl<string>;
+    ImportedFromGis?: FormControl<boolean>;
 }
 
 export class TreatmentGridRowFormControls { 
     public static TreatmentID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static TreatmentAreaName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -110,6 +128,26 @@ export class TreatmentGridRowFormControls {
             ],
         }
     );
+    public static CostPerAcre = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static TotalCost = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
     public static TreatmentNotes = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
@@ -131,6 +169,16 @@ export class TreatmentGridRowFormControls {
         }
     );
     public static TreatmentCodeName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ImportedFromGis = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

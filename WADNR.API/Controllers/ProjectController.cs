@@ -151,7 +151,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<TreatmentGridRow>>> ListTreatments([FromRoute] int projectID)
     {
-        var treatments = await Projects.ListTreatmentsForProjectAsync(DbContext, projectID);
+        var treatments = await Treatments.ListForProjectAsGridRowAsync(DbContext, projectID);
         return Ok(treatments);
     }
 
@@ -159,7 +159,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<InteractionEventGridRow>>> ListInteractionEvents([FromRoute] int projectID)
     {
-        var events = await Projects.ListInteractionEventsForProjectAsync(DbContext, projectID);
+        var events = await InteractionEvents.ListForProjectAsGridRowAsync(DbContext, projectID);
         return Ok(events);
     }
 
@@ -210,7 +210,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<ProjectDocumentGridRow>>> ListDocuments([FromRoute] int projectID)
     {
-        var documents = await Projects.ListDocumentsForProjectAsync(DbContext, projectID);
+        var documents = await ProjectDocuments.ListForProjectAsGridRowAsync(DbContext, projectID);
         return Ok(documents);
     }
 
@@ -218,7 +218,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<ProjectNoteGridRow>>> ListNotes([FromRoute] int projectID)
     {
-        var notes = await Projects.ListNotesForProjectAsync(DbContext, projectID);
+        var notes = await ProjectNotes.ListForProjectAsGridRowAsync(DbContext, projectID);
         return Ok(notes);
     }
 
@@ -226,7 +226,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<ProjectExternalLinkGridRow>>> ListExternalLinks([FromRoute] int projectID)
     {
-        var links = await Projects.ListExternalLinksForProjectAsync(DbContext, projectID);
+        var links = await ProjectExternalLinks.ListForProjectAsGridRowAsync(DbContext, projectID);
         return Ok(links);
     }
 
@@ -234,7 +234,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<ProjectUpdateHistoryGridRow>>> ListUpdateHistory([FromRoute] int projectID)
     {
-        var updates = await Projects.ListUpdateHistoryForProjectAsync(DbContext, projectID);
+        var updates = await ProjectUpdateBatches.ListForProjectAsGridRowAsync(DbContext, projectID);
         return Ok(updates);
     }
 
@@ -242,7 +242,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<ProjectNotificationGridRow>>> ListNotifications([FromRoute] int projectID)
     {
-        var notifications = await Projects.ListNotificationsForProjectAsync(DbContext, projectID);
+        var notifications = await Notifications.ListForProjectAsGridRowAsync(DbContext, projectID);
         return Ok(notifications);
     }
 
@@ -250,7 +250,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<ProjectAuditLogGridRow>>> ListAuditLogs([FromRoute] int projectID)
     {
-        var logs = await Projects.ListAuditLogsForProjectAsync(DbContext, projectID);
+        var logs = await AuditLogs.ListForProjectAsGridRowAsync(DbContext, projectID);
         return Ok(logs);
     }
 }

@@ -155,19 +155,46 @@ export class ProjectDetailComponent {
 
     private createTreatmentColumnDefs(): ColDef<TreatmentGridRow>[] {
         return [
+            this.utilityFunctions.createBasicColumnDef("Treatment Area", "TreatmentAreaName", {
+                CustomDropdownFilterField: "TreatmentAreaName",
+            }),
             this.utilityFunctions.createBasicColumnDef("Treatment Type", "TreatmentTypeName", {
                 FieldDefinitionType: "TreatmentType",
+                CustomDropdownFilterField: "TreatmentTypeName",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Treatment Code", "TreatmentCodeName", {
+                FieldDefinitionType: "TreatmentCode",
+                CustomDropdownFilterField: "TreatmentCodeName",
             }),
             this.utilityFunctions.createBasicColumnDef("Activity Type", "TreatmentDetailedActivityTypeName", {
                 FieldDefinitionType: "TreatmentDetailedActivityType",
+                CustomDropdownFilterField: "TreatmentDetailedActivityTypeName",
             }),
-            this.utilityFunctions.createDateColumnDef("Start Date", "TreatmentStartDate", "short"),
-            this.utilityFunctions.createDateColumnDef("End Date", "TreatmentEndDate", "short"),
-            this.utilityFunctions.createDecimalColumnDef("Footprint Acres", "TreatmentFootprintAcres"),
-            this.utilityFunctions.createDecimalColumnDef("Treated Acres", "TreatmentTreatedAcres"),
-            this.utilityFunctions.createBasicColumnDef("Program", "ProgramName"),
-            this.utilityFunctions.createBasicColumnDef("Treatment Code", "TreatmentCodeName"),
+            this.utilityFunctions.createDecimalColumnDef("Footprint Acres", "TreatmentFootprintAcres", {
+                FieldDefinitionType: "FootprintAcres",
+            }),
+            this.utilityFunctions.createDecimalColumnDef("Treated Acres", "TreatmentTreatedAcres", {
+                FieldDefinitionType: "TreatedAcres",
+            }),
+            this.utilityFunctions.createCurrencyColumnDef("Cost/Acre", "CostPerAcre", {
+                FieldDefinitionType: "TreatmentCostPerAcre",
+            }),
+            this.utilityFunctions.createCurrencyColumnDef("Total Cost", "TotalCost", {
+                FieldDefinitionType: "TreatmentTotalCost",
+            }),
+            this.utilityFunctions.createDateColumnDef("Start Date", "TreatmentStartDate", "M/d/yyyy", {
+                FieldDefinitionType: "TreatmentStartDate",
+            }),
+            this.utilityFunctions.createDateColumnDef("End Date", "TreatmentEndDate", "M/d/yyyy", {
+                FieldDefinitionType: "TreatmentEndDate",
+            }),
             this.utilityFunctions.createBasicColumnDef("Notes", "TreatmentNotes"),
+            this.utilityFunctions.createBasicColumnDef("Program", "ProgramName", {
+                CustomDropdownFilterField: "ProgramName",
+            }),
+            this.utilityFunctions.createBooleanColumnDef("Imported", "ImportedFromGis", {
+                CustomDropdownFilterField: "ImportedFromGis",
+            }),
         ];
     }
 
