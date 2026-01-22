@@ -7,6 +7,8 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { OrganizationLookupItem } from './organization-lookup-item';
+import { FundSourceStatusLookupItem } from './fund-source-status-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
@@ -14,16 +16,24 @@ export class FundSourceDetail {
     FundSourceID?: number;
     FundSourceName?: string | null;
     FundSourceNumber?: string | null;
+    ShortName?: string | null;
+    FundSourceTitle?: string | null;
+    Organization?: OrganizationLookupItem;
+    FundSourceStatus?: FundSourceStatusLookupItem;
+    FundSourceTypeName?: string | null;
+    TotalAwardAmount?: number;
+    CurrentBalance?: number | null;
+    CFDANumber?: string | null;
     StartDate?: string | null;
     EndDate?: string | null;
     ConditionsAndRequirements?: string | null;
     ComplianceNotes?: string | null;
-    CFDANumber?: string | null;
-    FundSourceTypeID?: number | null;
-    ShortName?: string | null;
-    FundSourceStatusID?: number;
-    OrganizationID?: number;
-    TotalAwardAmount?: number;
+    AllocationCount?: number;
+    AgreementCount?: number;
+    ProjectCount?: number;
+    FileCount?: number;
+    NoteCount?: number;
+    InternalNoteCount?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -33,16 +43,24 @@ export interface FundSourceDetailForm {
     FundSourceID?: FormControl<number>;
     FundSourceName?: FormControl<string>;
     FundSourceNumber?: FormControl<string>;
+    ShortName?: FormControl<string>;
+    FundSourceTitle?: FormControl<string>;
+    Organization?: FormControl<OrganizationLookupItem>;
+    FundSourceStatus?: FormControl<FundSourceStatusLookupItem>;
+    FundSourceTypeName?: FormControl<string>;
+    TotalAwardAmount?: FormControl<number>;
+    CurrentBalance?: FormControl<number>;
+    CFDANumber?: FormControl<string>;
     StartDate?: FormControl<string>;
     EndDate?: FormControl<string>;
     ConditionsAndRequirements?: FormControl<string>;
     ComplianceNotes?: FormControl<string>;
-    CFDANumber?: FormControl<string>;
-    FundSourceTypeID?: FormControl<number>;
-    ShortName?: FormControl<string>;
-    FundSourceStatusID?: FormControl<number>;
-    OrganizationID?: FormControl<number>;
-    TotalAwardAmount?: FormControl<number>;
+    AllocationCount?: FormControl<number>;
+    AgreementCount?: FormControl<number>;
+    ProjectCount?: FormControl<number>;
+    FileCount?: FormControl<number>;
+    NoteCount?: FormControl<number>;
+    InternalNoteCount?: FormControl<number>;
 }
 
 export class FundSourceDetailFormControls { 
@@ -67,6 +85,86 @@ export class FundSourceDetailFormControls {
         }
     );
     public static FundSourceNumber = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ShortName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceTitle = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Organization = (value: FormControlState<OrganizationLookupItem> | OrganizationLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<OrganizationLookupItem>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceStatus = (value: FormControlState<FundSourceStatusLookupItem> | FundSourceStatusLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<FundSourceStatusLookupItem>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceTypeName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static TotalAwardAmount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CurrentBalance = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CFDANumber = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -116,7 +214,7 @@ export class FundSourceDetailFormControls {
             ],
         }
     );
-    public static CFDANumber = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static AllocationCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -126,7 +224,7 @@ export class FundSourceDetailFormControls {
             ],
         }
     );
-    public static FundSourceTypeID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static AgreementCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -136,7 +234,7 @@ export class FundSourceDetailFormControls {
             ],
         }
     );
-    public static ShortName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static ProjectCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -146,7 +244,7 @@ export class FundSourceDetailFormControls {
             ],
         }
     );
-    public static FundSourceStatusID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static FileCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -156,7 +254,7 @@ export class FundSourceDetailFormControls {
             ],
         }
     );
-    public static OrganizationID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static NoteCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -166,7 +264,7 @@ export class FundSourceDetailFormControls {
             ],
         }
     );
-    public static TotalAwardAmount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static InternalNoteCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

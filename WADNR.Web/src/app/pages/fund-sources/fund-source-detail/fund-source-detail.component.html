@@ -1,0 +1,233 @@
+@if (fundSource$ | async; as fundSource) {
+<breadcrumb [items]="[{ label: 'Fund Sources', url: '/fund-sources' }, { label: fundSource.FundSourceTitle || 'Fund Source' }]" [linkLast]="false"></breadcrumb>
+<page-header [pageTitle]="fundSource.FundSourceTitle"></page-header>
+
+<div class="page-body grid-12">
+    <!-- Row 1: Basics (left) and Files (right) -->
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Basics</span>
+            </div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4 field-label">Fund Source Name</div>
+                    <div class="g-col-8">{{ fundSource.FundSourceName }}</div>
+
+                    <div class="g-col-4 field-label">Short Name</div>
+                    <div class="g-col-8">{{ fundSource.ShortName || '—' }}</div>
+
+                    <div class="g-col-4 field-label">Organization</div>
+                    <div class="g-col-8">
+                        @if (fundSource.Organization) {
+                            <a [routerLink]="['/organizations', fundSource.Organization.OrganizationID]">
+                                {{ fundSource.Organization.OrganizationName }}
+                            </a>
+                        } @else {
+                            —
+                        }
+                    </div>
+
+                    <div class="g-col-4 field-label">Status</div>
+                    <div class="g-col-8">{{ fundSource.FundSourceStatus?.FundSourceStatusName || '—' }}</div>
+
+                    <div class="g-col-4 field-label">Type</div>
+                    <div class="g-col-8">{{ fundSource.FundSourceTypeName || '—' }}</div>
+
+                    <div class="g-col-4 field-label">CFDA Number</div>
+                    <div class="g-col-8">{{ fundSource.CFDANumber || '—' }}</div>
+
+                    <div class="g-col-4 field-label">Fund Source Number</div>
+                    <div class="g-col-8">{{ fundSource.FundSourceNumber || '—' }}</div>
+
+                    <div class="g-col-4 field-label">Total Award Amount</div>
+                    <div class="g-col-8">{{ formatCurrency(fundSource.TotalAwardAmount) }}</div>
+
+                    @if (isUserLoggedIn) {
+                    <div class="g-col-4 field-label">Current Balance</div>
+                    <div class="g-col-8">{{ formatCurrency(fundSource.CurrentBalance) }}</div>
+                    }
+
+                    <div class="g-col-4 field-label">Start Date</div>
+                    <div class="g-col-8">{{ formatDate(fundSource.StartDate) }}</div>
+
+                    <div class="g-col-4 field-label">End Date</div>
+                    <div class="g-col-8">{{ formatDate(fundSource.EndDate) }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Files Card (right column) -->
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Files ({{ fundSource.FileCount }})</span>
+            </div>
+            <div class="card-body">
+                @if (files$ | async; as files) {
+                    @if (files.length > 0) {
+                        <wadnr-grid
+                            [columnDefs]="fileColumnDefs"
+                            [rowData]="files"
+                            height="250px"
+                            downloadFileName="fund-source-files">
+                        </wadnr-grid>
+                    } @else {
+                        <p class="text-muted">No files uploaded for this fund source.</p>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Budget Line Items Grid (logged-in users only) -->
+    @if (isUserLoggedIn) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Allocation Budget Line Items</span>
+            </div>
+            <div class="card-body">
+                @if (budgetLineItems$ | async; as budgetLineItems) {
+                    @if (budgetLineItems.length > 0) {
+                        <wadnr-grid
+                            [columnDefs]="budgetLineItemColumnDefs"
+                            [rowData]="budgetLineItems"
+                            height="350px"
+                            downloadFileName="fund-source-budget-line-items">
+                        </wadnr-grid>
+                    } @else {
+                        <p class="text-muted">No budget line items for this fund source.</p>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Projects Grid (always visible) -->
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Funding by Project ({{ fundSource.ProjectCount }})</span>
+            </div>
+            <div class="card-body">
+                @if (projects$ | async; as projects) {
+                    @if (projects.length > 0) {
+                        <wadnr-grid
+                            [columnDefs]="projectColumnDefs"
+                            [rowData]="projects"
+                            height="300px"
+                            downloadFileName="fund-source-projects">
+                        </wadnr-grid>
+                    } @else {
+                        <p class="text-muted">No projects are associated with this fund source.</p>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Agreements Grid (logged-in users only) -->
+    @if (isUserLoggedIn) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Agreements ({{ fundSource.AgreementCount }})</span>
+            </div>
+            <div class="card-body">
+                @if (agreements$ | async; as agreements) {
+                    @if (agreements.length > 0) {
+                        <wadnr-grid
+                            [columnDefs]="agreementColumnDefs"
+                            [rowData]="agreements"
+                            height="350px"
+                            downloadFileName="fund-source-agreements">
+                        </wadnr-grid>
+                    } @else {
+                        <p class="text-muted">No agreements are associated with this fund source.</p>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Notes Section -->
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Notes</span>
+            </div>
+            <div class="card-body">
+                <!-- Public Notes -->
+                <h4>Public Notes ({{ fundSource.NoteCount }})</h4>
+                @if (notes$ | async; as notes) {
+                    @if (notes.length > 0) {
+                        <wadnr-grid
+                            [columnDefs]="noteColumnDefs"
+                            [rowData]="notes"
+                            height="250px"
+                            downloadFileName="fund-source-notes">
+                        </wadnr-grid>
+                    } @else {
+                        <p class="text-muted">No public notes for this fund source.</p>
+                    }
+                }
+
+                <!-- Internal Notes (with permission check) -->
+                @if (canViewInternalNotes) {
+                <div class="internal-notes-section">
+                    <h4>Internal Notes ({{ fundSource.InternalNoteCount }})</h4>
+                    @if (internalNotes$ | async; as internalNotes) {
+                        @if (internalNotes.length > 0) {
+                            <wadnr-grid
+                                [columnDefs]="internalNoteColumnDefs"
+                                [rowData]="internalNotes"
+                                height="250px"
+                                downloadFileName="fund-source-internal-notes">
+                            </wadnr-grid>
+                        } @else {
+                            <p class="text-muted">No internal notes for this fund source.</p>
+                        }
+                    }
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Conditions and Requirements (if present) -->
+    @if (fundSource.ConditionsAndRequirements) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Conditions and Requirements</span>
+            </div>
+            <div class="card-body">
+                <div [innerHTML]="fundSource.ConditionsAndRequirements"></div>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Compliance Notes (if present) -->
+    @if (fundSource.ComplianceNotes) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Compliance Notes</span>
+            </div>
+            <div class="card-body">
+                <div [innerHTML]="fundSource.ComplianceNotes"></div>
+            </div>
+        </div>
+    </div>
+    }
+</div>
+} @else {
+<div class="page-body">
+    <p>Loading fund source details...</p>
+</div>
+}

@@ -75,4 +75,60 @@ public class FundSourceController(
         }
         return NoContent();
     }
+
+    [HttpGet("{fundSourceID}/allocations")]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<ActionResult<IEnumerable<FundSourceAllocationLookupItem>>> ListAllocations([FromRoute] int fundSourceID)
+    {
+        var allocations = await FundSources.ListAllocationsAsync(DbContext, fundSourceID);
+        return Ok(allocations);
+    }
+
+    [HttpGet("{fundSourceID}/projects")]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<ActionResult<IEnumerable<FundSourceProjectGridRow>>> ListProjects([FromRoute] int fundSourceID)
+    {
+        var projects = await FundSources.ListProjectsAsync(DbContext, fundSourceID);
+        return Ok(projects);
+    }
+
+    [HttpGet("{fundSourceID}/agreements")]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<ActionResult<IEnumerable<FundSourceAgreementGridRow>>> ListAgreements([FromRoute] int fundSourceID)
+    {
+        var agreements = await FundSources.ListAgreementsAsync(DbContext, fundSourceID);
+        return Ok(agreements);
+    }
+
+    [HttpGet("{fundSourceID}/budget-line-items")]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<ActionResult<IEnumerable<FundSourceBudgetLineItemGridRow>>> ListBudgetLineItems([FromRoute] int fundSourceID)
+    {
+        var budgetLineItems = await FundSources.ListBudgetLineItemsAsync(DbContext, fundSourceID);
+        return Ok(budgetLineItems);
+    }
+
+    [HttpGet("{fundSourceID}/files")]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<ActionResult<IEnumerable<FundSourceFileResourceGridRow>>> ListFiles([FromRoute] int fundSourceID)
+    {
+        var files = await FundSources.ListFilesAsync(DbContext, fundSourceID);
+        return Ok(files);
+    }
+
+    [HttpGet("{fundSourceID}/notes")]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<ActionResult<IEnumerable<FundSourceNoteGridRow>>> ListNotes([FromRoute] int fundSourceID)
+    {
+        var notes = await FundSources.ListNotesAsync(DbContext, fundSourceID);
+        return Ok(notes);
+    }
+
+    [HttpGet("{fundSourceID}/notes-internal")]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<ActionResult<IEnumerable<FundSourceNoteInternalGridRow>>> ListInternalNotes([FromRoute] int fundSourceID)
+    {
+        var notes = await FundSources.ListInternalNotesAsync(DbContext, fundSourceID);
+        return Ok(notes);
+    }
 }

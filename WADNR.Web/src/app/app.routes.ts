@@ -13,6 +13,8 @@ export const routeParams = {
     agreementID: "agreementID",
     organizationID: "organizationID",
     programID: "programID",
+    fundSourceID: "fundSourceID",
+    vendorID: "vendorID",
 };
 
 export const routes: Routes = [
@@ -51,6 +53,11 @@ export const routes: Routes = [
     { path: "find-your-forester", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "forest-health-monitoring", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "fund-sources", title: "Fund Sources", loadComponent: () => import("./pages/fund-sources/fund-sources.component").then((m) => m.FundSourcesComponent) },
+    {
+        path: `fund-sources/:${routeParams.fundSourceID}`,
+        title: "Fund Source Detail",
+        loadComponent: () => import("./pages/fund-sources/fund-source-detail/fund-source-detail.component").then((m) => m.FundSourceDetailComponent),
+    },
     {
         path: "interactions-events",
         title: "Interactions/Events",
@@ -102,6 +109,12 @@ export const routes: Routes = [
         path: `tags/:${routeParams.tagID}`,
         title: "Tag Detail",
         loadComponent: () => import("./pages/tags/tag-detail/tag-detail.component").then((m) => m.TagDetailComponent),
+    },
+    { path: "vendors", title: "Vendors", loadComponent: () => import("./pages/vendors/vendors.component").then((m) => m.VendorsComponent) },
+    {
+        path: `vendors/:${routeParams.vendorID}`,
+        title: "Vendor Detail",
+        loadComponent: () => import("./pages/vendors/vendor-detail/vendor-detail.component").then((m) => m.VendorDetailComponent),
     },
     { path: "projects", title: "Full Project List", loadComponent: () => import("./pages/projects/projects.component").then((m) => m.ProjectsComponent) },
     { path: "projects/map", loadComponent: () => import("./pages/projects/projects-map/projects-map.component").then((m) => m.ProjectsMapComponent) },

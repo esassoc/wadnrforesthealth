@@ -1752,6 +1752,356 @@
         }
       }
     },
+    "/fund-sources/{fundSourceID}/allocations": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "ListAllocations_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fund-sources/{fundSourceID}/projects": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "ListProjects_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceProjectGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceProjectGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceProjectGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fund-sources/{fundSourceID}/agreements": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "ListAgreements_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAgreementGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAgreementGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAgreementGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fund-sources/{fundSourceID}/budget-line-items": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "ListBudgetLineItems_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceBudgetLineItemGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceBudgetLineItemGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceBudgetLineItemGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fund-sources/{fundSourceID}/files": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "ListFiles_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceFileResourceGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceFileResourceGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceFileResourceGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fund-sources/{fundSourceID}/notes": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "ListNotes_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceNoteGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceNoteGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceNoteGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fund-sources/{fundSourceID}/notes-internal": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "ListInternalNotes_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceNoteInternalGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceNoteInternalGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceNoteInternalGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/interaction-events": {
       "get": {
         "tags": [
@@ -4974,6 +5324,234 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/ProjectTagDetailGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vendors": {
+      "get": {
+        "tags": [
+          "Vendor"
+        ],
+        "operationId": "List_Vendor",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VendorGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VendorGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VendorGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vendors/{vendorID}": {
+      "get": {
+        "tags": [
+          "Vendor"
+        ],
+        "operationId": "Get_Vendor",
+        "parameters": [
+          {
+            "name": "vendorID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vendors/search": {
+      "get": {
+        "tags": [
+          "Vendor"
+        ],
+        "operationId": "Search_Vendor",
+        "parameters": [
+          {
+            "name": "term",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VendorLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VendorLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VendorLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vendors/{vendorID}/people": {
+      "get": {
+        "tags": [
+          "Vendor"
+        ],
+        "operationId": "ListPeople_Vendor",
+        "parameters": [
+          {
+            "name": "vendorID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VendorPersonGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VendorPersonGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VendorPersonGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vendors/{vendorID}/organizations": {
+      "get": {
+        "tags": [
+          "Vendor"
+        ],
+        "operationId": "ListOrganizations_Vendor",
+        "parameters": [
+          {
+            "name": "vendorID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VendorOrganizationGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VendorOrganizationGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VendorOrganizationGridRow"
                   }
                 }
               }
@@ -8226,6 +8804,60 @@
         },
         "additionalProperties": false
       },
+      "FundSourceAgreementGridRow": {
+        "type": "object",
+        "properties": {
+          "AgreementID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AgreementTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "AgreementNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "AgreementTypeAbbrev": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "StartDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EndDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "AgreementAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProgramIndices": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectCodes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FundSourceAllocation": {
         "type": "object",
         "properties": {
@@ -9028,6 +9660,48 @@
         },
         "additionalProperties": false
       },
+      "FundSourceBudgetLineItemGridRow": {
+        "type": "object",
+        "properties": {
+          "FundSourceAllocationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceAllocationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "PersonnelAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "BenefitsAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "TravelAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "SuppliesAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "ContractualAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "IndirectCostsAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "TotalAmount": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
       "FundSourceDetail": {
         "type": "object",
         "properties": {
@@ -9040,6 +9714,37 @@
             "nullable": true
           },
           "FundSourceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ShortName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "Organization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "FundSourceStatus": {
+            "$ref": "#/components/schemas/FundSourceStatusLookupItem"
+          },
+          "FundSourceTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TotalAwardAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "CurrentBalance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "CFDANumber": {
             "type": "string",
             "nullable": true
           },
@@ -9061,30 +9766,29 @@
             "type": "string",
             "nullable": true
           },
-          "CFDANumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "FundSourceTypeID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "ShortName": {
-            "type": "string",
-            "nullable": true
-          },
-          "FundSourceStatusID": {
+          "AllocationCount": {
             "type": "integer",
             "format": "int32"
           },
-          "OrganizationID": {
+          "AgreementCount": {
             "type": "integer",
             "format": "int32"
           },
-          "TotalAwardAmount": {
-            "type": "number",
-            "format": "double"
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NoteCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "InternalNoteCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -9126,6 +9830,40 @@
           },
           "FundSource": {
             "$ref": "#/components/schemas/FundSource"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceFileResourceGridRow": {
+        "type": "object",
+        "properties": {
+          "FundSourceFileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceGUID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "FileResourceMimeTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -9246,6 +9984,37 @@
         },
         "additionalProperties": false
       },
+      "FundSourceNoteGridRow": {
+        "type": "object",
+        "properties": {
+          "FundSourceNoteID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Note": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "UpdatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "UpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FundSourceNoteInternal": {
         "type": "object",
         "properties": {
@@ -9296,6 +10065,82 @@
         },
         "additionalProperties": false
       },
+      "FundSourceNoteInternalGridRow": {
+        "type": "object",
+        "properties": {
+          "FundSourceNoteInternalID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Note": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "UpdatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "UpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceProjectGridRow": {
+        "type": "object",
+        "properties": {
+          "FundSourceAllocationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceAllocationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectStageName": {
+            "type": "string",
+            "nullable": true
+          },
+          "MatchAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "PayAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FundSourceStatus": {
         "type": "object",
         "properties": {
@@ -9328,6 +10173,20 @@
           "Closeout"
         ],
         "type": "string"
+      },
+      "FundSourceStatusLookupItem": {
+        "type": "object",
+        "properties": {
+          "FundSourceStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceStatusName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "FundSourceType": {
         "type": "object",
@@ -18893,6 +19752,254 @@
           }
         },
         "additionalProperties": false
+      },
+      "VendorDetail": {
+        "type": "object",
+        "properties": {
+          "VendorID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "VendorName": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatewideVendorNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatewideVendorNumberSuffix": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorType": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "BillingAgency": {
+            "type": "string",
+            "nullable": true
+          },
+          "BillingSubAgency": {
+            "type": "string",
+            "nullable": true
+          },
+          "BillingFund": {
+            "type": "string",
+            "nullable": true
+          },
+          "BillingFundBreakout": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorAddressLine1": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorAddressLine2": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorAddressLine3": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorCity": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorState": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorZip": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "Email": {
+            "type": "string",
+            "nullable": true
+          },
+          "Remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaxpayerIdNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "PersonCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OrganizationCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VendorGridRow": {
+        "type": "object",
+        "properties": {
+          "VendorID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "VendorName": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatewideVendorNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatewideVendorNumberSuffix": {
+            "type": "string",
+            "nullable": true
+          },
+          "BillingAgency": {
+            "type": "string",
+            "nullable": true
+          },
+          "BillingSubAgency": {
+            "type": "string",
+            "nullable": true
+          },
+          "BillingFund": {
+            "type": "string",
+            "nullable": true
+          },
+          "BillingFundBreakout": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorAddressLine1": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorAddressLine2": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorAddressLine3": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorCity": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorState": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorZip": {
+            "type": "string",
+            "nullable": true
+          },
+          "Remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaxpayerIdNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "Email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VendorLookupItem": {
+        "type": "object",
+        "properties": {
+          "VendorID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "VendorName": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatewideVendorNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatewideVendorNumberSuffix": {
+            "type": "string",
+            "nullable": true
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VendorOrganizationGridRow": {
+        "type": "object",
+        "properties": {
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationShortName": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsActive": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VendorPersonGridRow": {
+        "type": "object",
+        "properties": {
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Email": {
+            "type": "string",
+            "nullable": true
+          },
+          "Phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsActive": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
       }
     }
   },
@@ -18956,6 +20063,9 @@
     },
     {
       "name": "Tag"
+    },
+    {
+      "name": "Vendor"
     }
   ]
 }

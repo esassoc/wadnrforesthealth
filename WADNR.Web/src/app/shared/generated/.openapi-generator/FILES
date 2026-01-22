@@ -21,6 +21,7 @@ api/project.service.ts
 api/sitka-capture.service.ts
 api/system-info.service.ts
 api/tag.service.ts
+api/vendor.service.ts
 configuration.ts
 encoder.ts
 model/agreement-contact-grid-row.ts
@@ -106,6 +107,7 @@ model/focus-area.ts
 model/forester-role-enum.ts
 model/forester-role.ts
 model/forester-work-unit.ts
+model/fund-source-agreement-grid-row.ts
 model/fund-source-allocation-budget-line-item.ts
 model/fund-source-allocation-change-log.ts
 model/fund-source-allocation-dnr-upland-region-detail-grid-row.ts
@@ -124,13 +126,19 @@ model/fund-source-allocation-source-enum.ts
 model/fund-source-allocation-source-lookup-item.ts
 model/fund-source-allocation-source.ts
 model/fund-source-allocation.ts
+model/fund-source-budget-line-item-grid-row.ts
 model/fund-source-detail.ts
+model/fund-source-file-resource-grid-row.ts
 model/fund-source-file-resource.ts
 model/fund-source-grid-row.ts
 model/fund-source-lookup-item.ts
+model/fund-source-note-grid-row.ts
+model/fund-source-note-internal-grid-row.ts
 model/fund-source-note-internal.ts
 model/fund-source-note.ts
+model/fund-source-project-grid-row.ts
 model/fund-source-status-enum.ts
+model/fund-source-status-lookup-item.ts
 model/fund-source-status.ts
 model/fund-source-type.ts
 model/fund-source-upsert-request.ts
@@ -351,6 +359,11 @@ model/treatment-type-enum.ts
 model/treatment-type.ts
 model/treatment-update.ts
 model/treatment.ts
+model/vendor-detail.ts
+model/vendor-grid-row.ts
+model/vendor-lookup-item.ts
+model/vendor-organization-grid-row.ts
+model/vendor-person-grid-row.ts
 model/vendor.ts
 param.ts
 variables.ts

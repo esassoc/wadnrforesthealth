@@ -1,0 +1,143 @@
+@if (vendor$ | async; as vendor) {
+<breadcrumb [items]="[{ label: 'Vendors', url: '/vendors' }, { label: vendor.VendorName || 'Vendor' }]" [linkLast]="false"></breadcrumb>
+<page-header [pageTitle]="vendor.VendorName"></page-header>
+
+<div class="page-body grid-12">
+    <!-- Basics Card -->
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Basics</span>
+            </div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4 field-label">Vendor Name</div>
+                    <div class="g-col-8">{{ vendor.VendorName }}</div>
+
+                    <div class="g-col-4 field-label">Statewide Vendor Number</div>
+                    <div class="g-col-8">{{ vendor.StatewideVendorNumber }}</div>
+
+                    <div class="g-col-4 field-label">Suffix</div>
+                    <div class="g-col-8">{{ vendor.StatewideVendorNumberSuffix }}</div>
+
+                    <div class="g-col-4 field-label">Status</div>
+                    <div class="g-col-8">{{ vendor.VendorStatus || '—' }}</div>
+
+                    <div class="g-col-12"><hr class="my-2" /></div>
+
+                    <div class="g-col-4 field-label">Billing Agency</div>
+                    <div class="g-col-8">{{ vendor.BillingAgency || '—' }}</div>
+
+                    <div class="g-col-4 field-label">Billing Subagency</div>
+                    <div class="g-col-8">{{ vendor.BillingSubAgency || '—' }}</div>
+
+                    <div class="g-col-4 field-label">Billing Fund</div>
+                    <div class="g-col-8">{{ vendor.BillingFund || '—' }}</div>
+
+                    <div class="g-col-4 field-label">Billing Fund Breakout</div>
+                    <div class="g-col-8">{{ vendor.BillingFundBreakout || '—' }}</div>
+
+                    <div class="g-col-12"><hr class="my-2" /></div>
+
+                    <div class="g-col-4 field-label">Address</div>
+                    <div class="g-col-8">
+                        @if (vendor.VendorAddressLine1) {
+                            {{ vendor.VendorAddressLine1 }}
+                            @if (vendor.VendorAddressLine2) {
+                                <br />{{ vendor.VendorAddressLine2 }}
+                            }
+                            @if (vendor.VendorAddressLine3) {
+                                <br />{{ vendor.VendorAddressLine3 }}
+                            }
+                        } @else {
+                            —
+                        }
+                    </div>
+
+                    <div class="g-col-4 field-label">City</div>
+                    <div class="g-col-8">{{ vendor.VendorCity || '—' }}</div>
+
+                    <div class="g-col-4 field-label">State</div>
+                    <div class="g-col-8">{{ vendor.VendorState || '—' }}</div>
+
+                    <div class="g-col-4 field-label">ZIP Code</div>
+                    <div class="g-col-8">{{ vendor.VendorZip || '—' }}</div>
+
+                    <div class="g-col-4 field-label">Phone</div>
+                    <div class="g-col-8">
+                        @if (vendor.VendorPhone) {
+                            <a [href]="'tel:' + vendor.VendorPhone">{{ vendor.VendorPhone }}</a>
+                        } @else {
+                            —
+                        }
+                    </div>
+
+                    <div class="g-col-4 field-label">Email</div>
+                    <div class="g-col-8">
+                        @if (vendor.Email) {
+                            <a [href]="'mailto:' + vendor.Email">{{ vendor.Email }}</a>
+                        } @else {
+                            —
+                        }
+                    </div>
+
+                    <div class="g-col-12"><hr class="my-2" /></div>
+
+                    <div class="g-col-4 field-label">Remarks</div>
+                    <div class="g-col-8">{{ vendor.Remarks || '—' }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Section -->
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Users ({{ vendor.PersonCount }})</span>
+            </div>
+            <div class="card-body">
+                @if (people$ | async; as people) {
+                    @if (people.length > 0) {
+                        <wadnr-grid
+                            [columnDefs]="personColumnDefs"
+                            [rowData]="people"
+                            height="250px"
+                            downloadFileName="vendor-users">
+                        </wadnr-grid>
+                    } @else {
+                        <p class="text-muted">No users belong to this vendor.</p>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Organizations Section -->
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Organizations ({{ vendor.OrganizationCount }})</span>
+            </div>
+            <div class="card-body">
+                @if (organizations$ | async; as organizations) {
+                    @if (organizations.length > 0) {
+                        <wadnr-grid
+                            [columnDefs]="organizationColumnDefs"
+                            [rowData]="organizations"
+                            height="250px"
+                            downloadFileName="vendor-organizations">
+                        </wadnr-grid>
+                    } @else {
+                        <p class="text-muted">No organizations belong to this vendor.</p>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+} @else {
+<div class="page-body">
+    <p>Loading vendor details...</p>
+</div>
+}
