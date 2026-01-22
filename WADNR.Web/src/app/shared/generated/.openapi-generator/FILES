@@ -340,6 +340,7 @@ model/treatment-code-enum.ts
 model/treatment-code.ts
 model/treatment-detailed-activity-type-enum.ts
 model/treatment-detailed-activity-type.ts
+model/treatment-grid-row.ts
 model/treatment-type-enum.ts
 model/treatment-type.ts
 model/treatment-update.ts

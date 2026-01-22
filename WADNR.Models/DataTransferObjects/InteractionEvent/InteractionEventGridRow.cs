@@ -7,5 +7,5 @@ public class InteractionEventGridRow
     public string? InteractionEventDescription { get; set; }
     public DateTime InteractionEventDate { get; set; }
     public PersonLookupItem? StaffPerson { get; set; }
-    public InteractionEventTypeLookupItem InteractionEventType { get; set; }
+    public InteractionEventTypeLookupItem InteractionEventType { get; set; } = new();
 }

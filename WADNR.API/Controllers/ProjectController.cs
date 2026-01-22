@@ -147,6 +147,22 @@ public class ProjectController(
         return Ok(classifications);
     }
 
+    [HttpGet("{projectID}/treatments")]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<IEnumerable<TreatmentGridRow>>> ListTreatments([FromRoute] int projectID)
+    {
+        var treatments = await Projects.ListTreatmentsForProjectAsync(DbContext, projectID);
+        return Ok(treatments);
+    }
+
+    [HttpGet("{projectID}/interaction-events")]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<IEnumerable<InteractionEventGridRow>>> ListInteractionEvents([FromRoute] int projectID)
+    {
+        var events = await Projects.ListInteractionEventsForProjectAsync(DbContext, projectID);
+        return Ok(events);
+    }
+
     [HttpGet("{projectID}/locations/generic-layers")]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<List<GenericLayer>>> ListLocationsAsGenericLayers([FromRoute] int projectID)

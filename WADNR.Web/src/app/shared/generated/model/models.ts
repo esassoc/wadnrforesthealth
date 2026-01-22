@@ -315,6 +315,7 @@ export * from './treatment-code';
 export * from './treatment-code-enum';
 export * from './treatment-detailed-activity-type';
 export * from './treatment-detailed-activity-type-enum';
+export * from './treatment-grid-row';
 export * from './treatment-type';
 export * from './treatment-type-enum';
 export * from './treatment-update';

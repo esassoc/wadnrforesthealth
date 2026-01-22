@@ -8,7 +8,7 @@ public class ProgramGridRow
     public string ProgramShortName { get; set; }
     public bool IsActive { get; set; }
     public bool IsDefaultProgramForImportOnly { get; set; }
-    public OrganizationLookupItem Organization { get; set; } = null!;
+    public OrganizationLookupItem? Organization { get; set; }
     public int ProjectCount { get; set; }
 
 }

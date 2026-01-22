@@ -267,5 +267,51 @@
             </div>
         </div>
     </div>
+
+    <!-- Treatments Grid Card -->
+    @if (treatments$ | async; as treatments) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Treatments</span>
+            </div>
+            <div class="card-body">
+                @if (treatments.length > 0) {
+                    <wadnr-grid
+                        [rowData]="treatments"
+                        [columnDefs]="treatmentColumnDefs"
+                        height="400px"
+                        downloadFileName="Project_Treatments">
+                    </wadnr-grid>
+                } @else {
+                    <p class="system-text">No treatments recorded for this project.</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Interaction Events Grid Card -->
+    @if (interactionEvents$ | async; as interactionEvents) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Interaction Events</span>
+            </div>
+            <div class="card-body">
+                @if (interactionEvents.length > 0) {
+                    <wadnr-grid
+                        [rowData]="interactionEvents"
+                        [columnDefs]="interactionEventColumnDefs"
+                        height="400px"
+                        downloadFileName="Project_InteractionEvents">
+                    </wadnr-grid>
+                } @else {
+                    <p class="system-text">No interaction events recorded for this project.</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
 </div>
 }

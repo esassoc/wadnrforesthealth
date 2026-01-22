@@ -397,6 +397,107 @@ public static class Projects
         return rows;
     }
 
+    public static async Task<List<TreatmentGridRow>> ListTreatmentsForProjectAsync(WADNRDbContext dbContext, int projectID)
+    {
+        var rawTreatments = await dbContext.Treatments
+            .AsNoTracking()
+            .Where(t => t.ProjectID == projectID)
+            .Select(t => new
+            {
+                t.TreatmentID,
+                t.TreatmentTypeID,
+                t.TreatmentDetailedActivityTypeID,
+                t.TreatmentStartDate,
+                t.TreatmentEndDate,
+                t.TreatmentFootprintAcres,
+                t.TreatmentTreatedAcres,
+                t.TreatmentNotes,
+                t.TreatmentCodeID,
+                ProgramName = t.Program != null
+                    ? (t.Program.IsDefaultProgramForImportOnly
+                        ? (t.Program.Organization != null ? t.Program.Organization.OrganizationName : null)
+                        : t.Program.ProgramName)
+                    : null
+            })
+            .ToListAsync();
+
+        var treatments = rawTreatments
+            .Select(t => new TreatmentGridRow
+            {
+                TreatmentID = t.TreatmentID,
+                TreatmentTypeName = TreatmentType.AllLookupDictionary.TryGetValue(t.TreatmentTypeID, out var tt)
+                    ? tt.TreatmentTypeName
+                    : $"Unknown ({t.TreatmentTypeID})",
+                TreatmentDetailedActivityTypeName = TreatmentDetailedActivityType.AllLookupDictionary.TryGetValue(t.TreatmentDetailedActivityTypeID, out var tda)
+                    ? tda.TreatmentDetailedActivityTypeName
+                    : $"Unknown ({t.TreatmentDetailedActivityTypeID})",
+                TreatmentStartDate = t.TreatmentStartDate,
+                TreatmentEndDate = t.TreatmentEndDate,
+                TreatmentFootprintAcres = t.TreatmentFootprintAcres,
+                TreatmentTreatedAcres = t.TreatmentTreatedAcres,
+                TreatmentNotes = t.TreatmentNotes,
+                ProgramName = t.ProgramName,
+                TreatmentCodeName = t.TreatmentCodeID.HasValue && TreatmentCode.AllLookupDictionary.TryGetValue(t.TreatmentCodeID.Value, out var tc)
+                    ? tc.TreatmentCodeName
+                    : null
+            })
+            .OrderBy(t => t.TreatmentStartDate)
+            .ThenBy(t => t.TreatmentTypeName)
+            .ToList();
+
+        return treatments;
+    }
+
+    public static async Task<List<InteractionEventGridRow>> ListInteractionEventsForProjectAsync(WADNRDbContext dbContext, int projectID)
+    {
+        var rawEvents = await dbContext.InteractionEventProjects
+            .AsNoTracking()
+            .Where(iep => iep.ProjectID == projectID && iep.InteractionEvent != null)
+            .Select(iep => new
+            {
+                InteractionEventID = iep.InteractionEvent!.InteractionEventID,
+                InteractionEventTitle = iep.InteractionEvent.InteractionEventTitle,
+                InteractionEventDescription = iep.InteractionEvent.InteractionEventDescription,
+                InteractionEventDate = iep.InteractionEvent.InteractionEventDate,
+                InteractionEventTypeID = iep.InteractionEvent.InteractionEventTypeID,
+                StaffPersonID = iep.InteractionEvent.StaffPersonID,
+                StaffPersonFirstName = iep.InteractionEvent.StaffPerson != null ? iep.InteractionEvent.StaffPerson.FirstName : null,
+                StaffPersonLastName = iep.InteractionEvent.StaffPerson != null ? iep.InteractionEvent.StaffPerson.LastName : null
+            })
+            .ToListAsync();
+
+        var events = rawEvents
+            .Select(e => new InteractionEventGridRow
+            {
+                InteractionEventID = e.InteractionEventID,
+                InteractionEventTitle = e.InteractionEventTitle ?? string.Empty,
+                InteractionEventDescription = e.InteractionEventDescription,
+                InteractionEventDate = e.InteractionEventDate,
+                InteractionEventType = InteractionEventType.AllLookupDictionary.TryGetValue(e.InteractionEventTypeID, out var iet)
+                    ? new InteractionEventTypeLookupItem
+                    {
+                        InteractionEventTypeID = iet.InteractionEventTypeID,
+                        InteractionEventTypeDisplayName = iet.InteractionEventTypeDisplayName
+                    }
+                    : new InteractionEventTypeLookupItem
+                    {
+                        InteractionEventTypeID = e.InteractionEventTypeID,
+                        InteractionEventTypeDisplayName = $"Unknown ({e.InteractionEventTypeID})"
+                    },
+                StaffPerson = e.StaffPersonID.HasValue
+                    ? new PersonLookupItem
+                    {
+                        PersonID = e.StaffPersonID.Value,
+                        FullName = $"{e.StaffPersonFirstName} {e.StaffPersonLastName}"
+                    }
+                    : null
+            })
+            .OrderByDescending(e => e.InteractionEventDate)
+            .ToList();
+
+        return events;
+    }
+
     public static async Task<List<ProjectOrganizationDetailGridRow>> ListPendingAsOrganizationDetailGridRowAsync(WADNRDbContext dbContext, int organizationID)
     {
         var rows = await dbContext.Projects

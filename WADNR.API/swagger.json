@@ -3847,6 +3847,106 @@
         }
       }
     },
+    "/projects/{projectID}/treatments": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListTreatments_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TreatmentGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TreatmentGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TreatmentGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/interaction-events": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListInteractionEvents_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InteractionEventGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InteractionEventGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InteractionEventGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects/{projectID}/locations/generic-layers": {
       "get": {
         "tags": [
@@ -17941,6 +18041,55 @@
           "PileBurn"
         ],
         "type": "string"
+      },
+      "TreatmentGridRow": {
+        "type": "object",
+        "properties": {
+          "TreatmentID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentDetailedActivityTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentStartDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "TreatmentEndDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "TreatmentFootprintAcres": {
+            "type": "number",
+            "format": "double"
+          },
+          "TreatmentTreatedAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TreatmentNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentCodeName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "TreatmentType": {
         "type": "object",

@@ -16,7 +16,7 @@ public static class ProgramProjections
 
         // Parent Organization
         OrganizationID = x.OrganizationID,
-        OrganizationName = x.Organization.OrganizationName,
+        OrganizationName = x.Organization != null ? x.Organization.OrganizationName : null,
 
         // Primary Contact
         PrimaryContactPersonID = x.ProgramPrimaryContactPersonID,
@@ -71,7 +71,9 @@ public static class ProgramProjections
             ProjectStageDefaultID = x.GisUploadSourceOrganization.ProjectStageDefaultID,
             ProjectStageDefaultName = null, // Populated in static helper
             DataDeriveProjectStage = x.GisUploadSourceOrganization.DataDeriveProjectStage,
-            DefaultLeadImplementerOrganizationName = x.GisUploadSourceOrganization.DefaultLeadImplementerOrganization.OrganizationName,
+            DefaultLeadImplementerOrganizationName = x.GisUploadSourceOrganization.DefaultLeadImplementerOrganization != null
+                ? x.GisUploadSourceOrganization.DefaultLeadImplementerOrganization.OrganizationName
+                : null,
             ImportAsDetailedLocationInsteadOfTreatments = x.GisUploadSourceOrganization.ImportAsDetailedLocationInsteadOfTreatments,
             ImportAsDetailedLocationInAdditionToTreatments = x.GisUploadSourceOrganization.ImportAsDetailedLocationInAdditionToTreatments,
             ProjectDescriptionDefaultText = x.GisUploadSourceOrganization.ProjectDescriptionDefaultText,
@@ -89,11 +91,11 @@ public static class ProgramProjections
         ProgramShortName = x.ProgramShortName,
         IsActive = x.ProgramIsActive,
         IsDefaultProgramForImportOnly = x.IsDefaultProgramForImportOnly,
-        Organization = new OrganizationLookupItem
+        Organization = x.Organization != null ? new OrganizationLookupItem
         {
             OrganizationID = x.Organization.OrganizationID,
             OrganizationName = x.Organization.OrganizationName
-        },
+        } : null,
         ProjectCount = x.ProjectPrograms
             .Count(pp => pp.Project.ProjectApprovalStatusID == Projects.ApprovedStatusId &&
                          !pp.Project.ProjectType.LimitVisibilityToAdmin)

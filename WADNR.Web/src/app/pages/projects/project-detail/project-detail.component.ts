@@ -1,21 +1,26 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, shareReplay, switchMap } from "rxjs";
+import { BehaviorSubject, distinctUntilChanged, filter, Observable, shareReplay, switchMap } from "rxjs";
+import { ColDef } from "ag-grid-community";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
+import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
+import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectDetail } from "src/app/shared/generated/model/project-detail";
 import { ProjectOrganizationItem } from "src/app/shared/generated/model/project-organization-item";
 import { ProjectPersonItem } from "src/app/shared/generated/model/project-person-item";
 import { FundSourceAllocationRequestItem } from "src/app/shared/generated/model/fund-source-allocation-request-item";
+import { TreatmentGridRow } from "src/app/shared/generated/model/treatment-grid-row";
+import { InteractionEventGridRow } from "src/app/shared/generated/model/interaction-event-grid-row";
 
 @Component({
     selector: "project-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, WADNRGridComponent],
     templateUrl: "./project-detail.component.html",
     styleUrls: ["./project-detail.component.scss"],
 })
@@ -28,8 +33,16 @@ export class ProjectDetailComponent {
 
     public projectID$: Observable<number>;
     public project$: Observable<ProjectDetail>;
+    public treatments$: Observable<TreatmentGridRow[]>;
+    public interactionEvents$: Observable<InteractionEventGridRow[]>;
 
-    constructor(private projectService: ProjectService) {}
+    public treatmentColumnDefs: ColDef<TreatmentGridRow>[] = [];
+    public interactionEventColumnDefs: ColDef<InteractionEventGridRow>[] = [];
+
+    constructor(
+        private projectService: ProjectService,
+        private utilityFunctions: UtilityFunctionsService
+    ) {}
 
     ngOnInit(): void {
         this.projectID$ = this._projectID$.pipe(
@@ -42,6 +55,49 @@ export class ProjectDetailComponent {
             switchMap((projectID) => this.projectService.getProject(projectID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        this.treatments$ = this.projectID$.pipe(
+            switchMap((projectID) => this.projectService.listTreatmentsProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.interactionEvents$ = this.projectID$.pipe(
+            switchMap((projectID) => this.projectService.listInteractionEventsProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.treatmentColumnDefs = this.createTreatmentColumnDefs();
+        this.interactionEventColumnDefs = this.createInteractionEventColumnDefs();
+    }
+
+    private createTreatmentColumnDefs(): ColDef<TreatmentGridRow>[] {
+        return [
+            this.utilityFunctions.createBasicColumnDef("Treatment Type", "TreatmentTypeName", {
+                FieldDefinitionType: "TreatmentType",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Activity Type", "TreatmentDetailedActivityTypeName", {
+                FieldDefinitionType: "TreatmentDetailedActivityType",
+            }),
+            this.utilityFunctions.createDateColumnDef("Start Date", "TreatmentStartDate", "short"),
+            this.utilityFunctions.createDateColumnDef("End Date", "TreatmentEndDate", "short"),
+            this.utilityFunctions.createDecimalColumnDef("Footprint Acres", "TreatmentFootprintAcres"),
+            this.utilityFunctions.createDecimalColumnDef("Treated Acres", "TreatmentTreatedAcres"),
+            this.utilityFunctions.createBasicColumnDef("Program", "ProgramName"),
+            this.utilityFunctions.createBasicColumnDef("Treatment Code", "TreatmentCodeName"),
+            this.utilityFunctions.createBasicColumnDef("Notes", "TreatmentNotes"),
+        ];
+    }
+
+    private createInteractionEventColumnDefs(): ColDef<InteractionEventGridRow>[] {
+        return [
+            this.utilityFunctions.createLinkColumnDef("Event Title", "InteractionEventTitle", "InteractionEventID", {
+                InRouterLink: "/interaction-events/",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Event Type", "InteractionEventType.InteractionEventTypeDisplayName"),
+            this.utilityFunctions.createDateColumnDef("Date", "InteractionEventDate", "short"),
+            this.utilityFunctions.createBasicColumnDef("Staff Person", "StaffPerson.FullName"),
+            this.utilityFunctions.createBasicColumnDef("Description", "InteractionEventDescription"),
+        ];
     }
 
     // Group organizations by relationship type, with primary contact first

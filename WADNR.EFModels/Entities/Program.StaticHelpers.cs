@@ -7,7 +7,10 @@ public static class Programs
 {
     public static async Task<List<ProgramGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
     {
-        var entities = await dbContext.Programs.AsNoTracking().Select(ProgramProjections.AsGridRow)
+        var entities = await dbContext.Programs
+            .AsNoTracking()
+            .Include(x => x.Organization)
+            .Select(ProgramProjections.AsGridRow)
             .OrderBy(x => x.ProgramName)
             .ToListAsync();
         return entities;
@@ -15,7 +18,11 @@ public static class Programs
 
     public static async Task<ProgramDetail?> GetByIDAsDetailAsync(WADNRDbContext dbContext, int programID)
     {
-        var entity = await dbContext.Programs.AsNoTracking().Where(x => x.ProgramID == programID).Select(ProgramProjections.AsDetail)
+        var entity = await dbContext.Programs
+            .AsNoTracking()
+            .Include(x => x.Organization)
+            .Where(x => x.ProgramID == programID)
+            .Select(ProgramProjections.AsDetail)
             .SingleOrDefaultAsync();
 
         if (entity == null) return null;
@@ -163,6 +170,7 @@ public static class Programs
     {
         var entities = await dbContext.Programs
             .AsNoTracking()
+            .Include(x => x.Organization)
             .Where(x => x.OrganizationID == organizationID)
             .Select(ProgramProjections.AsGridRow)
             .OrderBy(x => x.ProgramName)
