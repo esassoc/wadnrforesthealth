@@ -6204,6 +6204,176 @@
         }
       }
     },
+    "/treatments/{treatmentID}": {
+      "get": {
+        "tags": [
+          "Treatment"
+        ],
+        "operationId": "GetByID_Treatment",
+        "parameters": [
+          {
+            "name": "treatmentID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Treatment"
+        ],
+        "operationId": "Update_Treatment",
+        "parameters": [
+          {
+            "name": "treatmentID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TreatmentUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TreatmentUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TreatmentUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Treatment"
+        ],
+        "operationId": "Delete_Treatment",
+        "parameters": [
+          {
+            "name": "treatmentID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/treatments": {
+      "post": {
+        "tags": [
+          "Treatment"
+        ],
+        "operationId": "Create_Treatment",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TreatmentUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TreatmentUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TreatmentUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/vendors": {
       "get": {
         "tags": [
@@ -20595,6 +20765,103 @@
         ],
         "type": "string"
       },
+      "TreatmentDetail": {
+        "type": "object",
+        "properties": {
+          "TreatmentID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectLocationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatmentAreaName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentDetailedActivityTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentDetailedActivityTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentCodeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatmentCodeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentStartDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "TreatmentEndDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "TreatmentFootprintAcres": {
+            "type": "number",
+            "format": "double"
+          },
+          "TreatmentTreatedAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "CostPerAcre": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TreatmentNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProgramName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ImportedFromGis": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "TreatmentDetailedActivityType": {
         "type": "object",
         "properties": {
@@ -20872,6 +21139,75 @@
           },
           "UpdateGisUploadAttempt": {
             "$ref": "#/components/schemas/GisUploadAttempt"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TreatmentUpsertRequest": {
+        "required": [
+          "ProjectID",
+          "TreatmentDetailedActivityTypeID",
+          "TreatmentEndDate",
+          "TreatmentFootprintAcres",
+          "TreatmentStartDate",
+          "TreatmentTypeID"
+        ],
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatmentTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentDetailedActivityTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentCodeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatmentStartDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "TreatmentEndDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "TreatmentFootprintAcres": {
+            "type": "number",
+            "format": "double"
+          },
+          "TreatmentTreatedAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "CostPerAcre": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TreatmentNotes": {
+            "maxLength": 2000,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -21342,6 +21678,9 @@
     },
     {
       "name": "TaxonomyTrunk"
+    },
+    {
+      "name": "Treatment"
     },
     {
       "name": "Vendor"

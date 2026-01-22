@@ -23,6 +23,7 @@ api/system-info.service.ts
 api/tag.service.ts
 api/taxonomy-branch.service.ts
 api/taxonomy-trunk.service.ts
+api/treatment.service.ts
 api/vendor.service.ts
 configuration.ts
 encoder.ts
@@ -363,12 +364,14 @@ model/taxonomy-trunk-upsert-request.ts
 model/taxonomy-trunk.ts
 model/treatment-code-enum.ts
 model/treatment-code.ts
+model/treatment-detail.ts
 model/treatment-detailed-activity-type-enum.ts
 model/treatment-detailed-activity-type.ts
 model/treatment-grid-row.ts
 model/treatment-type-enum.ts
 model/treatment-type.ts
 model/treatment-update.ts
+model/treatment-upsert-request.ts
 model/treatment.ts
 model/vendor-detail.ts
 model/vendor-grid-row.ts
