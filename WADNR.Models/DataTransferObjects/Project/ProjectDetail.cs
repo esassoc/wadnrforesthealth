@@ -54,6 +54,13 @@ public class ProjectDetail
 
     // Associated Agreements
     public List<AgreementLookupItem> Agreements { get; set; } = new();
+
+    // Location
+    public bool HasLocationData { get; set; }
+    public string? ProjectLocationNotes { get; set; }
+    public List<string> Counties { get; set; } = new();
+    public List<string> Regions { get; set; } = new();
+    public List<string> PriorityLandscapes { get; set; } = new();
 }
 
 public class ProjectOrganizationItem

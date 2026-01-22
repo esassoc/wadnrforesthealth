@@ -131,7 +131,14 @@ public static class ProjectProjections
                 AgreementTitle = ap.Agreement.AgreementTitle ?? string.Empty,
                 AgreementNumber = ap.Agreement.AgreementNumber
             })
-            .ToList()
+            .ToList(),
+
+        // Location
+        HasLocationData = x.ProjectLocationPoint != null || x.ProjectLocations.Any(),
+        ProjectLocationNotes = x.ProjectLocationNotes,
+        Counties = x.ProjectCounties.Select(pc => pc.County.CountyName).ToList(),
+        Regions = x.ProjectRegions.Select(pr => pr.DNRUplandRegion.DNRUplandRegionName).ToList(),
+        PriorityLandscapes = x.ProjectPriorityLandscapes.Select(ppl => ppl.PriorityLandscape.PriorityLandscapeName).ToList()
     };
 
     public static readonly Expression<Func<Project, ProjectMapPopup>> AsMapPopup = x => new ProjectMapPopup

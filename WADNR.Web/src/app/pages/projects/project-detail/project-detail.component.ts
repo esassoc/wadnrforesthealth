@@ -3,11 +3,15 @@ import { Component, Input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { BehaviorSubject, distinctUntilChanged, filter, Observable, shareReplay, switchMap } from "rxjs";
 import { ColDef } from "ag-grid-community";
+import { Map as LeafletMap } from "leaflet";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
+import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
+import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { GenericLayer } from "src/app/shared/generated/model/generic-layer";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectDetail } from "src/app/shared/generated/model/project-detail";
@@ -28,7 +32,7 @@ import { ProjectAuditLogGridRow } from "src/app/shared/generated/model/project-a
 @Component({
     selector: "project-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, WADNRGridComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent],
     templateUrl: "./project-detail.component.html",
     styleUrls: ["./project-detail.component.scss"],
 })
@@ -60,6 +64,12 @@ export class ProjectDetailComponent {
     public updateHistoryColumnDefs: ColDef<ProjectUpdateHistoryGridRow>[] = [];
     public notificationColumnDefs: ColDef<ProjectNotificationGridRow>[] = [];
     public auditLogColumnDefs: ColDef<ProjectAuditLogGridRow>[] = [];
+
+    // Map-related properties
+    public locationLayers$: Observable<GenericLayer[]>;
+    public map: LeafletMap;
+    public layerControl: L.Control.Layers;
+    public mapIsReady: boolean = false;
 
     constructor(
         private projectService: ProjectService,
@@ -125,6 +135,11 @@ export class ProjectDetailComponent {
 
         this.auditLogs$ = this.projectID$.pipe(
             switchMap((projectID) => this.projectService.listAuditLogsProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.locationLayers$ = this.projectID$.pipe(
+            switchMap((projectID) => this.projectService.listLocationsAsGenericLayersProject(projectID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -307,5 +322,12 @@ export class ProjectDetailComponent {
     hasMatchPayAmounts(requests: FundSourceAllocationRequestItem[] | null | undefined): boolean {
         if (!requests || requests.length === 0) return false;
         return requests.some(r => (r.MatchAmount ?? 0) !== 0 || (r.PayAmount ?? 0) !== 0);
+    }
+
+    // Map event handler
+    handleMapReady(event: any): void {
+        this.map = event.map;
+        this.layerControl = event.layerControl;
+        this.mapIsReady = true;
     }
 }

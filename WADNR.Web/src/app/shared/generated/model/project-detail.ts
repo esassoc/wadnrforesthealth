@@ -46,6 +46,11 @@ export class ProjectDetail {
     FundingSourceNotes?: string | null;
     FundSourceAllocationRequests?: Array<FundSourceAllocationRequestItem> | null;
     Agreements?: Array<AgreementLookupItem> | null;
+    HasLocationData?: boolean;
+    ProjectLocationNotes?: string | null;
+    Counties?: Array<string> | null;
+    Regions?: Array<string> | null;
+    PriorityLandscapes?: Array<string> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -77,6 +82,11 @@ export interface ProjectDetailForm {
     FundingSourceNotes?: FormControl<string>;
     FundSourceAllocationRequests?: FormControl<Array<FundSourceAllocationRequestItem>>;
     Agreements?: FormControl<Array<AgreementLookupItem>>;
+    HasLocationData?: FormControl<boolean>;
+    ProjectLocationNotes?: FormControl<string>;
+    Counties?: FormControl<Array<string>>;
+    Regions?: FormControl<Array<string>>;
+    PriorityLandscapes?: FormControl<Array<string>>;
 }
 
 export class ProjectDetailFormControls { 
@@ -321,6 +331,56 @@ export class ProjectDetailFormControls {
         }
     );
     public static Agreements = (value: FormControlState<Array<AgreementLookupItem>> | Array<AgreementLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<AgreementLookupItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static HasLocationData = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectLocationNotes = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Counties = (value: FormControlState<Array<string>> | Array<string> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<string>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Regions = (value: FormControlState<Array<string>> | Array<string> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<string>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PriorityLandscapes = (value: FormControlState<Array<string>> | Array<string> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<string>>(
         value,
         formControlOptions ?? 
         {

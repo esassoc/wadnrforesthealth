@@ -1,530 +1,574 @@
 @if (project$ | async; as project) {
-<breadcrumb [items]="[{ label: 'Projects', url: '/projects' }, { label: project.ProjectName || 'Project' }]" [linkLast]="false"></breadcrumb>
-<page-header pageTitle="{{ project.ProjectName }}"></page-header>
+    <breadcrumb [items]="[{ label: 'Projects', url: '/projects' }, { label: project.ProjectName || 'Project' }]" [linkLast]="false"></breadcrumb>
+    <page-header pageTitle="{{ project.ProjectName }}"></page-header>
 
-<!-- Project Stage Breadcrumb -->
-@if (project.ProjectStage) {
-<div class="stage-breadcrumb">
-    <span class="stage-item current">{{ project.ProjectStage.ProjectStageName }}</span>
-</div>
-}
+    <!-- Project Stage Breadcrumb -->
+    @if (project.ProjectStage) {
+        <div class="stage-breadcrumb">
+            <span class="stage-item current">{{ project.ProjectStage.ProjectStageName }}</span>
+        </div>
+    }
 
-<div class="grid-12">
-    <!-- Basics Card -->
-    <div class="g-col-6">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Basics</span>
-            </div>
-            <div class="card-body">
-                <div class="grid-12">
-                    <div class="g-col-4 field-label">Project Stage</div>
-                    <div class="g-col-8">{{ project.ProjectStage?.ProjectStageName || "—" }}</div>
-
-                    <div class="g-col-4 field-label">Project Initiation Date</div>
-                    <div class="g-col-8">{{ formatDate(project.PlannedDate) }}</div>
-
-                    <div class="g-col-4 field-label">Completion Date</div>
-                    <div class="g-col-8">{{ formatDate(project.CompletionDate) }}</div>
-
-                    <div class="g-col-4 field-label">Lead Implementer Organization</div>
-                    <div class="g-col-8">
-                        @if (project.LeadImplementer) {
-                            <a [routerLink]="['/organizations', project.LeadImplementer.OrganizationID]">{{ project.LeadImplementer.OrganizationName }}</a>
-                        } @else {
-                            —
-                        }
-                    </div>
-
-                    <div class="g-col-12"><hr /></div>
-
-                    <div class="g-col-4 field-label">Project Description</div>
-                    <div class="g-col-8">{{ project.ProjectDescription || "—" }}</div>
-
-                    <div class="g-col-4 field-label">Expiration Date</div>
-                    <div class="g-col-8">{{ formatDate(project.ExpirationDate) }}</div>
-
-                    <div class="g-col-4 field-label">Focus Area</div>
-                    <div class="g-col-8">{{ project.FocusAreaName || "—" }}</div>
-
-                    <div class="g-col-4 field-label">Program</div>
-                    <div class="g-col-8">
-                        @if (project.Programs && project.Programs.length > 0) {
-                            @for (program of project.Programs; track program.ProgramID; let last = $last) {
-                                <a [routerLink]="['/programs', program.ProgramID]">{{ program.ProgramName }}</a>@if (!last) {, }
-                            }
-                        } @else {
-                            —
-                        }
-                    </div>
-
-                    <div class="g-col-4 field-label">Percentage Match</div>
-                    <div class="g-col-8">{{ formatPercentage(project.PercentageMatch) }}</div>
-
-                    @if (project.ProjectGisIdentifier) {
-                    <div class="g-col-4 field-label">Project Identifier</div>
-                    <div class="g-col-8">{{ project.ProjectGisIdentifier }}</div>
-                    }
+    <div class="grid-12">
+        <!-- Basics Card -->
+        <div class="g-col-6">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Basics</span>
                 </div>
-            </div>
-        </div>
-    </div>
+                <div class="card-body">
+                    <div class="grid-12">
+                        <div class="g-col-4 field-label">Project Stage</div>
+                        <div class="g-col-8">{{ project.ProjectStage?.ProjectStageName || "—" }}</div>
 
-    <!-- Tags Card -->
-    <div class="g-col-6">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Tags</span>
-            </div>
-            <div class="card-body">
-                @if (project.Tags && project.Tags.length > 0) {
-                    <div class="tags-list">
-                        @for (tag of project.Tags; track tag.TagID) {
-                            <a [routerLink]="['/tags', tag.TagID]" class="btn btn-sm btn-tag">{{ tag.TagName }}</a>
-                        }
-                    </div>
-                } @else {
-                    <p class="system-text">No tags assigned to this project.</p>
-                }
-            </div>
-        </div>
-    </div>
+                        <div class="g-col-4 field-label">Project Initiation Date</div>
+                        <div class="g-col-8">{{ formatDate(project.PlannedDate) }}</div>
 
-    <!-- Organizations Card -->
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Organizations</span>
-            </div>
-            <div class="card-body">
-                @if (project.Organizations && project.Organizations.length > 0) {
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th style="width: 30%;">Relationship Type</th>
-                                <th>Organization</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for (group of getOrganizationsByRelationshipType(project.Organizations); track group.relationshipType) {
-                                <tr>
-                                    <td>{{ group.organizations.length > 1 ? group.relationshipType + 's' : group.relationshipType }}</td>
-                                    <td>
-                                        <ul class="list-unstyled">
-                                            @for (org of group.organizations; track org.ProjectOrganizationID) {
-                                                <li>
-                                                    <a [routerLink]="['/organizations', org.OrganizationID]">{{ org.OrganizationName }}</a>
-                                                </li>
-                                            }
-                                        </ul>
-                                    </td>
-                                </tr>
+                        <div class="g-col-4 field-label">Completion Date</div>
+                        <div class="g-col-8">{{ formatDate(project.CompletionDate) }}</div>
+
+                        <div class="g-col-4 field-label">Lead Implementer Organization</div>
+                        <div class="g-col-8">
+                            @if (project.LeadImplementer) {
+                                <a [routerLink]="['/organizations', project.LeadImplementer.OrganizationID]">{{ project.LeadImplementer.OrganizationName }}</a>
+                            } @else {
+                                —
                             }
-                        </tbody>
-                    </table>
-                } @else {
-                    <p class="system-text">No organizations set for this project.</p>
-                }
-            </div>
-        </div>
-    </div>
+                        </div>
 
-    <!-- Contacts Card -->
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Contacts</span>
-            </div>
-            <div class="card-body">
-                @if (project.People && project.People.length > 0) {
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th style="width: 30%;">Relationship Type</th>
-                                <th>Contact</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for (group of getPeopleByRelationshipType(project.People); track group.relationshipType) {
-                                <tr>
-                                    <td>{{ group.people.length > 1 ? group.relationshipType + 's' : group.relationshipType }}</td>
-                                    <td>
-                                        <ul class="list-unstyled">
-                                            @for (person of group.people; track person.ProjectPersonID) {
-                                                <li>{{ person.PersonFullName }}</li>
-                                            }
-                                        </ul>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                } @else {
-                    <p class="system-text">No contacts set for this project.</p>
-                }
-            </div>
-        </div>
-    </div>
+                        <div class="g-col-12"><hr /></div>
 
-    <!-- Funding Card -->
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Funding</span>
-            </div>
-            <div class="card-body">
-                <div class="grid-12">
-                    @if (project.EstimatedTotalCost) {
-                    <div class="g-col-3 field-label">Estimated Total Cost</div>
-                    <div class="g-col-9">{{ formatCurrency(project.EstimatedTotalCost) }}</div>
-                    }
+                        <div class="g-col-4 field-label">Project Description</div>
+                        <div class="g-col-8">{{ project.ProjectDescription || "—" }}</div>
 
-                    <div class="g-col-3 field-label">Funding Source</div>
-                    <div class="g-col-9">
-                        @if (project.FundingSources && project.FundingSources.length > 0) {
-                            {{ project.FundingSources.join(', ') }}
-                        } @else {
-                            —
-                        }
-                    </div>
+                        <div class="g-col-4 field-label">Expiration Date</div>
+                        <div class="g-col-8">{{ formatDate(project.ExpirationDate) }}</div>
 
-                    <div class="g-col-3 field-label">Funding Source Note</div>
-                    <div class="g-col-9">{{ project.FundingSourceNotes || 'None entered' }}</div>
-                </div>
+                        <div class="g-col-4 field-label">Focus Area</div>
+                        <div class="g-col-8">{{ project.FocusAreaName || "—" }}</div>
 
-                <hr />
-
-                @if (project.FundSourceAllocationRequests && project.FundSourceAllocationRequests.length > 0) {
-                    <p>The table below shows the identified fund source allocations contributing to the project cost. This may not be a comprehensive list of all project funding sources, nor an estimate of the full project cost.</p>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Fund Source Allocation</th>
-                                @if (hasMatchPayAmounts(project.FundSourceAllocationRequests)) {
-                                    <th style="text-align: right;">Match Amount</th>
-                                    <th style="text-align: right;">Pay Amount</th>
-                                }
-                                <th style="text-align: right;">Total Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for (request of project.FundSourceAllocationRequests; track request.ProjectFundSourceAllocationRequestID) {
-                                <tr>
-                                    <td>{{ request.FundSourceName }} - {{ request.FundSourceAllocationName }}</td>
-                                    @if (hasMatchPayAmounts(project.FundSourceAllocationRequests)) {
-                                        <td style="text-align: right;">{{ formatCurrency(request.MatchAmount) }}</td>
-                                        <td style="text-align: right;">{{ formatCurrency(request.PayAmount) }}</td>
+                        <div class="g-col-4 field-label">Program</div>
+                        <div class="g-col-8">
+                            @if (project.Programs && project.Programs.length > 0) {
+                                @for (program of project.Programs; track program.ProgramID; let last = $last) {
+                                    <a [routerLink]="['/programs', program.ProgramID]">{{ program.ProgramName }}</a>
+                                    @if (!last) {
+                                        ,
                                     }
-                                    <td style="text-align: right;">{{ formatCurrency(request.TotalAmount) }}</td>
-                                </tr>
-                            }
-                            <tr class="totals-row">
-                                <th style="text-align: right;">Total</th>
-                                @if (hasMatchPayAmounts(project.FundSourceAllocationRequests)) {
-                                    <th style="text-align: right;">{{ formatCurrency(getFundingTotals(project.FundSourceAllocationRequests).matchTotal) }}</th>
-                                    <th style="text-align: right;">{{ formatCurrency(getFundingTotals(project.FundSourceAllocationRequests).payTotal) }}</th>
                                 }
-                                <th style="text-align: right;">{{ formatCurrency(getFundingTotals(project.FundSourceAllocationRequests).total) }}</th>
-                            </tr>
-                        </tbody>
-                    </table>
-                } @else {
-                    <p class="system-text">No Fund Source Allocation identified for this Project.</p>
-                }
-            </div>
-        </div>
-    </div>
-
-    <!-- Associated Agreements Card -->
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Agreements Associated to this Project</span>
-            </div>
-            <div class="card-body">
-                @if (project.Agreements && project.Agreements.length > 0) {
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Agreement</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for (agreement of project.Agreements; track agreement.AgreementID) {
-                                <tr>
-                                    <td>
-                                        <a [routerLink]="['/agreements', agreement.AgreementID]">
-                                            {{ agreement.AgreementNumber ? agreement.AgreementNumber + ' - ' : '' }}{{ agreement.AgreementTitle }}
-                                        </a>
-                                    </td>
-                                </tr>
+                            } @else {
+                                —
                             }
-                        </tbody>
-                    </table>
-                } @else {
-                    <p class="system-text">No Agreements associated with this project.</p>
-                }
-            </div>
-        </div>
-    </div>
+                        </div>
 
-    <!-- Treatments Grid Card -->
-    @if (treatments$ | async; as treatments) {
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Treatments</span>
-            </div>
-            <div class="card-body">
-                @if (treatments.length > 0) {
-                    <wadnr-grid
-                        [rowData]="treatments"
-                        [columnDefs]="treatmentColumnDefs"
-                        height="400px"
-                        downloadFileName="Project_Treatments">
-                    </wadnr-grid>
-                } @else {
-                    <p class="system-text">No treatments recorded for this project.</p>
-                }
-            </div>
-        </div>
-    </div>
-    }
+                        <div class="g-col-4 field-label">Percentage Match</div>
+                        <div class="g-col-8">{{ formatPercentage(project.PercentageMatch) }}</div>
 
-    <!-- Interaction Events Grid Card -->
-    @if (interactionEvents$ | async; as interactionEvents) {
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Interaction Events</span>
-            </div>
-            <div class="card-body">
-                @if (interactionEvents.length > 0) {
-                    <wadnr-grid
-                        [rowData]="interactionEvents"
-                        [columnDefs]="interactionEventColumnDefs"
-                        height="400px"
-                        downloadFileName="Project_InteractionEvents">
-                    </wadnr-grid>
-                } @else {
-                    <p class="system-text">No interaction events recorded for this project.</p>
-                }
-            </div>
-        </div>
-    </div>
-    }
-
-    <!-- Classifications Card -->
-    @if (classifications$ | async; as classifications) {
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Classifications</span>
-            </div>
-            <div class="card-body">
-                @if (classifications.length > 0) {
-                    <div class="tags-list">
-                        @for (classification of classifications; track classification.ClassificationID) {
-                            <span class="btn btn-sm btn-tag">{{ classification.DisplayName }}</span>
+                        @if (project.ProjectGisIdentifier) {
+                            <div class="g-col-4 field-label">Project Identifier</div>
+                            <div class="g-col-8">{{ project.ProjectGisIdentifier }}</div>
                         }
                     </div>
-                } @else {
-                    <p class="system-text">No classifications assigned to this project.</p>
-                }
+                </div>
             </div>
         </div>
-    </div>
-    }
 
-    <!-- Images Card -->
-    @if (images$ | async; as images) {
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Photos</span>
+        <!-- Tags Card -->
+        <div class="g-col-6">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Tags</span>
+                </div>
+                <div class="card-body">
+                    @if (project.Tags && project.Tags.length > 0) {
+                        <div class="tags-list">
+                            @for (tag of project.Tags; track tag.TagID) {
+                                <a [routerLink]="['/tags', tag.TagID]" class="btn btn-sm btn-tag">{{ tag.TagName }}</a>
+                            }
+                        </div>
+                    } @else {
+                        <p class="system-text">No tags assigned to this project.</p>
+                    }
+                </div>
             </div>
-            <div class="card-body">
-                @if (images.length > 0) {
-                    <div class="image-gallery">
-                        @for (image of images; track image.ProjectImageID) {
-                            <div class="image-item">
-                                <img [src]="'/api/FileResource/' + image.FileResourceGuid" [alt]="image.Caption || 'Project photo'" class="project-image" />
-                                @if (image.Caption) {
-                                    <div class="image-caption">{{ image.Caption }}</div>
+        </div>
+
+        <!-- Organizations Card -->
+        <div class="g-col-12">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Organizations</span>
+                </div>
+                <div class="card-body">
+                    @if (project.Organizations && project.Organizations.length > 0) {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%">Relationship Type</th>
+                                    <th>Organization</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (group of getOrganizationsByRelationshipType(project.Organizations); track group.relationshipType) {
+                                    <tr>
+                                        <td>{{ group.organizations.length > 1 ? group.relationshipType + "s" : group.relationshipType }}</td>
+                                        <td>
+                                            <ul class="list-unstyled">
+                                                @for (org of group.organizations; track org.ProjectOrganizationID) {
+                                                    <li>
+                                                        <a [routerLink]="['/organizations', org.OrganizationID]">{{ org.OrganizationName }}</a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </td>
+                                    </tr>
                                 }
-                                @if (image.Credit) {
-                                    <div class="image-credit">Credit: {{ image.Credit }}</div>
+                            </tbody>
+                        </table>
+                    } @else {
+                        <p class="system-text">No organizations set for this project.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Contacts Card -->
+        <div class="g-col-12">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Contacts</span>
+                </div>
+                <div class="card-body">
+                    @if (project.People && project.People.length > 0) {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%">Relationship Type</th>
+                                    <th>Contact</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (group of getPeopleByRelationshipType(project.People); track group.relationshipType) {
+                                    <tr>
+                                        <td>{{ group.people.length > 1 ? group.relationshipType + "s" : group.relationshipType }}</td>
+                                        <td>
+                                            <ul class="list-unstyled">
+                                                @for (person of group.people; track person.ProjectPersonID) {
+                                                    <li>{{ person.PersonFullName }}</li>
+                                                }
+                                            </ul>
+                                        </td>
+                                    </tr>
                                 }
-                                @if (image.IsKeyPhoto) {
-                                    <span class="key-photo-badge">Key Photo</span>
+                            </tbody>
+                        </table>
+                    } @else {
+                        <p class="system-text">No contacts set for this project.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Funding Card -->
+        <div class="g-col-12">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Funding</span>
+                </div>
+                <div class="card-body">
+                    <div class="grid-12">
+                        @if (project.EstimatedTotalCost) {
+                            <div class="g-col-3 field-label">Estimated Total Cost</div>
+                            <div class="g-col-9">{{ formatCurrency(project.EstimatedTotalCost) }}</div>
+                        }
+
+                        <div class="g-col-3 field-label">Funding Source</div>
+                        <div class="g-col-9">
+                            @if (project.FundingSources && project.FundingSources.length > 0) {
+                                {{ project.FundingSources.join(", ") }}
+                            } @else {
+                                —
+                            }
+                        </div>
+
+                        <div class="g-col-3 field-label">Funding Source Note</div>
+                        <div class="g-col-9">{{ project.FundingSourceNotes || "None entered" }}</div>
+                    </div>
+
+                    <hr />
+
+                    @if (project.FundSourceAllocationRequests && project.FundSourceAllocationRequests.length > 0) {
+                        <p>
+                            The table below shows the identified fund source allocations contributing to the project cost. This may not be a comprehensive list of all project
+                            funding sources, nor an estimate of the full project cost.
+                        </p>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Fund Source Allocation</th>
+                                    @if (hasMatchPayAmounts(project.FundSourceAllocationRequests)) {
+                                        <th style="text-align: right">Match Amount</th>
+                                        <th style="text-align: right">Pay Amount</th>
+                                    }
+                                    <th style="text-align: right">Total Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (request of project.FundSourceAllocationRequests; track request.ProjectFundSourceAllocationRequestID) {
+                                    <tr>
+                                        <td>{{ request.FundSourceName }} - {{ request.FundSourceAllocationName }}</td>
+                                        @if (hasMatchPayAmounts(project.FundSourceAllocationRequests)) {
+                                            <td style="text-align: right">{{ formatCurrency(request.MatchAmount) }}</td>
+                                            <td style="text-align: right">{{ formatCurrency(request.PayAmount) }}</td>
+                                        }
+                                        <td style="text-align: right">{{ formatCurrency(request.TotalAmount) }}</td>
+                                    </tr>
+                                }
+                                <tr class="totals-row">
+                                    <th style="text-align: right">Total</th>
+                                    @if (hasMatchPayAmounts(project.FundSourceAllocationRequests)) {
+                                        <th style="text-align: right">{{ formatCurrency(getFundingTotals(project.FundSourceAllocationRequests).matchTotal) }}</th>
+                                        <th style="text-align: right">{{ formatCurrency(getFundingTotals(project.FundSourceAllocationRequests).payTotal) }}</th>
+                                    }
+                                    <th style="text-align: right">{{ formatCurrency(getFundingTotals(project.FundSourceAllocationRequests).total) }}</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    } @else {
+                        <p class="system-text">No Fund Source Allocation identified for this Project.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Associated Agreements Card -->
+        <div class="g-col-12">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Agreements Associated to this Project</span>
+                </div>
+                <div class="card-body">
+                    @if (project.Agreements && project.Agreements.length > 0) {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Agreement</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (agreement of project.Agreements; track agreement.AgreementID) {
+                                    <tr>
+                                        <td>
+                                            <a [routerLink]="['/agreements', agreement.AgreementID]">
+                                                {{ agreement.AgreementNumber ? agreement.AgreementNumber + " - " : "" }}{{ agreement.AgreementTitle }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    } @else {
+                        <p class="system-text">No Agreements associated with this project.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Card -->
+        <div class="g-col-12">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Location</span>
+                </div>
+                <div class="card-body">
+                    <div class="grid-12">
+                        <div class="g-col-4 field-label">Counties</div>
+                        <div class="g-col-8">
+                            @if (project.Counties && project.Counties.length > 0) {
+                                {{ project.Counties.join(", ") }}
+                            } @else {
+                                —
+                            }
+                        </div>
+
+                        <div class="g-col-4 field-label">DNR Upland Regions</div>
+                        <div class="g-col-8">
+                            @if (project.Regions && project.Regions.length > 0) {
+                                {{ project.Regions.join(", ") }}
+                            } @else {
+                                —
+                            }
+                        </div>
+
+                        <div class="g-col-4 field-label">Priority Landscapes</div>
+                        <div class="g-col-8">
+                            @if (project.PriorityLandscapes && project.PriorityLandscapes.length > 0) {
+                                {{ project.PriorityLandscapes.join(", ") }}
+                            } @else {
+                                —
+                            }
+                        </div>
+
+                        @if (project.ProjectLocationNotes) {
+                            <div class="g-col-4 field-label">Location Notes</div>
+                            <div class="g-col-8">{{ project.ProjectLocationNotes }}</div>
+                        }
+                    </div>
+
+                    @if (project.HasLocationData) {
+                        <hr />
+                        @if (locationLayers$ | async; as locationLayers) {
+                            <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
+                                @if (mapIsReady) {
+                                    @for (layer of locationLayers; track layer.LayerName) {
+                                        <generic-feature-collection-layer
+                                            [map]="map"
+                                            [layerControl]="layerControl"
+                                            [featureCollection]="layer.Features"
+                                            [layerName]="layer.LayerName"
+                                            [layerColor]="layer.LayerColor"
+                                            [displayOnLoad]="true">
+                                        </generic-feature-collection-layer>
+                                    }
+                                }
+                            </wadnr-map>
+                        }
+                    } @else {
+                        <hr />
+                        <p class="system-text">No location data available for this project.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Treatments Grid Card -->
+        @if (treatments$ | async; as treatments) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Treatments</span>
+                    </div>
+                    <div class="card-body">
+                        @if (treatments.length > 0) {
+                            <wadnr-grid [rowData]="treatments" [columnDefs]="treatmentColumnDefs" height="400px" downloadFileName="Project_Treatments"> </wadnr-grid>
+                        } @else {
+                            <p class="system-text">No treatments recorded for this project.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Interaction Events Grid Card -->
+        @if (interactionEvents$ | async; as interactionEvents) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Interaction Events</span>
+                    </div>
+                    <div class="card-body">
+                        @if (interactionEvents.length > 0) {
+                            <wadnr-grid [rowData]="interactionEvents" [columnDefs]="interactionEventColumnDefs" height="400px" downloadFileName="Project_InteractionEvents">
+                            </wadnr-grid>
+                        } @else {
+                            <p class="system-text">No interaction events recorded for this project.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Classifications Card -->
+        @if (classifications$ | async; as classifications) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Classifications</span>
+                    </div>
+                    <div class="card-body">
+                        @if (classifications.length > 0) {
+                            <div class="tags-list">
+                                @for (classification of classifications; track classification.ClassificationID) {
+                                    <span class="btn btn-sm btn-tag">{{ classification.DisplayName }}</span>
                                 }
                             </div>
+                        } @else {
+                            <p class="system-text">No classifications assigned to this project.</p>
                         }
                     </div>
-                } @else {
-                    <p class="system-text">No photos uploaded for this project.</p>
-                }
+                </div>
             </div>
-        </div>
-    </div>
-    }
+        }
 
-    <!-- Documents Card -->
-    @if (documents$ | async; as documents) {
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Documents</span>
-            </div>
-            <div class="card-body">
-                @if (documents.length > 0) {
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Document</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for (doc of documents; track doc.ProjectDocumentID) {
-                                <tr>
-                                    <td>
-                                        <a [href]="'/api/FileResource/' + doc.FileResourceGuid" target="_blank">{{ doc.DisplayName }}</a>
-                                    </td>
-                                    <td>{{ doc.DocumentTypeName || '—' }}</td>
-                                    <td>{{ doc.Description || '—' }}</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                } @else {
-                    <p class="system-text">No documents uploaded for this project.</p>
-                }
-            </div>
-        </div>
-    </div>
-    }
-
-    <!-- Notes Card -->
-    @if (notes$ | async; as notes) {
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Notes</span>
-            </div>
-            <div class="card-body">
-                @if (notes.length > 0) {
-                    <wadnr-grid
-                        [rowData]="notes"
-                        [columnDefs]="noteColumnDefs"
-                        height="300px"
-                        downloadFileName="Project_Notes">
-                    </wadnr-grid>
-                } @else {
-                    <p class="system-text">No notes recorded for this project.</p>
-                }
-            </div>
-        </div>
-    </div>
-    }
-
-    <!-- External Links Card -->
-    @if (externalLinks$ | async; as externalLinks) {
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">External Links</span>
-            </div>
-            <div class="card-body">
-                @if (externalLinks.length > 0) {
-                    <ul class="external-links-list">
-                        @for (link of externalLinks; track link.ProjectExternalLinkID) {
-                            <li>
-                                <a [href]="link.ExternalLinkUrl" target="_blank" rel="noopener noreferrer">{{ link.ExternalLinkLabel }}</a>
-                            </li>
+        <!-- Images Card -->
+        @if (images$ | async; as images) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Photos</span>
+                    </div>
+                    <div class="card-body">
+                        @if (images.length > 0) {
+                            <div class="image-gallery">
+                                @for (image of images; track image.ProjectImageID) {
+                                    <div class="image-item">
+                                        <img [src]="'/api/FileResource/' + image.FileResourceGuid" [alt]="image.Caption || 'Project photo'" class="project-image" />
+                                        @if (image.Caption) {
+                                            <div class="image-caption">{{ image.Caption }}</div>
+                                        }
+                                        @if (image.Credit) {
+                                            <div class="image-credit">Credit: {{ image.Credit }}</div>
+                                        }
+                                        @if (image.IsKeyPhoto) {
+                                            <span class="key-photo-badge">Key Photo</span>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        } @else {
+                            <p class="system-text">No photos uploaded for this project.</p>
                         }
-                    </ul>
-                } @else {
-                    <p class="system-text">No external links for this project.</p>
-                }
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    }
+        }
 
-    <!-- Administrative Section Header -->
-    <div class="g-col-12">
-        <h2 class="section-header">Administrative</h2>
-    </div>
+        <!-- Documents Card -->
+        @if (documents$ | async; as documents) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Documents</span>
+                    </div>
+                    <div class="card-body">
+                        @if (documents.length > 0) {
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Document</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (doc of documents; track doc.ProjectDocumentID) {
+                                        <tr>
+                                            <td>
+                                                <a [href]="'/api/FileResource/' + doc.FileResourceGuid" target="_blank">{{ doc.DisplayName }}</a>
+                                            </td>
+                                            <td>{{ doc.DocumentTypeName || "—" }}</td>
+                                            <td>{{ doc.Description || "—" }}</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        } @else {
+                            <p class="system-text">No documents uploaded for this project.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
 
-    <!-- Project Update History Card -->
-    @if (updateHistory$ | async; as updateHistory) {
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Project Update History</span>
+        <!-- Notes Card -->
+        @if (notes$ | async; as notes) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Notes</span>
+                    </div>
+                    <div class="card-body">
+                        @if (notes.length > 0) {
+                            <wadnr-grid [rowData]="notes" [columnDefs]="noteColumnDefs" height="300px" downloadFileName="Project_Notes"> </wadnr-grid>
+                        } @else {
+                            <p class="system-text">No notes recorded for this project.</p>
+                        }
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                @if (updateHistory.length > 0) {
-                    <wadnr-grid
-                        [rowData]="updateHistory"
-                        [columnDefs]="updateHistoryColumnDefs"
-                        height="300px"
-                        downloadFileName="Project_UpdateHistory">
-                    </wadnr-grid>
-                } @else {
-                    <p class="system-text">No update history for this project.</p>
-                }
-            </div>
-        </div>
-    </div>
-    }
+        }
 
-    <!-- System Communications Card -->
-    @if (notifications$ | async; as notifications) {
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">System Communications</span>
+        <!-- External Links Card -->
+        @if (externalLinks$ | async; as externalLinks) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">External Links</span>
+                    </div>
+                    <div class="card-body">
+                        @if (externalLinks.length > 0) {
+                            <ul class="external-links-list">
+                                @for (link of externalLinks; track link.ProjectExternalLinkID) {
+                                    <li>
+                                        <a [href]="link.ExternalLinkUrl" target="_blank" rel="noopener noreferrer">{{ link.ExternalLinkLabel }}</a>
+                                    </li>
+                                }
+                            </ul>
+                        } @else {
+                            <p class="system-text">No external links for this project.</p>
+                        }
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                @if (notifications.length > 0) {
-                    <wadnr-grid
-                        [rowData]="notifications"
-                        [columnDefs]="notificationColumnDefs"
-                        height="300px"
-                        downloadFileName="Project_Notifications">
-                    </wadnr-grid>
-                } @else {
-                    <p class="system-text">No system communications for this project.</p>
-                }
-            </div>
-        </div>
-    </div>
-    }
+        }
 
-    <!-- Audit Log Card -->
-    @if (auditLogs$ | async; as auditLogs) {
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Audit Log</span>
-            </div>
-            <div class="card-body">
-                @if (auditLogs.length > 0) {
-                    <wadnr-grid
-                        [rowData]="auditLogs"
-                        [columnDefs]="auditLogColumnDefs"
-                        height="300px"
-                        downloadFileName="Project_AuditLog">
-                    </wadnr-grid>
-                } @else {
-                    <p class="system-text">No audit log entries for this project.</p>
-                }
-            </div>
+        <!-- Administrative Section Header -->
+        <div class="g-col-12">
+            <h2 class="section-header">Administrative</h2>
         </div>
+
+        <!-- Project Update History Card -->
+        @if (updateHistory$ | async; as updateHistory) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Project Update History</span>
+                    </div>
+                    <div class="card-body">
+                        @if (updateHistory.length > 0) {
+                            <wadnr-grid [rowData]="updateHistory" [columnDefs]="updateHistoryColumnDefs" height="300px" downloadFileName="Project_UpdateHistory"> </wadnr-grid>
+                        } @else {
+                            <p class="system-text">No update history for this project.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- System Communications Card -->
+        @if (notifications$ | async; as notifications) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">System Communications</span>
+                    </div>
+                    <div class="card-body">
+                        @if (notifications.length > 0) {
+                            <wadnr-grid [rowData]="notifications" [columnDefs]="notificationColumnDefs" height="300px" downloadFileName="Project_Notifications"> </wadnr-grid>
+                        } @else {
+                            <p class="system-text">No system communications for this project.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Audit Log Card -->
+        @if (auditLogs$ | async; as auditLogs) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Audit Log</span>
+                    </div>
+                    <div class="card-body">
+                        @if (auditLogs.length > 0) {
+                            <wadnr-grid [rowData]="auditLogs" [columnDefs]="auditLogColumnDefs" height="300px" downloadFileName="Project_AuditLog"> </wadnr-grid>
+                        } @else {
+                            <p class="system-text">No audit log entries for this project.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
     </div>
-    }
-</div>
 }
