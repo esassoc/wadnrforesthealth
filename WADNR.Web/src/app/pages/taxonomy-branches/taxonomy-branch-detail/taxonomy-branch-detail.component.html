@@ -1,0 +1,90 @@
+@if (taxonomyBranch$ | async; as taxonomyBranch) {
+<breadcrumb [items]="[{ label: 'Taxonomy Branches', url: '/taxonomy-branches' }, { label: taxonomyBranch.TaxonomyBranchName }]" [linkLast]="false"></breadcrumb>
+<page-header pageTitle="{{ taxonomyBranch.TaxonomyBranchName }}"></page-header>
+
+<div class="grid-12">
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Basics</span></div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4">
+                        <strong>Taxonomy Trunk</strong>
+                    </div>
+                    <div class="g-col-8">{{ taxonomyBranch.TaxonomyTrunk?.TaxonomyTrunkName || "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong>Taxonomy Branch</strong>
+                    </div>
+                    <div class="g-col-8">{{ taxonomyBranch.TaxonomyBranchName || "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong>Code</strong>
+                    </div>
+                    <div class="g-col-8">{{ taxonomyBranch.TaxonomyBranchCode || "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong>Sort Order</strong>
+                    </div>
+                    <div class="g-col-8">{{ taxonomyBranch.TaxonomyBranchSortOrder ?? "—" }}</div>
+                </div>
+            </div>
+        </div>
+
+        @if (taxonomyBranch.TaxonomyBranchDescription) {
+        <div class="card mt-3">
+            <div class="card-header"><span class="card-title">Description</span></div>
+            <div class="card-body">
+                <div [innerHTML]="taxonomyBranch.TaxonomyBranchDescription"></div>
+            </div>
+        </div>
+        }
+
+        @if (taxonomyBranch.ProjectTypes && taxonomyBranch.ProjectTypes.length > 0) {
+        <div class="card mt-3">
+            <div class="card-header"><span class="card-title">Project Types</span></div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    @for (projectType of taxonomyBranch.ProjectTypes; track projectType.ProjectTypeID) {
+                    <li>
+                        <a [routerLink]="['/project-types', projectType.ProjectTypeID]">{{ projectType.ProjectTypeName }}</a>
+                    </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        }
+    </div>
+
+    <div class="g-col-6">
+        @if (taxonomyBranch.HasProjects) {
+        <div class="card">
+            <div class="card-header"><span class="card-title">Project Locations</span></div>
+            <div class="card-body">
+                <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" (onMapLoad)="handleMapReady($event)">
+                    @if (mapIsReady && (projectFeatures$ | async); as features) {
+                    <generic-feature-collection-layer
+                        [map]="map"
+                        [layerControl]="layerControl"
+                        [featureCollection]="features"
+                        [layerName]="'Projects'"
+                        [layerColor]="'#3388ff'"
+                        [displayOnLoad]="true">
+                    </generic-feature-collection-layer>
+                    }
+                </wadnr-map>
+            </div>
+        </div>
+        }
+    </div>
+
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Projects ({{ taxonomyBranch.ProjectCount }})</span></div>
+            <div class="card-body">
+                <wadnr-grid [rowData]="projects$ | async" [columnDefs]="columnDefs" [downloadFileName]="'projects'"></wadnr-grid>
+            </div>
+        </div>
+    </div>
+</div>
+}

@@ -5562,6 +5562,391 @@
         }
       }
     },
+    "/taxonomy-branches": {
+      "get": {
+        "tags": [
+          "TaxonomyBranch"
+        ],
+        "operationId": "List_TaxonomyBranch",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaxonomyBranchGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaxonomyBranchGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaxonomyBranchGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "TaxonomyBranch"
+        ],
+        "operationId": "Create_TaxonomyBranch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxonomyBranchUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxonomyBranchUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxonomyBranchUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyBranchDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyBranchDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyBranchDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/taxonomy-branches/{taxonomyBranchID}": {
+      "get": {
+        "tags": [
+          "TaxonomyBranch"
+        ],
+        "operationId": "Get_TaxonomyBranch",
+        "parameters": [
+          {
+            "name": "taxonomyBranchID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyBranchDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyBranchDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyBranchDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "TaxonomyBranch"
+        ],
+        "operationId": "Update_TaxonomyBranch",
+        "parameters": [
+          {
+            "name": "taxonomyBranchID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxonomyBranchUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxonomyBranchUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxonomyBranchUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyBranchDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyBranchDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxonomyBranchDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "TaxonomyBranch"
+        ],
+        "operationId": "Delete_TaxonomyBranch",
+        "parameters": [
+          {
+            "name": "taxonomyBranchID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/taxonomy-branches/{taxonomyBranchID}/projects": {
+      "get": {
+        "tags": [
+          "TaxonomyBranch"
+        ],
+        "operationId": "ListProjects_TaxonomyBranch",
+        "parameters": [
+          {
+            "name": "taxonomyBranchID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/taxonomy-branches/{taxonomyBranchID}/projects/mapped-point/feature-collection": {
+      "get": {
+        "tags": [
+          "TaxonomyBranch"
+        ],
+        "operationId": "ListProjectMappedPointsFeatureCollection_TaxonomyBranch",
+        "parameters": [
+          {
+            "name": "taxonomyBranchID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/taxonomy-branches/lookup": {
+      "get": {
+        "tags": [
+          "TaxonomyBranch"
+        ],
+        "operationId": "ListAsLookup_TaxonomyBranch",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaxonomyBranchLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaxonomyBranchLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaxonomyBranchLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/taxonomy-trunks/lookup": {
+      "get": {
+        "tags": [
+          "TaxonomyTrunk"
+        ],
+        "operationId": "ListAsLookup_TaxonomyTrunk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaxonomyTrunkLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaxonomyTrunkLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaxonomyTrunkLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/vendors": {
       "get": {
         "tags": [
@@ -19409,6 +19794,142 @@
         },
         "additionalProperties": false
       },
+      "TaxonomyBranchDetail": {
+        "type": "object",
+        "properties": {
+          "TaxonomyBranchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TaxonomyBranchName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaxonomyBranchDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaxonomyBranchCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "ThemeColor": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaxonomyBranchSortOrder": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TaxonomyTrunk": {
+            "$ref": "#/components/schemas/TaxonomyTrunkLookupItem"
+          },
+          "ProjectTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectTypeLookupItem"
+            },
+            "nullable": true
+          },
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "HasProjects": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TaxonomyBranchGridRow": {
+        "type": "object",
+        "properties": {
+          "TaxonomyBranchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TaxonomyBranchName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaxonomyBranchCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaxonomyBranchSortOrder": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TaxonomyTrunk": {
+            "$ref": "#/components/schemas/TaxonomyTrunkLookupItem"
+          },
+          "ProjectTypeCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TaxonomyBranchLookupItem": {
+        "type": "object",
+        "properties": {
+          "TaxonomyBranchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TaxonomyBranchName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TaxonomyBranchUpsertRequest": {
+        "required": [
+          "TaxonomyBranchName",
+          "TaxonomyTrunkID"
+        ],
+        "type": "object",
+        "properties": {
+          "TaxonomyTrunkID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TaxonomyBranchName": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "TaxonomyBranchDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaxonomyBranchCode": {
+            "maxLength": 10,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "ThemeColor": {
+            "maxLength": 20,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "TaxonomyBranchSortOrder": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TaxonomyLevel": {
         "type": "object",
         "properties": {
@@ -19494,6 +20015,20 @@
             "items": {
               "$ref": "#/components/schemas/TaxonomyBranch"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TaxonomyTrunkLookupItem": {
+        "type": "object",
+        "properties": {
+          "TaxonomyTrunkID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TaxonomyTrunkName": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -20419,6 +20954,12 @@
     },
     {
       "name": "Tag"
+    },
+    {
+      "name": "TaxonomyBranch"
+    },
+    {
+      "name": "TaxonomyTrunk"
     },
     {
       "name": "Vendor"

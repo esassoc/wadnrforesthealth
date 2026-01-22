@@ -16,6 +16,7 @@ export const routeParams = {
     fundSourceID: "fundSourceID",
     vendorID: "vendorID",
     personID: "personID",
+    taxonomyBranchID: "taxonomyBranchID",
 };
 
 export const routes: Routes = [
@@ -110,6 +111,16 @@ export const routes: Routes = [
         path: `tags/:${routeParams.tagID}`,
         title: "Tag Detail",
         loadComponent: () => import("./pages/tags/tag-detail/tag-detail.component").then((m) => m.TagDetailComponent),
+    },
+    {
+        path: "taxonomy-branches",
+        title: "Taxonomy Branches",
+        loadComponent: () => import("./pages/taxonomy-branches/taxonomy-branches.component").then((m) => m.TaxonomyBranchesComponent),
+    },
+    {
+        path: `taxonomy-branches/:${routeParams.taxonomyBranchID}`,
+        title: "Taxonomy Branch Detail",
+        loadComponent: () => import("./pages/taxonomy-branches/taxonomy-branch-detail/taxonomy-branch-detail.component").then((m) => m.TaxonomyBranchDetailComponent),
     },
     { path: "vendors", title: "Vendors", loadComponent: () => import("./pages/vendors/vendors.component").then((m) => m.VendorsComponent) },
     { path: "people", title: "Users and Contacts", loadComponent: () => import("./pages/people/people.component").then((m) => m.PeopleComponent) },

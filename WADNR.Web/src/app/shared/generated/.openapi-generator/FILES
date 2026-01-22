@@ -21,6 +21,8 @@ api/project.service.ts
 api/sitka-capture.service.ts
 api/system-info.service.ts
 api/tag.service.ts
+api/taxonomy-branch.service.ts
+api/taxonomy-trunk.service.ts
 api/vendor.service.ts
 configuration.ts
 encoder.ts
@@ -348,8 +350,13 @@ model/tag-grid-row.ts
 model/tag-lookup-item.ts
 model/tag-upsert-request.ts
 model/tag.ts
+model/taxonomy-branch-detail.ts
+model/taxonomy-branch-grid-row.ts
+model/taxonomy-branch-lookup-item.ts
+model/taxonomy-branch-upsert-request.ts
 model/taxonomy-branch.ts
 model/taxonomy-level.ts
+model/taxonomy-trunk-lookup-item.ts
 model/taxonomy-trunk.ts
 model/treatment-code-enum.ts
 model/treatment-code.ts
