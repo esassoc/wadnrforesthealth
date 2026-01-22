@@ -111,6 +111,7 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/tags/tag-detail/tag-detail.component").then((m) => m.TagDetailComponent),
     },
     { path: "vendors", title: "Vendors", loadComponent: () => import("./pages/vendors/vendors.component").then((m) => m.VendorsComponent) },
+    { path: "people", title: "Users and Contacts", loadComponent: () => import("./pages/people/people.component").then((m) => m.PeopleComponent) },
     {
         path: `vendors/:${routeParams.vendorID}`,
         title: "Vendor Detail",

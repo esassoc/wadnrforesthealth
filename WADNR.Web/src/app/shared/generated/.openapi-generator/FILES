@@ -203,6 +203,7 @@ model/organization.ts
 model/person-allowed-authenticator.ts
 model/person-detail.ts
 model/person-first-name-last-name.ts
+model/person-grid-row.ts
 model/person-lookup-item-with-email.ts
 model/person-lookup-item.ts
 model/person-role.ts

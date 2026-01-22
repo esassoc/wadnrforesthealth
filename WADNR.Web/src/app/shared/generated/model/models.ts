@@ -177,6 +177,7 @@ export * from './person';
 export * from './person-allowed-authenticator';
 export * from './person-detail';
 export * from './person-first-name-last-name';
+export * from './person-grid-row';
 export * from './person-lookup-item';
 export * from './person-lookup-item-with-email';
 export * from './person-role';
