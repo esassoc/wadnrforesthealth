@@ -33,6 +33,31 @@ public class FieldDefinitionController(
     public async Task<ActionResult<FieldDefinitionDatumDetail>> Get([FromRoute] int fieldDefinitionID)
     {
         var entity = await FieldDefinitionData.GetByFieldDefinitionAsDetailAsync(DbContext, fieldDefinitionID);
-        return RequireNotNullThrowNotFound(entity, "FieldDefinitionDatum", fieldDefinitionID);
+        if (entity != null)
+        {
+            return Ok(entity);
+        }
+
+        // Return an empty definition if the FieldDefinitionDatum doesn't exist
+        // This prevents 404s when field definitions haven't been populated yet
+        var fieldDefinition = FieldDefinition.AllLookupDictionary.GetValueOrDefault(fieldDefinitionID);
+        return Ok(new FieldDefinitionDatumDetail
+        {
+            FieldDefinitionID = fieldDefinitionID,
+            FieldDefinitionDatumValue = string.Empty,
+            FieldDefinition = fieldDefinition != null
+                ? new FieldDefinitionDetail
+                {
+                    FieldDefinitionID = fieldDefinition.FieldDefinitionID,
+                    FieldDefinitionName = fieldDefinition.FieldDefinitionName,
+                    FieldDefinitionDisplayName = fieldDefinition.FieldDefinitionDisplayName
+                }
+                : new FieldDefinitionDetail
+                {
+                    FieldDefinitionID = fieldDefinitionID,
+                    FieldDefinitionName = string.Empty,
+                    FieldDefinitionDisplayName = string.Empty
+                }
+        });
     }
 }
