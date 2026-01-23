@@ -227,6 +227,7 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/classifications/classification-detail/classification-detail.component").then((m) => m.ClassificationDetailComponent),
     },
     { path: "projects-by-type", loadComponent: () => import("./pages/taxonomy/taxonomy.component").then((m) => m.TaxonomyComponent) },
+    { path: "project-types", title: "Project Types", loadComponent: () => import("./pages/project-types/project-types.component").then((m) => m.ProjectTypesComponent) },
     {
         path: `project-types/:${routeParams.projectTypeID}`,
         title: "Project Type Detail",
