@@ -328,6 +328,42 @@ var items = await dbContext.Entities
     .ToListAsync();
 ```
 
+- **NEVER** use static lookup dictionaries (like `Division.AllLookupDictionary`) inside EF projections - EF Core cannot translate these to SQL and will throw `InvalidOperationException`. Instead, set the field to `null` in the projection and resolve it client-side after the query:
+
+```csharp
+// BAD - Will fail with "constant expression" error
+public static readonly Expression<Func<Entity, EntityDetail>> AsDetail = x => new EntityDetail
+{
+    DivisionID = x.DivisionID,
+    DivisionName = x.DivisionID != null ? Division.AllLookupDictionary[x.DivisionID.Value].DivisionDisplayName : null, // ERROR
+};
+
+// GOOD - Resolve client-side in the static helper
+public static readonly Expression<Func<Entity, EntityDetail>> AsDetail = x => new EntityDetail
+{
+    DivisionID = x.DivisionID,
+    DivisionName = null, // Resolved client-side
+};
+
+// In static helper:
+public static async Task<EntityDetail?> GetByIDAsDetailAsync(DbContext dbContext, int entityID)
+{
+    var detail = await dbContext.Entities
+        .AsNoTracking()
+        .Where(x => x.EntityID == entityID)
+        .Select(EntityProjections.AsDetail)
+        .SingleOrDefaultAsync();
+
+    // Resolve static lookup values client-side
+    if (detail?.DivisionID != null && Division.AllLookupDictionary.TryGetValue(detail.DivisionID.Value, out var division))
+    {
+        detail.DivisionName = division.DivisionDisplayName;
+    }
+
+    return detail;
+}
+```
+
 ---
 
 ## Angular Patterns

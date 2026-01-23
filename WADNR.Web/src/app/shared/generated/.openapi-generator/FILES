@@ -11,6 +11,7 @@ api/dnr-upland-region.service.ts
 api/field-definition.service.ts
 api/file-resource.service.ts
 api/focus-area.service.ts
+api/fund-source-allocation.service.ts
 api/fund-source.service.ts
 api/interaction-event.service.ts
 api/invoice.service.ts
@@ -124,9 +125,11 @@ model/forester-work-unit.ts
 model/fund-source-agreement-grid-row.ts
 model/fund-source-allocation-budget-line-item.ts
 model/fund-source-allocation-change-log.ts
+model/fund-source-allocation-detail.ts
 model/fund-source-allocation-dnr-upland-region-detail-grid-row.ts
 model/fund-source-allocation-expenditure.ts
 model/fund-source-allocation-file-resource.ts
+model/fund-source-allocation-grid-row.ts
 model/fund-source-allocation-likely-person.ts
 model/fund-source-allocation-lookup-item.ts
 model/fund-source-allocation-note-internal.ts

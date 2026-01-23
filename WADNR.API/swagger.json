@@ -2351,6 +2351,175 @@
         }
       }
     },
+    "/fund-source-allocations": {
+      "get": {
+        "tags": [
+          "FundSourceAllocation"
+        ],
+        "operationId": "List_FundSourceAllocation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fund-source-allocations/{fundSourceAllocationID}": {
+      "get": {
+        "tags": [
+          "FundSourceAllocation"
+        ],
+        "operationId": "GetByID_FundSourceAllocation",
+        "parameters": [
+          {
+            "name": "fundSourceAllocationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceAllocationDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceAllocationDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceAllocationDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fund-source-allocations/for-fund-source/{fundSourceID}": {
+      "get": {
+        "tags": [
+          "FundSourceAllocation"
+        ],
+        "operationId": "ListForFundSource_FundSourceAllocation",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fund-source-allocations/lookup": {
+      "get": {
+        "tags": [
+          "FundSourceAllocation"
+        ],
+        "operationId": "ListLookup_FundSourceAllocation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/interaction-events": {
       "get": {
         "tags": [
@@ -11383,6 +11552,134 @@
         },
         "additionalProperties": false
       },
+      "FundSourceAllocationDetail": {
+        "type": "object",
+        "properties": {
+          "FundSourceAllocationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceAllocationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "StartDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EndDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "AllocationAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "HasFundFSPs": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "LikelyToUse": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "FundSourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "DNRUplandRegionID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "DNRUplandRegionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FederalFundCodeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FederalFundCodeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "DivisionID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "DivisionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceManagerID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FundSourceManagerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceAllocationPriorityID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FundSourceAllocationPriorityName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceAllocationPriorityColor": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceAllocationSourceID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FundSourceAllocationSourceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AgreementCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProgramIndexCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectCodeCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "FundSourceAllocationExpenditure": {
         "type": "object",
         "properties": {
@@ -11470,6 +11767,77 @@
           },
           "FundSourceAllocation": {
             "$ref": "#/components/schemas/FundSourceAllocation"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceAllocationGridRow": {
+        "type": "object",
+        "properties": {
+          "FundSourceAllocationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceAllocationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "StartDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EndDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "AllocationAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "DNRUplandRegionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "DNRUplandRegionID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FundSourceAllocationPriorityName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceAllocationPriorityColor": {
+            "type": "string",
+            "nullable": true
+          },
+          "HasFundFSPs": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -23277,6 +23645,9 @@
     },
     {
       "name": "FundSource"
+    },
+    {
+      "name": "FundSourceAllocation"
     },
     {
       "name": "InteractionEvent"

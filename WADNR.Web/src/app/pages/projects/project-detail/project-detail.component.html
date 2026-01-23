@@ -216,7 +216,7 @@
                             <tbody>
                                 @for (request of project.FundSourceAllocationRequests; track request.ProjectFundSourceAllocationRequestID) {
                                     <tr>
-                                        <td>{{ request.FundSourceName }} - {{ request.FundSourceAllocationName }}</td>
+                                        <td>{{ request.FundSourceName }} - <a [routerLink]="['/fund-source-allocations', request.FundSourceAllocationID]">{{ request.FundSourceAllocationName }}</a></td>
                                         @if (hasMatchPayAmounts(project.FundSourceAllocationRequests)) {
                                             <td style="text-align: right">{{ formatCurrency(request.MatchAmount) }}</td>
                                             <td style="text-align: right">{{ formatCurrency(request.PayAmount) }}</td>

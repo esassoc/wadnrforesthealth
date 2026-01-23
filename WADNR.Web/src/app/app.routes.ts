@@ -24,6 +24,7 @@ export const routeParams = {
     programIndexID: "programIndexID",
     projectCodeID: "projectCodeID",
     classificationSystemID: "classificationSystemID",
+    fundSourceAllocationID: "fundSourceAllocationID",
 };
 
 export const routes: Routes = [
@@ -78,6 +79,12 @@ export const routes: Routes = [
         path: `fund-sources/:${routeParams.fundSourceID}`,
         title: "Fund Source Detail",
         loadComponent: () => import("./pages/fund-sources/fund-source-detail/fund-source-detail.component").then((m) => m.FundSourceDetailComponent),
+    },
+    { path: "fund-source-allocations", title: "Fund Source Allocations", loadComponent: () => import("./pages/fund-source-allocations/fund-source-allocations.component").then((m) => m.FundSourceAllocationsComponent) },
+    {
+        path: `fund-source-allocations/:${routeParams.fundSourceAllocationID}`,
+        title: "Fund Source Allocation Detail",
+        loadComponent: () => import("./pages/fund-source-allocations/fund-source-allocation-detail/fund-source-allocation-detail.component").then((m) => m.FundSourceAllocationDetailComponent),
     },
     {
         path: "interactions-events",

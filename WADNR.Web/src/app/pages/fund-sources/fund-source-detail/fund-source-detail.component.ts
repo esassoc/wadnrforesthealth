@@ -109,7 +109,9 @@ export class FundSourceDetailComponent {
 
     private createProjectColumnDefs(): ColDef<FundSourceProjectGridRow>[] {
         return [
-            this.utilityFunctions.createBasicColumnDef("Allocation", "FundSourceAllocationName"),
+            this.utilityFunctions.createLinkColumnDef("Allocation", "FundSourceAllocationName", "FundSourceAllocationID", {
+                InRouterLink: "/fund-source-allocations/",
+            }),
             this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", {
                 InRouterLink: "/projects/",
             }),
@@ -153,7 +155,9 @@ export class FundSourceDetailComponent {
 
     private createBudgetLineItemColumnDefs(): ColDef<FundSourceBudgetLineItemGridRow>[] {
         return [
-            this.utilityFunctions.createBasicColumnDef("Allocation", "FundSourceAllocationName"),
+            this.utilityFunctions.createLinkColumnDef("Allocation", "FundSourceAllocationName", "FundSourceAllocationID", {
+                InRouterLink: "/fund-source-allocations/",
+            }),
             this.utilityFunctions.createCurrencyColumnDef("Personnel", "PersonnelAmount", {
                 MaxDecimalPlacesToDisplay: 2,
             }),

@@ -183,7 +183,7 @@ export class DNRUplandRegionDetailComponent {
                 "FundSourceAllocationID",
                 "FundSourceAllocationName",
                 {
-                    InRouterLink: "/counties/",
+                    InRouterLink: "/fund-source-allocations/",
                     FieldDefinitionType: "FundSourceAllocation",
                     FieldDefinitionLabelOverride: "WA DNR Fund Source Allocation",
                     CustomDropdownFilterField: "ExpectedFundingFundSourceAllocations.FundSourceAllocationName",
@@ -217,7 +217,8 @@ export class DNRUplandRegionDetailComponent {
                 FieldDefinitionType: "FundSourceAllocationFundFSPs",
                 CustomDropdownFilterField: "HasFundFSPs",
             }),
-            this.utilityFunctions.createBasicColumnDef("Fund Source Allocation", "FundSourceAllocationName", {
+            this.utilityFunctions.createLinkColumnDef("Fund Source Allocation", "FundSourceAllocationName", "FundSourceAllocationID", {
+                InRouterLink: "/fund-source-allocations/",
                 FieldDefinitionType: "FundSourceAllocationName",
             }),
             this.utilityFunctions.createBasicColumnDef("Source", "FundSourceAllocationSource.FundSourceAllocationSourceDisplayName", {
