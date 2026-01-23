@@ -1,0 +1,62 @@
+@if (focusArea$ | async; as focusArea) {
+<breadcrumb [items]="[{ label: 'Focus Areas', url: '/focus-areas' }, { label: focusArea.FocusAreaName }]" [linkLast]="false"></breadcrumb>
+<page-header pageTitle="{{ focusArea.FocusAreaName }}"></page-header>
+
+<div class="grid-12">
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Basics</span></div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4">
+                        <strong>Focus Area Name</strong>
+                    </div>
+                    <div class="g-col-8">{{ focusArea.FocusAreaName }}</div>
+
+                    <div class="g-col-4">
+                        <strong>Status</strong>
+                    </div>
+                    <div class="g-col-8">{{ focusArea.FocusAreaStatusDisplayName }}</div>
+
+                    <div class="g-col-4">
+                        <strong>Region</strong>
+                    </div>
+                    <div class="g-col-8">
+                        <a [routerLink]="['/dnr-upland-regions', focusArea.DNRUplandRegionID]">{{ focusArea.DNRUplandRegionName }}</a>
+                    </div>
+
+                    @if (focusArea.PlannedFootprintAcres != null) {
+                    <div class="g-col-4">
+                        <strong>Planned Footprint</strong>
+                    </div>
+                    <div class="g-col-8">{{ focusArea.PlannedFootprintAcres | number:'1.0-0' }} acres</div>
+                    }
+
+                    <div class="g-col-4">
+                        <strong># of Projects</strong>
+                    </div>
+                    <div class="g-col-8">{{ focusArea.ProjectCount }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="g-col-6">
+        @if (focusArea.HasLocation) {
+        <div class="card">
+            <div class="card-header"><span class="card-title">Location</span></div>
+            <div class="card-body">
+                <p class="text-muted">Map display available in future update.</p>
+            </div>
+        </div>
+        } @else {
+        <div class="card">
+            <div class="card-header"><span class="card-title">Location</span></div>
+            <div class="card-body">
+                <p class="text-muted mb-0">No location data available for this focus area.</p>
+            </div>
+        </div>
+        }
+    </div>
+</div>
+}

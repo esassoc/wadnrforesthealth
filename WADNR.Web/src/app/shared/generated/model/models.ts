@@ -75,6 +75,8 @@ export * from './firma-page-type';
 export * from './firma-page-type-detail';
 export * from './firma-page-type-enum';
 export * from './focus-area';
+export * from './focus-area-detail';
+export * from './focus-area-grid-row';
 export * from './focus-area-location-staging';
 export * from './focus-area-status';
 export * from './focus-area-status-enum';

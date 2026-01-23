@@ -1,0 +1,7 @@
+<page-header pageTitle="Focus Areas"></page-header>
+
+<app-alert-display></app-alert-display>
+
+<div class="page-body">
+    <wadnr-grid [rowData]="focusAreas$ | async" [columnDefs]="columnDefs" downloadFileName="focus-areas"></wadnr-grid>
+</div>

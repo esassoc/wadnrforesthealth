@@ -1545,6 +1545,136 @@
         }
       }
     },
+    "/focus-areas": {
+      "get": {
+        "tags": [
+          "FocusArea"
+        ],
+        "operationId": "List_FocusArea",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FocusAreaGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FocusAreaGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FocusAreaGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/focus-areas/{focusAreaID}": {
+      "get": {
+        "tags": [
+          "FocusArea"
+        ],
+        "operationId": "GetByID_FocusArea",
+        "parameters": [
+          {
+            "name": "focusAreaID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FocusAreaDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FocusAreaDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FocusAreaDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/focus-areas/for-region/{dnrUplandRegionID}": {
+      "get": {
+        "tags": [
+          "FocusArea"
+        ],
+        "operationId": "ListForRegion_FocusArea",
+        "parameters": [
+          {
+            "name": "dnrUplandRegionID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FocusAreaGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FocusAreaGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FocusAreaGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/fund-sources": {
       "get": {
         "tags": [
@@ -9867,6 +9997,90 @@
               "$ref": "#/components/schemas/Project"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FocusAreaDetail": {
+        "type": "object",
+        "properties": {
+          "FocusAreaID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FocusAreaName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FocusAreaStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FocusAreaStatusDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "DNRUplandRegionID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DNRUplandRegionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "PlannedFootprintAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "HasLocation": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FocusAreaGridRow": {
+        "type": "object",
+        "properties": {
+          "FocusAreaID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FocusAreaName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FocusAreaStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FocusAreaStatusDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "DNRUplandRegionID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DNRUplandRegionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "PlannedFootprintAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "HasLocation": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -22273,6 +22487,9 @@
     },
     {
       "name": "FileResource"
+    },
+    {
+      "name": "FocusArea"
     },
     {
       "name": "FundSource"

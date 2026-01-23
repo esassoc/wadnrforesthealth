@@ -9,6 +9,7 @@ api/custom-rich-text.service.ts
 api/dnr-upland-region.service.ts
 api/field-definition.service.ts
 api/file-resource.service.ts
+api/focus-area.service.ts
 api/fund-source.service.ts
 api/interaction-event.service.ts
 api/invoice.service.ts
@@ -105,6 +106,8 @@ model/firma-page-type-detail.ts
 model/firma-page-type-enum.ts
 model/firma-page-type.ts
 model/firma-page.ts
+model/focus-area-detail.ts
+model/focus-area-grid-row.ts
 model/focus-area-location-staging.ts
 model/focus-area-status-enum.ts
 model/focus-area-status.ts

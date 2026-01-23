@@ -20,6 +20,7 @@ export const routeParams = {
     taxonomyTrunkID: "taxonomyTrunkID",
     roleID: "roleID",
     invoiceID: "invoiceID",
+    focusAreaID: "focusAreaID",
 };
 
 export const routes: Routes = [
@@ -56,6 +57,12 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/dnr-upland-regions/dnr-upland-region-detail.component").then((m) => m.DNRUplandRegionDetailComponent),
     },
     { path: "find-your-forester", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    { path: "focus-areas", title: "Focus Areas", loadComponent: () => import("./pages/focus-areas/focus-areas.component").then((m) => m.FocusAreasComponent) },
+    {
+        path: `focus-areas/:${routeParams.focusAreaID}`,
+        title: "Focus Area Detail",
+        loadComponent: () => import("./pages/focus-areas/focus-area-detail/focus-area-detail.component").then((m) => m.FocusAreaDetailComponent),
+    },
     { path: "forest-health-monitoring", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "fund-sources", title: "Fund Sources", loadComponent: () => import("./pages/fund-sources/fund-sources.component").then((m) => m.FundSourcesComponent) },
     {
