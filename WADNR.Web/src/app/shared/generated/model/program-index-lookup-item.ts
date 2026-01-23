@@ -13,6 +13,7 @@ import { FormControl, FormControlOptions, FormControlState, Validators } from "@
 export class ProgramIndexLookupItem { 
     ProgramIndexID?: number;
     ProgramIndexCode?: string | null;
+    DisplayName?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -21,6 +22,7 @@ export class ProgramIndexLookupItem {
 export interface ProgramIndexLookupItemForm { 
     ProgramIndexID?: FormControl<number>;
     ProgramIndexCode?: FormControl<string>;
+    DisplayName?: FormControl<string>;
 }
 
 export class ProgramIndexLookupItemFormControls { 
@@ -35,6 +37,16 @@ export class ProgramIndexLookupItemFormControls {
         }
     );
     public static ProgramIndexCode = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static DisplayName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

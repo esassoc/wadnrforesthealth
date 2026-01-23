@@ -2,6 +2,7 @@
 api.base.service.ts
 api.module.ts
 api/agreement.service.ts
+api/classification-system.service.ts
 api/classification.service.ts
 api/county.service.ts
 api/custom-page.service.ts
@@ -17,7 +18,9 @@ api/organization-type.service.ts
 api/organization.service.ts
 api/person.service.ts
 api/priority-landscape.service.ts
+api/program-index.service.ts
 api/program.service.ts
+api/project-code.service.ts
 api/project-type.service.ts
 api/project.service.ts
 api/role.service.ts
@@ -54,6 +57,9 @@ model/capture-post-data.ts
 model/classification-detail.ts
 model/classification-grid-row.ts
 model/classification-lookup-item.ts
+model/classification-system-detail.ts
+model/classification-system-grid-row.ts
+model/classification-system-lookup-item.ts
 model/classification-system.ts
 model/classification-upsert-request.ts
 model/classification-with-project-count.ts
@@ -235,6 +241,8 @@ model/priority-landscape-upsert-request.ts
 model/priority-landscape.ts
 model/program-detail.ts
 model/program-grid-row.ts
+model/program-index-detail.ts
+model/program-index-grid-row.ts
 model/program-index-lookup-item.ts
 model/program-index.ts
 model/program-lookup-item.ts
@@ -252,6 +260,8 @@ model/project-approval-status.ts
 model/project-audit-log-grid-row.ts
 model/project-classification-detail-grid-row.ts
 model/project-classification.ts
+model/project-code-detail.ts
+model/project-code-grid-row.ts
 model/project-code-lookup-item.ts
 model/project-code.ts
 model/project-county-detail-grid-row.ts

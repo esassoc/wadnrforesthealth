@@ -658,6 +658,125 @@
         }
       }
     },
+    "/classification-systems": {
+      "get": {
+        "tags": [
+          "ClassificationSystem"
+        ],
+        "operationId": "List_ClassificationSystem",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationSystemGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationSystemGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationSystemGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/classification-systems/{classificationSystemID}": {
+      "get": {
+        "tags": [
+          "ClassificationSystem"
+        ],
+        "operationId": "GetByID_ClassificationSystem",
+        "parameters": [
+          {
+            "name": "classificationSystemID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassificationSystemDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassificationSystemDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassificationSystemDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/classification-systems/lookup": {
+      "get": {
+        "tags": [
+          "ClassificationSystem"
+        ],
+        "operationId": "ListLookup_ClassificationSystem",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationSystemLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationSystemLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationSystemLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/counties": {
       "get": {
         "tags": [
@@ -4270,6 +4389,281 @@
         }
       }
     },
+    "/program-indices": {
+      "get": {
+        "tags": [
+          "ProgramIndex"
+        ],
+        "operationId": "List_ProgramIndex",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramIndexGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramIndexGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramIndexGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/program-indices/{programIndexID}": {
+      "get": {
+        "tags": [
+          "ProgramIndex"
+        ],
+        "operationId": "GetByID_ProgramIndex",
+        "parameters": [
+          {
+            "name": "programIndexID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramIndexDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramIndexDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramIndexDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/program-indices/for-biennium/{biennium}": {
+      "get": {
+        "tags": [
+          "ProgramIndex"
+        ],
+        "operationId": "ListForBiennium_ProgramIndex",
+        "parameters": [
+          {
+            "name": "biennium",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramIndexGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramIndexGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramIndexGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/program-indices/lookup": {
+      "get": {
+        "tags": [
+          "ProgramIndex"
+        ],
+        "operationId": "ListLookup_ProgramIndex",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramIndexLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramIndexLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramIndexLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/program-indices/lookup/for-biennium/{biennium}": {
+      "get": {
+        "tags": [
+          "ProgramIndex"
+        ],
+        "operationId": "ListLookupForBiennium_ProgramIndex",
+        "parameters": [
+          {
+            "name": "biennium",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramIndexLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramIndexLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramIndexLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/program-indices/search": {
+      "get": {
+        "tags": [
+          "ProgramIndex"
+        ],
+        "operationId": "Search_ProgramIndex",
+        "parameters": [
+          {
+            "name": "term",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "biennium",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramIndexLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramIndexLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramIndexLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects": {
       "get": {
         "tags": [
@@ -5179,6 +5573,173 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/ProjectAuditLogGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-codes": {
+      "get": {
+        "tags": [
+          "ProjectCode"
+        ],
+        "operationId": "List_ProjectCode",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectCodeGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectCodeGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectCodeGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-codes/{projectCodeID}": {
+      "get": {
+        "tags": [
+          "ProjectCode"
+        ],
+        "operationId": "GetByID_ProjectCode",
+        "parameters": [
+          {
+            "name": "projectCodeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectCodeDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectCodeDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectCodeDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-codes/lookup": {
+      "get": {
+        "tags": [
+          "ProjectCode"
+        ],
+        "operationId": "ListLookup_ProjectCode",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectCodeLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectCodeLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectCodeLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-codes/search": {
+      "get": {
+        "tags": [
+          "ProjectCode"
+        ],
+        "operationId": "Search_ProjectCode",
+        "parameters": [
+          {
+            "name": "term",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectCodeLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectCodeLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectCodeLookupItem"
                   }
                 }
               }
@@ -8004,6 +8565,64 @@
             "type": "integer",
             "format": "int32",
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ClassificationSystemDetail": {
+        "type": "object",
+        "properties": {
+          "ClassificationSystemID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ClassificationSystemName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ClassificationSystemDefinition": {
+            "type": "string",
+            "nullable": true
+          },
+          "ClassificationSystemListPageContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "ClassificationCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ClassificationSystemGridRow": {
+        "type": "object",
+        "properties": {
+          "ClassificationSystemID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ClassificationSystemName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ClassificationCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ClassificationSystemLookupItem": {
+        "type": "object",
+        "properties": {
+          "ClassificationSystemID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ClassificationSystemName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -16012,6 +16631,86 @@
         },
         "additionalProperties": false
       },
+      "ProgramIndexDetail": {
+        "type": "object",
+        "properties": {
+          "ProgramIndexID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProgramIndexCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramIndexTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "Biennium": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Activity": {
+            "type": "string",
+            "nullable": true
+          },
+          "Program": {
+            "type": "string",
+            "nullable": true
+          },
+          "Subprogram": {
+            "type": "string",
+            "nullable": true
+          },
+          "Subactivity": {
+            "type": "string",
+            "nullable": true
+          },
+          "InvoiceCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProgramIndexGridRow": {
+        "type": "object",
+        "properties": {
+          "ProgramIndexID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProgramIndexCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramIndexTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "Biennium": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Activity": {
+            "type": "string",
+            "nullable": true
+          },
+          "Program": {
+            "type": "string",
+            "nullable": true
+          },
+          "Subprogram": {
+            "type": "string",
+            "nullable": true
+          },
+          "InvoiceCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "ProgramIndexLookupItem": {
         "type": "object",
         "properties": {
@@ -16020,6 +16719,10 @@
             "format": "int32"
           },
           "ProgramIndexCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "DisplayName": {
             "type": "string",
             "nullable": true
           }
@@ -16856,6 +17559,84 @@
               "$ref": "#/components/schemas/Invoice"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectCodeDetail": {
+        "type": "object",
+        "properties": {
+          "ProjectCodeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectCodeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectCodeTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ProjectStartDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ProjectEndDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "InvoiceCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceAllocationCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectCodeGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectCodeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectCodeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectCodeTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ProjectStartDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ProjectEndDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "InvoiceCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -22471,6 +23252,9 @@
       "name": "Classification"
     },
     {
+      "name": "ClassificationSystem"
+    },
+    {
       "name": "County"
     },
     {
@@ -22516,7 +23300,13 @@
       "name": "Program"
     },
     {
+      "name": "ProgramIndex"
+    },
+    {
       "name": "Project"
+    },
+    {
+      "name": "ProjectCode"
     },
     {
       "name": "ProjectType"
