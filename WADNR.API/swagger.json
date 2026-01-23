@@ -5917,6 +5917,242 @@
         }
       }
     },
+    "/project-documents/{projectDocumentID}": {
+      "get": {
+        "tags": [
+          "ProjectDocument"
+        ],
+        "operationId": "GetByID_ProjectDocument",
+        "parameters": [
+          {
+            "name": "projectDocumentID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDocumentDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDocumentDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDocumentDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ProjectDocument"
+        ],
+        "operationId": "Update_ProjectDocument",
+        "parameters": [
+          {
+            "name": "projectDocumentID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectDocumentUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectDocumentUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectDocumentUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDocumentDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDocumentDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDocumentDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ProjectDocument"
+        ],
+        "operationId": "Delete_ProjectDocument",
+        "parameters": [
+          {
+            "name": "projectDocumentID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/project-documents": {
+      "post": {
+        "tags": [
+          "ProjectDocument"
+        ],
+        "operationId": "Create_ProjectDocument",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "projectID": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "displayName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "projectDocumentTypeID": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "projectID": {
+                  "style": "form"
+                },
+                "displayName": {
+                  "style": "form"
+                },
+                "description": {
+                  "style": "form"
+                },
+                "projectDocumentTypeID": {
+                  "style": "form"
+                },
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDocumentDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDocumentDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDocumentDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-documents/types": {
+      "get": {
+        "tags": [
+          "ProjectDocument"
+        ],
+        "operationId": "ListTypes_ProjectDocument",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectDocumentTypeLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectDocumentTypeLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectDocumentTypeLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/project-types": {
       "get": {
         "tags": [
@@ -18429,6 +18665,49 @@
         },
         "additionalProperties": false
       },
+      "ProjectDocumentDetail": {
+        "type": "object",
+        "properties": {
+          "ProjectDocumentID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectDocumentTypeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectDocumentTypeDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceGuid": {
+            "type": "string",
+            "nullable": true
+          },
+          "OriginalFileName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectDocumentGridRow": {
         "type": "object",
         "properties": {
@@ -18506,6 +18785,20 @@
         ],
         "type": "string"
       },
+      "ProjectDocumentTypeLookupItem": {
+        "type": "object",
+        "properties": {
+          "ProjectDocumentTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectDocumentTypeDisplayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectDocumentUpdate": {
         "type": "object",
         "properties": {
@@ -18551,6 +18844,30 @@
           },
           "ProjectUpdateBatch": {
             "$ref": "#/components/schemas/ProjectUpdateBatch"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectDocumentUpsertRequest": {
+        "required": [
+          "DisplayName"
+        ],
+        "type": "object",
+        "properties": {
+          "DisplayName": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "Description": {
+            "maxLength": 1000,
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectDocumentTypeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -23678,6 +23995,9 @@
     },
     {
       "name": "ProjectCode"
+    },
+    {
+      "name": "ProjectDocument"
     },
     {
       "name": "ProjectType"

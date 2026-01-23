@@ -22,6 +22,7 @@ api/priority-landscape.service.ts
 api/program-index.service.ts
 api/program.service.ts
 api/project-code.service.ts
+api/project-document.service.ts
 api/project-type.service.ts
 api/project.service.ts
 api/role.service.ts
@@ -272,10 +273,13 @@ model/project-county-update.ts
 model/project-county.ts
 model/project-detail.ts
 model/project-dnr-upland-region-detail-grid-row.ts
+model/project-document-detail.ts
 model/project-document-grid-row.ts
 model/project-document-type-enum.ts
+model/project-document-type-lookup-item.ts
 model/project-document-type.ts
 model/project-document-update.ts
+model/project-document-upsert-request.ts
 model/project-document.ts
 model/project-external-link-grid-row.ts
 model/project-external-link-update.ts

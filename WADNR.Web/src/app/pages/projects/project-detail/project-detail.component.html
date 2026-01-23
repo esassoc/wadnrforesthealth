@@ -439,29 +439,11 @@
                 <div class="card">
                     <div class="card-header">
                         <span class="card-title">Documents</span>
+                        <button class="btn btn-sm btn-primary float-right" (click)="openAddDocumentModal(project.ProjectID)">Add Document</button>
                     </div>
                     <div class="card-body">
                         @if (documents.length > 0) {
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Document</th>
-                                        <th>Type</th>
-                                        <th>Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @for (doc of documents; track doc.ProjectDocumentID) {
-                                        <tr>
-                                            <td>
-                                                <a [href]="'/api/FileResource/' + doc.FileResourceGuid" target="_blank">{{ doc.DisplayName }}</a>
-                                            </td>
-                                            <td>{{ doc.DocumentTypeName || "—" }}</td>
-                                            <td>{{ doc.Description || "—" }}</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                            <wadnr-grid [rowData]="documents" [columnDefs]="documentColumnDefs" height="300px" downloadFileName="Project_Documents"></wadnr-grid>
                         } @else {
                             <p class="system-text">No documents uploaded for this project.</p>
                         }

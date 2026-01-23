@@ -1,9 +1,10 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { BehaviorSubject, distinctUntilChanged, filter, Observable, shareReplay, switchMap } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, Observable, shareReplay, startWith, Subject, switchMap } from "rxjs";
 import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap } from "leaflet";
+import { DialogService } from "@ngneat/dialog";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -11,9 +12,14 @@ import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-g
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
+import { AlertService } from "src/app/shared/services/alert.service";
+import { Alert } from "src/app/shared/models/alert";
+import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { GenericLayer } from "src/app/shared/generated/model/generic-layer";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
+import { ProjectDocumentService } from "src/app/shared/generated/api/project-document.service";
 import { ProjectDetail } from "src/app/shared/generated/model/project-detail";
 import { ProjectOrganizationItem } from "src/app/shared/generated/model/project-organization-item";
 import { ProjectPersonItem } from "src/app/shared/generated/model/project-person-item";
@@ -23,11 +29,13 @@ import { InteractionEventGridRow } from "src/app/shared/generated/model/interact
 import { ClassificationLookupItem } from "src/app/shared/generated/model/classification-lookup-item";
 import { ProjectImageGridRow } from "src/app/shared/generated/model/project-image-grid-row";
 import { ProjectDocumentGridRow } from "src/app/shared/generated/model/project-document-grid-row";
+import { ProjectDocumentTypeLookupItem } from "src/app/shared/generated/model/project-document-type-lookup-item";
 import { ProjectNoteGridRow } from "src/app/shared/generated/model/project-note-grid-row";
 import { ProjectExternalLinkGridRow } from "src/app/shared/generated/model/project-external-link-grid-row";
 import { ProjectUpdateHistoryGridRow } from "src/app/shared/generated/model/project-update-history-grid-row";
 import { ProjectNotificationGridRow } from "src/app/shared/generated/model/project-notification-grid-row";
 import { ProjectAuditLogGridRow } from "src/app/shared/generated/model/project-audit-log-grid-row";
+import { ProjectDocumentModalComponent, ProjectDocumentModalData } from "../project-document-modal/project-document-modal.component";
 
 @Component({
     selector: "project-detail",
@@ -71,9 +79,17 @@ export class ProjectDetailComponent {
     public layerControl: L.Control.Layers;
     public mapIsReady: boolean = false;
 
+    // Document CRUD properties
+    public documentTypes$: Observable<ProjectDocumentTypeLookupItem[]>;
+    private refreshDocuments$ = new Subject<void>();
+
     constructor(
         private projectService: ProjectService,
-        private utilityFunctions: UtilityFunctionsService
+        private projectDocumentService: ProjectDocumentService,
+        private utilityFunctions: UtilityFunctionsService,
+        private dialogService: DialogService,
+        private confirmService: ConfirmService,
+        private alertService: AlertService
     ) {}
 
     ngOnInit(): void {
@@ -108,8 +124,15 @@ export class ProjectDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.documents$ = this.projectID$.pipe(
-            switchMap((projectID) => this.projectService.listDocumentsProject(projectID)),
+        this.documents$ = combineLatest([
+            this.projectID$,
+            this.refreshDocuments$.pipe(startWith(undefined))
+        ]).pipe(
+            switchMap(([projectID]) => this.projectService.listDocumentsProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.documentTypes$ = this.projectDocumentService.listTypesProjectDocument().pipe(
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -222,9 +245,37 @@ export class ProjectDetailComponent {
 
     private createDocumentColumnDefs(): ColDef<ProjectDocumentGridRow>[] {
         return [
-            this.utilityFunctions.createBasicColumnDef("Document Name", "DisplayName"),
+            {
+                headerName: "Document",
+                field: "DisplayName",
+                cellRenderer: (params: any) => {
+                    const doc = params.data as ProjectDocumentGridRow;
+                    return `<a href="/api/file-resources/${doc.FileResourceGuid}" target="_blank">${doc.DisplayName}</a>`;
+                }
+            },
             this.utilityFunctions.createBasicColumnDef("Description", "Description"),
             this.utilityFunctions.createBasicColumnDef("Type", "DocumentTypeName"),
+            {
+                headerName: "Actions",
+                sortable: false,
+                filter: false,
+                width: 150,
+                cellRenderer: (params: any) => {
+                    return `
+                        <button class="btn btn-sm btn-secondary edit-btn" title="Edit">Edit</button>
+                        <button class="btn btn-sm btn-danger delete-btn" title="Delete">Delete</button>
+                    `;
+                },
+                onCellClicked: (params: any) => {
+                    const target = params.event.target as HTMLElement;
+                    const doc = params.data as ProjectDocumentGridRow;
+                    if (target.classList.contains("edit-btn")) {
+                        this.openEditDocumentModal(doc);
+                    } else if (target.classList.contains("delete-btn")) {
+                        this.deleteDocument(doc);
+                    }
+                }
+            }
         ];
     }
 
@@ -357,5 +408,68 @@ export class ProjectDetailComponent {
         this.map = event.map;
         this.layerControl = event.layerControl;
         this.mapIsReady = true;
+    }
+
+    // Document CRUD methods
+    openAddDocumentModal(projectID: number): void {
+        this.documentTypes$.subscribe(documentTypes => {
+            const data: ProjectDocumentModalData = {
+                mode: "create",
+                projectID: projectID,
+                documentTypes: documentTypes
+            };
+
+            this.dialogService.open(ProjectDocumentModalComponent, {
+                data,
+                width: "600px"
+            }).afterClosed$.subscribe(result => {
+                if (result) {
+                    this.refreshDocuments$.next();
+                }
+            });
+        });
+    }
+
+    openEditDocumentModal(doc: ProjectDocumentGridRow): void {
+        this.documentTypes$.subscribe(documentTypes => {
+            const data: ProjectDocumentModalData = {
+                mode: "edit",
+                projectID: 0, // Not needed for edit
+                document: doc,
+                documentTypes: documentTypes
+            };
+
+            this.dialogService.open(ProjectDocumentModalComponent, {
+                data,
+                width: "600px"
+            }).afterClosed$.subscribe(result => {
+                if (result) {
+                    this.refreshDocuments$.next();
+                }
+            });
+        });
+    }
+
+    deleteDocument(doc: ProjectDocumentGridRow): void {
+        this.confirmService.confirm({
+            title: "Delete Document",
+            message: `Are you sure you want to delete "${doc.DisplayName}"? This action cannot be undone.`,
+            buttonTextYes: "Delete",
+            buttonTextNo: "Cancel",
+            buttonClassYes: "btn-danger"
+        }).then(confirmed => {
+            if (confirmed) {
+                this.projectDocumentService.deleteProjectDocument(doc.ProjectDocumentID).subscribe({
+                    next: () => {
+                        this.alertService.pushAlert(new Alert("Document deleted successfully.", AlertContext.Success, true));
+                        this.refreshDocuments$.next();
+                    },
+                    error: (err) => {
+                        const message = err?.error ?? err?.message ?? "An error occurred while deleting the document.";
+                        this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                    }
+                });
+            }
+        });
     }
 }

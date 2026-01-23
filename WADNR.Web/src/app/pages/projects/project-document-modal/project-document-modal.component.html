@@ -1,0 +1,56 @@
+<div class="modal-header">
+    <h3>{{ modalTitle }}</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        @if (isCreateMode) {
+            <form-field
+                [formControl]="fileControl"
+                fieldLabel="File"
+                [type]="FormFieldType.File"
+                [uploadFileAccepts]="allowedFileExtensions">
+            </form-field>
+            <p class="help-text">Allowed file types: PDF, ZIP, DOC, DOCX, XLS, XLSX</p>
+        }
+
+        <form-field
+            [formControl]="form.controls.DisplayName"
+            fieldLabel="Display Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter document display name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ProjectDocumentTypeID"
+            fieldLabel="Document Type"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="documentTypeOptions"
+            formInputOptionLabel="Label"
+            formInputOptionValue="Value"
+            placeholder="Select document type">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.Description"
+            fieldLabel="Description"
+            [type]="FormFieldType.Textarea"
+            placeholder="Enter document description (optional)">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Save' }}
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
