@@ -11,6 +11,7 @@ api/field-definition.service.ts
 api/file-resource.service.ts
 api/fund-source.service.ts
 api/interaction-event.service.ts
+api/invoice.service.ts
 api/organization-type.service.ts
 api/organization.service.ts
 api/person.service.ts
@@ -179,6 +180,8 @@ model/interaction-event-type.ts
 model/interaction-event-upsert-request.ts
 model/interaction-event.ts
 model/invoice-approval-status.ts
+model/invoice-detail.ts
+model/invoice-grid-row.ts
 model/invoice-match-amount-type-enum.ts
 model/invoice-match-amount-type.ts
 model/invoice-payment-request.ts

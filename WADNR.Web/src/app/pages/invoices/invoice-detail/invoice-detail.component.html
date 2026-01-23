@@ -1,0 +1,211 @@
+@if (invoice$ | async; as invoice) {
+<breadcrumb [items]="[{ label: 'Invoices', url: '/invoices' }, { label: invoice.InvoiceNumber || 'Invoice Detail' }]" [linkLast]="false"></breadcrumb>
+<page-header pageTitle="Invoice: {{ invoice.InvoiceNumber }}"></page-header>
+
+<div class="grid-12">
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Invoice Information</span></div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4">
+                        <strong>Invoice Number</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.InvoiceNumber }}</div>
+
+                    @if (invoice.InvoiceIdentifyingName) {
+                    <div class="g-col-4">
+                        <strong>Identifying Name</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.InvoiceIdentifyingName }}</div>
+                    }
+
+                    <div class="g-col-4">
+                        <strong>Invoice Date</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.InvoiceDate | date:'shortDate' }}</div>
+
+                    <div class="g-col-4">
+                        <strong>Status</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.InvoiceStatusDisplayName }}</div>
+
+                    <div class="g-col-4">
+                        <strong>Approval Status</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.InvoiceApprovalStatusName }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header"><span class="card-title">Amounts</span></div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4">
+                        <strong>Payment Amount</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.PaymentAmount | currency }}</div>
+
+                    <div class="g-col-4">
+                        <strong>Match Amount Type</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.InvoiceMatchAmountTypeDisplayName }}</div>
+
+                    @if (invoice.MatchAmount != null) {
+                    <div class="g-col-4">
+                        <strong>Match Amount</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.MatchAmount | currency }}</div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header"><span class="card-title">Financial Codes</span></div>
+            <div class="card-body">
+                <div class="grid-12">
+                    @if (invoice.FundSourceNumber) {
+                    <div class="g-col-4">
+                        <strong>Fund Source</strong>
+                    </div>
+                    <div class="g-col-8">
+                        @if (invoice.FundSourceID) {
+                        <a [routerLink]="['/fund-sources', invoice.FundSourceID]">{{ invoice.FundSourceNumber }}</a>
+                        @if (invoice.FundSourceName) {
+                        - {{ invoice.FundSourceName }}
+                        }
+                        } @else {
+                        {{ invoice.FundSourceNumber }}
+                        }
+                    </div>
+                    }
+
+                    @if (invoice.Fund) {
+                    <div class="g-col-4">
+                        <strong>Fund</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.Fund }}</div>
+                    }
+
+                    @if (invoice.Appn) {
+                    <div class="g-col-4">
+                        <strong>Appn</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.Appn }}</div>
+                    }
+
+                    @if (invoice.ProgramIndexCode) {
+                    <div class="g-col-4">
+                        <strong>Program Index</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.ProgramIndexCode }}@if (invoice.ProgramIndexTitle) { - {{ invoice.ProgramIndexTitle }}}</div>
+                    }
+
+                    @if (invoice.ProjectCodeName) {
+                    <div class="g-col-4">
+                        <strong>Project Code</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.ProjectCodeName }}@if (invoice.ProjectCodeTitle) { - {{ invoice.ProjectCodeTitle }}}</div>
+                    }
+
+                    @if (invoice.SubObject) {
+                    <div class="g-col-4">
+                        <strong>SubObject</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.SubObject }}</div>
+                    }
+
+                    @if (invoice.OrganizationCodeName) {
+                    <div class="g-col-4">
+                        <strong>Organization Code</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.OrganizationCodeName }}@if (invoice.OrganizationCodeValue) { ({{ invoice.OrganizationCodeValue }})}</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Project</span></div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4">
+                        <strong>Project</strong>
+                    </div>
+                    <div class="g-col-8">
+                        <a [routerLink]="['/projects', invoice.ProjectID]">{{ invoice.ProjectName }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header"><span class="card-title">Payment Request</span></div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4">
+                        <strong>Request Date</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.InvoicePaymentRequestDate | date:'shortDate' }}</div>
+
+                    @if (invoice.VendorName) {
+                    <div class="g-col-4">
+                        <strong>Vendor</strong>
+                    </div>
+                    <div class="g-col-8">
+                        @if (invoice.VendorID) {
+                        <a [routerLink]="['/vendors', invoice.VendorID]">{{ invoice.VendorName }}</a>
+                        } @else {
+                        {{ invoice.VendorName }}
+                        }
+                    </div>
+                    }
+
+                    @if (invoice.PreparedByPersonName) {
+                    <div class="g-col-4">
+                        <strong>Prepared By</strong>
+                    </div>
+                    <div class="g-col-8">
+                        @if (invoice.PreparedByPersonID) {
+                        <a [routerLink]="['/people', invoice.PreparedByPersonID]">{{ invoice.PreparedByPersonName }}</a>
+                        } @else {
+                        {{ invoice.PreparedByPersonName }}
+                        }
+                    </div>
+                    }
+
+                    @if (invoice.PurchaseAuthority) {
+                    <div class="g-col-4">
+                        <strong>Purchase Authority</strong>
+                    </div>
+                    <div class="g-col-8">
+                        {{ invoice.PurchaseAuthority }}
+                        @if (invoice.PurchaseAuthorityIsLandownerCostShareAgreement) {
+                        <span class="text-muted">(Landowner Cost Share Agreement)</span>
+                        }
+                    </div>
+                    }
+
+                    @if (invoice.Duns) {
+                    <div class="g-col-4">
+                        <strong>DUNS</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.Duns }}</div>
+                    }
+
+                    @if (invoice.PaymentRequestNotes) {
+                    <div class="g-col-4">
+                        <strong>Notes</strong>
+                    </div>
+                    <div class="g-col-8">{{ invoice.PaymentRequestNotes }}</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}

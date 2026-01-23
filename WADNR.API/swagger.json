@@ -2509,6 +2509,186 @@
         }
       }
     },
+    "/invoices": {
+      "get": {
+        "tags": [
+          "Invoice"
+        ],
+        "operationId": "List_Invoice",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invoices/{invoiceID}": {
+      "get": {
+        "tags": [
+          "Invoice"
+        ],
+        "operationId": "GetByID_Invoice",
+        "parameters": [
+          {
+            "name": "invoiceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invoices/for-project/{projectID}": {
+      "get": {
+        "tags": [
+          "Invoice"
+        ],
+        "operationId": "ListForProject_Invoice",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invoices/for-payment-request/{invoicePaymentRequestID}": {
+      "get": {
+        "tags": [
+          "Invoice"
+        ],
+        "operationId": "ListForPaymentRequest_Invoice",
+        "parameters": [
+          {
+            "name": "invoicePaymentRequestID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/organizations": {
       "get": {
         "tags": [
@@ -12813,6 +12993,268 @@
         },
         "additionalProperties": false
       },
+      "InvoiceDetail": {
+        "type": "object",
+        "properties": {
+          "InvoiceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "InvoiceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "InvoiceIdentifyingName": {
+            "type": "string",
+            "nullable": true
+          },
+          "InvoiceDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "InvoicePaymentRequestID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "InvoicePaymentRequestDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "PurchaseAuthority": {
+            "type": "string",
+            "nullable": true
+          },
+          "PurchaseAuthorityIsLandownerCostShareAgreement": {
+            "type": "boolean"
+          },
+          "Duns": {
+            "type": "string",
+            "nullable": true
+          },
+          "PaymentRequestNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "VendorID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "VendorName": {
+            "type": "string",
+            "nullable": true
+          },
+          "PreparedByPersonID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PreparedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FundSourceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Fund": {
+            "type": "string",
+            "nullable": true
+          },
+          "Appn": {
+            "type": "string",
+            "nullable": true
+          },
+          "SubObject": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramIndexID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProgramIndexCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramIndexTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectCodeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectCodeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectCodeTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationCodeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "OrganizationCodeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationCodeValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "PaymentAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "MatchAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "InvoiceMatchAmountTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "InvoiceMatchAmountTypeDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "InvoiceStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "InvoiceStatusDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "InvoiceApprovalStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "InvoiceApprovalStatusName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InvoiceGridRow": {
+        "type": "object",
+        "properties": {
+          "InvoiceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "InvoicePaymentRequestID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "InvoiceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "InvoiceDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Fund": {
+            "type": "string",
+            "nullable": true
+          },
+          "Appn": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramIndexCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectCodeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "SubObject": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationCodeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "OrganizationCodeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "MatchAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "PaymentAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "InvoiceStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "InvoiceStatusDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "InvoiceApprovalStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "InvoiceApprovalStatusName": {
+            "type": "string",
+            "nullable": true
+          },
+          "InvoiceIdentifyingName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "InvoiceMatchAmountType": {
         "type": "object",
         "properties": {
@@ -21837,6 +22279,9 @@
     },
     {
       "name": "InteractionEvent"
+    },
+    {
+      "name": "Invoice"
     },
     {
       "name": "Organization"

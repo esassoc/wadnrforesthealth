@@ -19,6 +19,7 @@ export const routeParams = {
     taxonomyBranchID: "taxonomyBranchID",
     taxonomyTrunkID: "taxonomyTrunkID",
     roleID: "roleID",
+    invoiceID: "invoiceID",
 };
 
 export const routes: Routes = [
@@ -71,6 +72,12 @@ export const routes: Routes = [
         path: `interactions-events/:${routeParams.interactionEventID}`,
         title: "Interaction/Event Detail",
         loadComponent: () => import("./pages/interactions-events/interaction-event-detail/interaction-event-detail.component").then((m) => m.InteractionEventDetailComponent),
+    },
+    { path: "invoices", title: "Invoices", loadComponent: () => import("./pages/invoices/invoices.component").then((m) => m.InvoicesComponent) },
+    {
+        path: `invoices/:${routeParams.invoiceID}`,
+        title: "Invoice Detail",
+        loadComponent: () => import("./pages/invoices/invoice-detail/invoice-detail.component").then((m) => m.InvoiceDetailComponent),
     },
     {
         path: "labels-and-definitions",

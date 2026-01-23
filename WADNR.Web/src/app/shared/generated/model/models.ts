@@ -150,6 +150,8 @@ export * from './interaction-event-type-lookup-item';
 export * from './interaction-event-upsert-request';
 export * from './invoice';
 export * from './invoice-approval-status';
+export * from './invoice-detail';
+export * from './invoice-grid-row';
 export * from './invoice-match-amount-type';
 export * from './invoice-match-amount-type-enum';
 export * from './invoice-payment-request';
