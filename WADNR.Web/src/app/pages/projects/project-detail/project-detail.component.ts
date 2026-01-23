@@ -155,7 +155,8 @@ export class ProjectDetailComponent {
 
     private createTreatmentColumnDefs(): ColDef<TreatmentGridRow>[] {
         return [
-            this.utilityFunctions.createBasicColumnDef("Treatment Area", "TreatmentAreaName", {
+            this.utilityFunctions.createLinkColumnDef("Treatment Area", "TreatmentAreaName", "TreatmentID", {
+                InRouterLink: "/treatments/",
                 CustomDropdownFilterField: "TreatmentAreaName",
             }),
             this.utilityFunctions.createBasicColumnDef("Treatment Type", "TreatmentTypeName", {

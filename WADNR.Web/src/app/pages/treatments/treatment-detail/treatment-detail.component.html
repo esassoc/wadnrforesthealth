@@ -1,0 +1,123 @@
+@if (treatment$ | async; as treatment) {
+<breadcrumb [items]="[
+    { label: 'Projects', url: '/projects' },
+    { label: treatment.ProjectName, url: '/projects/' + treatment.ProjectID },
+    { label: treatment.TreatmentAreaName || 'Treatment' }
+]" [linkLast]="false"></breadcrumb>
+<page-header [pageTitle]="treatment.TreatmentAreaName || 'Treatment Details'"></page-header>
+
+<div class="page-body grid-12">
+    <!-- Basic Information Card -->
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Basic Information</span>
+            </div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4 field-label">Treatment Area</div>
+                    <div class="g-col-8">{{ treatment.TreatmentAreaName || '—' }}</div>
+
+                    <div class="g-col-4 field-label">Project</div>
+                    <div class="g-col-8">
+                        <a [routerLink]="['/projects', treatment.ProjectID]">{{ treatment.ProjectName }}</a>
+                    </div>
+
+                    <div class="g-col-4 field-label">Program</div>
+                    <div class="g-col-8">
+                        @if (treatment.ProgramID) {
+                            <a [routerLink]="['/programs', treatment.ProgramID]">{{ treatment.ProgramName }}</a>
+                        } @else {
+                            —
+                        }
+                    </div>
+
+                    <div class="g-col-4 field-label">Imported from GIS</div>
+                    <div class="g-col-8">{{ formatBoolean(treatment.ImportedFromGis) }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Treatment Classification Card -->
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Treatment Classification</span>
+            </div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4 field-label">Treatment Type</div>
+                    <div class="g-col-8">{{ treatment.TreatmentTypeName || '—' }}</div>
+
+                    <div class="g-col-4 field-label">Activity Type</div>
+                    <div class="g-col-8">{{ treatment.TreatmentDetailedActivityTypeName || '—' }}</div>
+
+                    <div class="g-col-4 field-label">Treatment Code</div>
+                    <div class="g-col-8">{{ treatment.TreatmentCodeName || '—' }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dates Card -->
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Dates</span>
+            </div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4 field-label">Start Date</div>
+                    <div class="g-col-8">{{ formatDate(treatment.TreatmentStartDate) }}</div>
+
+                    <div class="g-col-4 field-label">End Date</div>
+                    <div class="g-col-8">{{ formatDate(treatment.TreatmentEndDate) }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acres & Costs Card -->
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Acres & Costs</span>
+            </div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4 field-label">Footprint Acres</div>
+                    <div class="g-col-8">{{ formatNumber(treatment.TreatmentFootprintAcres) }}</div>
+
+                    <div class="g-col-4 field-label">Treated Acres</div>
+                    <div class="g-col-8">{{ formatNumber(treatment.TreatmentTreatedAcres) }}</div>
+
+                    <div class="g-col-4 field-label">Cost Per Acre</div>
+                    <div class="g-col-8">{{ formatCurrency(treatment.CostPerAcre) }}</div>
+
+                    <div class="g-col-4 field-label">Total Cost</div>
+                    <div class="g-col-8">{{ formatCurrency(treatment.TotalCost) }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes Card -->
+    @if (treatment.TreatmentNotes) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Notes</span>
+            </div>
+            <div class="card-body">
+                <p>{{ treatment.TreatmentNotes }}</p>
+            </div>
+        </div>
+    </div>
+    }
+</div>
+} @else {
+<div class="page-body">
+    <p>Loading treatment details...</p>
+</div>
+}
