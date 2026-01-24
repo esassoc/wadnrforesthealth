@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -19,6 +21,7 @@ public class ClassificationController(
     : SitkaController<ClassificationController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<ClassificationGridRow>>> List()
     {
         var rows = await Classifications.ListAsGridRowAsync(DbContext);
@@ -26,6 +29,7 @@ public class ClassificationController(
     }
 
     [HttpGet("/with-project-count")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<ClassificationWithProjectCount>>> ListWithProjectCount()
     {
         var rows = await Classifications.ListAsWithProjectCountAsync(DbContext);
@@ -33,6 +37,7 @@ public class ClassificationController(
     }
 
     [HttpGet("{classificationID}")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Classification), "classificationID")]
     public async Task<ActionResult<ClassificationDetail>> Get([FromRoute] int classificationID)
     {
@@ -45,7 +50,7 @@ public class ClassificationController(
     }
 
     [HttpPost]
-    //[AdminFeature]
+    [AdminFeature]
     public async Task<ActionResult<ClassificationDetail>> Create([FromBody] ClassificationUpsertRequest dto)
     {
         var created = await Classifications.CreateAsync(DbContext, dto);
@@ -57,7 +62,7 @@ public class ClassificationController(
     }
 
     [HttpPut("{classificationID}")]
-    //[AdminFeature]
+    [AdminFeature]
     [EntityNotFound(typeof(Classification), "classificationID")]
     public async Task<ActionResult<ClassificationDetail>> Update([FromRoute] int classificationID, [FromBody] ClassificationUpsertRequest dto)
     {
@@ -70,7 +75,7 @@ public class ClassificationController(
     }
 
     [HttpDelete("{classificationID}")]
-    //[AdminFeature]
+    [AdminFeature]
     [EntityNotFound(typeof(Classification), "classificationID")]
     public async Task<IActionResult> Delete([FromRoute] int classificationID)
     {
@@ -83,6 +88,7 @@ public class ClassificationController(
     }
 
     [HttpGet("{classificationID}/projects")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<ProjectClassificationDetailGridRow>>> ListProjectsForClassificationID([FromRoute] int classificationID)
     {
         var projects = await Projects.ListAsClassificationDetailGridRowAsync(DbContext, classificationID);

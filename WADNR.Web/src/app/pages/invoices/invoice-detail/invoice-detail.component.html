@@ -170,11 +170,7 @@
                         <strong>Prepared By</strong>
                     </div>
                     <div class="g-col-8">
-                        @if (invoice.PreparedByPersonID) {
-                        <a [routerLink]="['/people', invoice.PreparedByPersonID]">{{ invoice.PreparedByPersonName }}</a>
-                        } @else {
-                        {{ invoice.PreparedByPersonName }}
-                        }
+                        <person-link [personID]="invoice.PreparedByPersonID" [displayText]="invoice.PreparedByPersonName"></person-link>
                     </div>
                     }
 

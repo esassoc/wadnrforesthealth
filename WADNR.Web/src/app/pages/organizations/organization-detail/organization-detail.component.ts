@@ -14,6 +14,7 @@ import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
 import { ProjectLocationsSimpleLayerComponent } from "src/app/shared/components/leaflet/layers/project-locations-simple-layer/project-locations-simple-layer.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
+import { PersonLinkComponent } from "src/app/shared/components/person-link/person-link.component";
 import { Palette, PROJECT_STAGE_LEGEND_COLORS } from "src/app/shared/models/legend-colors";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
@@ -35,7 +36,7 @@ import { OrganizationModalComponent, OrganizationModalData } from "../organizati
 @Component({
     selector: "organization-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, RouterLink, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ProjectLocationsSimpleLayerComponent, IconComponent],
+    imports: [PageHeaderComponent, AsyncPipe, RouterLink, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ProjectLocationsSimpleLayerComponent, IconComponent, PersonLinkComponent],
     templateUrl: "./organization-detail.component.html",
     styleUrls: ["./organization-detail.component.scss"],
 })

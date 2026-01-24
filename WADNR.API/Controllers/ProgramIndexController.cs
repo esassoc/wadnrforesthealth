@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -19,6 +20,7 @@ public class ProgramIndexController(
     : SitkaController<ProgramIndexController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<List<ProgramIndexGridRow>>> List()
     {
         var programIndices = await ProgramIndices.ListAsGridRowAsync(DbContext);
@@ -26,6 +28,7 @@ public class ProgramIndexController(
     }
 
     [HttpGet("{programIndexID}")]
+    [AllowAnonymous]
     public async Task<ActionResult<ProgramIndexDetail>> GetByID([FromRoute] int programIndexID)
     {
         var programIndex = await ProgramIndices.GetByIDAsDetailAsync(DbContext, programIndexID);
@@ -37,6 +40,7 @@ public class ProgramIndexController(
     }
 
     [HttpGet("for-biennium/{biennium}")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<ProgramIndexGridRow>>> ListForBiennium([FromRoute] int biennium)
     {
         var programIndices = await ProgramIndices.ListForBienniumAsGridRowAsync(DbContext, biennium);
@@ -44,6 +48,7 @@ public class ProgramIndexController(
     }
 
     [HttpGet("lookup")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<ProgramIndexLookupItem>>> ListLookup()
     {
         var programIndices = await ProgramIndices.ListAsLookupItemAsync(DbContext);
@@ -51,6 +56,7 @@ public class ProgramIndexController(
     }
 
     [HttpGet("lookup/for-biennium/{biennium}")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<ProgramIndexLookupItem>>> ListLookupForBiennium([FromRoute] int biennium)
     {
         var programIndices = await ProgramIndices.ListForBienniumAsLookupItemAsync(DbContext, biennium);
@@ -58,6 +64,7 @@ public class ProgramIndexController(
     }
 
     [HttpGet("search")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<ProgramIndexLookupItem>>> Search([FromQuery] string? term, [FromQuery] int? biennium)
     {
         var programIndices = await ProgramIndices.SearchAsLookupItemAsync(DbContext, term ?? string.Empty, biennium);

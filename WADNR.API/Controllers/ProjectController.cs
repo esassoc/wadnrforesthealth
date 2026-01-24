@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -72,7 +73,7 @@ public class ProjectController(
     }
 
     [HttpPost]
-    //[AdminFeature]
+    [ProjectEditFeature]
     public async Task<ActionResult<ProjectDetail>> Create([FromBody] ProjectUpsertRequest dto)
     {
         var created = await Projects.CreateAsync(DbContext, dto, CallingUser.PersonID);
@@ -85,7 +86,7 @@ public class ProjectController(
     }
 
     [HttpPut("{projectID}")]
-    //[AdminFeature]
+    [ProjectEditFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ProjectDetail>> Update([FromRoute] int projectID, [FromBody] ProjectUpsertRequest dto)
     {
@@ -99,7 +100,7 @@ public class ProjectController(
     }
 
     [HttpDelete("{projectID}")]
-    //[AdminFeature]
+    [AdminFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<IActionResult> Delete([FromRoute] int projectID)
     {

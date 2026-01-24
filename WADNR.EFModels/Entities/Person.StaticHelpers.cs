@@ -64,7 +64,10 @@ public static class People
             .Select(PersonProjections.AsDetail)
             .SingleOrDefaultAsync();
 
-        if (person == null) return null;
+        if (person == null)
+        {
+            return null;
+        }
 
         // Get person roles and resolve from static lookup
         var personRoleIDs = await dbContext.PersonRoles
@@ -72,28 +75,6 @@ public static class People
             .Where(pr => pr.PersonID == personID)
             .Select(pr => pr.RoleID)
             .ToListAsync();
-
-        PopulateRoles(person, personRoleIDs);
-
-        return person;
-    }
-
-    public static PersonDetail? GetByEmailAsDetail(WADNRDbContext dbContext, string email)
-    {
-        var person = dbContext.People
-            .AsNoTracking()
-            .Where(x => x.Email == email)
-            .Select(PersonProjections.AsDetail)
-            .SingleOrDefault();
-
-        if (person == null) return null;
-
-        // Get person roles and resolve from static lookup
-        var personRoleIDs = dbContext.PersonRoles
-            .AsNoTracking()
-            .Where(pr => pr.PersonID == person.PersonID)
-            .Select(pr => pr.RoleID)
-            .ToList();
 
         PopulateRoles(person, personRoleIDs);
 
@@ -129,10 +110,45 @@ public static class People
         person.IsFullUser = baseRole != null && baseRole != Role.Unassigned;
     }
 
-    public static async Task<PersonDetail?> GetByGlobalIDAsDtoAsync(WADNRDbContext dbContext, string globalID)
+    public static async Task<PersonDetail?> GetByGlobalIDAsDetailAsync(WADNRDbContext dbContext, string globalID)
     {
         var person = await dbContext.People
             .AsNoTracking().Where(x => x.GlobalID == globalID).Select(PersonProjections.AsDetail).SingleOrDefaultAsync();
+        if (person == null)
+        {
+            return null;
+        }
+
+        // Get person roles and resolve from static lookup
+        var personRoleIDs = await dbContext.PersonRoles
+            .AsNoTracking()
+            .Where(pr => pr.PersonID == person.PersonID)
+            .Select(pr => pr.RoleID)
+            .ToListAsync();
+
+        PopulateRoles(person, personRoleIDs);
+
+        return person;
+    }
+
+    public static PersonDetail? GetByGlobalIDAsDetail(WADNRDbContext dbContext, string globalID)
+    {
+        var person = dbContext.People
+            .AsNoTracking().Where(x => x.GlobalID == globalID).Select(PersonProjections.AsDetail).SingleOrDefault();
+        if (person == null)
+        {
+            return null;
+        }
+
+        // Get person roles and resolve from static lookup
+        var personRoleIDs = dbContext.PersonRoles
+            .AsNoTracking()
+            .Where(pr => pr.PersonID == person.PersonID)
+            .Select(pr => pr.RoleID)
+            .ToList();
+
+        PopulateRoles(person, personRoleIDs);
+
         return person;
     }
 

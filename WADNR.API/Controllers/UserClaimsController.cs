@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -20,9 +21,10 @@ public class UserClaimsController(
     : SitkaController<UserClaimsController>(dbContext, logger, neptuneConfiguration)
 {
     [HttpGet("{globalID}")]
+    [LoggedInFeature]
     public async Task<ActionResult<PersonDetail>> GetByGlobalID([FromRoute] string globalID)
     {
-        var userDto = await People.GetByGlobalIDAsDtoAsync(DbContext, globalID);
+        var userDto = await People.GetByGlobalIDAsDetailAsync(DbContext, globalID);
         if (userDto == null)
         {
             var notFoundMessage = $"User with GlobalID {globalID} does not exist!";

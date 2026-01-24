@@ -26,18 +26,14 @@
 
                     <div class="g-col-4"><strong>DNR Staff Person</strong></div>
                     <div class="g-col-8">
-                        @if (vm.interactionEvent.StaffPerson?.PersonID) {
-                            <a [routerLink]="['/people', vm.interactionEvent.StaffPerson?.PersonID]">{{ vm.interactionEvent.StaffPerson?.FullName }}</a>
-                        } @else {
-                            —
-                        }
+                        <person-link [personID]="vm.interactionEvent.StaffPerson?.PersonID" [displayText]="vm.interactionEvent.StaffPerson?.FullName"></person-link>
                     </div>
 
                     <div class="g-col-4"><strong>Contacts</strong></div>
                     <div class="g-col-8">
                         @if (vm.contacts.length) { @for (contact of vm.contacts; track contact.PersonID) {
                         <div>
-                            <a [routerLink]="['/people', contact.PersonID]">{{ contact.FullName || "—" }}</a>
+                            <person-link [personID]="contact.PersonID" [displayText]="contact.FullName || '—'"></person-link>
                         </div>
                         } } @else { <em>No contacts associated with this Interaction/Event.</em> }
                     </div>

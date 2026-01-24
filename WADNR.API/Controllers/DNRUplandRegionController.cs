@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -20,6 +22,7 @@ public class DNRUplandRegionController(
     : SitkaController<DNRUplandRegionController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<DNRUplandRegionGridRow>>> List()
     {
         var items = await DNRUplandRegions.ListAsGridRowAsync(DbContext);
@@ -27,6 +30,7 @@ public class DNRUplandRegionController(
     }
 
     [HttpGet("{dnrUplandRegionID}")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(DNRUplandRegion), "dnrUplandRegionID")]
     public async Task<ActionResult<DNRUplandRegionDetail>> Get([FromRoute] int dnrUplandRegionID)
     {
@@ -39,7 +43,7 @@ public class DNRUplandRegionController(
     }
 
     [HttpPost]
-    //[AdminFeature]
+    [AdminFeature]
     public async Task<ActionResult<DNRUplandRegionDetail>> Create([FromBody] DNRUplandRegionUpsertRequest dto)
     {
         var created = await DNRUplandRegions.CreateAsync(DbContext, dto, CallingUser.PersonID);
@@ -51,7 +55,7 @@ public class DNRUplandRegionController(
     }
 
     [HttpPut("{dnrUplandRegionID}")]
-    //[AdminFeature]
+    [AdminFeature]
     [EntityNotFound(typeof(DNRUplandRegion), "dnrUplandRegionID")]
     public async Task<ActionResult<DNRUplandRegionDetail>> Update([FromRoute] int dnrUplandRegionID, [FromBody] DNRUplandRegionUpsertRequest dto)
     {
@@ -64,7 +68,7 @@ public class DNRUplandRegionController(
     }
 
     [HttpDelete("{dnrUplandRegionID}")]
-    //[AdminFeature]
+    [AdminFeature]
     [EntityNotFound(typeof(DNRUplandRegion), "dnrUplandRegionID")]
     public async Task<IActionResult> Delete([FromRoute] int dnrUplandRegionID)
     {
@@ -77,6 +81,7 @@ public class DNRUplandRegionController(
     }
 
     [HttpGet("{dnrUplandRegionID}/projects")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<ProjectDNRUplandRegionDetailGridRow>>> ListProjectsForDNRUplandRegionID([FromRoute] int dnrUplandRegionID)
     {
         var items = await Projects.ListAsDNRUplandDetailGridRowAsync(DbContext, dnrUplandRegionID);
@@ -84,6 +89,7 @@ public class DNRUplandRegionController(
     }
 
     [HttpGet("{dnrUplandRegionID}/fund-source-allocations")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<FundSourceAllocationDNRUplandRegionDetailGridRow>>> ListFundSourceAllocationsForDNRUplandRegionID([FromRoute] int dnrUplandRegionID)
     {
         var rows = await FundSourceAllocations.ListByDnrUplandRegionActiveAsync(DbContext, dnrUplandRegionID);

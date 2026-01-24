@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -5,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -19,6 +21,7 @@ public class TagController(
     : SitkaController<TagController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<TagGridRow>>> List()
     {
         var sources = await Tags.ListAsGridRowAsync(DbContext);
@@ -26,6 +29,7 @@ public class TagController(
     }
 
     [HttpGet("{tagID}")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Tag), "tagID")]
     public async Task<ActionResult<TagDetail>> Get([FromRoute] int tagID)
     {
@@ -38,7 +42,7 @@ public class TagController(
     }
 
     [HttpPost]
-    //[AdminFeature]
+    [AdminFeature]
     public async Task<ActionResult<TagDetail>> Create([FromBody] TagUpsertRequest dto)
     {
         var created = await Tags.CreateAsync(DbContext, dto);
@@ -50,7 +54,7 @@ public class TagController(
     }
 
     [HttpPut("{tagID}")]
-    //[AdminFeature]
+    [AdminFeature]
     [EntityNotFound(typeof(Tag), "tagID")]
     public async Task<ActionResult<TagDetail>> Update([FromRoute] int tagID, [FromBody] TagUpsertRequest dto)
     {
@@ -63,7 +67,7 @@ public class TagController(
     }
 
     [HttpDelete("{tagID}")]
-    //[AdminFeature]
+    [AdminFeature]
     [EntityNotFound(typeof(Tag), "tagID")]
     public async Task<IActionResult> Delete([FromRoute] int tagID)
     {
@@ -76,6 +80,7 @@ public class TagController(
     }
 
     [HttpGet("{tagID}/projects")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<ProjectTagDetailGridRow>>> ListProjectsForTagID([FromRoute] int tagID)
     {
         var projects = await Projects.ListAsTagDetailGridRowAsync(DbContext, tagID);

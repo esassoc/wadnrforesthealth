@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 using NetTopologySuite.Features;
@@ -23,6 +25,7 @@ public class ProjectTypeController(
     : SitkaController<ProjectTypeController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<ProjectTypeGridRow>>> List()
     {
         var rows = await ProjectTypes.ListAsGridRowAsync(DbContext);
@@ -30,6 +33,7 @@ public class ProjectTypeController(
     }
 
     [HttpGet("taxonomy")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<ProjectTypeTaxonomy>>> Taxonomy()
     {
         var projectTypeTaxonomies = await ProjectTypes.ListTaxonomyAsync(DbContext);
@@ -37,6 +41,7 @@ public class ProjectTypeController(
     }
 
     [HttpGet("{projectTypeID}")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(ProjectType), "projectTypeID")]
     public async Task<ActionResult<ProjectTypeDetail>> Get([FromRoute] int projectTypeID)
     {
@@ -49,6 +54,7 @@ public class ProjectTypeController(
     }
 
     [HttpGet("{projectTypeID}/projects")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<ProjectProjectTypeDetailGridRow>>> ListProjectsForProjectTypeID([FromRoute] int projectTypeID)
     {
         var projects = await Projects.ListAsProjectTypeDetailGridRowAsync(DbContext, projectTypeID);
@@ -57,6 +63,7 @@ public class ProjectTypeController(
     }
 
     [HttpGet("{projectTypeID}/projects/mapped-point/feature-collection")]
+    [AllowAnonymous]
     public async Task<ActionResult<FeatureCollection>> ListProjectMappedPointsFeatureCollectionForProjectTypeID(
         [FromRoute] int projectTypeID)
     {
@@ -71,7 +78,7 @@ public class ProjectTypeController(
     }
 
     [HttpPost]
-    //[AdminFeature]
+    [AdminFeature]
     public async Task<ActionResult<ProjectTypeDetail>> Create([FromBody] ProjectTypeUpsertRequest dto)
     {
         var created = await ProjectTypes.CreateAsync(DbContext, dto);
@@ -83,7 +90,7 @@ public class ProjectTypeController(
     }
 
     [HttpPut("{projectTypeID}")]
-    //[AdminFeature]
+    [AdminFeature]
     [EntityNotFound(typeof(ProjectType), "projectTypeID")]
     public async Task<ActionResult<ProjectTypeDetail>> Update([FromRoute] int projectTypeID, [FromBody] ProjectTypeUpsertRequest dto)
     {
@@ -96,7 +103,7 @@ public class ProjectTypeController(
     }
 
     [HttpDelete("{projectTypeID}")]
-    //[AdminFeature]
+    [AdminFeature]
     [EntityNotFound(typeof(ProjectType), "projectTypeID")]
     public async Task<IActionResult> Delete([FromRoute] int projectTypeID)
     {

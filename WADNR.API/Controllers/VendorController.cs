@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -19,6 +20,7 @@ public class VendorController(
     : SitkaController<VendorController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<VendorGridRow>>> List()
     {
         var vendors = await Vendors.ListAsGridRowAsync(DbContext);
@@ -26,6 +28,7 @@ public class VendorController(
     }
 
     [HttpGet("{vendorID}")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Vendor), "vendorID")]
     public async Task<ActionResult<VendorDetail>> Get([FromRoute] int vendorID)
     {
@@ -38,6 +41,7 @@ public class VendorController(
     }
 
     [HttpGet("search")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<VendorLookupItem>>> Search([FromQuery] string term)
     {
         if (string.IsNullOrWhiteSpace(term))
@@ -49,6 +53,7 @@ public class VendorController(
     }
 
     [HttpGet("{vendorID}/people")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Vendor), "vendorID")]
     public async Task<ActionResult<IEnumerable<VendorPersonGridRow>>> ListPeople([FromRoute] int vendorID)
     {
@@ -57,6 +62,7 @@ public class VendorController(
     }
 
     [HttpGet("{vendorID}/organizations")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Vendor), "vendorID")]
     public async Task<ActionResult<IEnumerable<VendorOrganizationGridRow>>> ListOrganizations([FromRoute] int vendorID)
     {

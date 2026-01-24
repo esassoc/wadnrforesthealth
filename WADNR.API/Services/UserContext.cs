@@ -1,7 +1,9 @@
-﻿using WADNR.EFModels.Entities;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Linq;
+using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.Helpers;
 
 namespace WADNR.API.Services
 {
@@ -14,23 +16,32 @@ namespace WADNR.API.Services
             User = user;
         }
 
-        public static PersonDetail GetUserFromHttpContext(WADNRDbContext dbContext, HttpContext httpContext)
+        public static PersonDetail GetUserAsDetailFromHttpContext(WADNRDbContext dbContext, HttpContext httpContext)
         {
+            PersonDetail user;
             var claimsPrincipal = httpContext.User;
             if (!claimsPrincipal.Claims.Any())
             {
-                return null;
+                user = null;
             }
-
-            // Auth0 provides email in the 'email' claim (requires 'email' scope)
-            var emailClaim = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == "email");
-            if (emailClaim == null)
+            else
             {
-                return null;
+                var userGlobalID = claimsPrincipal.Claims.Single(c => c.Type == ClaimsConstants.Sub).Value;
+                var user1 = People.GetByGlobalIDAsDetail(dbContext, userGlobalID);
+                user = user1;
             }
 
-            var user = People.GetByEmailAsDetail(dbContext, emailClaim.Value);
-            return user;
+            return user ?? new PersonDetail
+            {
+                PersonID = Person.AnonymousPersonID,
+                FirstName = "Anonymous",
+                LastName = "User",
+                CreateDate = DateTime.UtcNow,
+                LastActivityDate = DateTime.UtcNow,
+                IsActive = true,
+                OrganizationID = -1,
+                ReceiveSupportEmails = false,
+            };
         }
     }
 }

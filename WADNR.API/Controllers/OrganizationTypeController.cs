@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,6 +19,7 @@ public class OrganizationTypeController(
     : SitkaController<OrganizationTypeController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<OrganizationTypeLookupItem>>> List()
     {
         var items = await OrganizationTypes.ListAsLookupItemAsync(DbContext);

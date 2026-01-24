@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,6 +19,7 @@ public class InvoiceController(
     : SitkaController<InvoiceController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<List<InvoiceGridRow>>> List()
     {
         var invoices = await Invoices.ListAsGridRowAsync(DbContext);
@@ -25,6 +27,7 @@ public class InvoiceController(
     }
 
     [HttpGet("{invoiceID}")]
+    [AllowAnonymous]
     public async Task<ActionResult<InvoiceDetail>> GetByID([FromRoute] int invoiceID)
     {
         var invoice = await Invoices.GetByIDAsDetailAsync(DbContext, invoiceID);
@@ -36,6 +39,7 @@ public class InvoiceController(
     }
 
     [HttpGet("for-project/{projectID}")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<InvoiceGridRow>>> ListForProject([FromRoute] int projectID)
     {
         var invoices = await Invoices.ListForProjectAsGridRowAsync(DbContext, projectID);
@@ -43,6 +47,7 @@ public class InvoiceController(
     }
 
     [HttpGet("for-payment-request/{invoicePaymentRequestID}")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<InvoiceGridRow>>> ListForPaymentRequest([FromRoute] int invoicePaymentRequestID)
     {
         var invoices = await Invoices.ListForPaymentRequestAsGridRowAsync(DbContext, invoicePaymentRequestID);

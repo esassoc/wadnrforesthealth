@@ -134,8 +134,9 @@ export class DNRUplandRegionDetailComponent {
                 CustomDropdownFilterField: "Counties.CountyName",
             }),
             this.utilityFunctions.createLinkColumnDef("Primary Contact", "PrimaryContact.FullName", "PrimaryContact.PersonID", {
-                InRouterLink: "/users/",
+                InRouterLink: "/people/",
                 FieldDefinitionType: "PrimaryContact",
+                RequiresAuth: true,
             }),
             this.utilityFunctions.createDecimalColumnDef("Total Treated Acres", "TotalTreatedAcres", {
                 MaxDecimalPlacesToDisplay: 2,
@@ -247,9 +248,10 @@ export class DNRUplandRegionDetailComponent {
                 MaxDecimalPlacesToDisplay: 2,
             }),
             this.utilityFunctions.createMultiLinkColumnDef("Likely To Use", "LikelyToUsePeople", "PersonID", "FullName", {
-                InRouterLink: "/users/",
+                InRouterLink: "/people/",
                 FieldDefinitionType: "FundSourceAllocationLikelyToUse",
                 CustomDropdownFilterField: "LikelyToUsePeople.FullName",
+                RequiresAuth: true,
             }),
         ];
     }

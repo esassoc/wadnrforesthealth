@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using NetTopologySuite.Features;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -43,7 +44,7 @@ public class OrganizationController(
     }
 
     [HttpPost]
-    //[AdminFeature]
+    [UserManageFeature]
     public async Task<ActionResult<OrganizationDetail>> Create([FromBody] OrganizationUpsertRequest dto)
     {
         var created = await Organizations.CreateAsync(DbContext, dto, CallingUser.PersonID);
@@ -56,7 +57,7 @@ public class OrganizationController(
     }
 
     [HttpPut("{organizationID}")]
-    //[AdminFeature]
+    [UserManageFeature]
     [EntityNotFound(typeof(Organization), "organizationID")]
     public async Task<ActionResult<OrganizationDetail>> Update([FromRoute] int organizationID, [FromBody] OrganizationUpsertRequest dto)
     {
@@ -70,7 +71,7 @@ public class OrganizationController(
     }
 
     [HttpDelete("{organizationID}")]
-    //[AdminFeature]
+    [UserManageFeature]
     [EntityNotFound(typeof(Organization), "organizationID")]
     public async Task<IActionResult> Delete([FromRoute] int organizationID)
     {
@@ -129,7 +130,7 @@ public class OrganizationController(
     }
 
     [HttpDelete("{organizationID}/boundary")]
-    //[AdminFeature]
+    [UserManageFeature]
     [EntityNotFound(typeof(Organization), "organizationID")]
     public async Task<IActionResult> DeleteBoundary([FromRoute] int organizationID)
     {

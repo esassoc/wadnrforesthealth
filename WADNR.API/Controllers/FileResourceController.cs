@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,7 @@ public class FileResourceController(
     : SitkaController<FileResourceController>(dbContext, logger, configuration)
 {
     [HttpGet("{fileResourceGuidAsString}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(FileStreamResult), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> DownloadFileResource(string fileResourceGuidAsString)
     {
@@ -66,6 +68,7 @@ public class FileResourceController(
     }
 
     [HttpGet("GetWithApiKey/{fileResourceGuidAsString}")]
+    [AllowAnonymous]
     public async Task<IActionResult> DisplayResourceWithApiKey([FromRoute] string fileResourceGuidAsString,
         [FromQuery] string apiKey)
     {

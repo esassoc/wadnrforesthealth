@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -19,6 +20,7 @@ public class ProjectCodeController(
     : SitkaController<ProjectCodeController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<List<ProjectCodeGridRow>>> List()
     {
         var projectCodes = await ProjectCodes.ListAsGridRowAsync(DbContext);
@@ -26,6 +28,7 @@ public class ProjectCodeController(
     }
 
     [HttpGet("{projectCodeID}")]
+    [AllowAnonymous]
     public async Task<ActionResult<ProjectCodeDetail>> GetByID([FromRoute] int projectCodeID)
     {
         var projectCode = await ProjectCodes.GetByIDAsDetailAsync(DbContext, projectCodeID);
@@ -37,6 +40,7 @@ public class ProjectCodeController(
     }
 
     [HttpGet("lookup")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<ProjectCodeLookupItem>>> ListLookup()
     {
         var projectCodes = await ProjectCodes.ListAsLookupItemAsync(DbContext);
@@ -44,6 +48,7 @@ public class ProjectCodeController(
     }
 
     [HttpGet("search")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<ProjectCodeLookupItem>>> Search([FromQuery] string? term)
     {
         var projectCodes = await ProjectCodes.SearchAsLookupItemAsync(DbContext, term ?? string.Empty);

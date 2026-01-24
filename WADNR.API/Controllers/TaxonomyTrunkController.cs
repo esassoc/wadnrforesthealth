@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -18,6 +20,7 @@ public class TaxonomyTrunkController(
     : SitkaController<TaxonomyTrunkController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<List<TaxonomyTrunkGridRow>>> List()
     {
         var items = await TaxonomyTrunks.ListAsGridRowAsync(DbContext);
@@ -25,6 +28,7 @@ public class TaxonomyTrunkController(
     }
 
     [HttpGet("{taxonomyTrunkID}")]
+    [AllowAnonymous]
     public async Task<ActionResult<TaxonomyTrunkDetail>> GetByID([FromRoute] int taxonomyTrunkID)
     {
         var item = await TaxonomyTrunks.GetByIDAsDetailAsync(DbContext, taxonomyTrunkID);
@@ -36,6 +40,7 @@ public class TaxonomyTrunkController(
     }
 
     [HttpGet("{taxonomyTrunkID}/projects")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<ProjectGridRow>>> ListProjects([FromRoute] int taxonomyTrunkID)
     {
         var projects = await TaxonomyTrunks.ListProjectsAsGridRowAsync(DbContext, taxonomyTrunkID);
@@ -43,6 +48,7 @@ public class TaxonomyTrunkController(
     }
 
     [HttpGet("lookup")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<TaxonomyTrunkLookupItem>>> ListAsLookup()
     {
         var items = await TaxonomyTrunks.ListAsLookupItemAsync(DbContext);
@@ -50,6 +56,7 @@ public class TaxonomyTrunkController(
     }
 
     [HttpPost]
+    [AdminFeature]
     public async Task<ActionResult<TaxonomyTrunkDetail>> Create([FromBody] TaxonomyTrunkUpsertRequest dto)
     {
         var item = await TaxonomyTrunks.CreateAsync(DbContext, dto);
@@ -57,6 +64,7 @@ public class TaxonomyTrunkController(
     }
 
     [HttpPut("{taxonomyTrunkID}")]
+    [AdminFeature]
     public async Task<ActionResult<TaxonomyTrunkDetail>> Update([FromRoute] int taxonomyTrunkID, [FromBody] TaxonomyTrunkUpsertRequest dto)
     {
         var item = await TaxonomyTrunks.UpdateAsync(DbContext, taxonomyTrunkID, dto);
@@ -68,6 +76,7 @@ public class TaxonomyTrunkController(
     }
 
     [HttpDelete("{taxonomyTrunkID}")]
+    [AdminFeature]
     public async Task<ActionResult> Delete([FromRoute] int taxonomyTrunkID)
     {
         var deleted = await TaxonomyTrunks.DeleteAsync(DbContext, taxonomyTrunkID);

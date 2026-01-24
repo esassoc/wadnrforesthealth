@@ -8,6 +8,7 @@ import { DialogService } from "@ngneat/dialog";
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
+import { PersonLinkComponent } from "src/app/shared/components/person-link/person-link.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { environment } from "src/environments/environment";
 
@@ -24,7 +25,7 @@ import { ProgramModalComponent, ProgramModalData } from "../program-modal/progra
 @Component({
     selector: "program-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRGridComponent, RouterLink],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRGridComponent, RouterLink, PersonLinkComponent],
     templateUrl: "./program-detail.component.html",
     styleUrls: ["./program-detail.component.scss"],
 })

@@ -5,6 +5,7 @@ import { BehaviorSubject, distinctUntilChanged, filter, Observable, shareReplay,
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
+import { PersonLinkComponent } from "src/app/shared/components/person-link/person-link.component";
 
 import { FundSourceAllocationService } from "src/app/shared/generated/api/fund-source-allocation.service";
 import { FundSourceAllocationDetail } from "src/app/shared/generated/model/fund-source-allocation-detail";
@@ -12,7 +13,7 @@ import { FundSourceAllocationDetail } from "src/app/shared/generated/model/fund-
 @Component({
     selector: "fund-source-allocation-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, PersonLinkComponent],
     templateUrl: "./fund-source-allocation-detail.component.html",
     styleUrls: ["./fund-source-allocation-detail.component.scss"],
 })

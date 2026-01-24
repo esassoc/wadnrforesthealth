@@ -70,6 +70,7 @@ export class VendorDetailComponent {
         return [
             this.utilityFunctions.createLinkColumnDef("Name", "FullName", "PersonID", {
                 InRouterLink: "/people/",
+                RequiresAuth: true,
             }),
             this.utilityFunctions.createBasicColumnDef("Email", "Email"),
             this.utilityFunctions.createBasicColumnDef("Phone", "Phone"),

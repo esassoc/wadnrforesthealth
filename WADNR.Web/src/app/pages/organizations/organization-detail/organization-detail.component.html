@@ -38,7 +38,7 @@
                     </div>
                     <div class="g-col-6">
                         @if (organization.PrimaryContactPersonID) {
-                            <a [routerLink]="['/people', organization.PrimaryContactPersonID]">{{ organization.PrimaryContactPersonFullName }}</a>
+                            <person-link [personID]="organization.PrimaryContactPersonID" [displayText]="organization.PrimaryContactPersonFullName"></person-link>
                             @if (organization.PrimaryContactPersonOrganization) {
                                 ({{ organization.PrimaryContactPersonOrganization }})
                             }
@@ -270,7 +270,7 @@
                 @if (organization.People && organization.People.length > 0) {
                     <ul>
                         @for (person of organization.People; track person.PersonID) {
-                            <li><a [routerLink]="['/people', person.PersonID]">{{ person.FullNameFirstLast }}</a></li>
+                            <li><person-link [personID]="person.PersonID" [displayText]="person.FullNameFirstLast"></person-link></li>
                         }
                     </ul>
                 } @else {

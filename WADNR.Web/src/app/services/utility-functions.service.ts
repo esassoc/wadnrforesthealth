@@ -499,6 +499,7 @@ export class UtilityFunctionsService {
                 inRouterLink: linkColumnDefParams?.InRouterLink,
                 inRouterLinkHandler: linkColumnDefParams?.InRouterLinkHandler,
                 isExternalUrl: linkColumnDefParams?.IsExternalUrl,
+                requiresAuth: linkColumnDefParams?.RequiresAuth,
             },
         };
 
@@ -562,6 +563,7 @@ export class UtilityFunctionsService {
             cellRendererParams: {
                 inRouterLink: multiLinkColumnDefParams?.InRouterLink,
                 inRouterLinkHandler: multiLinkColumnDefParams?.InRouterLinkHandler,
+                requiresAuth: multiLinkColumnDefParams?.RequiresAuth,
             },
         };
 
@@ -784,11 +786,15 @@ export interface LinkColumnDefParams extends LtinfoColumnDefParams {
     IsExternalUrl?: boolean;
     LinkDisplayField?: string;
     HrefTemplate?: string;
+    /** When true, link will only render as hyperlink if user is authenticated. Otherwise renders as plain text. */
+    RequiresAuth?: boolean;
 }
 
 export interface MultiLinkColumnDefParams extends LtinfoColumnDefParams {
     InRouterLink?: string;
     InRouterLinkHandler?: (params: any) => string;
+    /** When true, links will only render as hyperlinks if user is authenticated. Otherwise renders as plain text. */
+    RequiresAuth?: boolean;
 }
 
 export interface JoinedListColumnDefParams extends LtinfoColumnDefParams {

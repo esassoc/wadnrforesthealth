@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -19,6 +21,7 @@ public class CountyController(
     : SitkaController<CountyController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<CountyGridRow>>> List()
     {
         var items = await Counties.ListAsGridRowAsync(DbContext);
@@ -26,6 +29,7 @@ public class CountyController(
     }
 
     [HttpGet("{countyID}")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(County), "countyID")]
     public async Task<ActionResult<CountyDetail>> Get([FromRoute] int countyID)
     {
@@ -38,6 +42,7 @@ public class CountyController(
     }
 
     [HttpGet("{countyID}/projects")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<ProjectCountyDetailGridRow>>> ListProjectsForCountyID([FromRoute] int countyID)
     {
         var projects = await Projects.ListAsCountyDetailGridRowAsync(DbContext, countyID);
@@ -46,7 +51,7 @@ public class CountyController(
     }
 
     [HttpPost]
-    //[AdminFeature]
+    [AdminFeature]
     public async Task<ActionResult<CountyDetail>> Create([FromBody] CountyUpsertRequest dto)
     {
         var created = await Counties.CreateAsync(DbContext, dto, CallingUser.PersonID);
@@ -58,7 +63,7 @@ public class CountyController(
     }
 
     [HttpPut("{countyID}")]
-    //[AdminFeature]
+    [AdminFeature]
     [EntityNotFound(typeof(County), "countyID")]
     public async Task<ActionResult<CountyDetail>> Update([FromRoute] int countyID, [FromBody] CountyUpsertRequest dto)
     {
@@ -71,7 +76,7 @@ public class CountyController(
     }
 
     [HttpDelete("{countyID}")]
-    //[AdminFeature]
+    [AdminFeature]
     [EntityNotFound(typeof(County), "countyID")]
     public async Task<IActionResult> Delete([FromRoute] int countyID)
     {

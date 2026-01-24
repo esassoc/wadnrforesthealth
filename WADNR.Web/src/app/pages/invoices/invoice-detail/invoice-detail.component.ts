@@ -5,6 +5,7 @@ import { BehaviorSubject, filter, Observable, shareReplay, switchMap } from "rxj
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
+import { PersonLinkComponent } from "src/app/shared/components/person-link/person-link.component";
 
 import { InvoiceService } from "src/app/shared/generated/api/invoice.service";
 import { InvoiceDetail } from "src/app/shared/generated/model/invoice-detail";
@@ -12,7 +13,7 @@ import { InvoiceDetail } from "src/app/shared/generated/model/invoice-detail";
 @Component({
     selector: "invoice-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, CurrencyPipe, DatePipe],
+    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, CurrencyPipe, DatePipe, PersonLinkComponent],
     templateUrl: "./invoice-detail.component.html",
     styleUrls: ["./invoice-detail.component.scss"],
 })

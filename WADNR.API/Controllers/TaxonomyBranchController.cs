@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Options;
 using NetTopologySuite.Features;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -22,6 +24,7 @@ public class TaxonomyBranchController(
     : SitkaController<TaxonomyBranchController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<TaxonomyBranchGridRow>>> List()
     {
         var rows = await TaxonomyBranches.ListAsGridRowAsync(DbContext);
@@ -29,6 +32,7 @@ public class TaxonomyBranchController(
     }
 
     [HttpGet("{taxonomyBranchID}")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(TaxonomyBranch), "taxonomyBranchID")]
     public async Task<ActionResult<TaxonomyBranchDetail>> Get([FromRoute] int taxonomyBranchID)
     {
@@ -41,6 +45,7 @@ public class TaxonomyBranchController(
     }
 
     [HttpGet("{taxonomyBranchID}/projects")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(TaxonomyBranch), "taxonomyBranchID")]
     public async Task<ActionResult<IEnumerable<ProjectGridRow>>> ListProjects([FromRoute] int taxonomyBranchID)
     {
@@ -49,6 +54,7 @@ public class TaxonomyBranchController(
     }
 
     [HttpGet("{taxonomyBranchID}/projects/mapped-point/feature-collection")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(TaxonomyBranch), "taxonomyBranchID")]
     public async Task<ActionResult<FeatureCollection>> ListProjectMappedPointsFeatureCollection([FromRoute] int taxonomyBranchID)
     {
@@ -62,6 +68,7 @@ public class TaxonomyBranchController(
     }
 
     [HttpGet("lookup")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<TaxonomyBranchLookupItem>>> ListAsLookup()
     {
         var items = await TaxonomyBranches.ListAsLookupItemAsync(DbContext);
@@ -69,7 +76,7 @@ public class TaxonomyBranchController(
     }
 
     [HttpPost]
-    //[AdminFeature]
+    [AdminFeature]
     public async Task<ActionResult<TaxonomyBranchDetail>> Create([FromBody] TaxonomyBranchUpsertRequest dto)
     {
         var created = await TaxonomyBranches.CreateAsync(DbContext, dto);
@@ -81,7 +88,7 @@ public class TaxonomyBranchController(
     }
 
     [HttpPut("{taxonomyBranchID}")]
-    //[AdminFeature]
+    [AdminFeature]
     [EntityNotFound(typeof(TaxonomyBranch), "taxonomyBranchID")]
     public async Task<ActionResult<TaxonomyBranchDetail>> Update([FromRoute] int taxonomyBranchID, [FromBody] TaxonomyBranchUpsertRequest dto)
     {
@@ -94,7 +101,7 @@ public class TaxonomyBranchController(
     }
 
     [HttpDelete("{taxonomyBranchID}")]
-    //[AdminFeature]
+    [AdminFeature]
     [EntityNotFound(typeof(TaxonomyBranch), "taxonomyBranchID")]
     public async Task<IActionResult> Delete([FromRoute] int taxonomyBranchID)
     {

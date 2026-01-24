@@ -10,6 +10,7 @@ import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
+import { PersonLinkComponent } from "src/app/shared/components/person-link/person-link.component";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { InteractionEventService } from "src/app/shared/generated/api/interaction-event.service";
 import { FileResourceInteractionEventDetail } from "src/app/shared/generated/model/file-resource-interaction-event-detail";
@@ -34,6 +35,7 @@ import { MAP_SELECTED_COLOR } from "src/app/shared/models/map-colors";
         DatePipe,
         RouterLink,
         LoadingDirective,
+        PersonLinkComponent,
     ],
     templateUrl: "./interaction-event-detail.component.html",
     styleUrls: ["./interaction-event-detail.component.scss"],

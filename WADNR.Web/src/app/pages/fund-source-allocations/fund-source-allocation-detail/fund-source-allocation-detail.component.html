@@ -69,11 +69,7 @@
 
                     <div class="g-col-4 field-label">Fund Source Manager</div>
                     <div class="g-col-8">
-                        @if (allocation.FundSourceManagerID) {
-                            <a [routerLink]="['/people', allocation.FundSourceManagerID]">{{ allocation.FundSourceManagerName }}</a>
-                        } @else {
-                            —
-                        }
+                        <person-link [personID]="allocation.FundSourceManagerID" [displayText]="allocation.FundSourceManagerName"></person-link>
                     </div>
                 </div>
             </div>

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using WADNR.API.Services;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -28,6 +30,7 @@ public class ProjectDocumentController(
     };
 
     [HttpGet("{projectDocumentID}")]
+    [AllowAnonymous]
     public async Task<ActionResult<ProjectDocumentDetail>> GetByID([FromRoute] int projectDocumentID)
     {
         var detail = await ProjectDocuments.GetByIDAsDetailAsync(DbContext, projectDocumentID);
@@ -39,6 +42,7 @@ public class ProjectDocumentController(
     }
 
     [HttpPost]
+    [ProjectEditFeature]
     [Consumes("multipart/form-data")]
     public async Task<ActionResult<ProjectDocumentDetail>> Create(
         [FromForm] int projectID,
@@ -102,6 +106,7 @@ public class ProjectDocumentController(
     }
 
     [HttpPut("{projectDocumentID}")]
+    [ProjectEditFeature]
     public async Task<ActionResult<ProjectDocumentDetail>> Update(
         [FromRoute] int projectDocumentID,
         [FromBody] ProjectDocumentUpsertRequest request)
@@ -131,6 +136,7 @@ public class ProjectDocumentController(
     }
 
     [HttpDelete("{projectDocumentID}")]
+    [ProjectEditFeature]
     public async Task<IActionResult> Delete([FromRoute] int projectDocumentID)
     {
         var projectDocument = await DbContext.ProjectDocuments
@@ -151,6 +157,7 @@ public class ProjectDocumentController(
     }
 
     [HttpGet("types")]
+    [AllowAnonymous]
     public ActionResult<List<ProjectDocumentTypeLookupItem>> ListTypes()
     {
         var types = ProjectDocuments.ListTypesAsLookupItem();

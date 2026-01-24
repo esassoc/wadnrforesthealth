@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 using WADNR.Models.DataTransferObjects.FileResource;
@@ -21,6 +23,7 @@ public class PriorityLandscapeController(
     : SitkaController<PriorityLandscapeController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<PriorityLandscapeGridRow>>> List()
     {
         var items = await PriorityLandscapes.ListAsGridRowAsync(DbContext);
@@ -28,6 +31,7 @@ public class PriorityLandscapeController(
     }
 
     [HttpGet("{priorityLandscapeID}")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(PriorityLandscape), "priorityLandscapeID")]
     public async Task<ActionResult<PriorityLandscapeDetail>> Get([FromRoute] int priorityLandscapeID)
     {
@@ -40,7 +44,7 @@ public class PriorityLandscapeController(
     }
 
     [HttpPost]
-    //[AdminFeature]
+    [AdminFeature]
     public async Task<ActionResult<PriorityLandscapeDetail>> Create([FromBody] PriorityLandscapeUpsertRequest dto)
     {
         var created = await PriorityLandscapes.CreateAsync(DbContext, dto, CallingUser.PersonID);
@@ -52,7 +56,7 @@ public class PriorityLandscapeController(
     }
 
     [HttpPut("{priorityLandscapeID}")]
-    //[AdminFeature]
+    [AdminFeature]
     [EntityNotFound(typeof(PriorityLandscape), "priorityLandscapeID")]
     public async Task<ActionResult<PriorityLandscapeDetail>> Update([FromRoute] int priorityLandscapeID, [FromBody] PriorityLandscapeUpsertRequest dto)
     {
@@ -65,7 +69,7 @@ public class PriorityLandscapeController(
     }
 
     [HttpDelete("{priorityLandscapeID}")]
-    //[AdminFeature]
+    [AdminFeature]
     [EntityNotFound(typeof(PriorityLandscape), "priorityLandscapeID")]
     public async Task<IActionResult> Delete([FromRoute] int priorityLandscapeID)
     {
@@ -78,6 +82,7 @@ public class PriorityLandscapeController(
     }
 
     [HttpGet("{priorityLandscapeID}/projects")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<ProjectGridRow>>> ListProjectsForPriorityLandscapeID([FromRoute] int priorityLandscapeID)
     {
         var linkQuery = DbContext.ProjectPriorityLandscapes
@@ -93,6 +98,7 @@ public class PriorityLandscapeController(
     }
 
     [HttpGet("{priorityLandscapeID}/file-resources")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<FileResourcePriorityLandscapeDetail>>> ListFileResourcesForPriorityLandscapeID([FromRoute] int priorityLandscapeID)
     {
         var resources = await FileResources.ListForPriorityLandscapeIDAsync(DbContext, priorityLandscapeID);

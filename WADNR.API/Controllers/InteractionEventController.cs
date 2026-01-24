@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -5,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 using NetTopologySuite.Features;
@@ -21,6 +23,7 @@ public class InteractionEventController(
     : SitkaController<InteractionEventController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<InteractionEventGridRow>>> List()
     {
         var sources = await InteractionEvents.ListAsGridRowAsync(DbContext);
@@ -28,6 +31,7 @@ public class InteractionEventController(
     }
 
     [HttpGet("{interactionEventID}")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
     public async Task<ActionResult<InteractionEventDetail>> Get([FromRoute] int interactionEventID)
     {
@@ -40,7 +44,7 @@ public class InteractionEventController(
     }
 
     [HttpPost]
-    //[AdminFeature]
+    [ProjectEditFeature]
     public async Task<ActionResult<InteractionEventDetail>> Create([FromBody] InteractionEventUpsertRequest dto)
     {
         var created = await InteractionEvents.CreateAsync(DbContext, dto);
@@ -52,7 +56,7 @@ public class InteractionEventController(
     }
 
     [HttpPut("{interactionEventID}")]
-    //[AdminFeature]
+    [ProjectEditFeature]
     [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
     public async Task<ActionResult<InteractionEventDetail>> Update([FromRoute] int interactionEventID, [FromBody] InteractionEventUpsertRequest dto)
     {
@@ -65,7 +69,7 @@ public class InteractionEventController(
     }
 
     [HttpDelete("{interactionEventID}")]
-    //[AdminFeature]
+    [ProjectEditFeature]
     [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
     public async Task<IActionResult> Delete([FromRoute] int interactionEventID)
     {
@@ -78,6 +82,7 @@ public class InteractionEventController(
     }
 
     [HttpGet("{interactionEventID}/projects")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
     public async Task<ActionResult<IEnumerable<ProjectLookupItem>>> ListProjectsForInteractionEventID([FromRoute] int interactionEventID)
     {
@@ -86,6 +91,7 @@ public class InteractionEventController(
     }
 
     [HttpGet("{interactionEventID}/contacts")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
     public async Task<ActionResult<IEnumerable<PersonLookupItem>>> ListContactsForInteractionEventID([FromRoute] int interactionEventID)
     {
@@ -94,6 +100,7 @@ public class InteractionEventController(
     }
 
     [HttpGet("{interactionEventID}/simple-location/feature-collection")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
     public async Task<ActionResult<FeatureCollection>> GetSimpleLocationForInteractionEventID([FromRoute] int interactionEventID)
     {
@@ -102,6 +109,7 @@ public class InteractionEventController(
     }
 
     [HttpGet("{interactionEventID}/file-resources")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
     public async Task<ActionResult<IEnumerable<FileResourceInteractionEventDetail>>> ListFileResourcesForInteractionEventID([FromRoute] int interactionEventID)
     {

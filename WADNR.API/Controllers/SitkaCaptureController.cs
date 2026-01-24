@@ -1,4 +1,5 @@
 using WADNR.API.Services;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,7 @@ namespace WADNR.API.Controllers
         }
 
         [HttpPost("generate-pdf")]
+        [LoggedInFeature]
         [ProducesResponseType(typeof(FileStreamResult), (int)HttpStatusCode.OK)]
         public async Task<ActionResult> GeneratePdf([FromBody] CapturePostData capturePostData)
         {

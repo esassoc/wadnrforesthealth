@@ -31,6 +31,7 @@ export const appConfig: ApplicationConfig = {
                 connection: "wa-state-ciam",
             },
             useRefreshTokens: true,
+            cacheLocation: "localstorage",
             httpInterceptor: {
                 allowedList: buildAuth0AllowedList(environment.mainAppApiUrl),
             },

@@ -2,4 +2,5 @@
 
 public partial class Person
 {
+    public const int AnonymousPersonID = -999;
 }

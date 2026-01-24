@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -41,7 +42,7 @@ public class ProgramController(
     }
 
     [HttpPost]
-    //[AdminFeature]
+    [ProgramManageFeature]
     public async Task<ActionResult<ProgramDetail>> Create([FromBody] ProgramUpsertRequest dto)
     {
         var created = await Programs.CreateAsync(DbContext, dto, CallingUser.PersonID);
@@ -53,7 +54,7 @@ public class ProgramController(
     }
 
     [HttpPut("{programID}")]
-    //[AdminFeature]
+    [ProgramManageFeature]
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<ActionResult<ProgramDetail>> Update([FromRoute] int programID, [FromBody] ProgramUpsertRequest dto)
     {
@@ -66,7 +67,7 @@ public class ProgramController(
     }
 
     [HttpDelete("{programID}")]
-    //[AdminFeature]
+    [ProgramManageFeature]
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<IActionResult> Delete([FromRoute] int programID)
     {

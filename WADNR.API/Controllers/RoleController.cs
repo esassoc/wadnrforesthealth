@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -18,6 +19,7 @@ public class RoleController(
     : SitkaController<RoleController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AdminFeature]
     public async Task<ActionResult<List<RoleGridRow>>> List()
     {
         var roles = await Roles.ListAsGridRowAsync(DbContext);
@@ -25,6 +27,7 @@ public class RoleController(
     }
 
     [HttpGet("{roleID}")]
+    [AdminFeature]
     public async Task<ActionResult<RoleDetail>> GetByID([FromRoute] int roleID)
     {
         var role = await Roles.GetByIDAsDetailAsync(DbContext, roleID);
@@ -36,6 +39,7 @@ public class RoleController(
     }
 
     [HttpGet("{roleID}/people")]
+    [AdminFeature]
     public async Task<ActionResult<List<PersonLookupItem>>> ListPeople([FromRoute] int roleID)
     {
         if (!Role.AllLookupDictionary.ContainsKey(roleID))

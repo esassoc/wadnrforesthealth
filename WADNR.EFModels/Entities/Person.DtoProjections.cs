@@ -42,7 +42,7 @@ public static class PersonProjections
         }).ToList(),
         Authenticators = x.PersonAllowedAuthenticators
             .Select(a => a.Authenticator.AuthenticatorFullName)
-            .ToList()
+            .ToList(),
     };
 
     public static readonly Expression<Func<Person, PersonLookupItem>> AsLookupItem = x => new PersonLookupItem

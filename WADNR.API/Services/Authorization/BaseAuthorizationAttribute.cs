@@ -35,7 +35,7 @@ public abstract class BaseAuthorizationAttribute(IEnumerable<RoleEnum> grantedRo
                 "Could not find injected WADNRDbContext. BaseAuthorizationAttribute needs the DbContext registered.");
         }
 
-        var person = UserContext.GetUserFromHttpContext(dbContext, context.HttpContext);
+        var person = UserContext.GetUserAsDetailFromHttpContext(dbContext, context.HttpContext);
 
         // Check if user has any of the granted roles (base role or supplemental roles)
         var isAuthorized = person != null && HasAnyGrantedRole(person, grantedRoles);

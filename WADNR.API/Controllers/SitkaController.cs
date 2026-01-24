@@ -16,7 +16,7 @@ public abstract class SitkaController<T>(
     protected readonly WADNRDbContext DbContext = dbContext;
     protected readonly ILogger<T> Logger = logger;
     protected readonly WADNRConfiguration Configuration = configuration.Value;
-    protected PersonDetail CallingUser => UserContext.GetUserFromHttpContext(DbContext, HttpContext);
+    protected PersonDetail CallingUser => UserContext.GetUserAsDetailFromHttpContext(DbContext, HttpContext);
 
     protected ActionResult RequireNotNullThrowNotFound(object theObject, string objectType, object objectID)
     {

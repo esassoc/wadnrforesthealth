@@ -76,6 +76,12 @@ namespace WADNR.API
                 options.Audience = "WADNRAPI";
             });
 
+            // Require authentication by default - endpoints must explicitly use [AllowAnonymous] for public access
+            services.AddAuthorizationBuilder()
+                .SetFallbackPolicy(new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build());
+
             services.AddHttpClient("CorralClient")
                 .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
                 {
@@ -101,7 +107,7 @@ namespace WADNR.API
             #endregion
 
             services.AddScoped(s => s.GetService<IHttpContextAccessor>().HttpContext);
-            services.AddScoped(s => UserContext.GetUserFromHttpContext(s.GetService<WADNRDbContext>(), s.GetService<IHttpContextAccessor>().HttpContext));
+            services.AddScoped(s => UserContext.GetUserAsDetailFromHttpContext(s.GetService<WADNRDbContext>(), s.GetService<IHttpContextAccessor>().HttpContext));
             services.AddScoped<FileService>();
             services.AddScoped<AzureBlobStorageService>();
             services.AddScoped<IAzureStorage, AzureStorage>();

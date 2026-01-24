@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -19,6 +20,7 @@ public class FundSourceAllocationController(
     : SitkaController<FundSourceAllocationController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<List<FundSourceAllocationGridRow>>> List()
     {
         var fundSourceAllocations = await FundSourceAllocations.ListAsGridRowAsync(DbContext);
@@ -26,6 +28,7 @@ public class FundSourceAllocationController(
     }
 
     [HttpGet("{fundSourceAllocationID}")]
+    [AllowAnonymous]
     public async Task<ActionResult<FundSourceAllocationDetail>> GetByID([FromRoute] int fundSourceAllocationID)
     {
         var fundSourceAllocation = await FundSourceAllocations.GetByIDAsDetailAsync(DbContext, fundSourceAllocationID);
@@ -37,6 +40,7 @@ public class FundSourceAllocationController(
     }
 
     [HttpGet("for-fund-source/{fundSourceID}")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<FundSourceAllocationGridRow>>> ListForFundSource([FromRoute] int fundSourceID)
     {
         var fundSourceAllocations = await FundSourceAllocations.ListForFundSourceAsGridRowAsync(DbContext, fundSourceID);
@@ -44,6 +48,7 @@ public class FundSourceAllocationController(
     }
 
     [HttpGet("lookup")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<FundSourceAllocationLookupItem>>> ListLookup()
     {
         var fundSourceAllocations = await FundSourceAllocations.ListAsLookupItemAsync(DbContext);

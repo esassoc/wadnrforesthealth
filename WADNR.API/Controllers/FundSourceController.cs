@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -5,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -19,6 +21,7 @@ public class FundSourceController(
     : SitkaController<FundSourceController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<FundSourceGridRow>>> List()
     {
         var sources = await FundSources.ListAsGridRowAsync(DbContext);
@@ -26,6 +29,7 @@ public class FundSourceController(
     }
 
     [HttpGet("{fundSourceID}")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(FundSource), "fundSourceID")]
     public async Task<ActionResult<FundSourceDetail>> Get([FromRoute] int fundSourceID)
     {
@@ -38,7 +42,7 @@ public class FundSourceController(
     }
 
     [HttpPost]
-    //[AdminFeature]
+    [FundSourceManageFeature]
     public async Task<ActionResult<FundSourceDetail>> Create([FromBody] FundSourceUpsertRequest dto)
     {
         var created = await FundSources.CreateAsync(DbContext, dto);
@@ -50,7 +54,7 @@ public class FundSourceController(
     }
 
     [HttpPut("{fundSourceID}")]
-    //[AdminFeature]
+    [FundSourceManageFeature]
     [EntityNotFound(typeof(FundSource), "fundSourceID")]
     public async Task<ActionResult<FundSourceDetail>> Update([FromRoute] int fundSourceID, [FromBody] FundSourceUpsertRequest dto)
     {
@@ -63,7 +67,7 @@ public class FundSourceController(
     }
 
     [HttpDelete("{fundSourceID}")]
-    //[AdminFeature]
+    [FundSourceManageFeature]
     [EntityNotFound(typeof(FundSource), "fundSourceID")]
     public async Task<IActionResult> Delete([FromRoute] int fundSourceID)
     {
@@ -76,6 +80,7 @@ public class FundSourceController(
     }
 
     [HttpGet("{fundSourceID}/allocations")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(FundSource), "fundSourceID")]
     public async Task<ActionResult<IEnumerable<FundSourceAllocationLookupItem>>> ListAllocations([FromRoute] int fundSourceID)
     {
@@ -84,6 +89,7 @@ public class FundSourceController(
     }
 
     [HttpGet("{fundSourceID}/projects")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(FundSource), "fundSourceID")]
     public async Task<ActionResult<IEnumerable<FundSourceProjectGridRow>>> ListProjects([FromRoute] int fundSourceID)
     {
@@ -92,6 +98,7 @@ public class FundSourceController(
     }
 
     [HttpGet("{fundSourceID}/agreements")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(FundSource), "fundSourceID")]
     public async Task<ActionResult<IEnumerable<FundSourceAgreementGridRow>>> ListAgreements([FromRoute] int fundSourceID)
     {
@@ -100,6 +107,7 @@ public class FundSourceController(
     }
 
     [HttpGet("{fundSourceID}/budget-line-items")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(FundSource), "fundSourceID")]
     public async Task<ActionResult<IEnumerable<FundSourceBudgetLineItemGridRow>>> ListBudgetLineItems([FromRoute] int fundSourceID)
     {
@@ -108,6 +116,7 @@ public class FundSourceController(
     }
 
     [HttpGet("{fundSourceID}/files")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(FundSource), "fundSourceID")]
     public async Task<ActionResult<IEnumerable<FundSourceFileResourceGridRow>>> ListFiles([FromRoute] int fundSourceID)
     {
@@ -116,6 +125,7 @@ public class FundSourceController(
     }
 
     [HttpGet("{fundSourceID}/notes")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(FundSource), "fundSourceID")]
     public async Task<ActionResult<IEnumerable<FundSourceNoteGridRow>>> ListNotes([FromRoute] int fundSourceID)
     {
@@ -124,6 +134,7 @@ public class FundSourceController(
     }
 
     [HttpGet("{fundSourceID}/notes-internal")]
+    [FundSourceManageFeature]
     [EntityNotFound(typeof(FundSource), "fundSourceID")]
     public async Task<ActionResult<IEnumerable<FundSourceNoteInternalGridRow>>> ListInternalNotes([FromRoute] int fundSourceID)
     {

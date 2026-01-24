@@ -48,6 +48,7 @@ export class InteractionsEventsComponent {
             this.utilityFunctions.createLinkColumnDef("Staff Person", "StaffPerson.FullName", "StaffPerson.PersonID", {
                 InRouterLink: "/people/",
                 CustomDropdownFilterField: "StaffPerson.FullName",
+                RequiresAuth: true,
             }),
         ];
 

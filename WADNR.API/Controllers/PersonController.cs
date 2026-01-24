@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -19,6 +20,7 @@ public class PersonController(
     : SitkaController<PersonController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [NormalUserFeature]
     public async Task<ActionResult<IEnumerable<PersonGridRow>>> List()
     {
         var items = await People.ListAsGridRowAsync(DbContext);
@@ -26,6 +28,7 @@ public class PersonController(
     }
 
     [HttpGet("lookup")]
+    [NormalUserFeature]
     public async Task<ActionResult<IEnumerable<PersonLookupItem>>> ListLookup()
     {
         var items = await People.ListAsLookupItemAsync(DbContext);
@@ -33,6 +36,7 @@ public class PersonController(
     }
 
     [HttpGet("{personID}")]
+    [NormalUserFeature]
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<PersonDetail>> Get([FromRoute] int personID)
     {
@@ -45,6 +49,7 @@ public class PersonController(
     }
 
     [HttpGet("{personID}/projects")]
+    [NormalUserFeature]
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<IEnumerable<ProjectGridRow>>> ListProjects([FromRoute] int personID)
     {
@@ -53,6 +58,7 @@ public class PersonController(
     }
 
     [HttpGet("{personID}/agreements")]
+    [NormalUserFeature]
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<IEnumerable<AgreementGridRow>>> ListAgreements([FromRoute] int personID)
     {
@@ -61,6 +67,7 @@ public class PersonController(
     }
 
     [HttpGet("{personID}/interaction-events")]
+    [NormalUserFeature]
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<IEnumerable<InteractionEventGridRow>>> ListInteractionEvents([FromRoute] int personID)
     {

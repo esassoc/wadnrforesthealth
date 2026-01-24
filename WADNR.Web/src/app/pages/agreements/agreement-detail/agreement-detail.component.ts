@@ -98,12 +98,14 @@ export class AgreementDetailComponent {
 
         this.contactColumnDefs = [
             this.utilityFunctions.createLinkColumnDef("First Name", "Person.FirstName", "Person.PersonID", {
-                InRouterLink: "/users/",
+                InRouterLink: "/people/",
                 Width: 180,
+                RequiresAuth: true,
             }),
             this.utilityFunctions.createLinkColumnDef("Last Name", "Person.LastName", "Person.PersonID", {
-                InRouterLink: "/users/",
+                InRouterLink: "/people/",
                 Width: 200,
+                RequiresAuth: true,
             }),
             this.utilityFunctions.createBasicColumnDef("Agreement Role", "AgreementRole.AgreementPersonRoleDisplayName", {
                 Width: 220,

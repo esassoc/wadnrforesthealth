@@ -1,8 +1,10 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -17,6 +19,7 @@ public class TreatmentController(
     : SitkaController<TreatmentController>(dbContext, logger, configuration)
 {
     [HttpGet("{treatmentID}")]
+    [AllowAnonymous]
     public async Task<ActionResult<TreatmentDetail>> GetByID([FromRoute] int treatmentID)
     {
         var treatment = await Treatments.GetByIDAsDetailAsync(DbContext, treatmentID);
@@ -28,6 +31,7 @@ public class TreatmentController(
     }
 
     [HttpPost]
+    [ProjectEditFeature]
     public async Task<ActionResult<TreatmentDetail>> Create([FromBody] TreatmentUpsertRequest dto)
     {
         var treatment = await Treatments.CreateAsync(DbContext, dto);
@@ -35,6 +39,7 @@ public class TreatmentController(
     }
 
     [HttpPut("{treatmentID}")]
+    [ProjectEditFeature]
     public async Task<ActionResult<TreatmentDetail>> Update([FromRoute] int treatmentID, [FromBody] TreatmentUpsertRequest dto)
     {
         var treatment = await Treatments.UpdateAsync(DbContext, treatmentID, dto);
@@ -46,6 +51,7 @@ public class TreatmentController(
     }
 
     [HttpDelete("{treatmentID}")]
+    [ProjectEditFeature]
     public async Task<ActionResult> Delete([FromRoute] int treatmentID)
     {
         var deleted = await Treatments.DeleteAsync(DbContext, treatmentID);

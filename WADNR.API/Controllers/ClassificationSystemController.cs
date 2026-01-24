@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -19,6 +20,7 @@ public class ClassificationSystemController(
     : SitkaController<ClassificationSystemController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<List<ClassificationSystemGridRow>>> List()
     {
         var classificationSystems = await ClassificationSystems.ListAsGridRowAsync(DbContext);
@@ -26,6 +28,7 @@ public class ClassificationSystemController(
     }
 
     [HttpGet("{classificationSystemID}")]
+    [AllowAnonymous]
     public async Task<ActionResult<ClassificationSystemDetail>> GetByID([FromRoute] int classificationSystemID)
     {
         var classificationSystem = await ClassificationSystems.GetByIDAsDetailAsync(DbContext, classificationSystemID);
@@ -37,6 +40,7 @@ public class ClassificationSystemController(
     }
 
     [HttpGet("lookup")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<ClassificationSystemLookupItem>>> ListLookup()
     {
         var classificationSystems = await ClassificationSystems.ListAsLookupItemAsync(DbContext);
