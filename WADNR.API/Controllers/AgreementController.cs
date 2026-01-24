@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -19,6 +21,7 @@ public class AgreementController(
     : SitkaController<AgreementController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<AgreementGridRow>>> List()
     {
         var agreements = await Agreements.ListAsGridRowAsync(DbContext);
@@ -26,6 +29,7 @@ public class AgreementController(
     }
 
     [HttpGet("{agreementID}")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Agreement), "agreementID")]
     public async Task<ActionResult<AgreementDetail>> Get([FromRoute] int agreementID)
     {
@@ -39,7 +43,7 @@ public class AgreementController(
     }
 
     [HttpPost]
-    //[AdminFeature]
+    [AgreementManageFeature]
     public async Task<ActionResult<AgreementDetail>> Create([FromBody] AgreementUpsertRequest dto)
     {
         var created = await Agreements.CreateAsync(DbContext, dto, CallingUser.PersonID);
@@ -52,7 +56,7 @@ public class AgreementController(
     }
 
     [HttpPut("{agreementID}")]
-    //[AdminFeature]
+    [AgreementManageFeature]
     [EntityNotFound(typeof(Agreement), "agreementID")]
     public async Task<ActionResult<AgreementDetail>> Update([FromRoute] int agreementID, [FromBody] AgreementUpsertRequest dto)
     {
@@ -66,7 +70,7 @@ public class AgreementController(
     }
 
     [HttpDelete("{agreementID}")]
-    //[AdminFeature]
+    [AgreementManageFeature]
     [EntityNotFound(typeof(Agreement), "agreementID")]
     public async Task<IActionResult> Delete([FromRoute] int agreementID)
     {
@@ -80,6 +84,7 @@ public class AgreementController(
     }
 
     [HttpGet("{agreementID}/fund-source-allocations")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Agreement), "agreementID")]
     public async Task<ActionResult<IEnumerable<FundSourceAllocationLookupItem>>> ListFundSourceAllocations([FromRoute] int agreementID)
     {
@@ -88,6 +93,7 @@ public class AgreementController(
     }
 
     [HttpGet("{agreementID}/projects")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Agreement), "agreementID")]
     public async Task<ActionResult<IEnumerable<ProjectLookupItem>>> ListProjects([FromRoute] int agreementID)
     {
@@ -96,6 +102,7 @@ public class AgreementController(
     }
 
     [HttpGet("{agreementID}/contacts")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Agreement), "agreementID")]
     public async Task<ActionResult<IEnumerable<AgreementContactGridRow>>> ListContacts([FromRoute] int agreementID)
     {

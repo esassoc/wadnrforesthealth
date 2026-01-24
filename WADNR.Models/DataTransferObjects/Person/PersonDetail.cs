@@ -30,6 +30,7 @@ public class PersonDetail
 
     // Roles (populated separately due to static lookup type)
     public RoleLookupItem? BaseRole { get; set; }
+    public List<RoleLookupItem> SupplementalRoleList { get; set; } = new();
     public string? SupplementalRoles { get; set; }
 
     // Related data counts

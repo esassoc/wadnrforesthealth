@@ -41,7 +41,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       },
       "post": {
         "tags": [
@@ -129,7 +130,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       },
       "put": {
         "tags": [
@@ -259,7 +261,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/agreements/{agreementID}/projects": {
@@ -309,7 +312,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/agreements/{agreementID}/contacts": {
@@ -359,7 +363,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/classifications": {
@@ -11149,6 +11154,13 @@
           },
           "BaseRole": {
             "$ref": "#/components/schemas/RoleLookupItem"
+          },
+          "SupplementalRoleList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RoleLookupItem"
+            },
+            "nullable": true
           },
           "SupplementalRoles": {
             "type": "string",

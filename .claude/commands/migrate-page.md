@@ -74,6 +74,73 @@ Location: `{ApiProject}/Controllers/{Entity}Controller.cs`
 - Extend `{BaseController}` with primary constructor
 - Implement endpoints matching the DTOs
 
+### 3.5 Authorization
+
+Apply authorization attributes to controller endpoints based on legacy `*Feature` attributes.
+
+**Step 1: Identify legacy features**
+Search for `Feature]` in the legacy controller to find which features protect each action:
+```bash
+grep -E "Feature\]" {LegacyPath}/Controllers/{Entity}Controller.cs
+```
+
+**Step 2: Check legacy feature definitions**
+Read the feature class to see which roles are allowed:
+```bash
+cat {LegacyPath}/Security/{FeatureName}.cs
+```
+
+**Step 3: Map to new authorization attributes**
+
+| Legacy Feature Pattern | New Attribute | Roles |
+|------------------------|---------------|-------|
+| `AnonymousUnclassifiedFeature` or inherits from it | `[AllowAnonymous]` | No auth required |
+| Admin + EsaAdmin only | `[AdminFeature]` | Admin, EsaAdmin |
+| Normal + ProjectSteward + Admin + EsaAdmin + CanEditProgram | `[ProjectEditFeature]` | Project editors |
+| Admin + EsaAdmin + CanManageFundSourcesAndAgreements | `[AgreementManageFeature]` or `[FundSourceManageFeature]` | Fund/Agreement managers |
+| Admin + EsaAdmin + CanAddEditUsersContactsOrganizations | `[UserManageFeature]` | User managers |
+| Admin + EsaAdmin + CanManagePageContent | `[PageContentManageFeature]` | Content managers |
+| Admin + EsaAdmin + CanEditProgram | `[ProgramManageFeature]` | Program managers |
+| Any authenticated user | `[LoggedInFeature]` | All logged-in users |
+| Normal + ProjectSteward + Admin + EsaAdmin | `[NormalUserFeature]` | Standard users |
+
+**Step 4: Apply attributes**
+- Add `using WADNR.API.Services.Authorization;` to the controller
+- Add `using Microsoft.AspNetCore.Authorization;` if using `[AllowAnonymous]`
+- Apply appropriate attribute to each endpoint:
+  - GET endpoints (public data): Usually `[AllowAnonymous]`
+  - POST/PUT/DELETE: Apply the feature attribute that matches the legacy feature
+
+**Example:**
+```csharp
+[HttpGet]
+[AllowAnonymous]  // Legacy: AgreementsViewFeature (extends AnonymousUnclassifiedFeature)
+public async Task<ActionResult<List<EntityGridRow>>> List() { ... }
+
+[HttpPost]
+[AgreementManageFeature]  // Legacy: AgreementCreateFeature (Admin, EsaAdmin, CanManageFundSourcesAndAgreements)
+public async Task<ActionResult<EntityDetail>> Create([FromBody] EntityUpsertRequest dto) { ... }
+```
+
+**Creating new Feature attributes:**
+If no existing attribute matches, create a new one in `{ApiProject}/Services/Authorization/`:
+```csharp
+using WADNR.EFModels.Entities;
+
+namespace WADNR.API.Services.Authorization;
+
+public class {Entity}ManageFeature : BaseAuthorizationAttribute
+{
+    public {Entity}ManageFeature() : base([
+        RoleEnum.Admin,
+        RoleEnum.EsaAdmin,
+        // Add other roles from legacy feature
+    ])
+    {
+    }
+}
+```
+
 ## 4. Generate TypeScript
 
 After API code is complete:
@@ -184,6 +251,12 @@ npm start
 - [ ] No Bootstrap classes used (grid-12, card system only)
 - [ ] Route params use `@Input()` + `BehaviorSubject` pattern
 - [ ] All queries use `.AsNoTracking().Select()` projections
+
+### Authorization
+- [ ] Legacy `*Feature` attributes identified for each action
+- [ ] Appropriate authorization attributes applied to all endpoints
+- [ ] Public GET endpoints marked with `[AllowAnonymous]`
+- [ ] Create/Edit/Delete endpoints protected with feature attributes
 
 ### If Page Has Grids (per /migrate-grid)
 - [ ] Column parity verified with legacy

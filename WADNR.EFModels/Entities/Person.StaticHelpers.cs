@@ -73,26 +73,7 @@ public static class People
             .Select(pr => pr.RoleID)
             .ToListAsync();
 
-        var roleLookup = Role.AllLookupDictionary;
-        var roles = personRoleIDs
-            .Select(roleID => roleLookup.TryGetValue(roleID, out var role) ? role : null)
-            .Where(r => r != null)
-            .ToList();
-
-        var baseRole = roles.FirstOrDefault(r => r!.IsBaseRole);
-        var supplementalRoles = roles.Where(r => !r!.IsBaseRole).ToList();
-
-        person.BaseRole = new RoleLookupItem
-        {
-            RoleID = baseRole!.RoleID,
-            RoleName = baseRole!.RoleDisplayName
-        };
-        person.SupplementalRoles = supplementalRoles.Any()
-            ? string.Join(", ", supplementalRoles.Select(r => r!.RoleDisplayName))
-            : null;
-
-        // A "full user" has a base role that is not Unassigned
-        person.IsFullUser = baseRole != null && baseRole != Role.Unassigned;
+        PopulateRoles(person, personRoleIDs);
 
         return person;
     }
@@ -104,7 +85,48 @@ public static class People
             .Where(x => x.Email == email)
             .Select(PersonProjections.AsDetail)
             .SingleOrDefault();
+
+        if (person == null) return null;
+
+        // Get person roles and resolve from static lookup
+        var personRoleIDs = dbContext.PersonRoles
+            .AsNoTracking()
+            .Where(pr => pr.PersonID == person.PersonID)
+            .Select(pr => pr.RoleID)
+            .ToList();
+
+        PopulateRoles(person, personRoleIDs);
+
         return person;
+    }
+
+    private static void PopulateRoles(PersonDetail person, List<int> personRoleIDs)
+    {
+        var roleLookup = Role.AllLookupDictionary;
+        var roles = personRoleIDs
+            .Select(roleID => roleLookup.TryGetValue(roleID, out var role) ? role : null)
+            .Where(r => r != null)
+            .ToList();
+
+        var baseRole = roles.FirstOrDefault(r => r!.IsBaseRole);
+        var supplementalRoles = roles.Where(r => !r!.IsBaseRole).ToList();
+
+        person.BaseRole = baseRole != null ? new RoleLookupItem
+        {
+            RoleID = baseRole.RoleID,
+            RoleName = baseRole.RoleDisplayName
+        } : null;
+
+        person.SupplementalRoleList = supplementalRoles
+            .Select(r => new RoleLookupItem { RoleID = r!.RoleID, RoleName = r.RoleDisplayName })
+            .ToList();
+
+        person.SupplementalRoles = supplementalRoles.Any()
+            ? string.Join(", ", supplementalRoles.Select(r => r!.RoleDisplayName))
+            : null;
+
+        // A "full user" has a base role that is not Unassigned
+        person.IsFullUser = baseRole != null && baseRole != Role.Unassigned;
     }
 
     public static async Task<PersonDetail?> GetByGlobalIDAsDtoAsync(WADNRDbContext dbContext, string globalID)

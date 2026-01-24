@@ -19,14 +19,14 @@ function stripBase(apiBaseUrl: string, uri: string): string | null {
 
 const ANON_EXACT: ExactMap = {
   'DELETE': new Set([]),
-  'GET': new Set(["/","/custom-pages/menu-item","/field-definitions","/organizations","/programs","/projects","/projects/mapped-point/feature-collection","/projects/no-simple-location"]),
+  'GET': new Set(["/","/agreements","/custom-pages/menu-item","/field-definitions","/organizations","/programs","/projects","/projects/mapped-point/feature-collection","/projects/no-simple-location"]),
   'POST': new Set([]),
   'PUT': new Set([]),
 };
 
 const SECURED_EXACT: ExactMap = {
   'DELETE': new Set([]),
-  'GET': new Set(["/agreements","/classification-systems","/classification-systems/lookup","/classifications","/counties","/dnr-upland-regions","/focus-areas","/fund-source-allocations","/fund-source-allocations/lookup","/fund-sources","/interaction-events","/invoices","/organization-types","/people","/people/lookup","/priority-landscapes","/program-indices","/program-indices/lookup","/program-indices/search","/project-codes","/project-codes/lookup","/project-codes/search","/project-documents/types","/project-types","/project-types/taxonomy","/roles","/tags","/taxonomy-branches","/taxonomy-branches/lookup","/taxonomy-trunks","/taxonomy-trunks/lookup","/vendors","/vendors/search","/with-project-count"]),
+  'GET': new Set(["/classification-systems","/classification-systems/lookup","/classifications","/counties","/dnr-upland-regions","/focus-areas","/fund-source-allocations","/fund-source-allocations/lookup","/fund-sources","/interaction-events","/invoices","/organization-types","/people","/people/lookup","/priority-landscapes","/program-indices","/program-indices/lookup","/program-indices/search","/project-codes","/project-codes/lookup","/project-codes/search","/project-documents/types","/project-types","/project-types/taxonomy","/roles","/tags","/taxonomy-branches","/taxonomy-branches/lookup","/taxonomy-trunks","/taxonomy-trunks/lookup","/vendors","/vendors/search","/with-project-count"]),
   'POST': new Set(["/agreements","/classifications","/counties","/dnr-upland-regions","/fund-sources","/interaction-events","/organizations","/priority-landscapes","/programs","/project-documents","/project-types","/projects","/sitkacapture/generate-pdf","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"]),
   'PUT': new Set([]),
 };
@@ -36,6 +36,10 @@ const ANON_REGEX: RegexMap = {
 
   ],
   'GET': [
+    new RegExp("^/agreements/[^/]+$"),
+    new RegExp("^/agreements/[^/]+/contacts$"),
+    new RegExp("^/agreements/[^/]+/fund-source-allocations$"),
+    new RegExp("^/agreements/[^/]+/projects$"),
     new RegExp("^/custom-pages/[^/]+$"),
     new RegExp("^/custom-pages/navigation-section/[^/]+$"),
     new RegExp("^/custom-rich-texts/[^/]+$"),
@@ -94,10 +98,6 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/treatments/[^/]+$"),
   ],
   'GET': [
-    new RegExp("^/agreements/[^/]+$"),
-    new RegExp("^/agreements/[^/]+/contacts$"),
-    new RegExp("^/agreements/[^/]+/fund-source-allocations$"),
-    new RegExp("^/agreements/[^/]+/projects$"),
     new RegExp("^/classification-systems/[^/]+$"),
     new RegExp("^/classifications/[^/]+$"),
     new RegExp("^/classifications/[^/]+/projects$"),
