@@ -7,15 +7,15 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { AgreementPersonRoleLookupItem } from './agreement-person-role-lookup-item';
 import { PersonFirstNameLastName } from './person-first-name-last-name';
 import { OrganizationLookupItem } from './organization-lookup-item';
-import { AgreementRoleLookupItem } from './agreement-role-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class AgreementContactGridRow { 
     Person?: PersonFirstNameLastName;
-    AgreementRole?: AgreementRoleLookupItem;
+    AgreementRole?: AgreementPersonRoleLookupItem;
     ContributingOrganization?: OrganizationLookupItem;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -24,7 +24,7 @@ export class AgreementContactGridRow {
 
 export interface AgreementContactGridRowForm { 
     Person?: FormControl<PersonFirstNameLastName>;
-    AgreementRole?: FormControl<AgreementRoleLookupItem>;
+    AgreementRole?: FormControl<AgreementPersonRoleLookupItem>;
     ContributingOrganization?: FormControl<OrganizationLookupItem>;
 }
 
@@ -39,7 +39,7 @@ export class AgreementContactGridRowFormControls {
             ],
         }
     );
-    public static AgreementRole = (value: FormControlState<AgreementRoleLookupItem> | AgreementRoleLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<AgreementRoleLookupItem>(
+    public static AgreementRole = (value: FormControlState<AgreementPersonRoleLookupItem> | AgreementPersonRoleLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<AgreementPersonRoleLookupItem>(
         value,
         formControlOptions ?? 
         {

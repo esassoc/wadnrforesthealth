@@ -18,9 +18,8 @@ namespace WADNR.API.Controllers;
 public class TaxonomyBranchController(
     WADNRDbContext dbContext,
     ILogger<TaxonomyBranchController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<TaxonomyBranchController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<TaxonomyBranchController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TaxonomyBranchGridRow>>> List()

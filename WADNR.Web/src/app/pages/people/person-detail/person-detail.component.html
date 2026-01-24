@@ -1,193 +1,182 @@
 @if (person$ | async; as person) {
-<breadcrumb [items]="[{ label: 'Users and Contacts', url: '/people' }, { label: person.FullName || 'User' }]" [linkLast]="false"></breadcrumb>
-<page-header [pageTitle]="person.FullName + (person.IsActive ? '' : ' (inactive)')"></page-header>
+    <breadcrumb [items]="[{ label: 'Users and Contacts', url: '/people' }, { label: person.FullName || 'User' }]" [linkLast]="false"></breadcrumb>
+    <page-header [pageTitle]="person.FullName + (person.IsActive ? '' : ' (inactive)')"></page-header>
 
-<div class="page-body">
-    <div class="grid-12">
-        <!-- Left Column: Basic Info -->
-        <div class="g-col-6">
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Basics</span>
+    <div class="page-body">
+        <div class="grid-12">
+            <!-- Left Column: Basic Info -->
+            <div class="g-col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Basics</span>
+                    </div>
+                    <div class="card-body">
+                        <dl class="kv-pair-list">
+                            <dt>Name</dt>
+                            <dd>{{ person.FullNameFirstLastAndMiddle }}</dd>
+
+                            <dt>Email</dt>
+                            <dd>
+                                @if (person.Email) {
+                                    <a [href]="'mailto:' + person.Email">{{ person.Email }}</a>
+                                } @else {
+                                    <span class="text-muted">Not provided</span>
+                                }
+                            </dd>
+
+                            <dt>Phone</dt>
+                            <dd>{{ person.Phone || "Not provided" }}</dd>
+
+                            <dt>Organization</dt>
+                            <dd>
+                                @if (person.OrganizationID) {
+                                    <a [routerLink]="['/organizations', person.OrganizationID]">{{ person.OrganizationName }}</a>
+                                } @else {
+                                    <span class="text-muted">None</span>
+                                }
+                            </dd>
+
+                            <dt>Mailing Address</dt>
+                            <dd>{{ person.PersonAddress || "Not provided" }}</dd>
+
+                            <dt>Vendor</dt>
+                            <dd>
+                                @if (person.VendorID) {
+                                    <a [routerLink]="['/vendors', person.VendorID]">{{ person.VendorName }}</a>
+                                } @else {
+                                    <span class="text-muted">None</span>
+                                }
+                            </dd>
+
+                            @if (person.Notes) {
+                                <dt>Notes</dt>
+                                <dd>{{ person.Notes }}</dd>
+                            }
+
+                            @if (person.IsFullUser) {
+                                <dt>Last Activity</dt>
+                                <dd>{{ person.LastActivityDate | date: "M/d/yyyy h:mm a" }}</dd>
+                            }
+
+                            <dt>Added On</dt>
+                            <dd>{{ person.CreateDate | date: "M/d/yyyy" }}</dd>
+
+                            @if (person.AddedByPersonID) {
+                                <dt>Added By</dt>
+                                <dd>{{ person.AddedByPersonName }}</dd>
+                            }
+
+                            @if (person.Authenticators && person.Authenticators.length > 0) {
+                                <dt>Login Authenticators</dt>
+                                <dd>{{ person.Authenticators.join(", ") }}</dd>
+                            }
+                        </dl>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <dl class="kv-pair-list">
-                        <dt>Name</dt>
-                        <dd>{{ person.FullNameFirstLastAndMiddle }}</dd>
+            </div>
 
-                        <dt>Email</dt>
-                        <dd>
-                            @if (person.Email) {
-                                <a [href]="'mailto:' + person.Email">{{ person.Email }}</a>
-                            } @else {
-                                <span class="text-muted">Not provided</span>
-                            }
-                        </dd>
+            <!-- Right Column: Roles & Programs -->
+            <div class="g-col-6">
+                @if (person.IsFullUser) {
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Roles</span>
+                        </div>
+                        <div class="card-body">
+                            <dl class="kv-pair-list">
+                                <dt>Base Role</dt>
+                                <dd>{{ person.BaseRole.RoleName || "None" }}</dd>
 
-                        <dt>Phone</dt>
-                        <dd>{{ person.Phone || 'Not provided' }}</dd>
+                                <dt>Supplemental Roles</dt>
+                                <dd>{{ person.SupplementalRoles || "None" }}</dd>
 
-                        <dt>Organization</dt>
-                        <dd>
-                            @if (person.OrganizationID) {
-                                <a [routerLink]="['/organizations', person.OrganizationID]">{{ person.OrganizationName }}</a>
-                            } @else {
-                                <span class="text-muted">None</span>
-                            }
-                        </dd>
+                                <dt>Receive Support Emails</dt>
+                                <dd>{{ person.ReceiveSupportEmails ? "Yes" : "No" }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                }
 
-                        <dt>Mailing Address</dt>
-                        <dd>{{ person.PersonAddress || 'Not provided' }}</dd>
+                @if (person.AssignedPrograms && person.AssignedPrograms.length > 0) {
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <span class="card-title">Assigned Programs</span>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0">
+                                @for (program of person.AssignedPrograms; track program.ProgramID) {
+                                    <li>
+                                        <a [routerLink]="['/programs', program.ProgramID]">{{ program.ProgramName }}</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
 
-                        <dt>Vendor</dt>
-                        <dd>
-                            @if (person.VendorID) {
-                                <a [routerLink]="['/vendors', person.VendorID]">{{ person.VendorName }}</a>
-                            } @else {
-                                <span class="text-muted">None</span>
-                            }
-                        </dd>
-
-                        @if (person.Notes) {
-                            <dt>Notes</dt>
-                            <dd>{{ person.Notes }}</dd>
-                        }
-
-                        @if (person.IsFullUser) {
-                            <dt>Last Activity</dt>
-                            <dd>{{ person.LastActivityDate | date:'M/d/yyyy h:mm a' }}</dd>
-                        }
-
-                        <dt>Added On</dt>
-                        <dd>{{ person.CreateDate | date:'M/d/yyyy' }}</dd>
-
-                        @if (person.AddedByPersonID) {
-                            <dt>Added By</dt>
-                            <dd>{{ person.AddedByPersonName }}</dd>
-                        }
-
-                        @if (person.Authenticators && person.Authenticators.length > 0) {
-                            <dt>Login Authenticators</dt>
-                            <dd>{{ person.Authenticators.join(', ') }}</dd>
-                        }
-                    </dl>
-                </div>
+                @if (person.PrimaryContactOrganizations && person.PrimaryContactOrganizations.length > 0) {
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <span class="card-title">Primary Contact For Organizations</span>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0">
+                                @for (org of person.PrimaryContactOrganizations; track org.OrganizationID) {
+                                    <li>
+                                        <a [routerLink]="['/organizations', org.OrganizationID]">{{ org.OrganizationName }}</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
 
-        <!-- Right Column: Roles & Programs -->
-        <div class="g-col-6">
-            @if (person.IsFullUser) {
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Roles</span>
-                </div>
-                <div class="card-body">
-                    <dl class="kv-pair-list">
-                        <dt>Base Role</dt>
-                        <dd>{{ person.BaseRoleName || 'None' }}</dd>
-
-                        <dt>Supplemental Roles</dt>
-                        <dd>{{ person.SupplementalRoles || 'None' }}</dd>
-
-                        <dt>Receive Support Emails</dt>
-                        <dd>{{ person.ReceiveSupportEmails ? 'Yes' : 'No' }}</dd>
-                    </dl>
-                </div>
-            </div>
-            }
-
-            @if (person.AssignedPrograms && person.AssignedPrograms.length > 0) {
+        <!-- Projects Grid -->
+        @if (person.ProjectCount && person.ProjectCount > 0) {
             <div class="card mt-3">
                 <div class="card-header">
-                    <span class="card-title">Assigned Programs</span>
+                    <span class="card-title">Projects ({{ person.ProjectCount }})</span>
                 </div>
                 <div class="card-body">
-                    <ul class="list-unstyled mb-0">
-                        @for (program of person.AssignedPrograms; track program.ProgramID) {
-                        <li>
-                            <a [routerLink]="['/programs', program.ProgramID]">{{ program.ProgramName }}</a>
-                        </li>
-                        }
-                    </ul>
+                    <wadnr-grid [rowData]="projects$ | async" [columnDefs]="projectColumnDefs" downloadFileName="person-projects" [hideGlobalFilter]="true"></wadnr-grid>
                 </div>
             </div>
-            }
+        }
 
-            @if (person.PrimaryContactOrganizations && person.PrimaryContactOrganizations.length > 0) {
+        <!-- Agreements Grid -->
+        @if (person.AgreementCount && person.AgreementCount > 0) {
             <div class="card mt-3">
                 <div class="card-header">
-                    <span class="card-title">Primary Contact For Organizations</span>
+                    <span class="card-title">Agreements ({{ person.AgreementCount }})</span>
                 </div>
                 <div class="card-body">
-                    <ul class="list-unstyled mb-0">
-                        @for (org of person.PrimaryContactOrganizations; track org.OrganizationID) {
-                        <li>
-                            <a [routerLink]="['/organizations', org.OrganizationID]">{{ org.OrganizationName }}</a>
-                        </li>
-                        }
-                    </ul>
+                    <wadnr-grid [rowData]="agreements$ | async" [columnDefs]="agreementColumnDefs" downloadFileName="person-agreements" [hideGlobalFilter]="true"></wadnr-grid>
                 </div>
             </div>
-            }
-        </div>
-    </div>
+        }
 
-    <!-- Projects Grid -->
-    @if (person.ProjectCount && person.ProjectCount > 0) {
-    <div class="card mt-3">
-        <div class="card-header">
-            <span class="card-title">Projects ({{ person.ProjectCount }})</span>
-        </div>
-        <div class="card-body">
-            <wadnr-grid
-                [rowData]="projects$ | async"
-                [columnDefs]="projectColumnDefs"
-                downloadFileName="person-projects"
-                [hideGlobalFilter]="true"
-            ></wadnr-grid>
-        </div>
+        <!-- Interaction Events Grid -->
+        @if (person.InteractionEventCount && person.InteractionEventCount > 0) {
+            <div class="card mt-3">
+                <div class="card-header">
+                    <span class="card-title">Interactions/Events ({{ person.InteractionEventCount }})</span>
+                </div>
+                <div class="card-body">
+                    <wadnr-grid
+                        [rowData]="interactionEvents$ | async"
+                        [columnDefs]="interactionEventColumnDefs"
+                        downloadFileName="person-interaction-events"
+                        [hideGlobalFilter]="true"></wadnr-grid>
+                </div>
+            </div>
+        }
     </div>
-    }
-
-    <!-- Agreements Grid -->
-    @if (person.AgreementCount && person.AgreementCount > 0) {
-    <div class="card mt-3">
-        <div class="card-header">
-            <span class="card-title">Agreements ({{ person.AgreementCount }})</span>
-        </div>
-        <div class="card-body">
-            <wadnr-grid
-                [rowData]="agreements$ | async"
-                [columnDefs]="agreementColumnDefs"
-                downloadFileName="person-agreements"
-                [hideGlobalFilter]="true"
-            ></wadnr-grid>
-        </div>
-    </div>
-    }
-
-    <!-- Interaction Events Grid -->
-    @if (person.InteractionEventCount && person.InteractionEventCount > 0) {
-    <div class="card mt-3">
-        <div class="card-header">
-            <span class="card-title">Interactions/Events ({{ person.InteractionEventCount }})</span>
-        </div>
-        <div class="card-body">
-            <wadnr-grid
-                [rowData]="interactionEvents$ | async"
-                [columnDefs]="interactionEventColumnDefs"
-                downloadFileName="person-interaction-events"
-                [hideGlobalFilter]="true"
-            ></wadnr-grid>
-        </div>
-    </div>
-    }
-</div>
 } @else {
-<div class="page-body">
-    <div class="spinner-border" role="status">
-        <span class="visually-hidden">Loading...</span>
+    <div class="page-body">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
     </div>
-</div>
 }

@@ -14,9 +14,8 @@ namespace WADNR.API.Controllers;
 public class InvoiceController(
     WADNRDbContext dbContext,
     ILogger<InvoiceController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<InvoiceController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<InvoiceController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<List<InvoiceGridRow>>> List()

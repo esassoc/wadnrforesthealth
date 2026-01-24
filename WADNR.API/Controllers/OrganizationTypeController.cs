@@ -14,9 +14,8 @@ namespace WADNR.API.Controllers;
 public class OrganizationTypeController(
     WADNRDbContext dbContext,
     ILogger<OrganizationTypeController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<OrganizationTypeController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<OrganizationTypeController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<OrganizationTypeLookupItem>>> List()

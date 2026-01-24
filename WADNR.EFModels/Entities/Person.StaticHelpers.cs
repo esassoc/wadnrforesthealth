@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.Helpers;
 
 namespace WADNR.EFModels.Entities;
 
@@ -80,7 +82,11 @@ public static class People
         var baseRole = roles.FirstOrDefault(r => r!.IsBaseRole);
         var supplementalRoles = roles.Where(r => !r!.IsBaseRole).ToList();
 
-        person.BaseRoleName = baseRole?.RoleDisplayName;
+        person.BaseRole = new RoleLookupItem
+        {
+            RoleID = baseRole!.RoleID,
+            RoleName = baseRole!.RoleDisplayName
+        };
         person.SupplementalRoles = supplementalRoles.Any()
             ? string.Join(", ", supplementalRoles.Select(r => r!.RoleDisplayName))
             : null;
@@ -100,4 +106,77 @@ public static class People
             .SingleOrDefault();
         return person;
     }
+
+    public static async Task<PersonDetail?> GetByGlobalIDAsDtoAsync(WADNRDbContext dbContext, string globalID)
+    {
+        var person = await dbContext.People
+            .AsNoTracking().Where(x => x.GlobalID == globalID).Select(PersonProjections.AsDetail).SingleOrDefaultAsync();
+        return person;
+    }
+
+    public static async Task<PersonDetail?> UpdateClaims(WADNRDbContext dbContext, ClaimsPrincipal claimsPrincipal)
+    {
+        int? personID = null;
+        var globalID = claimsPrincipal?.Claims.SingleOrDefault(c => c.Type == ClaimsConstants.Sub)?.Value;
+        if (!string.IsNullOrEmpty(globalID))
+        {
+            personID = await dbContext.People.AsNoTracking().Where(x => x.GlobalID == globalID).Select(x => x.PersonID).SingleOrDefaultAsync();
+        }
+
+        Person person;
+        var email = claimsPrincipal?.Claims.SingleOrDefault(c => c.Type == ClaimsConstants.Emails)?.Value;
+        if (personID is > 0)
+        {
+            person = await dbContext.People.FirstOrDefaultAsync(x => x.PersonID == personID);
+        }
+        else
+        {
+            person = await dbContext.People.FirstOrDefaultAsync(x => x.Email == email);
+        }
+
+        if (person == null)
+        {
+            person = new Person
+            {
+                GlobalID = globalID,
+                CreateDate = DateTime.UtcNow,
+                IsActive = true,
+                WebServiceAccessToken = Guid.NewGuid(),
+                ReceiveSupportEmails = false,
+            };
+            var personRole = new PersonRole { Person = person, RoleID = (int)RoleEnum.Unassigned };
+
+            dbContext.People.Add(person);
+            dbContext.PersonRoles.Add(personRole);
+        }
+
+        var firstName = claimsPrincipal?.Claims.SingleOrDefault(c => c.Type == ClaimsConstants.GivenName)?.Value;
+        var lastName = claimsPrincipal?.Claims.SingleOrDefault(c => c.Type == ClaimsConstants.FamilyName)?.Value;
+
+        if (!string.IsNullOrEmpty(globalID))
+        {
+            person.GlobalID = globalID;
+        }
+
+        if (!string.IsNullOrEmpty(firstName))
+        {
+            person.FirstName = firstName;
+        }
+
+        if (!string.IsNullOrEmpty(lastName))
+        {
+            person.LastName = lastName;
+        }
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            person.Email = email;
+        }
+
+        await dbContext.SaveChangesAsync();
+        await dbContext.Entry(person).ReloadAsync();
+
+        return await GetByIDAsDetailAsync(dbContext, person.PersonID);
+    }
+
 }

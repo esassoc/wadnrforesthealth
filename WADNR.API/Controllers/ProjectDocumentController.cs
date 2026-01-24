@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using WADNR.API.Services;
 using WADNR.EFModels.Entities;
@@ -19,10 +18,9 @@ namespace WADNR.API.Controllers;
 public class ProjectDocumentController(
     WADNRDbContext dbContext,
     ILogger<ProjectDocumentController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration,
     FileService fileService)
-    : SitkaController<ProjectDocumentController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<ProjectDocumentController>(dbContext, logger, configuration)
 {
     private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
     {

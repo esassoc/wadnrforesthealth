@@ -29,7 +29,7 @@ public class PersonDetail
     public string? AddedByPersonName { get; set; }
 
     // Roles (populated separately due to static lookup type)
-    public string? BaseRoleName { get; set; }
+    public RoleLookupItem? BaseRole { get; set; }
     public string? SupplementalRoles { get; set; }
 
     // Related data counts

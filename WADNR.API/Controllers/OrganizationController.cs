@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -16,11 +17,11 @@ namespace WADNR.API.Controllers;
 public class OrganizationController(
     WADNRDbContext dbContext,
     ILogger<OrganizationController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<OrganizationController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<OrganizationController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<OrganizationGridRow>>> List()
     {
         var organizations = await Organizations.ListAsGridRowAsync(DbContext);
@@ -28,6 +29,7 @@ public class OrganizationController(
     }
 
     [HttpGet("{organizationID}")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Organization), "organizationID")]
     public async Task<ActionResult<OrganizationDetail>> Get([FromRoute] int organizationID)
     {
@@ -82,6 +84,7 @@ public class OrganizationController(
     }
 
     [HttpGet("{organizationID}/programs")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Organization), "organizationID")]
     public async Task<ActionResult<IEnumerable<ProgramGridRow>>> ListProgramsForOrganization([FromRoute] int organizationID)
     {
@@ -90,6 +93,7 @@ public class OrganizationController(
     }
 
     [HttpGet("{organizationID}/projects")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Organization), "organizationID")]
     public async Task<ActionResult<IEnumerable<ProjectOrganizationDetailGridRow>>> ListProjectsForOrganization([FromRoute] int organizationID)
     {
@@ -98,6 +102,7 @@ public class OrganizationController(
     }
 
     [HttpGet("{organizationID}/projects/pending")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Organization), "organizationID")]
     public async Task<ActionResult<IEnumerable<ProjectOrganizationDetailGridRow>>> ListPendingProjectsForOrganization([FromRoute] int organizationID)
     {
@@ -106,6 +111,7 @@ public class OrganizationController(
     }
 
     [HttpGet("{organizationID}/agreements")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Organization), "organizationID")]
     public async Task<ActionResult<IEnumerable<AgreementGridRow>>> ListAgreementsForOrganization([FromRoute] int organizationID)
     {
@@ -114,6 +120,7 @@ public class OrganizationController(
     }
 
     [HttpGet("{organizationID}/boundary")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Organization), "organizationID")]
     public async Task<ActionResult<FeatureCollection>> GetBoundary([FromRoute] int organizationID)
     {
@@ -136,6 +143,7 @@ public class OrganizationController(
     }
 
     [HttpGet("{organizationID}/project-locations")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(Organization), "organizationID")]
     public async Task<ActionResult<FeatureCollection>> GetProjectLocations([FromRoute] int organizationID)
     {

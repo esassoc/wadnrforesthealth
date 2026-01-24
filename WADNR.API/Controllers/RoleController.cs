@@ -14,9 +14,8 @@ namespace WADNR.API.Controllers;
 public class RoleController(
     WADNRDbContext dbContext,
     ILogger<RoleController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<RoleController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<RoleController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<List<RoleGridRow>>> List()

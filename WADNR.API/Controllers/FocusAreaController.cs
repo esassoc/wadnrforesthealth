@@ -14,9 +14,8 @@ namespace WADNR.API.Controllers;
 public class FocusAreaController(
     WADNRDbContext dbContext,
     ILogger<FocusAreaController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<FocusAreaController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<FocusAreaController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<List<FocusAreaGridRow>>> List()

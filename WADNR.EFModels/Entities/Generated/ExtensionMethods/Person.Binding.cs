@@ -18,6 +18,7 @@ namespace WADNR.EFModels.Entities
             public const int MiddleName = 100;
             public const int Notes = 500;
             public const int PersonAddress = 255;
+            public const int GlobalID = 100;
         }
     }
 }

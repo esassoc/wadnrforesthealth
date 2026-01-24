@@ -15,9 +15,8 @@ namespace WADNR.API.Controllers;
 public class TagController(
     WADNRDbContext dbContext,
     ILogger<TagController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<TagController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<TagController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TagGridRow>>> List()

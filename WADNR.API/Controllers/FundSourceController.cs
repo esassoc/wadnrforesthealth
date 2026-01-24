@@ -15,9 +15,8 @@ namespace WADNR.API.Controllers;
 public class FundSourceController(
     WADNRDbContext dbContext,
     ILogger<FundSourceController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<FundSourceController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<FundSourceController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<FundSourceGridRow>>> List()

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -14,11 +15,11 @@ namespace WADNR.API.Controllers;
 public class CustomPageController(
     WADNRDbContext dbContext,
     ILogger<CustomPageController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> ltInfoConfiguration)
-    : SitkaController<CustomPageController>(dbContext, logger, keystoneService, ltInfoConfiguration)
+    : SitkaController<CustomPageController>(dbContext, logger, ltInfoConfiguration)
 {
     [HttpGet("{vanityUrl}")]
+    [AllowAnonymous]
     public async Task<ActionResult<CustomPageDetail>> GetByVanityUrl([FromRoute] string vanityUrl)
     {
         var customPageDto = await CustomPages.GetByVanityUrlAsDetailAsync(DbContext, vanityUrl);
@@ -26,6 +27,7 @@ public class CustomPageController(
     }
 
     [HttpGet("navigation-section/{customPageNavigationSectionID}")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<CustomPageMenuItem>>> GetByCustomPageNavigationSectionID([FromRoute] int customPageNavigationSectionID)
     {
         var items = await CustomPages.GetByNavigationSectionAsMenuItemsAsync(DbContext, customPageNavigationSectionID);
@@ -33,6 +35,7 @@ public class CustomPageController(
     }
 
     [HttpGet("menu-item")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<CustomPageMenuItem>>> ListAsMenuItem()
     {
         var items = await CustomPages.ListAsMenuItemsAsync(DbContext);

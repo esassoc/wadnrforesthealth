@@ -131,9 +131,22 @@
                     </ul>
                 </li>
                 <!-- first right-aligned item -->
+                @if (currentUser$ | async; as currentUser) {
+                    <li class="nav-item dropdown secondary-nav__right-start" [dropdownToggle]="userMenu">
+                        <a href="javascript:void(0);" class="nav-link dropdown-toggle">
+                            {{ currentUser.FirstName }} {{ currentUser.LastName }} <icon icon="AngleDown"></icon>
+                        </a>
+                        <ul #userMenu class="dropdown-menu dropdown-menu-right">
+                            <li><a routerLink="/request-support" class="dropdown-item">Request Support</a></li>
+                            <li class="divider"></li>
+                            <li><a href="javascript:void(0);" (click)="logout()" class="dropdown-item">Log Out</a></li>
+                        </ul>
+                    </li>
+                } @else {
                 <li class="nav-item secondary-nav__right-start">
-                    <a routerLink="/not-found" routerLinkActive="active" class="nav-link">Log In</a>
+                    <a href="javascript:void(0);" (click)="login()" class="nav-link">Log In</a>
                 </li>
+                }
                 <li class="nav-item dropdown">
                     <a href="javascript:void(0);" [dropdownToggle]="helpMenu" class="nav-link dropdown-toggle">Help <icon icon="AngleDown"></icon></a>
                     <ul #helpMenu class="dropdown-menu dropdown-menu-right">

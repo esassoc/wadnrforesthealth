@@ -15,9 +15,8 @@ namespace WADNR.API.Controllers;
 public class ProjectCodeController(
     WADNRDbContext dbContext,
     ILogger<ProjectCodeController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<ProjectCodeController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<ProjectCodeController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<List<ProjectCodeGridRow>>> List()

@@ -16,9 +16,8 @@ namespace WADNR.API.Controllers;
 public class DNRUplandRegionController(
     WADNRDbContext dbContext,
     ILogger<DNRUplandRegionController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<DNRUplandRegionController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<DNRUplandRegionController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<DNRUplandRegionGridRow>>> List()

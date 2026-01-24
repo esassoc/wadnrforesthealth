@@ -130,7 +130,7 @@ public static class Agreements
             .Select(AgreementProjections.ToContactGridRow)
             .OrderBy(x => x.Person.LastName)
             .ThenBy(x => x.Person.FirstName)
-            .ThenBy(x => x.AgreementRole.AgreementPersonRoleDisplayName)
+            .ThenBy(x => x.AgreementRole.AgreementPersonRoleName)
             .ToList();
 
         return items;

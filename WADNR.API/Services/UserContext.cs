@@ -1,6 +1,5 @@
 ﻿using WADNR.EFModels.Entities;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Linq;
 using WADNR.Models.DataTransferObjects;
 
@@ -17,17 +16,21 @@ namespace WADNR.API.Services
 
         public static PersonDetail GetUserFromHttpContext(WADNRDbContext dbContext, HttpContext httpContext)
         {
-
             var claimsPrincipal = httpContext.User;
             if (!claimsPrincipal.Claims.Any())
             {
                 return null;
             }
 
-            var userGuid = Guid.Parse(claimsPrincipal.Claims.Single(c => c.Type == "sub").Value);
-            var keystoneUser = People.GetByEmailAsDetail(dbContext, userGuid.ToString());
+            // Auth0 provides email in the 'email' claim (requires 'email' scope)
+            var emailClaim = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == "email");
+            if (emailClaim == null)
+            {
+                return null;
+            }
 
-            return keystoneUser;
+            var user = People.GetByEmailAsDetail(dbContext, emailClaim.Value);
+            return user;
         }
     }
 }

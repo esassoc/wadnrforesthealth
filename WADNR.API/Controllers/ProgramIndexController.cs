@@ -15,9 +15,8 @@ namespace WADNR.API.Controllers;
 public class ProgramIndexController(
     WADNRDbContext dbContext,
     ILogger<ProgramIndexController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<ProgramIndexController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<ProgramIndexController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<List<ProgramIndexGridRow>>> List()

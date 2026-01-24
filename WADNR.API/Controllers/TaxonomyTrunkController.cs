@@ -14,9 +14,8 @@ namespace WADNR.API.Controllers;
 public class TaxonomyTrunkController(
     WADNRDbContext dbContext,
     ILogger<TaxonomyTrunkController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<TaxonomyTrunkController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<TaxonomyTrunkController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<List<TaxonomyTrunkGridRow>>> List()

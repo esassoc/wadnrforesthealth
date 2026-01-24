@@ -17,9 +17,8 @@ namespace WADNR.API.Controllers;
 public class PriorityLandscapeController(
     WADNRDbContext dbContext,
     ILogger<PriorityLandscapeController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<PriorityLandscapeController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<PriorityLandscapeController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PriorityLandscapeGridRow>>> List()

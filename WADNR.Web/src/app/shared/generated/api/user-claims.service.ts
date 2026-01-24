@@ -15,7 +15,7 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
-import { FieldDefinitionDatumDetail } from '../model/field-definition-datum-detail';
+import { PersonDetail } from '../model/person-detail';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -27,23 +27,23 @@ import { BaseService } from '../api.base.service';
 @Injectable({
   providedIn: 'root'
 })
-export class FieldDefinitionService extends BaseService {
+export class UserClaimsService extends BaseService {
 
     constructor(protected httpClient: HttpClient, @Optional() @Inject(BASE_PATH) basePath: string|string[], @Optional() configuration?: Configuration) {
         super(basePath, configuration);
     }
 
     /**
-     * @param fieldDefinitionID 
+     * @param globalID 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getFieldDefinition(fieldDefinitionID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<FieldDefinitionDatumDetail>;
-    public getFieldDefinition(fieldDefinitionID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<FieldDefinitionDatumDetail>>;
-    public getFieldDefinition(fieldDefinitionID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<FieldDefinitionDatumDetail>>;
-    public getFieldDefinition(fieldDefinitionID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        if (fieldDefinitionID === null || fieldDefinitionID === undefined) {
-            throw new Error('Required parameter fieldDefinitionID was null or undefined when calling getFieldDefinition.');
+    public getByGlobalIDUserClaims(globalID: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<PersonDetail>;
+    public getByGlobalIDUserClaims(globalID: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PersonDetail>>;
+    public getByGlobalIDUserClaims(globalID: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PersonDetail>>;
+    public getByGlobalIDUserClaims(globalID: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (globalID === null || globalID === undefined) {
+            throw new Error('Required parameter globalID was null or undefined when calling getByGlobalIDUserClaims.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -73,9 +73,9 @@ export class FieldDefinitionService extends BaseService {
             }
         }
 
-        let localVarPath = `/field-definitions/${this.configuration.encodeParam({name: "fieldDefinitionID", value: fieldDefinitionID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        let localVarPath = `/user-claims/${this.configuration.encodeParam({name: "globalID", value: globalID, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<FieldDefinitionDatumDetail>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<PersonDetail>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -92,10 +92,10 @@ export class FieldDefinitionService extends BaseService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listFieldDefinition(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FieldDefinitionDatumDetail>>;
-    public listFieldDefinition(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FieldDefinitionDatumDetail>>>;
-    public listFieldDefinition(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FieldDefinitionDatumDetail>>>;
-    public listFieldDefinition(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public postUserClaimsUserClaims(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<PersonDetail>;
+    public postUserClaimsUserClaims(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PersonDetail>>;
+    public postUserClaimsUserClaims(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PersonDetail>>;
+    public postUserClaimsUserClaims(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -124,9 +124,9 @@ export class FieldDefinitionService extends BaseService {
             }
         }
 
-        let localVarPath = `/field-definitions`;
+        let localVarPath = `/user-claims`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Array<FieldDefinitionDatumDetail>>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<PersonDetail>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

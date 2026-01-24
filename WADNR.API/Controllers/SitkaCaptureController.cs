@@ -18,9 +18,8 @@ namespace WADNR.API.Controllers
 
         public SitkaCaptureController(WADNRDbContext dbContext,
             ILogger<SitkaCaptureController> logger,
-            KeystoneService keystoneService,
-            IOptions<WADNRConfiguration> ltInfoConfiguration,
-            SitkaCaptureService.SitkaCaptureService sitkaCaptureService) : base(dbContext, logger, keystoneService, ltInfoConfiguration)
+                    IOptions<WADNRConfiguration> ltInfoConfiguration,
+            SitkaCaptureService.SitkaCaptureService sitkaCaptureService) : base(dbContext, logger, ltInfoConfiguration)
         {
             _sitkaCaptureService = sitkaCaptureService;
         }

@@ -3,7 +3,6 @@
     public class WADNRConfiguration
     {
         public string DatabaseConnectionString { get; set; }
-        public string KeystoneOpenIDUrl { get; set; }
         public string SendGridApiKey { get; set; }
         public string SitkaEmailRedirect { get; set; }
         public string SitkaSupportEmail { get; set; }

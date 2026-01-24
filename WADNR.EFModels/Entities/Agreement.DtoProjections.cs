@@ -127,10 +127,10 @@ public static class AgreementProjections
             FirstName = x.FirstName,
             LastName = x.LastName
         },
-        AgreementRole = new AgreementRoleLookupItem
+        AgreementRole = new AgreementPersonRoleLookupItem
         {
             AgreementPersonRoleID = x.AgreementPersonRoleID,
-            AgreementPersonRoleDisplayName = AgreementPersonRole.AllLookupDictionary[x.AgreementPersonRoleID].AgreementPersonRoleDisplayName
+            AgreementPersonRoleName = AgreementPersonRole.AllLookupDictionary[x.AgreementPersonRoleID].AgreementPersonRoleDisplayName
         },
         ContributingOrganization = x.OrganizationID == null
             ? null

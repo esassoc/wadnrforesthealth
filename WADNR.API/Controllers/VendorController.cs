@@ -15,9 +15,8 @@ namespace WADNR.API.Controllers;
 public class VendorController(
     WADNRDbContext dbContext,
     ILogger<VendorController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<VendorController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<VendorController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<VendorGridRow>>> List()

@@ -17,9 +17,8 @@ namespace WADNR.API.Controllers;
 public class InteractionEventController(
     WADNRDbContext dbContext,
     ILogger<InteractionEventController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<InteractionEventController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<InteractionEventController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<InteractionEventGridRow>>> List()

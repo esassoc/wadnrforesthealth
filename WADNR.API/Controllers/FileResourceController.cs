@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -18,11 +18,10 @@ namespace WADNR.API.Controllers;
 public class FileResourceController(
     WADNRDbContext dbContext,
     ILogger<FileResourceController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration,
     AzureBlobStorageService azureBlobStorageService,
     FileService fileService)
-    : SitkaController<FileResourceController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<FileResourceController>(dbContext, logger, configuration)
 {
     [HttpGet("{fileResourceGuidAsString}")]
     [ProducesResponseType(typeof(FileStreamResult), (int)HttpStatusCode.OK)]

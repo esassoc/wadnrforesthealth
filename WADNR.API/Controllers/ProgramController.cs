@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
@@ -15,11 +16,11 @@ namespace WADNR.API.Controllers;
 public class ProgramController(
     WADNRDbContext dbContext,
     ILogger<ProgramController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<ProgramController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<ProgramController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<ProgramGridRow>>> List()
     {
         var sources = await Programs.ListAsGridRowAsync(DbContext);
@@ -27,6 +28,7 @@ public class ProgramController(
     }
 
     [HttpGet("{programID}")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<ActionResult<ProgramDetail>> Get([FromRoute] int programID)
     {
@@ -77,6 +79,7 @@ public class ProgramController(
     }
 
     [HttpGet("{programID}/projects")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<ActionResult<IEnumerable<ProjectProgramDetailGridRow>>> ListProjects([FromRoute] int programID)
     {
@@ -85,6 +88,7 @@ public class ProgramController(
     }
 
     [HttpGet("{programID}/notifications")]
+    [AllowAnonymous]
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<ActionResult<IEnumerable<ProgramNotificationGridRow>>> ListNotifications([FromRoute] int programID)
     {

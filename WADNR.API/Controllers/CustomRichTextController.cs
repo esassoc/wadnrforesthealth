@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
@@ -13,11 +14,11 @@ namespace WADNR.API.Controllers;
 public class CustomRichTextController(
     WADNRDbContext dbContext,
     ILogger<CustomRichTextController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> ltInfoConfiguration)
-    : SitkaController<CustomRichTextController>(dbContext, logger, keystoneService, ltInfoConfiguration)
+    : SitkaController<CustomRichTextController>(dbContext, logger, ltInfoConfiguration)
 {
     [HttpGet("{customRichTextTypeID}")]
+    [AllowAnonymous]
     public async Task<ActionResult<FirmaPageDetail>> Get([FromRoute] int customRichTextTypeID)
     {
         var customRichTextDto = await FirmaPages.GetByFirmaPageTypeAsDetailAsync(DbContext, customRichTextTypeID);

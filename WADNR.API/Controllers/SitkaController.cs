@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
@@ -10,13 +10,11 @@ namespace WADNR.API.Controllers;
 public abstract class SitkaController<T>(
     WADNRDbContext dbContext,
     ILogger<T> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
     : ControllerBase
 {
     protected readonly WADNRDbContext DbContext = dbContext;
     protected readonly ILogger<T> Logger = logger;
-    protected readonly KeystoneService KeystoneService = keystoneService;
     protected readonly WADNRConfiguration Configuration = configuration.Value;
     protected PersonDetail CallingUser => UserContext.GetUserFromHttpContext(DbContext, HttpContext);
 

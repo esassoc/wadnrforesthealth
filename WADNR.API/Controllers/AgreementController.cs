@@ -15,9 +15,8 @@ namespace WADNR.API.Controllers;
 public class AgreementController(
     WADNRDbContext dbContext,
     ILogger<AgreementController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<AgreementController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<AgreementController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AgreementGridRow>>> List()

@@ -15,9 +15,8 @@ namespace WADNR.API.Controllers;
 public class FundSourceAllocationController(
     WADNRDbContext dbContext,
     ILogger<FundSourceAllocationController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<FundSourceAllocationController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<FundSourceAllocationController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<List<FundSourceAllocationGridRow>>> List()

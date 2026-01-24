@@ -65,6 +65,10 @@ public partial class Person
 
     public bool? CreatedAsPartOfBulkImport { get; set; }
 
+    [StringLength(100)]
+    [Unicode(false)]
+    public string? GlobalID { get; set; }
+
     [ForeignKey("AddedByPersonID")]
     [InverseProperty("InverseAddedByPerson")]
     public virtual Person? AddedByPerson { get; set; }

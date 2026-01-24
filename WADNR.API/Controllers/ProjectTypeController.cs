@@ -19,9 +19,8 @@ namespace WADNR.API.Controllers;
 public class ProjectTypeController(
     WADNRDbContext dbContext,
     ILogger<ProjectTypeController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<ProjectTypeController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<ProjectTypeController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProjectTypeGridRow>>> List()

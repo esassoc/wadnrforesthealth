@@ -13,9 +13,8 @@ namespace WADNR.API.Controllers;
 public class TreatmentController(
     WADNRDbContext dbContext,
     ILogger<TreatmentController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<TreatmentController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<TreatmentController>(dbContext, logger, configuration)
 {
     [HttpGet("{treatmentID}")]
     public async Task<ActionResult<TreatmentDetail>> GetByID([FromRoute] int treatmentID)

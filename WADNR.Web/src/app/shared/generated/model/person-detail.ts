@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { RoleLookupItem } from './role-lookup-item';
 import { OrganizationLookupItem } from './organization-lookup-item';
 import { ProgramLookupItem } from './program-lookup-item';
 
@@ -32,7 +33,7 @@ export class PersonDetail {
     VendorName?: string | null;
     AddedByPersonID?: number | null;
     AddedByPersonName?: string | null;
-    BaseRoleName?: string | null;
+    BaseRole?: RoleLookupItem;
     SupplementalRoles?: string | null;
     PrimaryContactOrganizationCount?: number;
     ProjectCount?: number;
@@ -69,7 +70,7 @@ export interface PersonDetailForm {
     VendorName?: FormControl<string>;
     AddedByPersonID?: FormControl<number>;
     AddedByPersonName?: FormControl<string>;
-    BaseRoleName?: FormControl<string>;
+    BaseRole?: FormControl<RoleLookupItem>;
     SupplementalRoles?: FormControl<string>;
     PrimaryContactOrganizationCount?: FormControl<number>;
     ProjectCount?: FormControl<number>;
@@ -274,7 +275,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static BaseRoleName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static BaseRole = (value: FormControlState<RoleLookupItem> | RoleLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<RoleLookupItem>(
         value,
         formControlOptions ?? 
         {

@@ -16,12 +16,12 @@ using NetTopologySuite.IO.Converters;
 using SendGrid;
 using Serilog;
 using System;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using Hangfire;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Hangfire.SqlServer;
 using WADNR.API.Hangfire;
 using WADNR.API.Services.Middleware;
@@ -66,20 +66,15 @@ namespace WADNR.API
 
             services.AddSitkaCaptureService(configuration.SitkaCaptureServiceUrl);
 
-            services.AddAuthentication()
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters.ValidateAudience = false;
-                    options.Authority = configuration.KeystoneOpenIDUrl;
-                    options.RequireHttpsMetadata = false;
-                    options.TokenHandlers.Clear();
-                    options.TokenHandlers.Add(new JwtSecurityTokenHandler
-                    {
-                        MapInboundClaims = false
-                    });
-                    options.TokenValidationParameters.NameClaimType = "name";
-                    options.TokenValidationParameters.RoleClaimType = "role";
-                });
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = "https://wadnr.us.auth0.com/";
+                options.Audience = "WADNRAPI";
+            });
 
             services.AddHttpClient("CorralClient")
                 .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
@@ -95,7 +90,6 @@ namespace WADNR.API
                     x.UseNetTopologySuite();
                 });
             });
-            services.AddTransient(s => new KeystoneService(s.GetService<IHttpContextAccessor>(), configuration.KeystoneOpenIDUrl));
 
             services.AddSingleton(Configuration);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -138,6 +132,7 @@ namespace WADNR.API
             services.AddSwaggerGen(options =>
             {
                 options.DocumentFilter<UseMethodNameAsOperationIdFilter>();
+                options.OperationFilter<AnonymousOperationFilter>();
             });
             #endregion
 

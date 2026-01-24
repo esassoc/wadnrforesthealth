@@ -15,9 +15,8 @@ namespace WADNR.API.Controllers;
 public class PersonController(
     WADNRDbContext dbContext,
     ILogger<PersonController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<PersonController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<PersonController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PersonGridRow>>> List()

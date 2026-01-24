@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -15,12 +16,12 @@ namespace WADNR.API.Controllers;
 public class FieldDefinitionController(
     WADNRDbContext dbContext,
     ILogger<FieldDefinitionController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<FieldDefinitionController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<FieldDefinitionController>(dbContext, logger, configuration)
 {
     [HttpGet]
-    public async Task<ActionResult<List<FieldDefinitionDatum>>> List()
+    [AllowAnonymous]
+    public async Task<ActionResult<List<FieldDefinitionDatumDetail>>> List()
     {
         var entities = await FieldDefinitionData.ListAsDetailAsync(DbContext);
         return Ok(entities);
@@ -28,6 +29,7 @@ public class FieldDefinitionController(
 
 
     [HttpGet("{fieldDefinitionID}")]
+    [AllowAnonymous]
     //MP 1/2/26 This doesn't work here because FieldDefinitionID is not the PK for FieldDefinitionDatum
     //[EntityNotFound(typeof(FieldDefinitionDatum), "fieldDefinitionID")]
     public async Task<ActionResult<FieldDefinitionDatumDetail>> Get([FromRoute] int fieldDefinitionID)

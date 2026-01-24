@@ -9,6 +9,8 @@ import { CustomPageService } from "src/app/shared/generated/api/custom-page.serv
 import { CustomPageMenuItem } from "src/app/shared/generated/model/custom-page-menu-item";
 import { forkJoin, Observable, of } from "rxjs";
 import { catchError, shareReplay } from "rxjs/operators";
+import { AuthenticationService } from "src/app/services/authentication.service";
+import { PersonDetail } from "src/app/shared/generated/model/person-detail";
 
 @Component({
     selector: "header-nav",
@@ -24,7 +26,18 @@ export class HeaderNavComponent implements OnInit {
         programInfo: Array<CustomPageMenuItem>;
     }>;
 
-    constructor(private customPageService: CustomPageService) {}
+    public currentUser$: Observable<PersonDetail | null>;
+
+    constructor(
+        private customPageService: CustomPageService,
+        private authenticationService: AuthenticationService
+    ) {
+        this.currentUser$ = this.authenticationService.currentUserSetObservable;
+    }
+
+    public isAuthenticated(): boolean {
+        return this.authenticationService.isAuthenticated();
+    }
 
     ngOnInit() {
         // Local helper because it's only used to initialize `navigationMenus$` once.
@@ -53,5 +66,13 @@ export class HeaderNavComponent implements OnInit {
             return ["/"];
         }
         return ["/", ...trimmed.split("/")];
+    }
+
+    public login(): void {
+        this.authenticationService.login();
+    }
+
+    public logout(): void {
+        this.authenticationService.logout();
     }
 }

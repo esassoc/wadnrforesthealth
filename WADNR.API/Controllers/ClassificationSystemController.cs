@@ -15,9 +15,8 @@ namespace WADNR.API.Controllers;
 public class ClassificationSystemController(
     WADNRDbContext dbContext,
     ILogger<ClassificationSystemController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<ClassificationSystemController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<ClassificationSystemController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<List<ClassificationSystemGridRow>>> List()

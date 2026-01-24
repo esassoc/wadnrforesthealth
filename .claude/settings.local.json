@@ -3,7 +3,20 @@
     "allow": [
       "Bash(find:*)",
       "Bash(ls:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(if not exist \"C:\\\\git\\\\sitkatech\\\\wadnrforesthealth\\\\WADNR.Models\\\\DataTransferObjects\\\\Invoice\" mkdir \"C:\\\\git\\\\sitkatech\\\\wadnrforesthealth\\\\WADNR.Models\\\\DataTransferObjects\\\\Invoice\")",
+      "Bash(powershell -Command \"New-Item -ItemType Directory -Force -Path ''C:\\\\git\\\\sitkatech\\\\wadnrforesthealth\\\\WADNR.Models\\\\DataTransferObjects\\\\Invoice''\")",
+      "Bash(findstr:*)",
+      "Bash(powershell:*)",
+      "Bash(npx eslint:*)",
+      "Bash(grep:*)",
+      "Bash(done)",
+      "Bash(npm install:*)",
+      "Bash(dotnet list:*)",
+      "Bash(dir:*)",
+      "Bash(Sort-Object)",
+      "Bash(Select-Object -First 20 \")",
+      "Bash(npm run gen-auth0-allowedlist:*)"
     ]
   }
 }

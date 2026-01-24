@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -8,7 +7,6 @@ using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
-using Microsoft.EntityFrameworkCore;
 
 namespace WADNR.API.Controllers;
 
@@ -17,9 +15,8 @@ namespace WADNR.API.Controllers;
 public class CountyController(
     WADNRDbContext dbContext,
     ILogger<CountyController> logger,
-    KeystoneService keystoneService,
     IOptions<WADNRConfiguration> configuration)
-    : SitkaController<CountyController>(dbContext, logger, keystoneService, configuration)
+    : SitkaController<CountyController>(dbContext, logger, configuration)
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CountyGridRow>>> List()

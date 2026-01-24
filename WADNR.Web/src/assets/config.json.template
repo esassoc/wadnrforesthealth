@@ -4,22 +4,16 @@
     "dev": [TODO],
     "mainAppApiUrl": [TODO],
     "createAccountRedirectUrl": [TODO],
-  
+
     "geoserverMapServiceUrl": [TODO],
-    
+
     "mainSiteUrl": [TODO],
     "pre2007ProjectCount": [TODO],
-  
-    "keystoneAuthConfiguration": {
+
+    "auth0": {
+      "domain": "wadnr.us.auth0.com",
       "clientId": [TODO],
-      "issuer": [TODO],
-      "responseType": "code",
-      "disablePKCE": false,
-      "redirectUriRelative": [TODO],
-      "scope": [TODO],
-      "sessionChecksEnabled": [TODO],
-      "logoutUrl": [TODO],
-      "postLogoutRedirectUri": [TODO],
-      "waitForTokenInMsec": [TODO]
+      "redirectUri": [TODO],
+      "audience": "WADNRAPI"
     }
   }
