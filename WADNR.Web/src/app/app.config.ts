@@ -2,7 +2,7 @@ import { ApplicationConfig, ErrorHandler, importProvidersFrom } from "@angular/c
 import { RouterModule, TitleStrategy, provideRouter, withComponentInputBinding } from "@angular/router";
 
 import { routes } from "./app.routes";
-import { DecimalPipe, CurrencyPipe, DatePipe } from "@angular/common";
+import { DecimalPipe, CurrencyPipe, DatePipe, PercentPipe } from "@angular/common";
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptorsFromDi } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 import { HttpErrorInterceptor } from "./shared/interceptors/httpErrorInterceptor";
@@ -63,6 +63,7 @@ export const appConfig: ApplicationConfig = {
         },
         DecimalPipe,
         CurrencyPipe,
+        PercentPipe,
         DatePipe,
         PhonePipe,
         GroupByPipe,
