@@ -205,7 +205,7 @@ namespace WADNR.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHealthChecks("/healthz");
+                endpoints.MapHealthChecks("/healthz").AllowAnonymous();
             });
 
             applicationLifetime.ApplicationStopping.Register(OnShutdown);
