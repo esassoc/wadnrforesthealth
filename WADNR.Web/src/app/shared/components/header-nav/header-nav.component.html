@@ -119,9 +119,11 @@
                         <li class="divider"></li>
                         <li><a routerLink="/priority-landscapes" class="dropdown-item">Priority Landscapes</a></li>
                         <li><a routerLink="/dnr-upland-regions" class="dropdown-item">DNR Upland Regions</a></li>
+                        <li><a routerLink="/focus-areas" class="dropdown-item">Focus Areas</a></li>
                         <li><a routerLink="/counties" class="dropdown-item">Counties</a></li>
                         <li class="divider"></li>
                         <li><a routerLink="/organizations" class="dropdown-item">Contributing Organizations</a></li>
+                        <li><a routerLink="/vendors" class="dropdown-item">Vendors</a></li>
                         <li class="divider"></li>
                         @for (menuItem of navigationMenus.programInfo; track menuItem.CustomPageID ?? menuItem.CustomPageVanityUrl) {
                         <li>
@@ -130,6 +132,38 @@
                         }
                     </ul>
                 </li>
+                @if (currentUser$ | async; as currentUserForManage) {
+                    @if (canViewManageMenu(currentUserForManage)) {
+                    <li class="nav-item dropdown">
+                        <a href="javascript:void(0);" [dropdownToggle]="manageMenu" class="nav-link dropdown-toggle">Manage <icon icon="AngleDown"></icon></a>
+                        <ul #manageMenu class="dropdown-menu">
+                            <!-- Group 1: Classification -->
+                            <li><a routerLink="/project-types" class="dropdown-item">Project Types</a></li>
+                            <li><a routerLink="/classification-systems" class="dropdown-item">Classification Systems</a></li>
+                            <li class="divider"></li>
+                            <!-- Group 2: System Config -->
+                            <li><a routerLink="/people" class="dropdown-item">Users and Contacts</a></li>
+                            <li><a routerLink="/roles" class="dropdown-item">Roles</a></li>
+                            <li class="divider"></li>
+                            <!-- Group 3: Content Editing -->
+                            <li><a routerLink="/labels-and-definitions" class="dropdown-item">Custom Labels &amp; Definitions</a></li>
+                            <li class="divider"></li>
+                            <!-- Group 4: Supporting Entities -->
+                            <li><a routerLink="/focus-areas" class="dropdown-item">Focus Areas</a></li>
+                            <li><a routerLink="/program-indices" class="dropdown-item">Program Indices</a></li>
+                            <li><a routerLink="/project-codes" class="dropdown-item">Project Codes</a></li>
+                            <li><a routerLink="/fund-source-allocations" class="dropdown-item">Fund Source Allocations</a></li>
+                            <li><a routerLink="/invoices" class="dropdown-item">Invoices</a></li>
+                            <li><a routerLink="/vendors" class="dropdown-item">Vendors</a></li>
+                            @if (isAdmin(currentUserForManage)) {
+                            <li class="divider"></li>
+                            <!-- Group 5: Admin Only -->
+                            <li><a href="/hangfire" class="dropdown-item" target="_blank">Hangfire <icon icon="ExternalLink"></icon></a></li>
+                            }
+                        </ul>
+                    </li>
+                    }
+                }
                 <!-- first right-aligned item -->
                 @if (currentUser$ | async; as currentUser) {
                     <li class="nav-item dropdown secondary-nav__right-start" [dropdownToggle]="userMenu">

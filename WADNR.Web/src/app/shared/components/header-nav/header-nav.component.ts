@@ -11,6 +11,7 @@ import { forkJoin, Observable, of } from "rxjs";
 import { catchError, shareReplay } from "rxjs/operators";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { PersonDetail } from "src/app/shared/generated/model/person-detail";
+import { RoleEnum } from "src/app/shared/generated/enum/role-enum";
 
 @Component({
     selector: "header-nav",
@@ -74,5 +75,24 @@ export class HeaderNavComponent implements OnInit {
 
     public logout(): void {
         this.authenticationService.logout();
+    }
+
+    public canViewManageMenu(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        const roleID = user.BaseRole?.RoleID;
+        // Admins and users with content management roles can see the Manage menu
+        return (
+            roleID === RoleEnum.Admin ||
+            roleID === RoleEnum.EsaAdmin ||
+            roleID === RoleEnum.CanManagePageContent ||
+            roleID === RoleEnum.CanAddEditUsersContactsOrganizations ||
+            roleID === RoleEnum.ProjectSteward
+        );
+    }
+
+    public isAdmin(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        const roleID = user.BaseRole?.RoleID;
+        return roleID === RoleEnum.Admin || roleID === RoleEnum.EsaAdmin;
     }
 }
