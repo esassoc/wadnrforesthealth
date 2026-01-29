@@ -82,12 +82,6 @@ namespace WADNR.API
                     .RequireAuthenticatedUser()
                     .Build());
 
-            services.AddHttpClient("CorralClient")
-                .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
-                {
-                    ServerCertificateCustomValidationCallback = _environment.IsDevelopment() ? HttpClientHandler.DangerousAcceptAnyServerCertificateValidator : null
-                });
-
             services.AddDbContext<WADNRDbContext>(c =>
             {
                 c.UseSqlServer(configuration.DatabaseConnectionString, x =>

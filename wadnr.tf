@@ -552,7 +552,7 @@ resource "datadog_synthetics_test" "wadnr_test" {
   subtype = "http"
   request_definition {
     method = "GET"
-    url    = "https://${var.domainWeb}/healthz"
+    url    = "https://${var.domainWeb}"
   }
   request_headers = {
     Content-Type   = "application/json"
