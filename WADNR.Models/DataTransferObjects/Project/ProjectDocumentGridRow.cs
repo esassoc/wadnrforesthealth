@@ -8,4 +8,6 @@ public class ProjectDocumentGridRow
     public string? DocumentTypeName { get; set; }
     public int FileResourceID { get; set; }
     public string FileResourceGuid { get; set; } = string.Empty;
+    public DateTime UploadDate { get; set; }
+    public string FileExtension { get; set; } = string.Empty;
 }

@@ -1,0 +1,16 @@
+@use "/src/scss/abstracts" as *;
+
+// Workflow outlet styles
+:host {
+    display: block;
+}
+
+.dashboard.workflow {
+    .sidebar {
+        background: #fff;
+    }
+
+    .sidebar-body {
+        padding-top: 1rem;
+    }
+}

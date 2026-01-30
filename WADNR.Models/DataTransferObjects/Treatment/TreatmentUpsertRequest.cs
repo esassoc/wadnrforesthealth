@@ -7,7 +7,8 @@ public class TreatmentUpsertRequest
     [Required]
     public int ProjectID { get; set; }
 
-    public int? ProjectLocationID { get; set; }
+    [Required]
+    public int ProjectLocationID { get; set; }
 
     [Required]
     public int TreatmentTypeID { get; set; }

@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
+import { RouterLink } from "@angular/router";
 import { ColDef } from "ag-grid-community";
 import { Observable } from "rxjs";
 
@@ -13,7 +14,7 @@ import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row"
 
 @Component({
     selector: "projects",
-    imports: [PageHeaderComponent, AlertDisplayComponent, ProjectGridComponent, AsyncPipe],
+    imports: [PageHeaderComponent, AlertDisplayComponent, ProjectGridComponent, AsyncPipe, RouterLink],
     templateUrl: "./projects.component.html",
 })
 export class ProjectsComponent {

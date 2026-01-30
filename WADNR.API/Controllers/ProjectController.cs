@@ -11,6 +11,7 @@ using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
+using WADNR.EFModels.Workflows;
 using WADNR.Models.DataTransferObjects;
 
 namespace WADNR.API.Controllers;
@@ -163,6 +164,15 @@ public class ProjectController(
         return Ok(treatments);
     }
 
+    [HttpGet("{projectID}/treatment-areas")]
+    [AllowAnonymous]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<IEnumerable<TreatmentAreaLookupItem>>> ListTreatmentAreas([FromRoute] int projectID)
+    {
+        var treatmentAreas = await Treatments.ListTreatmentAreasForProjectAsync(DbContext, projectID);
+        return Ok(treatmentAreas);
+    }
+
     [HttpGet("{projectID}/interaction-events")]
     [AllowAnonymous]
     [EntityNotFound(typeof(Project), "projectID")]
@@ -269,4 +279,390 @@ public class ProjectController(
         var logs = await AuditLogs.ListForProjectAsGridRowAsync(DbContext, projectID);
         return Ok(logs);
     }
+
+    #region Workflow Progress
+
+    [HttpGet("{projectID}/workflow/progress")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<ProjectCreateWorkflowProgressDto>> GetWorkflowProgress([FromRoute] int projectID)
+    {
+        var progress = await ProjectCreateWorkflowProgress.GetProgressAsync(DbContext, projectID);
+        if (progress == null)
+        {
+            return NotFound();
+        }
+        return Ok(progress);
+    }
+
+    #endregion
+
+    #region Workflow Steps - Basics
+
+    [HttpGet("{projectID}/workflow/steps/basics")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<ProjectBasicsStepDto>> GetBasicsStep([FromRoute] int projectID)
+    {
+        var dto = await ProjectWorkflowSteps.GetBasicsStepAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/workflow/steps/basics")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<ProjectBasicsStepDto>> SaveBasicsStep([FromRoute] int projectID, [FromBody] ProjectBasicsStepRequestDto request)
+    {
+        var dto = await ProjectWorkflowSteps.SaveBasicsStepAsync(DbContext, projectID, request, CallingUser.PersonID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPost("workflow/steps/basics")]
+    [ProjectEditFeature]
+    public async Task<ActionResult<ProjectBasicsStepDto>> CreateProjectFromBasicsStep([FromBody] ProjectBasicsStepRequestDto request)
+    {
+        var dto = await ProjectWorkflowSteps.CreateProjectFromBasicsStepAsync(DbContext, request, CallingUser.PersonID);
+        return CreatedAtAction(nameof(GetBasicsStep), new { projectID = dto.ProjectID }, dto);
+    }
+
+    #endregion
+
+    #region Workflow Steps - Location Simple
+
+    [HttpGet("{projectID}/workflow/steps/location-simple")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<LocationSimpleStepDto>> GetLocationSimpleStep([FromRoute] int projectID)
+    {
+        var dto = await ProjectWorkflowSteps.GetLocationSimpleStepAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/workflow/steps/location-simple")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<LocationSimpleStepDto>> SaveLocationSimpleStep([FromRoute] int projectID, [FromBody] LocationSimpleStepRequestDto request)
+    {
+        var dto = await ProjectWorkflowSteps.SaveLocationSimpleStepAsync(DbContext, projectID, request);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    #endregion
+
+    #region Workflow Steps - Location Detailed
+
+    [HttpGet("{projectID}/workflow/steps/location-detailed")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<LocationDetailedStepDto>> GetLocationDetailedStep([FromRoute] int projectID)
+    {
+        var dto = await ProjectWorkflowSteps.GetLocationDetailedStepAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/workflow/steps/location-detailed")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<LocationDetailedStepDto>> SaveLocationDetailedStep([FromRoute] int projectID, [FromBody] LocationDetailedStepRequestDto request)
+    {
+        var dto = await ProjectWorkflowSteps.SaveLocationDetailedStepAsync(DbContext, projectID, request);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    #endregion
+
+    #region Workflow Steps - Geographic Assignments
+
+    [HttpGet("{projectID}/workflow/steps/priority-landscapes")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<GeographicAssignmentStepDto>> GetPriorityLandscapesStep([FromRoute] int projectID)
+    {
+        var dto = await ProjectWorkflowSteps.GetPriorityLandscapesStepAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/workflow/steps/priority-landscapes")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<GeographicAssignmentStepDto>> SavePriorityLandscapesStep([FromRoute] int projectID, [FromBody] GeographicOverrideRequestDto request)
+    {
+        var dto = await ProjectWorkflowSteps.SavePriorityLandscapesStepAsync(DbContext, projectID, request);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpGet("{projectID}/workflow/steps/dnr-upland-regions")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<GeographicAssignmentStepDto>> GetDnrUplandRegionsStep([FromRoute] int projectID)
+    {
+        var dto = await ProjectWorkflowSteps.GetDnrUplandRegionsStepAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/workflow/steps/dnr-upland-regions")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<GeographicAssignmentStepDto>> SaveDnrUplandRegionsStep([FromRoute] int projectID, [FromBody] GeographicOverrideRequestDto request)
+    {
+        var dto = await ProjectWorkflowSteps.SaveDnrUplandRegionsStepAsync(DbContext, projectID, request);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpGet("{projectID}/workflow/steps/counties")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<GeographicAssignmentStepDto>> GetCountiesStep([FromRoute] int projectID)
+    {
+        var dto = await ProjectWorkflowSteps.GetCountiesStepAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/workflow/steps/counties")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<GeographicAssignmentStepDto>> SaveCountiesStep([FromRoute] int projectID, [FromBody] GeographicOverrideRequestDto request)
+    {
+        var dto = await ProjectWorkflowSteps.SaveCountiesStepAsync(DbContext, projectID, request);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    #endregion
+
+    #region Workflow Steps - Organizations
+
+    [HttpGet("{projectID}/workflow/steps/organizations")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<ProjectOrganizationsStepDto>> GetOrganizationsStep([FromRoute] int projectID)
+    {
+        var dto = await ProjectWorkflowSteps.GetOrganizationsStepAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/workflow/steps/organizations")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<ProjectOrganizationsStepDto>> SaveOrganizationsStep([FromRoute] int projectID, [FromBody] ProjectOrganizationsStepRequestDto request)
+    {
+        var dto = await ProjectWorkflowSteps.SaveOrganizationsStepAsync(DbContext, projectID, request);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    #endregion
+
+    #region Workflow Steps - Contacts
+
+    [HttpGet("{projectID}/workflow/steps/contacts")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<ProjectContactsStepDto>> GetContactsStep([FromRoute] int projectID)
+    {
+        var dto = await ProjectWorkflowSteps.GetContactsStepAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/workflow/steps/contacts")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<ProjectContactsStepDto>> SaveContactsStep([FromRoute] int projectID, [FromBody] ProjectContactsStepRequestDto request)
+    {
+        var dto = await ProjectWorkflowSteps.SaveContactsStepAsync(DbContext, projectID, request);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    #endregion
+
+    #region Workflow Steps - Expected Funding
+
+    [HttpGet("{projectID}/workflow/steps/expected-funding")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<ExpectedFundingStepDto>> GetExpectedFundingStep([FromRoute] int projectID)
+    {
+        var dto = await ProjectWorkflowSteps.GetExpectedFundingStepAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/workflow/steps/expected-funding")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<ExpectedFundingStepDto>> SaveExpectedFundingStep([FromRoute] int projectID, [FromBody] ExpectedFundingStepRequestDto request)
+    {
+        var dto = await ProjectWorkflowSteps.SaveExpectedFundingStepAsync(DbContext, projectID, request);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    #endregion
+
+    #region Workflow Steps - Classifications
+
+    [HttpGet("{projectID}/workflow/steps/classifications")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<ProjectClassificationsStepDto>> GetClassificationsStep([FromRoute] int projectID)
+    {
+        var dto = await ProjectWorkflowSteps.GetClassificationsStepAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/workflow/steps/classifications")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<ProjectClassificationsStepDto>> SaveClassificationsStep([FromRoute] int projectID, [FromBody] ProjectClassificationsStepRequestDto request)
+    {
+        var dto = await ProjectWorkflowSteps.SaveClassificationsStepAsync(DbContext, projectID, request);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    #endregion
+
+    #region Workflow State Transitions
+
+    [HttpPost("{projectID}/workflow/submit")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<WorkflowStateTransitionResponseDto>> SubmitForApproval([FromRoute] int projectID, [FromBody] WorkflowStateTransitionRequestDto? request)
+    {
+        var response = await ProjectWorkflowSteps.SubmitForApprovalAsync(DbContext, projectID, CallingUser.PersonID, request?.Comment);
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+        return Ok(response);
+    }
+
+    [HttpPost("{projectID}/workflow/approve")]
+    [ProjectApproveFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<WorkflowStateTransitionResponseDto>> Approve([FromRoute] int projectID, [FromBody] WorkflowStateTransitionRequestDto? request)
+    {
+        var response = await ProjectWorkflowSteps.ApproveAsync(DbContext, projectID, CallingUser.PersonID, request?.Comment);
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+        return Ok(response);
+    }
+
+    [HttpPost("{projectID}/workflow/return")]
+    [ProjectApproveFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<WorkflowStateTransitionResponseDto>> Return([FromRoute] int projectID, [FromBody] WorkflowStateTransitionRequestDto? request)
+    {
+        var response = await ProjectWorkflowSteps.ReturnAsync(DbContext, projectID, CallingUser.PersonID, request?.Comment);
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+        return Ok(response);
+    }
+
+    [HttpPost("{projectID}/workflow/reject")]
+    [ProjectApproveFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<WorkflowStateTransitionResponseDto>> Reject([FromRoute] int projectID, [FromBody] WorkflowStateTransitionRequestDto? request)
+    {
+        var response = await ProjectWorkflowSteps.RejectAsync(DbContext, projectID, CallingUser.PersonID, request?.Comment);
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+        return Ok(response);
+    }
+
+    [HttpPost("{projectID}/workflow/withdraw")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<WorkflowStateTransitionResponseDto>> Withdraw([FromRoute] int projectID, [FromBody] WorkflowStateTransitionRequestDto? request)
+    {
+        var response = await ProjectWorkflowSteps.WithdrawAsync(DbContext, projectID, CallingUser.PersonID, request?.Comment);
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+        return Ok(response);
+    }
+
+    #endregion
 }

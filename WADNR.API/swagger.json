@@ -3159,6 +3159,166 @@
         "x-anonymous": true
       }
     },
+    "/lookups/person-relationship-types": {
+      "get": {
+        "tags": [
+          "Lookup"
+        ],
+        "operationId": "ListPersonRelationshipTypes_Lookup",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonRelationshipTypeLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonRelationshipTypeLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonRelationshipTypeLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/lookups/organization-relationship-types": {
+      "get": {
+        "tags": [
+          "Lookup"
+        ],
+        "operationId": "ListOrganizationRelationshipTypes_Lookup",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationRelationshipTypeLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationRelationshipTypeLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationRelationshipTypeLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/lookups/funding-sources": {
+      "get": {
+        "tags": [
+          "Lookup"
+        ],
+        "operationId": "ListFundingSources_Lookup",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundingSourceOption"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundingSourceOption"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundingSourceOption"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/lookups/classification-systems-with-classifications": {
+      "get": {
+        "tags": [
+          "Lookup"
+        ],
+        "operationId": "ListClassificationSystemsWithClassifications_Lookup",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationSystemWithClassifications"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationSystemWithClassifications"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationSystemWithClassifications"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
     "/organizations": {
       "get": {
         "tags": [
@@ -3244,6 +3404,46 @@
             }
           }
         }
+      }
+    },
+    "/organizations/lookup": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "ListLookup_Organization",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
       }
     },
     "/organizations/{organizationID}": {
@@ -5434,6 +5634,57 @@
         "x-anonymous": true
       }
     },
+    "/projects/{projectID}/treatment-areas": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListTreatmentAreas_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TreatmentAreaLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TreatmentAreaLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TreatmentAreaLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
     "/projects/{projectID}/interaction-events": {
       "get": {
         "tags": [
@@ -5840,6 +6091,1386 @@
           }
         },
         "x-anonymous": true
+      }
+    },
+    "/projects/{projectID}/workflow/progress": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetWorkflowProgress_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectCreateWorkflowProgressDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectCreateWorkflowProgressDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectCreateWorkflowProgressDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/workflow/steps/basics": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetBasicsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveBasicsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectBasicsStepRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectBasicsStepRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectBasicsStepRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/workflow/steps/basics": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "CreateProjectFromBasicsStep_Project",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectBasicsStepRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectBasicsStepRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectBasicsStepRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/workflow/steps/location-simple": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetLocationSimpleStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationSimpleStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationSimpleStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationSimpleStepDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveLocationSimpleStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationSimpleStepRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationSimpleStepRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationSimpleStepRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationSimpleStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationSimpleStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationSimpleStepDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/workflow/steps/location-detailed": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetLocationDetailedStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationDetailedStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationDetailedStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationDetailedStepDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveLocationDetailedStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationDetailedStepRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationDetailedStepRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationDetailedStepRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationDetailedStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationDetailedStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationDetailedStepDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/workflow/steps/priority-landscapes": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetPriorityLandscapesStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SavePriorityLandscapesStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/workflow/steps/dnr-upland-regions": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetDnrUplandRegionsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveDnrUplandRegionsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/workflow/steps/counties": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetCountiesStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveCountiesStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/workflow/steps/organizations": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetOrganizationsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectOrganizationsStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectOrganizationsStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectOrganizationsStepDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveOrganizationsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectOrganizationsStepRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectOrganizationsStepRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectOrganizationsStepRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectOrganizationsStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectOrganizationsStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectOrganizationsStepDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/workflow/steps/contacts": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetContactsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectContactsStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectContactsStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectContactsStepDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveContactsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectContactsStepRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectContactsStepRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectContactsStepRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectContactsStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectContactsStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectContactsStepDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/workflow/steps/expected-funding": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetExpectedFundingStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpectedFundingStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpectedFundingStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpectedFundingStepDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveExpectedFundingStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpectedFundingStepRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpectedFundingStepRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpectedFundingStepRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpectedFundingStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpectedFundingStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpectedFundingStepDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/workflow/steps/classifications": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetClassificationsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectClassificationsStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectClassificationsStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectClassificationsStepDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveClassificationsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectClassificationsStepRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectClassificationsStepRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectClassificationsStepRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectClassificationsStepDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectClassificationsStepDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectClassificationsStepDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/workflow/submit": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SubmitForApproval_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/workflow/approve": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "Approve_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/workflow/return": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "Return_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/workflow/reject": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "Reject_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/workflow/withdraw": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "Withdraw_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/project-codes": {
@@ -6251,6 +7882,445 @@
         "x-anonymous": true
       }
     },
+    "/project-images/timings": {
+      "get": {
+        "tags": [
+          "ProjectImage"
+        ],
+        "operationId": "ListTimings_ProjectImage",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectImageTimingLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectImageTimingLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectImageTimingLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/project-images/{projectImageID}": {
+      "get": {
+        "tags": [
+          "ProjectImage"
+        ],
+        "operationId": "GetByID_ProjectImage",
+        "parameters": [
+          {
+            "name": "projectImageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectImageDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectImageDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectImageDetail"
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      },
+      "put": {
+        "tags": [
+          "ProjectImage"
+        ],
+        "operationId": "Update_ProjectImage",
+        "parameters": [
+          {
+            "name": "projectImageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectImageUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectImageUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectImageUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectImageDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectImageDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectImageDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ProjectImage"
+        ],
+        "operationId": "Delete_ProjectImage",
+        "parameters": [
+          {
+            "name": "projectImageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/project-images": {
+      "post": {
+        "tags": [
+          "ProjectImage"
+        ],
+        "operationId": "Create_ProjectImage",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "projectID": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "caption": {
+                    "type": "string"
+                  },
+                  "credit": {
+                    "type": "string"
+                  },
+                  "projectImageTimingID": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "excludeFromFactSheet": {
+                    "type": "boolean"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "projectID": {
+                  "style": "form"
+                },
+                "caption": {
+                  "style": "form"
+                },
+                "credit": {
+                  "style": "form"
+                },
+                "projectImageTimingID": {
+                  "style": "form"
+                },
+                "excludeFromFactSheet": {
+                  "style": "form"
+                },
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectImageDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectImageDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectImageDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-images/{projectImageID}/set-key-photo": {
+      "post": {
+        "tags": [
+          "ProjectImage"
+        ],
+        "operationId": "SetKeyPhoto_ProjectImage",
+        "parameters": [
+          {
+            "name": "projectImageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/project-notes/{projectNoteID}": {
+      "get": {
+        "tags": [
+          "ProjectNote"
+        ],
+        "operationId": "GetByID_ProjectNote",
+        "parameters": [
+          {
+            "name": "projectNoteID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectNoteDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectNoteDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectNoteDetail"
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      },
+      "put": {
+        "tags": [
+          "ProjectNote"
+        ],
+        "operationId": "Update_ProjectNote",
+        "parameters": [
+          {
+            "name": "projectNoteID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectNoteUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectNoteUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectNoteUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectNoteDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectNoteDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectNoteDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ProjectNote"
+        ],
+        "operationId": "Delete_ProjectNote",
+        "parameters": [
+          {
+            "name": "projectNoteID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/project-notes": {
+      "post": {
+        "tags": [
+          "ProjectNote"
+        ],
+        "operationId": "Create_ProjectNote",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectNoteUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectNoteUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectNoteUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectNoteDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectNoteDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectNoteDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/project-types": {
       "get": {
         "tags": [
@@ -6336,6 +8406,46 @@
             }
           }
         }
+      }
+    },
+    "/project-types/lookup": {
+      "get": {
+        "tags": [
+          "ProjectType"
+        ],
+        "operationId": "ListAsLookup_ProjectType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectTypeLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectTypeLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectTypeLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
       }
     },
     "/project-types/taxonomy": {
@@ -8612,6 +10722,29 @@
         },
         "additionalProperties": false
       },
+      "ClassificationOption": {
+        "type": "object",
+        "properties": {
+          "ClassificationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ClassificationDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "SortOrder": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ClassificationSystemDetail": {
         "type": "object",
         "properties": {
@@ -8665,6 +10798,27 @@
           },
           "ClassificationSystemName": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ClassificationSystemWithClassifications": {
+        "type": "object",
+        "properties": {
+          "ClassificationSystemID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ClassificationSystemName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Classifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClassificationOption"
+            },
             "nullable": true
           }
         },
@@ -9136,6 +11290,70 @@
           },
           "Centre": {
             "$ref": "#/components/schemas/Coordinate"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExpectedFundingStepDto": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectFundingSourceNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "SelectedFundingSourceIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "AllocationRequests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FundSourceAllocationRequestStepItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExpectedFundingStepRequestDto": {
+        "type": "object",
+        "properties": {
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectFundingSourceNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundingSourceIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "AllocationRequests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FundSourceAllocationRequestRequestItem"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -9718,6 +11936,10 @@
           "FundSourceAllocationName": {
             "type": "string",
             "nullable": true
+          },
+          "FundSourceName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -9747,6 +11969,64 @@
           "ProjectFundSourceAllocationRequestID": {
             "type": "integer",
             "format": "int32"
+          },
+          "FundSourceAllocationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceAllocationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "MatchAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "PayAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceAllocationRequestRequestItem": {
+        "type": "object",
+        "properties": {
+          "ProjectFundSourceAllocationRequestID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FundSourceAllocationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TotalAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceAllocationRequestStepItem": {
+        "type": "object",
+        "properties": {
+          "ProjectFundSourceAllocationRequestID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           },
           "FundSourceAllocationID": {
             "type": "integer",
@@ -10203,6 +12483,20 @@
         },
         "additionalProperties": false
       },
+      "FundingSourceOption": {
+        "type": "object",
+        "properties": {
+          "FundingSourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundingSourceName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "GdbCrosswalkItem": {
         "type": "object",
         "properties": {
@@ -10329,6 +12623,67 @@
             "items": {
               "$ref": "#/components/schemas/IFeature"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GeographicAssignmentStepDto": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "SelectedIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "NoSelectionExplanation": {
+            "type": "string",
+            "nullable": true
+          },
+          "AvailableOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeographicLookupItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GeographicLookupItem": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GeographicOverrideRequestDto": {
+        "type": "object",
+        "properties": {
+          "SelectedIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "NoSelectionExplanation": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -10851,6 +13206,120 @@
         },
         "additionalProperties": false
       },
+      "LocationDetailedItemRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectLocationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectLocationTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectLocationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "GeoJson": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LocationDetailedStepDto": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Locations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectLocationItem"
+            },
+            "nullable": true
+          },
+          "StagedLocations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectLocationStagingItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LocationDetailedStepRequestDto": {
+        "type": "object",
+        "properties": {
+          "Locations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationDetailedItemRequest"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LocationSimpleStepDto": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Latitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Longitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectLocationSimpleTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationNotes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LocationSimpleStepRequestDto": {
+        "type": "object",
+        "properties": {
+          "Latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "Longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "ProjectLocationSimpleTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationNotes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "NtsGeometryServices": {
         "type": "object",
         "properties": {
@@ -11098,6 +13567,34 @@
           "OrganizationName": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrganizationRelationshipTypeLookupItem": {
+        "type": "object",
+        "properties": {
+          "RelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RelationshipTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RelationshipTypeDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "CanOnlyBeRelatedOnceToAProject": {
+            "type": "boolean"
+          },
+          "IsPrimaryContact": {
+            "type": "boolean"
+          },
+          "SortOrder": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -11418,6 +13915,23 @@
           "Email": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonRelationshipTypeLookupItem": {
+        "type": "object",
+        "properties": {
+          "ProjectPersonRelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectPersonRelationshipTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsRequired": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -12047,6 +14561,131 @@
         },
         "additionalProperties": false
       },
+      "ProjectBasicsStepDto": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectStageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PlannedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "FocusAreaID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "LeadImplementerOrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PercentageMatch": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProgramIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectBasicsStepRequestDto": {
+        "type": "object",
+        "properties": {
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectStageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PlannedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "FocusAreaID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "LeadImplementerOrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PercentageMatch": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProgramIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectClassificationDetailGridRow": {
         "type": "object",
         "properties": {
@@ -12075,6 +14714,86 @@
           },
           "ProjectThemeNotes": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectClassificationRequestItem": {
+        "type": "object",
+        "properties": {
+          "ProjectClassificationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ClassificationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectClassificationNotes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectClassificationStepItem": {
+        "type": "object",
+        "properties": {
+          "ProjectClassificationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ClassificationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ClassificationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ClassificationSystemID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ClassificationSystemName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectClassificationNotes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectClassificationsStepDto": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Classifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectClassificationStepItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectClassificationsStepRequestDto": {
+        "type": "object",
+        "properties": {
+          "Classifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectClassificationRequestItem"
+            },
             "nullable": true
           }
         },
@@ -12172,6 +14891,82 @@
         },
         "additionalProperties": false
       },
+      "ProjectContactRequestItem": {
+        "type": "object",
+        "properties": {
+          "ProjectPersonID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectPersonRelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectContactStepItem": {
+        "type": "object",
+        "properties": {
+          "ProjectPersonID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PersonFullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectPersonRelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RelationshipTypeName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectContactsStepDto": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectContactStepItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectContactsStepRequestDto": {
+        "type": "object",
+        "properties": {
+          "Contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectContactRequestItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectCountyDetailGridRow": {
         "type": "object",
         "properties": {
@@ -12220,6 +15015,73 @@
           },
           "ProjectDescription": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectCreateWorkflowProgressDto": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectApprovalStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CanSubmit": {
+            "type": "boolean"
+          },
+          "Steps": {
+            "type": "object",
+            "properties": {
+              "Basics": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "LocationSimple": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "LocationDetailed": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "PriorityLandscapes": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "DnrUplandRegions": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "Counties": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "Treatments": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "Contacts": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "Organizations": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "ExpectedFunding": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "Classifications": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "Photos": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "DocumentsNotes": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              }
+            },
+            "additionalProperties": false,
             "nullable": true
           }
         },
@@ -12540,6 +15402,14 @@
           "FileResourceGuid": {
             "type": "string",
             "nullable": true
+          },
+          "UploadDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "FileExtension": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -12679,6 +15549,64 @@
         },
         "additionalProperties": false
       },
+      "ProjectImageDetail": {
+        "type": "object",
+        "properties": {
+          "ProjectImageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Caption": {
+            "type": "string",
+            "nullable": true
+          },
+          "Credit": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsKeyPhoto": {
+            "type": "boolean"
+          },
+          "ExcludeFromFactSheet": {
+            "type": "boolean"
+          },
+          "ProjectImageTimingID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectImageTimingDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreatedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "OriginalFilename": {
+            "type": "string",
+            "nullable": true
+          },
+          "ContentLength": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectImageGridRow": {
         "type": "object",
         "properties": {
@@ -12717,9 +15645,139 @@
             "format": "int32",
             "nullable": true
           },
+          "ProjectImageTimingDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
           "CreatedDate": {
             "type": "string",
             "format": "date-time"
+          },
+          "OriginalFilename": {
+            "type": "string",
+            "nullable": true
+          },
+          "ContentLength": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectImageTimingLookupItem": {
+        "type": "object",
+        "properties": {
+          "ProjectImageTimingID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectImageUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "Caption": {
+            "type": "string",
+            "nullable": true
+          },
+          "Credit": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectImageTimingID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ExcludeFromFactSheet": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectLocationItem": {
+        "type": "object",
+        "properties": {
+          "ProjectLocationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectLocationNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectLocationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "GeoJson": {
+            "type": "string",
+            "nullable": true
+          },
+          "AreaInAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectLocationStagingItem": {
+        "type": "object",
+        "properties": {
+          "ProjectLocationStagingID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectLocationNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectLocationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "GeoJson": {
+            "type": "string",
+            "nullable": true
+          },
+          "AreaInAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ToBeDeleted": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -12772,6 +15830,41 @@
         },
         "additionalProperties": false
       },
+      "ProjectNoteDetail": {
+        "type": "object",
+        "properties": {
+          "ProjectNoteID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Note": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "UpdatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "UpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectNoteGridRow": {
         "type": "object",
         "properties": {
@@ -12799,6 +15892,24 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectNoteUpsertRequest": {
+        "required": [
+          "Note"
+        ],
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Note": {
+            "maxLength": 8000,
+            "minLength": 1,
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -12914,6 +16025,85 @@
           },
           "IsPrimaryContact": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectOrganizationRequestItem": {
+        "type": "object",
+        "properties": {
+          "ProjectOrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectOrganizationStepItem": {
+        "type": "object",
+        "properties": {
+          "ProjectOrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RelationshipTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsPrimaryContact": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectOrganizationsStepDto": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Organizations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectOrganizationStepItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectOrganizationsStepRequestDto": {
+        "type": "object",
+        "properties": {
+          "Organizations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectOrganizationRequestItem"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -13827,6 +17017,20 @@
         },
         "additionalProperties": false
       },
+      "TreatmentAreaLookupItem": {
+        "type": "object",
+        "properties": {
+          "ProjectLocationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TreatmentDetail": {
         "type": "object",
         "properties": {
@@ -13993,6 +17197,7 @@
       "TreatmentUpsertRequest": {
         "required": [
           "ProjectID",
+          "ProjectLocationID",
           "TreatmentDetailedActivityTypeID",
           "TreatmentEndDate",
           "TreatmentFootprintAcres",
@@ -14007,8 +17212,7 @@
           },
           "ProjectLocationID": {
             "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "format": "int32"
           },
           "TreatmentTypeID": {
             "type": "integer",
@@ -14306,6 +17510,60 @@
           }
         },
         "additionalProperties": false
+      },
+      "WorkflowStateTransitionRequestDto": {
+        "type": "object",
+        "properties": {
+          "Comment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkflowStateTransitionResponseDto": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NewProjectApprovalStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NewProjectApprovalStatusName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TransitionDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Success": {
+            "type": "boolean"
+          },
+          "ErrorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkflowStepStatus": {
+        "type": "object",
+        "properties": {
+          "IsComplete": {
+            "type": "boolean"
+          },
+          "IsDisabled": {
+            "type": "boolean"
+          },
+          "IsRequired": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
       }
     }
   },
@@ -14353,6 +17611,9 @@
       "name": "Invoice"
     },
     {
+      "name": "Lookup"
+    },
+    {
       "name": "Organization"
     },
     {
@@ -14378,6 +17639,12 @@
     },
     {
       "name": "ProjectDocument"
+    },
+    {
+      "name": "ProjectImage"
+    },
+    {
+      "name": "ProjectNote"
     },
     {
       "name": "ProjectType"

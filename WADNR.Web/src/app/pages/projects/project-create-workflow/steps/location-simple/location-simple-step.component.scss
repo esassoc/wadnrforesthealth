@@ -1,0 +1,90 @@
+.map-container {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    z-index: 0;
+
+    wadnr-map {
+        display: block;
+        height: 100%;
+        width: 100%;
+    }
+
+    &.saving {
+        pointer-events: none;
+    }
+
+    .map-saving-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+
+        span {
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+        }
+    }
+}
+
+.radio-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .radio-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+
+        input[type="radio"] {
+            margin: 0;
+        }
+
+        &.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+    }
+}
+
+.location-info {
+    margin-top: 1.5rem;
+
+    .location-info-header {
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+    }
+
+    .location-info-loading {
+        color: #666;
+        font-style: italic;
+        margin-bottom: 0.5rem;
+    }
+
+    .location-info-row {
+        display: flex;
+        margin-bottom: 0.25rem;
+
+        .location-info-label {
+            min-width: 140px;
+            font-weight: 500;
+        }
+
+        .location-info-value {
+            color: #333;
+        }
+    }
+}

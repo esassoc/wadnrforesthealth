@@ -211,6 +211,38 @@ export const routes: Routes = [
         title: "Project Fact Sheet",
         loadComponent: () => import("./pages/projects/project-fact-sheet/project-fact-sheet.component").then((m) => m.ProjectFactSheetComponent),
     },
+    // ProjectCreate: New project - only basics step available until entity exists
+    {
+        path: "projects/new",
+        title: "New Project",
+        loadComponent: () => import("./pages/projects/project-create-workflow/project-create-workflow-outlet.component").then((m) => m.ProjectCreateWorkflowOutletComponent),
+        children: [
+            { path: "", redirectTo: "basics", pathMatch: "full" },
+            { path: "basics", loadComponent: () => import("./pages/projects/project-create-workflow/steps/basics/basics-step.component").then((m) => m.BasicsStepComponent) },
+        ],
+    },
+    // ProjectCreate: Edit draft/pending project - all steps available
+    {
+        path: `projects/edit/:${routeParams.projectID}`,
+        title: "Edit Project",
+        loadComponent: () => import("./pages/projects/project-create-workflow/project-create-workflow-outlet.component").then((m) => m.ProjectCreateWorkflowOutletComponent),
+        children: [
+            { path: "", redirectTo: "basics", pathMatch: "full" },
+            { path: "basics", loadComponent: () => import("./pages/projects/project-create-workflow/steps/basics/basics-step.component").then((m) => m.BasicsStepComponent) },
+            { path: "location-simple", loadComponent: () => import("./pages/projects/project-create-workflow/steps/location-simple/location-simple-step.component").then((m) => m.LocationSimpleStepComponent) },
+            { path: "location-detailed", loadComponent: () => import("./pages/projects/project-create-workflow/steps/location-detailed/location-detailed-step.component").then((m) => m.LocationDetailedStepComponent) },
+            { path: "priority-landscapes", loadComponent: () => import("./pages/projects/project-create-workflow/steps/priority-landscapes/priority-landscapes-step.component").then((m) => m.PriorityLandscapesStepComponent) },
+            { path: "dnr-upland-regions", loadComponent: () => import("./pages/projects/project-create-workflow/steps/dnr-upland-regions/dnr-upland-regions-step.component").then((m) => m.DnrUplandRegionsStepComponent) },
+            { path: "counties", loadComponent: () => import("./pages/projects/project-create-workflow/steps/counties/counties-step.component").then((m) => m.CountiesStepComponent) },
+            { path: "treatments", loadComponent: () => import("./pages/projects/project-create-workflow/steps/treatments/treatments-step.component").then((m) => m.TreatmentsStepComponent) },
+            { path: "contacts", loadComponent: () => import("./pages/projects/project-create-workflow/steps/contacts/contacts-step.component").then((m) => m.ContactsStepComponent) },
+            { path: "organizations", loadComponent: () => import("./pages/projects/project-create-workflow/steps/organizations/organizations-step.component").then((m) => m.OrganizationsStepComponent) },
+            { path: "expected-funding", loadComponent: () => import("./pages/projects/project-create-workflow/steps/expected-funding/expected-funding-step.component").then((m) => m.ExpectedFundingStepComponent) },
+            { path: "classifications", loadComponent: () => import("./pages/projects/project-create-workflow/steps/classifications/classifications-step.component").then((m) => m.ClassificationsStepComponent) },
+            { path: "photos", loadComponent: () => import("./pages/projects/project-create-workflow/steps/photos/photos-step.component").then((m) => m.PhotosStepComponent) },
+            { path: "documents-notes", loadComponent: () => import("./pages/projects/project-create-workflow/steps/documents-notes/documents-notes-step.component").then((m) => m.DocumentsNotesStepComponent) },
+        ],
+    },
     {
         path: `projects/:${routeParams.projectID}`,
         title: "Project Detail",

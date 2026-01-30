@@ -44,4 +44,11 @@ public static class ProjectTypeProjections
                 })
                 .ToList()
         });
+
+    public static IQueryable<ProjectTypeLookupItem> AsLookup(IQueryable<ProjectType> query)
+        => query.Select(pt => new ProjectTypeLookupItem
+        {
+            ProjectTypeID = pt.ProjectTypeID,
+            ProjectTypeName = pt.ProjectTypeName
+        });
 }

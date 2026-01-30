@@ -32,4 +32,28 @@ public static class ClassificationSystems
             .Select(ClassificationSystemProjections.AsLookupItem)
             .ToListAsync();
     }
+
+    public static async Task<List<ClassificationSystemWithClassifications>> ListWithClassificationsAsync(WADNRDbContext dbContext)
+    {
+        return await dbContext.ClassificationSystems
+            .AsNoTracking()
+            .OrderBy(x => x.ClassificationSystemName)
+            .Select(cs => new ClassificationSystemWithClassifications
+            {
+                ClassificationSystemID = cs.ClassificationSystemID,
+                ClassificationSystemName = cs.ClassificationSystemName,
+                Classifications = cs.Classifications
+                    .OrderBy(c => c.ClassificationSortOrder)
+                    .ThenBy(c => c.DisplayName)
+                    .Select(c => new ClassificationOption
+                    {
+                        ClassificationID = c.ClassificationID,
+                        DisplayName = c.DisplayName,
+                        ClassificationDescription = c.ClassificationDescription,
+                        SortOrder = c.ClassificationSortOrder
+                    })
+                    .ToList()
+            })
+            .ToListAsync();
+    }
 }

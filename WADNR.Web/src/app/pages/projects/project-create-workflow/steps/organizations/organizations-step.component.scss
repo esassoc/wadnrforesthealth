@@ -1,0 +1,49 @@
+// organizations step styles
+
+.relationship-type-section {
+    margin-bottom: 0.5rem;
+}
+
+.relationship-type-label {
+    margin-bottom: 0.25rem;
+}
+
+.field-definition-hint {
+    color: #999;
+    font-style: italic;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+
+    ::ng-deep .inline-display {
+        padding-top: 0 !important;
+
+        .fa-question-circle {
+            display: none;
+        }
+    }
+}
+
+.selected-organizations-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    .selected-organization-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0;
+
+        a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+
+            &.disabled {
+                pointer-events: none;
+                opacity: 0.5;
+            }
+        }
+    }
+}

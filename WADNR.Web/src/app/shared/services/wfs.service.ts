@@ -113,6 +113,65 @@ export class WfsService {
         });
     }
 
+    /**
+     * Query geographic areas (Priority Landscape, DNR Upland Region, County) by coordinate.
+     * Returns an object with the names of the intersecting areas.
+     */
+    public getGeographicAreasByCoordinate(
+        latitude: number,
+        longitude: number
+    ): Observable<{
+        priorityLandscapeName: string | null;
+        dnrUplandRegionName: string | null;
+        countyName: string | null;
+    }> {
+        const url: string = `${environment.geoserverMapServiceUrl}/wms`;
+        const layers = ["WADNRForestHealth:PriorityLandscape", "WADNRForestHealth:DNRUplandRegion", "WADNRForestHealth:County"].join(",");
+
+        return this.http
+            .get<FeatureCollection>(url, {
+                params: {
+                    service: "WFS",
+                    version: "2.0",
+                    request: "GetFeature",
+                    outputFormat: "application/json",
+                    SrsName: "EPSG:4326",
+                    typeName: layers,
+                    cql_filter: `intersects(Ogr_Geometry, POINT(${latitude} ${longitude}))`,
+                },
+            })
+            .pipe(
+                map((response: FeatureCollection) => {
+                    let priorityLandscapeName: string | null = null;
+                    let dnrUplandRegionName: string | null = null;
+                    let countyName: string | null = null;
+
+                    if (response.features && response.features.length > 0) {
+                        for (const feature of response.features) {
+                            const props = feature.properties;
+                            if (props) {
+                                if (props["PriorityLandscapeName"] && !priorityLandscapeName) {
+                                    priorityLandscapeName = props["PriorityLandscapeName"];
+                                }
+                                if (props["DNRUplandRegionName"] && !dnrUplandRegionName) {
+                                    dnrUplandRegionName = props["DNRUplandRegionName"];
+                                }
+                                if (props["CountyName"] && !countyName) {
+                                    countyName = props["CountyName"];
+                                }
+                            }
+                        }
+                    }
+
+                    return {
+                        priorityLandscapeName,
+                        dnrUplandRegionName,
+                        countyName,
+                    };
+                })
+            );
+    }
+
     getBoundingBox(wfsFeatureType: string, cqlFilter: string) {
         const url: string = `${environment.geoserverMapServiceUrl}/wms`;
         return this.http
@@ -141,10 +200,10 @@ export class WfsService {
                             feature.geometry.type === "Point"
                                 ? [feature.geometry.coordinates]
                                 : feature.geometry.type === "Polygon"
-                                ? feature.geometry.coordinates.flat(1)
-                                : feature.geometry.type === "MultiPolygon"
-                                ? feature.geometry.coordinates.flat(2)
-                                : [];
+                                  ? feature.geometry.coordinates.flat(1)
+                                  : feature.geometry.type === "MultiPolygon"
+                                    ? feature.geometry.coordinates.flat(2)
+                                    : [];
                         coords.forEach(([x, y]) => {
                             if (x < minX) minX = x;
                             if (y < minY) minY = y;

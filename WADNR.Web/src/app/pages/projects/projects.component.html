@@ -3,5 +3,10 @@
 <app-alert-display></app-alert-display>
 
 <div class="page-body">
+    <div class="d-flex justify-content-end mb-3">
+        <a class="btn btn-primary" [routerLink]="['/projects/new']">
+            <span class="fas fa-plus"></span> Add Project
+        </a>
+    </div>
     <project-grid [rowData]="projects$ | async" defaultRowSelection="multiRow"> </project-grid>
 </div>

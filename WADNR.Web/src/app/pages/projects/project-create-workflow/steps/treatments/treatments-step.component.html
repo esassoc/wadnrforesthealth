@@ -1,0 +1,50 @@
+@if (vm$ | async; as vm) {
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Treatments</span>
+        </div>
+        <div class="card-body">
+            @if (vm.isLoading) {
+                <div class="text-center p-4">Loading...</div>
+            } @else {
+                <p class="mb-3">
+                    Review and manage treatment activities for this project. Treatments are linked to project locations
+                    and define the specific work being performed.
+                </p>
+
+                <div class="section-header mb-3">
+                    <button class="btn btn-primary btn-sm" (click)="openAddTreatmentModal(vm.treatmentAreas)">
+                        <icon icon="Data"></icon> Add Treatment
+                    </button>
+                </div>
+
+                @if (vm.treatments && vm.treatments.length > 0) {
+                    <wadnr-grid
+                        [rowData]="vm.treatments"
+                        [columnDefs]="columnDefs"
+                        [hideDownloadButton]="true"
+                        [hideFullscreenButton]="true"
+                        height="400px">
+                    </wadnr-grid>
+                } @else {
+                    <div class="alert alert-info">
+                        <em>No treatments have been added to this project.</em>
+                    </div>
+                }
+            }
+        </div>
+        <div class="card-footer">
+            <workflow-step-actions
+                [isSaving]="false"
+                (save)="onSave(false)"
+                (saveAndContinue)="onSave(true)">
+            </workflow-step-actions>
+        </div>
+    </div>
+} @else {
+    <div class="card">
+        <div class="card-body">
+            <div class="text-center p-4">Loading...</div>
+        </div>
+    </div>
+}

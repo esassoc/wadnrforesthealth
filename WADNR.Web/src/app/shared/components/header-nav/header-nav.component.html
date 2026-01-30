@@ -80,6 +80,12 @@
                 <li class="nav-item dropdown">
                     <a href="javascript:void(0);" [dropdownToggle]="projectsMenu" class="nav-link dropdown-toggle">Projects <icon icon="AngleDown"></icon></a>
                     <ul #projectsMenu class="dropdown-menu">
+                        @if (currentUser$ | async; as currentUserForProjects) {
+                            @if (canCreateProject(currentUserForProjects)) {
+                                <li><a routerLink="/projects/new" class="dropdown-item">+ Add Project</a></li>
+                                <li class="divider"></li>
+                            }
+                        }
                         <li><a routerLink="/projects/map" class="dropdown-item">Project Map</a></li>
                         <li class="divider"></li>
                         <li><a routerLink="/projects" class="dropdown-item">Full Project List</a></li>

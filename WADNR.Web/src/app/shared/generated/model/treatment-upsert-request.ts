@@ -12,7 +12,7 @@
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class TreatmentUpsertRequest { 
     ProjectID: number;
-    ProjectLocationID?: number | null;
+    ProjectLocationID: number;
     TreatmentTypeID: number;
     TreatmentDetailedActivityTypeID: number;
     TreatmentCodeID?: number | null;
@@ -30,7 +30,7 @@ export class TreatmentUpsertRequest {
 
 export interface TreatmentUpsertRequestForm { 
     ProjectID: FormControl<number>;
-    ProjectLocationID?: FormControl<number>;
+    ProjectLocationID: FormControl<number>;
     TreatmentTypeID: FormControl<number>;
     TreatmentDetailedActivityTypeID: FormControl<number>;
     TreatmentCodeID?: FormControl<number>;
@@ -59,9 +59,10 @@ export class TreatmentUpsertRequestFormControls {
         value,
         formControlOptions ?? 
         {
-            nonNullable: false,
+            nonNullable: true,
             validators: 
             [
+                Validators.required,
             ],
         }
     );

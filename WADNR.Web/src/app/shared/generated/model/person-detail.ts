@@ -34,6 +34,7 @@ export class PersonDetail {
     AddedByPersonID?: number | null;
     AddedByPersonName?: string | null;
     BaseRole?: RoleLookupItem;
+    SupplementalRoleList?: Array<RoleLookupItem> | null;
     SupplementalRoles?: string | null;
     PrimaryContactOrganizationCount?: number;
     ProjectCount?: number;
@@ -71,6 +72,7 @@ export interface PersonDetailForm {
     AddedByPersonID?: FormControl<number>;
     AddedByPersonName?: FormControl<string>;
     BaseRole?: FormControl<RoleLookupItem>;
+    SupplementalRoleList?: FormControl<Array<RoleLookupItem>>;
     SupplementalRoles?: FormControl<string>;
     PrimaryContactOrganizationCount?: FormControl<number>;
     ProjectCount?: FormControl<number>;
@@ -276,6 +278,16 @@ export class PersonDetailFormControls {
         }
     );
     public static BaseRole = (value: FormControlState<RoleLookupItem> | RoleLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<RoleLookupItem>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static SupplementalRoleList = (value: FormControlState<Array<RoleLookupItem>> | Array<RoleLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<RoleLookupItem>>(
         value,
         formControlOptions ?? 
         {

@@ -1,0 +1,106 @@
+@if (vm$ | async; as vm) {
+    @if ({ saving: isSaving$ | async, available: availableOptions$ | async, selected: selectedItems$ | async }; as state) {
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">DNR Upland Regions</span>
+        </div>
+        <div class="card-body">
+            @if (vm.isLoading) {
+                <div class="text-center p-4">Loading...</div>
+            } @else {
+                <p class="mb-3">
+                    Select one or more DNR upland regions to associate with this project. You can select regions
+                    by clicking on the map or searching by region name. If your project is not associated with any
+                    DNR upland region, please provide an explanation in the Notes field.
+                </p>
+
+                <form [formGroup]="form">
+                    <div class="grid-12">
+                        <!-- Left Column: Form Controls -->
+                        <div class="g-col-5">
+                            <!-- Searchable Dropdown -->
+                            <div class="mb-3">
+                                <form-field
+                                    [formControl]="$any(form.controls.itemToAdd)"
+                                    fieldLabel="Search by region name"
+                                    [type]="FormFieldType.Select"
+                                    [formInputOptions]="state.available"
+                                    placeholder="Search by region name..."
+                                    [readOnly]="state.saving"
+                                    (change)="onDropdownSelect($event)">
+                                </form-field>
+                            </div>
+
+                            <!-- Selected Items List -->
+                            <div class="selected-items-section mb-3">
+                                @if (state.selected && state.selected.length > 0) {
+                                    <div class="selected-items-header">DNR Upland Region Name</div>
+                                    <ul class="selected-items-list">
+                                        @for (item of state.selected; track item.ID) {
+                                            <li class="selected-item">
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-link text-danger"
+                                                    (click)="removeItem(item.ID)"
+                                                    [disabled]="state.saving"
+                                                    title="Remove">
+                                                    <icon icon="Delete"></icon>
+                                                </button>
+                                                <span>{{ item.DisplayName }}</span>
+                                            </li>
+                                        }
+                                    </ul>
+                                } @else {
+                                    <div class="no-selection-message">
+                                        No DNR upland regions selected for this Project, provide an explanation
+                                        in the Notes field or select a region.
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="mb-3">
+                                <form-field
+                                    [formControl]="$any(form.controls.noSelectionExplanation)"
+                                    fieldLabel="Notes"
+                                    [type]="FormFieldType.Textarea"
+                                    placeholder=""
+                                    [readOnly]="state.saving">
+                                </form-field>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Map -->
+                        <div class="g-col-7">
+                            <div class="map-container" [class.saving]="state.saving">
+                                <wadnr-map (onMapLoad)="handleMapLoad($event)"></wadnr-map>
+                                <div class="map-caption text-muted mt-1">
+                                    Simple and/or Detailed Project location (for reference)
+                                </div>
+                                @if (state.saving) {
+                                    <div class="map-saving-overlay">
+                                        <span>Saving...</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            }
+        </div>
+        <div class="card-footer">
+            <workflow-step-actions
+                [isSaving]="state.saving"
+                (save)="onSave(false)"
+                (saveAndContinue)="onSave(true)">
+            </workflow-step-actions>
+        </div>
+    </div>
+    }
+} @else {
+    <div class="card">
+        <div class="card-body">
+            <div class="text-center p-4">Loading...</div>
+        </div>
+    </div>
+}

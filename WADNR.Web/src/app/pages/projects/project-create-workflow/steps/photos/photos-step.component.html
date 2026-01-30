@@ -1,0 +1,85 @@
+@if (vm$ | async; as vm) {
+    @if ({ saving: isSaving$ | async }; as state) {
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Photos</span>
+            </div>
+            <div class="card-body">
+                @if (vm.isLoading) {
+                    <div class="text-center p-4">Loading...</div>
+                } @else {
+                    <p class="mb-3">
+                        Manage the photos associated with this project. Photos help document project progress and outcomes. Thumbnails will display alphabetically by caption.
+                    </p>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons mb-3">
+                        @if (!isSelectingKeyPhoto) {
+                            @if (vm.photos.length > 1) {
+                                <button class="btn btn-secondary" (click)="startSelectKeyPhoto()"><icon icon="Key"></icon> Select Key Photo</button>
+                            }
+                            <button class="btn btn-primary" (click)="openAddPhotoModal(vm.timingOptions)"><icon icon="Upload"></icon> Add Photo</button>
+                        } @else {
+                            <span class="text-info">Click on a photo to select it as the key photo</span>
+                            <button class="btn btn-secondary" (click)="cancelSelectKeyPhoto()">Cancel</button>
+                            <button class="btn btn-primary" (click)="saveKeyPhoto()"><icon icon="CircleCheckmark"></icon> Done</button>
+                        }
+                    </div>
+
+                    @if (vm.photos.length > 0) {
+                        <!-- Photo Gallery -->
+                        <div class="photo-gallery" [class.selecting-key-photo]="isSelectingKeyPhoto">
+                            @for (photo of vm.photos; track photo.ProjectImageID) {
+                                <div
+                                    class="photo-item"
+                                    [class.is-key-photo]="photo.IsKeyPhoto"
+                                    [class.selected]="isSelectingKeyPhoto && selectedKeyPhotoID === photo.ProjectImageID"
+                                    [class.clickable]="isSelectingKeyPhoto"
+                                    (click)="selectPhoto(photo)">
+                                    <!-- Photo Icons -->
+                                    <div class="photo-icons">
+                                        @if (!isSelectingKeyPhoto) {
+                                            <span class="edit-icon" (click)="openEditPhotoModal(photo, vm.timingOptions); $event.stopPropagation()" title="Edit">
+                                                <icon icon="Edit"></icon>
+                                            </span>
+                                            <span class="delete-icon" (click)="deletePhoto(photo); $event.stopPropagation()" title="Delete">
+                                                <icon icon="Delete"></icon>
+                                            </span>
+                                        }
+                                    </div>
+                                    <!-- Key Photo Icon (right side) -->
+                                    @if (photo.IsKeyPhoto || (isSelectingKeyPhoto && selectedKeyPhotoID === photo.ProjectImageID)) {
+                                        <div class="key-photo-icon" title="Key Photo">
+                                            <icon icon="Key"></icon>
+                                        </div>
+                                    }
+
+                                    <!-- Photo Thumbnail -->
+                                    <div class="photo-thumbnail">
+                                        <img [src]="getPhotoUrl(photo)" [alt]="photo.Caption" />
+                                    </div>
+
+                                    <!-- Photo Caption -->
+                                    <div class="photo-caption">
+                                        {{ getPhotoCaption(photo) }}
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    } @else {
+                        <div class="alert alert-info">No photos have been added to this project yet. Click "Add Photo" to upload photos.</div>
+                    }
+                }
+            </div>
+            <div class="card-footer d-flex justify-content-end">
+                <workflow-step-actions [isSaving]="state.saving" (save)="onSave(false)" (saveAndContinue)="onSave(true)"> </workflow-step-actions>
+            </div>
+        </div>
+    }
+} @else {
+    <div class="card">
+        <div class="card-body">
+            <div class="text-center p-4">Loading...</div>
+        </div>
+    </div>
+}

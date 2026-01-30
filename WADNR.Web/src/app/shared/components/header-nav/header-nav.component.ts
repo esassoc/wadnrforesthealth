@@ -95,4 +95,17 @@ export class HeaderNavComponent implements OnInit {
         const roleID = user.BaseRole?.RoleID;
         return roleID === RoleEnum.Admin || roleID === RoleEnum.EsaAdmin;
     }
+
+    public canCreateProject(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        const roleID = user.BaseRole?.RoleID;
+        // Roles that can create projects: Normal, EsaAdmin, Admin, ProjectSteward, CanEditProgram
+        return (
+            roleID === RoleEnum.Admin ||
+            roleID === RoleEnum.EsaAdmin ||
+            roleID === RoleEnum.Normal ||
+            roleID === RoleEnum.ProjectSteward ||
+            roleID === RoleEnum.CanEditProgram
+        );
+    }
 }

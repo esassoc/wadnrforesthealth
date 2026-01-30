@@ -1,0 +1,43 @@
+<breadcrumb></breadcrumb>
+
+@if (vm$ | async; as vm) {
+    <page-header [pageTitle]="vm.isNewProject ? 'New Project' : (vm.progress?.ProjectName ?? 'Edit Project')">
+        <div class="header-actions" customHeaderActions>
+            @if (!vm.isNewProject && vm.progress?.CanSubmit) {
+                <button class="btn btn-primary" (click)="submitForApproval(vm.progress.ProjectID)">
+                    Submit for Approval
+                </button>
+            }
+        </div>
+    </page-header>
+
+    <div class="dashboard workflow">
+        <div class="sidebar">
+            <div class="sidebar-body sticky-nav">
+                <workflow-nav>
+                    @for (group of stepGroups; track group.title) {
+                        <workflow-nav-group
+                            [title]="group.title"
+                            [expanded]="true"
+                            [complete]="!vm.isNewProject && isGroupComplete(vm.progress, group)">
+                            @for (step of group.steps; track step.key) {
+                                <workflow-nav-item
+                                    [navRouterLink]="getStepLink(step)"
+                                    [complete]="!vm.isNewProject && isStepComplete(vm.progress, step)"
+                                    [disabled]="isStepDisabled(vm.progress, step, vm.isNewProject)"
+                                    [required]="isStepRequired(step)">
+                                    {{ step.name }}
+                                </workflow-nav-item>
+                            }
+                        </workflow-nav-group>
+                    }
+                </workflow-nav>
+            </div>
+        </div>
+        <div class="main">
+            <div class="outlet-container">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+}

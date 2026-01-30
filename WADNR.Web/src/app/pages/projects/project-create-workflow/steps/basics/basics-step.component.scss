@@ -1,0 +1,46 @@
+// Basics step styles
+.required::after {
+    content: " *";
+    color: red;
+}
+
+.optional-fields-section {
+    margin-top: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+
+    .optional-fields-toggle {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        font-weight: 500;
+        color: #0056b3;
+        user-select: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    .optional-fields-content {
+        padding: 1rem;
+        border-top: 1px solid #dee2e6;
+    }
+}
+
+.program-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    .program-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0;
+
+        .btn-link {
+            padding: 0;
+            line-height: 1;
+        }
+    }
+}

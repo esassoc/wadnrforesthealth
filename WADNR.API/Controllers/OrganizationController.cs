@@ -29,6 +29,14 @@ public class OrganizationController(
         return Ok(organizations);
     }
 
+    [HttpGet("lookup")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<OrganizationLookupItem>>> ListLookup()
+    {
+        var organizations = await Organizations.ListAsLookupItemAsync(DbContext);
+        return Ok(organizations);
+    }
+
     [HttpGet("{organizationID}")]
     [AllowAnonymous]
     [EntityNotFound(typeof(Organization), "organizationID")]

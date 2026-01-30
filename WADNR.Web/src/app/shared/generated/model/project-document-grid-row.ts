@@ -17,6 +17,8 @@ export class ProjectDocumentGridRow {
     DocumentTypeName?: string | null;
     FileResourceID?: number;
     FileResourceGuid?: string | null;
+    UploadDate?: string;
+    FileExtension?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -29,6 +31,8 @@ export interface ProjectDocumentGridRowForm {
     DocumentTypeName?: FormControl<string>;
     FileResourceID?: FormControl<number>;
     FileResourceGuid?: FormControl<string>;
+    UploadDate?: FormControl<string>;
+    FileExtension?: FormControl<string>;
 }
 
 export class ProjectDocumentGridRowFormControls { 
@@ -83,6 +87,26 @@ export class ProjectDocumentGridRowFormControls {
         }
     );
     public static FileResourceGuid = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static UploadDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FileExtension = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

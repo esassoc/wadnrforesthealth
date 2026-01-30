@@ -1,0 +1,136 @@
+.section {
+    margin-bottom: 1.5rem;
+
+    &-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-color, #dee2e6);
+
+        h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+    }
+}
+
+.item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.item-row {
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: var(--bg-secondary, #f8f9fa);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 4px;
+
+    &:hover {
+        background: var(--bg-hover, #e9ecef);
+    }
+}
+
+.item-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.action-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    border-radius: 4px;
+    color: var(--text-secondary, #6c757d);
+    transition: background-color 0.15s, color 0.15s;
+
+    &:hover {
+        background: var(--bg-hover-dark, #dee2e6);
+        color: var(--primary, #0d6efd);
+    }
+
+    &.delete:hover {
+        background: #f8d7da;
+        color: var(--danger, #dc3545);
+    }
+}
+
+.item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.item-title {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+
+    a {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--link-color, #0d6efd);
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.item-details {
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.detail-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+
+    dt {
+        color: var(--text-muted, #6c757d);
+        font-weight: normal;
+        min-width: 100px;
+
+        &::after {
+            content: ":";
+        }
+    }
+
+    dd {
+        margin: 0;
+        color: var(--text-primary, #212529);
+    }
+}
+
+.item-meta {
+    font-size: 0.875rem;
+    color: var(--text-muted, #6c757d);
+    margin-bottom: 0.5rem;
+}
+
+.note-text {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.empty-message {
+    color: var(--text-muted, #6c757d);
+    margin: 0;
+    padding: 1rem 0;
+}

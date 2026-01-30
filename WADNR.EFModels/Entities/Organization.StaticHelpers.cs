@@ -18,6 +18,20 @@ public static class Organizations
         return entities;
     }
 
+    public static async Task<List<OrganizationLookupItem>> ListAsLookupItemAsync(WADNRDbContext dbContext)
+    {
+        return await dbContext.Organizations
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.OrganizationName)
+            .Select(x => new OrganizationLookupItem
+            {
+                OrganizationID = x.OrganizationID,
+                OrganizationName = x.OrganizationName
+            })
+            .ToListAsync();
+    }
+
     public static async Task<OrganizationDetail?> GetByIDAsDetailAsync(WADNRDbContext dbContext, int organizationID)
     {
         var entity = await dbContext.Organizations

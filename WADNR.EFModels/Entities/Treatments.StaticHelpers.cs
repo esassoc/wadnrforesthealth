@@ -182,4 +182,18 @@ public static class Treatments
             .ExecuteDeleteAsync();
         return deletedCount > 0;
     }
+
+    public static async Task<List<TreatmentAreaLookupItem>> ListTreatmentAreasForProjectAsync(WADNRDbContext dbContext, int projectID)
+    {
+        return await dbContext.ProjectLocations
+            .AsNoTracking()
+            .Where(pl => pl.ProjectID == projectID && pl.ProjectLocationTypeID == (int)ProjectLocationTypeEnum.TreatmentArea)
+            .OrderBy(pl => pl.ProjectLocationName)
+            .Select(pl => new TreatmentAreaLookupItem
+            {
+                ProjectLocationID = pl.ProjectLocationID,
+                ProjectLocationName = pl.ProjectLocationName
+            })
+            .ToListAsync();
+    }
 }

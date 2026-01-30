@@ -13,5 +13,8 @@ public class ProjectImageDetail
     public bool IsKeyPhoto { get; set; }
     public bool ExcludeFromFactSheet { get; set; }
     public int? ProjectImageTimingID { get; set; }
+    public string? ProjectImageTimingDisplayName { get; set; }
     public DateTime CreatedDate { get; set; }
+    public string OriginalFilename { get; set; } = string.Empty;
+    public long? ContentLength { get; set; }
 }

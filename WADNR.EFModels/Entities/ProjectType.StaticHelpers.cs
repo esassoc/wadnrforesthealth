@@ -12,6 +12,11 @@ public static class ProjectTypes
             .OrderBy(x => x.ProjectTypeSortOrder).ThenBy(x => x.ProjectTypeName)
             .ToListAsync();
 
+    public static async Task<List<ProjectTypeLookupItem>> ListAsLookupAsync(WADNRDbContext dbContext)
+        => await ProjectTypeProjections.AsLookup(dbContext.ProjectTypes.AsNoTracking())
+            .OrderBy(x => x.ProjectTypeName)
+            .ToListAsync();
+
     public static async Task<ProjectTypeDetail?> GetByIDAsDetailAsync(WADNRDbContext dbContext, int id)
         => await ProjectTypeProjections.AsDetail(dbContext.ProjectTypes.AsNoTracking().Where(x => x.ProjectTypeID == id))
             .SingleOrDefaultAsync();

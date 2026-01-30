@@ -1,0 +1,72 @@
+@if (vm$ | async; as vm) {
+    @if ({ saving: isSaving$ | async }; as state) {
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Classifications</span>
+        </div>
+        <div class="card-body">
+            @if (vm.isLoading) {
+                <div class="text-center p-4">Loading...</div>
+            } @else {
+                <p class="mb-3">
+                    Optionally click one or more checkboxes below and add additional narrative details to associate
+                    this Project with specific Project Theme Classifications.
+                </p>
+
+                @if (vm.classificationSystems && vm.classificationSystems.length > 0) {
+                    @for (system of vm.classificationSystems; track system.ClassificationSystemID) {
+                        <div class="classification-system-section">
+                            <h4 class="classification-system-name">{{ system.ClassificationSystemName }}</h4>
+
+                            @for (classification of system.Classifications; track classification.ClassificationID) {
+                                <div class="classification-row grid-12 mb-3">
+                                    <div class="g-col-3">
+                                        <label class="classification-label">
+                                            <input
+                                                type="checkbox"
+                                                [checked]="isSelected(classification.ClassificationID)"
+                                                (change)="toggleSelection(classification.ClassificationID)"
+                                                [disabled]="state.saving">
+                                            <span class="classification-name">{{ classification.DisplayName }}</span>
+                                        </label>
+                                        @if (classification.ClassificationDescription) {
+                                            <div class="classification-description">
+                                                {{ classification.ClassificationDescription }}
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="g-col-9">
+                                        <form-field
+                                            [formControl]="getNotesControl(classification.ClassificationID)"
+                                            [type]="FormFieldType.Textarea"
+                                            [placeholder]="'Select the ' + system.ClassificationSystemName + ' and describe how it applies to the Project.'">
+                                        </form-field>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <hr>
+                    }
+                } @else {
+                    <div class="alert alert-info">
+                        No classification systems have been configured.
+                    </div>
+                }
+            }
+        </div>
+        <div class="card-footer d-flex justify-content-end">
+            <workflow-step-actions
+                [isSaving]="state.saving"
+                (save)="onSave(false)"
+                (saveAndContinue)="onSave(true)">
+            </workflow-step-actions>
+        </div>
+    </div>
+    }
+} @else {
+    <div class="card">
+        <div class="card-body">
+            <div class="text-center p-4">Loading...</div>
+        </div>
+    </div>
+}

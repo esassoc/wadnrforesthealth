@@ -20,7 +20,10 @@ export class ProjectImageGridRow {
     IsKeyPhoto?: boolean;
     ExcludeFromFactSheet?: boolean;
     ProjectImageTimingID?: number | null;
+    ProjectImageTimingDisplayName?: string | null;
     CreatedDate?: string;
+    OriginalFilename?: string | null;
+    ContentLength?: number | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -36,7 +39,10 @@ export interface ProjectImageGridRowForm {
     IsKeyPhoto?: FormControl<boolean>;
     ExcludeFromFactSheet?: FormControl<boolean>;
     ProjectImageTimingID?: FormControl<number>;
+    ProjectImageTimingDisplayName?: FormControl<string>;
     CreatedDate?: FormControl<string>;
+    OriginalFilename?: FormControl<string>;
+    ContentLength?: FormControl<number>;
 }
 
 export class ProjectImageGridRowFormControls { 
@@ -130,7 +136,37 @@ export class ProjectImageGridRowFormControls {
             ],
         }
     );
+    public static ProjectImageTimingDisplayName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
     public static CreatedDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static OriginalFilename = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ContentLength = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

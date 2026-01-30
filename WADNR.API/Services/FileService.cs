@@ -8,6 +8,7 @@ using WADNR.Common;
 using WADNR.EFModels.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using static WADNR.EFModels.Entities.FileResourceMimeType;
 
 namespace WADNR.API.Services
 {
@@ -87,6 +88,9 @@ namespace WADNR.API.Services
             }
 
             var fileNameSegments = fileName.Split(".");
+            var fileExtension = fileNameSegments.Last().ToLowerInvariant();
+            var mimeTypeID = GetMimeTypeIDFromExtension(fileExtension);
+
             var newFileResource = new FileResource()
             {
                 CreateDate = DateTime.UtcNow,
@@ -96,13 +100,39 @@ namespace WADNR.API.Services
                 OriginalFileExtension = fileNameSegments.Last(),
                 OriginalBaseFilename = String.Join(".", fileNameSegments.Take(fileNameSegments.Length - 1)),
                 InBlobStorage = true,
-                ContentLength = stream.Length
+                ContentLength = stream.Length,
+                FileResourceMimeTypeID = mimeTypeID
             };
 
             dbContext.FileResources.Add(newFileResource);
             await dbContext.SaveChangesAsync();
             await dbContext.Entry(newFileResource).ReloadAsync();
             return newFileResource;
+        }
+
+        private static int GetMimeTypeIDFromExtension(string extension)
+        {
+            return extension.ToLowerInvariant() switch
+            {
+                "pdf" => (int)FileResourceMimeTypeEnum.PDF,
+                "docx" => (int)FileResourceMimeTypeEnum.WordDOCX,
+                "doc" => (int)FileResourceMimeTypeEnum.WordDOC,
+                "xlsx" => (int)FileResourceMimeTypeEnum.ExcelXLSX,
+                "xls" => (int)FileResourceMimeTypeEnum.ExcelXLS,
+                "pptx" => (int)FileResourceMimeTypeEnum.PowerpointPPTX,
+                "ppt" => (int)FileResourceMimeTypeEnum.PowerpointPPT,
+                "png" => (int)FileResourceMimeTypeEnum.PNG,
+                "jpg" or "jpeg" => (int)FileResourceMimeTypeEnum.JPEG,
+                "gif" => (int)FileResourceMimeTypeEnum.GIF,
+                "bmp" => (int)FileResourceMimeTypeEnum.BMP,
+                "tiff" or "tif" => (int)FileResourceMimeTypeEnum.TIFF,
+                "zip" => (int)FileResourceMimeTypeEnum.ZIP,
+                "txt" => (int)FileResourceMimeTypeEnum.TXT,
+                "css" => (int)FileResourceMimeTypeEnum.CSS,
+                "gz" or "gzip" => (int)FileResourceMimeTypeEnum.GZIP,
+                "tar" => (int)FileResourceMimeTypeEnum.TAR,
+                _ => (int)FileResourceMimeTypeEnum.PDF // Default fallback
+            };
         }
 
         public async Task<FileResource> CreateFileResource(WADNRDbContext dbContext, Stream stream, string fullFileName, int createUserID)

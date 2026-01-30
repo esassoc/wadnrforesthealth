@@ -32,6 +32,14 @@ public class ProjectTypeController(
         return Ok(rows);
     }
 
+    [HttpGet("lookup")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<ProjectTypeLookupItem>>> ListAsLookup()
+    {
+        var items = await ProjectTypes.ListAsLookupAsync(DbContext);
+        return Ok(items);
+    }
+
     [HttpGet("taxonomy")]
     [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<ProjectTypeTaxonomy>>> Taxonomy()

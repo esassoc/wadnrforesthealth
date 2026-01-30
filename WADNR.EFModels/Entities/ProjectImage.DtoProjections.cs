@@ -18,7 +18,10 @@ public static class ProjectImageProjections
         IsKeyPhoto = x.IsKeyPhoto,
         ExcludeFromFactSheet = x.ExcludeFromFactSheet,
         ProjectImageTimingID = x.ProjectImageTimingID,
-        CreatedDate = x.FileResource.CreateDate
+        ProjectImageTimingDisplayName = null, // Resolved client-side
+        CreatedDate = x.FileResource.CreateDate,
+        OriginalFilename = x.FileResource.OriginalBaseFilename + "." + x.FileResource.OriginalFileExtension,
+        ContentLength = x.FileResource.ContentLength
     };
 
     public static readonly Expression<Func<ProjectImage, ProjectImageDetail>> AsDetail = x => new ProjectImageDetail
@@ -32,7 +35,10 @@ public static class ProjectImageProjections
         IsKeyPhoto = x.IsKeyPhoto,
         ExcludeFromFactSheet = x.ExcludeFromFactSheet,
         ProjectImageTimingID = x.ProjectImageTimingID,
-        CreatedDate = x.FileResource.CreateDate
+        ProjectImageTimingDisplayName = null, // Resolved client-side
+        CreatedDate = x.FileResource.CreateDate,
+        OriginalFilename = x.FileResource.OriginalBaseFilename + "." + x.FileResource.OriginalFileExtension,
+        ContentLength = x.FileResource.ContentLength
     };
 
     public static readonly Expression<Func<ProjectImage, ProjectImageLookupItem>> AsLookupItem = x => new ProjectImageLookupItem

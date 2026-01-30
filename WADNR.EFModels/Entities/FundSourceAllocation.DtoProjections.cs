@@ -88,7 +88,8 @@ public static class FundSourceAllocationProjections
     public static readonly Expression<Func<FundSourceAllocation, FundSourceAllocationLookupItem>> AsLookupItem = x => new FundSourceAllocationLookupItem
     {
         FundSourceAllocationID = x.FundSourceAllocationID,
-        FundSourceAllocationName = x.FundSource.FundSourceNumber + " " + x.FundSourceAllocationName
+        FundSourceAllocationName = x.FundSource.FundSourceNumber + " " + x.FundSourceAllocationName,
+        FundSourceName = x.FundSource.FundSourceName
     };
 
     public static readonly Expression<Func<FundSourceAllocation, FundSourceAllocationGridRow>> AsGridRow = x => new FundSourceAllocationGridRow

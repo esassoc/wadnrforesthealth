@@ -1,0 +1,24 @@
+<div class="workflow-step-actions">
+    <button
+        type="button"
+        class="btn btn-outline-primary"
+        (click)="onSaveClick()"
+        [disabled]="isSaving">
+        @if (isSaving) {
+            {{ savingText }}
+        } @else {
+            {{ saveButtonText }}
+        }
+    </button>
+    <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSaveAndContinueClick()"
+        [disabled]="isSaving">
+        @if (isSaving) {
+            {{ savingText }}
+        } @else {
+            {{ continueButtonText }}
+        }
+    </button>
+</div>

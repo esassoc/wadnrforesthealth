@@ -17,7 +17,9 @@ public static class ProjectDocuments
                 d.Description,
                 d.ProjectDocumentTypeID,
                 d.FileResourceID,
-                FileResourceGuid = d.FileResource.FileResourceGUID.ToString()
+                FileResourceGuid = d.FileResource.FileResourceGUID.ToString(),
+                UploadDate = d.FileResource.CreateDate,
+                FileExtension = d.FileResource.OriginalFileExtension
             })
             .ToListAsync();
 
@@ -31,7 +33,9 @@ public static class ProjectDocuments
                     ? dt.ProjectDocumentTypeDisplayName
                     : null,
                 FileResourceID = d.FileResourceID,
-                FileResourceGuid = d.FileResourceGuid
+                FileResourceGuid = d.FileResourceGuid,
+                UploadDate = d.UploadDate,
+                FileExtension = d.FileExtension
             })
             .OrderBy(d => d.DisplayName)
             .ToList();

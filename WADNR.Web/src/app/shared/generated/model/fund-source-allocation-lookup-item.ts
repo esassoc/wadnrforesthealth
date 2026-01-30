@@ -13,6 +13,7 @@ import { FormControl, FormControlOptions, FormControlState, Validators } from "@
 export class FundSourceAllocationLookupItem { 
     FundSourceAllocationID?: number;
     FundSourceAllocationName?: string | null;
+    FundSourceName?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -21,6 +22,7 @@ export class FundSourceAllocationLookupItem {
 export interface FundSourceAllocationLookupItemForm { 
     FundSourceAllocationID?: FormControl<number>;
     FundSourceAllocationName?: FormControl<string>;
+    FundSourceName?: FormControl<string>;
 }
 
 export class FundSourceAllocationLookupItemFormControls { 
@@ -35,6 +37,16 @@ export class FundSourceAllocationLookupItemFormControls {
         }
     );
     public static FundSourceAllocationName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
