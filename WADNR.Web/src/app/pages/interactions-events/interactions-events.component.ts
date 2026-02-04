@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
-import { AlertDisplayComponent } from "src/app/shared/components/alert-display/alert-display.component";
 import { AsyncPipe } from "@angular/common";
 import { InteractionEventService } from "src/app/shared/generated/api/interaction-event.service";
 import { InteractionEventGridRow } from "src/app/shared/generated/model/interaction-event-grid-row";
@@ -18,7 +17,7 @@ import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-g
 
 @Component({
     selector: "interactions-events",
-    imports: [PageHeaderComponent, AlertDisplayComponent, WADNRGridComponent, AsyncPipe],
+    imports: [PageHeaderComponent, WADNRGridComponent, AsyncPipe],
     templateUrl: "./interactions-events.component.html",
 })
 export class InteractionsEventsComponent {

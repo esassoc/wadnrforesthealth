@@ -6,7 +6,6 @@ import { FieldDefinitionService } from "src/app/shared/generated/api/field-defin
 import { EditorComponent, EditorModule, TINYMCE_SCRIPT_SRC } from "@tinymce/tinymce-angular";
 import TinyMCEHelpers from "src/app/shared/helpers/tiny-mce-helpers";
 import { FormsModule } from "@angular/forms";
-import { AlertDisplayComponent } from "src/app/shared/components/alert-display/alert-display.component";
 
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -14,7 +13,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
     selector: "field-definition-edit",
     templateUrl: "./field-definition-edit.component.html",
     styleUrls: ["./field-definition-edit.component.scss"],
-    imports: [RouterLink, AlertDisplayComponent, EditorModule, FormsModule, PageHeaderComponent],
+    imports: [RouterLink, EditorModule, FormsModule, PageHeaderComponent],
     providers: [{ provide: TINYMCE_SCRIPT_SRC, useValue: "tinymce/tinymce.min.js" }],
 })
 export class FieldDefinitionEditComponent implements OnInit {

@@ -3,7 +3,6 @@ import { AsyncPipe } from "@angular/common";
 import { ColDef } from "ag-grid-community";
 import { Observable } from "rxjs";
 
-import { AlertDisplayComponent } from "src/app/shared/components/alert-display/alert-display.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
@@ -14,7 +13,7 @@ import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type
 
 @Component({
     selector: "organizations",
-    imports: [PageHeaderComponent, AlertDisplayComponent, WADNRGridComponent, AsyncPipe],
+    imports: [PageHeaderComponent, WADNRGridComponent, AsyncPipe],
     templateUrl: "./organizations.component.html",
 })
 export class OrganizationsComponent {

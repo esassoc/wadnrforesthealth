@@ -3,10 +3,11 @@ import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { CustomRichTextComponent } from "src/app/shared/components/custom-rich-text/custom-rich-text.component";
 import { IconComponent, IconInterface } from "src/app/shared/components/icon/icon.component";
+import { AlertDisplayComponent } from "../alert-display/alert-display.component";
 
 @Component({
     selector: "page-header",
-    imports: [CommonModule, CustomRichTextComponent, IconComponent],
+    imports: [CommonModule, CustomRichTextComponent, IconComponent, AlertDisplayComponent],
     templateUrl: "./page-header.component.html",
     styleUrls: ["./page-header.component.scss"]
 })

@@ -5,7 +5,6 @@ import { Map } from "leaflet";
 import { Observable, shareReplay, tap } from "rxjs";
 
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
-import { AlertDisplayComponent } from "src/app/shared/components/alert-display/alert-display.component";
 import { HybridMapGridComponent } from "src/app/shared/components/hybrid-map-grid/hybrid-map-grid.component";
 import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
@@ -17,7 +16,7 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 @Component({
     selector: "dnr-upland-regions",
     standalone: true,
-    imports: [AlertDisplayComponent, HybridMapGridComponent, AsyncPipe, LoadingDirective, DNRUplandRegionsLayerComponent, PageHeaderComponent],
+    imports: [HybridMapGridComponent, AsyncPipe, LoadingDirective, DNRUplandRegionsLayerComponent, PageHeaderComponent],
     templateUrl: "./dnr-upland-regions.component.html",
 })
 export class DNRUplandRegionsComponent {

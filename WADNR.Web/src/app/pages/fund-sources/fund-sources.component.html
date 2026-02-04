@@ -1,7 +1,5 @@
 <page-header pageTitle="Fund Sources" [customRichTextTypeID]="customRichTextTypeID"></page-header>
 
-<app-alert-display></app-alert-display>
-
 <div class="page-body">
     <wadnr-grid [rowData]="fundSources$ | async" [columnDefs]="columnDefs" downloadFileName="fund-sources" [gridTitle]="'Fund Sources'"></wadnr-grid>
 </div>

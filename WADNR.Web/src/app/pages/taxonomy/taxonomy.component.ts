@@ -3,7 +3,6 @@ import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { AsyncPipe } from "@angular/common";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
-import { AlertDisplayComponent } from "src/app/shared/components/alert-display/alert-display.component";
 import { SimpleTreeComponent, SimpleTreeNode } from "src/app/shared/components/simple-tree/simple-tree.component";
 import { Router } from "@angular/router";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
@@ -15,7 +14,7 @@ import { ProjectLookupItem } from "src/app/shared/generated/model/project-lookup
 @Component({
     selector: "taxonomy",
     standalone: true,
-    imports: [PageHeaderComponent, AlertDisplayComponent, SimpleTreeComponent, AsyncPipe],
+    imports: [PageHeaderComponent, SimpleTreeComponent, AsyncPipe],
     templateUrl: "./taxonomy.component.html",
     styleUrls: ["./taxonomy.component.scss"],
 })

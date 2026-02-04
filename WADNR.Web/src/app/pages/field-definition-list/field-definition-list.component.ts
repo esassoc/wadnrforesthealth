@@ -4,7 +4,6 @@ import { ColDef } from "ag-grid-community";
 import { AgGridAngular, AgGridModule } from "ag-grid-angular";
 import { FieldDefinitionDatumDetail, PersonDetail } from "src/app/shared/generated/model/models";
 import { FieldDefinitionService } from "src/app/shared/generated/api/field-definition.service";
-import { AlertDisplayComponent } from "src/app/shared/components/alert-display/alert-display.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 
@@ -12,7 +11,7 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
     selector: "field-definition-list",
     templateUrl: "./field-definition-list.component.html",
     styleUrls: ["./field-definition-list.component.scss"],
-    imports: [AlertDisplayComponent, AgGridModule, WADNRGridComponent, PageHeaderComponent],
+    imports: [AgGridModule, WADNRGridComponent, PageHeaderComponent],
 })
 export class FieldDefinitionListComponent implements OnInit {
     @ViewChild("fieldDefinitionsGrid") fieldDefinitionsGrid: AgGridAngular;

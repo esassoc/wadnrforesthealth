@@ -1,7 +1,6 @@
 @if (fieldDefinitionDatum) {
 <div class="container mt-sm-4">
     <page-header pageTitle="Edit Definition for Label: {{ fieldDefinitionDatum.FieldDefinition.FieldDefinitionDisplayName }}"> </page-header>
-    <app-alert-display></app-alert-display>
     <editor #tinyMceEditor [init]="tinyMceConfig" [(ngModel)]="fieldDefinitionDatum.FieldDefinitionDatumValue"> </editor>
     <div class="flex-between no-wrap mt-2">
         <i></i>

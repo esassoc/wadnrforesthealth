@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
-import { AlertDisplayComponent } from "src/app/shared/components/alert-display/alert-display.component";
 import { AsyncPipe } from "@angular/common";
 import { ProgramService } from "src/app/shared/generated/api/program.service";
 import { ProgramDetail } from "src/app/shared/generated/model/program-detail";
@@ -18,7 +17,7 @@ import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-g
 
 @Component({
     selector: "programs",
-    imports: [PageHeaderComponent, AlertDisplayComponent, WADNRGridComponent, AsyncPipe],
+    imports: [PageHeaderComponent, WADNRGridComponent, AsyncPipe],
     templateUrl: "./programs.component.html",
 })
 export class ProgramsComponent {
