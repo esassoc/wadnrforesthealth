@@ -1,5 +1,24 @@
 .workflow-step-actions {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border-top: none;
+    padding-top: 0;
+}
+
+.required-note {
+    font-size: var(--type-size-100);
+    color: var(--color-text-muted);
+
+    .required-indicator {
+        color: var(--red-default);
+        font-weight: bold;
+    }
+}
+
+.workflow-step-buttons {
+    display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
 }

@@ -27,7 +27,7 @@ const ANON_EXACT: ExactMap = {
 const SECURED_EXACT: ExactMap = {
   'DELETE': new Set([]),
   'GET': new Set(["/people","/people/lookup","/roles"]),
-  'POST': new Set(["/agreements","/classifications","/counties","/dnr-upland-regions","/fund-sources","/interaction-events","/organizations","/priority-landscapes","/programs","/project-documents","/project-images","/project-notes","/project-types","/projects","/projects/workflow/steps/basics","/sitkacapture/generate-pdf","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"]),
+  'POST': new Set(["/agreements","/classifications","/counties","/dnr-upland-regions","/fund-sources","/interaction-events","/organizations","/priority-landscapes","/programs","/project-documents","/project-images","/project-notes","/project-types","/projects","/projects/workflow/steps/basics","/sitkacapture/generate-pdf","/support-requests","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"]),
   'PUT': new Set([]),
 };
 

@@ -18,13 +18,15 @@ import { ProjectStages, ProjectStagesAsSelectDropdownOptions } from "src/app/sha
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { FormFieldComponent, FormFieldType, FormInputOption, SelectDropdownOption } from "src/app/shared/components/forms/form-field/form-field.component";
+import { CustomRichTextComponent } from "src/app/shared/components/custom-rich-text/custom-rich-text.component";
+import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { ProgramGridRow } from "src/app/shared/generated/model/program-grid-row";
 
 @Component({
     selector: "basics-step",
     standalone: true,
-    imports: [CommonModule, AsyncPipe, ReactiveFormsModule, FormFieldComponent, IconComponent, WorkflowStepActionsComponent],
+    imports: [CommonModule, AsyncPipe, ReactiveFormsModule, FormFieldComponent, CustomRichTextComponent, IconComponent, WorkflowStepActionsComponent],
     templateUrl: "./basics-step.component.html",
     styleUrls: ["./basics-step.component.scss"],
 })
@@ -32,6 +34,7 @@ export class BasicsStepComponent extends WorkflowStepBase implements OnInit {
     readonly nextStep = "location-simple";
 
     public FormFieldType = FormFieldType;
+    public FirmaPageTypeEnum = FirmaPageTypeEnum;
     public projectTypeOptions$: Observable<FormInputOption[]>;
     public organizationOptions$: Observable<FormInputOption[]>;
     public focusAreaOptions$: Observable<FormInputOption[]>;

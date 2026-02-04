@@ -15,4 +15,14 @@
         pointer-events: none;
         cursor: default;
     }
+
+    .sidebar-link.active {
+        background: var(--secondary);
+        color: var(--white);
+        font-weight: bold;
+
+        icon {
+            color: var(--white);
+        }
+    }
 }

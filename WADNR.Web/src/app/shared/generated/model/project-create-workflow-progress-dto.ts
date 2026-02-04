@@ -15,7 +15,11 @@ export class ProjectCreateWorkflowProgressDto {
     ProjectID?: number;
     ProjectName?: string | null;
     ProjectApprovalStatusID?: number;
+    ProjectApprovalStatusName?: string | null;
     CanSubmit?: boolean;
+    CreatedByPersonName?: string | null;
+    CreatedByOrganizationName?: string | null;
+    CreateDate?: string | null;
     Steps?: ProjectCreateWorkflowProgressDtoSteps | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -26,7 +30,11 @@ export interface ProjectCreateWorkflowProgressDtoForm {
     ProjectID?: FormControl<number>;
     ProjectName?: FormControl<string>;
     ProjectApprovalStatusID?: FormControl<number>;
+    ProjectApprovalStatusName?: FormControl<string>;
     CanSubmit?: FormControl<boolean>;
+    CreatedByPersonName?: FormControl<string>;
+    CreatedByOrganizationName?: FormControl<string>;
+    CreateDate?: FormControl<string>;
     Steps?: FormControl<ProjectCreateWorkflowProgressDtoSteps>;
 }
 
@@ -61,7 +69,47 @@ export class ProjectCreateWorkflowProgressDtoFormControls {
             ],
         }
     );
+    public static ProjectApprovalStatusName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
     public static CanSubmit = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CreatedByPersonName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CreatedByOrganizationName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CreateDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

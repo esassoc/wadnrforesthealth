@@ -1,15 +1,38 @@
 <breadcrumb></breadcrumb>
 
 @if (vm$ | async; as vm) {
-    <page-header [pageTitle]="vm.isNewProject ? 'New Project' : (vm.progress?.ProjectName ?? 'Edit Project')">
-        <div class="header-actions" customHeaderActions>
-            @if (!vm.isNewProject && vm.progress?.CanSubmit) {
-                <button class="btn btn-primary" (click)="submitForApproval(vm.progress.ProjectID)">
-                    Submit for Approval
-                </button>
-            }
-        </div>
+    <page-header [pageTitle]="vm.isNewProject ? 'New Project' : (vm.progress?.ProjectName ?? 'Edit Project')" [templateRight]="actionsTemplate">
     </page-header>
+
+    <ng-template #actionsTemplate>
+        @if (!vm.isNewProject && vm.progress) {
+            <div class="actions-dropdown" [dropdownToggle]="actionsMenu">
+                <a href="javascript:void(0);" class="actions-toggle">
+                    See more Actions <icon icon="AngleDown"></icon>
+                </a>
+                <ul #actionsMenu class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a [routerLink]="['/projects', vm.progress.ProjectID]" class="dropdown-item">
+                            Project Details
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);" (click)="openFeedbackModal()" class="dropdown-item">
+                            Provide Feedback
+                        </a>
+                    </li>
+                    @if (canWithdraw(vm.progress)) {
+                        <li class="divider"></li>
+                        <li>
+                            <a href="javascript:void(0);" (click)="withdrawProposal()" class="dropdown-item text-danger">
+                                Withdraw Proposal
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </ng-template>
 
     <div class="dashboard workflow">
         <div class="sidebar">
@@ -18,8 +41,9 @@
                     @for (group of stepGroups; track group.title) {
                         <workflow-nav-group
                             [title]="group.title"
-                            [expanded]="true"
-                            [complete]="!vm.isNewProject && isGroupComplete(vm.progress, group)">
+                            [expanded]="false"
+                            [complete]="!vm.isNewProject && isGroupComplete(vm.progress, group)"
+                            [childRoutes]="getGroupChildRoutes(group)">
                             @for (step of group.steps; track step.key) {
                                 <workflow-nav-item
                                     [navRouterLink]="getStepLink(step)"
@@ -38,6 +62,35 @@
             <div class="outlet-container">
                 <router-outlet></router-outlet>
             </div>
+
+            <!-- Project Status Footer -->
+            @if (!vm.isNewProject && vm.progress) {
+                <div class="workflow-footer">
+                    <div class="workflow-footer__info">
+                        @if (vm.progress.CreatedByPersonName) {
+                            <span class="workflow-footer__created">
+                                Created by {{ vm.progress.CreatedByPersonName }}
+                                @if (vm.progress.CreatedByOrganizationName) {
+                                    ({{ vm.progress.CreatedByOrganizationName }})
+                                }
+                                @if (vm.progress.CreateDate) {
+                                    on {{ vm.progress.CreateDate | date:'M/d/yyyy h:mm:ss a' }}
+                                }
+                            </span>
+                        }
+                    </div>
+                    <div class="workflow-footer__status">
+                        <span class="workflow-footer__status-label">
+                            New Project Status: <strong>{{ vm.progress.ProjectApprovalStatusName }}</strong>
+                        </span>
+                        @if (vm.progress.CanSubmit) {
+                            <button class="btn btn-primary" (click)="submitForApproval(vm.progress.ProjectID, vm.progress.ProjectName)">
+                                Submit
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
         </div>
     </div>
 }

@@ -37,6 +37,10 @@ public static class ProjectCreateWorkflowProgress
         public int ProjectID { get; init; }
         public string ProjectName { get; init; } = string.Empty;
         public int ProjectApprovalStatusID { get; init; }
+        public string ProjectApprovalStatusName { get; init; } = string.Empty;
+        public string? CreatedByPersonName { get; init; }
+        public string? CreatedByOrganizationName { get; init; }
+        public DateTime? CreateDate { get; init; }
         public int ProjectTypeID { get; init; }
         public int? ProjectStageID { get; init; }
         public int? FocusAreaID { get; init; }
@@ -86,7 +90,11 @@ public static class ProjectCreateWorkflowProgress
             ProjectID = ctx.ProjectID,
             ProjectName = ctx.ProjectName,
             ProjectApprovalStatusID = ctx.ProjectApprovalStatusID,
+            ProjectApprovalStatusName = ctx.ProjectApprovalStatusName,
             CanSubmit = CanSubmit(ctx, steps),
+            CreatedByPersonName = ctx.CreatedByPersonName,
+            CreatedByOrganizationName = ctx.CreatedByOrganizationName,
+            CreateDate = ctx.CreateDate,
             Steps = steps
         };
     }
@@ -125,6 +133,10 @@ public static class ProjectCreateWorkflowProgress
                 ProjectID = p.ProjectID,
                 ProjectName = p.ProjectName,
                 ProjectApprovalStatusID = p.ProjectApprovalStatusID,
+                ProjectApprovalStatusName = p.ProjectApprovalStatus.ProjectApprovalStatusDisplayName,
+                CreatedByPersonName = p.ProposingPerson != null ? p.ProposingPerson.FirstName + " " + p.ProposingPerson.LastName : null,
+                CreatedByOrganizationName = p.ProposingPerson != null && p.ProposingPerson.Organization != null ? p.ProposingPerson.Organization.OrganizationName : null,
+                CreateDate = p.ProposingDate,
                 ProjectTypeID = p.ProjectTypeID,
                 ProjectStageID = p.ProjectStageID,
                 FocusAreaID = p.FocusAreaID,
@@ -191,17 +203,17 @@ public static class ProjectCreateWorkflowProgress
         {
             ProjectCreateWorkflowStep.Basics => IsBasicsComplete(ctx),
             ProjectCreateWorkflowStep.LocationSimple => IsLocationSimpleComplete(ctx),
-            ProjectCreateWorkflowStep.LocationDetailed => true, // Always complete (optional)
+            ProjectCreateWorkflowStep.LocationDetailed => ctx.HasDetailedLocations,
             ProjectCreateWorkflowStep.PriorityLandscapes => IsPriorityLandscapesComplete(ctx),
             ProjectCreateWorkflowStep.DnrUplandRegions => IsDnrUplandRegionsComplete(ctx),
             ProjectCreateWorkflowStep.Counties => IsCountiesComplete(ctx),
-            ProjectCreateWorkflowStep.Treatments => true, // Always complete (optional, read-only in proposal)
-            ProjectCreateWorkflowStep.Contacts => true, // Always complete (optional)
+            ProjectCreateWorkflowStep.Treatments => ctx.HasTreatments,
+            ProjectCreateWorkflowStep.Contacts => ctx.HasContacts,
             ProjectCreateWorkflowStep.Organizations => IsOrganizationsComplete(ctx),
-            ProjectCreateWorkflowStep.ExpectedFunding => true, // Always complete (optional)
-            ProjectCreateWorkflowStep.Classifications => true, // Always complete (optional)
-            ProjectCreateWorkflowStep.Photos => true, // Always complete (optional)
-            ProjectCreateWorkflowStep.DocumentsNotes => true, // Always complete (optional)
+            ProjectCreateWorkflowStep.ExpectedFunding => ctx.HasExpectedFunding,
+            ProjectCreateWorkflowStep.Classifications => ctx.HasClassifications,
+            ProjectCreateWorkflowStep.Photos => ctx.HasPhotos,
+            ProjectCreateWorkflowStep.DocumentsNotes => ctx.HasDocuments || ctx.HasNotes,
             _ => false
         };
     }
@@ -264,6 +276,10 @@ public class ProjectCreateWorkflowProgressDto
     public int ProjectID { get; set; }
     public string ProjectName { get; set; } = string.Empty;
     public int ProjectApprovalStatusID { get; set; }
+    public string ProjectApprovalStatusName { get; set; } = string.Empty;
     public bool CanSubmit { get; set; }
+    public string? CreatedByPersonName { get; set; }
+    public string? CreatedByOrganizationName { get; set; }
+    public DateTime? CreateDate { get; set; }
     public Dictionary<ProjectCreateWorkflowProgress.ProjectCreateWorkflowStep, WorkflowStepStatus> Steps { get; set; } = new();
 }

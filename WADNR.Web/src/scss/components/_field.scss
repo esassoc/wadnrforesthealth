@@ -14,7 +14,8 @@
         }
     }
 
-    &-label {
+    &-label,
+    .field-definition-label {
         display: flex;
         align-items: center;
         font-weight: bold;

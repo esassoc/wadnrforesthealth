@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { AsyncPipe, CommonModule } from "@angular/common";
+import { AsyncPipe, CommonModule, DatePipe } from "@angular/common";
 import { Router, RouterLink, RouterOutlet } from "@angular/router";
 import { BehaviorSubject, combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, startWith, of } from "rxjs";
+import { DialogService } from "@ngneat/dialog";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -9,8 +10,12 @@ import { WorkflowNavComponent } from "src/app/shared/components/workflow-nav/wor
 import { WorkflowNavItemComponent } from "src/app/shared/components/workflow-nav/workflow-nav-item/workflow-nav-item.component";
 import { WorkflowNavGroupComponent } from "src/app/shared/components/workflow-nav/workflow-nav-group/workflow-nav-group.component";
 import { WorkflowBodyComponent } from "src/app/shared/components/workflow-body/workflow-body.component";
+import { IconComponent } from "src/app/shared/components/icon/icon.component";
+import { DropdownToggleDirective } from "src/app/shared/directives/dropdown-toggle.directive";
+import { FeedbackModalComponent } from "src/app/shared/components/feedback-modal/feedback-modal.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectCreateWorkflowProgressDto } from "src/app/shared/generated/model/project-create-workflow-progress-dto";
+import { ProjectApprovalStatusEnum } from "src/app/shared/generated/enum/project-approval-status-enum";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -34,6 +39,7 @@ export interface WorkflowStepGroup {
     imports: [
         CommonModule,
         AsyncPipe,
+        DatePipe,
         RouterOutlet,
         RouterLink,
         BreadcrumbComponent,
@@ -41,7 +47,9 @@ export interface WorkflowStepGroup {
         WorkflowNavComponent,
         WorkflowNavItemComponent,
         WorkflowNavGroupComponent,
-        WorkflowBodyComponent
+        WorkflowBodyComponent,
+        IconComponent,
+        DropdownToggleDirective
     ],
     templateUrl: "./project-create-workflow-outlet.component.html",
     styleUrls: ["./project-create-workflow-outlet.component.scss"]
@@ -106,7 +114,8 @@ export class ProjectCreateWorkflowOutletComponent implements OnInit {
         private projectService: ProjectService,
         private router: Router,
         private alertService: AlertService,
-        private confirmService: ConfirmService
+        private confirmService: ConfirmService,
+        private dialogService: DialogService
     ) {}
 
     ngOnInit(): void {
@@ -144,11 +153,11 @@ export class ProjectCreateWorkflowOutletComponent implements OnInit {
         );
     }
 
-    submitForApproval(projectID: number): void {
+    submitForApproval(projectID: number, projectName: string): void {
         this.confirmService.confirm({
-            title: "Submit for Approval",
-            message: "Are you sure you want to submit this project for approval?",
-            buttonTextYes: "Submit",
+            title: "Submit Proposal for review",
+            message: `Are you sure you want to submit Project "${projectName}" to the reviewer?`,
+            buttonTextYes: "Continue",
             buttonTextNo: "Cancel",
             buttonClassYes: "btn-primary"
         }).then(confirmed => {
@@ -208,5 +217,49 @@ export class ProjectCreateWorkflowOutletComponent implements OnInit {
     onProjectCreated(projectID: number): void {
         // Navigate to the edit route after project is created
         this.router.navigate(["/projects", "edit", projectID, "location-simple"]);
+    }
+
+    getGroupChildRoutes(group: WorkflowStepGroup): string[] {
+        return group.steps.map(step => step.route);
+    }
+
+    canWithdraw(progress: ProjectCreateWorkflowProgressDto | null): boolean {
+        return progress?.ProjectApprovalStatusID === ProjectApprovalStatusEnum.PendingApproval;
+    }
+
+    openFeedbackModal(): void {
+        this.dialogService.open(FeedbackModalComponent, {
+            data: {
+                currentPageUrl: window.location.href
+            },
+            size: "md"
+        });
+    }
+
+    withdrawProposal(): void {
+        const projectID = this._projectID$.getValue();
+        if (!projectID) return;
+
+        this.confirmService.confirm({
+            title: "Withdraw Proposal",
+            message: "Are you sure you want to withdraw this proposal? This will return the project to Draft status.",
+            buttonTextYes: "Withdraw",
+            buttonTextNo: "Cancel",
+            buttonClassYes: "btn-danger"
+        }).then(confirmed => {
+            if (confirmed) {
+                this.projectService.withdrawProject(projectID, {}).subscribe({
+                    next: () => {
+                        this.alertService.pushAlert(new Alert("Proposal withdrawn successfully.", AlertContext.Success, true));
+                        this.refreshProgress$.next();
+                        this.router.navigate(["/projects", projectID]);
+                    },
+                    error: (err) => {
+                        const message = err?.error?.ErrorMessage ?? err?.error ?? "Failed to withdraw proposal.";
+                        this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                    }
+                });
+            }
+        });
     }
 }

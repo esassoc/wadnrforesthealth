@@ -8894,6 +8894,38 @@
         }
       }
     },
+    "/support-requests": {
+      "post": {
+        "tags": [
+          "SupportRequest"
+        ],
+        "operationId": "Create_SupportRequest",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupportRequestCreateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupportRequestCreateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupportRequestCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "tags": [
@@ -15035,8 +15067,25 @@
             "type": "integer",
             "format": "int32"
           },
+          "ProjectApprovalStatusName": {
+            "type": "string",
+            "nullable": true
+          },
           "CanSubmit": {
             "type": "boolean"
+          },
+          "CreatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreatedByOrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           },
           "Steps": {
             "type": "object",
@@ -16639,6 +16688,43 @@
         },
         "additionalProperties": false
       },
+      "SupportRequestCreateDto": {
+        "required": [
+          "RequestDescription",
+          "SupportRequestTypeID"
+        ],
+        "type": "object",
+        "properties": {
+          "SupportRequestTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RequestDescription": {
+            "maxLength": 2000,
+            "minLength": 0,
+            "type": "string"
+          },
+          "RequestPersonOrganization": {
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "RequestPersonPhone": {
+            "maxLength": 50,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "CurrentPageUrl": {
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "SystemInfoDetail": {
         "type": "object",
         "properties": {
@@ -17654,6 +17740,9 @@
     },
     {
       "name": "SitkaCapture"
+    },
+    {
+      "name": "SupportRequest"
     },
     {
       "name": "SystemInfo"

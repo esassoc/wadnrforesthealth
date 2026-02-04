@@ -406,17 +406,17 @@
         padding: 0;
         position: relative;
 
-        .outlet-container {
-            padding: 1rem;
-        }
+        // .outlet-container {
+        //     padding: 1rem;
+        // }
 
         @include desktop-small {
             padding: 0;
             grid-column: 5 / span 8;
 
-            .outlet-container {
-                padding: 2rem 4rem 4rem 2rem;
-            }
+            // .outlet-container {
+            //     padding: 2rem 4rem 4rem 2rem;
+            // }
         }
 
         @include desktop-medium {

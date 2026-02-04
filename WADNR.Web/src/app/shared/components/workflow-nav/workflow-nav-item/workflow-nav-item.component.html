@@ -1,23 +1,15 @@
 <li class="sidebar-item workflow-sidebar-item">
   <a [routerLink]="navRouterLink" routerLinkActive="active" class="sidebar-link" [class.disabled]="disabled">
     <div>
-      @switch (required) {
-        @case (true) {
-          @switch (complete) {
-            @case (true) {
-              <icon class="complete" icon="StepComplete"></icon>
-            }
-            @default {
-              <icon class="fade" icon="StepIncomplete"></icon>
-            }
-          }
-        }
-        @case (false) {
-          <icon class="info" icon="Info"></icon>
-        }
+      @if (complete) {
+        <icon class="complete" icon="StepComplete"></icon>
+      } @else if (required) {
+        <icon class="fade" icon="StepIncomplete"></icon>
+      } @else {
+        <icon class="info" icon="Info"></icon>
       }
     </div>
-    <div>
+    <div [class.required]="required">
       <ng-content></ng-content>
     </div>
   </a>

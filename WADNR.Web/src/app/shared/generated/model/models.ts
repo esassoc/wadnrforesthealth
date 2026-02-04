@@ -181,6 +181,7 @@ export * from './project-upsert-request';
 export * from './role-detail';
 export * from './role-grid-row';
 export * from './role-lookup-item';
+export * from './support-request-create-dto';
 export * from './system-info-detail';
 export * from './tag-detail';
 export * from './tag-grid-row';

@@ -2,12 +2,11 @@
 
 .required {
     &::after {
-        display: block;
-        content: "\f069";
+        display: inline;
+        content: " *";
         color: var(--red-default);
-        font-family: "Font Awesome 5 Free";
-        font-size: 0.5rem;
-        transform: translate3d(3px, -4px, 0);
+        font-weight: bold;
+        margin-left: 2px;
     }
 
     &-note {

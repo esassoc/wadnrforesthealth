@@ -1,0 +1,76 @@
+// Feedback modal styles
+
+// Label width for horizontal alignment
+$label-width: 120px;
+
+.feedback-form {
+    // Read-only field styling (Name, Email)
+    .field.horizontal {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+
+        .field-label {
+            flex: 0 0 $label-width;
+            text-align: left;
+            padding-right: 0.5rem;
+            font-weight: bold;
+            font-size: var(--type-size-200, 0.875rem);
+
+            &.required::after {
+                content: " *";
+                color: var(--danger, #dc3545);
+            }
+        }
+
+        .field-value {
+            flex: 1;
+            padding-top: 0.5rem; // Align vertically with input text
+            padding-left: 0.75rem; // Match input field's internal padding
+        }
+    }
+
+    // Override form-field horizontal layout to match
+    form-field {
+        display: block;
+        margin-bottom: 1rem;
+
+        // Target the horizontal form-field inner .field
+        ::ng-deep .field {
+            .field-label,
+            .field-definition-container {
+                flex: 0 0 $label-width !important;
+                text-align: left;
+                margin-right: 0.5rem !important;
+            }
+        }
+    }
+}
+
+.characters-remaining {
+    text-align: right;
+    color: var(--gray-600, #6c757d);
+    font-size: 0.875rem;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .required-field-note {
+        font-size: 0.875rem;
+        color: var(--gray-600, #6c757d);
+
+        .required-indicator {
+            color: var(--danger, #dc3545);
+        }
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+}

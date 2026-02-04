@@ -1,0 +1,75 @@
+<div class="modal-header">
+    <h3>Provide Feedback</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form" class="feedback-form">
+        <!-- Read-only Name field -->
+        <div class="field horizontal">
+            <div class="field-label required">Name</div>
+            <div class="field-value">{{ currentUser?.FirstName }} {{ currentUser?.LastName }}</div>
+        </div>
+
+        <!-- Read-only Email field -->
+        <div class="field horizontal">
+            <div class="field-label required">Email Address</div>
+            <div class="field-value">{{ currentUser?.Email }}</div>
+        </div>
+
+        <!-- Organization (optional) -->
+        <form-field
+            [formControl]="form.controls.RequestPersonOrganization"
+            fieldLabel="Organization"
+            [type]="FormFieldType.Text"
+            [horizontal]="true"
+            placeholder="">
+        </form-field>
+
+        <!-- Phone (optional) -->
+        <form-field
+            [formControl]="form.controls.RequestPersonPhone"
+            fieldLabel="Phone"
+            [type]="FormFieldType.Text"
+            [horizontal]="true"
+            placeholder="">
+        </form-field>
+
+        <!-- Subject dropdown -->
+        <form-field
+            [formControl]="form.controls.SupportRequestTypeID"
+            fieldLabel="Subject"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="supportRequestTypeOptions"
+            [horizontal]="true">
+        </form-field>
+
+        <!-- Description -->
+        <form-field
+            [formControl]="form.controls.RequestDescription"
+            fieldLabel="Description"
+            [type]="FormFieldType.Textarea"
+            [horizontal]="true"
+            placeholder="">
+        </form-field>
+
+        <div class="characters-remaining">
+            Characters Remaining: {{ charactersRemaining }}
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <div class="required-field-note">
+        <span class="required-indicator">*</span> Required Field
+    </div>
+    <div class="modal-actions">
+        <button class="btn btn-primary" (click)="submit()" [disabled]="form.invalid || isSubmitting">
+            @if (isSubmitting) {
+                Submitting...
+            } @else {
+                Submit Request
+            }
+        </button>
+        <button class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
+    </div>
+</div>

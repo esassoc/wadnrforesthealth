@@ -30,6 +30,7 @@ api/project-type.service.ts
 api/project.service.ts
 api/role.service.ts
 api/sitka-capture.service.ts
+api/support-request.service.ts
 api/system-info.service.ts
 api/tag.service.ts
 api/taxonomy-branch.service.ts
@@ -223,6 +224,7 @@ model/project-upsert-request.ts
 model/role-detail.ts
 model/role-grid-row.ts
 model/role-lookup-item.ts
+model/support-request-create-dto.ts
 model/system-info-detail.ts
 model/tag-detail.ts
 model/tag-grid-row.ts

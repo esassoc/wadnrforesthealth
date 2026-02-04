@@ -4,6 +4,21 @@
     height: 100%;
 }
 
+.field-definition-container {
+    display: inline-flex;
+    align-items: baseline;
+}
+
+// Match field-label styling to field-definition-label
+.field-label {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--type-size-200);
+    font-weight: bold;
+    line-height: 1.4;
+    color: var(--color-text);
+}
+
 :host.horizontal {
     .field {
         display: flex;

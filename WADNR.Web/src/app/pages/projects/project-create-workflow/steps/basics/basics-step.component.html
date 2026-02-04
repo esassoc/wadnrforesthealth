@@ -5,6 +5,10 @@
             <span class="card-title">Project Basics</span>
         </div>
         <div class="card-body">
+            <div class="mb-3">
+                <custom-rich-text [customRichTextTypeID]="FirmaPageTypeEnum.ProjectCreateInstructions"></custom-rich-text>
+            </div>
+
             <form [formGroup]="form">
                 <div class="grid-12">
                     <div class="g-col-12">
@@ -78,19 +82,24 @@
                                     </form-field>
                                 </div>
 
-                                <!-- Programs Section -->
-                                <div class="g-col-12">
-                                    <div class="mb-2">
-                                        <form-field
-                                            [formControl]="$any(form.controls.programToAdd)"
-                                            fieldLabel="Program to Add"
-                                            [type]="FormFieldType.Select"
-                                            [formInputOptions]="state.availablePrograms"
-                                            placeholder="Select a Program to Add"
-                                            (change)="onProgramSelect($event, vm.programOptions)">
-                                        </form-field>
-                                    </div>
+                                <div class="g-col-6">
+                                    <form-field
+                                        [formControl]="$any(form.controls.programToAdd)"
+                                        fieldLabel="Program to Add"
+                                        [type]="FormFieldType.Select"
+                                        [formInputOptions]="state.availablePrograms"
+                                        placeholder="Select a Program to Add"
+                                        (change)="onProgramSelect($event, vm.programOptions)">
+                                    </form-field>
+                                </div>
 
+                                <div class="g-col-6">
+                                    <form-field [formControl]="$any(form.controls.percentageMatch)" fieldLabel="Percentage Match" [type]="FormFieldType.Number" placeholder="">
+                                    </form-field>
+                                </div>
+
+                                <!-- Programs List -->
+                                <div class="g-col-12">
                                     <label class="field-label">Programs</label>
                                     @if (state.programs && state.programs.length > 0) {
                                         <ul class="program-list">
@@ -106,11 +115,6 @@
                                     } @else {
                                         <div class="text-muted">No programs added.</div>
                                     }
-                                </div>
-
-                                <div class="g-col-6">
-                                    <form-field [formControl]="$any(form.controls.percentageMatch)" fieldLabel="Percentage Match" [type]="FormFieldType.Number" placeholder="">
-                                    </form-field>
                                 </div>
                             </div>
                         </details>

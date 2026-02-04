@@ -7,6 +7,9 @@
 .field-definition-label {
     display: inline-flex;
     align-items: center;
+    font-size: var(--type-size-200);
+    line-height: 1.4;
+    color: var(--color-text);
 
     &__text {
         font-weight: bold;
