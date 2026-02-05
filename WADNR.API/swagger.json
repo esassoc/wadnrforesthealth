@@ -1219,6 +1219,64 @@
           }
         },
         "x-anonymous": true
+      },
+      "put": {
+        "tags": [
+          "CustomRichText"
+        ],
+        "operationId": "Update_CustomRichText",
+        "parameters": [
+          {
+            "name": "customRichTextTypeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FirmaPageUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FirmaPageUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FirmaPageUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FirmaPageDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FirmaPageDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FirmaPageDetail"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/dnr-upland-regions": {
@@ -1611,6 +1669,64 @@
           }
         },
         "x-anonymous": true
+      },
+      "put": {
+        "tags": [
+          "FieldDefinition"
+        ],
+        "operationId": "Update_FieldDefinition",
+        "parameters": [
+          {
+            "name": "fieldDefinitionID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldDefinitionDatumUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldDefinitionDatumUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldDefinitionDatumUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldDefinitionDatumDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldDefinitionDatumDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldDefinitionDatumDetail"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/file-resources/{fileResourceGuidAsString}": {
@@ -5139,7 +5255,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       },
       "post": {
         "tags": [
@@ -5227,7 +5344,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       },
       "put": {
         "tags": [
@@ -5348,7 +5466,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/map-popup": {
@@ -5389,7 +5508,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/mapped-point/feature-collection": {
@@ -5428,7 +5548,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/no-simple-location": {
@@ -5467,7 +5588,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/images": {
@@ -5517,7 +5639,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/classifications": {
@@ -5567,7 +5690,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/treatments": {
@@ -5617,7 +5741,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/treatment-areas": {
@@ -5667,7 +5792,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/interaction-events": {
@@ -5717,7 +5843,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/locations/generic-layers": {
@@ -5767,7 +5894,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/documents": {
@@ -5817,7 +5945,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/notes": {
@@ -5867,7 +5996,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/external-links": {
@@ -5917,7 +6047,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/update-history": {
@@ -5967,7 +6098,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/notifications": {
@@ -6017,7 +6149,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/audit-logs": {
@@ -11382,6 +11515,16 @@
         },
         "additionalProperties": false
       },
+      "FieldDefinitionDatumUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "FieldDefinitionDatumValue": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FieldDefinitionDetail": {
         "type": "object",
         "properties": {
@@ -11525,6 +11668,16 @@
           "FirmaPageRenderTypeID": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FirmaPageUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "FirmaPageContent": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

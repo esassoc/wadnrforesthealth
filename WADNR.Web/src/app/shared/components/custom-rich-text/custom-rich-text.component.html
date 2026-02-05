@@ -1,17 +1,17 @@
-<div [loadingSpinner]="{ isLoading, loadingHeight: 100 }">
-  @if (!isEditing) {
-    <div class="customRichTextContent" [class.editable]="showEditButton()" style="position: relative; min-height: 3rem">
-      @if (showEditButton()) {
+<div [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 100 }">
+  @if (!(isEditing$ | async)) {
+    <div class="customRichTextContent" [class.editable]="canEdit$ | async" style="position: relative; min-height: 3rem">
+      @if (canEdit$ | async) {
         <div class="hoverEditButton">
           <div style="transform: translate3d(-10px, 20px, 0)">
             <button type="button" class="btn btn-secondary" (click)="enterEdit()">Edit</button>
           </div>
         </div>
       }
-      @if (!isEmptyContent) {
-        <div [innerHtml]="customRichTextContent"></div>
+      @if (!(isEmptyContent$ | async)) {
+        <div [innerHtml]="customRichTextContent$ | async"></div>
       }
-      @if (isEmptyContent) {
+      @if (isEmptyContent$ | async) {
         <div class="hoverEmptySpace"></div>
       }
     </div>

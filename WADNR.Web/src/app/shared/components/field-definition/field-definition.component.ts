@@ -6,7 +6,10 @@ import { FieldDefinitionService } from "src/app/shared/generated/api/field-defin
 import { FieldDefinitionEnum } from "src/app/shared/generated/enum/field-definition-enum";
 import { PopperDirective } from "src/app/shared/directives/popper.directive";
 import { FormsModule } from "@angular/forms";
-import { FieldDefinitionDatumDetail } from "../../generated/model/models";
+import { FieldDefinitionDatumDetail, FieldDefinitionDatumUpsertRequest } from "../../generated/model/models";
+import { AuthenticationService } from "src/app/services/authentication.service";
+import { Alert } from "../../models/alert";
+import { AlertContext } from "../../models/enums/alert-context.enum";
 
 @Component({
     selector: "field-definition",
@@ -31,7 +34,12 @@ export class FieldDefinitionComponent implements OnInit, AfterViewInit, OnDestro
 
     public editedContent: string;
 
-    constructor(private fieldDefinitionService: FieldDefinitionService, private cdr: ChangeDetectorRef, private alertService: AlertService) {}
+    constructor(
+        private fieldDefinitionService: FieldDefinitionService,
+        private cdr: ChangeDetectorRef,
+        private alertService: AlertService,
+        private authenticationService: AuthenticationService
+    ) {}
 
     ngAfterViewInit(): void {
         // We need to use ngAfterViewInit because the image upload needs a reference to the component
@@ -63,8 +71,7 @@ export class FieldDefinitionComponent implements OnInit, AfterViewInit, OnDestro
     }
 
     public showEditButton(): boolean {
-        return true;
-        // return this.authenticationService.isCurrentUserAnAdministrator();
+        return this.authenticationService.isCurrentUserAnAdministrator();
     }
 
     public enterEdit(event: any): void {
@@ -82,13 +89,18 @@ export class FieldDefinitionComponent implements OnInit, AfterViewInit, OnDestro
         this.isEditing = false;
         this.isLoading = true;
 
-        this.fieldDefinitionDatum.FieldDefinitionDatumValue = this.editedContent;
-        // this.fieldDefinitionService.updateFieldDefinition(this.fieldDefinition.FieldDefinitionType.FieldDefinitionTypeID, this.fieldDefinition).subscribe(
-        //     (x) => this.loadFieldDefinition(x),
-        //     (error) => {
-        //         this.isLoading = false;
-        //         this.alertService.pushAlert(new Alert("There was an error updating the field definition", AlertContext.Danger));
-        //     }
-        // );
+        const upsertRequest: FieldDefinitionDatumUpsertRequest = {
+            FieldDefinitionDatumValue: this.editedContent
+        };
+        this.fieldDefinitionService.updateFieldDefinition(
+            this.fieldDefinitionDatum.FieldDefinition.FieldDefinitionID,
+            upsertRequest
+        ).subscribe({
+            next: (x) => this.loadFieldDefinition(x),
+            error: (error) => {
+                this.isLoading = false;
+                this.alertService.pushAlert(new Alert("There was an error updating the field definition", AlertContext.Danger));
+            }
+        });
     }
 }

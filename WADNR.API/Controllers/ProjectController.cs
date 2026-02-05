@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,7 @@ public class ProjectController(
     : SitkaController<ProjectController>(dbContext, logger, configuration)
 {
     [HttpGet]
+    [AllowAnonymous]
     [ProjectViewFeature]
     public async Task<ActionResult<IEnumerable<ProjectGridRow>>> List()
     {
@@ -32,6 +34,7 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ProjectDetail>> Get([FromRoute] int projectID)
@@ -46,6 +49,7 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}/fact-sheet")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ProjectFactSheet>> GetForFactSheet([FromRoute] int projectID)
@@ -60,6 +64,7 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}/map-popup")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ProjectMapPopup>> GetAsMapPopup([FromRoute] int projectID)
@@ -114,6 +119,7 @@ public class ProjectController(
     }
 
     [HttpGet("mapped-point/feature-collection")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     public async Task<ActionResult<FeatureCollection>> ListMappedPointsFeatureCollection()
     {
@@ -122,6 +128,7 @@ public class ProjectController(
     }
 
     [HttpGet("no-simple-location")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     public async Task<ActionResult<IEnumerable<ProjectSimpleTree>>> ListProjectsWithNoSimpleLocation()
     {
@@ -130,6 +137,7 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}/images")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<ProjectImageGridRow>>> ListImages([FromRoute] int projectID)
@@ -139,6 +147,7 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}/classifications")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<ClassificationLookupItem>>> ListClassifications([FromRoute] int projectID)
@@ -148,6 +157,7 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}/treatments")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<TreatmentGridRow>>> ListTreatments([FromRoute] int projectID)
@@ -157,6 +167,7 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}/treatment-areas")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<TreatmentAreaLookupItem>>> ListTreatmentAreas([FromRoute] int projectID)
@@ -166,6 +177,7 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}/interaction-events")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<InteractionEventGridRow>>> ListInteractionEvents([FromRoute] int projectID)
@@ -175,6 +187,7 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}/locations/generic-layers")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<List<GenericLayer>>> ListLocationsAsGenericLayers([FromRoute] int projectID)
@@ -219,6 +232,7 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}/documents")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<ProjectDocumentGridRow>>> ListDocuments([FromRoute] int projectID)
@@ -228,6 +242,7 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}/notes")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<ProjectNoteGridRow>>> ListNotes([FromRoute] int projectID)
@@ -237,6 +252,7 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}/external-links")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<ProjectExternalLinkGridRow>>> ListExternalLinks([FromRoute] int projectID)
@@ -246,6 +262,7 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}/update-history")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<ProjectUpdateHistoryGridRow>>> ListUpdateHistory([FromRoute] int projectID)
@@ -255,6 +272,7 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}/notifications")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<IEnumerable<ProjectNotificationGridRow>>> ListNotifications([FromRoute] int projectID)

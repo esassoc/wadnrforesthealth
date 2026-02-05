@@ -16,12 +16,12 @@ public static class FieldDefinitionData
     }
 
     public static async Task<FieldDefinitionDatumDetail?> Update(WADNRDbContext dbContext, int fieldDefinitionID,
-        FieldDefinitionDatumDetail fieldDefinitionUpdateDetail)
+        FieldDefinitionDatumUpsertRequest upsertRequest)
     {
         var fieldDefinitionDatum = await dbContext.FieldDefinitionData
             .SingleAsync(x => x.FieldDefinitionID == fieldDefinitionID);
 
-        fieldDefinitionDatum.FieldDefinitionDatumValue = fieldDefinitionUpdateDetail.FieldDefinitionDatumValue;
+        fieldDefinitionDatum.FieldDefinitionDatumValue = upsertRequest.FieldDefinitionDatumValue;
 
         await dbContext.SaveChangesAsync();
 

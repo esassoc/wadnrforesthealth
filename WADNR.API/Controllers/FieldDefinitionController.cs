@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -61,5 +62,19 @@ public class FieldDefinitionController(
                     FieldDefinitionDisplayName = string.Empty
                 }
         });
+    }
+
+    [HttpPut("{fieldDefinitionID}")]
+    [PageContentManageFeature]
+    public async Task<ActionResult<FieldDefinitionDatumDetail>> Update(
+        [FromRoute] int fieldDefinitionID,
+        [FromBody] FieldDefinitionDatumUpsertRequest upsertRequest)
+    {
+        var updated = await FieldDefinitionData.Update(DbContext, fieldDefinitionID, upsertRequest);
+        if (updated == null)
+        {
+            return NotFound();
+        }
+        return Ok(updated);
     }
 }
