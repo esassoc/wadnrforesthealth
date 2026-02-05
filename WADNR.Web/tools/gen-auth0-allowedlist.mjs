@@ -71,9 +71,11 @@ const methodsUpper = [...methodKeys].map((m) => m.toUpperCase()).sort();
  */
 const ts = `/* AUTO-GENERATED from swagger.json. DO NOT EDIT BY HAND. */
 
+import { HttpInterceptorRouteConfig } from '@auth0/auth0-angular';
+
 export type AllowedHttpMethod = 'GET'|'POST'|'PUT'|'PATCH'|'DELETE'|'OPTIONS'|'HEAD';
 
-type ExactMap = Partial<Record<AllowedHttpMethod, ReadonlySet<string>>>;
+type ExactMap = Partial<Record<AllowedHttpMethod, ReadonlyArray<string>>>;
 type RegexMap = Partial<Record<AllowedHttpMethod, ReadonlyArray<RegExp>>>;
 
 function stripBase(apiBaseUrl: string, uri: string): string | null {
@@ -93,7 +95,7 @@ ${methodsUpper
     .map((M) => {
         const m = M.toLowerCase();
         const arr = sorted(anonExact.get(m));
-        return `  '${M}': new Set(${JSON.stringify(arr)}),`;
+        return `  '${M}': ${JSON.stringify(arr)},`;
     })
     .join("\n")}
 };
@@ -103,7 +105,7 @@ ${methodsUpper
     .map((M) => {
         const m = M.toLowerCase();
         const arr = sorted(securedExact.get(m));
-        return `  '${M}': new Set(${JSON.stringify(arr)}),`;
+        return `  '${M}': ${JSON.stringify(arr)},`;
     })
     .join("\n")}
 };
@@ -128,48 +130,74 @@ ${methodsUpper
     .join("\n")}
 };
 
-function matchesAnon(method: AllowedHttpMethod, p: string): boolean {
-  const exact = ANON_EXACT[method];
-  if (exact?.has(p)) return true;
-
-  const regexes = ANON_REGEX[method] ?? [];
-  return regexes.some(rx => rx.test(p));
-}
-
-function matchesSecured(method: AllowedHttpMethod, p: string): boolean {
-  const exact = SECURED_EXACT[method];
-  if (exact?.has(p)) return true;
-
-  const regexes = SECURED_REGEX[method] ?? [];
-  return regexes.some(rx => rx.test(p));
-}
-
 /**
  * Auth0 httpInterceptor.allowedList generator.
  *
- * Rule:
- * - If request matches an anonymous route for that method => DO NOT attach token.
- * - Else if it matches a secured route for that method => attach token.
- * - Else => do nothing.
+ * This generates route configs that:
+ * - For anonymous routes: attach token if user is logged in, allow request if not (allowAnonymous: true)
+ * - For secured routes: require token (no allowAnonymous flag)
  *
- * This prevents overlap issues like:
- *   secured template:  /jurisdictions/{id}  (regex ^/jurisdictions/[^/]+$)
- *   anonymous literal: /jurisdictions/user-viewable
- * by always checking anonymous first.
+ * This allows endpoints like /projects to work for both anonymous users (showing public data)
+ * and authenticated users (showing additional data based on their identity).
  */
-export function buildAuth0AllowedList(apiBaseUrl: string) {
+export function buildAuth0AllowedList(apiBaseUrl: string): HttpInterceptorRouteConfig[] {
   const methods: AllowedHttpMethod[] = ['GET','POST','PUT','PATCH','DELETE','OPTIONS','HEAD'];
+  const entries: HttpInterceptorRouteConfig[] = [];
+  const base = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
 
-  return methods.map(httpMethod => ({
-    httpMethod,
-    uriMatcher: (uri: string) => {
-      const p = stripBase(apiBaseUrl, uri);
-      if (p === null) return false;
-
-      if (matchesAnon(httpMethod, p)) return false;
-      return matchesSecured(httpMethod, p);
+  // Anonymous routes: attach token if available, allow anonymous access
+  for (const method of methods) {
+    const exactPaths = ANON_EXACT[method];
+    if (exactPaths) {
+      for (const path of exactPaths) {
+        entries.push({
+          uri: base + path,
+          httpMethod: method,
+          allowAnonymous: true
+        });
+      }
     }
-  }));
+    const regexPatterns = ANON_REGEX[method];
+    if (regexPatterns) {
+      for (const rx of regexPatterns) {
+        entries.push({
+          uriMatcher: (uri: string) => {
+            const p = stripBase(apiBaseUrl, uri);
+            return p !== null && rx.test(p);
+          },
+          httpMethod: method,
+          allowAnonymous: true
+        });
+      }
+    }
+  }
+
+  // Secured routes: require token
+  for (const method of methods) {
+    const exactPaths = SECURED_EXACT[method];
+    if (exactPaths) {
+      for (const path of exactPaths) {
+        entries.push({
+          uri: base + path,
+          httpMethod: method
+        });
+      }
+    }
+    const regexPatterns = SECURED_REGEX[method];
+    if (regexPatterns) {
+      for (const rx of regexPatterns) {
+        entries.push({
+          uriMatcher: (uri: string) => {
+            const p = stripBase(apiBaseUrl, uri);
+            return p !== null && rx.test(p);
+          },
+          httpMethod: method
+        });
+      }
+    }
+  }
+
+  return entries;
 }
 `;
 

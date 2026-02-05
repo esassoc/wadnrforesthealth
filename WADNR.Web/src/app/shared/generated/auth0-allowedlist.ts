@@ -1,8 +1,10 @@
 /* AUTO-GENERATED from swagger.json. DO NOT EDIT BY HAND. */
 
+import { HttpInterceptorRouteConfig } from '@auth0/auth0-angular';
+
 export type AllowedHttpMethod = 'GET'|'POST'|'PUT'|'PATCH'|'DELETE'|'OPTIONS'|'HEAD';
 
-type ExactMap = Partial<Record<AllowedHttpMethod, ReadonlySet<string>>>;
+type ExactMap = Partial<Record<AllowedHttpMethod, ReadonlyArray<string>>>;
 type RegexMap = Partial<Record<AllowedHttpMethod, ReadonlyArray<RegExp>>>;
 
 function stripBase(apiBaseUrl: string, uri: string): string | null {
@@ -18,17 +20,17 @@ function stripBase(apiBaseUrl: string, uri: string): string | null {
 }
 
 const ANON_EXACT: ExactMap = {
-  'DELETE': new Set([]),
-  'GET': new Set(["/","/agreements","/classification-systems","/classification-systems/lookup","/classifications","/counties","/custom-pages/menu-item","/dnr-upland-regions","/field-definitions","/focus-areas","/fund-source-allocations","/fund-source-allocations/lookup","/fund-sources","/interaction-events","/invoices","/lookups/classification-systems-with-classifications","/lookups/funding-sources","/lookups/organization-relationship-types","/lookups/person-relationship-types","/organization-types","/organizations","/organizations/lookup","/priority-landscapes","/program-indices","/program-indices/lookup","/program-indices/search","/programs","/project-codes","/project-codes/lookup","/project-codes/search","/project-documents/types","/project-images/timings","/project-types","/project-types/lookup","/project-types/taxonomy","/tags","/taxonomy-branches","/taxonomy-branches/lookup","/taxonomy-trunks","/taxonomy-trunks/lookup","/vendors","/vendors/search","/with-project-count"]),
-  'POST': new Set([]),
-  'PUT': new Set([]),
+  'DELETE': [],
+  'GET': ["/","/agreements","/classification-systems","/classification-systems/lookup","/classifications","/counties","/custom-pages/menu-item","/dnr-upland-regions","/field-definitions","/focus-areas","/fund-source-allocations","/fund-source-allocations/lookup","/fund-sources","/interaction-events","/invoices","/lookups/classification-systems-with-classifications","/lookups/funding-sources","/lookups/organization-relationship-types","/lookups/person-relationship-types","/organization-types","/organizations","/organizations/lookup","/priority-landscapes","/program-indices","/program-indices/lookup","/program-indices/search","/programs","/project-codes","/project-codes/lookup","/project-codes/search","/project-documents/types","/project-images/timings","/project-types","/project-types/lookup","/project-types/taxonomy","/projects","/projects/mapped-point/feature-collection","/projects/no-simple-location","/tags","/taxonomy-branches","/taxonomy-branches/lookup","/taxonomy-trunks","/taxonomy-trunks/lookup","/vendors","/vendors/search","/with-project-count"],
+  'POST': [],
+  'PUT': [],
 };
 
 const SECURED_EXACT: ExactMap = {
-  'DELETE': new Set([]),
-  'GET': new Set(["/people","/people/lookup","/projects","/projects/mapped-point/feature-collection","/projects/no-simple-location","/roles"]),
-  'POST': new Set(["/agreements","/classifications","/counties","/dnr-upland-regions","/fund-sources","/interaction-events","/organizations","/priority-landscapes","/programs","/project-documents","/project-images","/project-notes","/project-types","/projects","/projects/workflow/steps/basics","/sitkacapture/generate-pdf","/support-requests","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"]),
-  'PUT': new Set([]),
+  'DELETE': [],
+  'GET': ["/people","/people/lookup","/roles"],
+  'POST': ["/agreements","/classifications","/counties","/dnr-upland-regions","/fund-sources","/interaction-events","/organizations","/priority-landscapes","/programs","/project-documents","/project-images","/project-notes","/project-types","/projects","/projects/workflow/steps/basics","/sitkacapture/generate-pdf","/support-requests","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
+  'PUT': [],
 };
 
 const ANON_REGEX: RegexMap = {
@@ -89,6 +91,20 @@ const ANON_REGEX: RegexMap = {
     new RegExp("^/project-images/[^/]+$"),
     new RegExp("^/project-notes/[^/]+$"),
     new RegExp("^/project-types/[^/]+$"),
+    new RegExp("^/projects/[^/]+$"),
+    new RegExp("^/projects/[^/]+/classifications$"),
+    new RegExp("^/projects/[^/]+/documents$"),
+    new RegExp("^/projects/[^/]+/external-links$"),
+    new RegExp("^/projects/[^/]+/fact-sheet$"),
+    new RegExp("^/projects/[^/]+/images$"),
+    new RegExp("^/projects/[^/]+/interaction-events$"),
+    new RegExp("^/projects/[^/]+/locations/generic-layers$"),
+    new RegExp("^/projects/[^/]+/map-popup$"),
+    new RegExp("^/projects/[^/]+/notes$"),
+    new RegExp("^/projects/[^/]+/notifications$"),
+    new RegExp("^/projects/[^/]+/treatment-areas$"),
+    new RegExp("^/projects/[^/]+/treatments$"),
+    new RegExp("^/projects/[^/]+/update-history$"),
     new RegExp("^/tags/[^/]+$"),
     new RegExp("^/taxonomy-branches/[^/]+$"),
     new RegExp("^/taxonomy-trunks/[^/]+$"),
@@ -140,21 +156,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/people/[^/]+/projects$"),
     new RegExp("^/project-types/[^/]+/projects$"),
     new RegExp("^/project-types/[^/]+/projects/mapped-point/feature-collection$"),
-    new RegExp("^/projects/[^/]+$"),
     new RegExp("^/projects/[^/]+/audit-logs$"),
-    new RegExp("^/projects/[^/]+/classifications$"),
-    new RegExp("^/projects/[^/]+/documents$"),
-    new RegExp("^/projects/[^/]+/external-links$"),
-    new RegExp("^/projects/[^/]+/fact-sheet$"),
-    new RegExp("^/projects/[^/]+/images$"),
-    new RegExp("^/projects/[^/]+/interaction-events$"),
-    new RegExp("^/projects/[^/]+/locations/generic-layers$"),
-    new RegExp("^/projects/[^/]+/map-popup$"),
-    new RegExp("^/projects/[^/]+/notes$"),
-    new RegExp("^/projects/[^/]+/notifications$"),
-    new RegExp("^/projects/[^/]+/treatment-areas$"),
-    new RegExp("^/projects/[^/]+/treatments$"),
-    new RegExp("^/projects/[^/]+/update-history$"),
     new RegExp("^/projects/[^/]+/workflow/progress$"),
     new RegExp("^/projects/[^/]+/workflow/steps/basics$"),
     new RegExp("^/projects/[^/]+/workflow/steps/classifications$"),
@@ -186,7 +188,9 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/agreements/[^/]+$"),
     new RegExp("^/classifications/[^/]+$"),
     new RegExp("^/counties/[^/]+$"),
+    new RegExp("^/custom-rich-texts/[^/]+$"),
     new RegExp("^/dnr-upland-regions/[^/]+$"),
+    new RegExp("^/field-definitions/[^/]+$"),
     new RegExp("^/fund-sources/[^/]+$"),
     new RegExp("^/interaction-events/[^/]+$"),
     new RegExp("^/organizations/[^/]+$"),
@@ -214,46 +218,72 @@ const SECURED_REGEX: RegexMap = {
   ],
 };
 
-function matchesAnon(method: AllowedHttpMethod, p: string): boolean {
-  const exact = ANON_EXACT[method];
-  if (exact?.has(p)) return true;
-
-  const regexes = ANON_REGEX[method] ?? [];
-  return regexes.some(rx => rx.test(p));
-}
-
-function matchesSecured(method: AllowedHttpMethod, p: string): boolean {
-  const exact = SECURED_EXACT[method];
-  if (exact?.has(p)) return true;
-
-  const regexes = SECURED_REGEX[method] ?? [];
-  return regexes.some(rx => rx.test(p));
-}
-
 /**
  * Auth0 httpInterceptor.allowedList generator.
  *
- * Rule:
- * - If request matches an anonymous route for that method => DO NOT attach token.
- * - Else if it matches a secured route for that method => attach token.
- * - Else => do nothing.
+ * This generates route configs that:
+ * - For anonymous routes: attach token if user is logged in, allow request if not (allowAnonymous: true)
+ * - For secured routes: require token (no allowAnonymous flag)
  *
- * This prevents overlap issues like:
- *   secured template:  /jurisdictions/{id}  (regex ^/jurisdictions/[^/]+$)
- *   anonymous literal: /jurisdictions/user-viewable
- * by always checking anonymous first.
+ * This allows endpoints like /projects to work for both anonymous users (showing public data)
+ * and authenticated users (showing additional data based on their identity).
  */
-export function buildAuth0AllowedList(apiBaseUrl: string) {
+export function buildAuth0AllowedList(apiBaseUrl: string): HttpInterceptorRouteConfig[] {
   const methods: AllowedHttpMethod[] = ['GET','POST','PUT','PATCH','DELETE','OPTIONS','HEAD'];
+  const entries: HttpInterceptorRouteConfig[] = [];
+  const base = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
 
-  return methods.map(httpMethod => ({
-    httpMethod,
-    uriMatcher: (uri: string) => {
-      const p = stripBase(apiBaseUrl, uri);
-      if (p === null) return false;
-
-      if (matchesAnon(httpMethod, p)) return false;
-      return matchesSecured(httpMethod, p);
+  // Anonymous routes: attach token if available, allow anonymous access
+  for (const method of methods) {
+    const exactPaths = ANON_EXACT[method];
+    if (exactPaths) {
+      for (const path of exactPaths) {
+        entries.push({
+          uri: base + path,
+          httpMethod: method,
+          allowAnonymous: true
+        });
+      }
     }
-  }));
+    const regexPatterns = ANON_REGEX[method];
+    if (regexPatterns) {
+      for (const rx of regexPatterns) {
+        entries.push({
+          uriMatcher: (uri: string) => {
+            const p = stripBase(apiBaseUrl, uri);
+            return p !== null && rx.test(p);
+          },
+          httpMethod: method,
+          allowAnonymous: true
+        });
+      }
+    }
+  }
+
+  // Secured routes: require token
+  for (const method of methods) {
+    const exactPaths = SECURED_EXACT[method];
+    if (exactPaths) {
+      for (const path of exactPaths) {
+        entries.push({
+          uri: base + path,
+          httpMethod: method
+        });
+      }
+    }
+    const regexPatterns = SECURED_REGEX[method];
+    if (regexPatterns) {
+      for (const rx of regexPatterns) {
+        entries.push({
+          uriMatcher: (uri: string) => {
+            const p = stripBase(apiBaseUrl, uri);
+            return p !== null && rx.test(p);
+          },
+          httpMethod: method
+        });
+      }
+    }
+  }
+
+  return entries;
 }
