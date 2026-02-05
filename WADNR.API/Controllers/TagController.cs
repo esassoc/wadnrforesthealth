@@ -80,10 +80,10 @@ public class TagController(
     }
 
     [HttpGet("{tagID}/projects")]
-    [AllowAnonymous]
+    [ProjectViewFeature]
     public async Task<ActionResult<IEnumerable<ProjectTagDetailGridRow>>> ListProjectsForTagID([FromRoute] int tagID)
     {
-        var projects = await Projects.ListAsTagDetailGridRowAsync(DbContext, tagID);
+        var projects = await Projects.ListAsTagDetailGridRowForUserAsync(DbContext, tagID, CallingUser);
         return Ok(projects);
     }
 }

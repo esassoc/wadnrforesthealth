@@ -1,4 +1,4 @@
-﻿using System.Net.Mail;
+using System.Net.Mail;
 using System.Net.Mime;
 using Microsoft.Extensions.Options;
 using SendGrid;

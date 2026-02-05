@@ -102,20 +102,20 @@ public class OrganizationController(
     }
 
     [HttpGet("{organizationID}/projects")]
-    [AllowAnonymous]
+    [ProjectViewFeature]
     [EntityNotFound(typeof(Organization), "organizationID")]
     public async Task<ActionResult<IEnumerable<ProjectOrganizationDetailGridRow>>> ListProjectsForOrganization([FromRoute] int organizationID)
     {
-        var projects = await Projects.ListAsOrganizationDetailGridRowAsync(DbContext, organizationID);
+        var projects = await Projects.ListAsOrganizationDetailGridRowForUserAsync(DbContext, organizationID, CallingUser);
         return Ok(projects);
     }
 
     [HttpGet("{organizationID}/projects/pending")]
-    [AllowAnonymous]
+    [ProjectPendingViewFeature]
     [EntityNotFound(typeof(Organization), "organizationID")]
     public async Task<ActionResult<IEnumerable<ProjectOrganizationDetailGridRow>>> ListPendingProjectsForOrganization([FromRoute] int organizationID)
     {
-        var projects = await Projects.ListPendingAsOrganizationDetailGridRowAsync(DbContext, organizationID);
+        var projects = await Projects.ListPendingAsOrganizationDetailGridRowForUserAsync(DbContext, organizationID, CallingUser);
         return Ok(projects);
     }
 

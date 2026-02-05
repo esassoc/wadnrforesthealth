@@ -16,7 +16,13 @@
       "Bash(dir:*)",
       "Bash(Sort-Object)",
       "Bash(Select-Object -First 20 \")",
-      "Bash(npm run gen-auth0-allowedlist:*)"
+      "Bash(npm run gen-auth0-allowedlist:*)",
+      "Bash(npx ng lint)",
+      "Bash(dotnet swagger:*)",
+      "Bash(while read file)",
+      "Bash(do if grep -q \"app-alert-display\" \"$file\")",
+      "Bash(then echo \"$file\")",
+      "Bash(fi)"
     ]
   }
 }

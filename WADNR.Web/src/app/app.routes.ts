@@ -1,4 +1,5 @@
 import { Routes } from "@angular/router";
+import { projectEditGuard } from "./shared/guards/project-edit.guard";
 
 export const routeParams = {
     definitionID: "definitionID",
@@ -215,6 +216,7 @@ export const routes: Routes = [
     {
         path: "projects/new",
         title: "New Project",
+        canActivate: [projectEditGuard],
         loadComponent: () => import("./pages/projects/project-create-workflow/project-create-workflow-outlet.component").then((m) => m.ProjectCreateWorkflowOutletComponent),
         children: [
             { path: "", redirectTo: "basics", pathMatch: "full" },
@@ -225,6 +227,7 @@ export const routes: Routes = [
     {
         path: `projects/edit/:${routeParams.projectID}`,
         title: "Edit Project",
+        canActivate: [projectEditGuard],
         loadComponent: () => import("./pages/projects/project-create-workflow/project-create-workflow-outlet.component").then((m) => m.ProjectCreateWorkflowOutletComponent),
         children: [
             { path: "", redirectTo: "basics", pathMatch: "full" },

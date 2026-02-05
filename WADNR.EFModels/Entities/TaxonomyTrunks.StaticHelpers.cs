@@ -71,4 +71,22 @@ public static class TaxonomyTrunks
 
         return projects;
     }
+
+    /// <summary>
+    /// Lists projects for a taxonomy trunk visible to the calling user.
+    /// </summary>
+    public static async Task<List<ProjectGridRow>> ListProjectsAsGridRowForUserAsync(
+        WADNRDbContext dbContext,
+        int taxonomyTrunkID,
+        PersonDetail? callingUser)
+    {
+        var query = ProjectVisibility.ApplyVisibilityFilter(dbContext.Projects, callingUser);
+
+        return await query
+            .Where(p => p.ProjectType.TaxonomyBranch.TaxonomyTrunkID == taxonomyTrunkID)
+            .AsNoTracking()
+            .OrderBy(p => p.ProjectName)
+            .Select(ProjectProjections.AsGridRow)
+            .ToListAsync();
+    }
 }

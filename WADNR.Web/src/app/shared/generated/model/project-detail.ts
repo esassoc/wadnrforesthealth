@@ -51,6 +51,10 @@ export class ProjectDetail {
     Counties?: Array<string> | null;
     Regions?: Array<string> | null;
     PriorityLandscapes?: Array<string> | null;
+    UserCanEdit?: boolean;
+    UserCanDelete?: boolean;
+    UserCanApprove?: boolean;
+    UserIsAdmin?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -87,6 +91,10 @@ export interface ProjectDetailForm {
     Counties?: FormControl<Array<string>>;
     Regions?: FormControl<Array<string>>;
     PriorityLandscapes?: FormControl<Array<string>>;
+    UserCanEdit?: FormControl<boolean>;
+    UserCanDelete?: FormControl<boolean>;
+    UserCanApprove?: FormControl<boolean>;
+    UserIsAdmin?: FormControl<boolean>;
 }
 
 export class ProjectDetailFormControls { 
@@ -381,6 +389,46 @@ export class ProjectDetailFormControls {
         }
     );
     public static PriorityLandscapes = (value: FormControlState<Array<string>> | Array<string> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<string>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static UserCanEdit = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static UserCanDelete = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static UserCanApprove = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static UserIsAdmin = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

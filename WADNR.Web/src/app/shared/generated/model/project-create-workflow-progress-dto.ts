@@ -21,6 +21,11 @@ export class ProjectCreateWorkflowProgressDto {
     CreatedByOrganizationName?: string | null;
     CreateDate?: string | null;
     Steps?: ProjectCreateWorkflowProgressDtoSteps | null;
+    CanApprove?: boolean;
+    CanReject?: boolean;
+    CanReturn?: boolean;
+    CanWithdraw?: boolean;
+    CanEdit?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -36,6 +41,11 @@ export interface ProjectCreateWorkflowProgressDtoForm {
     CreatedByOrganizationName?: FormControl<string>;
     CreateDate?: FormControl<string>;
     Steps?: FormControl<ProjectCreateWorkflowProgressDtoSteps>;
+    CanApprove?: FormControl<boolean>;
+    CanReject?: FormControl<boolean>;
+    CanReturn?: FormControl<boolean>;
+    CanWithdraw?: FormControl<boolean>;
+    CanEdit?: FormControl<boolean>;
 }
 
 export class ProjectCreateWorkflowProgressDtoFormControls { 
@@ -120,6 +130,56 @@ export class ProjectCreateWorkflowProgressDtoFormControls {
         }
     );
     public static Steps = (value: FormControlState<ProjectCreateWorkflowProgressDtoSteps> | ProjectCreateWorkflowProgressDtoSteps = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<ProjectCreateWorkflowProgressDtoSteps>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CanApprove = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CanReject = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CanReturn = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CanWithdraw = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CanEdit = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

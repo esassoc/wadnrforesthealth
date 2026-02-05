@@ -165,6 +165,45 @@ export class AuthenticationService {
         return roleIDs.includes(roleID);
     }
 
+    /**
+     * Checks if user has one of the specified roles (both base and supplemental).
+     */
+    public doesUserHaveOneOfTheseRoles(user: PersonDetail | null, roleIDs: number[]): boolean {
+        if (!user?.BaseRole) return false;
+
+        // Check base role
+        if (roleIDs.includes(user.BaseRole.RoleID)) return true;
+
+        // Check supplemental roles
+        if (user.SupplementalRoleList?.some((r) => roleIDs.includes(r.RoleID))) return true;
+
+        return false;
+    }
+
+    /**
+     * Checks if user can create new projects.
+     */
+    public canCreateProject(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.Normal, RoleEnum.ProjectSteward, RoleEnum.CanEditProgram]);
+    }
+
+    /**
+     * Checks if user has elevated project access (admin/steward level).
+     */
+    public hasElevatedProjectAccess(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.ProjectSteward]);
+    }
+
+    /**
+     * Checks if user can approve/reject projects.
+     */
+    public canApproveProjects(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.ProjectSteward, RoleEnum.CanEditProgram]);
+    }
+
     ngOnDestroy(): void {
         this._destroying$.next(undefined);
         this._destroying$.complete();

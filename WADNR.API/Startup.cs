@@ -1,4 +1,4 @@
-﻿using WADNR.API.Logging;
+using WADNR.API.Logging;
 using WADNR.API.Services;
 using WADNR.API.Services.Filter;
 using WADNR.Common.EMail;
@@ -62,6 +62,7 @@ namespace WADNR.API
             });
 
             services.Configure<WADNRConfiguration>(Configuration);
+            services.Configure<SendGridConfiguration>(Configuration);
             var configuration = Configuration.Get<WADNRConfiguration>();
 
             services.AddSitkaCaptureService(configuration.SitkaCaptureServiceUrl);

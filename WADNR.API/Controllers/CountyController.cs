@@ -42,11 +42,10 @@ public class CountyController(
     }
 
     [HttpGet("{countyID}/projects")]
-    [AllowAnonymous]
+    [ProjectViewFeature]
     public async Task<ActionResult<IEnumerable<ProjectCountyDetailGridRow>>> ListProjectsForCountyID([FromRoute] int countyID)
     {
-        var projects = await Projects.ListAsCountyDetailGridRowAsync(DbContext, countyID);
-
+        var projects = await Projects.ListAsCountyDetailGridRowForUserAsync(DbContext, countyID, CallingUser);
         return Ok(projects);
     }
 

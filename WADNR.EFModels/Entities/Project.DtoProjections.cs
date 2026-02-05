@@ -187,6 +187,8 @@ public static class ProjectProjections
             ProjectStageID = x.ProjectStageID,
             ProjectStageName = x.ProjectStage.ProjectStageName
         },
+        ProjectApprovalStatusID = x.ProjectApprovalStatusID,
+        ProjectApprovalStatusName = x.ProjectApprovalStatus.ProjectApprovalStatusDisplayName,
         LeadImplementerOrganization = x.ProjectOrganizations
             .Where(po => po.RelationshipType.IsPrimaryContact)
             .Select(po => new OrganizationLookupItem

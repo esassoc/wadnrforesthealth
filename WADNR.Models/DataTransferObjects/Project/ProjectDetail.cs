@@ -61,6 +61,12 @@ public class ProjectDetail
     public List<string> Counties { get; set; } = new();
     public List<string> Regions { get; set; } = new();
     public List<string> PriorityLandscapes { get; set; } = new();
+
+    // User permission flags (populated based on calling user's role)
+    public bool UserCanEdit { get; set; }
+    public bool UserCanDelete { get; set; }
+    public bool UserCanApprove { get; set; }
+    public bool UserIsAdmin { get; set; }
 }
 
 public class ProjectOrganizationItem

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WADNR.EFModels.Entities;
+using WADNR.Models.DataTransferObjects;
 
 namespace WADNR.EFModels.Workflows;
 
@@ -71,6 +72,17 @@ public static class ProjectCreateWorkflowProgress
     /// </summary>
     public static async Task<ProjectCreateWorkflowProgressDto?> GetProgressAsync(WADNRDbContext dbContext, int projectID)
     {
+        return await GetProgressForUserAsync(dbContext, projectID, null);
+    }
+
+    /// <summary>
+    /// Gets the workflow progress for a project, including user-specific permission flags.
+    /// </summary>
+    public static async Task<ProjectCreateWorkflowProgressDto?> GetProgressForUserAsync(
+        WADNRDbContext dbContext,
+        int projectID,
+        PersonDetail? callingUser)
+    {
         var ctx = await LoadWorkflowContextAsync(dbContext, projectID);
         if (ctx == null) return null;
 
@@ -85,7 +97,7 @@ public static class ProjectCreateWorkflowProgress
             };
         }
 
-        return new ProjectCreateWorkflowProgressDto
+        var dto = new ProjectCreateWorkflowProgressDto
         {
             ProjectID = ctx.ProjectID,
             ProjectName = ctx.ProjectName,
@@ -97,6 +109,70 @@ public static class ProjectCreateWorkflowProgress
             CreateDate = ctx.CreateDate,
             Steps = steps
         };
+
+        // Populate user permission flags
+        PopulateUserPermissionFlags(dto, ctx, callingUser, dbContext);
+
+        return dto;
+    }
+
+    /// <summary>
+    /// Populates user permission flags based on calling user's role and project state.
+    /// </summary>
+    private static void PopulateUserPermissionFlags(
+        ProjectCreateWorkflowProgressDto dto,
+        ProjectCreateWorkflowContext ctx,
+        PersonDetail? callingUser,
+        WADNRDbContext dbContext)
+    {
+        // Default all to false for anonymous/unassigned users
+        if (callingUser == null || callingUser.IsAnonymousOrUnassigned)
+        {
+            dto.CanApprove = false;
+            dto.CanReject = false;
+            dto.CanReturn = false;
+            dto.CanWithdraw = false;
+            dto.CanEdit = false;
+            return;
+        }
+
+        var isPendingApproval = ctx.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.PendingApproval;
+        var isDraftOrReturned = ctx.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Draft ||
+                                ctx.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Returned;
+
+        // Approve/Reject/Return: only available to approvers (Admin, EsaAdmin, ProjectSteward, CanEditProgram)
+        // and only when project is PendingApproval
+        var canApproveProjects = callingUser.HasElevatedProjectAccess || callingUser.HasCanEditProgramRole;
+        dto.CanApprove = canApproveProjects && isPendingApproval;
+        dto.CanReject = canApproveProjects && isPendingApproval;
+        dto.CanReturn = canApproveProjects && isPendingApproval;
+
+        // Withdraw: available to editor when PendingApproval
+        dto.CanWithdraw = isPendingApproval;
+
+        // Edit: based on role and project organizations
+        if (callingUser.HasElevatedProjectAccess)
+        {
+            dto.CanEdit = true;
+        }
+        else
+        {
+            // Need to check if user's org is associated with the project
+            var userOrgID = callingUser.OrganizationID;
+            if (userOrgID.HasValue)
+            {
+                var projectOrgIds = dbContext.ProjectOrganizations
+                    .AsNoTracking()
+                    .Where(po => po.ProjectID == ctx.ProjectID)
+                    .Select(po => po.OrganizationID)
+                    .ToList();
+                dto.CanEdit = projectOrgIds.Contains(userOrgID.Value);
+            }
+            else
+            {
+                dto.CanEdit = false;
+            }
+        }
     }
 
     /// <summary>
@@ -282,4 +358,11 @@ public class ProjectCreateWorkflowProgressDto
     public string? CreatedByOrganizationName { get; set; }
     public DateTime? CreateDate { get; set; }
     public Dictionary<ProjectCreateWorkflowProgress.ProjectCreateWorkflowStep, WorkflowStepStatus> Steps { get; set; } = new();
+
+    // User permission flags (populated based on calling user's role and project state)
+    public bool CanApprove { get; set; }
+    public bool CanReject { get; set; }
+    public bool CanReturn { get; set; }
+    public bool CanWithdraw { get; set; }
+    public bool CanEdit { get; set; }
 }

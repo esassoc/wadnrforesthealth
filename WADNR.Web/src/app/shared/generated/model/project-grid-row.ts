@@ -22,6 +22,8 @@ export class ProjectGridRow {
     FhtProjectNumber?: string | null;
     ProjectType?: ProjectTypeLookupItem;
     ProjectStage?: ProjectStageLookupItem;
+    ProjectApprovalStatusID?: number;
+    ProjectApprovalStatusName?: string | null;
     TotalTreatedAcres?: number | null;
     LeadImplementerOrganization?: OrganizationLookupItem;
     Programs?: Array<ProgramLookupItem> | null;
@@ -38,6 +40,8 @@ export interface ProjectGridRowForm {
     FhtProjectNumber?: FormControl<string>;
     ProjectType?: FormControl<ProjectTypeLookupItem>;
     ProjectStage?: FormControl<ProjectStageLookupItem>;
+    ProjectApprovalStatusID?: FormControl<number>;
+    ProjectApprovalStatusName?: FormControl<string>;
     TotalTreatedAcres?: FormControl<number>;
     LeadImplementerOrganization?: FormControl<OrganizationLookupItem>;
     Programs?: FormControl<Array<ProgramLookupItem>>;
@@ -87,6 +91,26 @@ export class ProjectGridRowFormControls {
         }
     );
     public static ProjectStage = (value: FormControlState<ProjectStageLookupItem> | ProjectStageLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<ProjectStageLookupItem>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectApprovalStatusID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectApprovalStatusName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

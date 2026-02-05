@@ -663,8 +663,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/classification-systems": {
@@ -1045,8 +1044,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/custom-pages/{vanityUrl}": {
@@ -1479,8 +1477,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/dnr-upland-regions/{dnrUplandRegionID}/fund-source-allocations": {
@@ -3666,8 +3663,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/organizations/{organizationID}/projects/pending": {
@@ -3717,8 +3713,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/organizations/{organizationID}/agreements": {
@@ -5144,8 +5139,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       },
       "post": {
         "tags": [
@@ -5233,8 +5227,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       },
       "put": {
         "tags": [
@@ -5355,8 +5348,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/{projectID}/map-popup": {
@@ -5397,8 +5389,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/mapped-point/feature-collection": {
@@ -5437,8 +5428,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/no-simple-location": {
@@ -5477,8 +5467,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/{projectID}/images": {
@@ -5528,8 +5517,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/{projectID}/classifications": {
@@ -5579,8 +5567,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/{projectID}/treatments": {
@@ -5630,8 +5617,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/{projectID}/treatment-areas": {
@@ -5681,8 +5667,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/{projectID}/interaction-events": {
@@ -5732,8 +5717,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/{projectID}/locations/generic-layers": {
@@ -5783,8 +5767,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/{projectID}/documents": {
@@ -5834,8 +5817,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/{projectID}/notes": {
@@ -5885,8 +5867,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/{projectID}/external-links": {
@@ -5936,8 +5917,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/{projectID}/update-history": {
@@ -5987,8 +5967,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/{projectID}/notifications": {
@@ -6038,8 +6017,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/{projectID}/audit-logs": {
@@ -6089,8 +6067,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/{projectID}/workflow/progress": {
@@ -8657,8 +8634,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/project-types/{projectTypeID}/projects/mapped-point/feature-collection": {
@@ -8708,8 +8684,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/roles": {
@@ -9213,8 +9188,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/taxonomy-branches": {
@@ -9473,8 +9447,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/taxonomy-branches/{taxonomyBranchID}/projects/mapped-point/feature-collection": {
@@ -9524,8 +9497,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/taxonomy-branches/lookup": {
@@ -9824,8 +9796,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/taxonomy-trunks/lookup": {
@@ -13825,6 +13796,26 @@
           },
           "IsFullUser": {
             "type": "boolean"
+          },
+          "IsAnonymousOrUnassigned": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "CanViewPendingProjects": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "HasElevatedProjectAccess": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "HasCanEditProgramRole": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "CanViewAdminLimitedProjects": {
+            "type": "boolean",
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -15132,6 +15123,21 @@
             },
             "additionalProperties": false,
             "nullable": true
+          },
+          "CanApprove": {
+            "type": "boolean"
+          },
+          "CanReject": {
+            "type": "boolean"
+          },
+          "CanReturn": {
+            "type": "boolean"
+          },
+          "CanWithdraw": {
+            "type": "boolean"
+          },
+          "CanEdit": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -15378,6 +15384,18 @@
               "type": "string"
             },
             "nullable": true
+          },
+          "UserCanEdit": {
+            "type": "boolean"
+          },
+          "UserCanDelete": {
+            "type": "boolean"
+          },
+          "UserCanApprove": {
+            "type": "boolean"
+          },
+          "UserIsAdmin": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -15573,6 +15591,14 @@
           },
           "ProjectStage": {
             "$ref": "#/components/schemas/ProjectStageLookupItem"
+          },
+          "ProjectApprovalStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectApprovalStatusName": {
+            "type": "string",
+            "nullable": true
           },
           "TotalTreatedAcres": {
             "type": "number",

@@ -2,6 +2,11 @@ namespace WADNR.Models.DataTransferObjects;
 
 public class PersonDetail
 {
+    /// <summary>
+    /// Constant PersonID used for anonymous users.
+    /// </summary>
+    public const int AnonymousPersonID = -999;
+
     public int PersonID { get; set; }
     public string FirstName { get; set; } = string.Empty;
     public string? MiddleName { get; set; }
@@ -56,4 +61,55 @@ public class PersonDetail
 
     // Indicates if this person is a "full user" (has a non-Unassigned base role) vs a "contact"
     public bool IsFullUser { get; set; }
+
+    #region Role Helper Properties for Visibility Checks
+
+    /// <summary>
+    /// Returns true if this is an anonymous user or has the Unassigned base role.
+    /// </summary>
+    public bool IsAnonymousOrUnassigned =>
+        PersonID == AnonymousPersonID ||
+        (BaseRole != null && BaseRole.RoleID == (int)RoleEnumInternal.Unassigned);
+
+    /// <summary>
+    /// Returns true if the user can view pending projects (any authenticated non-Unassigned user).
+    /// </summary>
+    public bool CanViewPendingProjects => !IsAnonymousOrUnassigned;
+
+    /// <summary>
+    /// Returns true if user has elevated project access (Admin, EsaAdmin, or ProjectSteward).
+    /// These users can see all pending projects, not just their organization's.
+    /// </summary>
+    public bool HasElevatedProjectAccess => BaseRole != null &&
+        (BaseRole.RoleID == (int)RoleEnumInternal.Admin ||
+         BaseRole.RoleID == (int)RoleEnumInternal.EsaAdmin ||
+         BaseRole.RoleID == (int)RoleEnumInternal.ProjectSteward);
+
+    /// <summary>
+    /// Returns true if user has the CanEditProgram supplemental role.
+    /// </summary>
+    public bool HasCanEditProgramRole =>
+        SupplementalRoleList?.Any(r => r.RoleID == (int)RoleEnumInternal.CanEditProgram) ?? false;
+
+    /// <summary>
+    /// Returns true if user can view admin-limited projects (LimitVisibilityToAdmin=true).
+    /// Includes Admin, EsaAdmin, ProjectSteward, or CanEditProgram supplemental role.
+    /// </summary>
+    public bool CanViewAdminLimitedProjects => HasElevatedProjectAccess || HasCanEditProgramRole;
+
+    /// <summary>
+    /// Internal enum to avoid circular dependencies with WADNR.EFModels.
+    /// Values must match RoleEnum in WADNR.EFModels.Entities.
+    /// </summary>
+    private enum RoleEnumInternal
+    {
+        Admin = 1,
+        Normal = 2,
+        Unassigned = 7,
+        EsaAdmin = 8,
+        ProjectSteward = 9,
+        CanEditProgram = 10
+    }
+
+    #endregion
 }

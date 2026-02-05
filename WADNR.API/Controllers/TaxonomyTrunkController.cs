@@ -40,10 +40,10 @@ public class TaxonomyTrunkController(
     }
 
     [HttpGet("{taxonomyTrunkID}/projects")]
-    [AllowAnonymous]
+    [ProjectViewFeature]
     public async Task<ActionResult<List<ProjectGridRow>>> ListProjects([FromRoute] int taxonomyTrunkID)
     {
-        var projects = await TaxonomyTrunks.ListProjectsAsGridRowAsync(DbContext, taxonomyTrunkID);
+        var projects = await TaxonomyTrunks.ListProjectsAsGridRowForUserAsync(DbContext, taxonomyTrunkID, CallingUser);
         return Ok(projects);
     }
 

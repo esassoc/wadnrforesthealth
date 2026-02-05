@@ -62,22 +62,21 @@ public class ProjectTypeController(
     }
 
     [HttpGet("{projectTypeID}/projects")]
-    [AllowAnonymous]
+    [ProjectViewFeature]
     public async Task<ActionResult<IEnumerable<ProjectProjectTypeDetailGridRow>>> ListProjectsForProjectTypeID([FromRoute] int projectTypeID)
     {
-        var projects = await Projects.ListAsProjectTypeDetailGridRowAsync(DbContext, projectTypeID);
-
+        var projects = await Projects.ListAsProjectTypeDetailGridRowForUserAsync(DbContext, projectTypeID, CallingUser);
         return Ok(projects);
     }
 
     [HttpGet("{projectTypeID}/projects/mapped-point/feature-collection")]
-    [AllowAnonymous]
+    [ProjectViewFeature]
     public async Task<ActionResult<FeatureCollection>> ListProjectMappedPointsFeatureCollectionForProjectTypeID(
         [FromRoute] int projectTypeID)
     {
-        var projectsThatShouldShowOnMap = DbContext.Projects
+        var visibleProjects = ProjectVisibility.ApplyVisibilityFilter(DbContext.Projects, CallingUser);
+        var projectsThatShouldShowOnMap = visibleProjects
             .Where(x => x.ProjectTypeID == projectTypeID)
-            .Where(Projects.IsActiveProjectExpr)
             .AsNoTracking();
 
         var featureCollection = await Projects.MapProjectFeatureCollection(projectsThatShouldShowOnMap);

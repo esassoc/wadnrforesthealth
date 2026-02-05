@@ -88,10 +88,10 @@ public class ClassificationController(
     }
 
     [HttpGet("{classificationID}/projects")]
-    [AllowAnonymous]
+    [ProjectViewFeature]
     public async Task<ActionResult<IEnumerable<ProjectClassificationDetailGridRow>>> ListProjectsForClassificationID([FromRoute] int classificationID)
     {
-        var projects = await Projects.ListAsClassificationDetailGridRowAsync(DbContext, classificationID);
+        var projects = await Projects.ListAsClassificationDetailGridRowForUserAsync(DbContext, classificationID, CallingUser);
         return Ok(projects);
     }
 }

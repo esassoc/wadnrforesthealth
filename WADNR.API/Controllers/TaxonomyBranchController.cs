@@ -45,22 +45,22 @@ public class TaxonomyBranchController(
     }
 
     [HttpGet("{taxonomyBranchID}/projects")]
-    [AllowAnonymous]
+    [ProjectViewFeature]
     [EntityNotFound(typeof(TaxonomyBranch), "taxonomyBranchID")]
     public async Task<ActionResult<IEnumerable<ProjectGridRow>>> ListProjects([FromRoute] int taxonomyBranchID)
     {
-        var projects = await TaxonomyBranches.ListProjectsAsGridRowAsync(DbContext, taxonomyBranchID);
+        var projects = await TaxonomyBranches.ListProjectsAsGridRowForUserAsync(DbContext, taxonomyBranchID, CallingUser);
         return Ok(projects);
     }
 
     [HttpGet("{taxonomyBranchID}/projects/mapped-point/feature-collection")]
-    [AllowAnonymous]
+    [ProjectViewFeature]
     [EntityNotFound(typeof(TaxonomyBranch), "taxonomyBranchID")]
     public async Task<ActionResult<FeatureCollection>> ListProjectMappedPointsFeatureCollection([FromRoute] int taxonomyBranchID)
     {
-        var projectsThatShouldShowOnMap = DbContext.Projects
+        var visibleProjects = ProjectVisibility.ApplyVisibilityFilter(DbContext.Projects, CallingUser);
+        var projectsThatShouldShowOnMap = visibleProjects
             .Where(x => x.ProjectType.TaxonomyBranchID == taxonomyBranchID)
-            .Where(Projects.IsActiveProjectExpr)
             .AsNoTracking();
 
         var featureCollection = await Projects.MapProjectFeatureCollection(projectsThatShouldShowOnMap);
