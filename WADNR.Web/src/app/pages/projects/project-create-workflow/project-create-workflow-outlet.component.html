@@ -5,33 +5,33 @@
     </page-header>
 
     <ng-template #actionsTemplate>
-        @if (!vm.isNewProject && vm.progress) {
-            <div class="actions-dropdown" [dropdownToggle]="actionsMenu">
-                <a href="javascript:void(0);" class="actions-toggle">
-                    See more Actions <icon icon="AngleDown"></icon>
-                </a>
-                <ul #actionsMenu class="dropdown-menu dropdown-menu-right">
+        <div class="actions-dropdown" [dropdownToggle]="actionsMenu">
+            <a href="javascript:void(0);" class="actions-toggle">
+                See more Actions <icon icon="AngleDown"></icon>
+            </a>
+            <ul #actionsMenu class="dropdown-menu dropdown-menu-right">
+                @if (!vm.isNewProject && vm.progress) {
                     <li>
                         <a [routerLink]="['/projects', vm.progress.ProjectID]" class="dropdown-item">
                             Project Details
                         </a>
                     </li>
+                }
+                <li>
+                    <a href="javascript:void(0);" (click)="openFeedbackModal()" class="dropdown-item">
+                        Provide Feedback
+                    </a>
+                </li>
+                @if (vm.progress && canWithdraw(vm.progress)) {
+                    <li class="divider"></li>
                     <li>
-                        <a href="javascript:void(0);" (click)="openFeedbackModal()" class="dropdown-item">
-                            Provide Feedback
+                        <a href="javascript:void(0);" (click)="withdrawProposal()" class="dropdown-item text-danger">
+                            Withdraw Proposal
                         </a>
                     </li>
-                    @if (canWithdraw(vm.progress)) {
-                        <li class="divider"></li>
-                        <li>
-                            <a href="javascript:void(0);" (click)="withdrawProposal()" class="dropdown-item text-danger">
-                                Withdraw Proposal
-                            </a>
-                        </li>
-                    }
-                </ul>
-            </div>
-        }
+                }
+            </ul>
+        </div>
     </ng-template>
 
     <div class="dashboard workflow">
