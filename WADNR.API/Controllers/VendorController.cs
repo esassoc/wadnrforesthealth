@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -6,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
+using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -20,7 +20,7 @@ public class VendorController(
     : SitkaController<VendorController>(dbContext, logger, configuration)
 {
     [HttpGet]
-    [AllowAnonymous]
+    [VendorViewFeature]
     public async Task<ActionResult<IEnumerable<VendorGridRow>>> List()
     {
         var vendors = await Vendors.ListAsGridRowAsync(DbContext);
@@ -28,7 +28,7 @@ public class VendorController(
     }
 
     [HttpGet("{vendorID}")]
-    [AllowAnonymous]
+    [VendorViewFeature]
     [EntityNotFound(typeof(Vendor), "vendorID")]
     public async Task<ActionResult<VendorDetail>> Get([FromRoute] int vendorID)
     {
@@ -41,7 +41,7 @@ public class VendorController(
     }
 
     [HttpGet("search")]
-    [AllowAnonymous]
+    [VendorViewFeature]
     public async Task<ActionResult<IEnumerable<VendorLookupItem>>> Search([FromQuery] string term)
     {
         if (string.IsNullOrWhiteSpace(term))
@@ -53,7 +53,7 @@ public class VendorController(
     }
 
     [HttpGet("{vendorID}/people")]
-    [AllowAnonymous]
+    [VendorViewFeature]
     [EntityNotFound(typeof(Vendor), "vendorID")]
     public async Task<ActionResult<IEnumerable<VendorPersonGridRow>>> ListPeople([FromRoute] int vendorID)
     {
@@ -62,7 +62,7 @@ public class VendorController(
     }
 
     [HttpGet("{vendorID}/organizations")]
-    [AllowAnonymous]
+    [VendorViewFeature]
     [EntityNotFound(typeof(Vendor), "vendorID")]
     public async Task<ActionResult<IEnumerable<VendorOrganizationGridRow>>> ListOrganizations([FromRoute] int vendorID)
     {

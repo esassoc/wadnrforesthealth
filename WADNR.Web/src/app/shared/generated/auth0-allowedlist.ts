@@ -21,14 +21,14 @@ function stripBase(apiBaseUrl: string, uri: string): string | null {
 
 const ANON_EXACT: ExactMap = {
   'DELETE': [],
-  'GET': ["/","/agreements","/classification-systems","/classification-systems/lookup","/classifications","/counties","/custom-pages/menu-item","/dnr-upland-regions","/field-definitions","/focus-areas","/fund-source-allocations","/fund-source-allocations/lookup","/fund-sources","/interaction-events","/invoices","/lookups/classification-systems-with-classifications","/lookups/funding-sources","/lookups/organization-relationship-types","/lookups/person-relationship-types","/organization-types","/organizations","/organizations/lookup","/priority-landscapes","/program-indices","/program-indices/lookup","/program-indices/search","/programs","/project-codes","/project-codes/lookup","/project-codes/search","/project-documents/types","/project-images/timings","/project-types","/project-types/lookup","/project-types/taxonomy","/projects","/projects/mapped-point/feature-collection","/projects/no-simple-location","/tags","/taxonomy-branches","/taxonomy-branches/lookup","/taxonomy-trunks","/taxonomy-trunks/lookup","/vendors","/vendors/search","/with-project-count"],
+  'GET': ["/","/agreements","/classification-systems","/classification-systems/lookup","/classifications","/counties","/custom-pages/menu-item","/dnr-upland-regions","/field-definitions","/fund-source-allocations","/fund-source-allocations/lookup","/fund-sources","/interaction-events","/invoices","/lookups/classification-systems-with-classifications","/lookups/funding-sources","/lookups/organization-relationship-types","/lookups/person-relationship-types","/organization-types","/organizations","/organizations/lookup","/priority-landscapes","/program-indices","/program-indices/lookup","/program-indices/search","/programs","/project-codes","/project-codes/lookup","/project-codes/search","/project-documents/types","/project-images/timings","/project-types","/project-types/lookup","/project-types/taxonomy","/projects","/projects/mapped-point/feature-collection","/projects/no-simple-location","/tags","/taxonomy-branches","/taxonomy-branches/lookup","/taxonomy-trunks","/taxonomy-trunks/lookup","/with-project-count"],
   'POST': [],
   'PUT': [],
 };
 
 const SECURED_EXACT: ExactMap = {
   'DELETE': [],
-  'GET': ["/people","/people/lookup","/roles"],
+  'GET': ["/focus-areas","/people","/people/lookup","/roles","/vendors","/vendors/search"],
   'POST': ["/agreements","/classifications","/counties","/dnr-upland-regions","/fund-sources","/interaction-events","/organizations","/priority-landscapes","/programs","/project-documents","/project-images","/project-notes","/project-types","/projects","/projects/workflow/steps/basics","/sitkacapture/generate-pdf","/support-requests","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
   'PUT': [],
 };
@@ -53,8 +53,6 @@ const ANON_REGEX: RegexMap = {
     new RegExp("^/field-definitions/[^/]+$"),
     new RegExp("^/file-resources/GetWithApiKey/[^/]+$"),
     new RegExp("^/file-resources/[^/]+$"),
-    new RegExp("^/focus-areas/[^/]+$"),
-    new RegExp("^/focus-areas/for-region/[^/]+$"),
     new RegExp("^/fund-source-allocations/[^/]+$"),
     new RegExp("^/fund-source-allocations/for-fund-source/[^/]+$"),
     new RegExp("^/fund-sources/[^/]+$"),
@@ -109,9 +107,6 @@ const ANON_REGEX: RegexMap = {
     new RegExp("^/taxonomy-branches/[^/]+$"),
     new RegExp("^/taxonomy-trunks/[^/]+$"),
     new RegExp("^/treatments/[^/]+$"),
-    new RegExp("^/vendors/[^/]+$"),
-    new RegExp("^/vendors/[^/]+/organizations$"),
-    new RegExp("^/vendors/[^/]+/people$"),
   ],
   'POST': [
 
@@ -147,6 +142,8 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/classifications/[^/]+/projects$"),
     new RegExp("^/counties/[^/]+/projects$"),
     new RegExp("^/dnr-upland-regions/[^/]+/projects$"),
+    new RegExp("^/focus-areas/[^/]+$"),
+    new RegExp("^/focus-areas/for-region/[^/]+$"),
     new RegExp("^/fund-sources/[^/]+/notes-internal$"),
     new RegExp("^/organizations/[^/]+/projects$"),
     new RegExp("^/organizations/[^/]+/projects/pending$"),
@@ -175,6 +172,9 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/taxonomy-branches/[^/]+/projects/mapped-point/feature-collection$"),
     new RegExp("^/taxonomy-trunks/[^/]+/projects$"),
     new RegExp("^/user-claims/[^/]+$"),
+    new RegExp("^/vendors/[^/]+$"),
+    new RegExp("^/vendors/[^/]+/organizations$"),
+    new RegExp("^/vendors/[^/]+/people$"),
   ],
   'POST': [
     new RegExp("^/project-images/[^/]+/set-key-photo$"),

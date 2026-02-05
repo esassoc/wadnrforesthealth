@@ -1840,8 +1840,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/focus-areas/{focusAreaID}": {
@@ -1882,8 +1881,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/focus-areas/for-region/{dnrUplandRegionID}": {
@@ -1933,8 +1931,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/fund-sources": {
@@ -10249,8 +10246,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/vendors/{vendorID}": {
@@ -10291,8 +10287,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/vendors/search": {
@@ -10340,8 +10335,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/vendors/{vendorID}/people": {
@@ -10391,8 +10385,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/vendors/{vendorID}/organizations": {
@@ -10442,8 +10435,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     }
   },
