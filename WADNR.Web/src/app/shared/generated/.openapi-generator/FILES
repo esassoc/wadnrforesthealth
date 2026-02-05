@@ -29,6 +29,7 @@ api/project-note.service.ts
 api/project-type.service.ts
 api/project.service.ts
 api/role.service.ts
+api/search.service.ts
 api/sitka-capture.service.ts
 api/support-request.service.ts
 api/system-info.service.ts
@@ -212,6 +213,7 @@ model/project-organizations-step-request-dto.ts
 model/project-person-item.ts
 model/project-program-detail-grid-row.ts
 model/project-project-type-detail-grid-row.ts
+model/project-search-result.ts
 model/project-simple-tree.ts
 model/project-stage-lookup-item.ts
 model/project-tag-detail-grid-row.ts

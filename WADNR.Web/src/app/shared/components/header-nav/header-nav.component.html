@@ -9,12 +9,7 @@
         </ul>
         <ul class="main-nav__links main-nav__utilities">
             <li class="nav-item">
-                <form class="main-nav__search" role="search" (submit)="$event.preventDefault()">
-                    <input class="main-nav__search-input" type="search" name="q" placeholder="Project Name or Description" autocomplete="off" />
-                    <button class="main-nav__search-button" type="submit" aria-label="Search">
-                        <i class="fa fa-search" aria-hidden="true"></i>
-                    </button>
-                </form>
+                <project-search-typeahead class="main-nav__search"></project-search-typeahead>
             </li>
             <!-- @if (!isAuthenticated()) {
             <li class="nav-item" routerLinkActive="active">

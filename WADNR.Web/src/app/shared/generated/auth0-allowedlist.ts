@@ -103,6 +103,7 @@ const ANON_REGEX: RegexMap = {
     new RegExp("^/projects/[^/]+/treatment-areas$"),
     new RegExp("^/projects/[^/]+/treatments$"),
     new RegExp("^/projects/[^/]+/update-history$"),
+    new RegExp("^/search/projects/[^/]+$"),
     new RegExp("^/tags/[^/]+$"),
     new RegExp("^/taxonomy-branches/[^/]+$"),
     new RegExp("^/taxonomy-trunks/[^/]+$"),

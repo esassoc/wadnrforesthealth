@@ -169,6 +169,7 @@ export * from './project-organizations-step-request-dto';
 export * from './project-person-item';
 export * from './project-program-detail-grid-row';
 export * from './project-project-type-detail-grid-row';
+export * from './project-search-result';
 export * from './project-simple-tree';
 export * from './project-stage-lookup-item';
 export * from './project-tag-detail-grid-row';

@@ -814,5 +814,38 @@ public static class Projects
             .ToListAsync();
     }
 
+    /// <summary>
+    /// Searches for projects by name or description, filtered by user visibility.
+    /// </summary>
+    public static async Task<List<ProjectSearchResult>> SearchForUserAsync(
+        WADNRDbContext dbContext,
+        string searchText,
+        PersonDetail? callingUser)
+    {
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            return new List<ProjectSearchResult>();
+        }
+
+        var trimmedSearch = searchText.Trim();
+
+        // Apply role-based visibility filter (handles anonymous, elevated, normal users)
+        var query = ProjectVisibility.ApplyVisibilityFilter(dbContext.Projects, callingUser);
+
+        return await query
+            .AsNoTracking()
+            .Where(p => p.ProjectName.Contains(trimmedSearch) ||
+                        (p.ProjectDescription != null && p.ProjectDescription.Contains(trimmedSearch)))
+            .OrderBy(p => p.ProjectName)
+            .Select(p => new ProjectSearchResult
+            {
+                ProjectID = p.ProjectID,
+                ProjectName = p.ProjectName,
+                ProjectStageName = p.ProjectStage.ProjectStageName,
+                ProjectTypeName = p.ProjectType.ProjectTypeName
+            })
+            .ToListAsync();
+    }
+
     #endregion
 }

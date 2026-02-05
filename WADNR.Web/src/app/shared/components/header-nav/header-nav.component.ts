@@ -4,6 +4,7 @@ import { AsyncPipe, CommonModule } from "@angular/common";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { DropdownToggleDirective } from "src/app/shared/directives/dropdown-toggle.directive";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
+import { ProjectSearchTypeaheadComponent } from "src/app/shared/components/project-search-typeahead/project-search-typeahead.component";
 import { CustomPageNavigationSectionEnum } from "src/app/shared/generated/enum/custom-page-navigation-section-enum";
 import { CustomPageService } from "src/app/shared/generated/api/custom-page.service";
 import { CustomPageMenuItem } from "src/app/shared/generated/model/custom-page-menu-item";
@@ -17,7 +18,7 @@ import { RoleEnum } from "src/app/shared/generated/enum/role-enum";
     selector: "header-nav",
     templateUrl: "./header-nav.component.html",
     styleUrls: ["./header-nav.component.scss"],
-    imports: [CommonModule, AsyncPipe, RouterLink, RouterLinkActive, DropdownToggleDirective, IconComponent],
+    imports: [CommonModule, AsyncPipe, RouterLink, RouterLinkActive, DropdownToggleDirective, IconComponent, ProjectSearchTypeaheadComponent],
 })
 export class HeaderNavComponent implements OnInit {
     public navigationMenus$: Observable<{
