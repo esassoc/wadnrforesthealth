@@ -21,6 +21,7 @@ import { GenericLayer } from "src/app/shared/generated/model/generic-layer";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectDocumentService } from "src/app/shared/generated/api/project-document.service";
 import { ProjectDetail } from "src/app/shared/generated/model/project-detail";
+import { ProjectApprovalStatusEnum } from "src/app/shared/generated/enum/project-approval-status-enum";
 import { ProjectOrganizationItem } from "src/app/shared/generated/model/project-organization-item";
 import { ProjectPersonItem } from "src/app/shared/generated/model/project-person-item";
 import { FundSourceAllocationRequestItem } from "src/app/shared/generated/model/fund-source-allocation-request-item";
@@ -50,6 +51,9 @@ export class ProjectDetailComponent {
     }
 
     private _projectID$ = new BehaviorSubject<number | null>(null);
+
+    // Make enum available to template
+    ProjectApprovalStatusEnum = ProjectApprovalStatusEnum;
 
     public projectID$: Observable<number>;
     public project$: Observable<ProjectDetail>;
@@ -471,5 +475,36 @@ export class ProjectDetailComponent {
                 });
             }
         });
+    }
+
+    // Helper methods for pending project status
+    isPendingProject(project: ProjectDetail): boolean {
+        const pendingStatuses = [
+            ProjectApprovalStatusEnum.Draft,
+            ProjectApprovalStatusEnum.PendingApproval,
+            ProjectApprovalStatusEnum.Returned,
+            ProjectApprovalStatusEnum.Rejected
+        ];
+        return pendingStatuses.includes(project.ProjectApprovalStatusID);
+    }
+
+    isRejected(project: ProjectDetail): boolean {
+        return project.ProjectApprovalStatusID === ProjectApprovalStatusEnum.Rejected;
+    }
+
+    // Approval action methods
+    approveProject(): void {
+        // TODO: Implement approval workflow - call API endpoint
+        this.alertService.pushAlert(new Alert("Project approval functionality coming soon.", AlertContext.Info, true));
+    }
+
+    returnProject(): void {
+        // TODO: Implement return workflow - call API endpoint
+        this.alertService.pushAlert(new Alert("Project return functionality coming soon.", AlertContext.Info, true));
+    }
+
+    rejectProject(): void {
+        // TODO: Implement rejection workflow - call API endpoint
+        this.alertService.pushAlert(new Alert("Project rejection functionality coming soon.", AlertContext.Info, true));
     }
 }

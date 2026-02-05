@@ -27,6 +27,8 @@ export class ProjectDetail {
     ProjectGisIdentifier?: string | null;
     ProjectType?: ProjectTypeLookupItem;
     ProjectStage?: ProjectStageLookupItem;
+    ProjectApprovalStatusID?: number;
+    ProjectApprovalStatusName?: string | null;
     PlannedDate?: string | null;
     CompletionDate?: string | null;
     ExpirationDate?: string | null;
@@ -67,6 +69,8 @@ export interface ProjectDetailForm {
     ProjectGisIdentifier?: FormControl<string>;
     ProjectType?: FormControl<ProjectTypeLookupItem>;
     ProjectStage?: FormControl<ProjectStageLookupItem>;
+    ProjectApprovalStatusID?: FormControl<number>;
+    ProjectApprovalStatusName?: FormControl<string>;
     PlannedDate?: FormControl<string>;
     CompletionDate?: FormControl<string>;
     ExpirationDate?: FormControl<string>;
@@ -149,6 +153,26 @@ export class ProjectDetailFormControls {
         }
     );
     public static ProjectStage = (value: FormControlState<ProjectStageLookupItem> | ProjectStageLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<ProjectStageLookupItem>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectApprovalStatusID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectApprovalStatusName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

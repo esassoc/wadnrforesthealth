@@ -25,6 +25,10 @@ public static class ProjectProjections
             ProjectStageName = x.ProjectStage.ProjectStageName
         },
 
+        // Approval Status
+        ProjectApprovalStatusID = x.ProjectApprovalStatusID,
+        ProjectApprovalStatusName = x.ProjectApprovalStatus.ProjectApprovalStatusDisplayName,
+
         // Dates
         PlannedDate = x.PlannedDate,
         CompletionDate = x.CompletionDate,

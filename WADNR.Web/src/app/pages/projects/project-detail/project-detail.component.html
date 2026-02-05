@@ -1,11 +1,45 @@
 @if (project$ | async; as project) {
     <breadcrumb [items]="[{ label: 'Projects', url: '/projects' }, { label: project.ProjectName || 'Project' }]" [linkLast]="false"></breadcrumb>
-    <page-header pageTitle="{{ project.ProjectName }}"></page-header>
+    <page-header pageTitle="{{ project.ProjectName }}" [templateRight]="headerButtons"></page-header>
+
+    <ng-template #headerButtons>
+        <div class="header-actions">
+            <a [routerLink]="['/projects', project.ProjectID, 'fact-sheet']" class="btn btn-primary">
+                <i class="fa fa-file-text"></i> View Fact Sheet
+            </a>
+            @if (project.UserCanEdit && isPendingProject(project) && !isRejected(project)) {
+                <a [routerLink]="['/projects/edit', project.ProjectID, 'basics']" class="btn btn-primary">
+                    <i class="fa fa-edit"></i>
+                    {{ project.ProjectApprovalStatusID === ProjectApprovalStatusEnum.PendingApproval ? 'Review Pending Project' : 'Edit Pending Project' }}
+                </a>
+            }
+        </div>
+    </ng-template>
+
+    <!-- Pending Project Alert -->
+    @if (isPendingProject(project)) {
+        <div class="alert" [class.alert-info]="!isRejected(project)" [class.alert-danger]="isRejected(project)">
+            @if (isRejected(project)) {
+                <p>This Project was rejected and can no longer be edited. It can be deleted, or preserved for archival purposes.</p>
+            } @else {
+                <p>This Project is pending. Any edits to this Project must be made using the Add New Project workflow.</p>
+            }
+            @if (project.UserCanApprove && project.ProjectApprovalStatusID === ProjectApprovalStatusEnum.PendingApproval) {
+                <div class="alert-actions">
+                    <button class="btn btn-success" (click)="approveProject()">Approve</button>
+                    <button class="btn btn-warning" (click)="returnProject()">Return</button>
+                    <button class="btn btn-danger" (click)="rejectProject()">Reject</button>
+                </div>
+            }
+        </div>
+    }
 
     <!-- Project Stage Breadcrumb -->
     @if (project.ProjectStage) {
         <div class="stage-breadcrumb">
-            <span class="stage-item current">{{ project.ProjectStage.ProjectStageName }}</span>
+            <span class="stage-item" [class.current]="project.ProjectStage.ProjectStageID === 2">Planned</span>
+            <span class="stage-item" [class.current]="project.ProjectStage.ProjectStageID === 3">Implementation</span>
+            <span class="stage-item" [class.current]="project.ProjectStage.ProjectStageID === 4">Completed</span>
         </div>
     }
 

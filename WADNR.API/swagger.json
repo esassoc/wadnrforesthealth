@@ -15447,6 +15447,14 @@
           "ProjectStage": {
             "$ref": "#/components/schemas/ProjectStageLookupItem"
           },
+          "ProjectApprovalStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectApprovalStatusName": {
+            "type": "string",
+            "nullable": true
+          },
           "PlannedDate": {
             "type": "string",
             "format": "date-time",

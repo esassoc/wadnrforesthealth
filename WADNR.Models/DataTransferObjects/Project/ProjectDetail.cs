@@ -12,6 +12,10 @@ public class ProjectDetail
     public ProjectTypeLookupItem? ProjectType { get; set; }
     public ProjectStageLookupItem? ProjectStage { get; set; }
 
+    // Approval Status
+    public int ProjectApprovalStatusID { get; set; }
+    public string? ProjectApprovalStatusName { get; set; }
+
     // Dates
     public DateTime? PlannedDate { get; set; }
     public DateTime? CompletionDate { get; set; }
