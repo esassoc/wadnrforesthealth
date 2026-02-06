@@ -4,13 +4,13 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { combineLatest, map, Observable, of, shareReplay, startWith, switchMap } from "rxjs";
 import { catchError } from "rxjs/operators";
 
-import { WorkflowStepBase } from "src/app/shared/components/workflow/workflow-step-base";
+import { CreateWorkflowStepBase } from "src/app/shared/components/workflow/create-workflow-step-base";
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { LookupService } from "src/app/shared/generated/api/lookup.service";
 import { FundSourceAllocationService } from "src/app/shared/generated/api/fund-source-allocation.service";
-import { ExpectedFundingStepDto } from "src/app/shared/generated/model/expected-funding-step-dto";
-import { ExpectedFundingStepRequestDto } from "src/app/shared/generated/model/expected-funding-step-request-dto";
+import { ExpectedFundingStep } from "src/app/shared/generated/model/expected-funding-step";
+import { ExpectedFundingStepRequest } from "src/app/shared/generated/model/expected-funding-step-request";
 import { FundSourceAllocationRequestRequestItem } from "src/app/shared/generated/model/fund-source-allocation-request-request-item";
 import { FundingSourceOption } from "src/app/shared/generated/model/funding-source-option";
 import { FundSourceAllocationLookupItem } from "src/app/shared/generated/model/fund-source-allocation-lookup-item";
@@ -36,7 +36,7 @@ interface AllocationRequest {
 
 interface ExpectedFundingViewModel {
     isLoading: boolean;
-    data: ExpectedFundingStepDto | null;
+    data: ExpectedFundingStep | null;
     fundingSourceCheckboxes: FundingSourceCheckbox[];
     allAllocationOptions: FormInputOption[];
     fundSourceAllocations: FundSourceAllocationLookupItem[];
@@ -45,20 +45,11 @@ interface ExpectedFundingViewModel {
 @Component({
     selector: "expected-funding-step",
     standalone: true,
-    imports: [
-        CommonModule,
-        AsyncPipe,
-        CurrencyPipe,
-        ReactiveFormsModule,
-        FormFieldComponent,
-        FieldDefinitionComponent,
-        IconComponent,
-        WorkflowStepActionsComponent
-    ],
+    imports: [CommonModule, AsyncPipe, CurrencyPipe, ReactiveFormsModule, FormFieldComponent, FieldDefinitionComponent, IconComponent, WorkflowStepActionsComponent],
     templateUrl: "./expected-funding-step.component.html",
-    styleUrls: ["./expected-funding-step.component.scss"]
+    styleUrls: ["./expected-funding-step.component.scss"],
 })
-export class ExpectedFundingStepComponent extends WorkflowStepBase implements OnInit {
+export class ExpectedFundingStepComponent extends CreateWorkflowStepBase implements OnInit {
     readonly nextStep = "classifications";
 
     public vm$: Observable<ExpectedFundingViewModel>;
@@ -107,7 +98,7 @@ export class ExpectedFundingStepComponent extends WorkflowStepBase implements On
                 if (id == null || Number.isNaN(id)) {
                     return of(null);
                 }
-                return this.projectService.getExpectedFundingStepProject(id).pipe(
+                return this.projectService.getCreateExpectedFundingStepProject(id).pipe(
                     catchError((err) => {
                         console.error("Failed to load expected funding data:", err);
                         this.alertService.pushAlert(new Alert("Failed to load expected funding data.", AlertContext.Danger, true));
@@ -128,27 +119,27 @@ export class ExpectedFundingStepComponent extends WorkflowStepBase implements On
                     fundingSourceCheckboxes.push({
                         id: fs.FundingSourceID!,
                         name: fs.FundingSourceName!,
-                        checked: selectedIDs.has(fs.FundingSourceID!)
+                        checked: selectedIDs.has(fs.FundingSourceID!),
                     });
                 }
 
                 // Build allocation dropdown options (all available)
-                const allAllocationOptions: FormInputOption[] = fundSourceAllocations.map(fsa => ({
+                const allAllocationOptions: FormInputOption[] = fundSourceAllocations.map((fsa) => ({
                     Value: fsa.FundSourceAllocationID,
                     Label: fsa.FundSourceAllocationName,
-                    disabled: false
+                    disabled: false,
                 }));
 
                 // Populate form controls
                 if (data) {
                     this.estimatedTotalCostControl.setValue(data.EstimatedTotalCost ?? null);
                     this.fundingSourceNotesControl.setValue(data.ProjectFundingSourceNotes ?? "");
-                    this.allocationRequests = (data.AllocationRequests ?? []).map(ar => ({
+                    this.allocationRequests = (data.AllocationRequests ?? []).map((ar) => ({
                         projectFundSourceAllocationRequestID: ar.ProjectFundSourceAllocationRequestID,
                         fundSourceAllocationID: ar.FundSourceAllocationID!,
                         fundSourceAllocationName: ar.FundSourceAllocationName!,
                         fundSourceName: ar.FundSourceName!,
-                        amountControl: new FormControl<number | null>(ar.TotalAmount ?? null)
+                        amountControl: new FormControl<number | null>(ar.TotalAmount ?? null),
                     }));
                     this.updateAvailableAllocationOptions(allAllocationOptions);
                 }
@@ -158,7 +149,7 @@ export class ExpectedFundingStepComponent extends WorkflowStepBase implements On
                     data,
                     fundingSourceCheckboxes,
                     allAllocationOptions,
-                    fundSourceAllocations
+                    fundSourceAllocations,
                 };
                 this.currentVm = vm;
                 return vm;
@@ -174,8 +165,8 @@ export class ExpectedFundingStepComponent extends WorkflowStepBase implements On
 
     private updateAvailableAllocationOptions(allOptions?: FormInputOption[]): void {
         const options = allOptions ?? this.currentVm?.allAllocationOptions ?? [];
-        const addedIDs = new Set(this.allocationRequests.map(ar => ar.fundSourceAllocationID));
-        this.availableAllocationOptions = options.filter(opt => !addedIDs.has(opt.Value as number));
+        const addedIDs = new Set(this.allocationRequests.map((ar) => ar.fundSourceAllocationID));
+        this.availableAllocationOptions = options.filter((opt) => !addedIDs.has(opt.Value as number));
     }
 
     onAllocationSelect(event: any): void {
@@ -183,15 +174,13 @@ export class ExpectedFundingStepComponent extends WorkflowStepBase implements On
         if (allocationID == null || !this.currentVm) return;
 
         // Check if already added
-        if (this.allocationRequests.some(ar => ar.fundSourceAllocationID === allocationID)) {
+        if (this.allocationRequests.some((ar) => ar.fundSourceAllocationID === allocationID)) {
             this.allocationToAddControl.reset();
             return;
         }
 
         // Find the allocation from the lookup list
-        const option = this.currentVm.fundSourceAllocations?.find(
-            fsa => fsa.FundSourceAllocationID === allocationID
-        );
+        const option = this.currentVm.fundSourceAllocations?.find((fsa) => fsa.FundSourceAllocationID === allocationID);
         if (!option) return;
 
         this.allocationRequests.push({
@@ -199,7 +188,7 @@ export class ExpectedFundingStepComponent extends WorkflowStepBase implements On
             fundSourceAllocationID: allocationID,
             fundSourceAllocationName: option.FundSourceAllocationName!,
             fundSourceName: option.FundSourceName!,
-            amountControl: new FormControl<number | null>(null)
+            amountControl: new FormControl<number | null>(null),
         });
 
         this.allocationToAddControl.reset();
@@ -207,7 +196,7 @@ export class ExpectedFundingStepComponent extends WorkflowStepBase implements On
     }
 
     removeAllocation(allocationID: number): void {
-        this.allocationRequests = this.allocationRequests.filter(ar => ar.fundSourceAllocationID !== allocationID);
+        this.allocationRequests = this.allocationRequests.filter((ar) => ar.fundSourceAllocationID !== allocationID);
         this.updateAvailableAllocationOptions();
     }
 
@@ -219,26 +208,24 @@ export class ExpectedFundingStepComponent extends WorkflowStepBase implements On
         if (!this.currentVm) return;
 
         // Collect selected funding source IDs
-        const fundingSourceIDs = this.currentVm.fundingSourceCheckboxes
-            .filter(cb => cb.checked)
-            .map(cb => cb.id);
+        const fundingSourceIDs = this.currentVm.fundingSourceCheckboxes.filter((cb) => cb.checked).map((cb) => cb.id);
 
         // Build allocation request items
-        const allocationRequestItems: FundSourceAllocationRequestRequestItem[] = this.allocationRequests.map(ar => ({
+        const allocationRequestItems: FundSourceAllocationRequestRequestItem[] = this.allocationRequests.map((ar) => ({
             ProjectFundSourceAllocationRequestID: ar.projectFundSourceAllocationRequestID,
             FundSourceAllocationID: ar.fundSourceAllocationID,
-            TotalAmount: ar.amountControl.value
+            TotalAmount: ar.amountControl.value,
         }));
 
-        const request: ExpectedFundingStepRequestDto = {
+        const request: ExpectedFundingStepRequest = {
             EstimatedTotalCost: this.estimatedTotalCostControl.value,
             ProjectFundingSourceNotes: this.fundingSourceNotesControl.value?.trim() || null,
             FundingSourceIDs: fundingSourceIDs,
-            AllocationRequests: allocationRequestItems
+            AllocationRequests: allocationRequestItems,
         };
 
         this.saveStep(
-            (projectID) => this.projectService.saveExpectedFundingStepProject(projectID, request),
+            (projectID) => this.projectService.saveCreateExpectedFundingStepProject(projectID, request),
             "Expected funding saved successfully.",
             "Failed to save expected funding.",
             navigate

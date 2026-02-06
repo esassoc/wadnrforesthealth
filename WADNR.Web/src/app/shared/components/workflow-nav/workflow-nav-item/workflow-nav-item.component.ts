@@ -14,6 +14,7 @@ export class WorkflowNavItemComponent {
     @Input() complete: boolean = false;
     @Input() disabled: boolean = false;
     @Input() required: boolean = true;
+    @Input() hasChanges: boolean = false;
 
     constructor() {}
 }

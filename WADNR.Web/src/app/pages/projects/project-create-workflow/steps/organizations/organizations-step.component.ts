@@ -4,13 +4,13 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { combineLatest, map, Observable, of, shareReplay, startWith, switchMap } from "rxjs";
 import { catchError } from "rxjs/operators";
 
-import { WorkflowStepBase } from "src/app/shared/components/workflow/workflow-step-base";
+import { CreateWorkflowStepBase } from "src/app/shared/components/workflow/create-workflow-step-base";
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
 import { LookupService } from "src/app/shared/generated/api/lookup.service";
-import { ProjectOrganizationsStepDto } from "src/app/shared/generated/model/project-organizations-step-dto";
-import { ProjectOrganizationsStepRequestDto } from "src/app/shared/generated/model/project-organizations-step-request-dto";
+import { ProjectOrganizationsStep } from "src/app/shared/generated/model/project-organizations-step";
+import { ProjectOrganizationsStepRequest } from "src/app/shared/generated/model/project-organizations-step-request";
 import { ProjectOrganizationStepItem } from "src/app/shared/generated/model/project-organization-step-item";
 import { ProjectOrganizationRequestItem } from "src/app/shared/generated/model/project-organization-request-item";
 import { OrganizationRelationshipTypeLookupItem } from "src/app/shared/generated/model/organization-relationship-type-lookup-item";
@@ -32,7 +32,7 @@ interface OrganizationsByType {
 
 interface OrganizationsViewModel {
     isLoading: boolean;
-    data: ProjectOrganizationsStepDto | null;
+    data: ProjectOrganizationsStep | null;
     organizationsByType: OrganizationsByType[];
     allOrganizationOptions: FormInputOption[];
 }
@@ -52,7 +52,7 @@ const FIELD_DEFINITION_MAP: Record<string, string> = {
     templateUrl: "./organizations-step.component.html",
     styleUrls: ["./organizations-step.component.scss"],
 })
-export class OrganizationsStepComponent extends WorkflowStepBase implements OnInit {
+export class OrganizationsStepComponent extends CreateWorkflowStepBase implements OnInit {
     readonly nextStep = "expected-funding";
 
     public FormFieldType = FormFieldType;
@@ -94,7 +94,7 @@ export class OrganizationsStepComponent extends WorkflowStepBase implements OnIn
                 if (id == null || Number.isNaN(id)) {
                     return of(null);
                 }
-                return this.projectService.getOrganizationsStepProject(id).pipe(
+                return this.projectService.getCreateOrganizationsStepProject(id).pipe(
                     catchError((err) => {
                         console.error("Failed to load organizations data:", err);
                         this.alertService.pushAlert(new Alert("Failed to load organizations data.", AlertContext.Danger, true));
@@ -235,12 +235,12 @@ export class OrganizationsStepComponent extends WorkflowStepBase implements OnIn
             }
         }
 
-        const request: ProjectOrganizationsStepRequestDto = {
+        const request: ProjectOrganizationsStepRequest = {
             Organizations: requestItems,
         };
 
         this.saveStep(
-            (projectID) => this.projectService.saveOrganizationsStepProject(projectID, request),
+            (projectID) => this.projectService.saveCreateOrganizationsStepProject(projectID, request),
             "Organizations saved successfully.",
             "Failed to save organizations.",
             navigate

@@ -1,0 +1,123 @@
+<breadcrumb></breadcrumb>
+
+@if (progress$ | async; as progress) {
+    <page-header [pageTitle]="'Update: ' + (progress?.ProjectName ?? 'Project')" [templateRight]="actionsTemplate">
+    </page-header>
+
+    <ng-template #actionsTemplate>
+        <div class="actions-dropdown" [dropdownToggle]="actionsMenu">
+            <a href="javascript:void(0);" class="actions-toggle">
+                See more Actions <icon icon="AngleDown"></icon>
+            </a>
+            <ul #actionsMenu class="dropdown-menu dropdown-menu-right">
+                <li>
+                    <a [routerLink]="['/projects', progress.ProjectID]" class="dropdown-item">
+                        Project Details
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" (click)="openFeedbackModal()" class="dropdown-item">
+                        Provide Feedback
+                    </a>
+                </li>
+                @if (canEdit(progress)) {
+                    <li class="divider"></li>
+                    <li>
+                        <a href="javascript:void(0);" (click)="deleteUpdate(progress.ProjectID, progress.ProjectName)" class="dropdown-item text-danger">
+                            Delete Update
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </ng-template>
+
+    <!-- Batch State Alert -->
+    @if (progress.ProjectUpdateStateID === ProjectUpdateStateEnum.Submitted) {
+        <div class="alert alert-info">
+            <strong>Pending Review:</strong> This update has been submitted and is awaiting approval. Changes cannot be made while under review.
+        </div>
+    }
+    @if (progress.ProjectUpdateStateID === ProjectUpdateStateEnum.Returned) {
+        <div class="alert alert-warning">
+            <strong>Returned for Revisions:</strong> This update has been returned by the reviewer. Please review the section-specific comments below and make the requested changes, then resubmit.
+        </div>
+    }
+
+    <div class="dashboard workflow">
+        <div class="sidebar">
+            <div class="sidebar-body sticky-nav">
+                <workflow-nav>
+                    @for (group of stepGroups; track group.title) {
+                        <workflow-nav-group
+                            [title]="group.title"
+                            [expanded]="false"
+                            [complete]="isGroupComplete(progress, group)"
+                            [childRoutes]="getGroupChildRoutes(group)">
+                            @for (step of group.steps; track step.key) {
+                                <workflow-nav-item
+                                    [navRouterLink]="getStepLink(step)"
+                                    [complete]="isStepComplete(progress, step)"
+                                    [disabled]="isStepDisabled(progress, step)"
+                                    [required]="isStepRequired(step)"
+                                    [hasChanges]="isStepHasChanges(progress, step)">
+                                    {{ step.name }}
+                                </workflow-nav-item>
+                            }
+                        </workflow-nav-group>
+                    }
+                </workflow-nav>
+            </div>
+        </div>
+        <div class="main">
+            <div class="outlet-container">
+                <router-outlet></router-outlet>
+            </div>
+
+            <!-- Update Workflow Footer -->
+            <div class="workflow-footer">
+                <div class="workflow-footer__info">
+                    @if (progress.ProjectUpdateStateID === ProjectUpdateStateEnum.Submitted && progress.SubmittedByPersonName) {
+                        <span class="workflow-footer__created">
+                            Submitted by {{ progress.SubmittedByPersonName }}
+                            @if (progress.SubmittedDate) {
+                                on {{ progress.SubmittedDate | date:'M/d/yyyy h:mm:ss a' }}
+                            }
+                        </span>
+                    } @else if (progress.ProjectUpdateStateID === ProjectUpdateStateEnum.Returned && progress.ReturnedByPersonName) {
+                        <span class="workflow-footer__created">
+                            Returned by {{ progress.ReturnedByPersonName }}
+                            @if (progress.ReturnedDate) {
+                                on {{ progress.ReturnedDate | date:'M/d/yyyy h:mm:ss a' }}
+                            }
+                        </span>
+                    }
+                </div>
+                <div class="workflow-footer__actions">
+                    @if (canSubmit(progress)) {
+                        <button class="btn btn-primary" (click)="submitForApproval(progress.ProjectID, progress.ProjectName)">
+                            Submit
+                        </button>
+                    } @else if (canEdit(progress)) {
+                        <!-- Show disabled Submit when editable but not ready -->
+                        <button class="btn btn-primary" disabled>Submit</button>
+                    }
+                    @if (canApprove(progress)) {
+                        <button class="btn btn-warning me-2" (click)="returnUpdate(progress.ProjectID, progress.ProjectName)">
+                            Return
+                        </button>
+                        @if (isReadyToApprove(progress)) {
+                            <button class="btn btn-success" (click)="approveUpdate(progress.ProjectID, progress.ProjectName)">
+                                Approve
+                            </button>
+                        } @else {
+                            <button class="btn btn-success" disabled>Approve</button>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+} @else {
+    <div class="loading-spinner">Loading...</div>
+}

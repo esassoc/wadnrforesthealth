@@ -1,9 +1,9 @@
 namespace WADNR.Models.DataTransferObjects;
 
 /// <summary>
-/// Request DTO for workflow state transitions (submit, approve, return, reject, withdraw).
+/// Request for workflow state transitions (submit, approve, return, reject, withdraw).
 /// </summary>
-public class WorkflowStateTransitionRequestDto
+public class WorkflowStateTransitionRequest
 {
     /// <summary>
     /// Optional comment for the state transition.
@@ -12,9 +12,9 @@ public class WorkflowStateTransitionRequestDto
 }
 
 /// <summary>
-/// Response DTO for workflow state transitions.
+/// Response for workflow state transitions.
 /// </summary>
-public class WorkflowStateTransitionResponseDto
+public class WorkflowStateTransitionResponse
 {
     public int ProjectID { get; set; }
     public int NewProjectApprovalStatusID { get; set; }

@@ -1,0 +1,133 @@
+@if (vm$ | async; as vm) {
+    @if ({ saving: isSaving$ | async, hasChanges: hasChanges$ | async }; as state) {
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Update Simple Location</span>
+        </div>
+        <div class="card-body">
+            @if (reviewerComment$ | async; as reviewerComment) {
+                <div class="reviewer-comment-banner">
+                    <strong>Reviewer Comments:</strong>
+                    <p>{{ reviewerComment }}</p>
+                </div>
+            }
+            @if (vm.isLoading) {
+                <div class="text-center p-4">Loading...</div>
+            } @else {
+            <form [formGroup]="form">
+                <div class="grid-12">
+                    <div class="g-col-5">
+                        <div class="mb-3">
+                            <label class="field-label">
+                                <field-definition fieldDefinition="ProjectLocation"></field-definition>
+                            </label>
+                            <div class="radio-options">
+                                @for (option of locationTypeOptions; track option.Value) {
+                                    <label class="radio-label" [class.disabled]="state.saving">
+                                        <input
+                                            type="radio"
+                                            [formControl]="$any(form.controls.projectLocationSimpleTypeID)"
+                                            [value]="option.Value"
+                                            [disabled]="state.saving"
+                                            name="projectLocationSimpleTypeID" />
+                                        {{ option.Label }}
+                                    </label>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <form-field [formControl]="$any(form.controls.projectLocationNotes)" fieldLabel="Notes" [type]="FormFieldType.Textarea" placeholder="" [readOnly]="state.saving"> </form-field>
+                        </div>
+
+                        @if (isLatLngInputMode) {
+                            <div class="grid-12 mb-3">
+                                <div class="g-col-6">
+                                    <form-field
+                                        [formControl]="$any(form.controls.latitude)"
+                                        fieldLabel="Latitude"
+                                        [type]="FormFieldType.Number"
+                                        placeholder="e.g., 47.6062"
+                                        [readOnly]="state.saving"
+                                        (change)="onLatLngInputChange()">
+                                    </form-field>
+                                </div>
+                                <div class="g-col-6">
+                                    <form-field
+                                        [formControl]="$any(form.controls.longitude)"
+                                        fieldLabel="Longitude"
+                                        [type]="FormFieldType.Number"
+                                        placeholder="e.g., -122.3321"
+                                        [readOnly]="state.saving"
+                                        (change)="onLatLngInputChange()">
+                                    </form-field>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="location-info">
+                            <h5 class="location-info-header">Location Information</h5>
+                            @if (geographicInfo$ | async; as geoInfo) {
+                                @if (geoInfo.isLoading) {
+                                    <div class="location-info-loading">Loading geographic information...</div>
+                                } @else {
+                                    <div class="location-info-row">
+                                        <span class="location-info-label">Priority Landscape:</span>
+                                        <span class="location-info-value">{{ geoInfo.priorityLandscapeName ?? "None" }}</span>
+                                    </div>
+                                    <div class="location-info-row">
+                                        <span class="location-info-label">DNR Upland Region:</span>
+                                        <span class="location-info-value">{{ geoInfo.dnrUplandRegionName ?? "None" }}</span>
+                                    </div>
+                                    <div class="location-info-row">
+                                        <span class="location-info-label">County:</span>
+                                        <span class="location-info-value">{{ geoInfo.countyName ?? "None" }}</span>
+                                    </div>
+                                }
+                            }
+                            <div class="location-info-row">
+                                <span class="location-info-label">Latitude:</span>
+                                <span class="location-info-value">{{ hasLocation ? (form.value.latitude | number: "1.4-4") : "" }}</span>
+                            </div>
+                            <div class="location-info-row">
+                                <span class="location-info-label">Longitude:</span>
+                                <span class="location-info-value">{{ hasLocation ? (form.value.longitude | number: "1.4-4") : "" }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="g-col-7">
+                        <p class="text-muted mb-2">To zoom, hold down Shift and drag a rectangle.</p>
+                        <div class="map-container" style="height: 500px" [class.saving]="state.saving">
+                            <wadnr-map (onMapLoad)="handleMapLoad($event)"> </wadnr-map>
+                            @if (state.saving) {
+                                <div class="map-saving-overlay">
+                                    <span>Saving...</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </form>
+            }
+        </div>
+        <div class="card-footer">
+            <workflow-step-actions [showRevertActions]="true"
+                [isSaving]="state.saving"
+                [hasChanges]="state.hasChanges"
+                [stepKey]="stepKey"
+                [projectID]="(projectID$ | async)"
+                (save)="onSave(false)"
+                (saveAndContinue)="onSave(true)"
+                (reverted)="onStepReverted()">
+            </workflow-step-actions>
+        </div>
+    </div>
+    }
+} @else {
+    <div class="card">
+        <div class="card-body">
+            <div class="text-center p-4">Loading...</div>
+        </div>
+    </div>
+}

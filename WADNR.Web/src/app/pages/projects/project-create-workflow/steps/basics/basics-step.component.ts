@@ -5,15 +5,15 @@ import { combineLatest, map, Observable, of, shareReplay, startWith, switchMap, 
 import { catchError } from "rxjs/operators";
 import { BehaviorSubject } from "rxjs";
 
-import { WorkflowStepBase } from "src/app/shared/components/workflow/workflow-step-base";
+import { CreateWorkflowStepBase } from "src/app/shared/components/workflow/create-workflow-step-base";
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectTypeService } from "src/app/shared/generated/api/project-type.service";
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
 import { FocusAreaService } from "src/app/shared/generated/api/focus-area.service";
 import { ProgramService } from "src/app/shared/generated/api/program.service";
-import { ProjectBasicsStepDto } from "src/app/shared/generated/model/project-basics-step-dto";
-import { ProjectBasicsStepRequestDto } from "src/app/shared/generated/model/project-basics-step-request-dto";
+import { ProjectBasicsStep } from "src/app/shared/generated/model/project-basics-step";
+import { ProjectBasicsStepRequest } from "src/app/shared/generated/model/project-basics-step-request";
 import { ProjectStages, ProjectStagesAsSelectDropdownOptions } from "src/app/shared/generated/enum/project-stage-enum";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -30,7 +30,7 @@ import { ProgramGridRow } from "src/app/shared/generated/model/program-grid-row"
     templateUrl: "./basics-step.component.html",
     styleUrls: ["./basics-step.component.scss"],
 })
-export class BasicsStepComponent extends WorkflowStepBase implements OnInit {
+export class BasicsStepComponent extends CreateWorkflowStepBase implements OnInit {
     readonly nextStep = "location-simple";
 
     public FormFieldType = FormFieldType;
@@ -192,7 +192,7 @@ export class BasicsStepComponent extends WorkflowStepBase implements OnInit {
                 if (id == null || Number.isNaN(id)) {
                     return of(null);
                 }
-                return this.projectService.getBasicsStepProject(id).pipe(
+                return this.projectService.getCreateBasicsStepProject(id).pipe(
                     catchError(() => {
                         this.alertService.pushAlert(new Alert("Failed to load project data.", AlertContext.Danger, true));
                         return of(null);
@@ -236,7 +236,7 @@ export class BasicsStepComponent extends WorkflowStepBase implements OnInit {
         return id == null || Number.isNaN(id);
     }
 
-    private populateForm(data: ProjectBasicsStepDto, programOptions: FormInputOption[]): void {
+    private populateForm(data: ProjectBasicsStep, programOptions: FormInputOption[]): void {
         this.form.patchValue({
             projectName: data.ProjectName,
             projectDescription: data.ProjectDescription,
@@ -298,7 +298,7 @@ export class BasicsStepComponent extends WorkflowStepBase implements OnInit {
 
         this.isSaving = true;
 
-        const request: ProjectBasicsStepRequestDto = {
+        const request: ProjectBasicsStepRequest = {
             ProjectName: this.form.value.projectName,
             ProjectDescription: this.form.value.projectDescription,
             ProjectTypeID: this.form.value.projectTypeID,
@@ -331,7 +331,7 @@ export class BasicsStepComponent extends WorkflowStepBase implements OnInit {
         } else {
             // Update existing project
             this.projectID$.pipe(take(1)).subscribe((projectID) => {
-                this.projectService.saveBasicsStepProject(projectID, request).subscribe({
+                this.projectService.saveCreateBasicsStepProject(projectID, request).subscribe({
                     next: () => {
                         this.isSaving = false;
                         this.alertService.pushAlert(new Alert("Project updated successfully.", AlertContext.Success, true));

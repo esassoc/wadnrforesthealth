@@ -193,6 +193,43 @@ geoserver:
   tolerations: []
   affinity: {}
 
+gdalapi:
+  replicaCount: 1
+  image:
+    repository: containersesaqa.azurecr.io/wadnr/gdalapi
+    pullPolicy: Always
+  nameOverride: ""
+  fullnameOverride: ""
+  namespace: h2o
+  resources:
+    requests:
+      memory: "512Mi"
+    limits:
+      memory: "4G"
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: ""
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+  nodeSelector:
+    agentpool: appnodepool
+  tolerations: []
+  affinity: {}
+
 sitkacapture:
   replicaCount: 1
   image:

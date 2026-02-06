@@ -1,17 +1,18 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
-import { AsyncPipe, CommonModule, DecimalPipe, LowerCasePipe } from "@angular/common";
-import { combineLatest, map, Observable, of, shareReplay, startWith, switchMap } from "rxjs";
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { AsyncPipe, CommonModule, LowerCasePipe } from "@angular/common";
+import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, startWith, switchMap } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import * as L from "leaflet";
 import "@geoman-io/leaflet-geoman-free";
+import { DialogService } from "@ngneat/dialog";
 
-import { WorkflowStepBase } from "src/app/shared/components/workflow/workflow-step-base";
+import { CreateWorkflowStepBase } from "src/app/shared/components/workflow/create-workflow-step-base";
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
-import { LocationDetailedStepDto } from "src/app/shared/generated/model/location-detailed-step-dto";
-import { LocationDetailedStepRequestDto } from "src/app/shared/generated/model/location-detailed-step-request-dto";
-import { LocationSimpleStepDto } from "src/app/shared/generated/model/location-simple-step-dto";
+import { LocationDetailedStep } from "src/app/shared/generated/model/location-detailed-step";
+import { LocationDetailedStepRequest } from "src/app/shared/generated/model/location-detailed-step-request";
+import { LocationSimpleStep } from "src/app/shared/generated/model/location-simple-step";
 import { ProjectLocationItem } from "src/app/shared/generated/model/project-location-item";
 import { LocationDetailedItemRequest } from "src/app/shared/generated/model/location-detailed-item-request";
 import { Alert } from "src/app/shared/models/alert";
@@ -22,6 +23,7 @@ import { GeometryHelper } from "src/app/shared/helpers/geometry-helper";
 import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
 import { ProjectLocationTypeEnum, ProjectLocationTypesAsSelectDropdownOptions } from "src/app/shared/generated/enum/project-location-type-enum";
 import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
+import { ImportGdbModalComponent, ImportGdbModalData } from "./import-gdb-modal/import-gdb-modal.component";
 
 /**
  * Geometry shape types supported by this component.
@@ -41,6 +43,8 @@ interface LocationFeature {
     ProjectLocationNotes: string;
     GeoJson: string; // WKT format (field is misnamed)
     AreaInAcres: number;
+    hasTreatments: boolean;
+    isFromArcGis: boolean;
 
     // Local tracking
     leafletId: number; // L.Util.stamp(layer)
@@ -63,23 +67,14 @@ interface FeatureFormControls {
 @Component({
     selector: "location-detailed-step",
     standalone: true,
-    imports: [
-        CommonModule,
-        AsyncPipe,
-        DecimalPipe,
-        LowerCasePipe,
-        ReactiveFormsModule,
-        WADNRMapComponent,
-        WorkflowStepActionsComponent,
-        FormFieldComponent
-    ],
+    imports: [CommonModule, AsyncPipe, LowerCasePipe, ReactiveFormsModule, WADNRMapComponent, WorkflowStepActionsComponent, FormFieldComponent],
     templateUrl: "./location-detailed-step.component.html",
-    styleUrls: ["./location-detailed-step.component.scss"]
+    styleUrls: ["./location-detailed-step.component.scss"],
 })
-export class LocationDetailedStepComponent extends WorkflowStepBase implements OnInit, OnDestroy {
+export class LocationDetailedStepComponent extends CreateWorkflowStepBase implements OnInit, OnDestroy {
     readonly nextStep = "priority-landscapes";
 
-    public vm$: Observable<{ isLoading: boolean; data: LocationDetailedStepDto | null; simpleLocation: LocationSimpleStepDto | null }>;
+    public vm$: Observable<{ isLoading: boolean; data: LocationDetailedStep | null; simpleLocation: LocationSimpleStep | null }>;
 
     // Form field type for template
     public FormFieldType = FormFieldType;
@@ -93,8 +88,8 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
     public mapIsReady = false;
 
     // Feature state
-    public features: LocationFeature[] = [];
-    public selectedFeatureId: number | null = null;
+    public features$ = new BehaviorSubject<LocationFeature[]>([]);
+    public selectedFeatureId$ = new BehaviorSubject<number | null>(null);
 
     // Form controls for each feature, keyed by leafletId
     private featureFormControls = new Map<number, FeatureFormControls>();
@@ -109,7 +104,7 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
     constructor(
         private projectService: ProjectService,
         private leafletHelper: LeafletHelperService,
-        private cdr: ChangeDetectorRef
+        private dialogService: DialogService
     ) {
         super();
     }
@@ -122,7 +117,7 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
                 if (id == null || Number.isNaN(id)) {
                     return of(null);
                 }
-                return this.projectService.getLocationDetailedStepProject(id).pipe(
+                return this.projectService.getCreateLocationDetailedStepProject(id).pipe(
                     catchError(() => {
                         this.alertService.pushAlert(new Alert("Failed to load detailed locations data.", AlertContext.Danger, true));
                         return of(null);
@@ -137,7 +132,7 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
                 if (id == null || Number.isNaN(id)) {
                     return of(null);
                 }
-                return this.projectService.getLocationSimpleStepProject(id).pipe(
+                return this.projectService.getCreateLocationSimpleStepProject(id).pipe(
                     catchError(() => {
                         // Non-critical, don't show error
                         return of(null);
@@ -183,25 +178,33 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
         const controls: FeatureFormControls = {
             name: new FormControl<string>(feature.ProjectLocationName, { nonNullable: true }),
             type: new FormControl<number>(feature.ProjectLocationTypeID, { nonNullable: true }),
-            notes: new FormControl<string>(feature.ProjectLocationNotes ?? "", { nonNullable: true })
+            notes: new FormControl<string>(feature.ProjectLocationNotes ?? "", { nonNullable: true }),
         };
 
+        // Disable controls based on protection flags
+        if (feature.isFromArcGis) {
+            controls.name.disable();
+        }
+        if (feature.hasTreatments || feature.isFromArcGis) {
+            controls.type.disable();
+        }
+
         // Subscribe to value changes to sync back to feature
-        controls.name.valueChanges.subscribe(value => {
+        controls.name.valueChanges.subscribe((value) => {
             feature.ProjectLocationName = value;
             feature.isModified = true;
         });
 
-        controls.type.valueChanges.subscribe(value => {
+        controls.type.valueChanges.subscribe((value) => {
             feature.ProjectLocationTypeID = value;
-            const typeOption = this.locationTypeOptions.find(t => t.Value === value);
+            const typeOption = this.locationTypeOptions.find((t) => t.Value === value);
             if (typeOption) {
                 feature.ProjectLocationTypeName = typeOption.Label;
             }
             feature.isModified = true;
         });
 
-        controls.notes.valueChanges.subscribe(value => {
+        controls.notes.valueChanges.subscribe((value) => {
             feature.ProjectLocationNotes = value;
             feature.isModified = true;
         });
@@ -376,13 +379,13 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
         // Create a marker for the simple location
         const marker = L.marker(this.simpleLocationLatLng, {
             icon: MarkerHelper.iconDefault,
-            zIndexOffset: -1000 // Behind drawn polygons
+            zIndexOffset: -1000, // Behind drawn polygons
         });
 
         // Add a tooltip to identify this as the simple location
         marker.bindTooltip("Project Location (Simple)", {
             permanent: false,
-            direction: "top"
+            direction: "top",
         });
 
         // Create a layer group and add the marker
@@ -407,8 +410,8 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
 
         // Clear any existing features
         this.featureGroup.clearLayers();
-        this.features = [];
         this.featureFormControls.clear();
+        const loadedFeatures: LocationFeature[] = [];
 
         for (const location of locations) {
             if (!location.GeoJson) {
@@ -424,11 +427,11 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
             const geoJsonFeature: GeoJSON.Feature = {
                 type: "Feature",
                 geometry: geojson as GeoJSON.Geometry,
-                properties: {}
+                properties: {},
             };
             const geoJsonLayer = L.geoJSON(geoJsonFeature, {
                 style: () => this.defaultStyle,
-                pointToLayer: (feature, latlng) => L.marker(latlng, { icon: MarkerHelper.iconDefault })
+                pointToLayer: (feature, latlng) => L.marker(latlng, { icon: MarkerHelper.iconDefault }),
             });
 
             // Extract the actual polygon layer from the GeoJSON layer group
@@ -451,15 +454,17 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
                 ProjectLocationNotes: location.ProjectLocationNotes ?? "",
                 GeoJson: location.GeoJson,
                 AreaInAcres: location.AreaInAcres ?? 0,
+                hasTreatments: location.HasTreatments ?? false,
+                isFromArcGis: location.IsFromArcGis ?? false,
                 leafletId: leafletId,
                 layer: polygonLayer,
                 shapeType: this.getShapeTypeFromGeometry(geojson.type),
                 isNew: false,
                 isModified: false,
-                isDeleted: false
+                isDeleted: false,
             };
 
-            this.features.push(locationFeature);
+            loadedFeatures.push(locationFeature);
             this.featureGroup.addLayer(polygonLayer);
 
             // Apply correct style based on shape type
@@ -467,10 +472,14 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
 
             this.bindLayerEvents(polygonLayer, locationFeature);
 
-            // Enable Geoman editing on this layer
-            (polygonLayer as any).pm?.enable();
-            (polygonLayer as any).pm?.disable();
+            // Enable Geoman editing on this layer (skip for ArcGIS features)
+            if (!locationFeature.isFromArcGis) {
+                (polygonLayer as any).pm?.enable();
+                (polygonLayer as any).pm?.disable();
+            }
         }
+
+        this.features$.next(loadedFeatures);
 
         // Fit map to features if any exist
         if (this.featureGroup.getLayers().length > 0) {
@@ -483,8 +492,6 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
 
             this.map.fitBounds(bounds, { padding: [50, 50] });
         }
-
-        this.cdr.detectChanges();
     }
 
     /**
@@ -507,19 +514,22 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
             ProjectLocationID: null,
             ProjectLocationTypeID: ProjectLocationTypeEnum.ProjectArea,
             ProjectLocationTypeName: "Project Area",
-            ProjectLocationName: `Location ${this.features.filter(f => !f.isDeleted).length + 1}`,
+            ProjectLocationName: `Location ${this.features$.value.filter((f) => !f.isDeleted).length + 1}`,
             ProjectLocationNotes: "",
             GeoJson: wkt,
             AreaInAcres: area,
+            hasTreatments: false,
+            isFromArcGis: false,
             leafletId: leafletId,
             layer: layer,
             shapeType: shapeType,
             isNew: true,
             isModified: false,
-            isDeleted: false
+            isDeleted: false,
         };
 
-        this.features.push(newFeature);
+        this.features$.value.push(newFeature);
+        this.features$.next(this.features$.value);
         this.featureGroup.addLayer(layer);
 
         // Apply default style based on shape type
@@ -533,8 +543,6 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
             const geomanMap = this.map as L.Map & { pm: any };
             geomanMap.pm.disableDraw();
         }
-
-        this.cdr.detectChanges();
     }
 
     /**
@@ -544,24 +552,30 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
         const layer = e.layer;
         const leafletId = L.Util.stamp(layer);
 
-        const feature = this.features.find(f => f.leafletId === leafletId);
+        const feature = this.features$.value.find((f) => f.leafletId === leafletId);
         if (feature) {
+            // Reject removal of protected features
+            if (feature.hasTreatments || feature.isFromArcGis) {
+                this.featureGroup.addLayer(layer);
+                this.alertService.pushAlert(new Alert("This location cannot be deleted because it has associated Treatments or was imported from ArcGIS.", AlertContext.Warning, true));
+                return;
+            }
+
             if (feature.isNew) {
                 // Remove new features entirely
-                this.features = this.features.filter(f => f.leafletId !== leafletId);
+                this.features$.next(this.features$.value.filter((f) => f.leafletId !== leafletId));
                 this.removeFeatureControls(leafletId);
             } else {
                 // Mark existing features as deleted
                 feature.isDeleted = true;
+                this.features$.next(this.features$.value);
             }
 
             // Clear selection if deleted feature was selected
-            if (this.selectedFeatureId === leafletId) {
-                this.selectedFeatureId = null;
+            if (this.selectedFeatureId$.value === leafletId) {
+                this.selectedFeatureId$.next(null);
             }
         }
-
-        this.cdr.detectChanges();
     }
 
     /**
@@ -572,6 +586,11 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
         layer.on("click", () => {
             this.selectFeature(feature);
         });
+
+        // Skip geometry editing for ArcGIS-imported features
+        if (feature.isFromArcGis) {
+            return;
+        }
 
         // Edit events for geometry changes
         (layer as any).on?.("pm:edit", () => {
@@ -597,7 +616,7 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
         feature.AreaInAcres = GeometryHelper.calculateAreaAcres(geojson);
         feature.isModified = true;
 
-        this.cdr.detectChanges();
+        this.features$.next(this.features$.value);
     }
 
     /**
@@ -609,15 +628,15 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
         }
 
         // Reset previous selection style
-        if (this.selectedFeatureId !== null) {
-            const prevFeature = this.features.find(f => f.leafletId === this.selectedFeatureId);
+        if (this.selectedFeatureId$.value !== null) {
+            const prevFeature = this.features$.value.find((f) => f.leafletId === this.selectedFeatureId$.value);
             if (prevFeature && prevFeature.layer) {
                 this.applyDefaultStyle(prevFeature);
             }
         }
 
         // Set new selection
-        this.selectedFeatureId = feature.leafletId;
+        this.selectedFeatureId$.next(feature.leafletId);
         this.applySelectedStyle(feature);
 
         // Pan to feature
@@ -627,8 +646,6 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
                 this.map.panTo(center);
             }
         }
-
-        this.cdr.detectChanges();
     }
 
     /**
@@ -638,20 +655,19 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
         if (feature.isNew) {
             // Remove new features from the map and array
             this.featureGroup.removeLayer(feature.layer);
-            this.features = this.features.filter(f => f.leafletId !== feature.leafletId);
+            this.features$.next(this.features$.value.filter((f) => f.leafletId !== feature.leafletId));
             this.removeFeatureControls(feature.leafletId);
         } else {
             // Mark existing features as deleted and remove from map
             feature.isDeleted = true;
             this.featureGroup.removeLayer(feature.layer);
+            this.features$.next(this.features$.value);
         }
 
         // Clear selection if deleted feature was selected
-        if (this.selectedFeatureId === feature.leafletId) {
-            this.selectedFeatureId = null;
+        if (this.selectedFeatureId$.value === feature.leafletId) {
+            this.selectedFeatureId$.next(null);
         }
-
-        this.cdr.detectChanges();
     }
 
     /**
@@ -673,14 +689,14 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
         // Re-bind click events (events may be lost when layer is removed)
         this.bindLayerEvents(feature.layer, feature);
 
-        this.cdr.detectChanges();
+        this.features$.next(this.features$.value);
     }
 
     /**
      * Validate features before saving.
      */
     private validateFeatures(): boolean {
-        const activeFeatures = this.features.filter(f => !f.isDeleted);
+        const activeFeatures = this.features$.value.filter((f) => !f.isDeleted);
 
         for (const feature of activeFeatures) {
             if (!feature.ProjectLocationName || feature.ProjectLocationName.trim() === "") {
@@ -697,10 +713,20 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
                 this.alertService.pushAlert(new Alert("All locations must have a valid geometry.", AlertContext.Warning, true));
                 return false;
             }
+
+            if (feature.ProjectLocationName.length > 100) {
+                this.alertService.pushAlert(new Alert("Location name must be 100 characters or fewer.", AlertContext.Warning, true));
+                return false;
+            }
+
+            if (feature.ProjectLocationNotes && feature.ProjectLocationNotes.length > 255) {
+                this.alertService.pushAlert(new Alert("Location notes must be 255 characters or fewer.", AlertContext.Warning, true));
+                return false;
+            }
         }
 
         // Check for duplicate names
-        const names = activeFeatures.map(f => f.ProjectLocationName.toLowerCase().trim());
+        const names = activeFeatures.map((f) => f.ProjectLocationName.toLowerCase().trim());
         const duplicates = names.filter((name, index) => names.indexOf(name) !== index);
         if (duplicates.length > 0) {
             this.alertService.pushAlert(new Alert("Location names must be unique.", AlertContext.Warning, true));
@@ -714,14 +740,14 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
      * Get visible (non-deleted) features for display.
      */
     get visibleFeatures(): LocationFeature[] {
-        return this.features.filter(f => !f.isDeleted);
+        return this.features$.value.filter((f) => !f.isDeleted);
     }
 
     /**
      * Get deleted features for the "restore" section.
      */
     get deletedFeatures(): LocationFeature[] {
-        return this.features.filter(f => f.isDeleted && !f.isNew);
+        return this.features$.value.filter((f) => f.isDeleted && !f.isNew);
     }
 
     /**
@@ -733,25 +759,53 @@ export class LocationDetailedStepComponent extends WorkflowStepBase implements O
         }
 
         // Map features to request DTOs (exclude deleted features)
-        const requestItems: LocationDetailedItemRequest[] = this.features
-            .filter(f => !f.isDeleted)
-            .map(f => ({
+        const requestItems: LocationDetailedItemRequest[] = this.features$.value
+            .filter((f) => !f.isDeleted)
+            .map((f) => ({
                 ProjectLocationID: f.ProjectLocationID,
                 ProjectLocationTypeID: f.ProjectLocationTypeID,
                 ProjectLocationName: f.ProjectLocationName,
                 ProjectLocationNotes: f.ProjectLocationNotes,
-                GeoJson: f.GeoJson // WKT format
+                GeoJson: f.GeoJson, // WKT format
             }));
 
-        const request: LocationDetailedStepRequestDto = {
-            Locations: requestItems
+        const request: LocationDetailedStepRequest = {
+            Locations: requestItems,
         };
 
         this.saveStep(
-            (projectID) => this.projectService.saveLocationDetailedStepProject(projectID, request),
-            "Locations saved successfully.",
+            (projectID) => this.projectService.saveCreateLocationDetailedStepProject(projectID, request),
+            "Locations saved successfully. Priority Landscapes, DNR Upland Regions, and Counties were automatically updated. Please review those sections to verify.",
             "Failed to save locations.",
             navigate
         );
+    }
+
+    openImportGdbModal(): void {
+        const pid = this._projectID$.value!;
+        const dialogRef = this.dialogService.open(ImportGdbModalComponent, {
+            size: "lg",
+            data: {
+                projectID: pid,
+                uploadFn: (projectID: number, file: Blob) =>
+                    this.projectService.uploadGdbForCreateWorkflowProject(projectID, file),
+                approveFn: (projectID: number, request: any) =>
+                    this.projectService.approveGdbForCreateWorkflowProject(projectID, request)
+            } as ImportGdbModalData
+        });
+
+        dialogRef.afterClosed$.subscribe((result) => {
+            if (result) {
+                // Reload step data to pick up newly imported features
+                this.projectService.getCreateLocationDetailedStepProject(pid).subscribe((data) => {
+                    if (data) {
+                        // Clear existing features and reload
+                        this.features$.next([]);
+                        this.featureGroup?.clearLayers();
+                        this.loadExistingFeatures(data.Locations);
+                    }
+                });
+            }
+        });
     }
 }

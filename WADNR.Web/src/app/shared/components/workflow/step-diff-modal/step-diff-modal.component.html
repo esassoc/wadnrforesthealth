@@ -1,0 +1,22 @@
+<div class="modal-header">
+    <h3>Changes to {{ stepTitle }}</h3>
+</div>
+
+<div class="modal-body">
+    <div class="diff-controls">
+        <label class="form-check">
+            <input
+                type="checkbox"
+                class="form-check-input"
+                [checked]="showDeletions"
+                (change)="toggleDeletions()">
+            <span class="form-check-label">Show deletion details</span>
+        </label>
+    </div>
+
+    <div class="diff-content" [class.hide-deletions]="!showDeletions" [innerHTML]="diffHtml"></div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="close()">Close</button>
+</div>

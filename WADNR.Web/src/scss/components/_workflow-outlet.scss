@@ -1,0 +1,124 @@
+// Shared workflow outlet styles (create + update)
+:host {
+    display: block;
+
+    .outlet-container {
+        padding: 0;
+    }
+}
+
+.dashboard.workflow {
+    .sidebar {
+        background: #fff;
+    }
+}
+
+.actions-dropdown {
+    position: relative;
+
+    .actions-toggle {
+        color: var(--link-color);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+
+        icon {
+            display: flex;
+        }
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        z-index: 1000;
+        display: none;
+        min-width: 180px;
+        padding: 0.5rem 0;
+        margin: 0.125rem 0 0;
+        background-color: #fff;
+        border: 1px solid var(--gray-300);
+        border-radius: 0.25rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
+        &.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 1rem;
+            color: var(--color-text);
+            text-decoration: none;
+            background-color: transparent;
+            border: 0;
+
+            &:hover {
+                background-color: var(--gray-100);
+            }
+
+            &.text-danger {
+                color: var(--danger);
+            }
+        }
+
+        .divider {
+            height: 0;
+            margin: 0.5rem 0;
+            overflow: hidden;
+            border-top: 1px solid var(--gray-200);
+        }
+    }
+}
+
+.reviewer-comment-banner {
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+
+    strong {
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    p {
+        margin: 0;
+        white-space: pre-wrap;
+    }
+}
+
+.workflow-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem 0;
+    margin-top: 1rem;
+    border-top: 1px solid var(--gray-300);
+
+    &__info {
+        flex: 1;
+    }
+
+    &__created {
+        color: var(--color-text);
+        font-size: var(--type-size-200);
+    }
+
+    &__status-label {
+        color: var(--color-text);
+        font-size: var(--type-size-200);
+
+        strong {
+            font-weight: bold;
+        }
+    }
+}

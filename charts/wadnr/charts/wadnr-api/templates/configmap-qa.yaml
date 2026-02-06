@@ -14,4 +14,5 @@ data:
   KeystoneOpenIDUrl: "https://identity-qa.sitkatech.com"
   GDALAPIBaseUrl: "http://{{ .Values.global.domains.gdalApi }}"
   SitkaCaptureServiceUrl: "http://{{ .Values.global.domains.sitkacapture }}"
+  WebUrl: "https://{{ .Values.global.domains.web }}"
 {{ end }}

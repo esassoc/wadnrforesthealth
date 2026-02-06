@@ -1,0 +1,36 @@
+.section-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    .btn {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+}
+
+// Grid action icons
+:host ::ng-deep {
+    .action-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+        border-radius: 4px;
+        color: var(--text-secondary, #6c757d);
+        transition: background-color 0.15s, color 0.15s;
+
+        &:hover {
+            background: var(--bg-hover-dark, #dee2e6);
+            color: var(--primary, #0d6efd);
+        }
+
+        svg {
+            width: 16px;
+            height: 16px;
+        }
+    }
+}

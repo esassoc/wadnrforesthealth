@@ -4,7 +4,7 @@ import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, start
 import { catchError, filter } from "rxjs/operators";
 import { DialogService } from "@ngneat/dialog";
 
-import { WorkflowStepBase } from "src/app/shared/components/workflow/workflow-step-base";
+import { CreateWorkflowStepBase } from "src/app/shared/components/workflow/create-workflow-step-base";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectDocumentService } from "src/app/shared/generated/api/project-document.service";
 import { ProjectNoteService } from "src/app/shared/generated/api/project-note.service";
@@ -29,17 +29,11 @@ interface DocumentsNotesViewModel {
 @Component({
     selector: "documents-notes-step",
     standalone: true,
-    imports: [
-        CommonModule,
-        AsyncPipe,
-        DatePipe,
-        UpperCasePipe,
-        IconComponent
-    ],
+    imports: [CommonModule, AsyncPipe, DatePipe, UpperCasePipe, IconComponent],
     templateUrl: "./documents-notes-step.component.html",
-    styleUrls: ["./documents-notes-step.component.scss"]
+    styleUrls: ["./documents-notes-step.component.scss"],
 })
-export class DocumentsNotesStepComponent extends WorkflowStepBase implements OnInit {
+export class DocumentsNotesStepComponent extends CreateWorkflowStepBase implements OnInit {
     readonly nextStep = "";
 
     public vm$: Observable<DocumentsNotesViewModel>;
@@ -69,12 +63,8 @@ export class DocumentsNotesStepComponent extends WorkflowStepBase implements OnI
                     return of({ documents: [] as ProjectDocumentGridRow[], notes: [] as ProjectNoteGridRow[] });
                 }
                 return combineLatest({
-                    documents: this.projectService.listDocumentsProject(id).pipe(
-                        catchError(() => of([] as ProjectDocumentGridRow[]))
-                    ),
-                    notes: this.projectService.listNotesProject(id).pipe(
-                        catchError(() => of([] as ProjectNoteGridRow[]))
-                    )
+                    documents: this.projectService.listDocumentsProject(id).pipe(catchError(() => of([] as ProjectDocumentGridRow[]))),
+                    notes: this.projectService.listNotesProject(id).pipe(catchError(() => of([] as ProjectNoteGridRow[]))),
                 });
             }),
             catchError(() => {
@@ -89,7 +79,7 @@ export class DocumentsNotesStepComponent extends WorkflowStepBase implements OnI
                 isLoading: false,
                 documents: data.documents,
                 notes: data.notes,
-                documentTypes
+                documentTypes,
             })),
             startWith({ isLoading: true, documents: [], notes: [], documentTypes: [] } as DocumentsNotesViewModel),
             shareReplay({ bufferSize: 1, refCount: true })
@@ -102,48 +92,52 @@ export class DocumentsNotesStepComponent extends WorkflowStepBase implements OnI
     }
 
     openAddDocumentModal(documentTypes: ProjectDocumentTypeLookupItem[]): void {
-        this._projectID$.pipe(
-            filter((id): id is number => id != null),
-            take(1)
-        ).subscribe(projectID => {
-            const dialogRef = this.dialogService.open(ProjectDocumentModalComponent, {
-                data: {
-                    mode: "create",
-                    projectID,
-                    documentTypes
-                } as ProjectDocumentModalData,
-                width: "600px"
-            });
+        this._projectID$
+            .pipe(
+                filter((id): id is number => id != null),
+                take(1)
+            )
+            .subscribe((projectID) => {
+                const dialogRef = this.dialogService.open(ProjectDocumentModalComponent, {
+                    data: {
+                        mode: "create",
+                        projectID,
+                        documentTypes,
+                    } as ProjectDocumentModalData,
+                    width: "600px",
+                });
 
-            dialogRef.afterClosed$.subscribe(result => {
-                if (result) {
-                    this.refresh$.next();
-                }
+                dialogRef.afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refresh$.next();
+                    }
+                });
             });
-        });
     }
 
     openEditDocumentModal(doc: ProjectDocumentGridRow, documentTypes: ProjectDocumentTypeLookupItem[]): void {
-        this._projectID$.pipe(
-            filter((id): id is number => id != null),
-            take(1)
-        ).subscribe(projectID => {
-            const dialogRef = this.dialogService.open(ProjectDocumentModalComponent, {
-                data: {
-                    mode: "edit",
-                    projectID,
-                    document: doc,
-                    documentTypes
-                } as ProjectDocumentModalData,
-                width: "600px"
-            });
+        this._projectID$
+            .pipe(
+                filter((id): id is number => id != null),
+                take(1)
+            )
+            .subscribe((projectID) => {
+                const dialogRef = this.dialogService.open(ProjectDocumentModalComponent, {
+                    data: {
+                        mode: "edit",
+                        projectID,
+                        document: doc,
+                        documentTypes,
+                    } as ProjectDocumentModalData,
+                    width: "600px",
+                });
 
-            dialogRef.afterClosed$.subscribe(result => {
-                if (result) {
-                    this.refresh$.next();
-                }
+                dialogRef.afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refresh$.next();
+                    }
+                });
             });
-        });
     }
 
     async deleteDocument(doc: ProjectDocumentGridRow): Promise<void> {
@@ -152,7 +146,7 @@ export class DocumentsNotesStepComponent extends WorkflowStepBase implements OnI
             message: `Are you sure you want to delete "${doc.DisplayName}"?`,
             buttonTextYes: "Delete",
             buttonTextNo: "Cancel",
-            buttonClassYes: "btn-danger"
+            buttonClassYes: "btn-danger",
         });
 
         if (confirmed) {
@@ -164,53 +158,57 @@ export class DocumentsNotesStepComponent extends WorkflowStepBase implements OnI
                 error: (err) => {
                     const message = err?.error ?? err?.message ?? "Failed to delete document.";
                     this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                }
+                },
             });
         }
     }
 
     // Note Methods
     openAddNoteModal(): void {
-        this._projectID$.pipe(
-            filter((id): id is number => id != null),
-            take(1)
-        ).subscribe(projectID => {
-            const dialogRef = this.dialogService.open(ProjectNoteModalComponent, {
-                data: {
-                    mode: "create",
-                    projectID
-                } as ProjectNoteModalData,
-                width: "600px"
-            });
+        this._projectID$
+            .pipe(
+                filter((id): id is number => id != null),
+                take(1)
+            )
+            .subscribe((projectID) => {
+                const dialogRef = this.dialogService.open(ProjectNoteModalComponent, {
+                    data: {
+                        mode: "create",
+                        projectID,
+                    } as ProjectNoteModalData,
+                    width: "600px",
+                });
 
-            dialogRef.afterClosed$.subscribe(result => {
-                if (result) {
-                    this.refresh$.next();
-                }
+                dialogRef.afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refresh$.next();
+                    }
+                });
             });
-        });
     }
 
     openEditNoteModal(note: ProjectNoteGridRow): void {
-        this._projectID$.pipe(
-            filter((id): id is number => id != null),
-            take(1)
-        ).subscribe(projectID => {
-            const dialogRef = this.dialogService.open(ProjectNoteModalComponent, {
-                data: {
-                    mode: "edit",
-                    projectID,
-                    note
-                } as ProjectNoteModalData,
-                width: "600px"
-            });
+        this._projectID$
+            .pipe(
+                filter((id): id is number => id != null),
+                take(1)
+            )
+            .subscribe((projectID) => {
+                const dialogRef = this.dialogService.open(ProjectNoteModalComponent, {
+                    data: {
+                        mode: "edit",
+                        projectID,
+                        note,
+                    } as ProjectNoteModalData,
+                    width: "600px",
+                });
 
-            dialogRef.afterClosed$.subscribe(result => {
-                if (result) {
-                    this.refresh$.next();
-                }
+                dialogRef.afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refresh$.next();
+                    }
+                });
             });
-        });
     }
 
     async deleteNote(note: ProjectNoteGridRow): Promise<void> {
@@ -219,7 +217,7 @@ export class DocumentsNotesStepComponent extends WorkflowStepBase implements OnI
             message: "Are you sure you want to delete this note?",
             buttonTextYes: "Delete",
             buttonTextNo: "Cancel",
-            buttonClassYes: "btn-danger"
+            buttonClassYes: "btn-danger",
         });
 
         if (confirmed) {
@@ -231,7 +229,7 @@ export class DocumentsNotesStepComponent extends WorkflowStepBase implements OnI
                 error: (err) => {
                     const message = err?.error ?? err?.message ?? "Failed to delete note.";
                     this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                }
+                },
             });
         }
     }

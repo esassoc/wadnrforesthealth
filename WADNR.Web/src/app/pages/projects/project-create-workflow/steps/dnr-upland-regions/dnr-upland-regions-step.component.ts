@@ -5,15 +5,14 @@ import { map, Observable, of, shareReplay, startWith, switchMap, combineLatest, 
 import { catchError } from "rxjs/operators";
 import * as L from "leaflet";
 
-import { WorkflowStepBase } from "src/app/shared/components/workflow/workflow-step-base";
+import { CreateWorkflowStepBase } from "src/app/shared/components/workflow/create-workflow-step-base";
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
-import { GeographicAssignmentStepDto } from "src/app/shared/generated/model/geographic-assignment-step-dto";
-import { GeographicOverrideRequestDto } from "src/app/shared/generated/model/geographic-override-request-dto";
+import { GeographicAssignmentStep } from "src/app/shared/generated/model/geographic-assignment-step";
+import { GeographicOverrideRequest } from "src/app/shared/generated/model/geographic-override-request";
 import { GeographicLookupItem } from "src/app/shared/generated/model/geographic-lookup-item";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
-import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
@@ -24,20 +23,11 @@ import { environment } from "src/environments/environment";
 @Component({
     selector: "dnr-upland-regions-step",
     standalone: true,
-    imports: [
-        CommonModule,
-        AsyncPipe,
-        ReactiveFormsModule,
-        FieldDefinitionComponent,
-        FormFieldComponent,
-        WorkflowStepActionsComponent,
-        WADNRMapComponent,
-        IconComponent
-    ],
+    imports: [CommonModule, AsyncPipe, ReactiveFormsModule, FormFieldComponent, WorkflowStepActionsComponent, WADNRMapComponent, IconComponent],
     templateUrl: "./dnr-upland-regions-step.component.html",
-    styleUrls: ["./dnr-upland-regions-step.component.scss"]
+    styleUrls: ["./dnr-upland-regions-step.component.scss"],
 })
-export class DnrUplandRegionsStepComponent extends WorkflowStepBase implements OnInit {
+export class DnrUplandRegionsStepComponent extends CreateWorkflowStepBase implements OnInit {
     readonly nextStep = "counties";
 
     // WMS layer configuration
@@ -46,7 +36,7 @@ export class DnrUplandRegionsStepComponent extends WorkflowStepBase implements O
     private readonly nameField = "DNRUplandRegionName";
     private readonly selectedStyle = "region_yellow";
 
-    public vm$: Observable<{ isLoading: boolean; data: GeographicAssignmentStepDto | null }>;
+    public vm$: Observable<{ isLoading: boolean; data: GeographicAssignmentStep | null }>;
 
     public FormFieldType = FormFieldType;
     public form: FormGroup;
@@ -76,7 +66,7 @@ export class DnrUplandRegionsStepComponent extends WorkflowStepBase implements O
         this.form = new FormGroup({
             selectedIDs: new FormControl<number[]>([]),
             itemToAdd: new FormControl<number | null>(null),
-            noSelectionExplanation: new FormControl("")
+            noSelectionExplanation: new FormControl(""),
         });
     }
 
@@ -88,7 +78,7 @@ export class DnrUplandRegionsStepComponent extends WorkflowStepBase implements O
                 if (id == null || Number.isNaN(id)) {
                     return of(null);
                 }
-                return this.projectService.getDnrUplandRegionsStepProject(id).pipe(
+                return this.projectService.getCreateDnrUplandRegionsStepProject(id).pipe(
                     catchError(() => {
                         this.alertService.pushAlert(new Alert("Failed to load DNR upland regions data.", AlertContext.Danger, true));
                         return of(null);
@@ -104,9 +94,7 @@ export class DnrUplandRegionsStepComponent extends WorkflowStepBase implements O
                 if (id == null || Number.isNaN(id)) {
                     return of(null);
                 }
-                return this.projectService.getLocationSimpleStepProject(id).pipe(
-                    catchError(() => of(null))
-                );
+                return this.projectService.getCreateLocationSimpleStepProject(id).pipe(catchError(() => of(null)));
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
@@ -130,40 +118,34 @@ export class DnrUplandRegionsStepComponent extends WorkflowStepBase implements O
         );
 
         // Available options excludes already selected items
-        this.availableOptions$ = combineLatest([
-            this._selectedIDs$,
-            this.vm$.pipe(map(vm => vm.data?.AvailableOptions ?? []))
-        ]).pipe(
+        this.availableOptions$ = combineLatest([this._selectedIDs$, this.vm$.pipe(map((vm) => vm.data?.AvailableOptions ?? []))]).pipe(
             map(([selectedIDs, allOptions]) => {
                 return allOptions
-                    .filter(opt => !selectedIDs.includes(opt.ID))
-                    .map(opt => ({
+                    .filter((opt) => !selectedIDs.includes(opt.ID))
+                    .map((opt) => ({
                         Value: opt.ID,
                         Label: opt.DisplayName,
-                        disabled: false
+                        disabled: false,
                     }));
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
         // Selected items for display
-        this.selectedItems$ = combineLatest([
-            this._selectedIDs$,
-            this.vm$.pipe(map(vm => vm.data?.AvailableOptions ?? []))
-        ]).pipe(
+        this.selectedItems$ = combineLatest([this._selectedIDs$, this.vm$.pipe(map((vm) => vm.data?.AvailableOptions ?? []))]).pipe(
             map(([selectedIDs, allOptions]) => {
-                return allOptions.filter(opt => selectedIDs.includes(opt.ID));
+                return allOptions.filter((opt) => selectedIDs.includes(opt.ID));
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
     }
 
-    private populateForm(data: GeographicAssignmentStepDto): void {
+    private populateForm(data: GeographicAssignmentStep): void {
         this.allOptions = data.AvailableOptions ?? [];
         const selectedIDs = data.SelectedIDs ?? [];
         this.form.patchValue({
             selectedIDs: selectedIDs,
-            noSelectionExplanation: data.NoSelectionExplanation ?? ""
+            noSelectionExplanation: data.NoSelectionExplanation ?? "",
         });
         this._selectedIDs$.next(selectedIDs);
     }
@@ -190,7 +172,7 @@ export class DnrUplandRegionsStepComponent extends WorkflowStepBase implements O
 
     removeItem(id: number): void {
         const currentIDs = this.selectedIDs;
-        const newIDs = currentIDs.filter(x => x !== id);
+        const newIDs = currentIDs.filter((x) => x !== id);
         this.form.patchValue({ selectedIDs: newIDs });
         this._selectedIDs$.next(newIDs);
         this.updateSelectedLayer();
@@ -219,7 +201,7 @@ export class DnrUplandRegionsStepComponent extends WorkflowStepBase implements O
             layers: this.layerName,
             transparent: true,
             format: "image/png",
-            styles: ""
+            styles: "",
         } as L.WMSOptions);
         this.layerControl.addOverlay(baseLayer, "DNR Upland Regions", "Geographic Layers");
         baseLayer.addTo(this.map);
@@ -245,7 +227,7 @@ export class DnrUplandRegionsStepComponent extends WorkflowStepBase implements O
         }
 
         this.projectMarker = L.marker([this.projectLatitude, this.projectLongitude], {
-            icon: MarkerHelper.iconDefault
+            icon: MarkerHelper.iconDefault,
         }).addTo(this.map);
 
         this.projectMarker.bindTooltip("Simple and/or Detailed Project location (for reference)");
@@ -264,12 +246,12 @@ export class DnrUplandRegionsStepComponent extends WorkflowStepBase implements O
             outputFormat: "application/json",
             SrsName: "EPSG:4326",
             typeName: this.layerName,
-            cql_filter: `intersects(Ogr_Geometry, POINT(${lat} ${lng}))`
+            cql_filter: `intersects(Ogr_Geometry, POINT(${lat} ${lng}))`,
         });
 
         fetch(`${url}?${params.toString()}`)
-            .then(response => response.json())
-            .then(data => {
+            .then((response) => response.json())
+            .then((data) => {
                 if (data.features && data.features.length > 0) {
                     const feature = data.features[0];
                     const id = feature.properties[this.idField];
@@ -278,7 +260,7 @@ export class DnrUplandRegionsStepComponent extends WorkflowStepBase implements O
                     }
                 }
             })
-            .catch(err => {
+            .catch((err) => {
                 console.error("Error querying map feature:", err);
             });
     }
@@ -305,7 +287,7 @@ export class DnrUplandRegionsStepComponent extends WorkflowStepBase implements O
             transparent: true,
             format: "image/png",
             styles: this.selectedStyle,
-            cql_filter: cqlFilter
+            cql_filter: cqlFilter,
         } as L.WMSOptions);
 
         this.selectedLayer.addTo(this.map);
@@ -329,7 +311,7 @@ export class DnrUplandRegionsStepComponent extends WorkflowStepBase implements O
             },
             error: () => {
                 // Ignore bounds errors
-            }
+            },
         });
     }
 
@@ -343,13 +325,13 @@ export class DnrUplandRegionsStepComponent extends WorkflowStepBase implements O
             return;
         }
 
-        const request: GeographicOverrideRequestDto = {
+        const request: GeographicOverrideRequest = {
             SelectedIDs: selectedIDs,
-            NoSelectionExplanation: selectedIDs.length === 0 ? explanation : null
+            NoSelectionExplanation: selectedIDs.length === 0 ? explanation : null,
         };
 
         this.saveStep(
-            (projectID) => this.projectService.saveDnrUplandRegionsStepProject(projectID, request),
+            (projectID) => this.projectService.saveCreateDnrUplandRegionsStepProject(projectID, request),
             "DNR upland regions saved successfully.",
             "Failed to save DNR upland regions.",
             navigate

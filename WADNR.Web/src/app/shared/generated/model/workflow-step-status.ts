@@ -14,6 +14,7 @@ export class WorkflowStepStatus {
     IsComplete?: boolean;
     IsDisabled?: boolean;
     IsRequired?: boolean;
+    HasChanges?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -23,6 +24,7 @@ export interface WorkflowStepStatusForm {
     IsComplete?: FormControl<boolean>;
     IsDisabled?: FormControl<boolean>;
     IsRequired?: FormControl<boolean>;
+    HasChanges?: FormControl<boolean>;
 }
 
 export class WorkflowStepStatusFormControls { 
@@ -47,6 +49,16 @@ export class WorkflowStepStatusFormControls {
         }
     );
     public static IsRequired = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static HasChanges = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

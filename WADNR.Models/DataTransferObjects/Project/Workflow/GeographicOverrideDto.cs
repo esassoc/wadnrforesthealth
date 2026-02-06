@@ -1,9 +1,9 @@
 namespace WADNR.Models.DataTransferObjects;
 
 /// <summary>
-/// DTO for geographic assignment steps (Priority Landscapes, DNR Upland Regions, Counties).
+/// Response for geographic assignment steps (Priority Landscapes, DNR Upland Regions, Counties).
 /// </summary>
-public class GeographicAssignmentStepDto
+public class GeographicAssignmentStep
 {
     public int ProjectID { get; set; }
     public List<int> SelectedIDs { get; set; } = new();
@@ -24,9 +24,9 @@ public class GeographicLookupItem
 }
 
 /// <summary>
-/// Request DTO for saving geographic assignment steps.
+/// Request for saving geographic assignment steps.
 /// </summary>
-public class GeographicOverrideRequestDto
+public class GeographicOverrideRequest
 {
     public List<int> SelectedIDs { get; set; } = new();
     public string? NoSelectionExplanation { get; set; }

@@ -19,6 +19,8 @@ export class ProjectLocationItem {
     ProjectLocationName?: string | null;
     GeoJson?: string | null;
     AreaInAcres?: number | null;
+    HasTreatments?: boolean;
+    IsFromArcGis?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -33,6 +35,8 @@ export interface ProjectLocationItemForm {
     ProjectLocationName?: FormControl<string>;
     GeoJson?: FormControl<string>;
     AreaInAcres?: FormControl<number>;
+    HasTreatments?: FormControl<boolean>;
+    IsFromArcGis?: FormControl<boolean>;
 }
 
 export class ProjectLocationItemFormControls { 
@@ -107,6 +111,26 @@ export class ProjectLocationItemFormControls {
         }
     );
     public static AreaInAcres = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static HasTreatments = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static IsFromArcGis = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

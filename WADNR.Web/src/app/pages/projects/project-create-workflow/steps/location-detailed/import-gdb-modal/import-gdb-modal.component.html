@@ -1,0 +1,96 @@
+<div class="modal-header">
+    <h3>Import GDB File</h3>
+</div>
+
+<div class="modal-body">
+    @if (errorMessage) {
+        <div class="alert alert-danger">{{ errorMessage }}</div>
+    }
+
+    @if (step === 'upload') {
+        <p>Upload a zipped File Geodatabase (.gdb.zip) to import location boundaries.</p>
+
+        <form-field
+            [formControl]="fileControl"
+            fieldLabel="GDB File (.zip)"
+            [type]="FormFieldType.File"
+            uploadFileAccepts=".zip">
+        </form-field>
+
+        @if (isUploading) {
+            <div class="text-center p-3">
+                <i class="fas fa-spinner fa-spin"></i> Processing file...
+            </div>
+        }
+    }
+
+    @if (step === 'review') {
+        <p>Select the layers to import and choose which property to use as the location name.</p>
+
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th style="width: 5%">Import</th>
+                    <th style="width: 30%">Layer Name</th>
+                    <th style="width: 15%">Type</th>
+                    <th style="width: 15%">Features</th>
+                    <th style="width: 35%">Name Property</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (layer of layers; track layer.featureClassName) {
+                    <tr>
+                        <td class="text-center align-middle">
+                            <form-field
+                                [formControl]="layer.shouldImportControl"
+                                [type]="FormFieldType.Check">
+                            </form-field>
+                        </td>
+                        <td class="align-middle">{{ layer.featureClassName }}</td>
+                        <td class="align-middle">{{ layer.featureType }}</td>
+                        <td class="text-end align-middle">{{ layer.featureCount }}</td>
+                        <td>
+                            @if (layer.propertyOptions.length > 0) {
+                                <form-field
+                                    [formControl]="layer.selectedPropertyControl"
+                                    [type]="FormFieldType.Select"
+                                    [formInputOptions]="layer.propertyOptions">
+                                </form-field>
+                            } @else {
+                                <span class="text-muted">No properties</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (isApproving) {
+            <div class="text-center p-3">
+                <i class="fas fa-spinner fa-spin"></i> Importing layers...
+            </div>
+        }
+    }
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="cancel()" [disabled]="isUploading || isApproving">Cancel</button>
+
+    @if (step === 'upload') {
+        <button type="button"
+                class="btn btn-primary"
+                (click)="upload()"
+                [disabled]="!fileControl.value || isUploading">
+            Upload
+        </button>
+    }
+
+    @if (step === 'review') {
+        <button type="button"
+                class="btn btn-primary"
+                (click)="approve()"
+                [disabled]="isApproving">
+            Import Selected Layers
+        </button>
+    }
+</div>

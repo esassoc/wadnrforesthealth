@@ -1,9 +1,9 @@
 namespace WADNR.Models.DataTransferObjects;
 
 /// <summary>
-/// DTO for the Location Detailed step of the ProjectCreate wizard.
+/// Response for the Location Detailed step of the Project Create workflow.
 /// </summary>
-public class LocationDetailedStepDto
+public class LocationDetailedStep
 {
     public int ProjectID { get; set; }
     public List<ProjectLocationItem> Locations { get; set; } = new();
@@ -26,6 +26,8 @@ public class ProjectLocationItem
     /// </summary>
     public string? GeoJson { get; set; }
     public double? AreaInAcres { get; set; }
+    public bool HasTreatments { get; set; }
+    public bool IsFromArcGis { get; set; }
 }
 
 /// <summary>
@@ -48,9 +50,9 @@ public class ProjectLocationStagingItem
 }
 
 /// <summary>
-/// Request DTO for saving the Location Detailed step.
+/// Request for saving the Location Detailed step.
 /// </summary>
-public class LocationDetailedStepRequestDto
+public class LocationDetailedStepRequest
 {
     public List<LocationDetailedItemRequest> Locations { get; set; } = new();
 }

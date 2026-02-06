@@ -1,0 +1,25 @@
+.add-link-form {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.links-list {
+    table {
+        margin-bottom: 0;
+
+        th, td {
+            vertical-align: middle;
+        }
+
+        a.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        a[target="_blank"] {
+            word-break: break-all;
+        }
+    }
+}

@@ -78,6 +78,7 @@ export var IconInterface:
     | "User"
     | "Users"
     | "VerticalMap"
+    | "Flag"
     | "Warning"
     | "WaterDrop"
     | "WaterDropFilled"

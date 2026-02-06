@@ -1,11 +1,11 @@
 namespace WADNR.Models.DataTransferObjects;
 
 /// <summary>
-/// DTO for the Contacts step of the ProjectCreate wizard.
+/// Response for the Contacts step of the Project Create workflow.
 /// Note: Available relationship types should be fetched from GET /lookups/person-relationship-types
 /// Note: Available people should be fetched from GET /persons/lookup
 /// </summary>
-public class ProjectContactsStepDto
+public class ProjectContactsStep
 {
     public int ProjectID { get; set; }
     /// <summary>
@@ -27,9 +27,9 @@ public class ProjectContactStepItem
 }
 
 /// <summary>
-/// Request DTO for saving the Contacts step.
+/// Request for saving the Contacts step.
 /// </summary>
-public class ProjectContactsStepRequestDto
+public class ProjectContactsStepRequest
 {
     public List<ProjectContactRequestItem> Contacts { get; set; } = new();
 }

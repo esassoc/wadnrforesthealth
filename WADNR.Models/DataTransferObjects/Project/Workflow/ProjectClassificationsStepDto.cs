@@ -1,10 +1,10 @@
 namespace WADNR.Models.DataTransferObjects;
 
 /// <summary>
-/// DTO for the Classifications step of the ProjectCreate wizard.
+/// Response for the Classifications step of the Project Create workflow.
 /// Note: Available classification systems should be fetched from GET /lookups/classification-systems-with-classifications
 /// </summary>
-public class ProjectClassificationsStepDto
+public class ProjectClassificationsStep
 {
     public int ProjectID { get; set; }
     /// <summary>
@@ -27,9 +27,9 @@ public class ProjectClassificationStepItem
 }
 
 /// <summary>
-/// Request DTO for saving the Classifications step.
+/// Request for saving the Classifications step.
 /// </summary>
-public class ProjectClassificationsStepRequestDto
+public class ProjectClassificationsStepRequest
 {
     public List<ProjectClassificationRequestItem> Classifications { get; set; } = new();
 }

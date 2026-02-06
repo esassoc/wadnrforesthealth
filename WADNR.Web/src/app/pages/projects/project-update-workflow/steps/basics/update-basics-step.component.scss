@@ -1,0 +1,74 @@
+// Basics step styles
+.optional-fields-section {
+    margin-top: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+
+    .optional-fields-toggle {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        font-weight: 500;
+        color: #0056b3;
+        user-select: none;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        &::before {
+            content: "\f078"; // fa-chevron-down
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            font-size: 0.75rem;
+            transition: transform 0.2s ease;
+        }
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    &[open] .optional-fields-toggle::before {
+        transform: rotate(180deg);
+    }
+
+    .optional-fields-content {
+        padding: 1rem;
+        border-top: 1px solid #dee2e6;
+    }
+}
+
+.program-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    .program-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0;
+
+        .btn-link {
+            padding: 0;
+            line-height: 1;
+        }
+    }
+}
+
+// Update-specific styles
+.readonly-info {
+    background-color: var(--gray-100);
+    padding: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid var(--gray-200);
+}
+
+.readonly-value {
+    font-weight: 500;
+    color: var(--color-text);
+}

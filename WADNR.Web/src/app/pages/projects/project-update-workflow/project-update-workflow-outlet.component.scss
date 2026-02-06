@@ -1,0 +1,69 @@
+@use "/src/scss/abstracts" as *;
+@use "/src/scss/components/workflow-outlet";
+
+// Update-specific styles
+.alert {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 0.25rem;
+
+    &.alert-info {
+        background-color: var(--info-bg, #d1ecf1);
+        border: 1px solid var(--info-border, #bee5eb);
+        color: var(--info-text, #0c5460);
+    }
+
+    &.alert-warning {
+        background-color: var(--warning-bg, #fff3cd);
+        border: 1px solid var(--warning-border, #ffeeba);
+        color: var(--warning-text, #856404);
+    }
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25em 0.5em;
+    font-size: 0.875em;
+    font-weight: 600;
+    border-radius: 0.25rem;
+
+    &.badge-secondary {
+        background-color: var(--gray-500);
+        color: #fff;
+    }
+
+    &.badge-info {
+        background-color: var(--info, #17a2b8);
+        color: #fff;
+    }
+
+    &.badge-success {
+        background-color: var(--success, #28a745);
+        color: #fff;
+    }
+
+    &.badge-warning {
+        background-color: var(--warning, #ffc107);
+        color: #212529;
+    }
+}
+
+.workflow-footer {
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+}
+
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    color: var(--gray-500);
+}
+
+.me-2 {
+    margin-right: 0.5rem;
+}

@@ -1,9 +1,9 @@
 namespace WADNR.Models.DataTransferObjects;
 
 /// <summary>
-/// DTO for the Location Simple step of the ProjectCreate wizard.
+/// Response for the Location Simple step of the Project Create workflow.
 /// </summary>
-public class LocationSimpleStepDto
+public class LocationSimpleStep
 {
     public int ProjectID { get; set; }
     public double? Latitude { get; set; }
@@ -13,9 +13,9 @@ public class LocationSimpleStepDto
 }
 
 /// <summary>
-/// Request DTO for saving the Location Simple step.
+/// Request for saving the Location Simple step.
 /// </summary>
-public class LocationSimpleStepRequestDto
+public class LocationSimpleStepRequest
 {
     public double Latitude { get; set; }
     public double Longitude { get; set; }

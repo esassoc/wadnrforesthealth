@@ -22,7 +22,13 @@
       "Bash(while read file)",
       "Bash(do if grep -q \"app-alert-display\" \"$file\")",
       "Bash(then echo \"$file\")",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(Remove-Item -Path \"C:\\\\git\\\\sitkatech\\\\wadnrforesthealth\\\\WADNR.EFModels\\\\Entities\\\\Generated\\\\ExtensionMethods\\\\*.Binding.cs\" -Force)",
+      "Bash(npx tsc:*)",
+      "WebFetch(domain:www.anthropic.com)",
+      "Bash(/tmp/replace-tags.ps1:*)",
+      "Bash(Select-String -Pattern \"error|Build succeeded|Build FAILED\")",
+      "Bash(Select-String \"error|Build succeeded\")"
     ]
   }
 }

@@ -21,7 +21,7 @@ public class AzureStorage(IOptions<WADNRConfiguration> apiConfiguration, ILogger
 
     #endregion
 
-    public async Task<BlobResponseDto> DeleteAsync(string containerName, string blobFilename)
+    public async Task<BlobResponse> DeleteAsync(string containerName, string blobFilename)
     {
         var client = new BlobContainerClient(_storageConnectionString, containerName);
 
@@ -37,16 +37,16 @@ public class AzureStorage(IOptions<WADNRConfiguration> apiConfiguration, ILogger
         {
             // File did not exist, log to console and return new response to requesting method
             logger.LogError($"File {blobFilename} was not found.");
-            return new BlobResponseDto { Error = true, Status = $"File with name {blobFilename} not found." };
+            return new BlobResponse { Error = true, Status = $"File with name {blobFilename} not found." };
         }
 
-        // Return a new BlobResponseDto to the requesting method
-        return new BlobResponseDto
+        // Return a new BlobResponse to the requesting method
+        return new BlobResponse
         { Error = false, Status = $"File: {blobFilename} has been successfully deleted." };
 
     }
 
-    public async Task<BlobDto> DownloadAsync(string containerName, string blobFilename)
+    public async Task<BlobFile> DownloadAsync(string containerName, string blobFilename)
     {
         // Get a reference to a container named in appsettings.json
         var client = new BlobContainerClient(_storageConnectionString, containerName);
@@ -64,11 +64,11 @@ public class AzureStorage(IOptions<WADNRConfiguration> apiConfiguration, ILogger
                 // Download the file details async
                 var content = await file.DownloadContentAsync();
 
-                // Add data to variables in order to return a BlobDto
+                // Add data to variables in order to return a BlobFile
                 var contentType = content.Value.Details.ContentType;
 
-                // CreateAsync new BlobDto with blob data from variables
-                return new BlobDto { Content = data, Name = blobFilename, ContentType = contentType };
+                // CreateAsync new BlobFile with blob data from variables
+                return new BlobFile { Content = data, Name = blobFilename, ContentType = contentType };
             }
         }
         catch (RequestFailedException ex)
@@ -82,22 +82,22 @@ public class AzureStorage(IOptions<WADNRConfiguration> apiConfiguration, ILogger
         return null;
     }
 
-    public async Task<List<BlobDto>> ListAsync(string containerName)
+    public async Task<List<BlobFile>> ListAsync(string containerName)
     {
         // Get a reference to a container named in appsettings.json
         var container = new BlobContainerClient(_storageConnectionString, containerName);
 
         // CreateAsync a new list object for 
-        var files = new List<BlobDto>();
+        var files = new List<BlobFile>();
 
         await foreach (var file in container.GetBlobsAsync())
         {
-            // Add each file retrieved from the storage container to the files list by creating a BlobDto object
+            // Add each file retrieved from the storage container to the files list by creating a BlobFile object
             var uri = container.Uri.ToString();
             var name = file.Name;
             var fullUri = $"{uri}/{name}";
 
-            files.Add(new BlobDto
+            files.Add(new BlobFile
             {
                 Uri = fullUri,
                 Name = name,
@@ -109,10 +109,10 @@ public class AzureStorage(IOptions<WADNRConfiguration> apiConfiguration, ILogger
         return files;
     }
 
-    public async Task<BlobResponseDto> UploadAsync(string containerName, string blobFilename, Stream data)
+    public async Task<BlobResponse> UploadAsync(string containerName, string blobFilename, Stream data)
     {
         // CreateAsync new upload response object that we can return to the requesting method
-        BlobResponseDto response = new();
+        BlobResponse response = new();
 
         // Get a reference to a container named in appsettings.json and then create it
         var container = new BlobContainerClient(_storageConnectionString, containerName);
@@ -158,12 +158,12 @@ public class AzureStorage(IOptions<WADNRConfiguration> apiConfiguration, ILogger
 
     }
 
-    public async Task<BlobResponseDto> CopyAsync(string containerName, string originalBlobName, string newBlobName)
+    public async Task<BlobResponse> CopyAsync(string containerName, string originalBlobName, string newBlobName)
     {
         // Get a reference to a container named in appsettings.json and then create it
         var container = new BlobContainerClient(_storageConnectionString, containerName);
         // CreateAsync new upload response object that we can return to the requesting method
-        BlobResponseDto response = new();
+        BlobResponse response = new();
 
         try
         {

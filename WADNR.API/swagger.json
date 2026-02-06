@@ -6200,12 +6200,12 @@
         }
       }
     },
-    "/projects/{projectID}/workflow/progress": {
+    "/projects/{projectID}/create-workflow/progress": {
       "get": {
         "tags": [
           "Project"
         ],
-        "operationId": "GetWorkflowProgress_Project",
+        "operationId": "GetCreateWorkflowProgress_Project",
         "parameters": [
           {
             "name": "projectID",
@@ -6223,17 +6223,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectCreateWorkflowProgressDto"
+                  "$ref": "#/components/schemas/CreateWorkflowProgressResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectCreateWorkflowProgressDto"
+                  "$ref": "#/components/schemas/CreateWorkflowProgressResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectCreateWorkflowProgressDto"
+                  "$ref": "#/components/schemas/CreateWorkflowProgressResponse"
                 }
               }
             }
@@ -6241,12 +6241,12 @@
         }
       }
     },
-    "/projects/{projectID}/workflow/steps/basics": {
+    "/projects/{projectID}/create-workflow/steps/basics": {
       "get": {
         "tags": [
           "Project"
         ],
-        "operationId": "GetBasicsStep_Project",
+        "operationId": "GetCreateBasicsStep_Project",
         "parameters": [
           {
             "name": "projectID",
@@ -6264,17 +6264,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                  "$ref": "#/components/schemas/ProjectBasicsStep"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                  "$ref": "#/components/schemas/ProjectBasicsStep"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                  "$ref": "#/components/schemas/ProjectBasicsStep"
                 }
               }
             }
@@ -6285,7 +6285,7 @@
         "tags": [
           "Project"
         ],
-        "operationId": "SaveBasicsStep_Project",
+        "operationId": "SaveCreateBasicsStep_Project",
         "parameters": [
           {
             "name": "projectID",
@@ -6301,17 +6301,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProjectBasicsStepRequestDto"
+                "$ref": "#/components/schemas/ProjectBasicsStepRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProjectBasicsStepRequestDto"
+                "$ref": "#/components/schemas/ProjectBasicsStepRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/ProjectBasicsStepRequestDto"
+                "$ref": "#/components/schemas/ProjectBasicsStepRequest"
               }
             }
           }
@@ -6322,17 +6322,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                  "$ref": "#/components/schemas/ProjectBasicsStep"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                  "$ref": "#/components/schemas/ProjectBasicsStep"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                  "$ref": "#/components/schemas/ProjectBasicsStep"
                 }
               }
             }
@@ -6340,7 +6340,7 @@
         }
       }
     },
-    "/projects/workflow/steps/basics": {
+    "/projects/create-workflow/steps/basics": {
       "post": {
         "tags": [
           "Project"
@@ -6350,17 +6350,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProjectBasicsStepRequestDto"
+                "$ref": "#/components/schemas/ProjectBasicsStepRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProjectBasicsStepRequestDto"
+                "$ref": "#/components/schemas/ProjectBasicsStepRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/ProjectBasicsStepRequestDto"
+                "$ref": "#/components/schemas/ProjectBasicsStepRequest"
               }
             }
           }
@@ -6371,17 +6371,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                  "$ref": "#/components/schemas/ProjectBasicsStep"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                  "$ref": "#/components/schemas/ProjectBasicsStep"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectBasicsStepDto"
+                  "$ref": "#/components/schemas/ProjectBasicsStep"
                 }
               }
             }
@@ -6389,12 +6389,12 @@
         }
       }
     },
-    "/projects/{projectID}/workflow/steps/location-simple": {
+    "/projects/{projectID}/create-workflow/steps/location-simple": {
       "get": {
         "tags": [
           "Project"
         ],
-        "operationId": "GetLocationSimpleStep_Project",
+        "operationId": "GetCreateLocationSimpleStep_Project",
         "parameters": [
           {
             "name": "projectID",
@@ -6412,17 +6412,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/LocationSimpleStepDto"
+                  "$ref": "#/components/schemas/LocationSimpleStep"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LocationSimpleStepDto"
+                  "$ref": "#/components/schemas/LocationSimpleStep"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LocationSimpleStepDto"
+                  "$ref": "#/components/schemas/LocationSimpleStep"
                 }
               }
             }
@@ -6433,7 +6433,7 @@
         "tags": [
           "Project"
         ],
-        "operationId": "SaveLocationSimpleStep_Project",
+        "operationId": "SaveCreateLocationSimpleStep_Project",
         "parameters": [
           {
             "name": "projectID",
@@ -6449,17 +6449,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LocationSimpleStepRequestDto"
+                "$ref": "#/components/schemas/LocationSimpleStepRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/LocationSimpleStepRequestDto"
+                "$ref": "#/components/schemas/LocationSimpleStepRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/LocationSimpleStepRequestDto"
+                "$ref": "#/components/schemas/LocationSimpleStepRequest"
               }
             }
           }
@@ -6470,17 +6470,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/LocationSimpleStepDto"
+                  "$ref": "#/components/schemas/LocationSimpleStep"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LocationSimpleStepDto"
+                  "$ref": "#/components/schemas/LocationSimpleStep"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LocationSimpleStepDto"
+                  "$ref": "#/components/schemas/LocationSimpleStep"
                 }
               }
             }
@@ -6488,12 +6488,12 @@
         }
       }
     },
-    "/projects/{projectID}/workflow/steps/location-detailed": {
+    "/projects/{projectID}/create-workflow/steps/location-detailed": {
       "get": {
         "tags": [
           "Project"
         ],
-        "operationId": "GetLocationDetailedStep_Project",
+        "operationId": "GetCreateLocationDetailedStep_Project",
         "parameters": [
           {
             "name": "projectID",
@@ -6511,17 +6511,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/LocationDetailedStepDto"
+                  "$ref": "#/components/schemas/LocationDetailedStep"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LocationDetailedStepDto"
+                  "$ref": "#/components/schemas/LocationDetailedStep"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LocationDetailedStepDto"
+                  "$ref": "#/components/schemas/LocationDetailedStep"
                 }
               }
             }
@@ -6532,7 +6532,7 @@
         "tags": [
           "Project"
         ],
-        "operationId": "SaveLocationDetailedStep_Project",
+        "operationId": "SaveCreateLocationDetailedStep_Project",
         "parameters": [
           {
             "name": "projectID",
@@ -6548,17 +6548,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LocationDetailedStepRequestDto"
+                "$ref": "#/components/schemas/LocationDetailedStepRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/LocationDetailedStepRequestDto"
+                "$ref": "#/components/schemas/LocationDetailedStepRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/LocationDetailedStepRequestDto"
+                "$ref": "#/components/schemas/LocationDetailedStepRequest"
               }
             }
           }
@@ -6569,17 +6569,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/LocationDetailedStepDto"
+                  "$ref": "#/components/schemas/LocationDetailedStep"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LocationDetailedStepDto"
+                  "$ref": "#/components/schemas/LocationDetailedStep"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LocationDetailedStepDto"
+                  "$ref": "#/components/schemas/LocationDetailedStep"
                 }
               }
             }
@@ -6587,705 +6587,12 @@
         }
       }
     },
-    "/projects/{projectID}/workflow/steps/priority-landscapes": {
-      "get": {
-        "tags": [
-          "Project"
-        ],
-        "operationId": "GetPriorityLandscapesStep_Project",
-        "parameters": [
-          {
-            "name": "projectID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Project"
-        ],
-        "operationId": "SavePriorityLandscapesStep_Project",
-        "parameters": [
-          {
-            "name": "projectID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/projects/{projectID}/workflow/steps/dnr-upland-regions": {
-      "get": {
-        "tags": [
-          "Project"
-        ],
-        "operationId": "GetDnrUplandRegionsStep_Project",
-        "parameters": [
-          {
-            "name": "projectID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Project"
-        ],
-        "operationId": "SaveDnrUplandRegionsStep_Project",
-        "parameters": [
-          {
-            "name": "projectID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/projects/{projectID}/workflow/steps/counties": {
-      "get": {
-        "tags": [
-          "Project"
-        ],
-        "operationId": "GetCountiesStep_Project",
-        "parameters": [
-          {
-            "name": "projectID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Project"
-        ],
-        "operationId": "SaveCountiesStep_Project",
-        "parameters": [
-          {
-            "name": "projectID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GeographicOverrideRequestDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GeographicAssignmentStepDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/projects/{projectID}/workflow/steps/organizations": {
-      "get": {
-        "tags": [
-          "Project"
-        ],
-        "operationId": "GetOrganizationsStep_Project",
-        "parameters": [
-          {
-            "name": "projectID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectOrganizationsStepDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectOrganizationsStepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectOrganizationsStepDto"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Project"
-        ],
-        "operationId": "SaveOrganizationsStep_Project",
-        "parameters": [
-          {
-            "name": "projectID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ProjectOrganizationsStepRequestDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ProjectOrganizationsStepRequestDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ProjectOrganizationsStepRequestDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectOrganizationsStepDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectOrganizationsStepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectOrganizationsStepDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/projects/{projectID}/workflow/steps/contacts": {
-      "get": {
-        "tags": [
-          "Project"
-        ],
-        "operationId": "GetContactsStep_Project",
-        "parameters": [
-          {
-            "name": "projectID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectContactsStepDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectContactsStepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectContactsStepDto"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Project"
-        ],
-        "operationId": "SaveContactsStep_Project",
-        "parameters": [
-          {
-            "name": "projectID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ProjectContactsStepRequestDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ProjectContactsStepRequestDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ProjectContactsStepRequestDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectContactsStepDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectContactsStepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectContactsStepDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/projects/{projectID}/workflow/steps/expected-funding": {
-      "get": {
-        "tags": [
-          "Project"
-        ],
-        "operationId": "GetExpectedFundingStep_Project",
-        "parameters": [
-          {
-            "name": "projectID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExpectedFundingStepDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExpectedFundingStepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExpectedFundingStepDto"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Project"
-        ],
-        "operationId": "SaveExpectedFundingStep_Project",
-        "parameters": [
-          {
-            "name": "projectID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ExpectedFundingStepRequestDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ExpectedFundingStepRequestDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ExpectedFundingStepRequestDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExpectedFundingStepDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExpectedFundingStepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExpectedFundingStepDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/projects/{projectID}/workflow/steps/classifications": {
-      "get": {
-        "tags": [
-          "Project"
-        ],
-        "operationId": "GetClassificationsStep_Project",
-        "parameters": [
-          {
-            "name": "projectID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectClassificationsStepDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectClassificationsStepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectClassificationsStepDto"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Project"
-        ],
-        "operationId": "SaveClassificationsStep_Project",
-        "parameters": [
-          {
-            "name": "projectID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ProjectClassificationsStepRequestDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ProjectClassificationsStepRequestDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ProjectClassificationsStepRequestDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectClassificationsStepDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectClassificationsStepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectClassificationsStepDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/projects/{projectID}/workflow/submit": {
+    "/projects/{projectID}/create-workflow/steps/location-detailed/upload-gdb": {
       "post": {
         "tags": [
           "Project"
         ],
-        "operationId": "SubmitForApproval_Project",
+        "operationId": "UploadGdbForCreateWorkflow_Project",
         "parameters": [
           {
             "name": "projectID",
@@ -7299,19 +6606,20 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
               }
             }
           }
@@ -7322,17 +6630,26 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbFeatureClassPreview"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbFeatureClassPreview"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbFeatureClassPreview"
+                  }
                 }
               }
             }
@@ -7340,12 +6657,12 @@
         }
       }
     },
-    "/projects/{projectID}/workflow/approve": {
+    "/projects/{projectID}/create-workflow/steps/location-detailed/approve-gdb": {
       "post": {
         "tags": [
           "Project"
         ],
-        "operationId": "Approve_Project",
+        "operationId": "ApproveGdbForCreateWorkflow_Project",
         "parameters": [
           {
             "name": "projectID",
@@ -7361,17 +6678,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+                "$ref": "#/components/schemas/GdbApproveRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+                "$ref": "#/components/schemas/GdbApproveRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+                "$ref": "#/components/schemas/GdbApproveRequest"
               }
             }
           }
@@ -7382,17 +6699,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                  "$ref": "#/components/schemas/LocationDetailedStep"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                  "$ref": "#/components/schemas/LocationDetailedStep"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                  "$ref": "#/components/schemas/LocationDetailedStep"
                 }
               }
             }
@@ -7400,12 +6717,51 @@
         }
       }
     },
-    "/projects/{projectID}/workflow/return": {
-      "post": {
+    "/projects/{projectID}/create-workflow/steps/priority-landscapes": {
+      "get": {
         "tags": [
           "Project"
         ],
-        "operationId": "Return_Project",
+        "operationId": "GetCreatePriorityLandscapesStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveCreatePriorityLandscapesStep_Project",
         "parameters": [
           {
             "name": "projectID",
@@ -7421,17 +6777,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+                "$ref": "#/components/schemas/GeographicOverrideRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+                "$ref": "#/components/schemas/GeographicOverrideRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+                "$ref": "#/components/schemas/GeographicOverrideRequest"
               }
             }
           }
@@ -7442,17 +6798,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
                 }
               }
             }
@@ -7460,12 +6816,51 @@
         }
       }
     },
-    "/projects/{projectID}/workflow/reject": {
-      "post": {
+    "/projects/{projectID}/create-workflow/steps/dnr-upland-regions": {
+      "get": {
         "tags": [
           "Project"
         ],
-        "operationId": "Reject_Project",
+        "operationId": "GetCreateDnrUplandRegionsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveCreateDnrUplandRegionsStep_Project",
         "parameters": [
           {
             "name": "projectID",
@@ -7481,17 +6876,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+                "$ref": "#/components/schemas/GeographicOverrideRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+                "$ref": "#/components/schemas/GeographicOverrideRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+                "$ref": "#/components/schemas/GeographicOverrideRequest"
               }
             }
           }
@@ -7502,17 +6897,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
                 }
               }
             }
@@ -7520,12 +6915,51 @@
         }
       }
     },
-    "/projects/{projectID}/workflow/withdraw": {
-      "post": {
+    "/projects/{projectID}/create-workflow/steps/counties": {
+      "get": {
         "tags": [
           "Project"
         ],
-        "operationId": "Withdraw_Project",
+        "operationId": "GetCreateCountiesStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveCreateCountiesStep_Project",
         "parameters": [
           {
             "name": "projectID",
@@ -7541,17 +6975,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+                "$ref": "#/components/schemas/GeographicOverrideRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+                "$ref": "#/components/schemas/GeographicOverrideRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowStateTransitionRequestDto"
+                "$ref": "#/components/schemas/GeographicOverrideRequest"
               }
             }
           }
@@ -7562,17 +6996,2766 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowStateTransitionResponseDto"
+                  "$ref": "#/components/schemas/GeographicAssignmentStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/create-workflow/steps/organizations": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetCreateOrganizationsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectOrganizationsStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectOrganizationsStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectOrganizationsStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveCreateOrganizationsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectOrganizationsStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectOrganizationsStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectOrganizationsStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectOrganizationsStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectOrganizationsStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectOrganizationsStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/create-workflow/steps/contacts": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetCreateContactsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectContactsStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectContactsStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectContactsStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveCreateContactsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectContactsStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectContactsStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectContactsStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectContactsStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectContactsStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectContactsStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/create-workflow/steps/expected-funding": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetCreateExpectedFundingStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpectedFundingStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpectedFundingStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpectedFundingStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveCreateExpectedFundingStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpectedFundingStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpectedFundingStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpectedFundingStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpectedFundingStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpectedFundingStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpectedFundingStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/create-workflow/steps/classifications": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetCreateClassificationsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectClassificationsStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectClassificationsStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectClassificationsStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveCreateClassificationsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectClassificationsStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectClassificationsStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectClassificationsStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectClassificationsStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectClassificationsStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectClassificationsStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/create-workflow/submit": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SubmitCreateForApproval_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/create-workflow/approve": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ApproveCreate_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/create-workflow/return": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ReturnCreate_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/create-workflow/reject": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "RejectCreate_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/create-workflow/withdraw": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "WithdrawCreate_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStateTransitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/start": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "StartUpdateBatch_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateBatchResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateBatchResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateBatchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/current": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetCurrentUpdateBatch_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateBatchResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateBatchResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateBatchResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "DeleteUpdateBatch_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/progress": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdateWorkflowProgress_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateWorkflowProgressResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateWorkflowProgressResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateWorkflowProgressResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/basics": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdateBasicsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateBasicsStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateBasicsStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateBasicsStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveUpdateBasicsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateBasicsStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateBasicsStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateBasicsStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateBasicsStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateBasicsStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateBasicsStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/location-simple": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdateLocationSimpleStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateLocationSimpleStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateLocationSimpleStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateLocationSimpleStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveUpdateLocationSimpleStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateLocationSimpleStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateLocationSimpleStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateLocationSimpleStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateLocationSimpleStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateLocationSimpleStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateLocationSimpleStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/location-detailed": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdateLocationDetailedStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateLocationDetailedStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateLocationDetailedStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateLocationDetailedStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveUpdateLocationDetailedStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateLocationDetailedStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateLocationDetailedStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateLocationDetailedStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateLocationDetailedStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateLocationDetailedStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateLocationDetailedStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/location-detailed/upload-gdb": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "UploadGdbForUpdateWorkflow_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbFeatureClassPreview"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbFeatureClassPreview"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbFeatureClassPreview"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/location-detailed/approve-gdb": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ApproveGdbForUpdateWorkflow_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GdbApproveRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GdbApproveRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GdbApproveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateLocationDetailedStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateLocationDetailedStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateLocationDetailedStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/priority-landscapes": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdatePriorityLandscapesStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveUpdatePriorityLandscapesStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateGeographicStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateGeographicStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateGeographicStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/dnr-upland-regions": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdateDnrUplandRegionsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveUpdateDnrUplandRegionsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateGeographicStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateGeographicStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateGeographicStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/counties": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdateCountiesStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveUpdateCountiesStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateGeographicStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateGeographicStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateGeographicStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateGeographicStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/treatments": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdateTreatmentsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateTreatmentsStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateTreatmentsStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateTreatmentsStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveUpdateTreatmentsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateTreatmentsStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateTreatmentsStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateTreatmentsStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateTreatmentsStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateTreatmentsStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateTreatmentsStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/treatment-areas": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListUpdateTreatmentAreas_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TreatmentAreaUpdateLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TreatmentAreaUpdateLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TreatmentAreaUpdateLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/treatments/{treatmentUpdateID}": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetTreatmentUpdate_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "treatmentUpdateID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentUpdateDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentUpdateDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentUpdateDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "UpdateTreatmentUpdate_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "treatmentUpdateID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TreatmentUpdateUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TreatmentUpdateUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TreatmentUpdateUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentUpdateDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentUpdateDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentUpdateDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/treatments": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "CreateTreatmentUpdate_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TreatmentUpdateUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TreatmentUpdateUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TreatmentUpdateUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentUpdateDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentUpdateDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentUpdateDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/contacts": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdateContactsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateContactsStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateContactsStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateContactsStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveUpdateContactsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateContactsStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateContactsStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateContactsStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateContactsStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateContactsStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateContactsStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/organizations": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdateOrganizationsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateOrganizationsStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateOrganizationsStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateOrganizationsStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveUpdateOrganizationsStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateOrganizationsStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateOrganizationsStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateOrganizationsStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateOrganizationsStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateOrganizationsStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateOrganizationsStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/expected-funding": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdateExpectedFundingStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateExpectedFundingStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateExpectedFundingStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateExpectedFundingStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveUpdateExpectedFundingStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateExpectedFundingStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateExpectedFundingStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateExpectedFundingStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateExpectedFundingStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateExpectedFundingStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateExpectedFundingStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/photos": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdatePhotosStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdatePhotosStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdatePhotosStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdatePhotosStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveUpdatePhotosStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdatePhotosStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdatePhotosStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdatePhotosStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdatePhotosStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdatePhotosStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdatePhotosStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/external-links": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdateExternalLinksStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateExternalLinksStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateExternalLinksStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateExternalLinksStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveUpdateExternalLinksStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateExternalLinksStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateExternalLinksStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateExternalLinksStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateExternalLinksStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateExternalLinksStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateExternalLinksStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/documents-notes": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdateDocumentsNotesStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateDocumentsNotesStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateDocumentsNotesStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateDocumentsNotesStep"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveUpdateDocumentsNotesStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateDocumentsNotesStepRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateDocumentsNotesStepRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateDocumentsNotesStepRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateDocumentsNotesStep"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateDocumentsNotesStep"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateDocumentsNotesStep"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/{stepKey}/diff": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdateStepDiff_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "stepKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StepDiffResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StepDiffResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StepDiffResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/{stepKey}/revert": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "RevertUpdateStep_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "stepKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/submit": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SubmitUpdateForApproval_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/approve": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ApproveUpdate_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/return": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ReturnUpdate_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateReturnRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateReturnRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateReturnRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStateTransitionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/diff": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdateDiff_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateDiffSummary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateDiffSummary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateDiffSummary"
                 }
               }
             }
@@ -9059,17 +11242,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SupportRequestCreateDto"
+                "$ref": "#/components/schemas/SupportRequestCreate"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/SupportRequestCreateDto"
+                "$ref": "#/components/schemas/SupportRequestCreate"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/SupportRequestCreateDto"
+                "$ref": "#/components/schemas/SupportRequestCreate"
               }
             }
           }
@@ -11228,6 +13411,105 @@
         },
         "additionalProperties": false
       },
+      "CreateWorkflowProgressResponse": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectApprovalStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectApprovalStatusName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CanSubmit": {
+            "type": "boolean"
+          },
+          "CreatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreatedByOrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Steps": {
+            "type": "object",
+            "properties": {
+              "Basics": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "LocationSimple": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "LocationDetailed": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "PriorityLandscapes": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "DnrUplandRegions": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "Counties": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "Treatments": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "Contacts": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "Organizations": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "ExpectedFunding": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "Classifications": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "Photos": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              },
+              "DocumentsNotes": {
+                "$ref": "#/components/schemas/WorkflowStepStatus"
+              }
+            },
+            "additionalProperties": false,
+            "nullable": true
+          },
+          "CanApprove": {
+            "type": "boolean"
+          },
+          "CanReject": {
+            "type": "boolean"
+          },
+          "CanReturn": {
+            "type": "boolean"
+          },
+          "CanWithdraw": {
+            "type": "boolean"
+          },
+          "CanEdit": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CustomPageDetail": {
         "type": "object",
         "properties": {
@@ -11472,7 +13754,7 @@
         },
         "additionalProperties": false
       },
-      "ExpectedFundingStepDto": {
+      "ExpectedFundingStep": {
         "type": "object",
         "properties": {
           "ProjectID": {
@@ -11506,7 +13788,7 @@
         },
         "additionalProperties": false
       },
-      "ExpectedFundingStepRequestDto": {
+      "ExpectedFundingStepRequest": {
         "type": "object",
         "properties": {
           "EstimatedTotalCost": {
@@ -12256,6 +14538,64 @@
         },
         "additionalProperties": false
       },
+      "FundSourceAllocationRequestUpdateItem": {
+        "type": "object",
+        "properties": {
+          "ProjectFundSourceAllocationRequestUpdateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FundSourceAllocationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceAllocationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundSourceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "MatchAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "PayAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceAllocationRequestUpdateItemRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectFundSourceAllocationRequestUpdateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FundSourceAllocationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TotalAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FundSourceAllocationSourceLookupItem": {
         "type": "object",
         "properties": {
@@ -12695,6 +15035,19 @@
         },
         "additionalProperties": false
       },
+      "GdbApproveRequest": {
+        "type": "object",
+        "properties": {
+          "Layers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GdbLayerApproval"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "GdbCrosswalkItem": {
         "type": "object",
         "properties": {
@@ -12738,6 +15091,31 @@
           },
           "GisDefaultMappingColumnName": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GdbFeatureClassPreview": {
+        "type": "object",
+        "properties": {
+          "FeatureClassName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FeatureType": {
+            "type": "string",
+            "nullable": true
+          },
+          "FeatureCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PropertyNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
             "nullable": true
           }
         },
@@ -12805,6 +15183,23 @@
         },
         "additionalProperties": false
       },
+      "GdbLayerApproval": {
+        "type": "object",
+        "properties": {
+          "FeatureClassName": {
+            "type": "string",
+            "nullable": true
+          },
+          "SelectedPropertyName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ShouldImport": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "GenericLayer": {
         "type": "object",
         "properties": {
@@ -12826,7 +15221,7 @@
         },
         "additionalProperties": false
       },
-      "GeographicAssignmentStepDto": {
+      "GeographicAssignmentStep": {
         "type": "object",
         "properties": {
           "ProjectID": {
@@ -12869,7 +15264,7 @@
         },
         "additionalProperties": false
       },
-      "GeographicOverrideRequestDto": {
+      "GeographicOverrideRequest": {
         "type": "object",
         "properties": {
           "SelectedIDs": {
@@ -13431,7 +15826,7 @@
         },
         "additionalProperties": false
       },
-      "LocationDetailedStepDto": {
+      "LocationDetailedStep": {
         "type": "object",
         "properties": {
           "ProjectID": {
@@ -13455,7 +15850,7 @@
         },
         "additionalProperties": false
       },
-      "LocationDetailedStepRequestDto": {
+      "LocationDetailedStepRequest": {
         "type": "object",
         "properties": {
           "Locations": {
@@ -13468,7 +15863,7 @@
         },
         "additionalProperties": false
       },
-      "LocationSimpleStepDto": {
+      "LocationSimpleStep": {
         "type": "object",
         "properties": {
           "ProjectID": {
@@ -13496,7 +15891,7 @@
         },
         "additionalProperties": false
       },
-      "LocationSimpleStepRequestDto": {
+      "LocationSimpleStepRequest": {
         "type": "object",
         "properties": {
           "Latitude": {
@@ -14779,7 +17174,7 @@
         },
         "additionalProperties": false
       },
-      "ProjectBasicsStepDto": {
+      "ProjectBasicsStep": {
         "type": "object",
         "properties": {
           "ProjectID": {
@@ -14844,7 +17239,7 @@
         },
         "additionalProperties": false
       },
-      "ProjectBasicsStepRequestDto": {
+      "ProjectBasicsStepRequest": {
         "type": "object",
         "properties": {
           "ProjectName": {
@@ -14987,7 +17382,7 @@
         },
         "additionalProperties": false
       },
-      "ProjectClassificationsStepDto": {
+      "ProjectClassificationsStep": {
         "type": "object",
         "properties": {
           "ProjectID": {
@@ -15004,7 +17399,7 @@
         },
         "additionalProperties": false
       },
-      "ProjectClassificationsStepRequestDto": {
+      "ProjectClassificationsStepRequest": {
         "type": "object",
         "properties": {
           "Classifications": {
@@ -15155,7 +17550,7 @@
         },
         "additionalProperties": false
       },
-      "ProjectContactsStepDto": {
+      "ProjectContactsStep": {
         "type": "object",
         "properties": {
           "ProjectID": {
@@ -15172,7 +17567,7 @@
         },
         "additionalProperties": false
       },
-      "ProjectContactsStepRequestDto": {
+      "ProjectContactsStepRequest": {
         "type": "object",
         "properties": {
           "Contacts": {
@@ -15234,105 +17629,6 @@
           "ProjectDescription": {
             "type": "string",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ProjectCreateWorkflowProgressDto": {
-        "type": "object",
-        "properties": {
-          "ProjectID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ProjectName": {
-            "type": "string",
-            "nullable": true
-          },
-          "ProjectApprovalStatusID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ProjectApprovalStatusName": {
-            "type": "string",
-            "nullable": true
-          },
-          "CanSubmit": {
-            "type": "boolean"
-          },
-          "CreatedByPersonName": {
-            "type": "string",
-            "nullable": true
-          },
-          "CreatedByOrganizationName": {
-            "type": "string",
-            "nullable": true
-          },
-          "CreateDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "Steps": {
-            "type": "object",
-            "properties": {
-              "Basics": {
-                "$ref": "#/components/schemas/WorkflowStepStatus"
-              },
-              "LocationSimple": {
-                "$ref": "#/components/schemas/WorkflowStepStatus"
-              },
-              "LocationDetailed": {
-                "$ref": "#/components/schemas/WorkflowStepStatus"
-              },
-              "PriorityLandscapes": {
-                "$ref": "#/components/schemas/WorkflowStepStatus"
-              },
-              "DnrUplandRegions": {
-                "$ref": "#/components/schemas/WorkflowStepStatus"
-              },
-              "Counties": {
-                "$ref": "#/components/schemas/WorkflowStepStatus"
-              },
-              "Treatments": {
-                "$ref": "#/components/schemas/WorkflowStepStatus"
-              },
-              "Contacts": {
-                "$ref": "#/components/schemas/WorkflowStepStatus"
-              },
-              "Organizations": {
-                "$ref": "#/components/schemas/WorkflowStepStatus"
-              },
-              "ExpectedFunding": {
-                "$ref": "#/components/schemas/WorkflowStepStatus"
-              },
-              "Classifications": {
-                "$ref": "#/components/schemas/WorkflowStepStatus"
-              },
-              "Photos": {
-                "$ref": "#/components/schemas/WorkflowStepStatus"
-              },
-              "DocumentsNotes": {
-                "$ref": "#/components/schemas/WorkflowStepStatus"
-              }
-            },
-            "additionalProperties": false,
-            "nullable": true
-          },
-          "CanApprove": {
-            "type": "boolean"
-          },
-          "CanReject": {
-            "type": "boolean"
-          },
-          "CanReturn": {
-            "type": "boolean"
-          },
-          "CanWithdraw": {
-            "type": "boolean"
-          },
-          "CanEdit": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -15599,6 +17895,30 @@
           },
           "UserIsAdmin": {
             "type": "boolean"
+          },
+          "CanViewFactSheet": {
+            "type": "boolean"
+          },
+          "CanStartUpdate": {
+            "type": "boolean"
+          },
+          "HasExistingUpdateBatch": {
+            "type": "boolean"
+          },
+          "LatestUpdateBatchStateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "LatestUpdateBatchStateName": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsInLandownerAssistanceProgram": {
+            "type": "boolean"
+          },
+          "ExistsInImportBlockList": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -15698,6 +18018,59 @@
         },
         "additionalProperties": false
       },
+      "ProjectDocumentUpdateItem": {
+        "type": "object",
+        "properties": {
+          "ProjectDocumentUpdateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DocumentTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "DocumentDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "FileResourceUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectDocumentUpdateItemRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectDocumentUpdateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DocumentTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "DocumentDescription": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectDocumentUpsertRequest": {
         "required": [
           "DisplayName"
@@ -15728,6 +18101,47 @@
           "ProjectExternalLinkID": {
             "type": "integer",
             "format": "int32"
+          },
+          "ExternalLinkLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "ExternalLinkUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectExternalLinkUpdateItem": {
+        "type": "object",
+        "properties": {
+          "ProjectExternalLinkUpdateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ExternalLinkLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "ExternalLinkUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectExternalLinkUpdateItemRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectExternalLinkUpdateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           },
           "ExternalLinkLabel": {
             "type": "string",
@@ -15957,6 +18371,79 @@
         },
         "additionalProperties": false
       },
+      "ProjectImageUpdateItem": {
+        "type": "object",
+        "properties": {
+          "ProjectImageUpdateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Caption": {
+            "type": "string",
+            "nullable": true
+          },
+          "Credit": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsKeyPhoto": {
+            "type": "boolean"
+          },
+          "ExcludeFromFactSheet": {
+            "type": "boolean"
+          },
+          "SortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectImageUpdateItemRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectImageUpdateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Caption": {
+            "type": "string",
+            "nullable": true
+          },
+          "Credit": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsKeyPhoto": {
+            "type": "boolean"
+          },
+          "ExcludeFromFactSheet": {
+            "type": "boolean"
+          },
+          "SortOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectImageUpsertRequest": {
         "type": "object",
         "properties": {
@@ -16014,6 +18501,12 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          },
+          "HasTreatments": {
+            "type": "boolean"
+          },
+          "IsFromArcGis": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -16056,6 +18549,78 @@
           },
           "ToBeDeleted": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectLocationUpdateItem": {
+        "type": "object",
+        "properties": {
+          "ProjectLocationUpdateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectLocationNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectLocationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "GeoJson": {
+            "type": "string",
+            "nullable": true
+          },
+          "AreaInAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "HasTreatments": {
+            "type": "boolean"
+          },
+          "IsFromArcGis": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectLocationUpdateItemRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectLocationUpdateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectLocationTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectLocationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "GeoJson": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -16169,6 +18734,56 @@
           "UpdateDate": {
             "type": "string",
             "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectNoteUpdateItem": {
+        "type": "object",
+        "properties": {
+          "ProjectNoteUpdateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Note": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "CreatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "UpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "UpdatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectNoteUpdateItemRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectNoteUpdateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "Note": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -16356,7 +18971,56 @@
         },
         "additionalProperties": false
       },
-      "ProjectOrganizationsStepDto": {
+      "ProjectOrganizationUpdateItem": {
+        "type": "object",
+        "properties": {
+          "ProjectOrganizationUpdateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RelationshipTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsPrimaryContact": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectOrganizationUpdateItemRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectOrganizationUpdateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectOrganizationsStep": {
         "type": "object",
         "properties": {
           "ProjectID": {
@@ -16373,7 +19037,7 @@
         },
         "additionalProperties": false
       },
-      "ProjectOrganizationsStepRequestDto": {
+      "ProjectOrganizationsStepRequest": {
         "type": "object",
         "properties": {
           "Organizations": {
@@ -16410,6 +19074,52 @@
             "nullable": true
           },
           "SortOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectPersonUpdateItem": {
+        "type": "object",
+        "properties": {
+          "ProjectPersonUpdateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PersonFullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectPersonRelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RelationshipTypeName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectPersonUpdateItemRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectPersonUpdateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectPersonRelationshipTypeID": {
             "type": "integer",
             "format": "int32"
           }
@@ -16759,6 +19469,478 @@
         },
         "additionalProperties": false
       },
+      "ProjectUpdateBasicsStep": {
+        "type": "object",
+        "properties": {
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectStageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PlannedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "FocusAreaID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "LeadImplementerOrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PercentageMatch": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProgramIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "IsProjectStageImported": {
+            "type": "boolean"
+          },
+          "IsPlannedDateImported": {
+            "type": "boolean"
+          },
+          "IsCompletionDateImported": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateBasicsStepRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectStageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PlannedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "FocusAreaID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "LeadImplementerOrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PercentageMatch": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProgramIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateBatchResponse": {
+        "type": "object",
+        "properties": {
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectUpdateStateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectUpdateStateName": {
+            "type": "string",
+            "nullable": true
+          },
+          "LastUpdateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "LastUpdatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "SubmittedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "SubmittalDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ApprovedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ApprovalDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ReturnedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ReturnComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "CanEdit": {
+            "type": "boolean"
+          },
+          "CanSubmit": {
+            "type": "boolean"
+          },
+          "CanApprove": {
+            "type": "boolean"
+          },
+          "CanReturn": {
+            "type": "boolean"
+          },
+          "CanDelete": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateContactsStep": {
+        "type": "object",
+        "properties": {
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectPersonUpdateItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateContactsStepRequest": {
+        "type": "object",
+        "properties": {
+          "Contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectPersonUpdateItemRequest"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateDiffSummary": {
+        "type": "object",
+        "properties": {
+          "BasicsDiffHtml": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationsDiffHtml": {
+            "type": "string",
+            "nullable": true
+          },
+          "ExternalLinksDiffHtml": {
+            "type": "string",
+            "nullable": true
+          },
+          "NotesDiffHtml": {
+            "type": "string",
+            "nullable": true
+          },
+          "ExpectedFundingDiffHtml": {
+            "type": "string",
+            "nullable": true
+          },
+          "HasBasicsChanges": {
+            "type": "boolean"
+          },
+          "HasOrganizationsChanges": {
+            "type": "boolean"
+          },
+          "HasExternalLinksChanges": {
+            "type": "boolean"
+          },
+          "HasNotesChanges": {
+            "type": "boolean"
+          },
+          "HasExpectedFundingChanges": {
+            "type": "boolean"
+          },
+          "HasAnyChanges": {
+            "type": "boolean",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateDocumentsNotesStep": {
+        "type": "object",
+        "properties": {
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectDocumentUpdateItem"
+            },
+            "nullable": true
+          },
+          "Notes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectNoteUpdateItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateDocumentsNotesStepRequest": {
+        "type": "object",
+        "properties": {
+          "Documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectDocumentUpdateItemRequest"
+            },
+            "nullable": true
+          },
+          "Notes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectNoteUpdateItemRequest"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateExpectedFundingStep": {
+        "type": "object",
+        "properties": {
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectFundingSourceNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "SelectedFundingSourceIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "AllocationRequests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FundSourceAllocationRequestUpdateItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateExpectedFundingStepRequest": {
+        "type": "object",
+        "properties": {
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectFundingSourceNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundingSourceIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "AllocationRequests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FundSourceAllocationRequestUpdateItemRequest"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateExternalLinksStep": {
+        "type": "object",
+        "properties": {
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ExternalLinks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectExternalLinkUpdateItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateExternalLinksStepRequest": {
+        "type": "object",
+        "properties": {
+          "ExternalLinks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectExternalLinkUpdateItemRequest"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateGeographicStep": {
+        "type": "object",
+        "properties": {
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "SelectedIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "NoSelectionExplanation": {
+            "type": "string",
+            "nullable": true
+          },
+          "AvailableOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeographicLookupItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateGeographicStepRequest": {
+        "type": "object",
+        "properties": {
+          "SelectedIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "NoSelectionExplanation": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectUpdateHistoryGridRow": {
         "type": "object",
         "properties": {
@@ -16776,6 +19958,208 @@
           },
           "ProjectUpdateStateName": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateLocationDetailedStep": {
+        "type": "object",
+        "properties": {
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Locations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectLocationUpdateItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateLocationDetailedStepRequest": {
+        "type": "object",
+        "properties": {
+          "Locations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectLocationUpdateItemRequest"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateLocationSimpleStep": {
+        "type": "object",
+        "properties": {
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Latitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Longitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectLocationSimpleTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationNotes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateLocationSimpleStepRequest": {
+        "type": "object",
+        "properties": {
+          "Latitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Longitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectLocationSimpleTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationNotes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateOrganizationsStep": {
+        "type": "object",
+        "properties": {
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Organizations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectOrganizationUpdateItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateOrganizationsStepRequest": {
+        "type": "object",
+        "properties": {
+          "Organizations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectOrganizationUpdateItemRequest"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdatePhotosStep": {
+        "type": "object",
+        "properties": {
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Photos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectImageUpdateItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdatePhotosStepRequest": {
+        "type": "object",
+        "properties": {
+          "Photos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectImageUpdateItemRequest"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateReturnRequest": {
+        "type": "object",
+        "properties": {
+          "BasicsComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "LocationSimpleComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "LocationDetailedComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "ExpectedFundingComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "ContactsComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationsComment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateTreatmentsStep": {
+        "type": "object",
+        "properties": {
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Treatments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TreatmentUpdateItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateTreatmentsStepRequest": {
+        "type": "object",
+        "properties": {
+          "Treatments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TreatmentUpdateItemRequest"
+            },
             "nullable": true
           }
         },
@@ -16939,7 +20323,20 @@
         },
         "additionalProperties": false
       },
-      "SupportRequestCreateDto": {
+      "StepDiffResponse": {
+        "type": "object",
+        "properties": {
+          "HasChanges": {
+            "type": "boolean"
+          },
+          "DiffHtml": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SupportRequestCreate": {
         "required": [
           "RequestDescription",
           "SupportRequestTypeID"
@@ -17368,6 +20765,20 @@
         },
         "additionalProperties": false
       },
+      "TreatmentAreaUpdateLookupItem": {
+        "type": "object",
+        "properties": {
+          "ProjectLocationUpdateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationUpdateName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TreatmentDetail": {
         "type": "object",
         "properties": {
@@ -17531,6 +20942,311 @@
         },
         "additionalProperties": false
       },
+      "TreatmentUpdateDetail": {
+        "type": "object",
+        "properties": {
+          "TreatmentUpdateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationUpdateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatmentAreaName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentDetailedActivityTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentDetailedActivityTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentCodeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatmentCodeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentStartDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "TreatmentEndDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "TreatmentFootprintAcres": {
+            "type": "number",
+            "format": "double"
+          },
+          "TreatmentTreatedAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "CostPerAcre": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TreatmentNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProgramName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ImportedFromGis": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TreatmentUpdateItem": {
+        "type": "object",
+        "properties": {
+          "TreatmentUpdateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationUpdateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectLocationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentDetailedActivityTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentDetailedActivityTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentCodeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatmentCodeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentFootprintAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TreatmentTreatedAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TreatmentNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentStartYear": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatmentEndYear": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "CostPerAcre": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ImportedFromGis": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TreatmentUpdateItemRequest": {
+        "type": "object",
+        "properties": {
+          "TreatmentUpdateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectLocationUpdateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatmentTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentDetailedActivityTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentCodeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatmentFootprintAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TreatmentTreatedAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TreatmentNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentStartYear": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatmentEndYear": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "CostPerAcre": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TreatmentUpdateUpsertRequest": {
+        "required": [
+          "ProjectLocationUpdateID",
+          "TreatmentDetailedActivityTypeID",
+          "TreatmentEndDate",
+          "TreatmentFootprintAcres",
+          "TreatmentStartDate",
+          "TreatmentTypeID"
+        ],
+        "type": "object",
+        "properties": {
+          "ProjectLocationUpdateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentDetailedActivityTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentCodeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatmentStartDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "TreatmentEndDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "TreatmentFootprintAcres": {
+            "type": "number",
+            "format": "double"
+          },
+          "TreatmentTreatedAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "CostPerAcre": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TreatmentNotes": {
+            "maxLength": 2000,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TreatmentUpsertRequest": {
         "required": [
           "ProjectID",
@@ -17596,6 +21312,91 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateWorkflowProgressResponse": {
+        "type": "object",
+        "properties": {
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectUpdateStateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectUpdateStateName": {
+            "type": "string",
+            "nullable": true
+          },
+          "LastUpdateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "LastUpdatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "SubmittedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "SubmittedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ReturnedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ReturnedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CanSubmit": {
+            "type": "boolean"
+          },
+          "IsReadyToApprove": {
+            "type": "boolean"
+          },
+          "Steps": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/WorkflowStepStatus"
+            },
+            "nullable": true
+          },
+          "ReviewerComments": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "nullable": true
+            },
+            "nullable": true
+          },
+          "CanEdit": {
+            "type": "boolean"
+          },
+          "CanApprove": {
+            "type": "boolean"
+          },
+          "CanReturn": {
+            "type": "boolean"
+          },
+          "CanDelete": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -17848,7 +21649,7 @@
         },
         "additionalProperties": false
       },
-      "WorkflowStateTransitionRequestDto": {
+      "WorkflowStateTransitionRequest": {
         "type": "object",
         "properties": {
           "Comment": {
@@ -17858,7 +21659,7 @@
         },
         "additionalProperties": false
       },
-      "WorkflowStateTransitionResponseDto": {
+      "WorkflowStateTransitionResponse": {
         "type": "object",
         "properties": {
           "ProjectID": {
@@ -17897,6 +21698,9 @@
             "type": "boolean"
           },
           "IsRequired": {
+            "type": "boolean"
+          },
+          "HasChanges": {
             "type": "boolean"
           }
         },

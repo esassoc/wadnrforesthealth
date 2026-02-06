@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { AsyncPipe, CommonModule, DatePipe } from "@angular/common";
 import { Router, RouterLink, RouterOutlet } from "@angular/router";
-import { BehaviorSubject, combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, startWith, of } from "rxjs";
+import { BehaviorSubject, combineLatest, filter, map, Observable, shareReplay, switchMap, startWith, of } from "rxjs";
 import { DialogService } from "@ngneat/dialog";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
@@ -9,17 +9,17 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 import { WorkflowNavComponent } from "src/app/shared/components/workflow-nav/workflow-nav.component";
 import { WorkflowNavItemComponent } from "src/app/shared/components/workflow-nav/workflow-nav-item/workflow-nav-item.component";
 import { WorkflowNavGroupComponent } from "src/app/shared/components/workflow-nav/workflow-nav-group/workflow-nav-group.component";
-import { WorkflowBodyComponent } from "src/app/shared/components/workflow-body/workflow-body.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { DropdownToggleDirective } from "src/app/shared/directives/dropdown-toggle.directive";
 import { FeedbackModalComponent } from "src/app/shared/components/feedback-modal/feedback-modal.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
-import { ProjectCreateWorkflowProgressDto } from "src/app/shared/generated/model/project-create-workflow-progress-dto";
+import { CreateWorkflowProgressResponse } from "src/app/shared/generated/model/create-workflow-progress-response";
 import { ProjectApprovalStatusEnum } from "src/app/shared/generated/enum/project-approval-status-enum";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
+import { WorkflowProgressService } from "src/app/shared/services/workflow-progress.service";
 
 export interface WorkflowStep {
     key: string;
@@ -47,12 +47,11 @@ export interface WorkflowStepGroup {
         WorkflowNavComponent,
         WorkflowNavItemComponent,
         WorkflowNavGroupComponent,
-        WorkflowBodyComponent,
         IconComponent,
-        DropdownToggleDirective
+        DropdownToggleDirective,
     ],
     templateUrl: "./project-create-workflow-outlet.component.html",
-    styleUrls: ["./project-create-workflow-outlet.component.scss"]
+    styleUrls: ["./project-create-workflow-outlet.component.scss"],
 })
 export class ProjectCreateWorkflowOutletComponent implements OnInit {
     @Input() set projectID(value: string | number | undefined) {
@@ -67,18 +66,18 @@ export class ProjectCreateWorkflowOutletComponent implements OnInit {
     private _projectID$ = new BehaviorSubject<number | null>(null);
 
     public projectID$: Observable<number>;
-    public progress$: Observable<ProjectCreateWorkflowProgressDto | null>;
+    public progress$: Observable<CreateWorkflowProgressResponse | null>;
 
     // Combined view model for the template
-    public vm$: Observable<{ isNewProject: boolean; progress: ProjectCreateWorkflowProgressDto | null }>;
+    public vm$: Observable<{ isNewProject: boolean; progress: CreateWorkflowProgressResponse | null }>;
 
     public stepGroups: WorkflowStepGroup[] = [
         {
             title: "Project Setup",
             steps: [
                 { key: "Basics", name: "Basics", route: "basics", required: true },
-                { key: "LocationSimple", name: "Location (Simple)", route: "location-simple", required: true }
-            ]
+                { key: "LocationSimple", name: "Location (Simple)", route: "location-simple", required: true },
+            ],
         },
         {
             title: "Location",
@@ -87,8 +86,8 @@ export class ProjectCreateWorkflowOutletComponent implements OnInit {
                 { key: "PriorityLandscapes", name: "Priority Landscapes", route: "priority-landscapes", required: false },
                 { key: "DnrUplandRegions", name: "DNR Upland Regions", route: "dnr-upland-regions", required: false },
                 { key: "Counties", name: "Counties", route: "counties", required: false },
-                { key: "Treatments", name: "Treatments", route: "treatments", required: false }
-            ]
+                { key: "Treatments", name: "Treatments", route: "treatments", required: false },
+            ],
         },
         {
             title: "Additional Data",
@@ -98,24 +97,23 @@ export class ProjectCreateWorkflowOutletComponent implements OnInit {
                 { key: "ExpectedFunding", name: "Expected Funding", route: "expected-funding", required: false },
                 { key: "Classifications", name: "Classifications", route: "classifications", required: false },
                 { key: "Photos", name: "Photos", route: "photos", required: false },
-                { key: "DocumentsNotes", name: "Documents & Notes", route: "documents-notes", required: false }
-            ]
-        }
+                { key: "DocumentsNotes", name: "Documents & Notes", route: "documents-notes", required: false },
+            ],
+        },
     ];
 
     // Flattened steps for lookup purposes
     public get steps(): WorkflowStep[] {
-        return this.stepGroups.flatMap(g => g.steps);
+        return this.stepGroups.flatMap((g) => g.steps);
     }
-
-    private refreshProgress$ = new Subject<void>();
 
     constructor(
         private projectService: ProjectService,
         private router: Router,
         private alertService: AlertService,
         private confirmService: ConfirmService,
-        private dialogService: DialogService
+        private dialogService: DialogService,
+        private workflowProgressService: WorkflowProgressService
     ) {}
 
     ngOnInit(): void {
@@ -130,51 +128,50 @@ export class ProjectCreateWorkflowOutletComponent implements OnInit {
                 if (projectID == null || Number.isNaN(projectID)) {
                     return of(null);
                 }
-                return this.refreshProgress$.pipe(
+                return this.workflowProgressService.refreshProgress$.pipe(
                     startWith(undefined),
-                    switchMap(() => this.projectService.getWorkflowProgressProject(projectID))
+                    switchMap(() => this.projectService.getCreateWorkflowProgressProject(projectID))
                 );
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
         // Combined view model for template - starts with new project state immediately
-        this.vm$ = combineLatest([
-            this._projectID$,
-            this.progress$.pipe(startWith(null))
-        ]).pipe(
+        this.vm$ = combineLatest([this._projectID$, this.progress$.pipe(startWith(null))]).pipe(
             map(([projectID, progress]) => ({
                 isNewProject: projectID == null || Number.isNaN(projectID),
-                progress
+                progress,
             })),
             // Ensure we emit immediately with default new project state
-            startWith({ isNewProject: true, progress: null as ProjectCreateWorkflowProgressDto | null }),
+            startWith({ isNewProject: true, progress: null as CreateWorkflowProgressResponse | null }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
     }
 
     submitForApproval(projectID: number, projectName: string): void {
-        this.confirmService.confirm({
-            title: "Submit Proposal for review",
-            message: `Are you sure you want to submit Project "${projectName}" to the reviewer?`,
-            buttonTextYes: "Continue",
-            buttonTextNo: "Cancel",
-            buttonClassYes: "btn-primary"
-        }).then(confirmed => {
-            if (confirmed) {
-                this.projectService.submitForApprovalProject(projectID).subscribe({
-                    next: (response) => {
-                        this.alertService.pushAlert(new Alert("Project submitted for approval successfully.", AlertContext.Success, true));
-                        this.refreshProgress$.next();
-                        this.router.navigate(["/projects", projectID]);
-                    },
-                    error: (err) => {
-                        const message = err?.error?.ErrorMessage ?? err?.error ?? "Failed to submit project.";
-                        this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                    }
-                });
-            }
-        });
+        this.confirmService
+            .confirm({
+                title: "Submit Proposal for review",
+                message: `Are you sure you want to submit Project "${projectName}" to the reviewer?`,
+                buttonTextYes: "Continue",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-primary",
+            })
+            .then((confirmed) => {
+                if (confirmed) {
+                    this.projectService.submitCreateForApprovalProject(projectID, {}).subscribe({
+                        next: (response) => {
+                            this.alertService.pushAlert(new Alert("Project submitted for approval successfully.", AlertContext.Success, true));
+                            this.workflowProgressService.triggerRefresh();
+                            this.router.navigate(["/projects", projectID]);
+                        },
+                        error: (err) => {
+                            const message = err?.error?.ErrorMessage ?? err?.error ?? "Failed to submit project.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                }
+            });
     }
 
     getStepLink(step: WorkflowStep): string[] {
@@ -186,13 +183,13 @@ export class ProjectCreateWorkflowOutletComponent implements OnInit {
         return ["/projects", "new", step.route];
     }
 
-    isStepComplete(progress: ProjectCreateWorkflowProgressDto, step: WorkflowStep): boolean {
+    isStepComplete(progress: CreateWorkflowProgressResponse, step: WorkflowStep): boolean {
         if (!progress?.Steps) return false;
         const stepStatus = progress.Steps[step.key];
         return stepStatus?.IsComplete ?? false;
     }
 
-    isStepDisabled(progress: ProjectCreateWorkflowProgressDto | null, step: WorkflowStep, isNewProject: boolean): boolean {
+    isStepDisabled(progress: CreateWorkflowProgressResponse | null, step: WorkflowStep, isNewProject: boolean): boolean {
         // For new projects, only basics is enabled
         if (isNewProject) {
             return step.key !== "Basics";
@@ -206,9 +203,9 @@ export class ProjectCreateWorkflowOutletComponent implements OnInit {
         return step.required;
     }
 
-    isGroupComplete(progress: ProjectCreateWorkflowProgressDto | null, group: WorkflowStepGroup): boolean {
+    isGroupComplete(progress: CreateWorkflowProgressResponse | null, group: WorkflowStepGroup): boolean {
         if (!progress?.Steps) return false;
-        return group.steps.every(step => {
+        return group.steps.every((step) => {
             const stepStatus = progress.Steps[step.key];
             return stepStatus?.IsComplete ?? false;
         });
@@ -220,19 +217,19 @@ export class ProjectCreateWorkflowOutletComponent implements OnInit {
     }
 
     getGroupChildRoutes(group: WorkflowStepGroup): string[] {
-        return group.steps.map(step => step.route);
+        return group.steps.map((step) => step.route);
     }
 
-    canWithdraw(progress: ProjectCreateWorkflowProgressDto | null): boolean {
+    canWithdraw(progress: CreateWorkflowProgressResponse | null): boolean {
         return progress?.ProjectApprovalStatusID === ProjectApprovalStatusEnum.PendingApproval;
     }
 
     openFeedbackModal(): void {
         this.dialogService.open(FeedbackModalComponent, {
             data: {
-                currentPageUrl: window.location.href
+                currentPageUrl: window.location.href,
             },
-            size: "md"
+            size: "md",
         });
     }
 
@@ -240,26 +237,28 @@ export class ProjectCreateWorkflowOutletComponent implements OnInit {
         const projectID = this._projectID$.getValue();
         if (!projectID) return;
 
-        this.confirmService.confirm({
-            title: "Withdraw Proposal",
-            message: "Are you sure you want to withdraw this proposal? This will return the project to Draft status.",
-            buttonTextYes: "Withdraw",
-            buttonTextNo: "Cancel",
-            buttonClassYes: "btn-danger"
-        }).then(confirmed => {
-            if (confirmed) {
-                this.projectService.withdrawProject(projectID, {}).subscribe({
-                    next: () => {
-                        this.alertService.pushAlert(new Alert("Proposal withdrawn successfully.", AlertContext.Success, true));
-                        this.refreshProgress$.next();
-                        this.router.navigate(["/projects", projectID]);
-                    },
-                    error: (err) => {
-                        const message = err?.error?.ErrorMessage ?? err?.error ?? "Failed to withdraw proposal.";
-                        this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                    }
-                });
-            }
-        });
+        this.confirmService
+            .confirm({
+                title: "Withdraw Proposal",
+                message: "Are you sure you want to withdraw this proposal? This will return the project to Draft status.",
+                buttonTextYes: "Withdraw",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-danger",
+            })
+            .then((confirmed) => {
+                if (confirmed) {
+                    this.projectService.withdrawCreateProject(projectID, {}).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Proposal withdrawn successfully.", AlertContext.Success, true));
+                            this.workflowProgressService.triggerRefresh();
+                            this.router.navigate(["/projects", projectID]);
+                        },
+                        error: (err) => {
+                            const message = err?.error?.ErrorMessage ?? err?.error ?? "Failed to withdraw proposal.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                }
+            });
     }
 }

@@ -1,7 +1,7 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, Input } from "@angular/core";
-import { RouterLink } from "@angular/router";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, Observable, shareReplay, startWith, Subject, switchMap } from "rxjs";
+import { Router, RouterLink } from "@angular/router";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, Observable, shareReplay, startWith, Subject, switchMap, take } from "rxjs";
 import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap } from "leaflet";
 import { DialogService } from "@ngneat/dialog";
@@ -22,6 +22,7 @@ import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectDocumentService } from "src/app/shared/generated/api/project-document.service";
 import { ProjectDetail } from "src/app/shared/generated/model/project-detail";
 import { ProjectApprovalStatusEnum } from "src/app/shared/generated/enum/project-approval-status-enum";
+import { ProjectUpdateStateEnum } from "src/app/shared/generated/enum/project-update-state-enum";
 import { ProjectOrganizationItem } from "src/app/shared/generated/model/project-organization-item";
 import { ProjectPersonItem } from "src/app/shared/generated/model/project-person-item";
 import { FundSourceAllocationRequestItem } from "src/app/shared/generated/model/fund-source-allocation-request-item";
@@ -93,7 +94,8 @@ export class ProjectDetailComponent {
         private utilityFunctions: UtilityFunctionsService,
         private dialogService: DialogService,
         private confirmService: ConfirmService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private router: Router
     ) {}
 
     ngOnInit(): void {
@@ -494,17 +496,148 @@ export class ProjectDetailComponent {
 
     // Approval action methods
     approveProject(): void {
-        // TODO: Implement approval workflow - call API endpoint
-        this.alertService.pushAlert(new Alert("Project approval functionality coming soon.", AlertContext.Info, true));
+        this.project$.pipe(take(1)).subscribe(project => {
+            this.confirmService.confirm({
+                title: "Approve Project",
+                message: `Are you sure you want to approve "${project.ProjectName}"?`,
+                buttonTextYes: "Approve",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-success"
+            }).then(confirmed => {
+                if (confirmed) {
+                    this.projectService.approveCreateProject(project.ProjectID).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Project has been approved.", AlertContext.Success, true));
+                            this._projectID$.next(project.ProjectID);
+                        },
+                        error: (err) => {
+                            const message = err?.error ?? err?.message ?? "An error occurred while approving the project.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        }
+                    });
+                }
+            });
+        });
     }
 
     returnProject(): void {
-        // TODO: Implement return workflow - call API endpoint
-        this.alertService.pushAlert(new Alert("Project return functionality coming soon.", AlertContext.Info, true));
+        this.project$.pipe(take(1)).subscribe(project => {
+            this.confirmService.confirm({
+                title: "Return Project",
+                message: `Are you sure you want to return "${project.ProjectName}" for revisions?`,
+                buttonTextYes: "Return",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-warning"
+            }).then(confirmed => {
+                if (confirmed) {
+                    this.projectService.returnCreateProject(project.ProjectID).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Project has been returned for revisions.", AlertContext.Success, true));
+                            this._projectID$.next(project.ProjectID);
+                        },
+                        error: (err) => {
+                            const message = err?.error ?? err?.message ?? "An error occurred while returning the project.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        }
+                    });
+                }
+            });
+        });
     }
 
     rejectProject(): void {
-        // TODO: Implement rejection workflow - call API endpoint
-        this.alertService.pushAlert(new Alert("Project rejection functionality coming soon.", AlertContext.Info, true));
+        this.project$.pipe(take(1)).subscribe(project => {
+            this.confirmService.confirm({
+                title: "Reject Project",
+                message: `Are you sure you want to reject "${project.ProjectName}"? This action cannot be undone.`,
+                buttonTextYes: "Reject",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-danger"
+            }).then(confirmed => {
+                if (confirmed) {
+                    this.projectService.rejectCreateProject(project.ProjectID).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Project has been rejected.", AlertContext.Success, true));
+                            this._projectID$.next(project.ProjectID);
+                        },
+                        error: (err) => {
+                            const message = err?.error ?? err?.message ?? "An error occurred while rejecting the project.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    // Update Project button helpers
+    getUpdateProjectButtonText(project: ProjectDetail): string {
+        if (!project.HasExistingUpdateBatch) {
+            return "Update Project";
+        }
+        if (project.LatestUpdateBatchStateID === ProjectUpdateStateEnum.Submitted) {
+            return "Review Project Update";
+        }
+        // Created or Returned state
+        return "Continue Project Update";
+    }
+
+    canShowUpdateProjectButton(project: ProjectDetail): boolean {
+        // User must be able to edit and project must be approved
+        return project.UserCanEdit && project.ProjectApprovalStatusID === ProjectApprovalStatusEnum.Approved;
+    }
+
+    navigateToUpdateWorkflow(project: ProjectDetail): void {
+        if (project.HasExistingUpdateBatch) {
+            // Navigate to existing update workflow
+            this.router.navigate(["/projects", project.ProjectID, "update"]);
+        } else {
+            // Show confirmation modal before starting new update batch
+            this.confirmService.confirm({
+                title: "Starting project update",
+                message: "To make changes to the project you must start a Project update.\nThe reviewer will then receive your update and either approve or return your Project update request.",
+                buttonTextYes: "Create project update",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-primary"
+            }).then(confirmed => {
+                if (confirmed) {
+                    this.projectService.startUpdateBatchProject(project.ProjectID).subscribe({
+                        next: () => {
+                            this.router.navigate(["/projects", project.ProjectID, "update"]);
+                        },
+                        error: (err) => {
+                            const message = err?.error ?? err?.message ?? "Failed to start project update.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    // Block List button helpers
+    canShowBlockListButton(project: ProjectDetail): boolean {
+        // Admin only, when project has programs
+        return project.UserIsAdmin && (project.Programs?.length ?? 0) > 0;
+    }
+
+    addToBlockList(project: ProjectDetail): void {
+        // TODO: Implement block list modal - requires API endpoint
+        this.alertService.pushAlert(new Alert("Add to Block List functionality coming soon.", AlertContext.Info, true));
+    }
+
+    removeFromBlockList(project: ProjectDetail): void {
+        // TODO: Implement remove from block list - requires API endpoint
+        this.alertService.pushAlert(new Alert("Remove from Block List functionality coming soon.", AlertContext.Info, true));
+    }
+
+    // Financial Assistance Approval Letter helpers
+    canShowApprovalLetter(project: ProjectDetail): boolean {
+        return project.UserCanEdit && project.IsInLandownerAssistanceProgram;
+    }
+
+    downloadApprovalLetter(project: ProjectDetail): void {
+        // TODO: Implement approval letter download - requires API endpoint
+        this.alertService.pushAlert(new Alert("Approval letter download functionality coming soon.", AlertContext.Info, true));
     }
 }

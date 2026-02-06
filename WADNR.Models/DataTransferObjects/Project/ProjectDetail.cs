@@ -71,6 +71,15 @@ public class ProjectDetail
     public bool UserCanDelete { get; set; }
     public bool UserCanApprove { get; set; }
     public bool UserIsAdmin { get; set; }
+
+    // Button visibility flags
+    public bool CanViewFactSheet { get; set; }
+    public bool CanStartUpdate { get; set; }
+    public bool HasExistingUpdateBatch { get; set; }
+    public int? LatestUpdateBatchStateID { get; set; }
+    public string? LatestUpdateBatchStateName { get; set; }
+    public bool IsInLandownerAssistanceProgram { get; set; }
+    public bool ExistsInImportBlockList { get; set; }
 }
 
 public class ProjectOrganizationItem

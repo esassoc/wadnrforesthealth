@@ -6,7 +6,7 @@ import { FormFieldComponent, FormFieldType, SelectDropdownOption } from "src/app
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { SupportRequestService } from "src/app/shared/generated/api/support-request.service";
-import { SupportRequestCreateDto } from "src/app/shared/generated/model/support-request-create-dto";
+import { SupportRequestCreate } from "src/app/shared/generated/model/support-request-create";
 import { SupportRequestTypeEnum, SupportRequestTypesAsSelectDropdownOptions } from "src/app/shared/generated/enum/support-request-type-enum";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -74,7 +74,7 @@ export class FeedbackModalComponent extends BaseModal implements OnInit {
         this.isSubmitting = true;
         this.localAlerts = [];
 
-        const dto: SupportRequestCreateDto = {
+        const dto: SupportRequestCreate = {
             SupportRequestTypeID: this.form.value.SupportRequestTypeID!,
             RequestDescription: this.form.value.RequestDescription!,
             RequestPersonOrganization: this.form.value.RequestPersonOrganization || undefined,

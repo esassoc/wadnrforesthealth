@@ -1,9 +1,9 @@
 namespace WADNR.Models.DataTransferObjects;
 
 /// <summary>
-/// DTO for the Basics step of the ProjectCreate wizard.
+/// Response for the Basics step of the Project Create workflow.
 /// </summary>
-public class ProjectBasicsStepDto
+public class ProjectBasicsStep
 {
     public int? ProjectID { get; set; }
     public string ProjectName { get; set; } = string.Empty;
@@ -20,9 +20,9 @@ public class ProjectBasicsStepDto
 }
 
 /// <summary>
-/// Request DTO for saving the Basics step.
+/// Request for saving the Basics step.
 /// </summary>
-public class ProjectBasicsStepRequestDto
+public class ProjectBasicsStepRequest
 {
     public string ProjectName { get; set; } = string.Empty;
     public string? ProjectDescription { get; set; }

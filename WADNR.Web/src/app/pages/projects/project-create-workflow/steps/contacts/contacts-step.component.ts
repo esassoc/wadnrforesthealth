@@ -4,12 +4,12 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { combineLatest, map, Observable, of, shareReplay, startWith, switchMap } from "rxjs";
 import { catchError } from "rxjs/operators";
 
-import { WorkflowStepBase } from "src/app/shared/components/workflow/workflow-step-base";
+import { CreateWorkflowStepBase } from "src/app/shared/components/workflow/create-workflow-step-base";
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { PersonService } from "src/app/shared/generated/api/person.service";
-import { ProjectContactsStepDto } from "src/app/shared/generated/model/project-contacts-step-dto";
-import { ProjectContactsStepRequestDto } from "src/app/shared/generated/model/project-contacts-step-request-dto";
+import { ProjectContactsStep } from "src/app/shared/generated/model/project-contacts-step";
+import { ProjectContactsStepRequest } from "src/app/shared/generated/model/project-contacts-step-request";
 import { ProjectContactRequestItem } from "src/app/shared/generated/model/project-contact-request-item";
 import { ProjectContactStepItem } from "src/app/shared/generated/model/project-contact-step-item";
 import { PersonLookupItem } from "src/app/shared/generated/model/person-lookup-item";
@@ -32,7 +32,7 @@ interface ContactsByType {
 
 interface ContactsViewModel {
     isLoading: boolean;
-    data: ProjectContactsStepDto | null;
+    data: ProjectContactsStep | null;
     contactsByType: ContactsByType[];
     allPeopleOptions: FormInputOption[];
 }
@@ -52,7 +52,7 @@ const FIELD_DEFINITION_MAP: Record<number, string> = {
     templateUrl: "./contacts-step.component.html",
     styleUrls: ["./contacts-step.component.scss"],
 })
-export class ContactsStepComponent extends WorkflowStepBase implements OnInit {
+export class ContactsStepComponent extends CreateWorkflowStepBase implements OnInit {
     readonly nextStep = "organizations";
 
     public FormFieldType = FormFieldType;
@@ -85,7 +85,7 @@ export class ContactsStepComponent extends WorkflowStepBase implements OnInit {
                 if (id == null || Number.isNaN(id)) {
                     return of(null);
                 }
-                return this.projectService.getContactsStepProject(id).pipe(
+                return this.projectService.getCreateContactsStepProject(id).pipe(
                     catchError((err) => {
                         console.error("Failed to load contacts data:", err);
                         this.alertService.pushAlert(new Alert("Failed to load contacts data.", AlertContext.Danger, true));
@@ -122,9 +122,7 @@ export class ContactsStepComponent extends WorkflowStepBase implements OnInit {
 
                     // Calculate available people (for multi-select, exclude already selected)
                     const selectedPersonIDs = selectedContacts.map((c) => c.PersonID);
-                    const availablePeopleOptions = canOnlyBeRelatedOnce
-                        ? allPeopleOptions
-                        : allPeopleOptions.filter((p) => !selectedPersonIDs.includes(p.Value as number));
+                    const availablePeopleOptions = canOnlyBeRelatedOnce ? allPeopleOptions : allPeopleOptions.filter((p) => !selectedPersonIDs.includes(p.Value as number));
 
                     return {
                         relationshipType: rt,
@@ -227,15 +225,10 @@ export class ContactsStepComponent extends WorkflowStepBase implements OnInit {
             }
         }
 
-        const request: ProjectContactsStepRequestDto = {
+        const request: ProjectContactsStepRequest = {
             Contacts: requestItems,
         };
 
-        this.saveStep(
-            (projectID) => this.projectService.saveContactsStepProject(projectID, request),
-            "Contacts saved successfully.",
-            "Failed to save contacts.",
-            navigate
-        );
+        this.saveStep((projectID) => this.projectService.saveCreateContactsStepProject(projectID, request), "Contacts saved successfully.", "Failed to save contacts.", navigate);
     }
 }

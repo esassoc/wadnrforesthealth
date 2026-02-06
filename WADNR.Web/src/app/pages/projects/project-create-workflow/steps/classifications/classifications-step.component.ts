@@ -4,13 +4,13 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { combineLatest, map, Observable, of, shareReplay, startWith, switchMap } from "rxjs";
 import { catchError } from "rxjs/operators";
 
-import { WorkflowStepBase } from "src/app/shared/components/workflow/workflow-step-base";
+import { CreateWorkflowStepBase } from "src/app/shared/components/workflow/create-workflow-step-base";
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { LookupService } from "src/app/shared/generated/api/lookup.service";
-import { ProjectClassificationsStepDto } from "src/app/shared/generated/model/project-classifications-step-dto";
-import { ProjectClassificationsStepRequestDto } from "src/app/shared/generated/model/project-classifications-step-request-dto";
+import { ProjectClassificationsStep } from "src/app/shared/generated/model/project-classifications-step";
+import { ProjectClassificationsStepRequest } from "src/app/shared/generated/model/project-classifications-step-request";
 import { ProjectClassificationRequestItem } from "src/app/shared/generated/model/project-classification-request-item";
 import { ClassificationSystemWithClassifications } from "src/app/shared/generated/model/classification-system-with-classifications";
 import { Alert } from "src/app/shared/models/alert";
@@ -26,24 +26,18 @@ interface ClassificationSelection {
 
 interface ClassificationsViewModel {
     isLoading: boolean;
-    data: ProjectClassificationsStepDto | null;
+    data: ProjectClassificationsStep | null;
     classificationSystems: ClassificationSystemWithClassifications[];
 }
 
 @Component({
     selector: "classifications-step",
     standalone: true,
-    imports: [
-        CommonModule,
-        AsyncPipe,
-        ReactiveFormsModule,
-        WorkflowStepActionsComponent,
-        FormFieldComponent
-    ],
+    imports: [CommonModule, AsyncPipe, ReactiveFormsModule, WorkflowStepActionsComponent, FormFieldComponent],
     templateUrl: "./classifications-step.component.html",
-    styleUrls: ["./classifications-step.component.scss"]
+    styleUrls: ["./classifications-step.component.scss"],
 })
-export class ClassificationsStepComponent extends WorkflowStepBase implements OnInit {
+export class ClassificationsStepComponent extends CreateWorkflowStepBase implements OnInit {
     readonly nextStep = "photos";
 
     public FormFieldType = FormFieldType;
@@ -76,7 +70,7 @@ export class ClassificationsStepComponent extends WorkflowStepBase implements On
                 if (id == null || Number.isNaN(id)) {
                     return of(null);
                 }
-                return this.projectService.getClassificationsStepProject(id).pipe(
+                return this.projectService.getCreateClassificationsStepProject(id).pipe(
                     catchError(() => {
                         this.alertService.pushAlert(new Alert("Failed to load classifications data.", AlertContext.Danger, true));
                         return of(null);
@@ -96,7 +90,7 @@ export class ClassificationsStepComponent extends WorkflowStepBase implements On
         );
     }
 
-    private populateSelections(classificationSystems: ClassificationSystemWithClassifications[], data: ProjectClassificationsStepDto | null): void {
+    private populateSelections(classificationSystems: ClassificationSystemWithClassifications[], data: ProjectClassificationsStep | null): void {
         this.selections.clear();
 
         // First, build a map from all available classifications (disabled by default)
@@ -108,7 +102,7 @@ export class ClassificationsStepComponent extends WorkflowStepBase implements On
                     selected: false,
                     notesControl: control,
                     classificationID: classification.ClassificationID!,
-                    classificationSystemID: system.ClassificationSystemID!
+                    classificationSystemID: system.ClassificationSystemID!,
                 });
             }
         }
@@ -155,17 +149,17 @@ export class ClassificationsStepComponent extends WorkflowStepBase implements On
                 requestItems.push({
                     ProjectClassificationID: selection.existingProjectClassificationID,
                     ClassificationID: selection.classificationID,
-                    ProjectClassificationNotes: selection.notesControl.value || null
+                    ProjectClassificationNotes: selection.notesControl.value || null,
                 });
             }
         }
 
-        const request: ProjectClassificationsStepRequestDto = {
-            Classifications: requestItems
+        const request: ProjectClassificationsStepRequest = {
+            Classifications: requestItems,
         };
 
         this.saveStep(
-            (projectID) => this.projectService.saveClassificationsStepProject(projectID, request),
+            (projectID) => this.projectService.saveCreateClassificationsStepProject(projectID, request),
             "Classifications saved successfully.",
             "Failed to save classifications.",
             navigate

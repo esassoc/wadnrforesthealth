@@ -1,11 +1,11 @@
 namespace WADNR.Models.DataTransferObjects;
 
 /// <summary>
-/// DTO for the Expected Funding step of the ProjectCreate wizard.
+/// Response for the Expected Funding step of the Project Create workflow.
 /// Note: Available funding sources should be fetched from GET /lookups/funding-sources
 /// Note: Available fund source allocations should be fetched from GET /fund-source-allocations/lookup
 /// </summary>
-public class ExpectedFundingStepDto
+public class ExpectedFundingStep
 {
     public int ProjectID { get; set; }
     public decimal? EstimatedTotalCost { get; set; }
@@ -35,9 +35,9 @@ public class FundSourceAllocationRequestStepItem
 }
 
 /// <summary>
-/// Request DTO for saving the Expected Funding step.
+/// Request for saving the Expected Funding step.
 /// </summary>
-public class ExpectedFundingStepRequestDto
+public class ExpectedFundingStepRequest
 {
     public decimal? EstimatedTotalCost { get; set; }
     public string? ProjectFundingSourceNotes { get; set; }

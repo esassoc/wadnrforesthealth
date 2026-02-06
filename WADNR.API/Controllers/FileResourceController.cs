@@ -91,7 +91,7 @@ public class FileResourceController(
         //_logger.LogError(message);
         //return NotFound(message);
 
-        if (apiKey != Configuration.LTInfoApiKey)
+        if (apiKey != Configuration.WadnrApiKey)
         {
             return new UnauthorizedResult();
         }

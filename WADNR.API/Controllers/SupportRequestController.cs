@@ -21,7 +21,7 @@ public class SupportRequestController(
     : SitkaController<SupportRequestController>(dbContext, logger, configuration)
 {
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] SupportRequestCreateDto dto)
+    public async Task<IActionResult> Create([FromBody] SupportRequestCreate dto)
     {
         // Get the current person entity
         var currentPerson = await DbContext.People.FindAsync(CallingUser.PersonID);

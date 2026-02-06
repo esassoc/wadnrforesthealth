@@ -1,11 +1,11 @@
 namespace WADNR.Models.DataTransferObjects;
 
 /// <summary>
-/// DTO for the Organizations step of the ProjectCreate wizard.
+/// Response for the Organizations step of the Project Create workflow.
 /// Note: Available relationship types should be fetched from GET /lookups/organization-relationship-types
 /// Note: Available organizations should be fetched from GET /organizations/lookup
 /// </summary>
-public class ProjectOrganizationsStepDto
+public class ProjectOrganizationsStep
 {
     public int ProjectID { get; set; }
     /// <summary>
@@ -28,9 +28,9 @@ public class ProjectOrganizationStepItem
 }
 
 /// <summary>
-/// Request DTO for saving the Organizations step.
+/// Request for saving the Organizations step.
 /// </summary>
-public class ProjectOrganizationsStepRequestDto
+public class ProjectOrganizationsStepRequest
 {
     public List<ProjectOrganizationRequestItem> Organizations { get; set; } = new();
 }

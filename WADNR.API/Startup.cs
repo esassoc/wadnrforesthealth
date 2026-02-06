@@ -106,6 +106,23 @@ namespace WADNR.API
             services.AddScoped<FileService>();
             services.AddScoped<AzureBlobStorageService>();
             services.AddScoped<IAzureStorage, AzureStorage>();
+            services.AddScoped<IProjectUpdateNotificationService, ProjectUpdateNotificationService>();
+
+            #region GDAL API
+            if (!string.IsNullOrEmpty(configuration.GDALAPIBaseUrl))
+            {
+                services.AddHttpClient<GDALAPIService>(c =>
+                {
+                    c.BaseAddress = new Uri(configuration.GDALAPIBaseUrl);
+                    c.Timeout = TimeSpan.FromMinutes(30);
+                }).ConfigurePrimaryHttpMessageHandler(() =>
+                {
+                    var handler = new HttpClientHandler();
+                    handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
+                    return handler;
+                });
+            }
+            #endregion
 
             #region Hangfire
             services.AddHangfire(c => c

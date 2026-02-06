@@ -5,7 +5,7 @@ import { catchError, filter } from "rxjs/operators";
 import { ColDef } from "ag-grid-community";
 import { DialogService } from "@ngneat/dialog";
 
-import { WorkflowStepBase } from "src/app/shared/components/workflow/workflow-step-base";
+import { CreateWorkflowStepBase } from "src/app/shared/components/workflow/create-workflow-step-base";
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { TreatmentService } from "src/app/shared/generated/api/treatment.service";
@@ -27,17 +27,11 @@ interface TreatmentsViewModel {
 @Component({
     selector: "treatments-step",
     standalone: true,
-    imports: [
-        CommonModule,
-        AsyncPipe,
-        WADNRGridComponent,
-        IconComponent,
-        WorkflowStepActionsComponent
-    ],
+    imports: [CommonModule, AsyncPipe, WADNRGridComponent, IconComponent, WorkflowStepActionsComponent],
     templateUrl: "./treatments-step.component.html",
-    styleUrls: ["./treatments-step.component.scss"]
+    styleUrls: ["./treatments-step.component.scss"],
 })
-export class TreatmentsStepComponent extends WorkflowStepBase implements OnInit {
+export class TreatmentsStepComponent extends CreateWorkflowStepBase implements OnInit {
     readonly nextStep = "contacts";
 
     public vm$: Observable<TreatmentsViewModel>;
@@ -65,25 +59,21 @@ export class TreatmentsStepComponent extends WorkflowStepBase implements OnInit 
                     return of({ treatments: [] as TreatmentGridRow[], treatmentAreas: [] as TreatmentAreaLookupItem[] });
                 }
                 return combineLatest({
-                    treatments: this.projectService.listTreatmentsProject(id).pipe(
-                        catchError(() => of([] as TreatmentGridRow[]))
-                    ),
-                    treatmentAreas: this.projectService.listTreatmentAreasProject(id).pipe(
-                        catchError(() => of([] as TreatmentAreaLookupItem[]))
-                    )
+                    treatments: this.projectService.listTreatmentsProject(id).pipe(catchError(() => of([] as TreatmentGridRow[]))),
+                    treatmentAreas: this.projectService.listTreatmentAreasProject(id).pipe(catchError(() => of([] as TreatmentAreaLookupItem[]))),
                 });
             }),
             catchError(() => {
                 this.alertService.pushAlert(new Alert("Failed to load treatments data.", AlertContext.Danger, true));
                 return of({ treatments: [] as TreatmentGridRow[], treatmentAreas: [] as TreatmentAreaLookupItem[] });
             }),
-            map(data => {
+            map((data) => {
                 // Store for use in grid actions
                 this.currentTreatmentAreas = data.treatmentAreas;
                 return {
                     isLoading: false,
                     treatments: data.treatments,
-                    treatmentAreas: data.treatmentAreas
+                    treatmentAreas: data.treatmentAreas,
                 };
             }),
             startWith({ isLoading: true, treatments: [], treatmentAreas: [] } as TreatmentsViewModel),
@@ -120,7 +110,7 @@ export class TreatmentsStepComponent extends WorkflowStepBase implements OnInit 
                     } else if (deleteBtn) {
                         this.deleteTreatment(treatment);
                     }
-                }
+                },
             },
             { headerName: "Treatment Area", field: "TreatmentAreaName", flex: 1, minWidth: 120 },
             { headerName: "Type", field: "TreatmentTypeName", flex: 1, minWidth: 100 },
@@ -131,42 +121,42 @@ export class TreatmentsStepComponent extends WorkflowStepBase implements OnInit 
                 field: "TreatmentStartDate",
                 flex: 1,
                 minWidth: 100,
-                valueFormatter: (params) => this.formatDate(params.value)
+                valueFormatter: (params) => this.formatDate(params.value),
             },
             {
                 headerName: "End Date",
                 field: "TreatmentEndDate",
                 flex: 1,
                 minWidth: 100,
-                valueFormatter: (params) => this.formatDate(params.value)
+                valueFormatter: (params) => this.formatDate(params.value),
             },
             {
                 headerName: "Footprint (Acres)",
                 field: "TreatmentFootprintAcres",
                 flex: 1,
                 minWidth: 100,
-                valueFormatter: (params) => params.value?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? ""
+                valueFormatter: (params) => params.value?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? "",
             },
             {
                 headerName: "Treated (Acres)",
                 field: "TreatmentTreatedAcres",
                 flex: 1,
                 minWidth: 100,
-                valueFormatter: (params) => params.value?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? ""
+                valueFormatter: (params) => params.value?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? "",
             },
             {
                 headerName: "Cost/Acre",
                 field: "CostPerAcre",
                 flex: 1,
                 minWidth: 80,
-                valueFormatter: (params) => params.value != null ? `$${params.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ""
+                valueFormatter: (params) => (params.value != null ? `$${params.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ""),
             },
             {
                 headerName: "Total Cost",
                 field: "TotalCost",
                 flex: 1,
                 minWidth: 80,
-                valueFormatter: (params) => params.value != null ? `$${params.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ""
+                valueFormatter: (params) => (params.value != null ? `$${params.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ""),
             },
             { headerName: "Program", field: "ProgramName", flex: 1, minWidth: 100 },
             {
@@ -174,78 +164,79 @@ export class TreatmentsStepComponent extends WorkflowStepBase implements OnInit 
                 field: "ImportedFromGis",
                 flex: 1,
                 minWidth: 80,
-                valueFormatter: (params) => params.value ? "Yes" : "No"
-            }
+                valueFormatter: (params) => (params.value ? "Yes" : "No"),
+            },
         ];
     }
 
     openAddTreatmentModal(treatmentAreas: TreatmentAreaLookupItem[]): void {
-        this._projectID$.pipe(
-            filter((id): id is number => id != null),
-            take(1)
-        ).subscribe(projectID => {
-            const dialogRef = this.dialogService.open(TreatmentModalComponent, {
-                data: {
-                    mode: "create",
-                    projectID,
-                    treatmentAreas
-                } as TreatmentModalData,
-                width: "700px"
-            });
+        this._projectID$
+            .pipe(
+                filter((id): id is number => id != null),
+                take(1)
+            )
+            .subscribe((projectID) => {
+                const dialogRef = this.dialogService.open(TreatmentModalComponent, {
+                    data: {
+                        mode: "create",
+                        projectID,
+                        treatmentAreas,
+                    } as TreatmentModalData,
+                    width: "700px",
+                });
 
-            dialogRef.afterClosed$.subscribe(result => {
-                if (result) {
-                    this.refresh$.next();
-                }
+                dialogRef.afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refresh$.next();
+                    }
+                });
             });
-        });
     }
 
     openEditTreatmentModal(treatment: TreatmentGridRow): void {
         // First fetch the full treatment detail
         this.treatmentService.getByIDTreatment(treatment.TreatmentID!).subscribe({
             next: (treatmentDetail) => {
-                this._projectID$.pipe(
-                    filter((id): id is number => id != null),
-                    take(1)
-                ).subscribe(projectID => {
-                    const dialogRef = this.dialogService.open(TreatmentModalComponent, {
-                        data: {
-                            mode: "edit",
-                            projectID,
-                            treatment: treatmentDetail,
-                            treatmentAreas: this.currentTreatmentAreas
-                        } as TreatmentModalData,
-                        width: "700px"
-                    });
+                this._projectID$
+                    .pipe(
+                        filter((id): id is number => id != null),
+                        take(1)
+                    )
+                    .subscribe((projectID) => {
+                        const dialogRef = this.dialogService.open(TreatmentModalComponent, {
+                            data: {
+                                mode: "edit",
+                                projectID,
+                                treatment: treatmentDetail,
+                                treatmentAreas: this.currentTreatmentAreas,
+                            } as TreatmentModalData,
+                            width: "700px",
+                        });
 
-                    dialogRef.afterClosed$.subscribe(result => {
-                        if (result) {
-                            this.refresh$.next();
-                        }
+                        dialogRef.afterClosed$.subscribe((result) => {
+                            if (result) {
+                                this.refresh$.next();
+                            }
+                        });
                     });
-                });
             },
             error: (err) => {
                 const message = err?.error ?? err?.message ?? "Failed to load treatment details.";
                 this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-            }
+            },
         });
     }
 
     async deleteTreatment(treatment: TreatmentGridRow): Promise<void> {
-        const treatmentDescription = [
-            treatment.TreatmentTypeName,
-            treatment.TreatmentDetailedActivityTypeName,
-            treatment.TreatmentAreaName
-        ].filter(Boolean).join(" - ") || "this treatment";
+        const treatmentDescription =
+            [treatment.TreatmentTypeName, treatment.TreatmentDetailedActivityTypeName, treatment.TreatmentAreaName].filter(Boolean).join(" - ") || "this treatment";
 
         const confirmed = await this.confirmService.confirm({
             title: "Delete Treatment",
             message: `Are you sure you want to delete "${treatmentDescription}"?`,
             buttonTextYes: "Delete",
             buttonTextNo: "Cancel",
-            buttonClassYes: "btn-danger"
+            buttonClassYes: "btn-danger",
         });
 
         if (confirmed) {
@@ -257,7 +248,7 @@ export class TreatmentsStepComponent extends WorkflowStepBase implements OnInit 
                 error: (err) => {
                     const message = err?.error ?? err?.message ?? "Failed to delete treatment.";
                     this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                }
+                },
             });
         }
     }

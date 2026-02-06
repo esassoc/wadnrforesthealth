@@ -4,3 +4,9 @@ services:
     build:
       context: ..
       dockerfile: WADNR.API/Dockerfile
+
+  wadnr.gdalapi:
+    image: wadnr/gdalapi
+    build:
+      context: ..
+      dockerfile: WADNR.GDALAPI/Dockerfile

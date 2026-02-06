@@ -1,24 +1,38 @@
 .workflow-step-actions {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    border-top: none;
+    flex-direction: column;
+    gap: 0.5rem;
     padding-top: 0;
+
+    &__buttons-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        border: none;
+    }
+
+    &__left {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    &__right {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
 }
 
 .required-note {
     font-size: var(--type-size-100);
-    color: var(--color-text-muted);
+    border: none;
+    border-top: none;
 
     .required-indicator {
         color: var(--red-default);
         font-weight: bold;
     }
-}
-
-.workflow-step-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
 }

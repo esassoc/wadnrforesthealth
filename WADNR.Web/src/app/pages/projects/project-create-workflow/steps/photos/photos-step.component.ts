@@ -1,10 +1,10 @@
 import { Component, OnInit } from "@angular/core";
-import { AsyncPipe, CommonModule, DecimalPipe } from "@angular/common";
+import { AsyncPipe, CommonModule } from "@angular/common";
 import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, startWith, switchMap, take } from "rxjs";
 import { catchError, filter } from "rxjs/operators";
 import { DialogService } from "@ngneat/dialog";
 
-import { WorkflowStepBase } from "src/app/shared/components/workflow/workflow-step-base";
+import { CreateWorkflowStepBase } from "src/app/shared/components/workflow/create-workflow-step-base";
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectImageService } from "src/app/shared/generated/api/project-image.service";
@@ -27,17 +27,11 @@ interface PhotosViewModel {
 @Component({
     selector: "photos-step",
     standalone: true,
-    imports: [
-        CommonModule,
-        AsyncPipe,
-        DecimalPipe,
-        IconComponent,
-        WorkflowStepActionsComponent
-    ],
+    imports: [CommonModule, AsyncPipe, IconComponent, WorkflowStepActionsComponent],
     templateUrl: "./photos-step.component.html",
-    styleUrls: ["./photos-step.component.scss"]
+    styleUrls: ["./photos-step.component.scss"],
 })
-export class PhotosStepComponent extends WorkflowStepBase implements OnInit {
+export class PhotosStepComponent extends CreateWorkflowStepBase implements OnInit {
     readonly nextStep = "documents-notes";
 
     public vm$: Observable<PhotosViewModel>;
@@ -84,7 +78,7 @@ export class PhotosStepComponent extends WorkflowStepBase implements OnInit {
         this.vm$ = combineLatest([photos$, timingOptions$]).pipe(
             map(([photos, timingOptions]) => {
                 // Find current key photo
-                const keyPhoto = photos.find(p => p.IsKeyPhoto);
+                const keyPhoto = photos.find((p) => p.IsKeyPhoto);
                 if (keyPhoto) {
                     this.originalKeyPhotoID = keyPhoto.ProjectImageID;
                     this.selectedKeyPhotoID = keyPhoto.ProjectImageID;
@@ -93,7 +87,7 @@ export class PhotosStepComponent extends WorkflowStepBase implements OnInit {
                 return {
                     isLoading: false,
                     photos,
-                    timingOptions
+                    timingOptions,
                 };
             }),
             startWith({ isLoading: true, photos: [], timingOptions: [] } as PhotosViewModel),
@@ -123,48 +117,52 @@ export class PhotosStepComponent extends WorkflowStepBase implements OnInit {
     }
 
     openAddPhotoModal(timingOptions: ProjectImageTimingLookupItem[]): void {
-        this._projectID$.pipe(
-            filter((id): id is number => id != null),
-            take(1)
-        ).subscribe(projectID => {
-            const dialogRef = this.dialogService.open(ProjectImageModalComponent, {
-                data: {
-                    mode: "create",
-                    projectID,
-                    timingOptions
-                } as ProjectImageModalData,
-                width: "700px"
-            });
+        this._projectID$
+            .pipe(
+                filter((id): id is number => id != null),
+                take(1)
+            )
+            .subscribe((projectID) => {
+                const dialogRef = this.dialogService.open(ProjectImageModalComponent, {
+                    data: {
+                        mode: "create",
+                        projectID,
+                        timingOptions,
+                    } as ProjectImageModalData,
+                    width: "700px",
+                });
 
-            dialogRef.afterClosed$.subscribe(result => {
-                if (result) {
-                    this.refresh$.next();
-                }
+                dialogRef.afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refresh$.next();
+                    }
+                });
             });
-        });
     }
 
     openEditPhotoModal(photo: ProjectImageGridRow, timingOptions: ProjectImageTimingLookupItem[]): void {
-        this._projectID$.pipe(
-            filter((id): id is number => id != null),
-            take(1)
-        ).subscribe(projectID => {
-            const dialogRef = this.dialogService.open(ProjectImageModalComponent, {
-                data: {
-                    mode: "edit",
-                    projectID,
-                    image: photo,
-                    timingOptions
-                } as ProjectImageModalData,
-                width: "700px"
-            });
+        this._projectID$
+            .pipe(
+                filter((id): id is number => id != null),
+                take(1)
+            )
+            .subscribe((projectID) => {
+                const dialogRef = this.dialogService.open(ProjectImageModalComponent, {
+                    data: {
+                        mode: "edit",
+                        projectID,
+                        image: photo,
+                        timingOptions,
+                    } as ProjectImageModalData,
+                    width: "700px",
+                });
 
-            dialogRef.afterClosed$.subscribe(result => {
-                if (result) {
-                    this.refresh$.next();
-                }
+                dialogRef.afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refresh$.next();
+                    }
+                });
             });
-        });
     }
 
     async deletePhoto(photo: ProjectImageGridRow): Promise<void> {
@@ -173,7 +171,7 @@ export class PhotosStepComponent extends WorkflowStepBase implements OnInit {
             message: `Are you sure you want to delete this photo? (${photo.Caption})`,
             buttonTextYes: "Delete",
             buttonTextNo: "Cancel",
-            buttonClassYes: "btn-danger"
+            buttonClassYes: "btn-danger",
         });
 
         if (confirmed) {
@@ -185,7 +183,7 @@ export class PhotosStepComponent extends WorkflowStepBase implements OnInit {
                 error: (err) => {
                     const message = err?.error ?? err?.message ?? "Failed to delete photo.";
                     this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                }
+                },
             });
         }
     }
@@ -214,7 +212,7 @@ export class PhotosStepComponent extends WorkflowStepBase implements OnInit {
             width: "auto",
             maxWidth: "95vw",
             closeButton: true,
-            enableClose: { escape: true, backdrop: true }
+            enableClose: { escape: true, backdrop: true },
         });
     }
 
@@ -234,7 +232,7 @@ export class PhotosStepComponent extends WorkflowStepBase implements OnInit {
             error: (err) => {
                 const message = err?.error ?? err?.message ?? "Failed to set key photo.";
                 this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-            }
+            },
         });
     }
 

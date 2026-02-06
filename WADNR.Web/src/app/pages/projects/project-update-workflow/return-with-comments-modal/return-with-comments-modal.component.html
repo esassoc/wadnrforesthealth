@@ -1,0 +1,62 @@
+<div class="modal">
+    <div class="modal-header">
+        <h3>Return Update for Revisions</h3>
+    </div>
+
+    <div class="modal-body">
+        <p class="mb-3">Return the update for <strong>{{ projectName }}</strong> to the submitter for revisions. You may optionally provide comments for specific sections.</p>
+
+        <form [formGroup]="form">
+            <h4>Project Setup</h4>
+
+            <form-field
+                [formControl]="form.controls.BasicsComment"
+                fieldLabel="Basics"
+                [type]="FormFieldType.Textarea"
+                placeholder="Optional comments for Basics section...">
+            </form-field>
+
+            <form-field
+                [formControl]="form.controls.LocationSimpleComment"
+                fieldLabel="Location (Simple) & Geographic Areas"
+                [type]="FormFieldType.Textarea"
+                placeholder="Optional comments for Location (Simple), Priority Landscapes, DNR Upland Regions, and Counties...">
+            </form-field>
+
+            <form-field
+                [formControl]="form.controls.LocationDetailedComment"
+                fieldLabel="Location (Detailed)"
+                [type]="FormFieldType.Textarea"
+                placeholder="Optional comments for Location (Detailed) section...">
+            </form-field>
+
+            <h4>Additional Data</h4>
+
+            <form-field
+                [formControl]="form.controls.ExpectedFundingComment"
+                fieldLabel="Expected Funding"
+                [type]="FormFieldType.Textarea"
+                placeholder="Optional comments for Expected Funding section...">
+            </form-field>
+
+            <form-field
+                [formControl]="form.controls.ContactsComment"
+                fieldLabel="Contacts"
+                [type]="FormFieldType.Textarea"
+                placeholder="Optional comments for Contacts section...">
+            </form-field>
+
+            <form-field
+                [formControl]="form.controls.OrganizationsComment"
+                fieldLabel="Organizations"
+                [type]="FormFieldType.Textarea"
+                placeholder="Optional comments for Organizations section...">
+            </form-field>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+        <button type="button" class="btn btn-warning" (click)="submit()">Return for Revisions</button>
+    </div>
+</div>

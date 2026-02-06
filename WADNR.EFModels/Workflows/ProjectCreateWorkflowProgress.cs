@@ -70,7 +70,7 @@ public static class ProjectCreateWorkflowProgress
     /// <summary>
     /// Gets the workflow progress for a project, including step completion states and submit eligibility.
     /// </summary>
-    public static async Task<ProjectCreateWorkflowProgressDto?> GetProgressAsync(WADNRDbContext dbContext, int projectID)
+    public static async Task<CreateWorkflowProgressResponse?> GetProgressAsync(WADNRDbContext dbContext, int projectID)
     {
         return await GetProgressForUserAsync(dbContext, projectID, null);
     }
@@ -78,7 +78,7 @@ public static class ProjectCreateWorkflowProgress
     /// <summary>
     /// Gets the workflow progress for a project, including user-specific permission flags.
     /// </summary>
-    public static async Task<ProjectCreateWorkflowProgressDto?> GetProgressForUserAsync(
+    public static async Task<CreateWorkflowProgressResponse?> GetProgressForUserAsync(
         WADNRDbContext dbContext,
         int projectID,
         PersonDetail? callingUser)
@@ -97,7 +97,7 @@ public static class ProjectCreateWorkflowProgress
             };
         }
 
-        var dto = new ProjectCreateWorkflowProgressDto
+        var dto = new CreateWorkflowProgressResponse
         {
             ProjectID = ctx.ProjectID,
             ProjectName = ctx.ProjectName,
@@ -120,7 +120,7 @@ public static class ProjectCreateWorkflowProgress
     /// Populates user permission flags based on calling user's role and project state.
     /// </summary>
     private static void PopulateUserPermissionFlags(
-        ProjectCreateWorkflowProgressDto dto,
+        CreateWorkflowProgressResponse dto,
         ProjectCreateWorkflowContext ctx,
         PersonDetail? callingUser,
         WADNRDbContext dbContext)
@@ -335,19 +335,9 @@ public static class ProjectCreateWorkflowProgress
 }
 
 /// <summary>
-/// Status of a single workflow step.
+/// Response for Create workflow progress returned by the API.
 /// </summary>
-public class WorkflowStepStatus
-{
-    public bool IsComplete { get; set; }
-    public bool IsDisabled { get; set; }
-    public bool IsRequired { get; set; }
-}
-
-/// <summary>
-/// DTO for workflow progress returned by the API.
-/// </summary>
-public class ProjectCreateWorkflowProgressDto
+public class CreateWorkflowProgressResponse
 {
     public int ProjectID { get; set; }
     public string ProjectName { get; set; } = string.Empty;

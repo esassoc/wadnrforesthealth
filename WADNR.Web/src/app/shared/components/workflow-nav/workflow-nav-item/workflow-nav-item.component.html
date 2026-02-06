@@ -12,5 +12,8 @@
     <div [class.required]="required">
       <ng-content></ng-content>
     </div>
+    @if (hasChanges) {
+      <icon icon="Flag" class="has-changes-flag"></icon>
+    }
   </a>
 </li>

@@ -17,11 +17,21 @@ services:
       - RECAPTCHA_VERIFY_URL=${RECAPTCHA_VERIFY_URL}
       - RECAPTCHA_SCORE_THRESHOLD=${RECAPTCHA_SCORE_THRESHOLD}
       - SitkaCaptureServiceUrl=${SitkaCaptureServiceUrl}
+      - WebUrl=${WebUrl}
+      - GDALAPIBaseUrl=http://wadnr.gdalapi:8080
     ports:
       - "3211:8080"
       - "3212:8081"
     volumes:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  wadnr.gdalapi:
+    hostname: gdalapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+    ports:
+      - "3213:8080"
 
   geoserver:
     container_name: wadnr_geoserver

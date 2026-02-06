@@ -57,6 +57,13 @@ export class ProjectDetail {
     UserCanDelete?: boolean;
     UserCanApprove?: boolean;
     UserIsAdmin?: boolean;
+    CanViewFactSheet?: boolean;
+    CanStartUpdate?: boolean;
+    HasExistingUpdateBatch?: boolean;
+    LatestUpdateBatchStateID?: number | null;
+    LatestUpdateBatchStateName?: string | null;
+    IsInLandownerAssistanceProgram?: boolean;
+    ExistsInImportBlockList?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -99,6 +106,13 @@ export interface ProjectDetailForm {
     UserCanDelete?: FormControl<boolean>;
     UserCanApprove?: FormControl<boolean>;
     UserIsAdmin?: FormControl<boolean>;
+    CanViewFactSheet?: FormControl<boolean>;
+    CanStartUpdate?: FormControl<boolean>;
+    HasExistingUpdateBatch?: FormControl<boolean>;
+    LatestUpdateBatchStateID?: FormControl<number>;
+    LatestUpdateBatchStateName?: FormControl<string>;
+    IsInLandownerAssistanceProgram?: FormControl<boolean>;
+    ExistsInImportBlockList?: FormControl<boolean>;
 }
 
 export class ProjectDetailFormControls { 
@@ -453,6 +467,76 @@ export class ProjectDetailFormControls {
         }
     );
     public static UserIsAdmin = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CanViewFactSheet = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CanStartUpdate = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static HasExistingUpdateBatch = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static LatestUpdateBatchStateID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static LatestUpdateBatchStateName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static IsInLandownerAssistanceProgram = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ExistsInImportBlockList = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

@@ -12,12 +12,12 @@ public static class ProjectWorkflowSteps
 {
     #region Basics Step
 
-    public static async Task<ProjectBasicsStepDto?> GetBasicsStepAsync(WADNRDbContext dbContext, int projectID)
+    public static async Task<ProjectBasicsStep?> GetBasicsStepAsync(WADNRDbContext dbContext, int projectID)
     {
         return await dbContext.Projects
             .AsNoTracking()
             .Where(p => p.ProjectID == projectID)
-            .Select(p => new ProjectBasicsStepDto
+            .Select(p => new ProjectBasicsStep
             {
                 ProjectID = p.ProjectID,
                 ProjectName = p.ProjectName,
@@ -38,7 +38,7 @@ public static class ProjectWorkflowSteps
             .SingleOrDefaultAsync();
     }
 
-    public static async Task<ProjectBasicsStepDto> CreateProjectFromBasicsStepAsync(WADNRDbContext dbContext, ProjectBasicsStepRequestDto request, int callingPersonID)
+    public static async Task<ProjectBasicsStep> CreateProjectFromBasicsStepAsync(WADNRDbContext dbContext, ProjectBasicsStepRequest request, int callingPersonID)
     {
         // Generate FHT project number
         var fhtProjectNumber = await GenerateFhtProjectNumberAsync(dbContext);
@@ -96,7 +96,7 @@ public static class ProjectWorkflowSteps
         return (await GetBasicsStepAsync(dbContext, project.ProjectID))!;
     }
 
-    public static async Task<ProjectBasicsStepDto?> SaveBasicsStepAsync(WADNRDbContext dbContext, int projectID, ProjectBasicsStepRequestDto request, int callingPersonID)
+    public static async Task<ProjectBasicsStep?> SaveBasicsStepAsync(WADNRDbContext dbContext, int projectID, ProjectBasicsStepRequest request, int callingPersonID)
     {
         var project = await dbContext.Projects
             .Include(p => p.ProjectPrograms)
@@ -196,12 +196,12 @@ public static class ProjectWorkflowSteps
 
     #region Location Simple Step
 
-    public static async Task<LocationSimpleStepDto?> GetLocationSimpleStepAsync(WADNRDbContext dbContext, int projectID)
+    public static async Task<LocationSimpleStep?> GetLocationSimpleStepAsync(WADNRDbContext dbContext, int projectID)
     {
         return await dbContext.Projects
             .AsNoTracking()
             .Where(p => p.ProjectID == projectID)
-            .Select(p => new LocationSimpleStepDto
+            .Select(p => new LocationSimpleStep
             {
                 ProjectID = p.ProjectID,
                 Latitude = p.ProjectLocationPoint != null ? p.ProjectLocationPoint.Coordinate.Y : null,
@@ -212,7 +212,7 @@ public static class ProjectWorkflowSteps
             .SingleOrDefaultAsync();
     }
 
-    public static async Task<LocationSimpleStepDto?> SaveLocationSimpleStepAsync(WADNRDbContext dbContext, int projectID, LocationSimpleStepRequestDto request)
+    public static async Task<LocationSimpleStep?> SaveLocationSimpleStepAsync(WADNRDbContext dbContext, int projectID, LocationSimpleStepRequest request)
     {
         var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.ProjectID == projectID);
         if (project == null) return null;
@@ -235,17 +235,18 @@ public static class ProjectWorkflowSteps
 
     #region Location Detailed Step
 
-    public static async Task<LocationDetailedStepDto?> GetLocationDetailedStepAsync(WADNRDbContext dbContext, int projectID)
+    public static async Task<LocationDetailedStep?> GetLocationDetailedStepAsync(WADNRDbContext dbContext, int projectID)
     {
         var project = await dbContext.Projects
             .AsNoTracking()
             .Include(p => p.ProjectLocations)
+                .ThenInclude(pl => pl.Treatments)
             .Include(p => p.ProjectLocationStagings)
             .FirstOrDefaultAsync(p => p.ProjectID == projectID);
 
         if (project == null) return null;
 
-        return new LocationDetailedStepDto
+        return new LocationDetailedStep
         {
             ProjectID = projectID,
             Locations = project.ProjectLocations.Select(pl => new ProjectLocationItem
@@ -259,7 +260,9 @@ public static class ProjectWorkflowSteps
                 ProjectLocationNotes = pl.ProjectLocationNotes,
                 ProjectLocationName = pl.ProjectLocationName,
                 GeoJson = pl.ProjectLocationGeometry?.AsText(),
-                AreaInAcres = pl.ProjectLocationGeometry != null ? pl.ProjectLocationGeometry.Area * 247.105 : null // Convert sq degrees to acres (approximate)
+                AreaInAcres = pl.ProjectLocationGeometry != null ? pl.ProjectLocationGeometry.Area * 247.105 : null, // Convert sq degrees to acres (approximate)
+                HasTreatments = pl.Treatments.Any(),
+                IsFromArcGis = pl.ArcGisObjectID.HasValue
             }).ToList(),
             StagedLocations = project.ProjectLocationStagings.Select(pls => new ProjectLocationStagingItem
             {
@@ -276,10 +279,11 @@ public static class ProjectWorkflowSteps
         };
     }
 
-    public static async Task<LocationDetailedStepDto?> SaveLocationDetailedStepAsync(WADNRDbContext dbContext, int projectID, LocationDetailedStepRequestDto request)
+    public static async Task<LocationDetailedStep?> SaveLocationDetailedStepAsync(WADNRDbContext dbContext, int projectID, LocationDetailedStepRequest request)
     {
         var project = await dbContext.Projects
             .Include(p => p.ProjectLocations)
+                .ThenInclude(pl => pl.Treatments)
             .FirstOrDefaultAsync(p => p.ProjectID == projectID);
 
         if (project == null) return null;
@@ -288,8 +292,25 @@ public static class ProjectWorkflowSteps
         var existingLocationIDs = project.ProjectLocations.Select(pl => pl.ProjectLocationID).ToHashSet();
         var requestLocationIDs = request.Locations.Where(l => l.ProjectLocationID.HasValue).Select(l => l.ProjectLocationID!.Value).ToHashSet();
 
-        // Remove locations not in request
+        // Remove locations not in request — but guard against deleting locations with treatments
         var toRemove = project.ProjectLocations.Where(pl => !requestLocationIDs.Contains(pl.ProjectLocationID)).ToList();
+        var locationsWithTreatments = toRemove.Where(pl => pl.Treatments.Any()).ToList();
+        if (locationsWithTreatments.Count > 0)
+        {
+            var names = string.Join(", ", locationsWithTreatments.Select(pl => $"'{pl.ProjectLocationName}'"));
+            throw new InvalidOperationException($"Cannot delete project location(s) {names} because they have associated Treatments. Remove the Treatments first.");
+        }
+
+        // Validate that locations with treatments keep their type as Treatment Area
+        foreach (var locRequest in request.Locations.Where(l => l.ProjectLocationID.HasValue))
+        {
+            var existing = project.ProjectLocations.FirstOrDefault(pl => pl.ProjectLocationID == locRequest.ProjectLocationID!.Value);
+            if (existing != null && existing.Treatments.Any() && locRequest.ProjectLocationTypeID != existing.ProjectLocationTypeID)
+            {
+                throw new InvalidOperationException($"Cannot change the location type of '{existing.ProjectLocationName}' because it has associated Treatments.");
+            }
+        }
+
         dbContext.ProjectLocations.RemoveRange(toRemove);
 
         // Update existing and add new
@@ -340,11 +361,89 @@ public static class ProjectWorkflowSteps
         return await GetLocationDetailedStepAsync(dbContext, projectID);
     }
 
+    public static async Task<LocationDetailedStep?> ApproveGdbImportAsync(WADNRDbContext dbContext, int projectID, int personID, GdbApproveRequest request)
+    {
+        var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.ProjectID == projectID);
+        if (project == null) return null;
+
+        var stagingRows = await dbContext.ProjectLocationStagings
+            .Where(s => s.ProjectID == projectID && s.PersonID == personID)
+            .ToListAsync();
+
+        var layerLookup = request.Layers
+            .Where(l => l.ShouldImport)
+            .ToDictionary(l => l.FeatureClassName, StringComparer.OrdinalIgnoreCase);
+
+        var jsonOptions = new System.Text.Json.JsonSerializerOptions();
+        jsonOptions.Converters.Add(new NetTopologySuite.IO.Converters.GeoJsonConverterFactory());
+
+        foreach (var staging in stagingRows)
+        {
+            if (!layerLookup.TryGetValue(staging.FeatureClassName, out var approval))
+            {
+                continue;
+            }
+
+            var featureCollection = System.Text.Json.JsonSerializer.Deserialize<NetTopologySuite.Features.FeatureCollection>(staging.GeoJson, jsonOptions);
+            if (featureCollection == null) continue;
+
+            var locationIndex = 1;
+            foreach (var feature in featureCollection)
+            {
+                var geometry = feature.Geometry;
+                if (geometry == null) continue;
+                geometry.SRID = 4326;
+
+                // Use selected property as name, falling back to feature class + index
+                string locationName = null;
+                if (!string.IsNullOrEmpty(approval.SelectedPropertyName) && feature.Attributes != null)
+                {
+                    var propValue = feature.Attributes[approval.SelectedPropertyName];
+                    if (propValue != null)
+                    {
+                        locationName = propValue.ToString();
+                    }
+                }
+
+                if (string.IsNullOrEmpty(locationName))
+                {
+                    locationName = $"{staging.FeatureClassName} {locationIndex}";
+                }
+
+                // Truncate to DB max length
+                if (locationName.Length > 100)
+                {
+                    locationName = locationName.Substring(0, 100);
+                }
+
+                dbContext.ProjectLocations.Add(new ProjectLocation
+                {
+                    ProjectID = projectID,
+                    ProjectLocationTypeID = (int)ProjectLocationTypeEnum.ProjectArea,
+                    ProjectLocationName = locationName,
+                    ProjectLocationGeometry = geometry,
+                    ImportedFromGisUpload = true
+                });
+
+                locationIndex++;
+            }
+        }
+
+        // Clean up staging rows
+        dbContext.ProjectLocationStagings.RemoveRange(stagingRows);
+        await dbContext.SaveChangesAsync();
+
+        // Auto-populate geographic regions based on updated locations
+        await AutoAssignGeographicRegionsAsync(dbContext, projectID);
+
+        return await GetLocationDetailedStepAsync(dbContext, projectID);
+    }
+
     #endregion
 
     #region Geographic Assignment Steps
 
-    public static async Task<GeographicAssignmentStepDto?> GetPriorityLandscapesStepAsync(WADNRDbContext dbContext, int projectID)
+    public static async Task<GeographicAssignmentStep?> GetPriorityLandscapesStepAsync(WADNRDbContext dbContext, int projectID)
     {
         var project = await dbContext.Projects
             .AsNoTracking()
@@ -363,7 +462,7 @@ public static class ProjectWorkflowSteps
             })
             .ToListAsync();
 
-        return new GeographicAssignmentStepDto
+        return new GeographicAssignmentStep
         {
             ProjectID = projectID,
             SelectedIDs = project.ProjectPriorityLandscapes.Select(ppl => ppl.PriorityLandscapeID).ToList(),
@@ -372,7 +471,7 @@ public static class ProjectWorkflowSteps
         };
     }
 
-    public static async Task<GeographicAssignmentStepDto?> SavePriorityLandscapesStepAsync(WADNRDbContext dbContext, int projectID, GeographicOverrideRequestDto request)
+    public static async Task<GeographicAssignmentStep?> SavePriorityLandscapesStepAsync(WADNRDbContext dbContext, int projectID, GeographicOverrideRequest request)
     {
         var project = await dbContext.Projects
             .Include(p => p.ProjectPriorityLandscapes)
@@ -405,7 +504,7 @@ public static class ProjectWorkflowSteps
         return await GetPriorityLandscapesStepAsync(dbContext, projectID);
     }
 
-    public static async Task<GeographicAssignmentStepDto?> GetDnrUplandRegionsStepAsync(WADNRDbContext dbContext, int projectID)
+    public static async Task<GeographicAssignmentStep?> GetDnrUplandRegionsStepAsync(WADNRDbContext dbContext, int projectID)
     {
         var project = await dbContext.Projects
             .AsNoTracking()
@@ -424,7 +523,7 @@ public static class ProjectWorkflowSteps
             })
             .ToListAsync();
 
-        return new GeographicAssignmentStepDto
+        return new GeographicAssignmentStep
         {
             ProjectID = projectID,
             SelectedIDs = project.ProjectRegions.Select(pr => pr.DNRUplandRegionID).ToList(),
@@ -433,7 +532,7 @@ public static class ProjectWorkflowSteps
         };
     }
 
-    public static async Task<GeographicAssignmentStepDto?> SaveDnrUplandRegionsStepAsync(WADNRDbContext dbContext, int projectID, GeographicOverrideRequestDto request)
+    public static async Task<GeographicAssignmentStep?> SaveDnrUplandRegionsStepAsync(WADNRDbContext dbContext, int projectID, GeographicOverrideRequest request)
     {
         var project = await dbContext.Projects
             .Include(p => p.ProjectRegions)
@@ -466,7 +565,7 @@ public static class ProjectWorkflowSteps
         return await GetDnrUplandRegionsStepAsync(dbContext, projectID);
     }
 
-    public static async Task<GeographicAssignmentStepDto?> GetCountiesStepAsync(WADNRDbContext dbContext, int projectID)
+    public static async Task<GeographicAssignmentStep?> GetCountiesStepAsync(WADNRDbContext dbContext, int projectID)
     {
         var project = await dbContext.Projects
             .AsNoTracking()
@@ -485,7 +584,7 @@ public static class ProjectWorkflowSteps
             })
             .ToListAsync();
 
-        return new GeographicAssignmentStepDto
+        return new GeographicAssignmentStep
         {
             ProjectID = projectID,
             SelectedIDs = project.ProjectCounties.Select(pc => pc.CountyID).ToList(),
@@ -494,7 +593,7 @@ public static class ProjectWorkflowSteps
         };
     }
 
-    public static async Task<GeographicAssignmentStepDto?> SaveCountiesStepAsync(WADNRDbContext dbContext, int projectID, GeographicOverrideRequestDto request)
+    public static async Task<GeographicAssignmentStep?> SaveCountiesStepAsync(WADNRDbContext dbContext, int projectID, GeographicOverrideRequest request)
     {
         var project = await dbContext.Projects
             .Include(p => p.ProjectCounties)
@@ -639,12 +738,12 @@ public static class ProjectWorkflowSteps
 
     #region Organizations Step
 
-    public static async Task<ProjectOrganizationsStepDto?> GetOrganizationsStepAsync(WADNRDbContext dbContext, int projectID)
+    public static async Task<ProjectOrganizationsStep?> GetOrganizationsStepAsync(WADNRDbContext dbContext, int projectID)
     {
         return await dbContext.Projects
             .AsNoTracking()
             .Where(p => p.ProjectID == projectID)
-            .Select(p => new ProjectOrganizationsStepDto
+            .Select(p => new ProjectOrganizationsStep
             {
                 ProjectID = p.ProjectID,
                 Organizations = p.ProjectOrganizations.Select(po => new ProjectOrganizationStepItem
@@ -660,7 +759,7 @@ public static class ProjectWorkflowSteps
             .SingleOrDefaultAsync();
     }
 
-    public static async Task<ProjectOrganizationsStepDto?> SaveOrganizationsStepAsync(WADNRDbContext dbContext, int projectID, ProjectOrganizationsStepRequestDto request)
+    public static async Task<ProjectOrganizationsStep?> SaveOrganizationsStepAsync(WADNRDbContext dbContext, int projectID, ProjectOrganizationsStepRequest request)
     {
         var project = await dbContext.Projects
             .Include(p => p.ProjectOrganizations)
@@ -707,12 +806,12 @@ public static class ProjectWorkflowSteps
 
     #region Contacts Step
 
-    public static async Task<ProjectContactsStepDto?> GetContactsStepAsync(WADNRDbContext dbContext, int projectID)
+    public static async Task<ProjectContactsStep?> GetContactsStepAsync(WADNRDbContext dbContext, int projectID)
     {
         return await dbContext.Projects
             .AsNoTracking()
             .Where(p => p.ProjectID == projectID)
-            .Select(p => new ProjectContactsStepDto
+            .Select(p => new ProjectContactsStep
             {
                 ProjectID = p.ProjectID,
                 Contacts = p.ProjectPeople.Select(pp => new ProjectContactStepItem
@@ -727,7 +826,7 @@ public static class ProjectWorkflowSteps
             .SingleOrDefaultAsync();
     }
 
-    public static async Task<ProjectContactsStepDto?> SaveContactsStepAsync(WADNRDbContext dbContext, int projectID, ProjectContactsStepRequestDto request)
+    public static async Task<ProjectContactsStep?> SaveContactsStepAsync(WADNRDbContext dbContext, int projectID, ProjectContactsStepRequest request)
     {
         var project = await dbContext.Projects
             .Include(p => p.ProjectPeople)
@@ -774,7 +873,7 @@ public static class ProjectWorkflowSteps
 
     #region Expected Funding Step
 
-    public static async Task<ExpectedFundingStepDto?> GetExpectedFundingStepAsync(WADNRDbContext dbContext, int projectID)
+    public static async Task<ExpectedFundingStep?> GetExpectedFundingStepAsync(WADNRDbContext dbContext, int projectID)
     {
         var project = await dbContext.Projects
             .AsNoTracking()
@@ -786,7 +885,7 @@ public static class ProjectWorkflowSteps
 
         if (project == null) return null;
 
-        var dto = new ExpectedFundingStepDto
+        var dto = new ExpectedFundingStep
         {
             ProjectID = projectID,
             EstimatedTotalCost = project.EstimatedTotalCost,
@@ -805,7 +904,7 @@ public static class ProjectWorkflowSteps
         return dto;
     }
 
-    public static async Task<ExpectedFundingStepDto?> SaveExpectedFundingStepAsync(WADNRDbContext dbContext, int projectID, ExpectedFundingStepRequestDto request)
+    public static async Task<ExpectedFundingStep?> SaveExpectedFundingStepAsync(WADNRDbContext dbContext, int projectID, ExpectedFundingStepRequest request)
     {
         var project = await dbContext.Projects
             .Include(p => p.ProjectFundingSources)
@@ -870,12 +969,12 @@ public static class ProjectWorkflowSteps
 
     #region Classifications Step
 
-    public static async Task<ProjectClassificationsStepDto?> GetClassificationsStepAsync(WADNRDbContext dbContext, int projectID)
+    public static async Task<ProjectClassificationsStep?> GetClassificationsStepAsync(WADNRDbContext dbContext, int projectID)
     {
         return await dbContext.Projects
             .AsNoTracking()
             .Where(p => p.ProjectID == projectID)
-            .Select(p => new ProjectClassificationsStepDto
+            .Select(p => new ProjectClassificationsStep
             {
                 ProjectID = p.ProjectID,
                 Classifications = p.ProjectClassifications.Select(pc => new ProjectClassificationStepItem
@@ -891,7 +990,7 @@ public static class ProjectWorkflowSteps
             .SingleOrDefaultAsync();
     }
 
-    public static async Task<ProjectClassificationsStepDto?> SaveClassificationsStepAsync(WADNRDbContext dbContext, int projectID, ProjectClassificationsStepRequestDto request)
+    public static async Task<ProjectClassificationsStep?> SaveClassificationsStepAsync(WADNRDbContext dbContext, int projectID, ProjectClassificationsStepRequest request)
     {
         var project = await dbContext.Projects
             .Include(p => p.ProjectClassifications)
@@ -934,12 +1033,12 @@ public static class ProjectWorkflowSteps
 
     #region State Transitions
 
-    public static async Task<WorkflowStateTransitionResponseDto> SubmitForApprovalAsync(WADNRDbContext dbContext, int projectID, int callingPersonID, string? comment)
+    public static async Task<WorkflowStateTransitionResponse> SubmitForApprovalAsync(WADNRDbContext dbContext, int projectID, int callingPersonID, string? comment)
     {
         var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.ProjectID == projectID);
         if (project == null)
         {
-            return new WorkflowStateTransitionResponseDto
+            return new WorkflowStateTransitionResponse
             {
                 ProjectID = projectID,
                 Success = false,
@@ -951,7 +1050,7 @@ public static class ProjectWorkflowSteps
         if (project.ProjectApprovalStatusID != (int)ProjectApprovalStatusEnum.Draft &&
             project.ProjectApprovalStatusID != (int)ProjectApprovalStatusEnum.Returned)
         {
-            return new WorkflowStateTransitionResponseDto
+            return new WorkflowStateTransitionResponse
             {
                 ProjectID = projectID,
                 Success = false,
@@ -963,7 +1062,7 @@ public static class ProjectWorkflowSteps
         var canSubmit = await ProjectCreateWorkflowProgress.CanSubmitAsync(dbContext, projectID);
         if (!canSubmit)
         {
-            return new WorkflowStateTransitionResponseDto
+            return new WorkflowStateTransitionResponse
             {
                 ProjectID = projectID,
                 Success = false,
@@ -978,7 +1077,7 @@ public static class ProjectWorkflowSteps
 
         // TODO: Send notification to project stewards
 
-        return new WorkflowStateTransitionResponseDto
+        return new WorkflowStateTransitionResponse
         {
             ProjectID = projectID,
             NewProjectApprovalStatusID = project.ProjectApprovalStatusID,
@@ -988,12 +1087,12 @@ public static class ProjectWorkflowSteps
         };
     }
 
-    public static async Task<WorkflowStateTransitionResponseDto> ApproveAsync(WADNRDbContext dbContext, int projectID, int callingPersonID, string? comment)
+    public static async Task<WorkflowStateTransitionResponse> ApproveAsync(WADNRDbContext dbContext, int projectID, int callingPersonID, string? comment)
     {
         var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.ProjectID == projectID);
         if (project == null)
         {
-            return new WorkflowStateTransitionResponseDto
+            return new WorkflowStateTransitionResponse
             {
                 ProjectID = projectID,
                 Success = false,
@@ -1003,7 +1102,7 @@ public static class ProjectWorkflowSteps
 
         if (project.ProjectApprovalStatusID != (int)ProjectApprovalStatusEnum.PendingApproval)
         {
-            return new WorkflowStateTransitionResponseDto
+            return new WorkflowStateTransitionResponse
             {
                 ProjectID = projectID,
                 Success = false,
@@ -1019,7 +1118,7 @@ public static class ProjectWorkflowSteps
 
         // TODO: Send approval notification to proposer
 
-        return new WorkflowStateTransitionResponseDto
+        return new WorkflowStateTransitionResponse
         {
             ProjectID = projectID,
             NewProjectApprovalStatusID = project.ProjectApprovalStatusID,
@@ -1029,12 +1128,12 @@ public static class ProjectWorkflowSteps
         };
     }
 
-    public static async Task<WorkflowStateTransitionResponseDto> ReturnAsync(WADNRDbContext dbContext, int projectID, int callingPersonID, string? comment)
+    public static async Task<WorkflowStateTransitionResponse> ReturnAsync(WADNRDbContext dbContext, int projectID, int callingPersonID, string? comment)
     {
         var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.ProjectID == projectID);
         if (project == null)
         {
-            return new WorkflowStateTransitionResponseDto
+            return new WorkflowStateTransitionResponse
             {
                 ProjectID = projectID,
                 Success = false,
@@ -1044,7 +1143,7 @@ public static class ProjectWorkflowSteps
 
         if (project.ProjectApprovalStatusID != (int)ProjectApprovalStatusEnum.PendingApproval)
         {
-            return new WorkflowStateTransitionResponseDto
+            return new WorkflowStateTransitionResponse
             {
                 ProjectID = projectID,
                 Success = false,
@@ -1059,7 +1158,7 @@ public static class ProjectWorkflowSteps
 
         // TODO: Send return notification to proposer
 
-        return new WorkflowStateTransitionResponseDto
+        return new WorkflowStateTransitionResponse
         {
             ProjectID = projectID,
             NewProjectApprovalStatusID = project.ProjectApprovalStatusID,
@@ -1069,12 +1168,12 @@ public static class ProjectWorkflowSteps
         };
     }
 
-    public static async Task<WorkflowStateTransitionResponseDto> RejectAsync(WADNRDbContext dbContext, int projectID, int callingPersonID, string? comment)
+    public static async Task<WorkflowStateTransitionResponse> RejectAsync(WADNRDbContext dbContext, int projectID, int callingPersonID, string? comment)
     {
         var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.ProjectID == projectID);
         if (project == null)
         {
-            return new WorkflowStateTransitionResponseDto
+            return new WorkflowStateTransitionResponse
             {
                 ProjectID = projectID,
                 Success = false,
@@ -1084,7 +1183,7 @@ public static class ProjectWorkflowSteps
 
         if (project.ProjectApprovalStatusID != (int)ProjectApprovalStatusEnum.PendingApproval)
         {
-            return new WorkflowStateTransitionResponseDto
+            return new WorkflowStateTransitionResponse
             {
                 ProjectID = projectID,
                 Success = false,
@@ -1099,7 +1198,7 @@ public static class ProjectWorkflowSteps
 
         // TODO: Send rejection notification to proposer
 
-        return new WorkflowStateTransitionResponseDto
+        return new WorkflowStateTransitionResponse
         {
             ProjectID = projectID,
             NewProjectApprovalStatusID = project.ProjectApprovalStatusID,
@@ -1109,12 +1208,12 @@ public static class ProjectWorkflowSteps
         };
     }
 
-    public static async Task<WorkflowStateTransitionResponseDto> WithdrawAsync(WADNRDbContext dbContext, int projectID, int callingPersonID, string? comment)
+    public static async Task<WorkflowStateTransitionResponse> WithdrawAsync(WADNRDbContext dbContext, int projectID, int callingPersonID, string? comment)
     {
         var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.ProjectID == projectID);
         if (project == null)
         {
-            return new WorkflowStateTransitionResponseDto
+            return new WorkflowStateTransitionResponse
             {
                 ProjectID = projectID,
                 Success = false,
@@ -1124,7 +1223,7 @@ public static class ProjectWorkflowSteps
 
         if (project.ProjectApprovalStatusID != (int)ProjectApprovalStatusEnum.PendingApproval)
         {
-            return new WorkflowStateTransitionResponseDto
+            return new WorkflowStateTransitionResponse
             {
                 ProjectID = projectID,
                 Success = false,
@@ -1137,7 +1236,7 @@ public static class ProjectWorkflowSteps
 
         await dbContext.SaveChangesAsync();
 
-        return new WorkflowStateTransitionResponseDto
+        return new WorkflowStateTransitionResponse
         {
             ProjectID = projectID,
             NewProjectApprovalStatusID = project.ProjectApprovalStatusID,

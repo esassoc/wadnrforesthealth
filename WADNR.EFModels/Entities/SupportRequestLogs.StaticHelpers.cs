@@ -8,7 +8,7 @@ public static class SupportRequestLogs
 {
     public static async Task<SupportRequestLog> CreateAsync(
         WADNRDbContext dbContext,
-        SupportRequestCreateDto dto,
+        SupportRequestCreate dto,
         Person currentPerson)
     {
         var fullName = $"{currentPerson.FirstName} {currentPerson.LastName}".Trim();

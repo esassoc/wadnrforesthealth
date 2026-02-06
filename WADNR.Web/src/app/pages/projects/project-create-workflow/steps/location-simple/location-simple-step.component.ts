@@ -4,11 +4,11 @@ import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { map, Observable, of, shareReplay, startWith, switchMap } from "rxjs";
 import { catchError } from "rxjs/operators";
 
-import { WorkflowStepBase } from "src/app/shared/components/workflow/workflow-step-base";
+import { CreateWorkflowStepBase } from "src/app/shared/components/workflow/create-workflow-step-base";
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
-import { LocationSimpleStepDto } from "src/app/shared/generated/model/location-simple-step-dto";
-import { LocationSimpleStepRequestDto } from "src/app/shared/generated/model/location-simple-step-request-dto";
+import { LocationSimpleStep } from "src/app/shared/generated/model/location-simple-step";
+import { LocationSimpleStepRequest } from "src/app/shared/generated/model/location-simple-step-request";
 import { ProjectLocationSimpleTypeEnum } from "src/app/shared/generated/enum/project-location-simple-type-enum";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -27,10 +27,10 @@ import * as L from "leaflet";
     templateUrl: "./location-simple-step.component.html",
     styleUrls: ["./location-simple-step.component.scss"],
 })
-export class LocationSimpleStepComponent extends WorkflowStepBase implements OnInit {
+export class LocationSimpleStepComponent extends CreateWorkflowStepBase implements OnInit {
     readonly nextStep = "location-detailed";
 
-    public vm$: Observable<{ isLoading: boolean; data: LocationSimpleStepDto | null }>;
+    public vm$: Observable<{ isLoading: boolean; data: LocationSimpleStep | null }>;
 
     public FormFieldType = FormFieldType;
     public ProjectLocationSimpleTypeEnum = ProjectLocationSimpleTypeEnum;
@@ -87,7 +87,7 @@ export class LocationSimpleStepComponent extends WorkflowStepBase implements OnI
                 if (id == null || Number.isNaN(id)) {
                     return of(null);
                 }
-                return this.projectService.getLocationSimpleStepProject(id).pipe(
+                return this.projectService.getCreateLocationSimpleStepProject(id).pipe(
                     catchError(() => {
                         this.alertService.pushAlert(new Alert("Failed to load location data.", AlertContext.Danger, true));
                         return of(null);
@@ -109,7 +109,7 @@ export class LocationSimpleStepComponent extends WorkflowStepBase implements OnI
         );
     }
 
-    private populateForm(data: LocationSimpleStepDto): void {
+    private populateForm(data: LocationSimpleStep): void {
         this.form.patchValue({
             latitude: data.Latitude,
             longitude: data.Longitude,
@@ -284,7 +284,7 @@ export class LocationSimpleStepComponent extends WorkflowStepBase implements OnI
             this.marker.dragging?.disable();
         }
 
-        const request: LocationSimpleStepRequestDto = {
+        const request: LocationSimpleStepRequest = {
             Latitude: this.form.value.latitude,
             Longitude: this.form.value.longitude,
             ProjectLocationSimpleTypeID: this.form.value.projectLocationSimpleTypeID,
@@ -292,7 +292,7 @@ export class LocationSimpleStepComponent extends WorkflowStepBase implements OnI
         };
 
         this.saveStep(
-            (projectID) => this.projectService.saveLocationSimpleStepProject(projectID, request),
+            (projectID) => this.projectService.saveCreateLocationSimpleStepProject(projectID, request),
             "Location saved successfully. Priority Landscapes, DNR Upland Regions, and Counties have been auto-assigned based on this location.",
             "Failed to save location.",
             navigate,

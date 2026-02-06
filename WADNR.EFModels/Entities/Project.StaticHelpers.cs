@@ -500,6 +500,9 @@ public static class Projects
         // Populate user permission flags
         PopulateUserPermissionFlags(entity, callingUser, dbContext, projectID);
 
+        // Populate button visibility flags
+        await PopulateButtonVisibilityFlagsAsync(entity, callingUser, dbContext, projectID);
+
         return entity;
     }
 
@@ -554,6 +557,59 @@ public static class Projects
                 entity.UserCanEdit = false;
             }
         }
+    }
+
+    /// <summary>
+    /// Populates button visibility flags on a ProjectDetail.
+    /// </summary>
+    private static async Task PopulateButtonVisibilityFlagsAsync(
+        ProjectDetail entity,
+        PersonDetail? callingUser,
+        WADNRDbContext dbContext,
+        int projectID)
+    {
+        // CanViewFactSheet: Available for all projects except cancelled
+        var projectStageID = entity.ProjectStage?.ProjectStageID;
+        entity.CanViewFactSheet = projectStageID != (int)ProjectStageEnum.Cancelled;
+
+        // IsInLandownerAssistanceProgram: Check if project is in Landowner Assistance Program
+        entity.IsInLandownerAssistanceProgram = entity.Programs?.Any(p => p.ProgramID == Program.LandownerAssistanceProgramID) ?? false;
+
+        // ExistsInImportBlockList: Check ProjectImportBlockLists table
+        entity.ExistsInImportBlockList = await dbContext.ProjectImportBlockLists
+            .AnyAsync(x => x.ProjectID == projectID);
+
+        // Check if project is approved (not pending)
+        var isApproved = entity.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Approved;
+
+        // Get latest update batch info for this project
+        var latestBatch = await dbContext.ProjectUpdateBatches
+            .AsNoTracking()
+            .Where(b => b.ProjectID == projectID)
+            .OrderByDescending(b => b.ProjectUpdateBatchID)
+            .Select(b => new
+            {
+                b.ProjectUpdateBatchID,
+                b.ProjectUpdateStateID,
+                StateName = b.ProjectUpdateState.ProjectUpdateStateName
+            })
+            .FirstOrDefaultAsync();
+
+        if (latestBatch != null)
+        {
+            entity.LatestUpdateBatchStateID = latestBatch.ProjectUpdateStateID;
+            entity.LatestUpdateBatchStateName = latestBatch.StateName;
+
+            // HasExistingUpdateBatch: true if there's a batch not in Approved state
+            entity.HasExistingUpdateBatch = latestBatch.ProjectUpdateStateID != (int)ProjectUpdateStateEnum.Approved;
+        }
+        else
+        {
+            entity.HasExistingUpdateBatch = false;
+        }
+
+        // CanStartUpdate: User can edit + project is approved + no existing open batch
+        entity.CanStartUpdate = entity.UserCanEdit && isApproved && !entity.HasExistingUpdateBatch;
     }
 
     /// <summary>
