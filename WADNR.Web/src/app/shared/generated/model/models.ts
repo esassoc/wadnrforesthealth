@@ -1,3 +1,4 @@
+export * from './add-to-block-list-request';
 export * from './agreement-contact-grid-row';
 export * from './agreement-detail';
 export * from './agreement-grid-row';

@@ -1075,8 +1075,6 @@ public static class ProjectWorkflowSteps
 
         await dbContext.SaveChangesAsync();
 
-        // TODO: Send notification to project stewards
-
         return new WorkflowStateTransitionResponse
         {
             ProjectID = projectID,
@@ -1116,8 +1114,6 @@ public static class ProjectWorkflowSteps
 
         await dbContext.SaveChangesAsync();
 
-        // TODO: Send approval notification to proposer
-
         return new WorkflowStateTransitionResponse
         {
             ProjectID = projectID,
@@ -1156,8 +1152,6 @@ public static class ProjectWorkflowSteps
 
         await dbContext.SaveChangesAsync();
 
-        // TODO: Send return notification to proposer
-
         return new WorkflowStateTransitionResponse
         {
             ProjectID = projectID,
@@ -1195,8 +1189,6 @@ public static class ProjectWorkflowSteps
         project.ReviewedByPersonID = callingPersonID;
 
         await dbContext.SaveChangesAsync();
-
-        // TODO: Send rejection notification to proposer
 
         return new WorkflowStateTransitionResponse
         {

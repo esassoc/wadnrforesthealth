@@ -25,7 +25,7 @@ public class ProjectController(
     WADNRDbContext dbContext,
     ILogger<ProjectController> logger,
     IOptions<WADNRConfiguration> configuration,
-    IProjectUpdateNotificationService notificationService,
+    ProjectNotificationService notificationService,
     GDALAPIService gdalApiService = null)
     : SitkaController<ProjectController>(dbContext, logger, configuration)
 {
@@ -684,6 +684,16 @@ public class ProjectController(
         {
             return BadRequest(response);
         }
+
+        try
+        {
+            await notificationService.SendCreateSubmittedNotificationAsync(projectID, CallingUser.PersonID);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to send create-submission notification for project {ProjectID}", projectID);
+        }
+
         return Ok(response);
     }
 
@@ -697,6 +707,16 @@ public class ProjectController(
         {
             return BadRequest(response);
         }
+
+        try
+        {
+            await notificationService.SendCreateApprovedNotificationAsync(projectID, CallingUser.PersonID);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to send create-approval notification for project {ProjectID}", projectID);
+        }
+
         return Ok(response);
     }
 
@@ -710,6 +730,16 @@ public class ProjectController(
         {
             return BadRequest(response);
         }
+
+        try
+        {
+            await notificationService.SendCreateReturnedNotificationAsync(projectID, CallingUser.PersonID, request?.Comment);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to send create-return notification for project {ProjectID}", projectID);
+        }
+
         return Ok(response);
     }
 
@@ -723,6 +753,16 @@ public class ProjectController(
         {
             return BadRequest(response);
         }
+
+        try
+        {
+            await notificationService.SendCreateRejectedNotificationAsync(projectID, CallingUser.PersonID, request?.Comment);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to send create-rejection notification for project {ProjectID}", projectID);
+        }
+
         return Ok(response);
     }
 
@@ -1665,7 +1705,7 @@ public class ProjectController(
         // Send notification to approvers
         try
         {
-            await notificationService.SendSubmittedNotificationAsync(batch.ProjectUpdateBatchID, CallingUser.PersonID);
+            await notificationService.SendUpdateSubmittedNotificationAsync(batch.ProjectUpdateBatchID, CallingUser.PersonID);
         }
         catch (Exception ex)
         {
@@ -1696,7 +1736,7 @@ public class ProjectController(
         // Send notification to submitter and primary contact
         try
         {
-            await notificationService.SendApprovedNotificationAsync(batch.ProjectUpdateBatchID, CallingUser.PersonID);
+            await notificationService.SendUpdateApprovedNotificationAsync(batch.ProjectUpdateBatchID, CallingUser.PersonID);
         }
         catch (Exception ex)
         {
@@ -1736,7 +1776,7 @@ public class ProjectController(
 
         try
         {
-            await notificationService.SendReturnedNotificationAsync(batch.ProjectUpdateBatchID, CallingUser.PersonID, notificationComment);
+            await notificationService.SendUpdateReturnedNotificationAsync(batch.ProjectUpdateBatchID, CallingUser.PersonID, notificationComment);
         }
         catch (Exception ex)
         {
@@ -1777,6 +1817,65 @@ public class ProjectController(
             HasNotesChanges = diffSummary.HasNotesChanges,
             HasExpectedFundingChanges = diffSummary.HasExpectedFundingChanges
         });
+    }
+
+    #endregion
+
+    #region Block List
+
+    [HttpPost("{projectID}/block-list")]
+    [AdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult> AddToBlockList([FromRoute] int projectID, [FromBody] AddToBlockListRequest request)
+    {
+        var project = await DbContext.Projects
+            .Include(p => p.ProjectPrograms)
+            .FirstOrDefaultAsync(p => p.ProjectID == projectID);
+
+        if (project == null)
+        {
+            return NotFound();
+        }
+
+        if (!project.ProjectPrograms.Any())
+        {
+            return BadRequest(new { ErrorMessage = "Project must belong to at least one program." });
+        }
+
+        foreach (var pp in project.ProjectPrograms)
+        {
+            var entry = new ProjectImportBlockList
+            {
+                ProgramID = pp.ProgramID,
+                ProjectGisIdentifier = request.ProjectGisIdentifier,
+                ProjectName = request.ProjectName,
+                ProjectID = projectID,
+                Notes = request.Notes
+            };
+            DbContext.ProjectImportBlockLists.Add(entry);
+        }
+
+        await DbContext.SaveChangesAsync();
+        return Ok();
+    }
+
+    [HttpDelete("{projectID}/block-list")]
+    [AdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult> RemoveFromBlockList([FromRoute] int projectID)
+    {
+        var entries = await DbContext.ProjectImportBlockLists
+            .Where(b => b.ProjectID == projectID)
+            .ToListAsync();
+
+        if (!entries.Any())
+        {
+            return NotFound();
+        }
+
+        DbContext.ProjectImportBlockLists.RemoveRange(entries);
+        await DbContext.SaveChangesAsync();
+        return Ok();
     }
 
     #endregion

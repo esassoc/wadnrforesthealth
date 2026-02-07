@@ -134,6 +134,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/project-notes/[^/]+$"),
     new RegExp("^/project-types/[^/]+$"),
     new RegExp("^/projects/[^/]+$"),
+    new RegExp("^/projects/[^/]+/block-list$"),
     new RegExp("^/projects/[^/]+/update-workflow/current$"),
     new RegExp("^/tags/[^/]+$"),
     new RegExp("^/taxonomy-branches/[^/]+$"),
@@ -199,6 +200,7 @@ const SECURED_REGEX: RegexMap = {
   ],
   'POST': [
     new RegExp("^/project-images/[^/]+/set-key-photo$"),
+    new RegExp("^/projects/[^/]+/block-list$"),
     new RegExp("^/projects/[^/]+/create-workflow/approve$"),
     new RegExp("^/projects/[^/]+/create-workflow/reject$"),
     new RegExp("^/projects/[^/]+/create-workflow/return$"),

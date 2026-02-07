@@ -295,13 +295,11 @@ export class WADNRGridComponent implements OnInit, OnChanges {
     }
 
     onSelectAll() {
-        // todo: ensure only selecting filtered
-        this.gridApi.selectAll();
+        this.gridApi.selectAll('filtered');
     }
 
     onDeselectAll() {
-        // todo: ensure only deselecting filtered
-        this.gridApi.deselectAll();
+        this.gridApi.deselectAll('filtered');
     }
 
     public onFiltersCleared() {

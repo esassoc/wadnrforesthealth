@@ -9763,6 +9763,71 @@
         }
       }
     },
+    "/projects/{projectID}/block-list": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "AddToBlockList_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToBlockListRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToBlockListRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToBlockListRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "RemoveFromBlockList_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/project-codes": {
       "get": {
         "tags": [
@@ -12674,6 +12739,30 @@
   },
   "components": {
     "schemas": {
+      "AddToBlockListRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectGisIdentifier": {
+            "maxLength": 140,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectName": {
+            "maxLength": 140,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "Notes": {
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "AgreementContactGridRow": {
         "type": "object",
         "properties": {

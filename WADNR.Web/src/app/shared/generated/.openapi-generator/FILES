@@ -41,6 +41,7 @@ api/user-claims.service.ts
 api/vendor.service.ts
 configuration.ts
 encoder.ts
+model/add-to-block-list-request.ts
 model/agreement-contact-grid-row.ts
 model/agreement-detail.ts
 model/agreement-grid-row.ts

@@ -38,6 +38,7 @@ import { ProjectUpdateHistoryGridRow } from "src/app/shared/generated/model/proj
 import { ProjectNotificationGridRow } from "src/app/shared/generated/model/project-notification-grid-row";
 import { ProjectAuditLogGridRow } from "src/app/shared/generated/model/project-audit-log-grid-row";
 import { ProjectDocumentModalComponent, ProjectDocumentModalData } from "../project-document-modal/project-document-modal.component";
+import { BlockListModalComponent, BlockListModalData } from "./block-list-modal/block-list-modal.component";
 
 @Component({
     selector: "project-detail",
@@ -130,17 +131,12 @@ export class ProjectDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.documents$ = combineLatest([
-            this.projectID$,
-            this.refreshDocuments$.pipe(startWith(undefined))
-        ]).pipe(
+        this.documents$ = combineLatest([this.projectID$, this.refreshDocuments$.pipe(startWith(undefined))]).pipe(
             switchMap(([projectID]) => this.projectService.listDocumentsProject(projectID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.documentTypes$ = this.projectDocumentService.listTypesProjectDocument().pipe(
-            shareReplay({ bufferSize: 1, refCount: true })
-        );
+        this.documentTypes$ = this.projectDocumentService.listTypesProjectDocument().pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
         this.notes$ = this.projectID$.pipe(
             switchMap((projectID) => this.projectService.listNotesProject(projectID)),
@@ -257,7 +253,7 @@ export class ProjectDetailComponent {
                 cellRenderer: (params: any) => {
                     const doc = params.data as ProjectDocumentGridRow;
                     return `<a href="/api/file-resources/${doc.FileResourceGuid}" target="_blank">${doc.DisplayName}</a>`;
-                }
+                },
             },
             this.utilityFunctions.createBasicColumnDef("Description", "Description"),
             this.utilityFunctions.createBasicColumnDef("Type", "DocumentTypeName"),
@@ -280,8 +276,8 @@ export class ProjectDetailComponent {
                     } else if (target.classList.contains("delete-btn")) {
                         this.deleteDocument(doc);
                     }
-                }
-            }
+                },
+            },
         ];
     }
 
@@ -324,7 +320,9 @@ export class ProjectDetailComponent {
     }
 
     // Group organizations by relationship type, with primary contact first
-    getOrganizationsByRelationshipType(organizations: ProjectOrganizationItem[] | null | undefined): { relationshipType: string; isPrimaryContact: boolean; organizations: ProjectOrganizationItem[] }[] {
+    getOrganizationsByRelationshipType(
+        organizations: ProjectOrganizationItem[] | null | undefined
+    ): { relationshipType: string; isPrimaryContact: boolean; organizations: ProjectOrganizationItem[] }[] {
         if (!organizations || organizations.length === 0) return [];
 
         const grouped = new Map<string, { isPrimaryContact: boolean; organizations: ProjectOrganizationItem[] }>();
@@ -342,7 +340,7 @@ export class ProjectDetailComponent {
             .map(([relationshipType, data]) => ({
                 relationshipType,
                 isPrimaryContact: data.isPrimaryContact,
-                organizations: data.organizations.sort((a, b) => a.OrganizationName.localeCompare(b.OrganizationName))
+                organizations: data.organizations.sort((a, b) => a.OrganizationName.localeCompare(b.OrganizationName)),
             }))
             .sort((a, b) => {
                 if (a.isPrimaryContact && !b.isPrimaryContact) return -1;
@@ -370,7 +368,7 @@ export class ProjectDetailComponent {
             .map(([relationshipType, data]) => ({
                 relationshipType,
                 sortOrder: data.sortOrder,
-                people: data.people.sort((a, b) => a.PersonFullName.localeCompare(b.PersonFullName))
+                people: data.people.sort((a, b) => a.PersonFullName.localeCompare(b.PersonFullName)),
             }))
             .sort((a, b) => a.sortOrder - b.sortOrder);
     }
@@ -399,14 +397,14 @@ export class ProjectDetailComponent {
         return {
             matchTotal: requests.reduce((sum, r) => sum + (r.MatchAmount ?? 0), 0),
             payTotal: requests.reduce((sum, r) => sum + (r.PayAmount ?? 0), 0),
-            total: requests.reduce((sum, r) => sum + (r.TotalAmount ?? 0), 0)
+            total: requests.reduce((sum, r) => sum + (r.TotalAmount ?? 0), 0),
         };
     }
 
     // Check if match/pay amounts are relevant (any non-zero values)
     hasMatchPayAmounts(requests: FundSourceAllocationRequestItem[] | null | undefined): boolean {
         if (!requests || requests.length === 0) return false;
-        return requests.some(r => (r.MatchAmount ?? 0) !== 0 || (r.PayAmount ?? 0) !== 0);
+        return requests.some((r) => (r.MatchAmount ?? 0) !== 0 || (r.PayAmount ?? 0) !== 0);
     }
 
     // Map event handler
@@ -418,65 +416,71 @@ export class ProjectDetailComponent {
 
     // Document CRUD methods
     openAddDocumentModal(projectID: number): void {
-        this.documentTypes$.subscribe(documentTypes => {
+        this.documentTypes$.subscribe((documentTypes) => {
             const data: ProjectDocumentModalData = {
                 mode: "create",
                 projectID: projectID,
-                documentTypes: documentTypes
+                documentTypes: documentTypes,
             };
 
-            this.dialogService.open(ProjectDocumentModalComponent, {
-                data,
-                width: "600px"
-            }).afterClosed$.subscribe(result => {
-                if (result) {
-                    this.refreshDocuments$.next();
-                }
-            });
+            this.dialogService
+                .open(ProjectDocumentModalComponent, {
+                    data,
+                    width: "600px",
+                })
+                .afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refreshDocuments$.next();
+                    }
+                });
         });
     }
 
     openEditDocumentModal(doc: ProjectDocumentGridRow): void {
-        this.documentTypes$.subscribe(documentTypes => {
+        this.documentTypes$.subscribe((documentTypes) => {
             const data: ProjectDocumentModalData = {
                 mode: "edit",
                 projectID: 0, // Not needed for edit
                 document: doc,
-                documentTypes: documentTypes
+                documentTypes: documentTypes,
             };
 
-            this.dialogService.open(ProjectDocumentModalComponent, {
-                data,
-                width: "600px"
-            }).afterClosed$.subscribe(result => {
-                if (result) {
-                    this.refreshDocuments$.next();
-                }
-            });
+            this.dialogService
+                .open(ProjectDocumentModalComponent, {
+                    data,
+                    width: "600px",
+                })
+                .afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refreshDocuments$.next();
+                    }
+                });
         });
     }
 
     deleteDocument(doc: ProjectDocumentGridRow): void {
-        this.confirmService.confirm({
-            title: "Delete Document",
-            message: `Are you sure you want to delete "${doc.DisplayName}"? This action cannot be undone.`,
-            buttonTextYes: "Delete",
-            buttonTextNo: "Cancel",
-            buttonClassYes: "btn-danger"
-        }).then(confirmed => {
-            if (confirmed) {
-                this.projectDocumentService.deleteProjectDocument(doc.ProjectDocumentID).subscribe({
-                    next: () => {
-                        this.alertService.pushAlert(new Alert("Document deleted successfully.", AlertContext.Success, true));
-                        this.refreshDocuments$.next();
-                    },
-                    error: (err) => {
-                        const message = err?.error ?? err?.message ?? "An error occurred while deleting the document.";
-                        this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                    }
-                });
-            }
-        });
+        this.confirmService
+            .confirm({
+                title: "Delete Document",
+                message: `Are you sure you want to delete "${doc.DisplayName}"? This action cannot be undone.`,
+                buttonTextYes: "Delete",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-danger",
+            })
+            .then((confirmed) => {
+                if (confirmed) {
+                    this.projectDocumentService.deleteProjectDocument(doc.ProjectDocumentID).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Document deleted successfully.", AlertContext.Success, true));
+                            this.refreshDocuments$.next();
+                        },
+                        error: (err) => {
+                            const message = err?.error ?? err?.message ?? "An error occurred while deleting the document.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                }
+            });
     }
 
     // Helper methods for pending project status
@@ -485,7 +489,7 @@ export class ProjectDetailComponent {
             ProjectApprovalStatusEnum.Draft,
             ProjectApprovalStatusEnum.PendingApproval,
             ProjectApprovalStatusEnum.Returned,
-            ProjectApprovalStatusEnum.Rejected
+            ProjectApprovalStatusEnum.Rejected,
         ];
         return pendingStatuses.includes(project.ProjectApprovalStatusID);
     }
@@ -496,77 +500,83 @@ export class ProjectDetailComponent {
 
     // Approval action methods
     approveProject(): void {
-        this.project$.pipe(take(1)).subscribe(project => {
-            this.confirmService.confirm({
-                title: "Approve Project",
-                message: `Are you sure you want to approve "${project.ProjectName}"?`,
-                buttonTextYes: "Approve",
-                buttonTextNo: "Cancel",
-                buttonClassYes: "btn-success"
-            }).then(confirmed => {
-                if (confirmed) {
-                    this.projectService.approveCreateProject(project.ProjectID).subscribe({
-                        next: () => {
-                            this.alertService.pushAlert(new Alert("Project has been approved.", AlertContext.Success, true));
-                            this._projectID$.next(project.ProjectID);
-                        },
-                        error: (err) => {
-                            const message = err?.error ?? err?.message ?? "An error occurred while approving the project.";
-                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                        }
-                    });
-                }
-            });
+        this.project$.pipe(take(1)).subscribe((project) => {
+            this.confirmService
+                .confirm({
+                    title: "Approve Project",
+                    message: `Are you sure you want to approve "${project.ProjectName}"?`,
+                    buttonTextYes: "Approve",
+                    buttonTextNo: "Cancel",
+                    buttonClassYes: "btn-success",
+                })
+                .then((confirmed) => {
+                    if (confirmed) {
+                        this.projectService.approveCreateProject(project.ProjectID).subscribe({
+                            next: () => {
+                                this.alertService.pushAlert(new Alert("Project has been approved.", AlertContext.Success, true));
+                                this._projectID$.next(project.ProjectID);
+                            },
+                            error: (err) => {
+                                const message = err?.error ?? err?.message ?? "An error occurred while approving the project.";
+                                this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                            },
+                        });
+                    }
+                });
         });
     }
 
     returnProject(): void {
-        this.project$.pipe(take(1)).subscribe(project => {
-            this.confirmService.confirm({
-                title: "Return Project",
-                message: `Are you sure you want to return "${project.ProjectName}" for revisions?`,
-                buttonTextYes: "Return",
-                buttonTextNo: "Cancel",
-                buttonClassYes: "btn-warning"
-            }).then(confirmed => {
-                if (confirmed) {
-                    this.projectService.returnCreateProject(project.ProjectID).subscribe({
-                        next: () => {
-                            this.alertService.pushAlert(new Alert("Project has been returned for revisions.", AlertContext.Success, true));
-                            this._projectID$.next(project.ProjectID);
-                        },
-                        error: (err) => {
-                            const message = err?.error ?? err?.message ?? "An error occurred while returning the project.";
-                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                        }
-                    });
-                }
-            });
+        this.project$.pipe(take(1)).subscribe((project) => {
+            this.confirmService
+                .confirm({
+                    title: "Return Project",
+                    message: `Are you sure you want to return "${project.ProjectName}" for revisions?`,
+                    buttonTextYes: "Return",
+                    buttonTextNo: "Cancel",
+                    buttonClassYes: "btn-warning",
+                })
+                .then((confirmed) => {
+                    if (confirmed) {
+                        this.projectService.returnCreateProject(project.ProjectID).subscribe({
+                            next: () => {
+                                this.alertService.pushAlert(new Alert("Project has been returned for revisions.", AlertContext.Success, true));
+                                this._projectID$.next(project.ProjectID);
+                            },
+                            error: (err) => {
+                                const message = err?.error ?? err?.message ?? "An error occurred while returning the project.";
+                                this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                            },
+                        });
+                    }
+                });
         });
     }
 
     rejectProject(): void {
-        this.project$.pipe(take(1)).subscribe(project => {
-            this.confirmService.confirm({
-                title: "Reject Project",
-                message: `Are you sure you want to reject "${project.ProjectName}"? This action cannot be undone.`,
-                buttonTextYes: "Reject",
-                buttonTextNo: "Cancel",
-                buttonClassYes: "btn-danger"
-            }).then(confirmed => {
-                if (confirmed) {
-                    this.projectService.rejectCreateProject(project.ProjectID).subscribe({
-                        next: () => {
-                            this.alertService.pushAlert(new Alert("Project has been rejected.", AlertContext.Success, true));
-                            this._projectID$.next(project.ProjectID);
-                        },
-                        error: (err) => {
-                            const message = err?.error ?? err?.message ?? "An error occurred while rejecting the project.";
-                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                        }
-                    });
-                }
-            });
+        this.project$.pipe(take(1)).subscribe((project) => {
+            this.confirmService
+                .confirm({
+                    title: "Reject Project",
+                    message: `Are you sure you want to reject "${project.ProjectName}"? This action cannot be undone.`,
+                    buttonTextYes: "Reject",
+                    buttonTextNo: "Cancel",
+                    buttonClassYes: "btn-danger",
+                })
+                .then((confirmed) => {
+                    if (confirmed) {
+                        this.projectService.rejectCreateProject(project.ProjectID).subscribe({
+                            next: () => {
+                                this.alertService.pushAlert(new Alert("Project has been rejected.", AlertContext.Success, true));
+                                this._projectID$.next(project.ProjectID);
+                            },
+                            error: (err) => {
+                                const message = err?.error ?? err?.message ?? "An error occurred while rejecting the project.";
+                                this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                            },
+                        });
+                    }
+                });
         });
     }
 
@@ -593,25 +603,28 @@ export class ProjectDetailComponent {
             this.router.navigate(["/projects", project.ProjectID, "update"]);
         } else {
             // Show confirmation modal before starting new update batch
-            this.confirmService.confirm({
-                title: "Starting project update",
-                message: "To make changes to the project you must start a Project update.\nThe reviewer will then receive your update and either approve or return your Project update request.",
-                buttonTextYes: "Create project update",
-                buttonTextNo: "Cancel",
-                buttonClassYes: "btn-primary"
-            }).then(confirmed => {
-                if (confirmed) {
-                    this.projectService.startUpdateBatchProject(project.ProjectID).subscribe({
-                        next: () => {
-                            this.router.navigate(["/projects", project.ProjectID, "update"]);
-                        },
-                        error: (err) => {
-                            const message = err?.error ?? err?.message ?? "Failed to start project update.";
-                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                        }
-                    });
-                }
-            });
+            this.confirmService
+                .confirm({
+                    title: "Starting project update",
+                    message:
+                        "To make changes to the project you must start a Project update.\nThe reviewer will then receive your update and either approve or return your Project update request.",
+                    buttonTextYes: "Create project update",
+                    buttonTextNo: "Cancel",
+                    buttonClassYes: "btn-primary",
+                })
+                .then((confirmed) => {
+                    if (confirmed) {
+                        this.projectService.startUpdateBatchProject(project.ProjectID).subscribe({
+                            next: () => {
+                                this.router.navigate(["/projects", project.ProjectID, "update"]);
+                            },
+                            error: (err) => {
+                                const message = err?.error ?? err?.message ?? "Failed to start project update.";
+                                this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                            },
+                        });
+                    }
+                });
         }
     }
 
@@ -622,13 +635,44 @@ export class ProjectDetailComponent {
     }
 
     addToBlockList(project: ProjectDetail): void {
-        // TODO: Implement block list modal - requires API endpoint
-        this.alertService.pushAlert(new Alert("Add to Block List functionality coming soon.", AlertContext.Info, true));
+        const data: BlockListModalData = {
+            projectID: project.ProjectID,
+            projectGisIdentifier: project.ProjectGisIdentifier,
+            projectName: project.ProjectName,
+        };
+
+        const dialogRef = this.dialogService.open(BlockListModalComponent, { data, size: "md" });
+        dialogRef.afterClosed$.subscribe((result) => {
+            if (result) {
+                // Refresh the project detail to update ExistsInImportBlockList flag
+                this._projectID$.next(project.ProjectID);
+            }
+        });
     }
 
     removeFromBlockList(project: ProjectDetail): void {
-        // TODO: Implement remove from block list - requires API endpoint
-        this.alertService.pushAlert(new Alert("Remove from Block List functionality coming soon.", AlertContext.Info, true));
+        this.confirmService
+            .confirm({
+                title: "Remove from Block List",
+                message: `Are you sure you want to remove the project '${project.ProjectName}' from the import block list?`,
+                buttonTextYes: "Remove",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-danger",
+            })
+            .then((confirmed) => {
+                if (confirmed) {
+                    this.projectService.removeFromBlockListProject(project.ProjectID).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Project removed from import block list.", AlertContext.Success, true));
+                            this._projectID$.next(project.ProjectID);
+                        },
+                        error: (err) => {
+                            const message = err?.error?.ErrorMessage ?? err?.message ?? "An error occurred.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                }
+            });
     }
 
     // Financial Assistance Approval Letter helpers

@@ -106,7 +106,7 @@ namespace WADNR.API
             services.AddScoped<FileService>();
             services.AddScoped<AzureBlobStorageService>();
             services.AddScoped<IAzureStorage, AzureStorage>();
-            services.AddScoped<IProjectUpdateNotificationService, ProjectUpdateNotificationService>();
+            services.AddScoped<ProjectNotificationService>();
 
             #region GDAL API
             if (!string.IsNullOrEmpty(configuration.GDALAPIBaseUrl))
