@@ -17,6 +17,7 @@
         public string SitkaCaptureServiceUrl { get; set; }
         public string WebUrl { get; set; } = "https://wadnrforesthealth.wa.gov";
         public string GDALAPIBaseUrl { get; set; }
+        public bool EnableE2ETestAuth { get; set; }
 
         public int Pre2007ProjectCount => 266; // todo: keeping this as a constant here since I doubt it changes now
     }

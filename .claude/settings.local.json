@@ -32,7 +32,11 @@
       "Bash(for file in \"C:\\\\git\\\\sitkatech\\\\wadnrforesthealth\\\\Source\\\\ProjectFirma.Web\\\\Controllers\\\\AgreementController.cs\" \"C:\\\\git\\\\sitkatech\\\\wadnrforesthealth\\\\Source\\\\ProjectFirma.Web\\\\Controllers\\\\ClassificationController.cs\" \"C:\\\\git\\\\sitkatech\\\\wadnrforesthealth\\\\Source\\\\ProjectFirma.Web\\\\Controllers\\\\ClassificationSystemController.cs\" \"C:\\\\git\\\\sitkatech\\\\wadnrforesthealth\\\\Source\\\\ProjectFirma.Web\\\\Controllers\\\\CountyController.cs\" \"C:\\\\git\\\\sitkatech\\\\wadnrforesthealth\\\\Source\\\\ProjectFirma.Web\\\\Controllers\\\\CustomPageController.cs\")",
       "Bash(do basename \"$file\" .cs)",
       "Bash(git mv:*)",
-      "WebFetch(domain:playwright.dev)"
+      "WebFetch(domain:playwright.dev)",
+      "Bash(npx playwright:*)",
+      "Bash(set NODE_TLS_REJECT_UNAUTHORIZED=0)",
+      "Bash(node -e:*)",
+      "Bash(set \"NODE_EXTRA_CA_CERTS=C:\\\\Users\\\\mack.peters\\\\.cato-root-ca.pem\")"
     ]
   }
 }

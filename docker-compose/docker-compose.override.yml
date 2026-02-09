@@ -19,6 +19,7 @@ services:
       - SitkaCaptureServiceUrl=${SitkaCaptureServiceUrl}
       - WebUrl=${WebUrl}
       - GDALAPIBaseUrl=http://wadnr.gdalapi:8080
+      - EnableE2ETestAuth=${EnableE2ETestAuth}  
     ports:
       - "3211:8080"
       - "3212:8081"

@@ -49,3 +49,8 @@ openapitools.json
 Thumbs.db
 
 src/assets/config.json
+
+# Playwright
+/playwright/.auth/
+/test-results/
+/playwright-report/

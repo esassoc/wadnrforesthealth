@@ -21,9 +21,11 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using Hangfire;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Hangfire.SqlServer;
 using WADNR.API.Hangfire;
+using WADNR.API.Services.Authentication;
 using WADNR.API.Services.Middleware;
 using ILogger = Serilog.ILogger;
 
@@ -67,15 +69,44 @@ namespace WADNR.API
 
             services.AddSitkaCaptureService(configuration.SitkaCaptureServiceUrl);
 
-            services.AddAuthentication(options =>
+            var enableTestAuth = configuration.EnableE2ETestAuth;
+            if (enableTestAuth)
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
+                // Register both JWT and E2E test auth; a policy scheme picks which to use per-request
+                services.AddAuthentication(options =>
+                {
+                    options.DefaultScheme = "DualAuth";
+                    options.DefaultChallengeScheme = "DualAuth";
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.Authority = "https://wadnr.us.auth0.com/";
+                    options.Audience = "WADNRAPI";
+                })
+                .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(TestAuthHandler.SchemeName, null)
+                .AddPolicyScheme("DualAuth", "JWT or E2E Test Auth", options =>
+                {
+                    options.ForwardDefaultSelector = context =>
+                    {
+                        if (context.Request.Headers.ContainsKey(TestAuthHandler.TestUserHeader))
+                            return TestAuthHandler.SchemeName;
+                        return JwtBearerDefaults.AuthenticationScheme;
+                    };
+                });
+                Log.Warning("E2E Test authentication is ENABLED - do not use in production!");
+            }
+            else
             {
-                options.Authority = "https://wadnr.us.auth0.com/";
-                options.Audience = "WADNRAPI";
-            });
+                services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                }).AddJwtBearer(options =>
+                {
+                    options.Authority = "https://wadnr.us.auth0.com/";
+                    options.Audience = "WADNRAPI";
+                });
+            }
 
             // Require authentication by default - endpoints must explicitly use [AllowAnonymous] for public access
             services.AddAuthorizationBuilder()
