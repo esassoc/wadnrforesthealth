@@ -162,7 +162,7 @@ namespace WADNR.Common.EMail
 
         public MailAddress GetDefaultEmailFrom()
         {
-            return new MailAddress("donotreply@sitkatech.net", "Lake Tahoe Info");
+            return new MailAddress("donotreply@sitkatech.net", "WA DNR Forest Health Tracker");
         }
 
         public static void AddBccRecipientsToEmail(MailMessage mailMessage, IEnumerable<string> recipients)
