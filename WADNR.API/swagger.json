@@ -5997,6 +5997,56 @@
         "x-anonymous": true
       }
     },
+    "/projects/{projectID}/internal-notes": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListInternalNotes_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectInternalNoteGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectInternalNoteGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectInternalNoteGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects/{projectID}/external-links": {
       "get": {
         "tags": [
@@ -18551,6 +18601,37 @@
           },
           "ExcludeFromFactSheet": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectInternalNoteGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectInternalNoteID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Note": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "UpdatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "UpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         },
         "additionalProperties": false

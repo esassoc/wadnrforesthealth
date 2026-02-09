@@ -168,6 +168,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/projects/[^/]+/create-workflow/steps/location-simple$"),
     new RegExp("^/projects/[^/]+/create-workflow/steps/organizations$"),
     new RegExp("^/projects/[^/]+/create-workflow/steps/priority-landscapes$"),
+    new RegExp("^/projects/[^/]+/internal-notes$"),
     new RegExp("^/projects/[^/]+/update-workflow/current$"),
     new RegExp("^/projects/[^/]+/update-workflow/diff$"),
     new RegExp("^/projects/[^/]+/update-workflow/progress$"),

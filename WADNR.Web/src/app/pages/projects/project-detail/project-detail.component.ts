@@ -1,7 +1,8 @@
 import { AsyncPipe } from "@angular/common";
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnDestroy, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, Observable, shareReplay, startWith, Subject, switchMap, take } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, fromEvent, Observable, shareReplay, startWith, Subject, Subscription, switchMap, take } from "rxjs";
+import { debounceTime } from "rxjs/operators";
 import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap } from "leaflet";
 import { DialogService } from "@ngneat/dialog";
@@ -11,6 +12,7 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
+import { ScrollSpyStickyDirective } from "src/app/shared/directives/scroll-spy-sticky.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { AlertService } from "src/app/shared/services/alert.service";
@@ -20,6 +22,7 @@ import { GenericLayer } from "src/app/shared/generated/model/generic-layer";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectDocumentService } from "src/app/shared/generated/api/project-document.service";
+import { InvoiceService } from "src/app/shared/generated/api/invoice.service";
 import { ProjectDetail } from "src/app/shared/generated/model/project-detail";
 import { ProjectApprovalStatusEnum } from "src/app/shared/generated/enum/project-approval-status-enum";
 import { ProjectUpdateStateEnum } from "src/app/shared/generated/enum/project-update-state-enum";
@@ -33,6 +36,8 @@ import { ProjectImageGridRow } from "src/app/shared/generated/model/project-imag
 import { ProjectDocumentGridRow } from "src/app/shared/generated/model/project-document-grid-row";
 import { ProjectDocumentTypeLookupItem } from "src/app/shared/generated/model/project-document-type-lookup-item";
 import { ProjectNoteGridRow } from "src/app/shared/generated/model/project-note-grid-row";
+import { ProjectInternalNoteGridRow } from "src/app/shared/generated/model/project-internal-note-grid-row";
+import { InvoiceGridRow } from "src/app/shared/generated/model/invoice-grid-row";
 import { ProjectExternalLinkGridRow } from "src/app/shared/generated/model/project-external-link-grid-row";
 import { ProjectUpdateHistoryGridRow } from "src/app/shared/generated/model/project-update-history-grid-row";
 import { ProjectNotificationGridRow } from "src/app/shared/generated/model/project-notification-grid-row";
@@ -43,11 +48,11 @@ import { BlockListModalComponent, BlockListModalData } from "./block-list-modal/
 @Component({
     selector: "project-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ScrollSpyStickyDirective],
     templateUrl: "./project-detail.component.html",
     styleUrls: ["./project-detail.component.scss"],
 })
-export class ProjectDetailComponent {
+export class ProjectDetailComponent implements OnDestroy {
     @Input() set projectID(value: string | number) {
         this._projectID$.next(Number(value));
     }
@@ -65,6 +70,8 @@ export class ProjectDetailComponent {
     public images$: Observable<ProjectImageGridRow[]>;
     public documents$: Observable<ProjectDocumentGridRow[]>;
     public notes$: Observable<ProjectNoteGridRow[]>;
+    public internalNotes$: Observable<ProjectInternalNoteGridRow[]>;
+    public invoices$: Observable<InvoiceGridRow[]>;
     public externalLinks$: Observable<ProjectExternalLinkGridRow[]>;
     public updateHistory$: Observable<ProjectUpdateHistoryGridRow[]>;
     public notifications$: Observable<ProjectNotificationGridRow[]>;
@@ -75,6 +82,8 @@ export class ProjectDetailComponent {
     public imageColumnDefs: ColDef<ProjectImageGridRow>[] = [];
     public documentColumnDefs: ColDef<ProjectDocumentGridRow>[] = [];
     public noteColumnDefs: ColDef<ProjectNoteGridRow>[] = [];
+    public internalNoteColumnDefs: ColDef<ProjectInternalNoteGridRow>[] = [];
+    public invoiceColumnDefs: ColDef<InvoiceGridRow>[] = [];
     public updateHistoryColumnDefs: ColDef<ProjectUpdateHistoryGridRow>[] = [];
     public notificationColumnDefs: ColDef<ProjectNotificationGridRow>[] = [];
     public auditLogColumnDefs: ColDef<ProjectAuditLogGridRow>[] = [];
@@ -89,9 +98,26 @@ export class ProjectDetailComponent {
     public documentTypes$: Observable<ProjectDocumentTypeLookupItem[]>;
     private refreshDocuments$ = new Subject<void>();
 
+    // Scrollspy
+    sections = [
+        { id: "section-overview", label: "Project Overview" },
+        { id: "section-location", label: "Location" },
+        { id: "section-organizations", label: "Organizations" },
+        { id: "section-funding", label: "Funding" },
+        { id: "section-activities", label: "Activities" },
+        { id: "section-interaction-events", label: "Interaction Events" },
+        { id: "section-classifications", label: "Classifications" },
+        { id: "section-details", label: "Project Details" },
+        { id: "section-photos", label: "Photos" },
+        { id: "section-admin", label: "Administrative" },
+    ];
+    activeSectionId = signal<string | null>(null);
+    private scrollSub: Subscription;
+
     constructor(
         private projectService: ProjectService,
         private projectDocumentService: ProjectDocumentService,
+        private invoiceService: InvoiceService,
         private utilityFunctions: UtilityFunctionsService,
         private dialogService: DialogService,
         private confirmService: ConfirmService,
@@ -143,6 +169,16 @@ export class ProjectDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.internalNotes$ = this.projectID$.pipe(
+            switchMap((projectID) => this.projectService.listInternalNotesProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.invoices$ = this.projectID$.pipe(
+            switchMap((projectID) => this.invoiceService.listForProjectInvoice(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
         this.externalLinks$ = this.projectID$.pipe(
             switchMap((projectID) => this.projectService.listExternalLinksProject(projectID)),
             shareReplay({ bufferSize: 1, refCount: true })
@@ -173,9 +209,50 @@ export class ProjectDetailComponent {
         this.imageColumnDefs = this.createImageColumnDefs();
         this.documentColumnDefs = this.createDocumentColumnDefs();
         this.noteColumnDefs = this.createNoteColumnDefs();
+        this.internalNoteColumnDefs = this.createInternalNoteColumnDefs();
+        this.invoiceColumnDefs = this.createInvoiceColumnDefs();
         this.updateHistoryColumnDefs = this.createUpdateHistoryColumnDefs();
         this.notificationColumnDefs = this.createNotificationColumnDefs();
         this.auditLogColumnDefs = this.createAuditLogColumnDefs();
+
+        // Scrollspy scroll listener
+        this.scrollSub = fromEvent(window, "scroll")
+            .pipe(debounceTime(10))
+            .subscribe(() => this.updateActiveSection());
+    }
+
+    ngOnDestroy(): void {
+        this.scrollSub?.unsubscribe();
+    }
+
+    // Scrollspy methods
+    getVisibleSections(project: ProjectDetail): { id: string; label: string }[] {
+        if (project.UserIsAdmin) {
+            return this.sections;
+        }
+        return this.sections.filter((s) => s.id !== "section-admin");
+    }
+
+    scrollToSection(sectionId: string): void {
+        const el = document.getElementById(sectionId);
+        if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }
+
+    private updateActiveSection(): void {
+        const offset = 120; // account for sticky header
+        for (let i = this.sections.length - 1; i >= 0; i--) {
+            const el = document.getElementById(this.sections[i].id);
+            if (el) {
+                const rect = el.getBoundingClientRect();
+                if (rect.top <= offset) {
+                    this.activeSectionId.set(this.sections[i].id);
+                    return;
+                }
+            }
+        }
+        this.activeSectionId.set(this.sections[0]?.id ?? null);
     }
 
     private createTreatmentColumnDefs(): ColDef<TreatmentGridRow>[] {
@@ -288,6 +365,32 @@ export class ProjectDetailComponent {
             this.utilityFunctions.createDateColumnDef("Created", "CreateDate", "short"),
             this.utilityFunctions.createBasicColumnDef("Updated By", "UpdatedByPersonName"),
             this.utilityFunctions.createDateColumnDef("Updated", "UpdateDate", "short"),
+        ];
+    }
+
+    private createInternalNoteColumnDefs(): ColDef<ProjectInternalNoteGridRow>[] {
+        return [
+            this.utilityFunctions.createBasicColumnDef("Note", "Note"),
+            this.utilityFunctions.createBasicColumnDef("Created By", "CreatedByPersonName"),
+            this.utilityFunctions.createDateColumnDef("Created", "CreateDate", "short"),
+            this.utilityFunctions.createBasicColumnDef("Updated By", "UpdatedByPersonName"),
+            this.utilityFunctions.createDateColumnDef("Updated", "UpdateDate", "short"),
+        ];
+    }
+
+    private createInvoiceColumnDefs(): ColDef<InvoiceGridRow>[] {
+        return [
+            this.utilityFunctions.createBasicColumnDef("Invoice Number", "InvoiceNumber"),
+            this.utilityFunctions.createDateColumnDef("Invoice Date", "InvoiceDate", "short"),
+            this.utilityFunctions.createBasicColumnDef("Fund Source", "FundSourceNumber"),
+            this.utilityFunctions.createCurrencyColumnDef("Payment Amount", "PaymentAmount"),
+            this.utilityFunctions.createCurrencyColumnDef("Match Amount", "MatchAmount"),
+            this.utilityFunctions.createBasicColumnDef("Status", "InvoiceStatusDisplayName", {
+                CustomDropdownFilterField: "InvoiceStatusDisplayName",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Approval Status", "InvoiceApprovalStatusName", {
+                CustomDropdownFilterField: "InvoiceApprovalStatusName",
+            }),
         ];
     }
 

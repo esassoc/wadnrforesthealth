@@ -256,6 +256,15 @@ public class ProjectController(
         return Ok(notes);
     }
 
+    [HttpGet("{projectID}/internal-notes")]
+    [AdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<IEnumerable<ProjectInternalNoteGridRow>>> ListInternalNotes([FromRoute] int projectID)
+    {
+        var notes = await ProjectInternalNotes.ListForProjectAsGridRowAsync(DbContext, projectID);
+        return Ok(notes);
+    }
+
     [HttpGet("{projectID}/external-links")]
     [AllowAnonymous]
     [ProjectViewFeature]

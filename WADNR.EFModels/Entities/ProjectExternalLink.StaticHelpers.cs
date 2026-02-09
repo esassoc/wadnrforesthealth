@@ -10,12 +10,7 @@ public static class ProjectExternalLinks
         var links = await dbContext.ProjectExternalLinks
             .AsNoTracking()
             .Where(l => l.ProjectID == projectID)
-            .Select(l => new ProjectExternalLinkGridRow
-            {
-                ProjectExternalLinkID = l.ProjectExternalLinkID,
-                ExternalLinkLabel = l.ExternalLinkLabel,
-                ExternalLinkUrl = l.ExternalLinkUrl
-            })
+            .Select(ProjectExternalLinkProjections.AsGridRow)
             .OrderBy(l => l.ExternalLinkLabel)
             .ToListAsync();
 

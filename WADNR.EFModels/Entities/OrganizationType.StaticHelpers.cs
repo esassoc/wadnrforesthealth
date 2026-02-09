@@ -10,11 +10,7 @@ public static class OrganizationTypes
         var items = await dbContext.OrganizationTypes
             .AsNoTracking()
             .OrderBy(x => x.OrganizationTypeName)
-            .Select(x => new OrganizationTypeLookupItem
-            {
-                OrganizationTypeID = x.OrganizationTypeID,
-                OrganizationTypeName = x.OrganizationTypeName
-            })
+            .Select(OrganizationTypeProjections.AsLookupItem)
             .ToListAsync();
         return items;
     }

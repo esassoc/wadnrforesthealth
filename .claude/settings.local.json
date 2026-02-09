@@ -28,7 +28,11 @@
       "WebFetch(domain:www.anthropic.com)",
       "Bash(/tmp/replace-tags.ps1:*)",
       "Bash(Select-String -Pattern \"error|Build succeeded|Build FAILED\")",
-      "Bash(Select-String \"error|Build succeeded\")"
+      "Bash(Select-String \"error|Build succeeded\")",
+      "Bash(for file in \"C:\\\\git\\\\sitkatech\\\\wadnrforesthealth\\\\Source\\\\ProjectFirma.Web\\\\Controllers\\\\AgreementController.cs\" \"C:\\\\git\\\\sitkatech\\\\wadnrforesthealth\\\\Source\\\\ProjectFirma.Web\\\\Controllers\\\\ClassificationController.cs\" \"C:\\\\git\\\\sitkatech\\\\wadnrforesthealth\\\\Source\\\\ProjectFirma.Web\\\\Controllers\\\\ClassificationSystemController.cs\" \"C:\\\\git\\\\sitkatech\\\\wadnrforesthealth\\\\Source\\\\ProjectFirma.Web\\\\Controllers\\\\CountyController.cs\" \"C:\\\\git\\\\sitkatech\\\\wadnrforesthealth\\\\Source\\\\ProjectFirma.Web\\\\Controllers\\\\CustomPageController.cs\")",
+      "Bash(do basename \"$file\" .cs)",
+      "Bash(git mv:*)",
+      "WebFetch(domain:playwright.dev)"
     ]
   }
 }

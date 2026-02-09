@@ -208,6 +208,7 @@ model/project-image-timing-lookup-item.ts
 model/project-image-update-item-request.ts
 model/project-image-update-item.ts
 model/project-image-upsert-request.ts
+model/project-internal-note-grid-row.ts
 model/project-location-item.ts
 model/project-location-staging-item.ts
 model/project-location-update-item-request.ts

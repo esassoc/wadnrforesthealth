@@ -128,6 +128,101 @@
     }
 }
 
+// Dashboard layout with TOC sidebar
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.toc-sidebar {
+    position: sticky;
+    top: 1rem;
+}
+
+.toc-nav {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 1rem;
+
+    .toc-heading {
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #6c757d;
+        margin: 0 0 0.75rem 0;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .toc-link {
+        display: block;
+        padding: 0.35rem 0.75rem;
+        margin: 0.125rem 0;
+        font-size: 0.875rem;
+        color: #495057;
+        text-decoration: none;
+        border-left: 3px solid transparent;
+        border-radius: 0 4px 4px 0;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover {
+            color: var(--btn-primary-bg-color, #033B6A);
+            background-color: #f8f9fa;
+        }
+
+        &.active {
+            color: var(--btn-primary-bg-color, #033B6A);
+            border-left-color: var(--btn-primary-bg-color, #033B6A);
+            background-color: rgba(3, 59, 106, 0.05);
+            font-weight: 600;
+        }
+    }
+}
+
+// Scrollspy fixed positioning (applied by ScrollSpyStickyDirective)
+.scrollspy-fixed {
+    position: fixed;
+    top: var(--spy-top, 1rem);
+    left: var(--spy-left);
+    width: var(--spy-width);
+}
+
+.content-area {
+    min-width: 0; // prevent grid blowout
+
+    section {
+        scroll-margin-top: 5rem;
+    }
+}
+
+.section-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin: 1.5rem 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #dee2e6;
+
+    section:first-child > & {
+        margin-top: 0;
+    }
+}
+
+// Mobile responsive: collapse to single column
+@media (max-width: 992px) {
+    .dashboard-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .toc-sidebar {
+        display: none;
+    }
+}
+
 .tags-list {
     display: flex;
     flex-wrap: wrap;
@@ -253,13 +348,4 @@
             }
         }
     }
-}
-
-.section-header {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #333;
-    margin: 1.5rem 0 1rem 0;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #dee2e6;
 }

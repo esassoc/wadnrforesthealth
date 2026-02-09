@@ -164,6 +164,7 @@ export * from './project-image-timing-lookup-item';
 export * from './project-image-update-item';
 export * from './project-image-update-item-request';
 export * from './project-image-upsert-request';
+export * from './project-internal-note-grid-row';
 export * from './project-location-item';
 export * from './project-location-staging-item';
 export * from './project-location-update-item';
