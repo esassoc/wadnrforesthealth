@@ -7,6 +7,18 @@ import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap } from "leaflet";
 import { DialogService } from "@ngneat/dialog";
 
+interface TocSection {
+    id: string;
+    label: string;
+    children?: TocChild[];
+    adminOnly?: boolean;
+}
+
+interface TocChild {
+    id: string;
+    label: string;
+}
+
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
@@ -98,20 +110,58 @@ export class ProjectDetailComponent implements OnDestroy {
     public documentTypes$: Observable<ProjectDocumentTypeLookupItem[]>;
     private refreshDocuments$ = new Subject<void>();
 
-    // Scrollspy
-    sections = [
-        { id: "section-overview", label: "Project Overview" },
-        { id: "section-location", label: "Location" },
-        { id: "section-organizations", label: "Organizations" },
-        { id: "section-funding", label: "Funding" },
-        { id: "section-activities", label: "Activities" },
-        { id: "section-interaction-events", label: "Interaction Events" },
-        { id: "section-classifications", label: "Classifications" },
-        { id: "section-details", label: "Project Details" },
-        { id: "section-photos", label: "Photos" },
-        { id: "section-admin", label: "Administrative" },
+    // Scrollspy — hierarchical TOC
+    sectionsTree: TocSection[] = [
+        {
+            id: "project-overview",
+            label: "Project Overview",
+            children: [
+                { id: "card-basics", label: "Basics" },
+                { id: "card-location", label: "Location" },
+                { id: "card-tags", label: "Tags" },
+                { id: "card-organizations", label: "Organizations" },
+                { id: "card-contacts", label: "Contacts" },
+            ],
+        },
+        {
+            id: "funding",
+            label: "Funding",
+            children: [
+                { id: "card-funding", label: "Funding" },
+                { id: "card-invoices", label: "Invoices" },
+            ],
+        },
+        { id: "card-activities", label: "Activities" },
+        { id: "card-interaction-events", label: "Project Interactions/Events" },
+        { id: "card-classifications", label: "Project Themes" },
+        {
+            id: "project-details",
+            label: "Project Details",
+            children: [
+                { id: "card-cost-share", label: "Cost Share" },
+                { id: "card-documents", label: "Documents" },
+                { id: "card-notes", label: "Notes" },
+                { id: "card-external-links", label: "External Links" },
+            ],
+        },
+        { id: "card-photos", label: "Photos" },
+        {
+            id: "administrative",
+            label: "Administrative",
+            adminOnly: true,
+            children: [
+                { id: "card-update-history", label: "Update History" },
+                { id: "card-notifications", label: "System Comms" },
+                { id: "card-audit-log", label: "Audit Log" },
+            ],
+        },
     ];
-    activeSectionId = signal<string | null>(null);
+
+    activeParentId = signal<string | null>(null);
+    activeChildId = signal<string | null>(null);
+
+    private childToParentMap = new Map<string, string>();
+    private allScrollTargetIds: string[] = [];
     private scrollSub: Subscription;
 
     constructor(
@@ -219,6 +269,9 @@ export class ProjectDetailComponent implements OnDestroy {
         this.scrollSub = fromEvent(window, "scroll")
             .pipe(debounceTime(10))
             .subscribe(() => this.updateActiveSection());
+
+        // Trigger initial detection after DOM settles
+        setTimeout(() => this.updateActiveSection(), 200);
     }
 
     ngOnDestroy(): void {
@@ -226,11 +279,45 @@ export class ProjectDetailComponent implements OnDestroy {
     }
 
     // Scrollspy methods
-    getVisibleSections(project: ProjectDetail): { id: string; label: string }[] {
-        if (project.UserIsAdmin) {
-            return this.sections;
+    getVisibleSections(project: ProjectDetail): TocSection[] {
+        const filtered: TocSection[] = [];
+
+        for (const section of this.sectionsTree) {
+            // Skip admin-only sections for non-admins
+            if (section.adminOnly && !project.UserIsAdmin) continue;
+
+            if (section.children) {
+                const visibleChildren = section.children.filter((child) => {
+                    if (child.id === "card-invoices" && !project.UserCanEdit) return false;
+                    if (child.id === "card-cost-share" && !project.IsInLandownerAssistanceProgram) return false;
+                    return true;
+                });
+                if (visibleChildren.length > 0) {
+                    filtered.push({ ...section, children: visibleChildren });
+                }
+            } else {
+                filtered.push(section);
+            }
         }
-        return this.sections.filter((s) => s.id !== "section-admin");
+
+        // Rebuild lookup maps
+        this.childToParentMap.clear();
+        this.allScrollTargetIds = [];
+
+        for (const section of filtered) {
+            if (section.children) {
+                for (const child of section.children) {
+                    this.childToParentMap.set(child.id, section.id);
+                    this.allScrollTargetIds.push(child.id);
+                }
+            } else {
+                // Leaf sections map to themselves
+                this.childToParentMap.set(section.id, section.id);
+                this.allScrollTargetIds.push(section.id);
+            }
+        }
+
+        return filtered;
     }
 
     scrollToSection(sectionId: string): void {
@@ -240,19 +327,34 @@ export class ProjectDetailComponent implements OnDestroy {
         }
     }
 
+    scrollToParent(section: TocSection): void {
+        if (section.children && section.children.length > 0) {
+            const firstChildId = section.children[0].id;
+            this.activeParentId.set(section.id);
+            this.scrollToSection(firstChildId);
+        }
+    }
+
     private updateActiveSection(): void {
-        const offset = 120; // account for sticky header
-        for (let i = this.sections.length - 1; i >= 0; i--) {
-            const el = document.getElementById(this.sections[i].id);
+        const offset = 120;
+        for (let i = this.allScrollTargetIds.length - 1; i >= 0; i--) {
+            const el = document.getElementById(this.allScrollTargetIds[i]);
             if (el) {
                 const rect = el.getBoundingClientRect();
                 if (rect.top <= offset) {
-                    this.activeSectionId.set(this.sections[i].id);
+                    const childId = this.allScrollTargetIds[i];
+                    this.activeChildId.set(childId);
+                    this.activeParentId.set(this.childToParentMap.get(childId) ?? null);
                     return;
                 }
             }
         }
-        this.activeSectionId.set(this.sections[0]?.id ?? null);
+        // Default to first section
+        if (this.allScrollTargetIds.length > 0) {
+            const firstId = this.allScrollTargetIds[0];
+            this.activeChildId.set(firstId);
+            this.activeParentId.set(this.childToParentMap.get(firstId) ?? null);
+        }
     }
 
     private createTreatmentColumnDefs(): ColDef<TreatmentGridRow>[] {

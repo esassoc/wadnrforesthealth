@@ -181,6 +181,11 @@
             font-weight: 600;
         }
     }
+
+    .toc-child-link {
+        padding-left: 1.5rem;
+        font-size: 0.8125rem;
+    }
 }
 
 // Scrollspy fixed positioning (applied by ScrollSpyStickyDirective)
@@ -193,23 +198,19 @@
 
 .content-area {
     min-width: 0; // prevent grid blowout
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 
-    section {
+    .card[id] {
         scroll-margin-top: 5rem;
     }
 }
 
-.section-header {
-    font-size: 1.5rem;
+.card-subsection-heading {
+    font-size: 0.9375rem;
     font-weight: 600;
-    color: #333;
-    margin: 1.5rem 0 1rem 0;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #dee2e6;
-
-    section:first-child > & {
-        margin-top: 0;
-    }
+    margin: 0 0 0.5rem 0;
 }
 
 // Mobile responsive: collapse to single column
