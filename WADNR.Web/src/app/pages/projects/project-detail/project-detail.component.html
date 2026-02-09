@@ -523,7 +523,9 @@
                 <div class="card" id="card-documents">
                     <div class="card-header">
                         <span class="card-title">Documents</span>
-                        <button class="btn btn-sm btn-primary float-right" (click)="openAddDocumentModal(project.ProjectID)">Add Document</button>
+                        @if (project.UserCanDirectEdit) {
+                            <button class="btn btn-sm btn-primary float-right" (click)="openAddDocumentModal(project.ProjectID)">Add Document</button>
+                        }
                     </div>
                     <div class="card-body">
                         @if (documents.length > 0) {
@@ -541,7 +543,12 @@
                     <span class="card-title">Notes</span>
                 </div>
                 <div class="card-body">
-                    <h4 class="card-subsection-heading">Public Notes</h4>
+                    <div class="subsection-header">
+                        <h4 class="card-subsection-heading">Public Notes</h4>
+                        @if (project.UserCanDirectEdit) {
+                            <button class="btn btn-sm btn-primary" (click)="openAddNoteModal(project.ProjectID)">Add Note</button>
+                        }
+                    </div>
                     @if (notes$ | async; as notes) {
                         @if (notes.length > 0) {
                             <wadnr-grid [rowData]="notes" [columnDefs]="noteColumnDefs" height="300px" downloadFileName="Project_Notes"> </wadnr-grid>
@@ -552,7 +559,10 @@
 
                     @if (project.UserIsAdmin) {
                         <hr />
-                        <h4 class="card-subsection-heading">Internal Notes</h4>
+                        <div class="subsection-header">
+                            <h4 class="card-subsection-heading">Internal Notes</h4>
+                            <button class="btn btn-sm btn-primary" (click)="openAddInternalNoteModal(project.ProjectID)">Add Internal Note</button>
+                        </div>
                         @if (internalNotes$ | async; as internalNotes) {
                             @if (internalNotes.length > 0) {
                                 <wadnr-grid [rowData]="internalNotes" [columnDefs]="internalNoteColumnDefs" height="300px" downloadFileName="Project_InternalNotes"></wadnr-grid>
@@ -591,28 +601,18 @@
                 <div class="card" id="card-photos">
                     <div class="card-header">
                         <span class="card-title">Photos</span>
+                        @if (project.UserCanDirectEdit) {
+                            <button class="btn btn-sm btn-primary float-right" (click)="openAddImageModal(project.ProjectID)">Add Photo</button>
+                        }
                     </div>
                     <div class="card-body">
-                        @if (images.length > 0) {
-                            <div class="image-gallery">
-                                @for (image of images; track image.ProjectImageID) {
-                                    <div class="image-item">
-                                        <img [src]="'/api/FileResource/' + image.FileResourceGuid" [alt]="image.Caption || 'Project photo'" class="project-image" />
-                                        @if (image.Caption) {
-                                            <div class="image-caption">{{ image.Caption }}</div>
-                                        }
-                                        @if (image.Credit) {
-                                            <div class="image-credit">Credit: {{ image.Credit }}</div>
-                                        }
-                                        @if (image.IsKeyPhoto) {
-                                            <span class="key-photo-badge">Key Photo</span>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                        } @else {
-                            <p class="system-text">No photos uploaded for this project.</p>
-                        }
+                        <image-gallery
+                            [images]="mapToGalleryItems(images)"
+                            [canEdit]="project.UserCanDirectEdit"
+                            (edit)="openEditImageModal($event)"
+                            (delete)="deleteImage($event)"
+                            (setKeyPhoto)="setKeyPhoto($event)">
+                        </image-gallery>
                     </div>
                 </div>
             }

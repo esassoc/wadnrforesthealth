@@ -19,4 +19,20 @@ public static class ProjectInternalNoteProjections
                 : null,
             UpdateDate = x.UpdateDate
         };
+
+    public static Expression<Func<ProjectInternalNote, ProjectInternalNoteDetail>> AsDetail =>
+        x => new ProjectInternalNoteDetail
+        {
+            ProjectInternalNoteID = x.ProjectInternalNoteID,
+            ProjectID = x.ProjectID,
+            Note = x.Note,
+            CreatedByPersonName = x.CreatePerson != null
+                ? x.CreatePerson.FirstName + " " + x.CreatePerson.LastName
+                : null,
+            CreateDate = x.CreateDate,
+            UpdatedByPersonName = x.UpdatePerson != null
+                ? x.UpdatePerson.FirstName + " " + x.UpdatePerson.LastName
+                : null,
+            UpdateDate = x.UpdateDate
+        };
 }

@@ -24,6 +24,7 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
+import { ImageGalleryComponent, ImageGalleryItem } from "src/app/shared/components/image-gallery/image-gallery.component";
 import { ScrollSpyStickyDirective } from "src/app/shared/directives/scroll-spy-sticky.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
@@ -34,6 +35,9 @@ import { GenericLayer } from "src/app/shared/generated/model/generic-layer";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectDocumentService } from "src/app/shared/generated/api/project-document.service";
+import { ProjectNoteService } from "src/app/shared/generated/api/project-note.service";
+import { ProjectInternalNoteService } from "src/app/shared/generated/api/project-internal-note.service";
+import { ProjectImageService } from "src/app/shared/generated/api/project-image.service";
 import { InvoiceService } from "src/app/shared/generated/api/invoice.service";
 import { ProjectDetail } from "src/app/shared/generated/model/project-detail";
 import { ProjectApprovalStatusEnum } from "src/app/shared/generated/enum/project-approval-status-enum";
@@ -45,6 +49,7 @@ import { TreatmentGridRow } from "src/app/shared/generated/model/treatment-grid-
 import { InteractionEventGridRow } from "src/app/shared/generated/model/interaction-event-grid-row";
 import { ClassificationLookupItem } from "src/app/shared/generated/model/classification-lookup-item";
 import { ProjectImageGridRow } from "src/app/shared/generated/model/project-image-grid-row";
+import { ProjectImageTimingLookupItem } from "src/app/shared/generated/model/project-image-timing-lookup-item";
 import { ProjectDocumentGridRow } from "src/app/shared/generated/model/project-document-grid-row";
 import { ProjectDocumentTypeLookupItem } from "src/app/shared/generated/model/project-document-type-lookup-item";
 import { ProjectNoteGridRow } from "src/app/shared/generated/model/project-note-grid-row";
@@ -55,12 +60,14 @@ import { ProjectUpdateHistoryGridRow } from "src/app/shared/generated/model/proj
 import { ProjectNotificationGridRow } from "src/app/shared/generated/model/project-notification-grid-row";
 import { ProjectAuditLogGridRow } from "src/app/shared/generated/model/project-audit-log-grid-row";
 import { ProjectDocumentModalComponent, ProjectDocumentModalData } from "../project-document-modal/project-document-modal.component";
+import { ProjectNoteModalComponent, ProjectNoteModalData } from "../project-note-modal/project-note-modal.component";
+import { ProjectImageModalComponent, ProjectImageModalData } from "../project-image-modal/project-image-modal.component";
 import { BlockListModalComponent, BlockListModalData } from "./block-list-modal/block-list-modal.component";
 
 @Component({
     selector: "project-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ScrollSpyStickyDirective],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ImageGalleryComponent, ScrollSpyStickyDirective],
     templateUrl: "./project-detail.component.html",
     styleUrls: ["./project-detail.component.scss"],
 })
@@ -109,6 +116,14 @@ export class ProjectDetailComponent implements OnDestroy {
     // Document CRUD properties
     public documentTypes$: Observable<ProjectDocumentTypeLookupItem[]>;
     private refreshDocuments$ = new Subject<void>();
+
+    // Note CRUD properties
+    private refreshNotes$ = new Subject<void>();
+    private refreshInternalNotes$ = new Subject<void>();
+
+    // Image CRUD properties
+    public timingOptions$: Observable<ProjectImageTimingLookupItem[]>;
+    private refreshImages$ = new Subject<void>();
 
     // Scrollspy — hierarchical TOC
     sectionsTree: TocSection[] = [
@@ -167,6 +182,9 @@ export class ProjectDetailComponent implements OnDestroy {
     constructor(
         private projectService: ProjectService,
         private projectDocumentService: ProjectDocumentService,
+        private projectNoteService: ProjectNoteService,
+        private projectInternalNoteService: ProjectInternalNoteService,
+        private projectImageService: ProjectImageService,
         private invoiceService: InvoiceService,
         private utilityFunctions: UtilityFunctionsService,
         private dialogService: DialogService,
@@ -202,10 +220,12 @@ export class ProjectDetailComponent implements OnDestroy {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.images$ = this.projectID$.pipe(
-            switchMap((projectID) => this.projectService.listImagesProject(projectID)),
+        this.images$ = combineLatest([this.projectID$, this.refreshImages$.pipe(startWith(undefined))]).pipe(
+            switchMap(([projectID]) => this.projectService.listImagesProject(projectID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        this.timingOptions$ = this.projectImageService.listTimingsProjectImage().pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
         this.documents$ = combineLatest([this.projectID$, this.refreshDocuments$.pipe(startWith(undefined))]).pipe(
             switchMap(([projectID]) => this.projectService.listDocumentsProject(projectID)),
@@ -214,13 +234,13 @@ export class ProjectDetailComponent implements OnDestroy {
 
         this.documentTypes$ = this.projectDocumentService.listTypesProjectDocument().pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
-        this.notes$ = this.projectID$.pipe(
-            switchMap((projectID) => this.projectService.listNotesProject(projectID)),
+        this.notes$ = combineLatest([this.projectID$, this.refreshNotes$.pipe(startWith(undefined))]).pipe(
+            switchMap(([projectID]) => this.projectService.listNotesProject(projectID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.internalNotes$ = this.projectID$.pipe(
-            switchMap((projectID) => this.projectService.listInternalNotesProject(projectID)),
+        this.internalNotes$ = combineLatest([this.projectID$, this.refreshInternalNotes$.pipe(startWith(undefined))]).pipe(
+            switchMap(([projectID]) => this.projectService.listInternalNotesProject(projectID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -436,27 +456,13 @@ export class ProjectDetailComponent implements OnDestroy {
             },
             this.utilityFunctions.createBasicColumnDef("Description", "Description"),
             this.utilityFunctions.createBasicColumnDef("Type", "DocumentTypeName"),
-            {
-                headerName: "Actions",
-                sortable: false,
-                filter: false,
-                width: 150,
-                cellRenderer: (params: any) => {
-                    return `
-                        <button class="btn btn-sm btn-secondary edit-btn" title="Edit">Edit</button>
-                        <button class="btn btn-sm btn-danger delete-btn" title="Delete">Delete</button>
-                    `;
-                },
-                onCellClicked: (params: any) => {
-                    const target = params.event.target as HTMLElement;
-                    const doc = params.data as ProjectDocumentGridRow;
-                    if (target.classList.contains("edit-btn")) {
-                        this.openEditDocumentModal(doc);
-                    } else if (target.classList.contains("delete-btn")) {
-                        this.deleteDocument(doc);
-                    }
-                },
-            },
+            this.utilityFunctions.createActionsColumnDef((params) => {
+                const doc = params.data as ProjectDocumentGridRow;
+                return [
+                    { ActionName: "Edit", ActionHandler: () => this.openEditDocumentModal(doc), ActionIcon: "fa fa-pencil" },
+                    { ActionName: "Delete", ActionHandler: () => this.deleteDocument(doc), ActionIcon: "fa fa-trash" },
+                ];
+            }),
         ];
     }
 
@@ -467,6 +473,13 @@ export class ProjectDetailComponent implements OnDestroy {
             this.utilityFunctions.createDateColumnDef("Created", "CreateDate", "short"),
             this.utilityFunctions.createBasicColumnDef("Updated By", "UpdatedByPersonName"),
             this.utilityFunctions.createDateColumnDef("Updated", "UpdateDate", "short"),
+            this.utilityFunctions.createActionsColumnDef((params) => {
+                const note = params.data as ProjectNoteGridRow;
+                return [
+                    { ActionName: "Edit", ActionHandler: () => this.openEditNoteModal(note), ActionIcon: "fa fa-pencil" },
+                    { ActionName: "Delete", ActionHandler: () => this.deleteNote(note), ActionIcon: "fa fa-trash" },
+                ];
+            }),
         ];
     }
 
@@ -477,6 +490,13 @@ export class ProjectDetailComponent implements OnDestroy {
             this.utilityFunctions.createDateColumnDef("Created", "CreateDate", "short"),
             this.utilityFunctions.createBasicColumnDef("Updated By", "UpdatedByPersonName"),
             this.utilityFunctions.createDateColumnDef("Updated", "UpdateDate", "short"),
+            this.utilityFunctions.createActionsColumnDef((params) => {
+                const note = params.data as ProjectInternalNoteGridRow;
+                return [
+                    { ActionName: "Edit", ActionHandler: () => this.openEditInternalNoteModal(note), ActionIcon: "fa fa-pencil" },
+                    { ActionName: "Delete", ActionHandler: () => this.deleteInternalNote(note), ActionIcon: "fa fa-trash" },
+                ];
+            }),
         ];
     }
 
@@ -686,6 +706,225 @@ export class ProjectDetailComponent implements OnDestroy {
                     });
                 }
             });
+    }
+
+    // Note CRUD methods
+    openAddNoteModal(projectID: number): void {
+        const data: ProjectNoteModalData = {
+            mode: "create",
+            projectID: projectID,
+        };
+
+        this.dialogService
+            .open(ProjectNoteModalComponent, { data, width: "600px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshNotes$.next();
+                }
+            });
+    }
+
+    openEditNoteModal(note: ProjectNoteGridRow): void {
+        const data: ProjectNoteModalData = {
+            mode: "edit",
+            projectID: 0,
+            note: note,
+        };
+
+        this.dialogService
+            .open(ProjectNoteModalComponent, { data, width: "600px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshNotes$.next();
+                }
+            });
+    }
+
+    deleteNote(note: ProjectNoteGridRow): void {
+        this.confirmService
+            .confirm({
+                title: "Delete Note",
+                message: "Are you sure you want to delete this note? This action cannot be undone.",
+                buttonTextYes: "Delete",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-danger",
+            })
+            .then((confirmed) => {
+                if (confirmed) {
+                    this.projectNoteService.deleteProjectNote(note.ProjectNoteID).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Note deleted successfully.", AlertContext.Success, true));
+                            this.refreshNotes$.next();
+                        },
+                        error: (err) => {
+                            const message = err?.error ?? err?.message ?? "An error occurred while deleting the note.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                }
+            });
+    }
+
+    // Internal Note CRUD methods
+    openAddInternalNoteModal(projectID: number): void {
+        const data: ProjectNoteModalData = {
+            mode: "create",
+            projectID: projectID,
+            isInternal: true,
+        };
+
+        this.dialogService
+            .open(ProjectNoteModalComponent, { data, width: "600px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshInternalNotes$.next();
+                }
+            });
+    }
+
+    openEditInternalNoteModal(note: ProjectInternalNoteGridRow): void {
+        const data: ProjectNoteModalData = {
+            mode: "edit",
+            projectID: 0,
+            isInternal: true,
+            note: note,
+        };
+
+        this.dialogService
+            .open(ProjectNoteModalComponent, { data, width: "600px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshInternalNotes$.next();
+                }
+            });
+    }
+
+    deleteInternalNote(note: ProjectInternalNoteGridRow): void {
+        this.confirmService
+            .confirm({
+                title: "Delete Internal Note",
+                message: "Are you sure you want to delete this internal note? This action cannot be undone.",
+                buttonTextYes: "Delete",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-danger",
+            })
+            .then((confirmed) => {
+                if (confirmed) {
+                    this.projectInternalNoteService.deleteProjectInternalNote(note.ProjectInternalNoteID).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Internal note deleted successfully.", AlertContext.Success, true));
+                            this.refreshInternalNotes$.next();
+                        },
+                        error: (err) => {
+                            const message = err?.error ?? err?.message ?? "An error occurred while deleting the internal note.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                }
+            });
+    }
+
+    // Image CRUD methods
+    openAddImageModal(projectID: number): void {
+        this.timingOptions$.pipe(take(1)).subscribe((timingOptions) => {
+            const data: ProjectImageModalData = {
+                mode: "create",
+                projectID: projectID,
+                timingOptions: timingOptions,
+            };
+
+            this.dialogService
+                .open(ProjectImageModalComponent, { data, width: "600px" })
+                .afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refreshImages$.next();
+                    }
+                });
+        });
+    }
+
+    openEditImageModal(image: ImageGalleryItem): void {
+        combineLatest([this.images$.pipe(take(1)), this.timingOptions$.pipe(take(1))]).subscribe(([images, timingOptions]) => {
+            const gridRow = images.find((i) => i.ProjectImageID === image.imageID);
+            if (!gridRow) return;
+
+            const data: ProjectImageModalData = {
+                mode: "edit",
+                projectID: 0,
+                image: gridRow,
+                timingOptions: timingOptions,
+            };
+
+            this.dialogService
+                .open(ProjectImageModalComponent, { data, width: "600px" })
+                .afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refreshImages$.next();
+                    }
+                });
+        });
+    }
+
+    deleteImage(image: ImageGalleryItem): void {
+        this.confirmService
+            .confirm({
+                title: "Delete Photo",
+                message: "Are you sure you want to delete this photo? This action cannot be undone.",
+                buttonTextYes: "Delete",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-danger",
+            })
+            .then((confirmed) => {
+                if (confirmed) {
+                    this.projectImageService.deleteProjectImage(image.imageID).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Photo deleted successfully.", AlertContext.Success, true));
+                            this.refreshImages$.next();
+                        },
+                        error: (err) => {
+                            const message = err?.error ?? err?.message ?? "An error occurred while deleting the photo.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                }
+            });
+    }
+
+    setKeyPhoto(image: ImageGalleryItem): void {
+        this.confirmService
+            .confirm({
+                title: "Set Key Photo",
+                message: `Are you sure you want to set this photo as the key photo? The current key photo will be unset.`,
+                buttonTextYes: "Set Key Photo",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-primary",
+            })
+            .then((confirmed) => {
+                if (confirmed) {
+                    this.projectImageService.setKeyPhotoProjectImage(image.imageID).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Key photo updated successfully.", AlertContext.Success, true));
+                            this.refreshImages$.next();
+                        },
+                        error: (err) => {
+                            const message = err?.error ?? err?.message ?? "An error occurred while setting the key photo.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                }
+            });
+    }
+
+    mapToGalleryItems(images: ProjectImageGridRow[]): ImageGalleryItem[] {
+        return images.map((img) => ({
+            imageID: img.ProjectImageID,
+            fileResourceGuid: img.FileResourceGuid,
+            caption: img.Caption,
+            credit: img.Credit,
+            isKeyPhoto: img.IsKeyPhoto,
+            timingDisplayName: img.ProjectImageTimingDisplayName,
+            contentLength: img.ContentLength,
+        }));
     }
 
     // Helper methods for pending project status

@@ -29,7 +29,7 @@ const ANON_EXACT: ExactMap = {
 const SECURED_EXACT: ExactMap = {
   'DELETE': [],
   'GET': ["/focus-areas","/people","/people/lookup","/roles","/vendors","/vendors/search"],
-  'POST': ["/agreements","/classifications","/counties","/dnr-upland-regions","/fund-sources","/interaction-events","/organizations","/priority-landscapes","/programs","/project-documents","/project-images","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/sitkacapture/generate-pdf","/support-requests","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
+  'POST': ["/agreements","/classifications","/counties","/dnr-upland-regions","/fund-sources","/interaction-events","/organizations","/priority-landscapes","/programs","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/sitkacapture/generate-pdf","/support-requests","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
   'PUT': [],
 };
 
@@ -131,6 +131,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/programs/[^/]+$"),
     new RegExp("^/project-documents/[^/]+$"),
     new RegExp("^/project-images/[^/]+$"),
+    new RegExp("^/project-internal-notes/[^/]+$"),
     new RegExp("^/project-notes/[^/]+$"),
     new RegExp("^/project-types/[^/]+$"),
     new RegExp("^/projects/[^/]+$"),
@@ -154,6 +155,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/people/[^/]+/agreements$"),
     new RegExp("^/people/[^/]+/interaction-events$"),
     new RegExp("^/people/[^/]+/projects$"),
+    new RegExp("^/project-internal-notes/[^/]+$"),
     new RegExp("^/project-types/[^/]+/projects$"),
     new RegExp("^/project-types/[^/]+/projects/mapped-point/feature-collection$"),
     new RegExp("^/projects/[^/]+/audit-logs$"),
@@ -232,6 +234,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/programs/[^/]+$"),
     new RegExp("^/project-documents/[^/]+$"),
     new RegExp("^/project-images/[^/]+$"),
+    new RegExp("^/project-internal-notes/[^/]+$"),
     new RegExp("^/project-notes/[^/]+$"),
     new RegExp("^/project-types/[^/]+$"),
     new RegExp("^/projects/[^/]+$"),

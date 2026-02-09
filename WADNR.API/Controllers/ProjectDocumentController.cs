@@ -42,7 +42,7 @@ public class ProjectDocumentController(
     }
 
     [HttpPost]
-    [ProjectEditFeature]
+    [ProjectEditAsAdminFeature]
     [Consumes("multipart/form-data")]
     public async Task<ActionResult<ProjectDocumentDetail>> Create(
         [FromForm] int projectID,
@@ -106,7 +106,7 @@ public class ProjectDocumentController(
     }
 
     [HttpPut("{projectDocumentID}")]
-    [ProjectEditFeature]
+    [ProjectEditAsAdminFeature]
     public async Task<ActionResult<ProjectDocumentDetail>> Update(
         [FromRoute] int projectDocumentID,
         [FromBody] ProjectDocumentUpsertRequest request)
@@ -136,7 +136,7 @@ public class ProjectDocumentController(
     }
 
     [HttpDelete("{projectDocumentID}")]
-    [ProjectEditFeature]
+    [ProjectEditAsAdminFeature]
     public async Task<IActionResult> Delete([FromRoute] int projectDocumentID)
     {
         var projectDocument = await DbContext.ProjectDocuments

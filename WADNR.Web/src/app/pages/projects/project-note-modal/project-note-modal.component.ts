@@ -9,17 +9,22 @@ import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 
 import { ProjectNoteService } from "src/app/shared/generated/api/project-note.service";
+import { ProjectInternalNoteService } from "src/app/shared/generated/api/project-internal-note.service";
 import { ProjectNoteDetail } from "src/app/shared/generated/model/project-note-detail";
+import { ProjectInternalNoteDetail } from "src/app/shared/generated/model/project-internal-note-detail";
 import { ProjectNoteGridRow } from "src/app/shared/generated/model/project-note-grid-row";
+import { ProjectInternalNoteGridRow } from "src/app/shared/generated/model/project-internal-note-grid-row";
 import {
     ProjectNoteUpsertRequest,
     ProjectNoteUpsertRequestFormControls
 } from "src/app/shared/generated/model/project-note-upsert-request";
+import { ProjectInternalNoteUpsertRequest } from "src/app/shared/generated/model/project-internal-note-upsert-request";
 
 export interface ProjectNoteModalData {
     mode: "create" | "edit";
     projectID: number;
-    note?: ProjectNoteGridRow;
+    isInternal?: boolean;
+    note?: ProjectNoteGridRow | ProjectInternalNoteGridRow;
 }
 
 @Component({
@@ -30,12 +35,13 @@ export interface ProjectNoteModalData {
     styleUrls: ["./project-note-modal.component.scss"]
 })
 export class ProjectNoteModalComponent extends BaseModal implements OnInit {
-    public ref: DialogRef<ProjectNoteModalData, ProjectNoteDetail | null> = inject(DialogRef);
+    public ref: DialogRef<ProjectNoteModalData, ProjectNoteDetail | ProjectInternalNoteDetail | null> = inject(DialogRef);
 
     public FormFieldType = FormFieldType;
     public mode: "create" | "edit" = "create";
     public projectID: number;
-    public note?: ProjectNoteGridRow;
+    public isInternal = false;
+    public note?: ProjectNoteGridRow | ProjectInternalNoteGridRow;
     public isSubmitting = false;
 
     public form = new FormGroup({
@@ -46,6 +52,7 @@ export class ProjectNoteModalComponent extends BaseModal implements OnInit {
 
     constructor(
         private projectNoteService: ProjectNoteService,
+        private projectInternalNoteService: ProjectInternalNoteService,
         alertService: AlertService
     ) {
         super(alertService);
@@ -55,6 +62,7 @@ export class ProjectNoteModalComponent extends BaseModal implements OnInit {
         const data = this.ref.data;
         this.mode = data?.mode ?? "create";
         this.projectID = data?.projectID;
+        this.isInternal = data?.isInternal ?? false;
         this.note = data?.note;
 
         if (this.mode === "edit" && this.note) {
@@ -65,7 +73,8 @@ export class ProjectNoteModalComponent extends BaseModal implements OnInit {
     }
 
     get modalTitle(): string {
-        return this.mode === "create" ? "Add Note" : "Edit Note";
+        const noteType = this.isInternal ? "Internal Note" : "Note";
+        return this.mode === "create" ? `Add ${noteType}` : `Edit ${noteType}`;
     }
 
     get isCreateMode(): boolean {
@@ -89,41 +98,69 @@ export class ProjectNoteModalComponent extends BaseModal implements OnInit {
     }
 
     private createNote(): void {
-        const dto = new ProjectNoteUpsertRequest({
-            ProjectID: this.projectID,
-            Note: this.form.value.Note
-        });
+        const noteText = this.form.value.Note;
 
-        this.projectNoteService.createProjectNote(dto).subscribe({
-            next: (result) => {
-                this.pushGlobalSuccess("Note added successfully.");
-                this.ref.close(result);
-            },
-            error: (err) => {
-                this.isSubmitting = false;
-                const message = err?.error ?? err?.message ?? "An error occurred while adding the note.";
-                this.addLocalAlert(message, AlertContext.Danger, true);
-            }
-        });
+        if (this.isInternal) {
+            const dto = new ProjectInternalNoteUpsertRequest({ ProjectID: this.projectID, Note: noteText });
+            this.projectInternalNoteService.createProjectInternalNote(dto).subscribe({
+                next: (result) => {
+                    this.pushGlobalSuccess("Internal note added successfully.");
+                    this.ref.close(result);
+                },
+                error: (err) => {
+                    this.isSubmitting = false;
+                    const message = err?.error ?? err?.message ?? "An error occurred while adding the internal note.";
+                    this.addLocalAlert(message, AlertContext.Danger, true);
+                }
+            });
+        } else {
+            const dto = new ProjectNoteUpsertRequest({ ProjectID: this.projectID, Note: noteText });
+            this.projectNoteService.createProjectNote(dto).subscribe({
+                next: (result) => {
+                    this.pushGlobalSuccess("Note added successfully.");
+                    this.ref.close(result);
+                },
+                error: (err) => {
+                    this.isSubmitting = false;
+                    const message = err?.error ?? err?.message ?? "An error occurred while adding the note.";
+                    this.addLocalAlert(message, AlertContext.Danger, true);
+                }
+            });
+        }
     }
 
     private updateNote(): void {
-        const dto = new ProjectNoteUpsertRequest({
-            ProjectID: this.projectID,
-            Note: this.form.value.Note
-        });
+        const noteText = this.form.value.Note;
 
-        this.projectNoteService.updateProjectNote(this.note!.ProjectNoteID, dto).subscribe({
-            next: (result) => {
-                this.pushGlobalSuccess("Note updated successfully.");
-                this.ref.close(result);
-            },
-            error: (err) => {
-                this.isSubmitting = false;
-                const message = err?.error ?? err?.message ?? "An error occurred while updating the note.";
-                this.addLocalAlert(message, AlertContext.Danger, true);
-            }
-        });
+        if (this.isInternal) {
+            const internalNote = this.note as ProjectInternalNoteGridRow;
+            const dto = new ProjectInternalNoteUpsertRequest({ ProjectID: this.projectID, Note: noteText });
+            this.projectInternalNoteService.updateProjectInternalNote(internalNote.ProjectInternalNoteID, dto).subscribe({
+                next: (result) => {
+                    this.pushGlobalSuccess("Internal note updated successfully.");
+                    this.ref.close(result);
+                },
+                error: (err) => {
+                    this.isSubmitting = false;
+                    const message = err?.error ?? err?.message ?? "An error occurred while updating the internal note.";
+                    this.addLocalAlert(message, AlertContext.Danger, true);
+                }
+            });
+        } else {
+            const publicNote = this.note as ProjectNoteGridRow;
+            const dto = new ProjectNoteUpsertRequest({ ProjectID: this.projectID, Note: noteText });
+            this.projectNoteService.updateProjectNote(publicNote.ProjectNoteID, dto).subscribe({
+                next: (result) => {
+                    this.pushGlobalSuccess("Note updated successfully.");
+                    this.ref.close(result);
+                },
+                error: (err) => {
+                    this.isSubmitting = false;
+                    const message = err?.error ?? err?.message ?? "An error occurred while updating the note.";
+                    this.addLocalAlert(message, AlertContext.Danger, true);
+                }
+            });
+        }
     }
 
     cancel(): void {

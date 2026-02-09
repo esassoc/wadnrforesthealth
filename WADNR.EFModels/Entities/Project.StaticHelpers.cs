@@ -519,6 +519,7 @@ public static class Projects
         if (callingUser == null || callingUser.IsAnonymousOrUnassigned)
         {
             entity.UserCanEdit = false;
+            entity.UserCanDirectEdit = false;
             entity.UserCanDelete = false;
             entity.UserCanApprove = false;
             entity.UserIsAdmin = false;
@@ -536,6 +537,10 @@ public static class Projects
 
         // Approve permission: Admin, EsaAdmin, ProjectSteward, or CanEditProgram
         entity.UserCanApprove = callingUser.HasElevatedProjectAccess || callingUser.HasCanEditProgramRole;
+
+        // Direct edit permission: can bypass the update workflow for notes, photos, documents
+        // Matches ProjectEditAsAdminFeature roles (excludes Normal users)
+        entity.UserCanDirectEdit = callingUser.HasElevatedProjectAccess || callingUser.HasCanEditProgramRole;
 
         // Edit permission: depends on project organizations
         // Admin/EsaAdmin/ProjectSteward can edit any project

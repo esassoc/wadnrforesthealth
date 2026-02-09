@@ -54,6 +54,7 @@ export class ProjectDetail {
     Regions?: Array<string> | null;
     PriorityLandscapes?: Array<string> | null;
     UserCanEdit?: boolean;
+    UserCanDirectEdit?: boolean;
     UserCanDelete?: boolean;
     UserCanApprove?: boolean;
     UserIsAdmin?: boolean;
@@ -103,6 +104,7 @@ export interface ProjectDetailForm {
     Regions?: FormControl<Array<string>>;
     PriorityLandscapes?: FormControl<Array<string>>;
     UserCanEdit?: FormControl<boolean>;
+    UserCanDirectEdit?: FormControl<boolean>;
     UserCanDelete?: FormControl<boolean>;
     UserCanApprove?: FormControl<boolean>;
     UserIsAdmin?: FormControl<boolean>;
@@ -437,6 +439,16 @@ export class ProjectDetailFormControls {
         }
     );
     public static UserCanEdit = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static UserCanDirectEdit = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

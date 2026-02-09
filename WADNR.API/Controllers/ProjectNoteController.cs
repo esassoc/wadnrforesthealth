@@ -31,7 +31,7 @@ public class ProjectNoteController(
     }
 
     [HttpPost]
-    [ProjectEditFeature]
+    [ProjectEditAsAdminFeature]
     public async Task<ActionResult<ProjectNoteDetail>> Create([FromBody] ProjectNoteUpsertRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Note))
@@ -62,7 +62,7 @@ public class ProjectNoteController(
     }
 
     [HttpPut("{projectNoteID}")]
-    [ProjectEditFeature]
+    [ProjectEditAsAdminFeature]
     public async Task<ActionResult<ProjectNoteDetail>> Update(
         [FromRoute] int projectNoteID,
         [FromBody] ProjectNoteUpsertRequest request)
@@ -90,7 +90,7 @@ public class ProjectNoteController(
     }
 
     [HttpDelete("{projectNoteID}")]
-    [ProjectEditFeature]
+    [ProjectEditAsAdminFeature]
     public async Task<IActionResult> Delete([FromRoute] int projectNoteID)
     {
         var projectNote = await DbContext.ProjectNotes.FindAsync(projectNoteID);

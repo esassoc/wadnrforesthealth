@@ -68,6 +68,7 @@ public class ProjectDetail
 
     // User permission flags (populated based on calling user's role)
     public bool UserCanEdit { get; set; }
+    public bool UserCanDirectEdit { get; set; }
     public bool UserCanDelete { get; set; }
     public bool UserCanApprove { get; set; }
     public bool UserIsAdmin { get; set; }

@@ -10555,6 +10555,176 @@
         }
       }
     },
+    "/project-internal-notes/{projectInternalNoteID}": {
+      "get": {
+        "tags": [
+          "ProjectInternalNote"
+        ],
+        "operationId": "GetByID_ProjectInternalNote",
+        "parameters": [
+          {
+            "name": "projectInternalNoteID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectInternalNoteDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectInternalNoteDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectInternalNoteDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ProjectInternalNote"
+        ],
+        "operationId": "Update_ProjectInternalNote",
+        "parameters": [
+          {
+            "name": "projectInternalNoteID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectInternalNoteUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectInternalNoteUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectInternalNoteUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectInternalNoteDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectInternalNoteDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectInternalNoteDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ProjectInternalNote"
+        ],
+        "operationId": "Delete_ProjectInternalNote",
+        "parameters": [
+          {
+            "name": "projectInternalNoteID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/project-internal-notes": {
+      "post": {
+        "tags": [
+          "ProjectInternalNote"
+        ],
+        "operationId": "Create_ProjectInternalNote",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectInternalNoteUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectInternalNoteUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectInternalNoteUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectInternalNoteDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectInternalNoteDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectInternalNoteDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/project-notes/{projectNoteID}": {
       "get": {
         "tags": [
@@ -18026,6 +18196,9 @@
           "UserCanEdit": {
             "type": "boolean"
           },
+          "UserCanDirectEdit": {
+            "type": "boolean"
+          },
           "UserCanDelete": {
             "type": "boolean"
           },
@@ -18605,6 +18778,41 @@
         },
         "additionalProperties": false
       },
+      "ProjectInternalNoteDetail": {
+        "type": "object",
+        "properties": {
+          "ProjectInternalNoteID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Note": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "UpdatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "UpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectInternalNoteGridRow": {
         "type": "object",
         "properties": {
@@ -18632,6 +18840,24 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectInternalNoteUpsertRequest": {
+        "required": [
+          "Note"
+        ],
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Note": {
+            "maxLength": 8000,
+            "minLength": 1,
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -21953,6 +22179,9 @@
     },
     {
       "name": "ProjectImage"
+    },
+    {
+      "name": "ProjectInternalNote"
     },
     {
       "name": "ProjectNote"
