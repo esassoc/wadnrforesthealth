@@ -63,6 +63,9 @@ import { ProjectDocumentModalComponent, ProjectDocumentModalData } from "../proj
 import { ProjectNoteModalComponent, ProjectNoteModalData } from "../project-note-modal/project-note-modal.component";
 import { ProjectImageModalComponent, ProjectImageModalData } from "../project-image-modal/project-image-modal.component";
 import { BlockListModalComponent, BlockListModalData } from "./block-list-modal/block-list-modal.component";
+import { ProjectExternalLinkEditorComponent, ProjectExternalLinkEditorData } from "../project-external-link-editor/project-external-link-editor.component";
+import { ProjectOrganizationEditorComponent, ProjectOrganizationEditorData } from "../project-organization-editor/project-organization-editor.component";
+import { ProjectContactEditorComponent, ProjectContactEditorData } from "../project-contact-editor/project-contact-editor.component";
 
 @Component({
     selector: "project-detail",
@@ -124,6 +127,10 @@ export class ProjectDetailComponent implements OnDestroy {
     // Image CRUD properties
     public timingOptions$: Observable<ProjectImageTimingLookupItem[]>;
     private refreshImages$ = new Subject<void>();
+
+    // Direct edit refresh subjects
+    private refreshExternalLinks$ = new Subject<void>();
+    private refreshProject$ = new Subject<void>();
 
     // Scrollspy — hierarchical TOC
     sectionsTree: TocSection[] = [
@@ -200,8 +207,8 @@ export class ProjectDetailComponent implements OnDestroy {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.project$ = this.projectID$.pipe(
-            switchMap((projectID) => this.projectService.getProject(projectID)),
+        this.project$ = combineLatest([this.projectID$, this.refreshProject$.pipe(startWith(undefined))]).pipe(
+            switchMap(([projectID]) => this.projectService.getProject(projectID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -249,8 +256,8 @@ export class ProjectDetailComponent implements OnDestroy {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.externalLinks$ = this.projectID$.pipe(
-            switchMap((projectID) => this.projectService.listExternalLinksProject(projectID)),
+        this.externalLinks$ = combineLatest([this.projectID$, this.refreshExternalLinks$.pipe(startWith(undefined))]).pipe(
+            switchMap(([projectID]) => this.projectService.listExternalLinksProject(projectID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -1127,5 +1134,53 @@ export class ProjectDetailComponent implements OnDestroy {
     downloadApprovalLetter(project: ProjectDetail): void {
         // TODO: Implement approval letter download - requires API endpoint
         this.alertService.pushAlert(new Alert("Approval letter download functionality coming soon.", AlertContext.Info, true));
+    }
+
+    // Direct Edit modal openers
+    openEditExternalLinksModal(project: ProjectDetail): void {
+        this.externalLinks$.pipe(take(1)).subscribe((externalLinks) => {
+            const data: ProjectExternalLinkEditorData = {
+                projectID: project.ProjectID,
+                existingLinks: externalLinks,
+            };
+
+            this.dialogService
+                .open(ProjectExternalLinkEditorComponent, { data, width: "700px" })
+                .afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refreshExternalLinks$.next();
+                    }
+                });
+        });
+    }
+
+    openEditOrganizationsModal(project: ProjectDetail): void {
+        const data: ProjectOrganizationEditorData = {
+            projectID: project.ProjectID,
+            existingOrganizations: project.Organizations ?? [],
+        };
+
+        this.dialogService
+            .open(ProjectOrganizationEditorComponent, { data, width: "700px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshProject$.next();
+                }
+            });
+    }
+
+    openEditContactsModal(project: ProjectDetail): void {
+        const data: ProjectContactEditorData = {
+            projectID: project.ProjectID,
+            existingContacts: project.People ?? [],
+        };
+
+        this.dialogService
+            .open(ProjectContactEditorComponent, { data, width: "700px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshProject$.next();
+                }
+            });
     }
 }

@@ -1,0 +1,107 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit Contacts</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <div [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 200 }">
+    @if (!(isLoading$ | async)) {
+        <p class="mb-3">
+            Select the Contacts that are associated with your Project. The Primary Contact relationship is required,
+            can have only one contact associated, and is marked with a required symbol (<span class="text-danger">*</span>).
+            Other relationship types can apply to any number of contacts and are not required.
+        </p>
+        <p class="mb-3">
+            If you do not see the contact listed, you can <a href="/people" target="_blank">Add a Contact</a>
+        </p>
+
+        @if (contactsByType.length > 0) {
+            @for (cbt of contactsByType; track cbt.relationshipType.Value) {
+                <hr>
+                <div class="relationship-type-section">
+                    <div class="relationship-type-label">
+                        <strong>{{ cbt.relationshipType.DisplayName }}</strong>
+                        @if (cbt.canOnlyBeRelatedOnce) {
+                            <span class="text-danger">*</span>
+                        }
+                    </div>
+
+                    @if (cbt.canOnlyBeRelatedOnce) {
+                        <div class="grid-12 mt-2">
+                            <div class="g-col-8">
+                                <form-field
+                                    [formControl]="cbt.formControl"
+                                    [type]="FormFieldType.Select"
+                                    [formInputOptions]="allPeopleOptions"
+                                    [placeholder]="'Select a ' + cbt.relationshipType.DisplayName + '...'"
+                                    [readOnly]="isSubmitting"
+                                    (change)="onSingleSelectChange($event, cbt)">
+                                </form-field>
+                            </div>
+                            @if (cbt.fieldDefinitionName) {
+                                <div class="g-col-4 field-definition-hint">
+                                    <field-definition [fieldDefinition]="cbt.fieldDefinitionName" [inline]="true"></field-definition>
+                                </div>
+                            }
+                        </div>
+                    } @else {
+                        <div class="grid-12 mt-2">
+                            <div class="g-col-8">
+                                <form-field
+                                    [formControl]="cbt.formControl"
+                                    [type]="FormFieldType.Select"
+                                    [formInputOptions]="cbt.availablePeopleOptions"
+                                    [placeholder]="'Add a ' + cbt.relationshipType.DisplayName + '...'"
+                                    [readOnly]="isSubmitting"
+                                    (change)="onMultiSelectChange($event, cbt)">
+                                </form-field>
+                                @if (cbt.selectedContacts.length > 0) {
+                                    <ul class="selected-contacts-list mt-2">
+                                        @for (contact of cbt.selectedContacts; track contact.PersonID) {
+                                            <li class="selected-contact-item">
+                                                <a href="#"
+                                                    class="text-danger"
+                                                    (click)="removeContact(cbt, contact.PersonID); $event.preventDefault()"
+                                                    [class.disabled]="isSubmitting"
+                                                    title="Remove">
+                                                    <icon icon="Delete"></icon>
+                                                </a>
+                                                <span>{{ contact.PersonFullName }}</span>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                            @if (cbt.fieldDefinitionName) {
+                                <div class="g-col-4 field-definition-hint">
+                                    <field-definition [fieldDefinition]="cbt.fieldDefinitionName" [inline]="true"></field-definition>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        } @else {
+            <div class="alert alert-info">
+                No relationship types are available.
+            </div>
+        }
+    }
+    </div>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting || (isLoading$ | async)">
+        {{ isSubmitting ? 'Saving...' : 'Save' }}
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

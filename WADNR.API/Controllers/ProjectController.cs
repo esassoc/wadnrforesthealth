@@ -275,6 +275,99 @@ public class ProjectController(
         return Ok(links);
     }
 
+    [HttpPut("{projectID}/external-links")]
+    [ProjectEditAsAdminFeature]
+    public async Task<ActionResult<List<ProjectExternalLinkGridRow>>> SaveAllExternalLinks(
+        [FromRoute] int projectID,
+        [FromBody] ProjectExternalLinkSaveRequest request)
+    {
+        var project = await DbContext.Projects.FindAsync(projectID);
+        if (project == null)
+        {
+            return NotFound($"Project with ID {projectID} not found.");
+        }
+
+        foreach (var link in request.ExternalLinks)
+        {
+            if (string.IsNullOrWhiteSpace(link.ExternalLinkLabel))
+            {
+                return BadRequest("Link label is required.");
+            }
+            if (string.IsNullOrWhiteSpace(link.ExternalLinkUrl))
+            {
+                return BadRequest("Link URL is required.");
+            }
+            if (!link.ExternalLinkUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                !link.ExternalLinkUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                link.ExternalLinkUrl = "https://" + link.ExternalLinkUrl;
+            }
+        }
+
+        var result = await ProjectExternalLinks.SaveAllAsync(DbContext, projectID, request);
+        return Ok(result);
+    }
+
+    [HttpPut("{projectID}/organizations")]
+    [ProjectEditAsAdminFeature]
+    public async Task<ActionResult<List<ProjectOrganizationItem>>> SaveAllOrganizations(
+        [FromRoute] int projectID,
+        [FromBody] ProjectOrganizationSaveRequest request)
+    {
+        var project = await DbContext.Projects.FindAsync(projectID);
+        if (project == null)
+        {
+            return NotFound($"Project with ID {projectID} not found.");
+        }
+
+        var relationshipTypes = await DbContext.RelationshipTypes.AsNoTracking().ToListAsync();
+        var rtLookup = relationshipTypes.ToDictionary(rt => rt.RelationshipTypeID);
+
+        foreach (var org in request.Organizations)
+        {
+            if (!rtLookup.ContainsKey(org.RelationshipTypeID))
+            {
+                return BadRequest($"Relationship type with ID {org.RelationshipTypeID} not found.");
+            }
+        }
+
+        var groupedByType = request.Organizations.GroupBy(o => o.RelationshipTypeID);
+        foreach (var group in groupedByType)
+        {
+            var rt = rtLookup[group.Key];
+            if ((rt.CanOnlyBeRelatedOnceToAProject || rt.IsPrimaryContact) && group.Count() > 1)
+            {
+                return BadRequest($"Relationship type '{rt.RelationshipTypeName}' can only have one organization associated.");
+            }
+        }
+
+        var result = await ProjectOrganizations.SaveAllAsync(DbContext, projectID, request);
+        return Ok(result);
+    }
+
+    [HttpPut("{projectID}/contacts")]
+    [ProjectEditAsAdminFeature]
+    public async Task<ActionResult<List<ProjectPersonItem>>> SaveAllContacts(
+        [FromRoute] int projectID,
+        [FromBody] ProjectContactSaveRequest request)
+    {
+        var project = await DbContext.Projects.FindAsync(projectID);
+        if (project == null)
+        {
+            return NotFound($"Project with ID {projectID} not found.");
+        }
+
+        var primaryContactCount = request.Contacts
+            .Count(c => c.ProjectPersonRelationshipTypeID == (int)ProjectPersonRelationshipTypeEnum.PrimaryContact);
+        if (primaryContactCount > 1)
+        {
+            return BadRequest("Only one Primary Contact is allowed per project.");
+        }
+
+        var result = await ProjectPeople.SaveAllAsync(DbContext, projectID, request);
+        return Ok(result);
+    }
+
     [HttpGet("{projectID}/update-history")]
     [AllowAnonymous]
     [ProjectViewFeature]

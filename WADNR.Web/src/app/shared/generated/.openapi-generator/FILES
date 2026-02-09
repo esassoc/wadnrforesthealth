@@ -185,7 +185,9 @@ model/project-classifications-step.ts
 model/project-code-detail.ts
 model/project-code-grid-row.ts
 model/project-code-lookup-item.ts
+model/project-contact-item-request.ts
 model/project-contact-request-item.ts
+model/project-contact-save-request.ts
 model/project-contact-step-item.ts
 model/project-contacts-step-request.ts
 model/project-contacts-step.ts
@@ -199,6 +201,8 @@ model/project-document-update-item-request.ts
 model/project-document-update-item.ts
 model/project-document-upsert-request.ts
 model/project-external-link-grid-row.ts
+model/project-external-link-item-request.ts
+model/project-external-link-save-request.ts
 model/project-external-link-update-item-request.ts
 model/project-external-link-update-item.ts
 model/project-fact-sheet.ts
@@ -225,8 +229,10 @@ model/project-note-update-item.ts
 model/project-note-upsert-request.ts
 model/project-notification-grid-row.ts
 model/project-organization-detail-grid-row.ts
+model/project-organization-item-request.ts
 model/project-organization-item.ts
 model/project-organization-request-item.ts
+model/project-organization-save-request.ts
 model/project-organization-step-item.ts
 model/project-organization-update-item-request.ts
 model/project-organization-update-item.ts

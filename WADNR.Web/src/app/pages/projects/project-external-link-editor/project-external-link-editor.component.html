@@ -1,0 +1,95 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit External Links</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <p class="mb-3">
+        Add external links to relevant resources for this project. Links will be displayed on the project detail page.
+    </p>
+
+    <!-- Add Link Form -->
+    <div class="mb-3">
+        <form [formGroup]="addLinkForm" (ngSubmit)="addLink()">
+            <div class="grid-12" style="align-items: end;">
+                <div class="g-col-5">
+                    <form-field
+                        [formControl]="$any(addLinkForm.controls.linkLabel)"
+                        fieldLabel="Link Label"
+                        [type]="FormFieldType.Text"
+                        placeholder="Enter link label..."
+                        [readOnly]="isSubmitting">
+                    </form-field>
+                </div>
+                <div class="g-col-5">
+                    <form-field
+                        [formControl]="$any(addLinkForm.controls.linkUrl)"
+                        fieldLabel="Link URL"
+                        [type]="FormFieldType.Text"
+                        placeholder="https://..."
+                        [readOnly]="isSubmitting">
+                    </form-field>
+                </div>
+                <div class="g-col-2">
+                    <button type="submit" class="btn btn-primary btn-sm" [disabled]="isSubmitting">Add</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Links List -->
+    @if (externalLinks.length > 0) {
+        <div class="links-list">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th style="width: 40px"></th>
+                        <th>Label</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (link of externalLinks; track $index; let i = $index) {
+                        <tr>
+                            <td>
+                                <a href="#"
+                                    class="text-danger"
+                                    (click)="removeLink(i); $event.preventDefault()"
+                                    [class.disabled]="isSubmitting"
+                                    title="Remove">
+                                    <icon icon="Delete"></icon>
+                                </a>
+                            </td>
+                            <td>{{ link.ExternalLinkLabel }}</td>
+                            <td>
+                                <a [href]="link.ExternalLinkUrl" target="_blank" rel="noopener noreferrer">
+                                    {{ link.ExternalLinkUrl }}
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    } @else {
+        <div class="alert alert-info">
+            <em>No external links have been added to this project.</em>
+        </div>
+    }
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Save' }}
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

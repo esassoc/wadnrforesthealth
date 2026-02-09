@@ -57,6 +57,8 @@ import { ProjectClassificationsStep } from '../model/project-classifications-ste
 // @ts-ignore
 import { ProjectClassificationsStepRequest } from '../model/project-classifications-step-request';
 // @ts-ignore
+import { ProjectContactSaveRequest } from '../model/project-contact-save-request';
+// @ts-ignore
 import { ProjectContactsStep } from '../model/project-contacts-step';
 // @ts-ignore
 import { ProjectContactsStepRequest } from '../model/project-contacts-step-request';
@@ -66,6 +68,8 @@ import { ProjectDetail } from '../model/project-detail';
 import { ProjectDocumentGridRow } from '../model/project-document-grid-row';
 // @ts-ignore
 import { ProjectExternalLinkGridRow } from '../model/project-external-link-grid-row';
+// @ts-ignore
+import { ProjectExternalLinkSaveRequest } from '../model/project-external-link-save-request';
 // @ts-ignore
 import { ProjectFactSheet } from '../model/project-fact-sheet';
 // @ts-ignore
@@ -81,9 +85,15 @@ import { ProjectNoteGridRow } from '../model/project-note-grid-row';
 // @ts-ignore
 import { ProjectNotificationGridRow } from '../model/project-notification-grid-row';
 // @ts-ignore
+import { ProjectOrganizationItem } from '../model/project-organization-item';
+// @ts-ignore
+import { ProjectOrganizationSaveRequest } from '../model/project-organization-save-request';
+// @ts-ignore
 import { ProjectOrganizationsStep } from '../model/project-organizations-step';
 // @ts-ignore
 import { ProjectOrganizationsStepRequest } from '../model/project-organizations-step-request';
+// @ts-ignore
+import { ProjectPersonItem } from '../model/project-person-item';
 // @ts-ignore
 import { ProjectSimpleTree } from '../model/project-simple-tree';
 // @ts-ignore
@@ -3792,6 +3802,210 @@ export class ProjectService extends BaseService {
         return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param projectID 
+     * @param projectContactSaveRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public saveAllContactsProject(projectID: number, projectContactSaveRequest?: ProjectContactSaveRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ProjectPersonItem>>;
+    public saveAllContactsProject(projectID: number, projectContactSaveRequest?: ProjectContactSaveRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ProjectPersonItem>>>;
+    public saveAllContactsProject(projectID: number, projectContactSaveRequest?: ProjectContactSaveRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ProjectPersonItem>>>;
+    public saveAllContactsProject(projectID: number, projectContactSaveRequest?: ProjectContactSaveRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (projectID === null || projectID === undefined) {
+            throw new Error('Required parameter projectID was null or undefined when calling saveAllContactsProject.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/projects/${this.configuration.encodeParam({name: "projectID", value: projectID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/contacts`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<ProjectPersonItem>>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: projectContactSaveRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param projectID 
+     * @param projectExternalLinkSaveRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public saveAllExternalLinksProject(projectID: number, projectExternalLinkSaveRequest?: ProjectExternalLinkSaveRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ProjectExternalLinkGridRow>>;
+    public saveAllExternalLinksProject(projectID: number, projectExternalLinkSaveRequest?: ProjectExternalLinkSaveRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ProjectExternalLinkGridRow>>>;
+    public saveAllExternalLinksProject(projectID: number, projectExternalLinkSaveRequest?: ProjectExternalLinkSaveRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ProjectExternalLinkGridRow>>>;
+    public saveAllExternalLinksProject(projectID: number, projectExternalLinkSaveRequest?: ProjectExternalLinkSaveRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (projectID === null || projectID === undefined) {
+            throw new Error('Required parameter projectID was null or undefined when calling saveAllExternalLinksProject.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/projects/${this.configuration.encodeParam({name: "projectID", value: projectID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/external-links`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<ProjectExternalLinkGridRow>>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: projectExternalLinkSaveRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param projectID 
+     * @param projectOrganizationSaveRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public saveAllOrganizationsProject(projectID: number, projectOrganizationSaveRequest?: ProjectOrganizationSaveRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ProjectOrganizationItem>>;
+    public saveAllOrganizationsProject(projectID: number, projectOrganizationSaveRequest?: ProjectOrganizationSaveRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ProjectOrganizationItem>>>;
+    public saveAllOrganizationsProject(projectID: number, projectOrganizationSaveRequest?: ProjectOrganizationSaveRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ProjectOrganizationItem>>>;
+    public saveAllOrganizationsProject(projectID: number, projectOrganizationSaveRequest?: ProjectOrganizationSaveRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (projectID === null || projectID === undefined) {
+            throw new Error('Required parameter projectID was null or undefined when calling saveAllOrganizationsProject.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/projects/${this.configuration.encodeParam({name: "projectID", value: projectID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/organizations`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<ProjectOrganizationItem>>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: projectOrganizationSaveRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

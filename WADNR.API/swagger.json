@@ -6096,6 +6096,211 @@
           }
         },
         "x-anonymous": true
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveAllExternalLinks_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectExternalLinkSaveRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectExternalLinkSaveRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectExternalLinkSaveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectExternalLinkGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectExternalLinkGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectExternalLinkGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/organizations": {
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveAllOrganizations_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectOrganizationSaveRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectOrganizationSaveRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectOrganizationSaveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectOrganizationItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectOrganizationItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectOrganizationItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/contacts": {
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveAllContacts_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectContactSaveRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectContactSaveRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectContactSaveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectPersonItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectPersonItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectPersonItem"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/projects/{projectID}/update-history": {
@@ -17813,6 +18018,29 @@
         },
         "additionalProperties": false
       },
+      "ProjectContactItemRequest": {
+        "required": [
+          "PersonID",
+          "ProjectPersonRelationshipTypeID"
+        ],
+        "type": "object",
+        "properties": {
+          "ProjectPersonID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectPersonRelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectContactRequestItem": {
         "type": "object",
         "properties": {
@@ -17828,6 +18056,19 @@
           "ProjectPersonRelationshipTypeID": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectContactSaveRequest": {
+        "type": "object",
+        "properties": {
+          "Contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectContactItemRequest"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -18420,6 +18661,44 @@
           },
           "ExternalLinkUrl": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectExternalLinkItemRequest": {
+        "required": [
+          "ExternalLinkLabel",
+          "ExternalLinkUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "ProjectExternalLinkID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ExternalLinkLabel": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "ExternalLinkUrl": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectExternalLinkSaveRequest": {
+        "type": "object",
+        "properties": {
+          "ExternalLinks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectExternalLinkItemRequest"
+            },
             "nullable": true
           }
         },
@@ -19318,6 +19597,29 @@
         },
         "additionalProperties": false
       },
+      "ProjectOrganizationItemRequest": {
+        "required": [
+          "OrganizationID",
+          "RelationshipTypeID"
+        ],
+        "type": "object",
+        "properties": {
+          "ProjectOrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectOrganizationRequestItem": {
         "type": "object",
         "properties": {
@@ -19333,6 +19635,19 @@
           "RelationshipTypeID": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectOrganizationSaveRequest": {
+        "type": "object",
+        "properties": {
+          "Organizations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectOrganizationItemRequest"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

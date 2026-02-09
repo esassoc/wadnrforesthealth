@@ -262,6 +262,11 @@
             <div class="card" id="card-organizations">
                 <div class="card-header">
                     <span class="card-title">Organizations</span>
+                    @if (project.UserCanDirectEdit) {
+                        <button class="btn btn-sm btn-primary float-right" (click)="openEditOrganizationsModal(project)">
+                            <i class="fa fa-pencil"></i> Edit
+                        </button>
+                    }
                 </div>
                 <div class="card-body">
                     @if (project.Organizations && project.Organizations.length > 0) {
@@ -299,6 +304,11 @@
             <div class="card" id="card-contacts">
                 <div class="card-header">
                     <span class="card-title">Contacts</span>
+                    @if (project.UserCanDirectEdit) {
+                        <button class="btn btn-sm btn-primary float-right" (click)="openEditContactsModal(project)">
+                            <i class="fa fa-pencil"></i> Edit
+                        </button>
+                    }
                 </div>
                 <div class="card-body">
                     @if (project.People && project.People.length > 0) {
@@ -579,6 +589,11 @@
                 <div class="card" id="card-external-links">
                     <div class="card-header">
                         <span class="card-title">External Links</span>
+                        @if (project.UserCanDirectEdit) {
+                            <button class="btn btn-sm btn-primary float-right" (click)="openEditExternalLinksModal(project)">
+                                <i class="fa fa-pencil"></i> Edit
+                            </button>
+                        }
                     </div>
                     <div class="card-body">
                         @if (externalLinks.length > 0) {
