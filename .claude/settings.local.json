@@ -37,7 +37,8 @@
       "Bash(set NODE_TLS_REJECT_UNAUTHORIZED=0)",
       "Bash(node -e:*)",
       "Bash(set \"NODE_EXTRA_CA_CERTS=C:\\\\Users\\\\mack.peters\\\\.cato-root-ca.pem\")",
-      "Bash(dotnet run:*)"
+      "Bash(dotnet run:*)",
+      "Bash(dotnet tool list:*)"
     ]
   }
 }

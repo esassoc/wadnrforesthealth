@@ -21,6 +21,8 @@ import { DNRUplandRegionGridRow } from '../model/dnr-upland-region-grid-row';
 // @ts-ignore
 import { DNRUplandRegionUpsertRequest } from '../model/dnr-upland-region-upsert-request';
 // @ts-ignore
+import { FocusAreaGridRow } from '../model/focus-area-grid-row';
+// @ts-ignore
 import { FundSourceAllocationDNRUplandRegionDetailGridRow } from '../model/fund-source-allocation-dnr-upland-region-detail-grid-row';
 // @ts-ignore
 import { ProjectDNRUplandRegionDetailGridRow } from '../model/project-dnr-upland-region-detail-grid-row';
@@ -251,6 +253,61 @@ export class DNRUplandRegionService extends BaseService {
         let localVarPath = `/dnr-upland-regions`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Array<DNRUplandRegionGridRow>>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param dnrUplandRegionID 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public listFocusAreasDNRUplandRegion(dnrUplandRegionID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FocusAreaGridRow>>;
+    public listFocusAreasDNRUplandRegion(dnrUplandRegionID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FocusAreaGridRow>>>;
+    public listFocusAreasDNRUplandRegion(dnrUplandRegionID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FocusAreaGridRow>>>;
+    public listFocusAreasDNRUplandRegion(dnrUplandRegionID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (dnrUplandRegionID === null || dnrUplandRegionID === undefined) {
+            throw new Error('Required parameter dnrUplandRegionID was null or undefined when calling listFocusAreasDNRUplandRegion.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/dnr-upland-regions/${this.configuration.encodeParam({name: "dnrUplandRegionID", value: dnrUplandRegionID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/focus-areas`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<FocusAreaGridRow>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

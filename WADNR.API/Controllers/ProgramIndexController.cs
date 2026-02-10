@@ -21,9 +21,11 @@ public class ProgramIndexController(
 {
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ActionResult<List<ProgramIndexGridRow>>> List()
+    public async Task<ActionResult<List<ProgramIndexGridRow>>> List([FromQuery] int? biennium)
     {
-        var programIndices = await ProgramIndices.ListAsGridRowAsync(DbContext);
+        var programIndices = biennium.HasValue
+            ? await ProgramIndices.ListForBienniumAsGridRowAsync(DbContext, biennium.Value)
+            : await ProgramIndices.ListAsGridRowAsync(DbContext);
         return Ok(programIndices);
     }
 
@@ -39,27 +41,13 @@ public class ProgramIndexController(
         return Ok(programIndex);
     }
 
-    [HttpGet("for-biennium/{biennium}")]
-    [AllowAnonymous]
-    public async Task<ActionResult<List<ProgramIndexGridRow>>> ListForBiennium([FromRoute] int biennium)
-    {
-        var programIndices = await ProgramIndices.ListForBienniumAsGridRowAsync(DbContext, biennium);
-        return Ok(programIndices);
-    }
-
     [HttpGet("lookup")]
     [AllowAnonymous]
-    public async Task<ActionResult<List<ProgramIndexLookupItem>>> ListLookup()
+    public async Task<ActionResult<List<ProgramIndexLookupItem>>> ListLookup([FromQuery] int? biennium)
     {
-        var programIndices = await ProgramIndices.ListAsLookupItemAsync(DbContext);
-        return Ok(programIndices);
-    }
-
-    [HttpGet("lookup/for-biennium/{biennium}")]
-    [AllowAnonymous]
-    public async Task<ActionResult<List<ProgramIndexLookupItem>>> ListLookupForBiennium([FromRoute] int biennium)
-    {
-        var programIndices = await ProgramIndices.ListForBienniumAsLookupItemAsync(DbContext, biennium);
+        var programIndices = biennium.HasValue
+            ? await ProgramIndices.ListForBienniumAsLookupItemAsync(DbContext, biennium.Value)
+            : await ProgramIndices.ListAsLookupItemAsync(DbContext);
         return Ok(programIndices);
     }
 

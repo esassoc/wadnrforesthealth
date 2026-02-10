@@ -429,20 +429,102 @@
 
             <!-- Invoices Card -->
             @if (project.UserCanEdit) {
-                @if (invoices$ | async; as invoices) {
-                    <div class="card" id="card-invoices">
-                        <div class="card-header">
-                            <span class="card-title">Invoices</span>
-                        </div>
-                        <div class="card-body">
-                            @if (invoices.length > 0) {
-                                <wadnr-grid [rowData]="invoices" [columnDefs]="invoiceColumnDefs" height="300px" downloadFileName="Project_Invoices"></wadnr-grid>
-                            } @else {
-                                <p class="system-text">No invoices recorded for this project.</p>
-                            }
-                        </div>
+                <div class="card" id="card-invoices">
+                    <div class="card-header">
+                        <span class="card-title">Invoices</span>
                     </div>
-                }
+                    <div class="card-body">
+                        @if (project.UserCanDirectEdit) {
+                            <div style="text-align: right; margin-bottom: 1rem;">
+                                <button class="btn btn-primary btn-sm" (click)="openAddPaymentRequestModal(project.ProjectID)">
+                                    <i class="fa fa-plus"></i> Add Invoice Payment Request
+                                </button>
+                            </div>
+                        }
+
+                        @if (paymentRequests$ | async; as paymentRequests) {
+                            @if (invoicesByPaymentRequest$ | async; as invoiceMap) {
+                                @if (paymentRequests.length === 0) {
+                                    <p class="system-text">No payment requests recorded for this project.</p>
+                                }
+                                @for (pr of paymentRequests; track pr.InvoicePaymentRequestID) {
+                                    <div class="payment-request-card" style="border: 1px solid #ddd; border-radius: 4px; padding: 1rem; margin-bottom: 1.5rem;">
+                                        @if (project.UserCanDirectEdit) {
+                                            <div style="text-align: right; margin-bottom: 0.5rem;">
+                                                <button class="btn btn-primary btn-sm" (click)="openAddInvoiceModal(pr.InvoicePaymentRequestID)">
+                                                    <i class="fa fa-plus"></i> Create New Invoice
+                                                </button>
+                                            </div>
+                                        }
+
+                                        <!-- Payment Request Detail Fields -->
+                                        <div class="grid-12" style="margin-bottom: 0.75rem;">
+                                            <!-- Left column: Vendor info -->
+                                            <div class="g-col-5">
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-5" style="font-weight: bold; text-align: right; padding-right: 0.5rem;">Vendor Name</div>
+                                                    <div class="g-col-7">{{ pr.VendorName }}</div>
+                                                </div>
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-5" style="font-weight: bold; text-align: right; padding-right: 0.5rem;">Vendor Address</div>
+                                                    <div class="g-col-7">{{ pr.VendorAddress }}</div>
+                                                </div>
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-5" style="font-weight: bold; text-align: right; padding-right: 0.5rem;">Vendor ID</div>
+                                                    <div class="g-col-7">{{ pr.VendorStatewideVendorNumber }}</div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Middle column: Purchase Authority & DUNS -->
+                                            <div class="g-col-3">
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-6" style="font-weight: bold; text-align: right; padding-right: 0.5rem;">Purchase Authority</div>
+                                                    <div class="g-col-6">{{ getPurchaseAuthorityDisplay(pr) }}</div>
+                                                </div>
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-6" style="font-weight: bold; text-align: right; padding-right: 0.5rem;">DUNS</div>
+                                                    <div class="g-col-6">{{ pr.Duns }}</div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Right column: Prepared By, Phone, Date -->
+                                            <div class="g-col-4">
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-5" style="font-weight: bold; text-align: right; padding-right: 0.5rem;">Prepared By</div>
+                                                    <div class="g-col-7">{{ pr.PreparedByPersonFullName }}</div>
+                                                </div>
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-5" style="font-weight: bold; text-align: right; padding-right: 0.5rem;">Phone</div>
+                                                    <div class="g-col-7">{{ pr.PreparedByPersonPhone }}</div>
+                                                </div>
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-5" style="font-weight: bold; text-align: right; padding-right: 0.5rem;">Date</div>
+                                                    <div class="g-col-7">{{ pr.InvoicePaymentRequestDate | date:'M/d/yyyy' }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Notes row -->
+                                        @if (pr.Notes) {
+                                            <div class="grid-12" style="margin-bottom: 0.75rem;">
+                                                <div class="g-col-2" style="font-weight: bold; text-align: right; padding-right: 0.5rem;">Notes</div>
+                                                <div class="g-col-10">{{ pr.Notes }}</div>
+                                            </div>
+                                        }
+
+                                        <!-- Invoice grid for this payment request -->
+                                        <wadnr-grid
+                                            [rowData]="invoiceMap[pr.InvoicePaymentRequestID] || []"
+                                            [columnDefs]="invoiceColumnDefs"
+                                            height="240px"
+                                            [downloadFileName]="'Invoices_PR_' + pr.InvoicePaymentRequestID">
+                                        </wadnr-grid>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
             }
 
             <!-- Associated Agreements Card (inside funding, no TOC entry) -->

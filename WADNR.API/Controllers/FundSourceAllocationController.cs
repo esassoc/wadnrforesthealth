@@ -39,14 +39,6 @@ public class FundSourceAllocationController(
         return Ok(fundSourceAllocation);
     }
 
-    [HttpGet("for-fund-source/{fundSourceID}")]
-    [AllowAnonymous]
-    public async Task<ActionResult<List<FundSourceAllocationGridRow>>> ListForFundSource([FromRoute] int fundSourceID)
-    {
-        var fundSourceAllocations = await FundSourceAllocations.ListForFundSourceAsGridRowAsync(DbContext, fundSourceID);
-        return Ok(fundSourceAllocations);
-    }
-
     [HttpGet("lookup")]
     [AllowAnonymous]
     public async Task<ActionResult<List<FundSourceAllocationLookupItem>>> ListLookup()

@@ -15,6 +15,8 @@ using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.EFModels.Workflows;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.Invoice;
+using WADNR.Models.DataTransferObjects.InvoicePaymentRequest;
 using WADNR.Models.DataTransferObjects.ProjectUpdate;
 
 namespace WADNR.API.Controllers;
@@ -273,6 +275,24 @@ public class ProjectController(
     {
         var links = await ProjectExternalLinks.ListForProjectAsGridRowAsync(DbContext, projectID);
         return Ok(links);
+    }
+
+    [HttpGet("{projectID}/invoices")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<List<InvoiceGridRow>>> ListInvoices([FromRoute] int projectID)
+    {
+        var invoices = await Invoices.ListForProjectAsGridRowAsync(DbContext, projectID);
+        return Ok(invoices);
+    }
+
+    [HttpGet("{projectID}/invoice-payment-requests")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<List<InvoicePaymentRequestGridRow>>> ListInvoicePaymentRequests([FromRoute] int projectID)
+    {
+        var paymentRequests = await InvoicePaymentRequests.ListForProjectAsGridRowAsync(DbContext, projectID);
+        return Ok(paymentRequests);
     }
 
     [HttpPut("{projectID}/external-links")]

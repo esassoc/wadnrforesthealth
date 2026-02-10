@@ -15,6 +15,7 @@ export class InvoiceGridRow {
     InvoicePaymentRequestID?: number;
     ProjectID?: number;
     ProjectName?: string | null;
+    FundSourceID?: number | null;
     FundSourceNumber?: string | null;
     InvoiceNumber?: string | null;
     InvoiceDate?: string;
@@ -32,6 +33,7 @@ export class InvoiceGridRow {
     InvoiceApprovalStatusID?: number;
     InvoiceApprovalStatusName?: string | null;
     InvoiceIdentifyingName?: string | null;
+    InvoiceFileResourceGuid?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -42,6 +44,7 @@ export interface InvoiceGridRowForm {
     InvoicePaymentRequestID?: FormControl<number>;
     ProjectID?: FormControl<number>;
     ProjectName?: FormControl<string>;
+    FundSourceID?: FormControl<number>;
     FundSourceNumber?: FormControl<string>;
     InvoiceNumber?: FormControl<string>;
     InvoiceDate?: FormControl<string>;
@@ -59,6 +62,7 @@ export interface InvoiceGridRowForm {
     InvoiceApprovalStatusID?: FormControl<number>;
     InvoiceApprovalStatusName?: FormControl<string>;
     InvoiceIdentifyingName?: FormControl<string>;
+    InvoiceFileResourceGuid?: FormControl<string>;
 }
 
 export class InvoiceGridRowFormControls { 
@@ -93,6 +97,16 @@ export class InvoiceGridRowFormControls {
         }
     );
     public static ProjectName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -263,6 +277,16 @@ export class InvoiceGridRowFormControls {
         }
     );
     public static InvoiceIdentifyingName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static InvoiceFileResourceGuid = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

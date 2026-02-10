@@ -10,6 +10,7 @@ using WADNR.API.Services.Attributes;
 using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.FocusArea;
 
 namespace WADNR.API.Controllers;
 
@@ -86,6 +87,14 @@ public class DNRUplandRegionController(
     {
         var items = await Projects.ListAsDNRUplandDetailGridRowForUserAsync(DbContext, dnrUplandRegionID, CallingUser);
         return Ok(items);
+    }
+
+    [HttpGet("{dnrUplandRegionID}/focus-areas")]
+    [NormalUserFeature]
+    public async Task<ActionResult<List<FocusAreaGridRow>>> ListFocusAreas([FromRoute] int dnrUplandRegionID)
+    {
+        var focusAreas = await FocusAreas.ListForRegionAsGridRowAsync(DbContext, dnrUplandRegionID);
+        return Ok(focusAreas);
     }
 
     [HttpGet("{dnrUplandRegionID}/fund-source-allocations")]

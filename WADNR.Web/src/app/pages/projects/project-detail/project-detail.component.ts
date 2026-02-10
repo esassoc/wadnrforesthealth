@@ -1,8 +1,8 @@
-import { AsyncPipe } from "@angular/common";
+import { AsyncPipe, DatePipe } from "@angular/common";
 import { Component, Input, OnDestroy, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, fromEvent, Observable, shareReplay, startWith, Subject, Subscription, switchMap, take } from "rxjs";
-import { debounceTime } from "rxjs/operators";
+import { debounceTime, map } from "rxjs/operators";
 import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap } from "leaflet";
 import { DialogService } from "@ngneat/dialog";
@@ -39,6 +39,11 @@ import { ProjectNoteService } from "src/app/shared/generated/api/project-note.se
 import { ProjectInternalNoteService } from "src/app/shared/generated/api/project-internal-note.service";
 import { ProjectImageService } from "src/app/shared/generated/api/project-image.service";
 import { InvoiceService } from "src/app/shared/generated/api/invoice.service";
+import { InvoicePaymentRequestService } from "src/app/shared/generated/api/invoice-payment-request.service";
+import { PersonService } from "src/app/shared/generated/api/person.service";
+import { FundSourceService } from "src/app/shared/generated/api/fund-source.service";
+import { ProgramIndexService } from "src/app/shared/generated/api/program-index.service";
+import { ProjectCodeService } from "src/app/shared/generated/api/project-code.service";
 import { ProjectDetail } from "src/app/shared/generated/model/project-detail";
 import { ProjectApprovalStatusEnum } from "src/app/shared/generated/enum/project-approval-status-enum";
 import { ProjectUpdateStateEnum } from "src/app/shared/generated/enum/project-update-state-enum";
@@ -55,6 +60,13 @@ import { ProjectDocumentTypeLookupItem } from "src/app/shared/generated/model/pr
 import { ProjectNoteGridRow } from "src/app/shared/generated/model/project-note-grid-row";
 import { ProjectInternalNoteGridRow } from "src/app/shared/generated/model/project-internal-note-grid-row";
 import { InvoiceGridRow } from "src/app/shared/generated/model/invoice-grid-row";
+import { InvoicePaymentRequestGridRow } from "src/app/shared/generated/model/invoice-payment-request-grid-row";
+import { PersonGridRow } from "src/app/shared/generated/model/person-grid-row";
+import { VendorGridRow } from "src/app/shared/generated/model/vendor-grid-row";
+import { FundSourceGridRow } from "src/app/shared/generated/model/fund-source-grid-row";
+import { ProgramIndexGridRow } from "src/app/shared/generated/model/program-index-grid-row";
+import { ProjectCodeLookupItem } from "src/app/shared/generated/model/project-code-lookup-item";
+import { SelectDropdownOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ProjectExternalLinkGridRow } from "src/app/shared/generated/model/project-external-link-grid-row";
 import { ProjectUpdateHistoryGridRow } from "src/app/shared/generated/model/project-update-history-grid-row";
 import { ProjectNotificationGridRow } from "src/app/shared/generated/model/project-notification-grid-row";
@@ -70,11 +82,13 @@ import { ProjectBasicsEditorComponent, ProjectBasicsEditorData } from "../projec
 import { ProjectTagEditorComponent, ProjectTagEditorData } from "../project-tag-editor/project-tag-editor.component";
 import { ProjectClassificationEditorComponent, ProjectClassificationEditorData } from "../project-classification-editor/project-classification-editor.component";
 import { ProjectFundingEditorComponent, ProjectFundingEditorData } from "../project-funding-editor/project-funding-editor.component";
+import { InvoicePaymentRequestModalComponent, InvoicePaymentRequestModalData } from "../invoice-payment-request-modal/invoice-payment-request-modal.component";
+import { InvoiceModalComponent, InvoiceModalData } from "../invoice-modal/invoice-modal.component";
 
 @Component({
     selector: "project-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ImageGalleryComponent, ScrollSpyStickyDirective],
+    imports: [PageHeaderComponent, AsyncPipe, DatePipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ImageGalleryComponent, ScrollSpyStickyDirective],
     templateUrl: "./project-detail.component.html",
     styleUrls: ["./project-detail.component.scss"],
 })
@@ -98,6 +112,8 @@ export class ProjectDetailComponent implements OnDestroy {
     public notes$: Observable<ProjectNoteGridRow[]>;
     public internalNotes$: Observable<ProjectInternalNoteGridRow[]>;
     public invoices$: Observable<InvoiceGridRow[]>;
+    public invoicesByPaymentRequest$: Observable<Record<number, InvoiceGridRow[]>>;
+    public paymentRequests$: Observable<InvoicePaymentRequestGridRow[]>;
     public externalLinks$: Observable<ProjectExternalLinkGridRow[]>;
     public updateHistory$: Observable<ProjectUpdateHistoryGridRow[]>;
     public notifications$: Observable<ProjectNotificationGridRow[]>;
@@ -131,6 +147,15 @@ export class ProjectDetailComponent implements OnDestroy {
     // Image CRUD properties
     public timingOptions$: Observable<ProjectImageTimingLookupItem[]>;
     private refreshImages$ = new Subject<void>();
+
+    // Invoice/PaymentRequest CRUD properties
+    private refreshInvoices$ = new Subject<void>();
+    private refreshPaymentRequests$ = new Subject<void>();
+    public people$: Observable<SelectDropdownOption[]>;
+    public fundSources$: Observable<SelectDropdownOption[]>;
+    public programIndices$: Observable<SelectDropdownOption[]>;
+    public projectCodes$: Observable<SelectDropdownOption[]>;
+    public approvalStatuses$: Observable<SelectDropdownOption[]>;
 
     // Direct edit refresh subjects
     private refreshExternalLinks$ = new Subject<void>();
@@ -197,6 +222,11 @@ export class ProjectDetailComponent implements OnDestroy {
         private projectInternalNoteService: ProjectInternalNoteService,
         private projectImageService: ProjectImageService,
         private invoiceService: InvoiceService,
+        private invoicePaymentRequestService: InvoicePaymentRequestService,
+        private personService: PersonService,
+        private fundSourceService: FundSourceService,
+        private programIndexService: ProgramIndexService,
+        private projectCodeService: ProjectCodeService,
         private utilityFunctions: UtilityFunctionsService,
         private dialogService: DialogService,
         private confirmService: ConfirmService,
@@ -255,8 +285,27 @@ export class ProjectDetailComponent implements OnDestroy {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.invoices$ = this.projectID$.pipe(
-            switchMap((projectID) => this.invoiceService.listForProjectInvoice(projectID)),
+        this.invoices$ = combineLatest([this.projectID$, this.refreshInvoices$.pipe(startWith(undefined))]).pipe(
+            switchMap(([projectID]) => this.projectService.listInvoicesProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.invoicesByPaymentRequest$ = this.invoices$.pipe(
+            map(invoices => {
+                const grouped: Record<number, InvoiceGridRow[]> = {};
+                for (const inv of invoices) {
+                    if (!grouped[inv.InvoicePaymentRequestID]) {
+                        grouped[inv.InvoicePaymentRequestID] = [];
+                    }
+                    grouped[inv.InvoicePaymentRequestID].push(inv);
+                }
+                return grouped;
+            }),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.paymentRequests$ = combineLatest([this.projectID$, this.refreshPaymentRequests$.pipe(startWith(undefined))]).pipe(
+            switchMap(([projectID]) => this.projectService.listInvoicePaymentRequestsProject(projectID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -282,6 +331,61 @@ export class ProjectDetailComponent implements OnDestroy {
 
         this.locationLayers$ = this.projectID$.pipe(
             switchMap((projectID) => this.projectService.listLocationsAsGenericLayersProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        // Invoice/PaymentRequest lookup data - filter to active WADNR people (OrganizationID 4704)
+        const WADNR_ORGANIZATION_ID = 4704;
+        this.people$ = this.personService.listPerson().pipe(
+            map(people => people
+                .filter(p => p.IsActive && p.OrganizationID === WADNR_ORGANIZATION_ID)
+                .map(p => ({
+                    Value: p.PersonID,
+                    Label: p.OrganizationName ? `${p.FirstName} ${p.LastName} - ${p.OrganizationName}` : `${p.FirstName} ${p.LastName}`,
+                    disabled: false
+                } as SelectDropdownOption))),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.fundSources$ = this.fundSourceService.listFundSource().pipe(
+            map(sources => sources
+                .sort((a, b) => (a.FundSourceNumber ?? "").localeCompare(b.FundSourceNumber ?? ""))
+                .map(s => ({
+                    Value: s.FundSourceID,
+                    Label: [s.FundSourceNumber, s.FundSourceName].filter(Boolean).join(" - "),
+                    disabled: false
+                } as SelectDropdownOption))),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.programIndices$ = this.programIndexService.listProgramIndex().pipe(
+            map(indices => indices
+                .sort((a, b) => (a.ProgramIndexCode ?? "").localeCompare(b.ProgramIndexCode ?? ""))
+                .map(i => ({
+                    Value: i.ProgramIndexID,
+                    Label: [i.ProgramIndexCode, i.ProgramIndexTitle].filter(Boolean).join(" - ") + (i.Biennium ? ` (${i.Biennium})` : ""),
+                    disabled: false
+                } as SelectDropdownOption))),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.projectCodes$ = this.projectCodeService.listProjectCode().pipe(
+            map(codes => codes
+                .sort((a, b) => (a.ProjectCodeName ?? "").localeCompare(b.ProjectCodeName ?? ""))
+                .map(c => ({
+                    Value: c.ProjectCodeID,
+                    Label: [c.ProjectCodeName, c.ProjectCodeTitle].filter(Boolean).join(" - "),
+                    disabled: false
+                } as SelectDropdownOption))),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.approvalStatuses$ = this.invoiceService.listApprovalStatusesInvoice().pipe(
+            map(statuses => statuses.map(s => ({
+                Value: s.InvoiceApprovalStatusID,
+                Label: s.InvoiceApprovalStatusName,
+                disabled: false
+            } as SelectDropdownOption))),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -513,18 +617,48 @@ export class ProjectDetailComponent implements OnDestroy {
 
     private createInvoiceColumnDefs(): ColDef<InvoiceGridRow>[] {
         return [
+            this.utilityFunctions.createLinkColumnDef("Fund Source", "FundSourceNumber", "FundSourceID", {
+                InRouterLink: "/fund-sources/",
+            }),
             this.utilityFunctions.createBasicColumnDef("Invoice Number", "InvoiceNumber"),
             this.utilityFunctions.createDateColumnDef("Invoice Date", "InvoiceDate", "short"),
-            this.utilityFunctions.createBasicColumnDef("Fund Source", "FundSourceNumber"),
-            this.utilityFunctions.createCurrencyColumnDef("Payment Amount", "PaymentAmount"),
+            this.utilityFunctions.createBasicColumnDef("Fund", "Fund"),
+            this.utilityFunctions.createBasicColumnDef("Appn", "Appn"),
+            this.utilityFunctions.createBasicColumnDef("Program Index", "ProgramIndexCode"),
+            this.utilityFunctions.createBasicColumnDef("Project Code", "ProjectCodeName"),
+            this.utilityFunctions.createBasicColumnDef("Sub Object", "SubObject"),
+            this.utilityFunctions.createBasicColumnDef("Organization Code", "OrganizationCodeName"),
             this.utilityFunctions.createCurrencyColumnDef("Match Amount", "MatchAmount"),
+            this.utilityFunctions.createCurrencyColumnDef("Payment Amount", "PaymentAmount"),
             this.utilityFunctions.createBasicColumnDef("Status", "InvoiceStatusDisplayName", {
                 CustomDropdownFilterField: "InvoiceStatusDisplayName",
             }),
             this.utilityFunctions.createBasicColumnDef("Approval Status", "InvoiceApprovalStatusName", {
                 CustomDropdownFilterField: "InvoiceApprovalStatusName",
             }),
+            this.utilityFunctions.createBasicColumnDef("Nickname", "InvoiceIdentifyingName"),
+            this.utilityFunctions.createActionsColumnDef((params) => {
+                const invoice = params.data as InvoiceGridRow;
+                const actions: any[] = [
+                    { ActionName: "Edit", ActionHandler: () => this.openEditInvoiceModal(invoice), ActionIcon: "fa fa-pencil" },
+                ];
+                if (invoice.InvoiceFileResourceGuid) {
+                    actions.push({
+                        ActionName: "Download Voucher",
+                        ActionHandler: () => window.open(`/api/file-resources/${invoice.InvoiceFileResourceGuid}`, "_blank"),
+                        ActionIcon: "fa fa-download"
+                    });
+                }
+                return actions;
+            }),
         ];
+    }
+
+    getPurchaseAuthorityDisplay(pr: InvoicePaymentRequestGridRow): string {
+        if (pr.PurchaseAuthorityIsLandownerCostShareAgreement) {
+            return "Landowner Cost-Share Agreement";
+        }
+        return pr.PurchaseAuthority || "";
     }
 
     private createUpdateHistoryColumnDefs(): ColDef<ProjectUpdateHistoryGridRow>[] {
@@ -1138,6 +1272,80 @@ export class ProjectDetailComponent implements OnDestroy {
     downloadApprovalLetter(project: ProjectDetail): void {
         // TODO: Implement approval letter download - requires API endpoint
         this.alertService.pushAlert(new Alert("Approval letter download functionality coming soon.", AlertContext.Info, true));
+    }
+
+    // Invoice/PaymentRequest modal openers
+    openAddPaymentRequestModal(projectID: number): void {
+        this.people$.pipe(take(1)).subscribe((people) => {
+            const data: InvoicePaymentRequestModalData = {
+                mode: "create",
+                projectID: projectID,
+                people: people,
+            };
+
+            this.dialogService
+                .open(InvoicePaymentRequestModalComponent, { data, width: "600px" })
+                .afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refreshPaymentRequests$.next();
+                    }
+                });
+        });
+    }
+
+    openAddInvoiceModal(invoicePaymentRequestID: number): void {
+        combineLatest([
+            this.fundSources$.pipe(take(1)),
+            this.programIndices$.pipe(take(1)),
+            this.projectCodes$.pipe(take(1)),
+            this.approvalStatuses$.pipe(take(1))
+        ]).subscribe(([fundSources, programIndices, projectCodes, approvalStatuses]) => {
+            const data: InvoiceModalData = {
+                mode: "create",
+                invoicePaymentRequestID: invoicePaymentRequestID,
+                fundSources: fundSources,
+                programIndices: programIndices,
+                projectCodes: projectCodes,
+                approvalStatuses: approvalStatuses,
+            };
+
+            this.dialogService
+                .open(InvoiceModalComponent, { data, width: "800px" })
+                .afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refreshInvoices$.next();
+                        this.refreshPaymentRequests$.next();
+                    }
+                });
+        });
+    }
+
+    openEditInvoiceModal(invoice: InvoiceGridRow): void {
+        combineLatest([
+            this.fundSources$.pipe(take(1)),
+            this.programIndices$.pipe(take(1)),
+            this.projectCodes$.pipe(take(1)),
+            this.approvalStatuses$.pipe(take(1))
+        ]).subscribe(([fundSources, programIndices, projectCodes, approvalStatuses]) => {
+            const data: InvoiceModalData = {
+                mode: "edit",
+                invoicePaymentRequestID: invoice.InvoicePaymentRequestID,
+                invoiceID: invoice.InvoiceID,
+                fundSources: fundSources,
+                programIndices: programIndices,
+                projectCodes: projectCodes,
+                approvalStatuses: approvalStatuses,
+            };
+
+            this.dialogService
+                .open(InvoiceModalComponent, { data, width: "800px" })
+                .afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refreshInvoices$.next();
+                        this.refreshPaymentRequests$.next();
+                    }
+                });
+        });
     }
 
     // Direct Edit modal openers

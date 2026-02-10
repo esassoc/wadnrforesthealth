@@ -14,6 +14,7 @@ api/focus-area.service.ts
 api/fund-source-allocation.service.ts
 api/fund-source.service.ts
 api/interaction-event.service.ts
+api/invoice-payment-request.service.ts
 api/invoice.service.ts
 api/lookup.service.ts
 api/organization-type.service.ts
@@ -134,8 +135,12 @@ model/interaction-event-detail.ts
 model/interaction-event-grid-row.ts
 model/interaction-event-type-lookup-item.ts
 model/interaction-event-upsert-request.ts
+model/invoice-approval-status-lookup-item.ts
 model/invoice-detail.ts
 model/invoice-grid-row.ts
+model/invoice-payment-request-grid-row.ts
+model/invoice-payment-request-upsert-request.ts
+model/invoice-upsert-request.ts
 model/location-detailed-item-request.ts
 model/location-detailed-step-request.ts
 model/location-detailed-step.ts

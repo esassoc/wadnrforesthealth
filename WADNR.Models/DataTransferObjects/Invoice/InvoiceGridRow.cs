@@ -6,6 +6,7 @@ public class InvoiceGridRow
     public int InvoicePaymentRequestID { get; set; }
     public int ProjectID { get; set; }
     public string ProjectName { get; set; } = string.Empty;
+    public int? FundSourceID { get; set; }
     public string? FundSourceNumber { get; set; }
     public string InvoiceNumber { get; set; } = string.Empty;
     public DateTime InvoiceDate { get; set; }
@@ -23,4 +24,5 @@ public class InvoiceGridRow
     public int InvoiceApprovalStatusID { get; set; }
     public string InvoiceApprovalStatusName { get; set; } = string.Empty;
     public string? InvoiceIdentifyingName { get; set; }
+    public Guid? InvoiceFileResourceGuid { get; set; }
 }

@@ -67,4 +67,10 @@ public class InvoiceDetail
     // Approval Status
     public int InvoiceApprovalStatusID { get; set; }
     public string InvoiceApprovalStatusName { get; set; } = string.Empty;
+    public string? InvoiceApprovalStatusComment { get; set; }
+
+    // Invoice Voucher File
+    public int? InvoiceFileResourceID { get; set; }
+    public Guid? InvoiceFileResourceGuid { get; set; }
+    public string? InvoiceFileOriginalFileName { get; set; }
 }

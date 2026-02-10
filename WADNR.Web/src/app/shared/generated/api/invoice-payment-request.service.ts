@@ -15,9 +15,11 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
-import { FocusAreaDetail } from '../model/focus-area-detail';
+import { InvoiceGridRow } from '../model/invoice-grid-row';
 // @ts-ignore
-import { FocusAreaGridRow } from '../model/focus-area-grid-row';
+import { InvoicePaymentRequestGridRow } from '../model/invoice-payment-request-grid-row';
+// @ts-ignore
+import { InvoicePaymentRequestUpsertRequest } from '../model/invoice-payment-request-upsert-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -29,24 +31,21 @@ import { BaseService } from '../api.base.service';
 @Injectable({
   providedIn: 'root'
 })
-export class FocusAreaService extends BaseService {
+export class InvoicePaymentRequestService extends BaseService {
 
     constructor(protected httpClient: HttpClient, @Optional() @Inject(BASE_PATH) basePath: string|string[], @Optional() configuration?: Configuration) {
         super(basePath, configuration);
     }
 
     /**
-     * @param focusAreaID 
+     * @param invoicePaymentRequestUpsertRequest 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getByIDFocusArea(focusAreaID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<FocusAreaDetail>;
-    public getByIDFocusArea(focusAreaID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<FocusAreaDetail>>;
-    public getByIDFocusArea(focusAreaID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<FocusAreaDetail>>;
-    public getByIDFocusArea(focusAreaID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        if (focusAreaID === null || focusAreaID === undefined) {
-            throw new Error('Required parameter focusAreaID was null or undefined when calling getByIDFocusArea.');
-        }
+    public createInvoicePaymentRequest(invoicePaymentRequestUpsertRequest?: InvoicePaymentRequestUpsertRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<InvoicePaymentRequestGridRow>;
+    public createInvoicePaymentRequest(invoicePaymentRequestUpsertRequest?: InvoicePaymentRequestUpsertRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<InvoicePaymentRequestGridRow>>;
+    public createInvoicePaymentRequest(invoicePaymentRequestUpsertRequest?: InvoicePaymentRequestUpsertRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<InvoicePaymentRequestGridRow>>;
+    public createInvoicePaymentRequest(invoicePaymentRequestUpsertRequest?: InvoicePaymentRequestUpsertRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -64,6 +63,17 @@ export class FocusAreaService extends BaseService {
         const localVarTransferCache: boolean = options?.transferCache ?? true;
 
 
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
         let responseType_: 'text' | 'json' | 'blob' = 'json';
         if (localVarHttpHeaderAcceptSelected) {
             if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
@@ -75,11 +85,12 @@ export class FocusAreaService extends BaseService {
             }
         }
 
-        let localVarPath = `/focus-areas/${this.configuration.encodeParam({name: "focusAreaID", value: focusAreaID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        let localVarPath = `/invoice-payment-requests`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<FocusAreaDetail>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<InvoicePaymentRequestGridRow>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                body: invoicePaymentRequestUpsertRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -91,13 +102,17 @@ export class FocusAreaService extends BaseService {
     }
 
     /**
+     * @param invoicePaymentRequestID 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listFocusArea(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FocusAreaGridRow>>;
-    public listFocusArea(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FocusAreaGridRow>>>;
-    public listFocusArea(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FocusAreaGridRow>>>;
-    public listFocusArea(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public listInvoicesInvoicePaymentRequest(invoicePaymentRequestID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<InvoiceGridRow>>;
+    public listInvoicesInvoicePaymentRequest(invoicePaymentRequestID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<InvoiceGridRow>>>;
+    public listInvoicesInvoicePaymentRequest(invoicePaymentRequestID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<InvoiceGridRow>>>;
+    public listInvoicesInvoicePaymentRequest(invoicePaymentRequestID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (invoicePaymentRequestID === null || invoicePaymentRequestID === undefined) {
+            throw new Error('Required parameter invoicePaymentRequestID was null or undefined when calling listInvoicesInvoicePaymentRequest.');
+        }
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -126,9 +141,9 @@ export class FocusAreaService extends BaseService {
             }
         }
 
-        let localVarPath = `/focus-areas`;
+        let localVarPath = `/invoice-payment-requests/${this.configuration.encodeParam({name: "invoicePaymentRequestID", value: invoicePaymentRequestID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/invoices`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Array<FocusAreaGridRow>>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<Array<InvoiceGridRow>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

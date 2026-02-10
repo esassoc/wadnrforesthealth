@@ -11,6 +11,7 @@ public static class InvoiceProjections
         InvoicePaymentRequestID = x.InvoicePaymentRequestID,
         ProjectID = x.InvoicePaymentRequest.ProjectID,
         ProjectName = x.InvoicePaymentRequest.Project.ProjectName,
+        FundSourceID = x.FundSourceID,
         FundSourceNumber = x.FundSource != null ? x.FundSource.FundSourceNumber : null,
         InvoiceNumber = x.InvoiceNumber,
         InvoiceDate = x.InvoiceDate,
@@ -29,7 +30,8 @@ public static class InvoiceProjections
         InvoiceStatusDisplayName = string.Empty,
         InvoiceApprovalStatusID = x.InvoiceApprovalStatusID,
         InvoiceApprovalStatusName = x.InvoiceApprovalStatus.InvoiceApprovalStatusName,
-        InvoiceIdentifyingName = x.InvoiceIdentifyingName
+        InvoiceIdentifyingName = x.InvoiceIdentifyingName,
+        InvoiceFileResourceGuid = x.InvoiceFileResource != null ? x.InvoiceFileResource.FileResourceGUID : null
     };
 
     public static Expression<Func<Invoice, InvoiceDetail>> AsDetail => x => new InvoiceDetail
@@ -100,6 +102,14 @@ public static class InvoiceProjections
 
         // Approval Status
         InvoiceApprovalStatusID = x.InvoiceApprovalStatusID,
-        InvoiceApprovalStatusName = x.InvoiceApprovalStatus.InvoiceApprovalStatusName
+        InvoiceApprovalStatusName = x.InvoiceApprovalStatus.InvoiceApprovalStatusName,
+        InvoiceApprovalStatusComment = x.InvoiceApprovalStatusComment,
+
+        // Invoice Voucher File
+        InvoiceFileResourceID = x.InvoiceFileResourceID,
+        InvoiceFileResourceGuid = x.InvoiceFileResource != null ? x.InvoiceFileResource.FileResourceGUID : null,
+        InvoiceFileOriginalFileName = x.InvoiceFileResource != null
+            ? x.InvoiceFileResource.OriginalBaseFilename + "." + x.InvoiceFileResource.OriginalFileExtension
+            : null
     };
 }

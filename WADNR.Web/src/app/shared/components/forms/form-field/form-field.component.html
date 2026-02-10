@@ -97,7 +97,14 @@
         [multiple]="multiple"
         [bindLabel]="formInputOptionLabel"
         [bindValue]="formInputOptionValue"
-        (change)="onNgSelectChange($event)"></ng-select>
+        (change)="onNgSelectChange($event)">
+        <ng-template ng-label-tmp let-item="item">
+            <span [title]="item[formInputOptionLabel]">{{ item[formInputOptionLabel] }}</span>
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item">
+            <span [title]="item[formInputOptionLabel]">{{ item[formInputOptionLabel] }}</span>
+        </ng-template>
+    </ng-select>
     } @else {
     <span class="text-danger"> No "formInputOptions" were provided to this form field component </span>
     } }

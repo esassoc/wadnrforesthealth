@@ -1,0 +1,157 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>{{ mode === "edit" ? "Edit Invoice" : "Create a new Invoice" }}</h3>
+</div>
+<div class="modal-body" [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 200 }">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <p>{{ mode === "edit" ? "Update the invoice details below." : "Enter basic information about the Invoice." }}</p>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.InvoiceIdentifyingName"
+            fieldLabel="Invoice Nickname"
+            [type]="FormFieldType.Text">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.FundSourceID"
+            fieldLabel="Fund Source"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="fundSources"
+            placeholder="Choose one">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.InvoiceNumber"
+            fieldLabel="Invoice Number"
+            [type]="FormFieldType.Text">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.InvoiceDate"
+            fieldLabel="Invoice Date"
+            [type]="FormFieldType.Date">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.Fund"
+            fieldLabel="Fund"
+            [type]="FormFieldType.Text">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.Appn"
+            fieldLabel="Appn"
+            [type]="FormFieldType.Text">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ProgramIndexID"
+            fieldLabel="Program Index"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="programIndices"
+            placeholder="Choose one">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ProjectCodeID"
+            fieldLabel="Project Code"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="projectCodes"
+            placeholder="Choose one">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.SubObject"
+            fieldLabel="SubObject"
+            [type]="FormFieldType.Text">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.OrganizationCodeID"
+            fieldLabel="Organization Code"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="organizationCodes"
+            placeholder="Choose one">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.InvoiceMatchAmountTypeID"
+            fieldLabel="Match Amount"
+            [type]="FormFieldType.Radio"
+            [formInputOptions]="matchAmountTypes"
+            name="InvoiceMatchAmountTypeID">
+        </form-field>
+
+        @if (showMatchAmount) {
+            <form-field
+                [formControl]="form.controls.MatchAmount"
+                fieldLabel="Match Amount"
+                [type]="FormFieldType.Number"
+                placeholder="Enter match amount">
+            </form-field>
+        }
+
+        <form-field
+            [formControl]="form.controls.PaymentAmount"
+            fieldLabel="Payment Amount"
+            [type]="FormFieldType.Number"
+            placeholder="Enter payment amount">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.InvoiceStatusID"
+            fieldLabel="Invoice Status"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="invoiceStatuses"
+            placeholder="Select status">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.InvoiceApprovalStatusID"
+            fieldLabel="Approval Status"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="approvalStatuses"
+            placeholder="Select approval status">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.InvoiceApprovalStatusComment"
+            fieldLabel="Approval Status Comment"
+            [type]="FormFieldType.Textarea"
+            placeholder="Enter comment (required if denied)">
+        </form-field>
+
+        @if (existingFileName) {
+            <div class="field">
+                <div class="field-label">Current Voucher File</div>
+                <div>
+                    <a href="/api/file-resources/{{ existingFileResourceGuid }}" target="_blank">{{ existingFileName }}</a>
+                </div>
+            </div>
+        }
+
+        <form-field
+            [formControl]="fileControl"
+            [fieldLabel]="existingFileName ? 'Replace Voucher File' : 'Invoice Voucher Upload'"
+            [type]="FormFieldType.File"
+            uploadFileAccepts=".pdf,.zip,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.gif,.png">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Save' }}
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

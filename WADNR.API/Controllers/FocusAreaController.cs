@@ -38,11 +38,4 @@ public class FocusAreaController(
         return Ok(focusArea);
     }
 
-    [HttpGet("for-region/{dnrUplandRegionID}")]
-    [NormalUserFeature]
-    public async Task<ActionResult<List<FocusAreaGridRow>>> ListForRegion([FromRoute] int dnrUplandRegionID)
-    {
-        var focusAreas = await FocusAreas.ListForRegionAsGridRowAsync(DbContext, dnrUplandRegionID);
-        return Ok(focusAreas);
-    }
 }

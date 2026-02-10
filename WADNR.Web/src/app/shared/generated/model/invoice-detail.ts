@@ -50,6 +50,10 @@ export class InvoiceDetail {
     InvoiceStatusDisplayName?: string | null;
     InvoiceApprovalStatusID?: number;
     InvoiceApprovalStatusName?: string | null;
+    InvoiceApprovalStatusComment?: string | null;
+    InvoiceFileResourceID?: number | null;
+    InvoiceFileResourceGuid?: string | null;
+    InvoiceFileOriginalFileName?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -95,6 +99,10 @@ export interface InvoiceDetailForm {
     InvoiceStatusDisplayName?: FormControl<string>;
     InvoiceApprovalStatusID?: FormControl<number>;
     InvoiceApprovalStatusName?: FormControl<string>;
+    InvoiceApprovalStatusComment?: FormControl<string>;
+    InvoiceFileResourceID?: FormControl<number>;
+    InvoiceFileResourceGuid?: FormControl<string>;
+    InvoiceFileOriginalFileName?: FormControl<string>;
 }
 
 export class InvoiceDetailFormControls { 
@@ -479,6 +487,46 @@ export class InvoiceDetailFormControls {
         }
     );
     public static InvoiceApprovalStatusName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static InvoiceApprovalStatusComment = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static InvoiceFileResourceID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static InvoiceFileResourceGuid = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static InvoiceFileOriginalFileName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
