@@ -175,10 +175,15 @@ model/program-lookup-item.ts
 model/program-notification-grid-row.ts
 model/program-upsert-request.ts
 model/project-audit-log-grid-row.ts
+model/project-basics-edit-data.ts
+model/project-basics-save-request.ts
 model/project-basics-step-request.ts
 model/project-basics-step.ts
 model/project-classification-detail-grid-row.ts
+model/project-classification-detail-item.ts
+model/project-classification-item-request.ts
 model/project-classification-request-item.ts
+model/project-classification-save-request.ts
 model/project-classification-step-item.ts
 model/project-classifications-step-request.ts
 model/project-classifications-step.ts
@@ -206,6 +211,9 @@ model/project-external-link-save-request.ts
 model/project-external-link-update-item-request.ts
 model/project-external-link-update-item.ts
 model/project-fact-sheet.ts
+model/project-fund-source-allocation-request-item-request.ts
+model/project-funding-detail.ts
+model/project-funding-save-request.ts
 model/project-grid-row.ts
 model/project-image-detail.ts
 model/project-image-grid-row.ts
@@ -247,6 +255,7 @@ model/project-search-result.ts
 model/project-simple-tree.ts
 model/project-stage-lookup-item.ts
 model/project-tag-detail-grid-row.ts
+model/project-tag-save-request.ts
 model/project-type-detail.ts
 model/project-type-grid-row.ts
 model/project-type-lookup-item-with-color.ts

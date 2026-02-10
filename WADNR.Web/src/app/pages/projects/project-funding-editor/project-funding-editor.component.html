@@ -1,0 +1,165 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit Funding</h3>
+</div>
+<div class="modal-body" [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 200 }">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <div class="grid-12">
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="$any(form.controls.estimatedTotalCost)"
+                    fieldLabel="Estimated Total Cost"
+                    [type]="FormFieldType.Number"
+                    placeholder="Enter amount..."
+                    [readOnly]="isSubmitting">
+                </form-field>
+            </div>
+            <div class="g-col-6"></div>
+
+            <!-- Funding Sources checkboxes -->
+            <div class="g-col-12">
+                <label class="field-label">Funding Sources</label>
+                <div class="grid-12">
+                    @for (fs of fundingSourceOptions; track fs.FundingSourceID) {
+                        <div class="g-col-6">
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    [(ngModel)]="fs.checked"
+                                    [ngModelOptions]="{standalone: true}"
+                                    [id]="'fs-' + fs.FundingSourceID"
+                                    [disabled]="isSubmitting">
+                                <label class="form-check-label" [for]="'fs-' + fs.FundingSourceID">
+                                    {{ fs.FundingSourceName }}
+                                </label>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="g-col-12">
+                <form-field
+                    [formControl]="$any(form.controls.fundingSourceNotes)"
+                    fieldLabel="Funding Source Notes"
+                    [type]="FormFieldType.Textarea"
+                    placeholder="Enter notes..."
+                    [readOnly]="isSubmitting">
+                </form-field>
+            </div>
+        </div>
+    </form>
+
+    <hr />
+
+    <!-- Fund Source Allocation Requests -->
+    <label class="field-label">Fund Source Allocations</label>
+
+    <div class="mb-3">
+        <form-field
+            [formControl]="allocationToAdd"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="availableAllocationOptions"
+            placeholder="Select allocation to add..."
+            [readOnly]="isSubmitting">
+        </form-field>
+    </div>
+
+    @if (allocationRows.length > 0) {
+        <table class="table table-sm" style="table-layout: fixed;">
+            <colgroup>
+                <col style="width: 30px;" />
+                <col />
+                <col style="width: 110px;" />
+                <col style="width: 110px;" />
+                <col style="width: 110px;" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Fund Source Allocation</th>
+                    <th style="text-align: right">Match Amount</th>
+                    <th style="text-align: right">Pay Amount</th>
+                    <th style="text-align: right">Total Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (row of allocationRows; track $index; let i = $index) {
+                    <tr>
+                        <td>
+                            <a href="#"
+                                class="text-danger"
+                                (click)="removeAllocation(i); $event.preventDefault()"
+                                [class.disabled]="isSubmitting"
+                                title="Remove">
+                                <icon icon="Delete"></icon>
+                            </a>
+                        </td>
+                        <td>
+                            @if (row.fundSourceName) {
+                                {{ row.fundSourceName }} -
+                            }
+                            {{ row.fundSourceAllocationName }}
+                        </td>
+                        <td>
+                            <input
+                                type="number"
+                                class="form-control form-control-sm"
+                                [(ngModel)]="row.matchAmount"
+                                [disabled]="isSubmitting"
+                                placeholder="0"
+                                style="width: 100%; text-align: right;" />
+                        </td>
+                        <td>
+                            <input
+                                type="number"
+                                class="form-control form-control-sm"
+                                [(ngModel)]="row.payAmount"
+                                [disabled]="isSubmitting"
+                                placeholder="0"
+                                style="width: 100%; text-align: right;" />
+                        </td>
+                        <td>
+                            <input
+                                type="number"
+                                class="form-control form-control-sm"
+                                [(ngModel)]="row.totalAmount"
+                                [disabled]="isSubmitting"
+                                placeholder="0"
+                                style="width: 100%; text-align: right;" />
+                        </td>
+                    </tr>
+                }
+                <tr class="totals-row">
+                    <th></th>
+                    <th style="text-align: right">Total</th>
+                    <th style="text-align: right">{{ formatCurrency(matchTotal) }}</th>
+                    <th style="text-align: right">{{ formatCurrency(payTotal) }}</th>
+                    <th style="text-align: right">{{ formatCurrency(allocationTotal) }}</th>
+                </tr>
+            </tbody>
+        </table>
+    } @else {
+        <div class="alert alert-info">
+            <em>No fund source allocations have been added.</em>
+        </div>
+    }
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Save' }}
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

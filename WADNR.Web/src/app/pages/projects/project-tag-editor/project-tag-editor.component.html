@@ -1,0 +1,54 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit Tags</h3>
+</div>
+<div class="modal-body" [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 200 }">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <p class="mb-3">
+        Add or remove tags for this project.
+    </p>
+
+    <div class="mb-3">
+        <form-field
+            [formControl]="tagToAdd"
+            fieldLabel="Add Tag"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="availableTagOptions"
+            placeholder="Select tag to add..."
+            [readOnly]="isSubmitting">
+        </form-field>
+    </div>
+
+    @if (selectedTags.length > 0) {
+        <div class="tags-list mt-3">
+            @for (tag of selectedTags; track tag.TagID) {
+                <span class="btn btn-sm btn-tag">
+                    {{ tag.TagName }}
+                    <a href="#" class="ms-1 text-danger" (click)="removeTag(tag.TagID); $event.preventDefault()" [class.disabled]="isSubmitting" title="Remove">
+                        <icon icon="Delete"></icon>
+                    </a>
+                </span>
+            }
+        </div>
+    } @else {
+        <div class="alert alert-info mt-3">
+            <em>No tags have been assigned to this project.</em>
+        </div>
+    }
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Save' }}
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

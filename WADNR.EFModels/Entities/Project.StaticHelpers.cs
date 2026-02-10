@@ -909,4 +909,121 @@ public static class Projects
     }
 
     #endregion
+
+    #region Direct Edit - Save Basics
+
+    public static async Task<ProjectBasicsEditData> GetBasicsEditDataAsync(WADNRDbContext dbContext, int projectID)
+    {
+        // Get import flags by checking GIS default mappings for the project's programs
+        var programIDs = await dbContext.ProjectPrograms
+            .Where(pp => pp.ProjectID == projectID)
+            .Select(pp => pp.ProgramID)
+            .ToListAsync();
+
+        var result = new ProjectBasicsEditData();
+
+        if (programIDs.Count > 0)
+        {
+            // Get GIS upload source organizations for these programs, with their mappings
+            var gisSourceOrgs = await dbContext.GisUploadSourceOrganizations
+                .Where(g => programIDs.Contains(g.ProgramID))
+                .Include(g => g.GisDefaultMappings)
+                .AsNoTracking()
+                .ToListAsync();
+
+            foreach (var gisSource in gisSourceOrgs)
+            {
+                var mappings = gisSource.GisDefaultMappings;
+
+                if (mappings.Any(m => m.FieldDefinitionID == (int)FieldDefinitionEnum.ProjectName && !string.IsNullOrEmpty(m.GisDefaultMappingColumnName)))
+                    result.IsProjectNameImported = true;
+
+                if (mappings.Any(m => m.FieldDefinitionID == (int)FieldDefinitionEnum.ProjectStage && !string.IsNullOrEmpty(m.GisDefaultMappingColumnName)))
+                    result.IsProjectStageImported = true;
+
+                if (gisSource.ApplyStartDateToProject && mappings.Any(m => m.FieldDefinitionID == (int)FieldDefinitionEnum.PlannedDate && !string.IsNullOrEmpty(m.GisDefaultMappingColumnName)))
+                    result.IsProjectInitiationDateImported = true;
+
+                if (gisSource.ApplyCompletedDateToProject && mappings.Any(m => m.FieldDefinitionID == (int)FieldDefinitionEnum.CompletionDate && !string.IsNullOrEmpty(m.GisDefaultMappingColumnName)))
+                    result.IsCompletionDateImported = true;
+
+                if (mappings.Any(m => m.FieldDefinitionID == (int)FieldDefinitionEnum.ProjectIdentifier && !string.IsNullOrEmpty(m.GisDefaultMappingColumnName)))
+                    result.IsProjectIdentifierImported = true;
+            }
+        }
+
+        return result;
+    }
+
+    public static async Task SaveBasicsAsync(WADNRDbContext dbContext, int projectID, ProjectBasicsSaveRequest request)
+    {
+        var project = await dbContext.Projects
+            .Include(p => p.ProjectPrograms)
+            .Include(p => p.ProjectOrganizations)
+            .FirstAsync(p => p.ProjectID == projectID);
+
+        project.ProjectTypeID = request.ProjectTypeID;
+        project.ProjectName = request.ProjectName;
+        project.ProjectDescription = request.ProjectDescription;
+        project.ProjectStageID = request.ProjectStageID;
+        project.EstimatedTotalCost = request.EstimatedTotalCost;
+        project.PlannedDate = request.PlannedDate;
+        project.CompletionDate = request.CompletionDate;
+        project.ExpirationDate = request.ExpirationDate;
+        project.ProjectGisIdentifier = request.ProjectGisIdentifier;
+        project.FocusAreaID = request.FocusAreaID;
+        project.PercentageMatch = request.PercentageMatch;
+
+        // Sync Lead Implementer Organization via ProjectOrganization with IsPrimaryContact relationship type
+        var primaryContactRelationshipTypeID = await dbContext.RelationshipTypes
+            .Where(rt => rt.IsPrimaryContact)
+            .Select(rt => rt.RelationshipTypeID)
+            .FirstAsync();
+
+        var existingLeadImpl = project.ProjectOrganizations
+            .FirstOrDefault(po => po.RelationshipTypeID == primaryContactRelationshipTypeID);
+
+        if (request.LeadImplementerOrganizationID.HasValue)
+        {
+            if (existingLeadImpl != null)
+            {
+                existingLeadImpl.OrganizationID = request.LeadImplementerOrganizationID.Value;
+            }
+            else
+            {
+                dbContext.ProjectOrganizations.Add(new ProjectOrganization
+                {
+                    ProjectID = projectID,
+                    OrganizationID = request.LeadImplementerOrganizationID.Value,
+                    RelationshipTypeID = primaryContactRelationshipTypeID
+                });
+            }
+        }
+        else if (existingLeadImpl != null)
+        {
+            dbContext.ProjectOrganizations.Remove(existingLeadImpl);
+        }
+
+        // Sync Programs
+        var existingProgramIDs = project.ProjectPrograms.Select(pp => pp.ProgramID).ToHashSet();
+        var requestedProgramIDs = request.ProgramIDs.ToHashSet();
+
+        // Delete programs not in request
+        var toRemove = project.ProjectPrograms.Where(pp => !requestedProgramIDs.Contains(pp.ProgramID)).ToList();
+        dbContext.ProjectPrograms.RemoveRange(toRemove);
+
+        // Add new programs
+        foreach (var programID in requestedProgramIDs.Except(existingProgramIDs))
+        {
+            dbContext.ProjectPrograms.Add(new ProjectProgram
+            {
+                ProjectID = projectID,
+                ProgramID = programID
+            });
+        }
+
+        await dbContext.SaveChangesAsync();
+    }
+
+    #endregion
 }

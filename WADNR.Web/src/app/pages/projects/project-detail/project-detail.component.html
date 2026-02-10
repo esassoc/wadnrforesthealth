@@ -118,6 +118,11 @@
             <div class="card" id="card-basics">
                 <div class="card-header">
                     <span class="card-title">Basics</span>
+                    @if (project.UserCanDirectEdit) {
+                        <button class="btn btn-sm btn-primary float-right" (click)="openEditBasicsModal(project)">
+                            <i class="fa fa-pencil"></i> Edit
+                        </button>
+                    }
                 </div>
                 <div class="card-body">
                     <div class="grid-12">
@@ -244,6 +249,11 @@
             <div class="card" id="card-tags">
                 <div class="card-header">
                     <span class="card-title">Tags</span>
+                    @if (project.UserCanDirectEdit && project.UserIsAdmin) {
+                        <button class="btn btn-sm btn-primary float-right" (click)="openEditTagsModal(project)">
+                            <i class="fa fa-pencil"></i> Edit
+                        </button>
+                    }
                 </div>
                 <div class="card-body">
                     @if (project.Tags && project.Tags.length > 0) {
@@ -346,6 +356,11 @@
             <div class="card" id="card-funding">
                 <div class="card-header">
                     <span class="card-title">Funding</span>
+                    @if (project.UserCanDirectEdit) {
+                        <button class="btn btn-sm btn-primary float-right" (click)="openEditFundingModal(project)">
+                            <i class="fa fa-pencil"></i> Edit
+                        </button>
+                    }
                 </div>
                 <div class="card-body">
                     <div class="grid-12">
@@ -499,6 +514,11 @@
                 <div class="card" id="card-classifications">
                     <div class="card-header">
                         <span class="card-title">Classifications</span>
+                        @if (project.UserCanDirectEdit) {
+                            <button class="btn btn-sm btn-primary float-right" (click)="openEditClassificationsModal(project)">
+                                <i class="fa fa-pencil"></i> Edit
+                            </button>
+                        }
                     </div>
                     <div class="card-body">
                         @if (classifications.length > 0) {

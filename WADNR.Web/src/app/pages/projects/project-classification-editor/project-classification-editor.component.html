@@ -1,0 +1,64 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit Classifications</h3>
+</div>
+<div class="modal-body" [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 200 }">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <p class="mb-3">
+        Select classifications for this project. You may optionally add notes for each classification.
+    </p>
+
+    @for (system of classificationSystems; track system.classificationSystemID) {
+        <div class="mb-4">
+            <h5>{{ system.classificationSystemName }}</h5>
+            @for (classification of system.classifications; track classification.classificationID) {
+                <div class="mb-2">
+                    <div class="form-check">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            [(ngModel)]="classification.checked"
+                            [id]="'classification-' + classification.classificationID"
+                            [disabled]="isSubmitting">
+                        <label class="form-check-label" [for]="'classification-' + classification.classificationID">
+                            {{ classification.displayName }}
+                        </label>
+                    </div>
+                    @if (classification.checked) {
+                        <div class="ms-4 mt-1">
+                            <textarea
+                                class="form-control form-control-sm"
+                                rows="2"
+                                placeholder="Notes (optional)..."
+                                [(ngModel)]="classification.notes"
+                                [disabled]="isSubmitting">
+                            </textarea>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    @if (classificationSystems.length === 0) {
+        <div class="alert alert-info">
+            <em>No classification systems are configured.</em>
+        </div>
+    }
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Save' }}
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

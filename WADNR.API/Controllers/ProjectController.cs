@@ -368,6 +368,112 @@ public class ProjectController(
         return Ok(result);
     }
 
+    [HttpGet("{projectID}/basics/edit")]
+    [ProjectEditAsAdminFeature]
+    public async Task<ActionResult<ProjectBasicsEditData>> GetBasicsEditData([FromRoute] int projectID)
+    {
+        var project = await DbContext.Projects.FindAsync(projectID);
+        if (project == null)
+        {
+            return NotFound($"Project with ID {projectID} not found.");
+        }
+
+        var result = await Projects.GetBasicsEditDataAsync(DbContext, projectID);
+        return Ok(result);
+    }
+
+    [HttpPut("{projectID}/basics")]
+    [ProjectEditAsAdminFeature]
+    public async Task<IActionResult> SaveBasics(
+        [FromRoute] int projectID,
+        [FromBody] ProjectBasicsSaveRequest request)
+    {
+        var project = await DbContext.Projects.FindAsync(projectID);
+        if (project == null)
+        {
+            return NotFound($"Project with ID {projectID} not found.");
+        }
+
+        await Projects.SaveBasicsAsync(DbContext, projectID, request);
+        return NoContent();
+    }
+
+    [HttpPut("{projectID}/tags")]
+    [ProjectEditAsAdminFeature]
+    public async Task<ActionResult<List<TagLookupItem>>> SaveAllTags(
+        [FromRoute] int projectID,
+        [FromBody] ProjectTagSaveRequest request)
+    {
+        var project = await DbContext.Projects.FindAsync(projectID);
+        if (project == null)
+        {
+            return NotFound($"Project with ID {projectID} not found.");
+        }
+
+        var result = await ProjectTags.SaveAllAsync(DbContext, projectID, request);
+        return Ok(result);
+    }
+
+    [HttpGet("{projectID}/classifications/edit")]
+    [ProjectEditAsAdminFeature]
+    public async Task<ActionResult<List<ProjectClassificationDetailItem>>> ListClassificationsForEdit([FromRoute] int projectID)
+    {
+        var project = await DbContext.Projects.FindAsync(projectID);
+        if (project == null)
+        {
+            return NotFound($"Project with ID {projectID} not found.");
+        }
+
+        var result = await ProjectClassifications.ListForProjectAsDetailItemAsync(DbContext, projectID);
+        return Ok(result);
+    }
+
+    [HttpPut("{projectID}/classifications")]
+    [ProjectEditAsAdminFeature]
+    public async Task<ActionResult<List<ProjectClassificationDetailItem>>> SaveAllClassifications(
+        [FromRoute] int projectID,
+        [FromBody] ProjectClassificationSaveRequest request)
+    {
+        var project = await DbContext.Projects.FindAsync(projectID);
+        if (project == null)
+        {
+            return NotFound($"Project with ID {projectID} not found.");
+        }
+
+        var result = await ProjectClassifications.SaveAllAsync(DbContext, projectID, request);
+        return Ok(result);
+    }
+
+    [HttpGet("{projectID}/funding")]
+    [ProjectEditAsAdminFeature]
+    public async Task<ActionResult<ProjectFundingDetail>> GetFunding([FromRoute] int projectID)
+    {
+        var project = await DbContext.Projects.FindAsync(projectID);
+        if (project == null)
+        {
+            return NotFound($"Project with ID {projectID} not found.");
+        }
+
+        var result = await ProjectFunding.GetForProjectAsync(DbContext, projectID);
+        return Ok(result);
+    }
+
+    [HttpPut("{projectID}/funding")]
+    [ProjectEditAsAdminFeature]
+    public async Task<ActionResult<ProjectFundingDetail>> SaveFunding(
+        [FromRoute] int projectID,
+        [FromBody] ProjectFundingSaveRequest request)
+    {
+        var project = await DbContext.Projects.FindAsync(projectID);
+        if (project == null)
+        {
+            return NotFound($"Project with ID {projectID} not found.");
+        }
+
+        var result = await ProjectFunding.SaveAllAsync(DbContext, projectID, request);
+        return Ok(result);
+    }
+
     [HttpGet("{projectID}/update-history")]
     [AllowAnonymous]
     [ProjectViewFeature]

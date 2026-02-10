@@ -5689,6 +5689,73 @@
           }
         },
         "x-anonymous": true
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveAllClassifications_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectClassificationSaveRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectClassificationSaveRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectClassificationSaveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectClassificationDetailItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectClassificationDetailItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectClassificationDetailItem"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/projects/{projectID}/treatments": {
@@ -6296,6 +6363,308 @@
                   "items": {
                     "$ref": "#/components/schemas/ProjectPersonItem"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/basics/edit": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetBasicsEditData_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectBasicsEditData"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectBasicsEditData"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectBasicsEditData"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/basics": {
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveBasics_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectBasicsSaveRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectBasicsSaveRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectBasicsSaveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/tags": {
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveAllTags_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectTagSaveRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectTagSaveRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectTagSaveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TagLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TagLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TagLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/classifications/edit": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListClassificationsForEdit_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectClassificationDetailItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectClassificationDetailItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectClassificationDetailItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/funding": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetFunding_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFundingDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFundingDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFundingDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SaveFunding_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectFundingSaveRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectFundingSaveRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectFundingSaveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFundingDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFundingDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFundingDetail"
                 }
               }
             }
@@ -17688,6 +18057,100 @@
         },
         "additionalProperties": false
       },
+      "ProjectBasicsEditData": {
+        "type": "object",
+        "properties": {
+          "IsProjectNameImported": {
+            "type": "boolean"
+          },
+          "IsProjectStageImported": {
+            "type": "boolean"
+          },
+          "IsProjectInitiationDateImported": {
+            "type": "boolean"
+          },
+          "IsCompletionDateImported": {
+            "type": "boolean"
+          },
+          "IsProjectIdentifierImported": {
+            "type": "boolean"
+          },
+          "ImportedFieldWarningMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectBasicsSaveRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectStageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "PlannedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ProjectGisIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "LeadImplementerOrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FocusAreaID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PercentageMatch": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProgramIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectBasicsStep": {
         "type": "object",
         "properties": {
@@ -17846,6 +18309,55 @@
         },
         "additionalProperties": false
       },
+      "ProjectClassificationDetailItem": {
+        "type": "object",
+        "properties": {
+          "ProjectClassificationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ClassificationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ClassificationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ClassificationSystemID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ClassificationSystemName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectClassificationNotes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectClassificationItemRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectClassificationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ClassificationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectClassificationNotes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectClassificationRequestItem": {
         "type": "object",
         "properties": {
@@ -17860,6 +18372,19 @@
           },
           "ProjectClassificationNotes": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectClassificationSaveRequest": {
+        "type": "object",
+        "properties": {
+          "Classifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectClassificationItemRequest"
+            },
             "nullable": true
           }
         },
@@ -18774,6 +19299,96 @@
           },
           "Duration": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectFundSourceAllocationRequestItemRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectFundSourceAllocationRequestID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FundSourceAllocationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "MatchAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "PayAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectFundingDetail": {
+        "type": "object",
+        "properties": {
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "FundingSourceNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "SelectedFundingSourceIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "AllocationRequests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FundSourceAllocationRequestItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectFundingSaveRequest": {
+        "type": "object",
+        "properties": {
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "FundingSourceNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "FundingSourceIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "AllocationRequests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectFundSourceAllocationRequestItemRequest"
+            },
             "nullable": true
           }
         },
@@ -20024,6 +20639,20 @@
           },
           "ProjectDescription": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectTagSaveRequest": {
+        "type": "object",
+        "properties": {
+          "TagIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
             "nullable": true
           }
         },

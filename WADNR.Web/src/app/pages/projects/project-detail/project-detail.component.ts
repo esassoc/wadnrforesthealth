@@ -66,6 +66,10 @@ import { BlockListModalComponent, BlockListModalData } from "./block-list-modal/
 import { ProjectExternalLinkEditorComponent, ProjectExternalLinkEditorData } from "../project-external-link-editor/project-external-link-editor.component";
 import { ProjectOrganizationEditorComponent, ProjectOrganizationEditorData } from "../project-organization-editor/project-organization-editor.component";
 import { ProjectContactEditorComponent, ProjectContactEditorData } from "../project-contact-editor/project-contact-editor.component";
+import { ProjectBasicsEditorComponent, ProjectBasicsEditorData } from "../project-basics-editor/project-basics-editor.component";
+import { ProjectTagEditorComponent, ProjectTagEditorData } from "../project-tag-editor/project-tag-editor.component";
+import { ProjectClassificationEditorComponent, ProjectClassificationEditorData } from "../project-classification-editor/project-classification-editor.component";
+import { ProjectFundingEditorComponent, ProjectFundingEditorData } from "../project-funding-editor/project-funding-editor.component";
 
 @Component({
     selector: "project-detail",
@@ -1177,6 +1181,68 @@ export class ProjectDetailComponent implements OnDestroy {
 
         this.dialogService
             .open(ProjectContactEditorComponent, { data, width: "700px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshProject$.next();
+                }
+            });
+    }
+
+    openEditBasicsModal(project: ProjectDetail): void {
+        const data: ProjectBasicsEditorData = {
+            projectID: project.ProjectID,
+            project: project,
+        };
+
+        this.dialogService
+            .open(ProjectBasicsEditorComponent, { data, width: "800px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshProject$.next();
+                }
+            });
+    }
+
+    openEditTagsModal(project: ProjectDetail): void {
+        const data: ProjectTagEditorData = {
+            projectID: project.ProjectID,
+            existingTags: project.Tags ?? [],
+        };
+
+        this.dialogService
+            .open(ProjectTagEditorComponent, { data, width: "600px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshProject$.next();
+                }
+            });
+    }
+
+    openEditClassificationsModal(project: ProjectDetail): void {
+        const data: ProjectClassificationEditorData = {
+            projectID: project.ProjectID,
+        };
+
+        this.dialogService
+            .open(ProjectClassificationEditorComponent, { data, width: "700px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshProject$.next();
+                    this.classifications$ = this.projectID$.pipe(
+                        switchMap((projectID) => this.projectService.listClassificationsProject(projectID)),
+                        shareReplay({ bufferSize: 1, refCount: true })
+                    );
+                }
+            });
+    }
+
+    openEditFundingModal(project: ProjectDetail): void {
+        const data: ProjectFundingEditorData = {
+            projectID: project.ProjectID,
+        };
+
+        this.dialogService
+            .open(ProjectFundingEditorComponent, { data, width: "800px" })
             .afterClosed$.subscribe((result) => {
                 if (result) {
                     this.refreshProject$.next();
