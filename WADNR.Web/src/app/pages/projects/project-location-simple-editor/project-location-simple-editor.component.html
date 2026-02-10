@@ -1,0 +1,118 @@
+<div class="modal">
+@if (isLoading$ | async) {
+    <div class="modal-header">
+        <h4 class="modal-title">Edit Simple Location</h4>
+    </div>
+    <div class="modal-body">
+        <div class="text-center p-4">Loading...</div>
+    </div>
+} @else {
+    <div class="modal-header">
+        <h4 class="modal-title">Edit Simple Location</h4>
+    </div>
+    <div class="modal-body">
+        <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+        <form [formGroup]="form">
+            <div class="grid-12">
+                <!-- Left Column: Form Controls -->
+                <div class="g-col-5">
+                    <!-- Location Type Selection -->
+                    <div class="mb-3">
+                        <label class="field-label">Location Type</label>
+                        <div class="radio-options">
+                            @for (option of locationTypeOptions; track option.Value) {
+                                <label class="radio-label" [class.disabled]="isSubmitting">
+                                    <input
+                                        type="radio"
+                                        [formControl]="$any(form.controls.projectLocationSimpleTypeID)"
+                                        [value]="option.Value"
+                                        [disabled]="isSubmitting"
+                                        name="projectLocationSimpleTypeID" />
+                                    {{ option.Label }}
+                                </label>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="mb-3">
+                        <form-field [formControl]="$any(form.controls.projectLocationNotes)" fieldLabel="Notes" [type]="FormFieldType.Textarea" [readOnly]="isSubmitting"></form-field>
+                    </div>
+
+                    <!-- Lat/Lng Input Fields -->
+                    @if (isLatLngInputMode) {
+                        <div class="grid-12 mb-3">
+                            <div class="g-col-6">
+                                <form-field
+                                    [formControl]="$any(form.controls.latitude)"
+                                    fieldLabel="Latitude"
+                                    [type]="FormFieldType.Number"
+                                    placeholder="e.g., 47.6062"
+                                    [readOnly]="isSubmitting"
+                                    (change)="onLatLngInputChange()">
+                                </form-field>
+                            </div>
+                            <div class="g-col-6">
+                                <form-field
+                                    [formControl]="$any(form.controls.longitude)"
+                                    fieldLabel="Longitude"
+                                    [type]="FormFieldType.Number"
+                                    placeholder="e.g., -122.3321"
+                                    [readOnly]="isSubmitting"
+                                    (change)="onLatLngInputChange()">
+                                </form-field>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Location Information -->
+                    <div class="location-info">
+                        <h5 class="mb-2"><strong>Location Information</strong></h5>
+                        @if (geographicInfo$ | async; as geoInfo) {
+                            @if (geoInfo.isLoading) {
+                                <div class="text-muted">Loading geographic information...</div>
+                            } @else {
+                                <div class="grid-12 mb-1">
+                                    <div class="g-col-5 field-label">Priority Landscape</div>
+                                    <div class="g-col-7">{{ geoInfo.priorityLandscapeName ?? "None" }}</div>
+                                </div>
+                                <div class="grid-12 mb-1">
+                                    <div class="g-col-5 field-label">DNR Upland Region</div>
+                                    <div class="g-col-7">{{ geoInfo.dnrUplandRegionName ?? "None" }}</div>
+                                </div>
+                                <div class="grid-12 mb-1">
+                                    <div class="g-col-5 field-label">County</div>
+                                    <div class="g-col-7">{{ geoInfo.countyName ?? "None" }}</div>
+                                </div>
+                            }
+                        }
+                        <div class="grid-12 mb-1">
+                            <div class="g-col-5 field-label">Latitude</div>
+                            <div class="g-col-7">{{ hasLocation ? (form.value.latitude | number: "1.4-4") : "" }}</div>
+                        </div>
+                        <div class="grid-12 mb-1">
+                            <div class="g-col-5 field-label">Longitude</div>
+                            <div class="g-col-7">{{ hasLocation ? (form.value.longitude | number: "1.4-4") : "" }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Map -->
+                <div class="g-col-7">
+                    <p class="text-muted mb-2">To zoom, hold down Shift and drag a rectangle.</p>
+                    <div style="height: 450px">
+                        <wadnr-map (onMapLoad)="handleMapLoad($event)"></wadnr-map>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="save()" [disabled]="isSubmitting">
+            {{ isSubmitting ? "Saving..." : "Save" }}
+        </button>
+    </div>
+}
+</div>

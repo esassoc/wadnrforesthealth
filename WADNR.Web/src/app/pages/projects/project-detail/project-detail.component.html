@@ -184,64 +184,99 @@
             <div class="card" id="card-location">
                 <div class="card-header">
                     <span class="card-title">Location</span>
+                    @if (project.UserCanDirectEdit) {
+                        <div class="dropdown">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-primary dropdown-toggle" [dropdownToggle]="locationEditMenu" #locationDropdown="dropdownToggleName">
+                                <i class="fa fa-pencil"></i> Edit
+                            </a>
+                            <ul #locationEditMenu class="dropdown-menu dropdown-menu-right">
+                                <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditLocationSimpleModal(project)">Simple (Point)</a></li>
+                                <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditLocationDetailedModal(project)">Detailed (Geometries)</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditPriorityLandscapesModal(project)">Priority Landscapes</a></li>
+                                <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditDnrUplandRegionsModal(project)">DNR Upland Regions</a></li>
+                                <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditCountiesModal(project)">Counties</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditMapExtentModal(project)">Map Extent</a></li>
+                            </ul>
+                        </div>
+                    }
                 </div>
                 <div class="card-body">
                     <div class="grid-12">
-                        <div class="g-col-4 field-label">Counties</div>
-                        <div class="g-col-8">
-                            @if (project.Counties && project.Counties.length > 0) {
-                                {{ project.Counties.join(", ") }}
-                            } @else {
-                                —
-                            }
-                        </div>
-
-                        <div class="g-col-4 field-label">DNR Upland Regions</div>
-                        <div class="g-col-8">
-                            @if (project.Regions && project.Regions.length > 0) {
-                                {{ project.Regions.join(", ") }}
-                            } @else {
-                                —
-                            }
-                        </div>
-
-                        <div class="g-col-4 field-label">Priority Landscapes</div>
-                        <div class="g-col-8">
-                            @if (project.PriorityLandscapes && project.PriorityLandscapes.length > 0) {
-                                {{ project.PriorityLandscapes.join(", ") }}
-                            } @else {
-                                —
-                            }
-                        </div>
-
-                        @if (project.ProjectLocationNotes) {
-                            <div class="g-col-4 field-label">Location Notes</div>
-                            <div class="g-col-8">{{ project.ProjectLocationNotes }}</div>
-                        }
-                    </div>
-
-                    @if (project.HasLocationData) {
-                        <hr />
-                        @if (locationLayers$ | async; as locationLayers) {
-                            <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
-                                @if (mapIsReady) {
-                                    @for (layer of locationLayers; track layer.LayerName) {
-                                        <generic-feature-collection-layer
-                                            [map]="map"
-                                            [layerControl]="layerControl"
-                                            [featureCollection]="layer.Features"
-                                            [layerName]="layer.LayerName"
-                                            [layerColor]="layer.LayerColor"
-                                            [displayOnLoad]="true">
-                                        </generic-feature-collection-layer>
-                                    }
+                        <!-- Left Column: Map -->
+                        <div class="g-col-6">
+                            @if (project.HasLocationData) {
+                                @if (locationLayers$ | async; as locationLayers) {
+                                    <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
+                                        @if (mapIsReady) {
+                                            @for (layer of locationLayers; track layer.LayerName) {
+                                                <generic-feature-collection-layer
+                                                    [map]="map"
+                                                    [layerControl]="layerControl"
+                                                    [featureCollection]="layer.Features"
+                                                    [layerName]="layer.LayerName"
+                                                    [layerColor]="layer.LayerColor"
+                                                    [displayOnLoad]="true">
+                                                </generic-feature-collection-layer>
+                                            }
+                                        }
+                                    </wadnr-map>
                                 }
-                            </wadnr-map>
-                        }
-                    } @else {
-                        <hr />
-                        <p class="system-text">No location data available for this project.</p>
-                    }
+                            } @else {
+                                <p class="system-text">No location data available for this project.</p>
+                            }
+                        </div>
+
+                        <!-- Right Column: Geographic Info -->
+                        <div class="g-col-6">
+                            <div class="subsection-header">
+                                <h5 class="card-subsection-heading">Counties</h5>
+                            </div>
+                            @if (project.Counties && project.Counties.length > 0) {
+                                <ul class="list-unstyled">
+                                    @for (county of project.Counties; track county) {
+                                        <li>{{ county }}</li>
+                                    }
+                                </ul>
+                            } @else {
+                                <p class="text-muted mb-3">—</p>
+                            }
+
+                            <div class="subsection-header mt-3">
+                                <h5 class="card-subsection-heading">Priority Landscapes</h5>
+                            </div>
+                            @if (project.PriorityLandscapes && project.PriorityLandscapes.length > 0) {
+                                <ul class="list-unstyled">
+                                    @for (pl of project.PriorityLandscapes; track pl) {
+                                        <li>{{ pl }}</li>
+                                    }
+                                </ul>
+                            } @else {
+                                <p class="text-muted mb-3">—</p>
+                            }
+
+                            <div class="subsection-header mt-3">
+                                <h5 class="card-subsection-heading">DNR Upland Region</h5>
+                            </div>
+                            @if (project.Regions && project.Regions.length > 0) {
+                                <ul class="list-unstyled">
+                                    @for (region of project.Regions; track region) {
+                                        <li>{{ region }}</li>
+                                    }
+                                </ul>
+                            } @else {
+                                <p class="text-muted mb-3">—</p>
+                            }
+
+                            @if (project.ProjectLocationNotes) {
+                                <div class="subsection-header mt-3">
+                                    <h5 class="card-subsection-heading">Location Notes</h5>
+                                </div>
+                                <p>{{ project.ProjectLocationNotes }}</p>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
 

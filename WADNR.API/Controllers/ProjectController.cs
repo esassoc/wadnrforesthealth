@@ -2049,6 +2049,246 @@ public class ProjectController(
 
     #endregion
 
+    #region Direct Edit - Location Simple
+
+    [HttpGet("{projectID}/location-simple")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<LocationSimpleStep>> GetLocationSimple([FromRoute] int projectID)
+    {
+        var dto = await ProjectWorkflowSteps.GetLocationSimpleStepAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/location-simple")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<LocationSimpleStep>> SaveLocationSimple([FromRoute] int projectID, [FromBody] LocationSimpleStepRequest request)
+    {
+        var dto = await Projects.SaveLocationSimpleAsync(DbContext, projectID, request);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    #endregion
+
+    #region Direct Edit - Location Detailed
+
+    [HttpGet("{projectID}/location-detailed")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<LocationDetailedStep>> GetLocationDetailed([FromRoute] int projectID)
+    {
+        var dto = await ProjectWorkflowSteps.GetLocationDetailedStepAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/location-detailed")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<LocationDetailedStep>> SaveLocationDetailed([FromRoute] int projectID, [FromBody] LocationDetailedStepRequest request)
+    {
+        try
+        {
+            var dto = await Projects.SaveLocationDetailedAsync(DbContext, projectID, request);
+            if (dto == null)
+            {
+                return NotFound();
+            }
+            return Ok(dto);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { ErrorMessage = ex.Message });
+        }
+    }
+
+    [HttpPost("{projectID}/location-detailed/upload-gdb")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    [RequestSizeLimit(500_000_000)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 500_000_000)]
+    public async Task<ActionResult<List<GdbFeatureClassPreview>>> UploadGdbForDirectEdit([FromRoute] int projectID, IFormFile file)
+    {
+        if (gdalApiService == null)
+        {
+            return StatusCode(503, new { ErrorMessage = "GDB import is not configured on this server." });
+        }
+
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest(new { ErrorMessage = "A file is required." });
+        }
+
+        if (!file.FileName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+        {
+            return BadRequest(new { ErrorMessage = "File must be a .zip archive containing a File Geodatabase (.gdb)." });
+        }
+
+        var featureClasses = await gdalApiService.OgrInfoGdbToFeatureClassInfo(file);
+
+        var existingStaging = await DbContext.ProjectLocationStagings
+            .Where(s => s.ProjectID == projectID && s.PersonID == CallingUser.PersonID)
+            .ToListAsync();
+        DbContext.ProjectLocationStagings.RemoveRange(existingStaging);
+
+        foreach (var fc in featureClasses)
+        {
+            var geoJson = await gdalApiService.Ogr2OgrGdbLayerToGeoJson(file, fc.FeatureClassName);
+            DbContext.ProjectLocationStagings.Add(new ProjectLocationStaging
+            {
+                ProjectID = projectID,
+                PersonID = CallingUser.PersonID,
+                FeatureClassName = fc.FeatureClassName,
+                GeoJson = geoJson,
+                ShouldImport = false
+            });
+        }
+
+        await DbContext.SaveChangesAsync();
+        return Ok(featureClasses);
+    }
+
+    [HttpPost("{projectID}/location-detailed/approve-gdb")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<LocationDetailedStep>> ApproveGdbForDirectEdit([FromRoute] int projectID, [FromBody] GdbApproveRequest request)
+    {
+        var dto = await Projects.ApproveGdbImportDirectEditAsync(DbContext, projectID, CallingUser.PersonID, request);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    #endregion
+
+    #region Direct Edit - Geographic Areas
+
+    [HttpGet("{projectID}/priority-landscapes")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<GeographicAssignmentStep>> GetPriorityLandscapes([FromRoute] int projectID)
+    {
+        var dto = await ProjectWorkflowSteps.GetPriorityLandscapesStepAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/priority-landscapes")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<GeographicAssignmentStep>> SavePriorityLandscapes([FromRoute] int projectID, [FromBody] GeographicOverrideRequest request)
+    {
+        var dto = await ProjectWorkflowSteps.SavePriorityLandscapesStepAsync(DbContext, projectID, request);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpGet("{projectID}/dnr-upland-regions")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<GeographicAssignmentStep>> GetDnrUplandRegions([FromRoute] int projectID)
+    {
+        var dto = await ProjectWorkflowSteps.GetDnrUplandRegionsStepAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/dnr-upland-regions")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<GeographicAssignmentStep>> SaveDnrUplandRegions([FromRoute] int projectID, [FromBody] GeographicOverrideRequest request)
+    {
+        var dto = await ProjectWorkflowSteps.SaveDnrUplandRegionsStepAsync(DbContext, projectID, request);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpGet("{projectID}/counties")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<GeographicAssignmentStep>> GetCounties([FromRoute] int projectID)
+    {
+        var dto = await ProjectWorkflowSteps.GetCountiesStepAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/counties")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<GeographicAssignmentStep>> SaveCounties([FromRoute] int projectID, [FromBody] GeographicOverrideRequest request)
+    {
+        var dto = await ProjectWorkflowSteps.SaveCountiesStepAsync(DbContext, projectID, request);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    #endregion
+
+    #region Direct Edit - Map Extent
+
+    [HttpGet("{projectID}/map-extent")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<MapExtentStep>> GetMapExtent([FromRoute] int projectID)
+    {
+        var dto = await Projects.GetMapExtentAsync(DbContext, projectID);
+        if (dto == null)
+        {
+            return NotFound();
+        }
+        return Ok(dto);
+    }
+
+    [HttpPut("{projectID}/map-extent")]
+    [ProjectEditAsAdminFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<IActionResult> SaveMapExtent([FromRoute] int projectID, [FromBody] MapExtentSaveRequest request)
+    {
+        var project = await DbContext.Projects.FindAsync(projectID);
+        if (project == null)
+        {
+            return NotFound($"Project with ID {projectID} not found.");
+        }
+
+        await Projects.SaveMapExtentAsync(DbContext, projectID, request);
+        return NoContent();
+    }
+
+    #endregion
+
     #region Block List
 
     [HttpPost("{projectID}/block-list")]

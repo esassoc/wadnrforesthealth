@@ -1026,4 +1026,223 @@ public static class Projects
     }
 
     #endregion
+
+    #region Direct Edit - Location Simple (no auto-assignment)
+
+    public static async Task<LocationSimpleStep?> SaveLocationSimpleAsync(WADNRDbContext dbContext, int projectID, LocationSimpleStepRequest request)
+    {
+        var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.ProjectID == projectID);
+        if (project == null) return null;
+
+        var point = new NetTopologySuite.Geometries.Point(request.Longitude, request.Latitude) { SRID = 4326 };
+        project.ProjectLocationPoint = point;
+        project.ProjectLocationSimpleTypeID = request.ProjectLocationSimpleTypeID;
+        project.ProjectLocationNotes = request.ProjectLocationNotes;
+
+        await dbContext.SaveChangesAsync();
+
+        return await ProjectWorkflowSteps.GetLocationSimpleStepAsync(dbContext, projectID);
+    }
+
+    #endregion
+
+    #region Direct Edit - Location Detailed (no auto-assignment)
+
+    public static async Task<LocationDetailedStep?> SaveLocationDetailedAsync(WADNRDbContext dbContext, int projectID, LocationDetailedStepRequest request)
+    {
+        var project = await dbContext.Projects
+            .Include(p => p.ProjectLocations)
+                .ThenInclude(pl => pl.Treatments)
+            .FirstOrDefaultAsync(p => p.ProjectID == projectID);
+
+        if (project == null) return null;
+
+        var existingLocationIDs = project.ProjectLocations.Select(pl => pl.ProjectLocationID).ToHashSet();
+        var requestLocationIDs = request.Locations.Where(l => l.ProjectLocationID.HasValue).Select(l => l.ProjectLocationID!.Value).ToHashSet();
+
+        // Remove locations not in request — guard against deleting locations with treatments
+        var toRemove = project.ProjectLocations.Where(pl => !requestLocationIDs.Contains(pl.ProjectLocationID)).ToList();
+        var locationsWithTreatments = toRemove.Where(pl => pl.Treatments.Any()).ToList();
+        if (locationsWithTreatments.Count > 0)
+        {
+            var names = string.Join(", ", locationsWithTreatments.Select(pl => $"'{pl.ProjectLocationName}'"));
+            throw new InvalidOperationException($"Cannot delete project location(s) {names} because they have associated Treatments. Remove the Treatments first.");
+        }
+
+        foreach (var locRequest in request.Locations.Where(l => l.ProjectLocationID.HasValue))
+        {
+            var existing = project.ProjectLocations.FirstOrDefault(pl => pl.ProjectLocationID == locRequest.ProjectLocationID!.Value);
+            if (existing != null && existing.Treatments.Any() && locRequest.ProjectLocationTypeID != existing.ProjectLocationTypeID)
+            {
+                throw new InvalidOperationException($"Cannot change the location type of '{existing.ProjectLocationName}' because it has associated Treatments.");
+            }
+        }
+
+        dbContext.ProjectLocations.RemoveRange(toRemove);
+
+        foreach (var locRequest in request.Locations)
+        {
+            if (locRequest.ProjectLocationID.HasValue && existingLocationIDs.Contains(locRequest.ProjectLocationID.Value))
+            {
+                var existing = project.ProjectLocations.First(pl => pl.ProjectLocationID == locRequest.ProjectLocationID.Value);
+                existing.ProjectLocationTypeID = locRequest.ProjectLocationTypeID;
+                existing.ProjectLocationNotes = locRequest.ProjectLocationNotes;
+                existing.ProjectLocationName = locRequest.ProjectLocationName;
+                if (!string.IsNullOrEmpty(locRequest.GeoJson))
+                {
+                    var reader = new NetTopologySuite.IO.WKTReader();
+                    existing.ProjectLocationGeometry = reader.Read(locRequest.GeoJson);
+                    existing.ProjectLocationGeometry.SRID = 4326;
+                }
+            }
+            else
+            {
+                var newLocation = new ProjectLocation
+                {
+                    ProjectID = projectID,
+                    ProjectLocationTypeID = locRequest.ProjectLocationTypeID,
+                    ProjectLocationNotes = locRequest.ProjectLocationNotes,
+                    ProjectLocationName = locRequest.ProjectLocationName
+                };
+
+                if (!string.IsNullOrEmpty(locRequest.GeoJson))
+                {
+                    var reader = new NetTopologySuite.IO.WKTReader();
+                    newLocation.ProjectLocationGeometry = reader.Read(locRequest.GeoJson);
+                    newLocation.ProjectLocationGeometry.SRID = 4326;
+                }
+
+                dbContext.ProjectLocations.Add(newLocation);
+            }
+        }
+
+        await dbContext.SaveChangesAsync();
+
+        return await ProjectWorkflowSteps.GetLocationDetailedStepAsync(dbContext, projectID);
+    }
+
+    public static async Task<LocationDetailedStep?> ApproveGdbImportDirectEditAsync(WADNRDbContext dbContext, int projectID, int personID, GdbApproveRequest request)
+    {
+        var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.ProjectID == projectID);
+        if (project == null) return null;
+
+        var stagingRows = await dbContext.ProjectLocationStagings
+            .Where(s => s.ProjectID == projectID && s.PersonID == personID)
+            .ToListAsync();
+
+        var layerLookup = request.Layers
+            .Where(l => l.ShouldImport)
+            .ToDictionary(l => l.FeatureClassName, StringComparer.OrdinalIgnoreCase);
+
+        var jsonOptions = new System.Text.Json.JsonSerializerOptions();
+        jsonOptions.Converters.Add(new NetTopologySuite.IO.Converters.GeoJsonConverterFactory());
+
+        foreach (var staging in stagingRows)
+        {
+            if (!layerLookup.TryGetValue(staging.FeatureClassName, out var approval))
+            {
+                continue;
+            }
+
+            var featureCollection = System.Text.Json.JsonSerializer.Deserialize<NetTopologySuite.Features.FeatureCollection>(staging.GeoJson, jsonOptions);
+            if (featureCollection == null) continue;
+
+            var locationIndex = 1;
+            foreach (var feature in featureCollection)
+            {
+                var geometry = feature.Geometry;
+                if (geometry == null) continue;
+                geometry.SRID = 4326;
+
+                string locationName = null;
+                if (!string.IsNullOrEmpty(approval.SelectedPropertyName) && feature.Attributes != null)
+                {
+                    var propValue = feature.Attributes[approval.SelectedPropertyName];
+                    if (propValue != null)
+                    {
+                        locationName = propValue.ToString();
+                    }
+                }
+
+                if (string.IsNullOrEmpty(locationName))
+                {
+                    locationName = $"{staging.FeatureClassName} {locationIndex}";
+                }
+
+                if (locationName.Length > 100)
+                {
+                    locationName = locationName.Substring(0, 100);
+                }
+
+                dbContext.ProjectLocations.Add(new ProjectLocation
+                {
+                    ProjectID = projectID,
+                    ProjectLocationTypeID = (int)ProjectLocationTypeEnum.ProjectArea,
+                    ProjectLocationName = locationName,
+                    ProjectLocationGeometry = geometry,
+                    ImportedFromGisUpload = true
+                });
+
+                locationIndex++;
+            }
+        }
+
+        dbContext.ProjectLocationStagings.RemoveRange(stagingRows);
+        await dbContext.SaveChangesAsync();
+
+        // No AutoAssignGeographicRegionsAsync call — direct edit preserves manual geographic selections
+        return await ProjectWorkflowSteps.GetLocationDetailedStepAsync(dbContext, projectID);
+    }
+
+    #endregion
+
+    #region Direct Edit - Map Extent
+
+    public static async Task<MapExtentStep?> GetMapExtentAsync(WADNRDbContext dbContext, int projectID)
+    {
+        var project = await dbContext.Projects
+            .AsNoTracking()
+            .Where(p => p.ProjectID == projectID)
+            .Select(p => new { p.ProjectID, p.DefaultBoundingBox })
+            .SingleOrDefaultAsync();
+
+        if (project == null) return null;
+
+        if (project.DefaultBoundingBox != null)
+        {
+            var env = project.DefaultBoundingBox.EnvelopeInternal;
+            return new MapExtentStep
+            {
+                ProjectID = project.ProjectID,
+                North = env.MaxY,
+                South = env.MinY,
+                East = env.MaxX,
+                West = env.MinX
+            };
+        }
+
+        return new MapExtentStep { ProjectID = project.ProjectID };
+    }
+
+    public static async Task SaveMapExtentAsync(WADNRDbContext dbContext, int projectID, MapExtentSaveRequest request)
+    {
+        var project = await dbContext.Projects.FirstAsync(p => p.ProjectID == projectID);
+
+        if (request.North.HasValue && request.South.HasValue && request.East.HasValue && request.West.HasValue)
+        {
+            var envelope = new NetTopologySuite.Geometries.Envelope(
+                request.West.Value, request.East.Value,
+                request.South.Value, request.North.Value);
+            var factory = new NetTopologySuite.Geometries.GeometryFactory(new NetTopologySuite.Geometries.PrecisionModel(), 4326);
+            project.DefaultBoundingBox = factory.ToGeometry(envelope);
+        }
+        else
+        {
+            project.DefaultBoundingBox = null;
+        }
+
+        await dbContext.SaveChangesAsync();
+    }
+
+    #endregion
 }

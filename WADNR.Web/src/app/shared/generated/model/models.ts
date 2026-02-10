@@ -101,6 +101,8 @@ export * from './location-detailed-step';
 export * from './location-detailed-step-request';
 export * from './location-simple-step';
 export * from './location-simple-step-request';
+export * from './map-extent-save-request';
+export * from './map-extent-step';
 export * from './nts-geometry-services';
 export * from './ogc-geometry-type';
 export * from './ordinates';

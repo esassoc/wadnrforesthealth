@@ -84,11 +84,18 @@ import { ProjectClassificationEditorComponent, ProjectClassificationEditorData }
 import { ProjectFundingEditorComponent, ProjectFundingEditorData } from "../project-funding-editor/project-funding-editor.component";
 import { InvoicePaymentRequestModalComponent, InvoicePaymentRequestModalData } from "../invoice-payment-request-modal/invoice-payment-request-modal.component";
 import { InvoiceModalComponent, InvoiceModalData } from "../invoice-modal/invoice-modal.component";
+import { ProjectLocationSimpleEditorComponent, ProjectLocationSimpleEditorData } from "../project-location-simple-editor/project-location-simple-editor.component";
+import { ProjectLocationDetailedEditorComponent, ProjectLocationDetailedEditorData } from "../project-location-detailed-editor/project-location-detailed-editor.component";
+import { ProjectGeographicAreaEditorComponent, ProjectGeographicAreaEditorData } from "../project-geographic-area-editor/project-geographic-area-editor.component";
+import { ProjectMapExtentEditorComponent, ProjectMapExtentEditorData } from "../project-map-extent-editor/project-map-extent-editor.component";
+import { GeographicAssignmentStep } from "src/app/shared/generated/model/geographic-assignment-step";
+import { GeographicOverrideRequest } from "src/app/shared/generated/model/geographic-override-request";
+import { DropdownToggleDirective } from "src/app/shared/directives/dropdown-toggle.directive";
 
 @Component({
     selector: "project-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, DatePipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ImageGalleryComponent, ScrollSpyStickyDirective],
+    imports: [PageHeaderComponent, AsyncPipe, DatePipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ImageGalleryComponent, ScrollSpyStickyDirective, DropdownToggleDirective],
     templateUrl: "./project-detail.component.html",
     styleUrls: ["./project-detail.component.scss"],
 })
@@ -160,6 +167,7 @@ export class ProjectDetailComponent implements OnDestroy {
     // Direct edit refresh subjects
     private refreshExternalLinks$ = new Subject<void>();
     private refreshProject$ = new Subject<void>();
+    private refreshLocationLayers$ = new Subject<void>();
 
     // Scrollspy — hierarchical TOC
     sectionsTree: TocSection[] = [
@@ -329,8 +337,8 @@ export class ProjectDetailComponent implements OnDestroy {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.locationLayers$ = this.projectID$.pipe(
-            switchMap((projectID) => this.projectService.listLocationsAsGenericLayersProject(projectID)),
+        this.locationLayers$ = combineLatest([this.projectID$, this.refreshLocationLayers$.pipe(startWith(undefined))]).pipe(
+            switchMap(([projectID]) => this.projectService.listLocationsAsGenericLayersProject(projectID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -1451,6 +1459,108 @@ export class ProjectDetailComponent implements OnDestroy {
 
         this.dialogService
             .open(ProjectFundingEditorComponent, { data, width: "800px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshProject$.next();
+                }
+            });
+    }
+
+    // Location Edit modal openers
+    openEditLocationSimpleModal(project: ProjectDetail): void {
+        const data: ProjectLocationSimpleEditorData = { projectID: project.ProjectID };
+
+        this.dialogService
+            .open(ProjectLocationSimpleEditorComponent, { data, width: "900px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshProject$.next();
+                    this.refreshLocationLayers$.next();
+                }
+            });
+    }
+
+    openEditLocationDetailedModal(project: ProjectDetail): void {
+        const data: ProjectLocationDetailedEditorData = { projectID: project.ProjectID };
+
+        this.dialogService
+            .open(ProjectLocationDetailedEditorComponent, { data, width: "1100px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshProject$.next();
+                    this.refreshLocationLayers$.next();
+                }
+            });
+    }
+
+    openEditPriorityLandscapesModal(project: ProjectDetail): void {
+        const data: ProjectGeographicAreaEditorData = {
+            projectID: project.ProjectID,
+            title: "Priority Landscapes",
+            wmsLayerName: "WADNRForestHealth:PriorityLandscape",
+            wmsIdField: "PriorityLandscapeID",
+            wmsNameField: "PriorityLandscapeName",
+            wmsSelectedStyle: "priorityLandscape_yellow",
+            getFn: (id: number) => this.projectService.getPriorityLandscapesProject(id),
+            saveFn: (id: number, req: GeographicOverrideRequest) => this.projectService.savePriorityLandscapesProject(id, req),
+        };
+
+        this.dialogService
+            .open(ProjectGeographicAreaEditorComponent, { data, width: "900px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshProject$.next();
+                }
+            });
+    }
+
+    openEditDnrUplandRegionsModal(project: ProjectDetail): void {
+        const data: ProjectGeographicAreaEditorData = {
+            projectID: project.ProjectID,
+            title: "DNR Upland Regions",
+            wmsLayerName: "WADNRForestHealth:DNRUplandRegion",
+            wmsIdField: "DNRUplandRegionID",
+            wmsNameField: "DNRUplandRegionName",
+            wmsSelectedStyle: "region_yellow",
+            getFn: (id: number) => this.projectService.getDnrUplandRegionsProject(id),
+            saveFn: (id: number, req: GeographicOverrideRequest) => this.projectService.saveDnrUplandRegionsProject(id, req),
+        };
+
+        this.dialogService
+            .open(ProjectGeographicAreaEditorComponent, { data, width: "900px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshProject$.next();
+                }
+            });
+    }
+
+    openEditCountiesModal(project: ProjectDetail): void {
+        const data: ProjectGeographicAreaEditorData = {
+            projectID: project.ProjectID,
+            title: "Counties",
+            wmsLayerName: "WADNRForestHealth:County",
+            wmsIdField: "CountyID",
+            wmsNameField: "CountyName",
+            wmsSelectedStyle: "county_yellow",
+            getFn: (id: number) => this.projectService.getCountiesProject(id),
+            saveFn: (id: number, req: GeographicOverrideRequest) => this.projectService.saveCountiesProject(id, req),
+        };
+
+        this.dialogService
+            .open(ProjectGeographicAreaEditorComponent, { data, width: "900px" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshProject$.next();
+                }
+            });
+    }
+
+    openEditMapExtentModal(project: ProjectDetail): void {
+        const data: ProjectMapExtentEditorData = { projectID: project.ProjectID };
+
+        this.dialogService
+            .open(ProjectMapExtentEditorComponent, { data, width: "800px" })
             .afterClosed$.subscribe((result) => {
                 if (result) {
                     this.refreshProject$.next();

@@ -146,6 +146,8 @@ model/location-detailed-step-request.ts
 model/location-detailed-step.ts
 model/location-simple-step-request.ts
 model/location-simple-step.ts
+model/map-extent-save-request.ts
+model/map-extent-step.ts
 model/models.ts
 model/nts-geometry-services.ts
 model/ogc-geometry-type.ts
