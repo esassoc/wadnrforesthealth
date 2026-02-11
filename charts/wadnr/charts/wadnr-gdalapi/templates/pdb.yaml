@@ -1,9 +1,9 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: {{ include "gdalapi.fullname" . }}
+  name: {{ include "gdalapi.fullname" . }}-pdb
 spec:
-  minAvailable: 0
+  maxUnavailable: 0
   selector:
     matchLabels:
-      {{- include "gdalapi.selectorLabels" . | nindent 6 }}
+      app: {{ include "gdalapi.fullname" . }}
