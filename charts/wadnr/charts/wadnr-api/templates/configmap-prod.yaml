@@ -9,9 +9,9 @@ data:
   SECRET_PATH: "/app/secrets/wadnrApiSecrets"
   SitkaEmailRedirect: ""
   SitkaSupportEmail: "h2o.team@esassoc.com"
-  DoNotReplyEmail: "donotreply@laketahoeinfo.org"
+  DoNotReplyEmail: "donotreply@esassoc.com"
   MailLogBcc: ""
-  KeystoneOpenIDUrl: "https://identity.sitkatech.com"
-  GDALAPIBaseUrl: "http://{{ .Values.global.domains.gdalApi }}"
+  GDALAPIBaseUrl: "http://wadnr-gdalapi"
   SitkaCaptureServiceUrl: "http://{{ .Values.global.domains.sitkacapture }}"
+  WebUrl: "https://{{ .Values.global.domains.web }}"
 {{ end }}

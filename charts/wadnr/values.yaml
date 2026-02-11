@@ -9,7 +9,6 @@ global:
     api: "api-wadnr.esa-qa.sitkatech.com"
     web: "wadnr.esa-qa.sitkatech.com"
     geoserver: "geoserver-wadnr.esa-qa.sitkatech.com"
-    gdalApi: "wadnr-gdalapi"
     sitkacapture: "wadnr-sitkacapture"
   secrets:
     geoserverSqlServerPassword: "passwordhere"
@@ -72,7 +71,7 @@ api:
   autoscaling:
     enabled: false
     minReplicas: 1
-    maxReplicas: 100
+    maxReplicas: 2
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
   nodeSelector: 
@@ -121,14 +120,14 @@ web:
       cert-manager.io/cluster-issuer: letsencrypt
       acme.cert-manager.io/http01-edit-in-place: "true"
       appgw.ingress.kubernetes.io/ssl-redirect: "true"
-      appgw.ingress.kubernetes.io/request-timeout: "300"
+      appgw.ingress.kubernetes.io/request-timeout: "1200"
       cert-manager.io/issue-temporary-certificate: "true"
       appgw.ingress.kubernetes.io/connection-draining: "true"
       appgw.ingress.kubernetes.io/connection-draining-timeout: "30"
   autoscaling:
     enabled: false
     minReplicas: 1
-    maxReplicas: 100
+    maxReplicas: 2
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
   nodeSelector: 
@@ -223,7 +222,7 @@ gdalapi:
   autoscaling:
     enabled: false
     minReplicas: 1
-    maxReplicas: 100
+    maxReplicas: 2
     targetCPUUtilizationPercentage: 80
   nodeSelector:
     agentpool: appnodepool
@@ -260,7 +259,7 @@ sitkacapture:
   autoscaling:
     enabled: false
     minReplicas: 1
-    maxReplicas: 100
+    maxReplicas: 2
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
   nodeSelector:

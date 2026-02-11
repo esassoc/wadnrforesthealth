@@ -3,8 +3,12 @@ kind: Deployment
 metadata:
   name: {{ include "gdalapi.fullname" . }}
   labels:
+    tags.datadoghq.com/env: {{ .Values.global.env.name | quote }}
+    tags.datadoghq.com/service: {{ include "gdalapi.fullname" . }}
+    tags.datadoghq.com/version: {{ .Values.image.tag | quote }}
     {{- include "gdalapi.labels" . | nindent 4 }}
 spec:
+  revisionHistoryLimit: 1 # Default to 10 if not specified
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
@@ -14,7 +18,8 @@ spec:
   template:
     metadata:
       annotations:
-        rollme: {{ randAlphaNum 5 | quote }}
+        ad.datadoghq.com/tags: '{"teamName": "{{ .Values.namespace }}"}'
+        rollme: {{ randAlphaNum 5 | quote }}  # roll deployments on every upgrade: https://helm.sh/docs/howto/charts_tips_and_tricks/#automatically-roll-deployments
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -32,17 +37,12 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 80
               protocol: TCP
-          env:
-            - name: ASPNETCORE_ENVIRONMENT
-              value: "Production"
-            - name: ASPNETCORE_HTTP_PORTS
-              value: "8080"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
