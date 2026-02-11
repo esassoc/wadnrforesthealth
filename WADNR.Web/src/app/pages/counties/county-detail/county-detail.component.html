@@ -7,8 +7,14 @@
             <div class="card-header"><span class="card-title">Map</span></div>
             <div class="card-body">
                 <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
+                    <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
+                    @if (projectFeatures$ | async; as projectFeatures) {
+                    <generic-feature-collection-layer [map]="map" [layerControl]="layerControl" [featureCollection]="projectFeatures" [layerName]="'Project Locations'" [layerColor]="'#ffff00'" [displayOnLoad]="true"></generic-feature-collection-layer>
+                    }
                     <counties-layer [map]="map" [layerControl]="layerControl" [selectedIDs]="[county.CountyID]" [mode]="highlightedCountyLayerMode"></counties-layer>
                     <counties-layer [map]="map" [layerControl]="layerControl" [mode]="allCountiesLayerMode" [fitBoundsOnWmsAddToControl]="false"></counties-layer>
+                    <priority-landscapes-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                    <dnr-upland-regions-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
                 </wadnr-map>
             </div>
         </div>

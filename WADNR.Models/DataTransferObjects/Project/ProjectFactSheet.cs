@@ -11,4 +11,6 @@ public class ProjectFactSheet
     public ProjectStageLookupItem ProjectStage { get; set; }
     public string Duration { get; set; }
 
+    // Map bounding box (computed via fallback chain)
+    public BoundingBox? DefaultBoundingBox { get; set; }
 }

@@ -60,6 +60,7 @@ public class ProjectDetail
     public List<AgreementLookupItem> Agreements { get; set; } = new();
 
     // Location
+    public BoundingBox? DefaultBoundingBox { get; set; }
     public bool HasLocationData { get; set; }
     public string? ProjectLocationNotes { get; set; }
     public List<string> Counties { get; set; } = new();
@@ -81,48 +82,4 @@ public class ProjectDetail
     public string? LatestUpdateBatchStateName { get; set; }
     public bool IsInLandownerAssistanceProgram { get; set; }
     public bool ExistsInImportBlockList { get; set; }
-}
-
-public class ProjectOrganizationItem
-{
-    public int ProjectOrganizationID { get; set; }
-    public int OrganizationID { get; set; }
-    public string OrganizationName { get; set; } = string.Empty;
-    public int RelationshipTypeID { get; set; }
-    public string RelationshipTypeName { get; set; } = string.Empty;
-    public bool IsPrimaryContact { get; set; }
-}
-
-public class ProjectPersonItem
-{
-    public int ProjectPersonID { get; set; }
-    public int PersonID { get; set; }
-    public string PersonFullName { get; set; } = string.Empty;
-    public int RelationshipTypeID { get; set; }
-    public string RelationshipTypeName { get; set; } = string.Empty;
-    public int SortOrder { get; set; }
-}
-
-public class TagLookupItem
-{
-    public int TagID { get; set; }
-    public string TagName { get; set; } = string.Empty;
-}
-
-public class FundSourceAllocationRequestItem
-{
-    public int ProjectFundSourceAllocationRequestID { get; set; }
-    public int FundSourceAllocationID { get; set; }
-    public string FundSourceAllocationName { get; set; } = string.Empty;
-    public string FundSourceName { get; set; } = string.Empty;
-    public decimal? MatchAmount { get; set; }
-    public decimal? PayAmount { get; set; }
-    public decimal? TotalAmount { get; set; }
-}
-
-public class AgreementLookupItem
-{
-    public int AgreementID { get; set; }
-    public string AgreementTitle { get; set; } = string.Empty;
-    public string? AgreementNumber { get; set; }
 }

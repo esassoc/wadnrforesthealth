@@ -1047,6 +1047,57 @@
         }
       }
     },
+    "/counties/{countyID}/projects/feature-collection": {
+      "get": {
+        "tags": [
+          "County"
+        ],
+        "operationId": "ListProjectsFeatureCollectionForCountyID_County",
+        "parameters": [
+          {
+            "name": "countyID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
     "/custom-pages/{vanityUrl}": {
       "get": {
         "tags": [
@@ -1538,6 +1589,57 @@
         }
       }
     },
+    "/dnr-upland-regions/{dnrUplandRegionID}/projects/feature-collection": {
+      "get": {
+        "tags": [
+          "DNRUplandRegion"
+        ],
+        "operationId": "ListProjectsFeatureCollectionForDNRUplandRegionID_DNRUplandRegion",
+        "parameters": [
+          {
+            "name": "dnrUplandRegionID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
     "/dnr-upland-regions/{dnrUplandRegionID}/focus-areas": {
       "get": {
         "tags": [
@@ -1630,6 +1732,126 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/FundSourceAllocationDNRUplandRegionDetailGridRow"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/external-map-layers/project-map": {
+      "get": {
+        "tags": [
+          "ExternalMapLayer"
+        ],
+        "operationId": "ListForProjectMap_ExternalMapLayer",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/external-map-layers/priority-landscape": {
+      "get": {
+        "tags": [
+          "ExternalMapLayer"
+        ],
+        "operationId": "ListForPriorityLandscape_ExternalMapLayer",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/external-map-layers/other-maps": {
+      "get": {
+        "tags": [
+          "ExternalMapLayer"
+        ],
+        "operationId": "ListForOtherMaps_ExternalMapLayer",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalMapLayerDetail"
                   }
                 }
               }
@@ -4756,6 +4978,57 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/ProjectGridRow"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/priority-landscapes/{priorityLandscapeID}/projects/feature-collection": {
+      "get": {
+        "tags": [
+          "PriorityLandscape"
+        ],
+        "operationId": "ListProjectsFeatureCollectionForPriorityLandscapeID_PriorityLandscape",
+        "parameters": [
+          {
+            "name": "priorityLandscapeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
                   }
                 }
               }
@@ -14764,6 +15037,28 @@
         },
         "additionalProperties": false
       },
+      "BoundingBox": {
+        "type": "object",
+        "properties": {
+          "Left": {
+            "type": "number",
+            "format": "double"
+          },
+          "Bottom": {
+            "type": "number",
+            "format": "double"
+          },
+          "Right": {
+            "type": "number",
+            "format": "double"
+          },
+          "Top": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
       "CapturePostData": {
         "type": "object",
         "properties": {
@@ -15614,6 +15909,47 @@
               "$ref": "#/components/schemas/FundSourceAllocationRequestRequestItem"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExternalMapLayerDetail": {
+        "type": "object",
+        "properties": {
+          "ExternalMapLayerID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "LayerUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "LayerDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "FeatureNameField": {
+            "type": "string",
+            "nullable": true
+          },
+          "DisplayOnPriorityLandscape": {
+            "type": "boolean"
+          },
+          "DisplayOnProjectMap": {
+            "type": "boolean"
+          },
+          "DisplayOnAllOthers": {
+            "type": "boolean"
+          },
+          "IsActive": {
+            "type": "boolean"
+          },
+          "IsTiledMapService": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -20151,6 +20487,9 @@
             },
             "nullable": true
           },
+          "DefaultBoundingBox": {
+            "$ref": "#/components/schemas/BoundingBox"
+          },
           "HasLocationData": {
             "type": "boolean"
           },
@@ -20520,6 +20859,9 @@
           "Duration": {
             "type": "string",
             "nullable": true
+          },
+          "DefaultBoundingBox": {
+            "$ref": "#/components/schemas/BoundingBox"
           }
         },
         "additionalProperties": false
@@ -24289,6 +24631,9 @@
     },
     {
       "name": "DNRUplandRegion"
+    },
+    {
+      "name": "ExternalMapLayer"
     },
     {
       "name": "FieldDefinition"

@@ -8,6 +8,7 @@ api/county.service.ts
 api/custom-page.service.ts
 api/custom-rich-text.service.ts
 api/dnr-upland-region.service.ts
+api/external-map-layer.service.ts
 api/field-definition.service.ts
 api/file-resource.service.ts
 api/focus-area.service.ts
@@ -52,6 +53,7 @@ model/agreement-person-role-lookup-item.ts
 model/agreement-status-lookup-item.ts
 model/agreement-type-lookup-item.ts
 model/agreement-upsert-request.ts
+model/bounding-box.ts
 model/capture-post-data.ts
 model/classification-detail.ts
 model/classification-grid-row.ts
@@ -83,6 +85,7 @@ model/elevation-model.ts
 model/envelope.ts
 model/expected-funding-step-request.ts
 model/expected-funding-step.ts
+model/external-map-layer-detail.ts
 model/field-definition-datum-detail.ts
 model/field-definition-datum-upsert-request.ts
 model/field-definition-detail.ts

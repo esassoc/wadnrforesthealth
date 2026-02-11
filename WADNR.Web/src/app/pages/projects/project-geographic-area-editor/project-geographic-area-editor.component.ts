@@ -20,9 +20,17 @@ import { GeographicAssignmentStep } from "src/app/shared/generated/model/geograp
 import { GeographicOverrideRequest } from "src/app/shared/generated/model/geographic-override-request";
 import { GeographicLookupItem } from "src/app/shared/generated/model/geographic-lookup-item";
 import { environment } from "src/environments/environment";
+import { BoundingBoxDto } from "src/app/shared/models/bounding-box-dto";
+import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 
 export interface ProjectGeographicAreaEditorData {
     projectID: number;
+    boundingBox?: BoundingBoxDto;
     title: string;
     wmsLayerName: string;
     wmsIdField: string;
@@ -35,7 +43,7 @@ export interface ProjectGeographicAreaEditorData {
 @Component({
     selector: "project-geographic-area-editor",
     standalone: true,
-    imports: [CommonModule, AsyncPipe, ReactiveFormsModule, FormFieldComponent, WADNRMapComponent, ModalAlertsComponent, IconComponent],
+    imports: [CommonModule, AsyncPipe, ReactiveFormsModule, FormFieldComponent, WADNRMapComponent, ModalAlertsComponent, IconComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent],
     templateUrl: "./project-geographic-area-editor.component.html",
     styleUrls: ["./project-geographic-area-editor.component.scss"],
 })
@@ -43,6 +51,7 @@ export class ProjectGeographicAreaEditorComponent extends BaseModal implements O
     public ref: DialogRef<ProjectGeographicAreaEditorData, boolean> = inject(DialogRef);
 
     public FormFieldType = FormFieldType;
+    public OverlayMode = OverlayMode;
     public isLoading$ = new BehaviorSubject<boolean>(true);
     public isSubmitting = false;
 

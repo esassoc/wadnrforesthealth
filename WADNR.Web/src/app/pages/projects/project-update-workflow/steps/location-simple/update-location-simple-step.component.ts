@@ -18,12 +18,18 @@ import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/
 import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
+import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 import * as L from "leaflet";
 
 @Component({
     selector: "update-location-simple-step",
     standalone: true,
-    imports: [CommonModule, AsyncPipe, DecimalPipe, ReactiveFormsModule, WADNRMapComponent, FormFieldComponent, FieldDefinitionComponent, WorkflowStepActionsComponent],
+    imports: [CommonModule, AsyncPipe, DecimalPipe, ReactiveFormsModule, WADNRMapComponent, FormFieldComponent, FieldDefinitionComponent, WorkflowStepActionsComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent],
     templateUrl: "./update-location-simple-step.component.html",
     styleUrls: ["./update-location-simple-step.component.scss"],
 })
@@ -35,6 +41,7 @@ export class UpdateLocationSimpleStepComponent extends UpdateWorkflowStepBase im
 
     public FormFieldType = FormFieldType;
     public ProjectLocationSimpleTypeEnum = ProjectLocationSimpleTypeEnum;
+    public OverlayMode = OverlayMode;
 
     public locationTypeOptions: FormInputOption[] = [
         { Value: ProjectLocationSimpleTypeEnum.PointOnMap, Label: "Plot a point on the map", disabled: false },
@@ -44,6 +51,7 @@ export class UpdateLocationSimpleStepComponent extends UpdateWorkflowStepBase im
     public form: FormGroup;
 
     public map: L.Map;
+    public layerControl: any;
     public marker: L.Marker | null = null;
     public mapIsReady = false;
 
@@ -159,6 +167,7 @@ export class UpdateLocationSimpleStepComponent extends UpdateWorkflowStepBase im
 
     handleMapLoad(event: WADNRMapInitEvent): void {
         this.map = event.map;
+        this.layerControl = event.layerControl;
         this.mapIsReady = true;
 
         this.map.on("click", (e: L.LeafletMouseEvent) => {

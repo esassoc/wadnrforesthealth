@@ -38,7 +38,8 @@
       "Bash(node -e:*)",
       "Bash(set \"NODE_EXTRA_CA_CERTS=C:\\\\Users\\\\mack.peters\\\\.cato-root-ca.pem\")",
       "Bash(dotnet run:*)",
-      "Bash(dotnet tool list:*)"
+      "Bash(dotnet tool list:*)",
+      "Bash(git log:*)"
     ]
   }
 }

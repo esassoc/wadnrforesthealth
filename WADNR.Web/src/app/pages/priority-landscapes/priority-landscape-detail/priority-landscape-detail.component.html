@@ -27,6 +27,10 @@
             <div class="card-body">
                 <p>{{ vm.priorityLandscape.PriorityLandscapeAboveMapText }}</p>
                 <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
+                    <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'priority-landscape'" [displayOnLoad]="false"></external-map-layers>
+                    @if (projectFeatures$ | async; as projectFeatures) {
+                    <generic-feature-collection-layer [map]="map" [layerControl]="layerControl" [featureCollection]="projectFeatures" [layerName]="'Project Locations'" [layerColor]="'#ffff00'" [displayOnLoad]="true"></generic-feature-collection-layer>
+                    }
                     <priority-landscapes-layer
                         [map]="map"
                         [layerControl]="layerControl"
@@ -38,6 +42,8 @@
                         [layerControl]="layerControl"
                         [mode]="allPriorityLandscapesLayerMode"
                         [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                    <dnr-upland-regions-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
+                    <counties-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></counties-layer>
                 </wadnr-map>
                 <p>
                     Projects can be associated with multiple Priority Landscapes, but the simple project location marker is mapped in a single location. Therefore, some Projects

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NetTopologySuite.Features;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.API.Services.Authorization;
@@ -95,6 +96,18 @@ public class PriorityLandscapeController(
         );
 
         return Ok(projects);
+    }
+
+    [HttpGet("{priorityLandscapeID}/projects/feature-collection")]
+    [AllowAnonymous]
+    [EntityNotFound(typeof(PriorityLandscape), "priorityLandscapeID")]
+    public async Task<ActionResult<FeatureCollection>> ListProjectsFeatureCollectionForPriorityLandscapeID([FromRoute] int priorityLandscapeID)
+    {
+        var projectQuery = DbContext.ProjectPriorityLandscapes
+            .Where(ppl => ppl.PriorityLandscapeID == priorityLandscapeID)
+            .Select(ppl => ppl.Project);
+        var featureCollection = await Projects.MapProjectFeatureCollection(projectQuery);
+        return Ok(featureCollection);
     }
 
     [HttpGet("{priorityLandscapeID}/file-resources")]

@@ -14,25 +14,35 @@ import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { MapExtentSaveRequest } from "src/app/shared/generated/model/map-extent-save-request";
+import { BoundingBoxDto } from "src/app/shared/models/bounding-box-dto";
+import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 
 export interface ProjectMapExtentEditorData {
     projectID: number;
+    boundingBox?: BoundingBoxDto;
 }
 
 @Component({
     selector: "project-map-extent-editor",
     standalone: true,
-    imports: [CommonModule, AsyncPipe, DecimalPipe, WADNRMapComponent, ModalAlertsComponent],
+    imports: [CommonModule, AsyncPipe, DecimalPipe, WADNRMapComponent, ModalAlertsComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent],
     templateUrl: "./project-map-extent-editor.component.html",
 })
 export class ProjectMapExtentEditorComponent extends BaseModal implements OnInit, OnDestroy {
     public ref: DialogRef<ProjectMapExtentEditorData, boolean> = inject(DialogRef);
 
+    public OverlayMode = OverlayMode;
     public isLoading$ = new BehaviorSubject<boolean>(true);
     public isSubmitting = false;
 
     // Map
     public map: L.Map;
+    public layerControl: any;
     public mapIsReady = false;
     private projectMarker: L.Marker | null = null;
 
@@ -101,6 +111,7 @@ export class ProjectMapExtentEditorComponent extends BaseModal implements OnInit
 
     handleMapLoad(event: WADNRMapInitEvent): void {
         this.map = event.map;
+        this.layerControl = event.layerControl;
         this.mapIsReady = true;
 
         this.setupGeomanControls();

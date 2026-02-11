@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NetTopologySuite.Features;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.API.Services.Authorization;
@@ -87,6 +88,18 @@ public class DNRUplandRegionController(
     {
         var items = await Projects.ListAsDNRUplandDetailGridRowForUserAsync(DbContext, dnrUplandRegionID, CallingUser);
         return Ok(items);
+    }
+
+    [HttpGet("{dnrUplandRegionID}/projects/feature-collection")]
+    [AllowAnonymous]
+    [EntityNotFound(typeof(DNRUplandRegion), "dnrUplandRegionID")]
+    public async Task<ActionResult<FeatureCollection>> ListProjectsFeatureCollectionForDNRUplandRegionID([FromRoute] int dnrUplandRegionID)
+    {
+        var projectQuery = DbContext.ProjectRegions
+            .Where(pr => pr.DNRUplandRegionID == dnrUplandRegionID)
+            .Select(pr => pr.Project);
+        var featureCollection = await Projects.MapProjectFeatureCollection(projectQuery);
+        return Ok(featureCollection);
     }
 
     [HttpGet("{dnrUplandRegionID}/focus-areas")]

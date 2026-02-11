@@ -18,12 +18,17 @@ import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { WfsService } from "src/app/shared/services/wfs.service";
 import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
+import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 import { environment } from "src/environments/environment";
 
 @Component({
     selector: "update-dnr-upland-regions-step",
     standalone: true,
-    imports: [CommonModule, AsyncPipe, ReactiveFormsModule, FormFieldComponent, WorkflowStepActionsComponent, WADNRMapComponent, IconComponent],
+    imports: [CommonModule, AsyncPipe, ReactiveFormsModule, FormFieldComponent, WorkflowStepActionsComponent, WADNRMapComponent, IconComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent],
     templateUrl: "./update-dnr-upland-regions-step.component.html",
     styleUrls: ["./update-dnr-upland-regions-step.component.scss"],
 })
@@ -40,6 +45,7 @@ export class UpdateDnrUplandRegionsStepComponent extends UpdateWorkflowStepBase 
     public vm$: Observable<{ isLoading: boolean; data: ProjectUpdateGeographicStep | null }>;
 
     public FormFieldType = FormFieldType;
+    public OverlayMode = OverlayMode;
     public form: FormGroup;
     public allOptions: GeographicLookupItem[] = [];
 

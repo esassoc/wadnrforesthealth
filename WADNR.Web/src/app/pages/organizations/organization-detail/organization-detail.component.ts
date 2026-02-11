@@ -13,6 +13,12 @@ import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-g
 import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
 import { ProjectLocationsSimpleLayerComponent } from "src/app/shared/components/leaflet/layers/project-locations-simple-layer/project-locations-simple-layer.component";
+import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { PersonLinkComponent } from "src/app/shared/components/person-link/person-link.component";
 import { Palette, PROJECT_STAGE_LEGEND_COLORS } from "src/app/shared/models/legend-colors";
@@ -36,7 +42,7 @@ import { OrganizationModalComponent, OrganizationModalData } from "../organizati
 @Component({
     selector: "organization-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, RouterLink, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ProjectLocationsSimpleLayerComponent, IconComponent, PersonLinkComponent],
+    imports: [PageHeaderComponent, AsyncPipe, RouterLink, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ProjectLocationsSimpleLayerComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent, IconComponent, PersonLinkComponent],
     templateUrl: "./organization-detail.component.html",
     styleUrls: ["./organization-detail.component.scss"],
 })
@@ -60,6 +66,7 @@ export class OrganizationDetailComponent {
     public projectColumnDefs: ColDef<ProjectOrganizationDetailGridRow>[] = [];
     public agreementColumnDefs: ColDef<AgreementGridRow>[] = [];
     public legendColorsToUse: Record<string, Palette> = PROJECT_STAGE_LEGEND_COLORS;
+    public OverlayMode = OverlayMode;
 
     private refreshData$ = new BehaviorSubject<void>(undefined);
 

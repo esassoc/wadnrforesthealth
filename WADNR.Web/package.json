@@ -57,6 +57,7 @@
         "ag-grid-community": "^34.3.1",
         "core-js": "^3.47.0",
         "esri-leaflet": "^3.0.19",
+        "esri-leaflet-renderers": "^3.0.1",
         "font-awesome": "^4.7.0",
         "leaflet": "^1.9.4",
         "leaflet-arrowheads": "1.4.0",

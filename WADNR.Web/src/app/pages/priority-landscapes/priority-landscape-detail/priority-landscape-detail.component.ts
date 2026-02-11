@@ -10,7 +10,12 @@ import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadc
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
+import { IFeature } from "src/app/shared/generated/model/i-feature";
 import { PriorityLandscapeService } from "src/app/shared/generated/api/priority-landscape.service";
 import { PriorityLandscapeDetail } from "src/app/shared/generated/model/priority-landscape-detail";
 import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row";
@@ -23,7 +28,7 @@ import { FileResourcePriorityLandscapeDetail } from "src/app/shared/generated/mo
 @Component({
     selector: "priority-landscape-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRMapComponent, PriorityLandscapesLayerComponent, ProjectGridComponent, IconComponent, DatePipe],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRMapComponent, PriorityLandscapesLayerComponent, CountiesLayerComponent, DNRUplandRegionsLayerComponent, ExternalMapLayersComponent, GenericFeatureCollectionLayerComponent, ProjectGridComponent, IconComponent, DatePipe],
     templateUrl: "./priority-landscape-detail.component.html",
     styleUrls: ["./priority-landscape-detail.component.scss"],
 })
@@ -42,6 +47,8 @@ export class PriorityLandscapeDetailComponent {
 
     public highlightedPriorityLandscapeLayerMode = OverlayMode.Single;
     public allPriorityLandscapesLayerMode = OverlayMode.ReferenceOnly;
+    public OverlayMode = OverlayMode;
+    public projectFeatures$: Observable<IFeature[]>;
 
     constructor(private route: ActivatedRoute, private priorityLandscapeService: PriorityLandscapeService, private sanitizer: DomSanitizer) {}
 
@@ -54,6 +61,11 @@ export class PriorityLandscapeDetailComponent {
             map((p) => (p.get("priorityLandscapeID") ? Number(p.get("priorityLandscapeID")) : null)),
             filter((priorityLandscapeID): priorityLandscapeID is number => priorityLandscapeID != null && !Number.isNaN(priorityLandscapeID)),
             distinctUntilChanged()
+        );
+
+        this.projectFeatures$ = this.priorityLandscapeID$.pipe(
+            switchMap((id) => this.priorityLandscapeService.listProjectsFeatureCollectionForPriorityLandscapeIDPriorityLandscape(id)),
+            shareReplay({ bufferSize: 1, refCount: true })
         );
 
         this.priorityLandscapeDetailPageData$ = this.priorityLandscapeID$.pipe(

@@ -13,11 +13,18 @@ import { CapturePostData } from "src/app/shared/generated/model/capture-post-dat
 import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { Title } from "@angular/platform-browser";
 import { ProjectFactSheet } from "src/app/shared/generated/model/project-fact-sheet";
+import { BoundingBoxDto } from "src/app/shared/models/bounding-box-dto";
 import { SitkaCaptureService } from "src/app/shared/generated/api/sitka-capture.service";
 import { ClassificationLookupItem } from "src/app/shared/generated/model/classification-lookup-item";
 import * as L from "leaflet";
 import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { ProjectLocationsAsReferenceLayersComponent } from "src/app/shared/components/leaflet/orchestrators/project-locations-as-reference-layers/project-locations-as-reference-layers.component";
+import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 import { ProjectImageGridRow } from "src/app/shared/generated/model/models";
 
 @Component({
@@ -25,7 +32,7 @@ import { ProjectImageGridRow } from "src/app/shared/generated/model/models";
     standalone: true,
     templateUrl: "./project-fact-sheet.component.html",
     styleUrls: ["./project-fact-sheet.component.scss"],
-    imports: [AlertDisplayComponent, CommonModule, AsyncPipe, RouterLink, ButtonLoadingDirective, WADNRMapComponent, ProjectLocationsAsReferenceLayersComponent],
+    imports: [AlertDisplayComponent, CommonModule, AsyncPipe, RouterLink, ButtonLoadingDirective, WADNRMapComponent, ProjectLocationsAsReferenceLayersComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent],
 })
 export class ProjectFactSheetComponent implements OnInit {
     @Input() public projectID?: number | null;
@@ -34,6 +41,7 @@ export class ProjectFactSheetComponent implements OnInit {
     public keyPhoto$!: Observable<ProjectImageGridRow | null>;
     public groupedImages$!: Observable<Array<{ timingId: number; timingName: string; images: ProjectImageGridRow[] }>>;
     public projectThemes$!: Observable<Array<ClassificationLookupItem>>;
+    public projectBoundingBox$!: Observable<BoundingBoxDto | undefined>;
 
     public selectedImage?: ProjectImageGridRow | null = null;
     // flat list of images displayed in the Photos section (excludes key photo)
@@ -43,6 +51,7 @@ export class ProjectFactSheetComponent implements OnInit {
 
     public isLoadingPdf: boolean = false;
     public isPrintMode = false;
+    public OverlayMode = OverlayMode;
 
     public map?: L.Map;
     public layerControl?: any;
@@ -81,6 +90,15 @@ export class ProjectFactSheetComponent implements OnInit {
             }),
             shareReplay(1)
         );
+
+        this.projectBoundingBox$ = this.project$.pipe(
+            map(project => {
+                const bb = project?.DefaultBoundingBox;
+                if (!bb) return undefined;
+                return new BoundingBoxDto({ Left: bb.Left, Bottom: bb.Bottom, Right: bb.Right, Top: bb.Top });
+            })
+        );
+
         // wire images$ to load when project is available
         this.images$ = this.project$.pipe(
             switchMap((p) => this.projectService.listImagesProject(p.ProjectID).pipe(catchError(() => of([] as Array<ProjectImageGridRow>)))),

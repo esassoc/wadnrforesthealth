@@ -18,12 +18,17 @@ import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { WfsService } from "src/app/shared/services/wfs.service";
 import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 import { environment } from "src/environments/environment";
 
 @Component({
     selector: "update-counties-step",
     standalone: true,
-    imports: [CommonModule, AsyncPipe, ReactiveFormsModule, FormFieldComponent, WorkflowStepActionsComponent, WADNRMapComponent, IconComponent],
+    imports: [CommonModule, AsyncPipe, ReactiveFormsModule, FormFieldComponent, WorkflowStepActionsComponent, WADNRMapComponent, IconComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent],
     templateUrl: "./update-counties-step.component.html",
     styleUrls: ["./update-counties-step.component.scss"],
 })
@@ -40,6 +45,7 @@ export class UpdateCountiesStepComponent extends UpdateWorkflowStepBase implemen
     public vm$: Observable<{ isLoading: boolean; data: ProjectUpdateGeographicStep | null }>;
 
     public FormFieldType = FormFieldType;
+    public OverlayMode = OverlayMode;
     public form: FormGroup;
     public allOptions: GeographicLookupItem[] = [];
 

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using NetTopologySuite.Features;
+using NetTopologySuite.Geometries;
 using System.Linq;
 using System.Linq.Expressions;
 using WADNR.Models.DataTransferObjects;
@@ -101,6 +102,9 @@ public static class Projects
             .Cast<string>()
             .OrderBy(name => name)
             .ToList();
+
+        // Populate bounding box using fallback chain
+        entity.DefaultBoundingBox = await GetProjectBoundingBoxAsync(dbContext, projectID);
 
         return entity;
     }
@@ -320,6 +324,9 @@ public static class Projects
             .Select(ProjectProjections.AsFactSheet)
             .SingleOrDefaultAsync();
 
+        if (entity != null)
+            entity.DefaultBoundingBox = await GetProjectBoundingBoxAsync(dbContext, projectID);
+
         return entity;
     }
 
@@ -503,6 +510,9 @@ public static class Projects
         // Populate button visibility flags
         await PopulateButtonVisibilityFlagsAsync(entity, callingUser, dbContext, projectID);
 
+        // Populate bounding box using fallback chain
+        entity.DefaultBoundingBox = await GetProjectBoundingBoxAsync(dbContext, projectID);
+
         return entity;
     }
 
@@ -627,11 +637,16 @@ public static class Projects
     {
         var query = ProjectVisibility.ApplyVisibilityFilter(dbContext.Projects, callingUser);
 
-        return await query
+        var entity = await query
             .AsNoTracking()
             .Where(x => x.ProjectID == projectID)
             .Select(ProjectProjections.AsFactSheet)
             .SingleOrDefaultAsync();
+
+        if (entity != null)
+            entity.DefaultBoundingBox = await GetProjectBoundingBoxAsync(dbContext, projectID);
+
+        return entity;
     }
 
     /// <summary>
@@ -1242,6 +1257,92 @@ public static class Projects
         }
 
         await dbContext.SaveChangesAsync();
+    }
+
+    #endregion
+
+    #region Bounding Box Fallback Chain
+
+    public static async Task<BoundingBox?> GetProjectBoundingBoxAsync(WADNRDbContext dbContext, int projectID)
+    {
+        var project = await dbContext.Projects
+            .AsNoTracking()
+            .Include(p => p.ProjectLocations)
+            .Include(p => p.ProjectRegions).ThenInclude(pr => pr.DNRUplandRegion)
+            .Include(p => p.ProjectPriorityLandscapes).ThenInclude(ppl => ppl.PriorityLandscape)
+            .Where(p => p.ProjectID == projectID)
+            .SingleOrDefaultAsync();
+
+        if (project == null) return null;
+
+        // 1. Custom DefaultBoundingBox
+        if (project.DefaultBoundingBox != null)
+            return GeometryToBoundingBox(project.DefaultBoundingBox);
+
+        // 2. Detailed locations envelope
+        var locationGeometries = project.ProjectLocations
+            .Select(pl => pl.ProjectLocationGeometry)
+            .Where(g => g != null).ToList();
+        if (locationGeometries.Count > 0)
+            return GeometryListToBoundingBox(locationGeometries);
+
+        // 3. Simple location point with padding
+        if (project.ProjectLocationPoint != null)
+            return PointToPaddedBoundingBox(project.ProjectLocationPoint, 0.001);
+
+        // 4. Regions + Priority Landscapes
+        var areaGeometries = project.ProjectRegions
+            .Select(pr => pr.DNRUplandRegion.DNRUplandRegionLocation)
+            .Where(g => g != null)
+            .Concat(project.ProjectPriorityLandscapes
+                .Select(ppl => ppl.PriorityLandscape.PriorityLandscapeLocation)
+                .Where(g => g != null))
+            .ToList();
+        if (areaGeometries.Count > 0)
+            return GeometryListToBoundingBox(areaGeometries);
+
+        // 5. null - frontend uses default WA state bounds
+        return null;
+    }
+
+    private static BoundingBox GeometryToBoundingBox(Geometry geometry)
+    {
+        var env = geometry.EnvelopeInternal;
+        return new BoundingBox
+        {
+            Left = env.MinX,
+            Bottom = env.MinY,
+            Right = env.MaxX,
+            Top = env.MaxY
+        };
+    }
+
+    private static BoundingBox GeometryListToBoundingBox(List<Geometry> geometries)
+    {
+        var envelope = new Envelope();
+        foreach (var g in geometries)
+        {
+            envelope.ExpandToInclude(g.EnvelopeInternal);
+        }
+        return new BoundingBox
+        {
+            Left = envelope.MinX,
+            Bottom = envelope.MinY,
+            Right = envelope.MaxX,
+            Top = envelope.MaxY
+        };
+    }
+
+    private static BoundingBox PointToPaddedBoundingBox(Geometry point, double padding)
+    {
+        var coord = point.Coordinate;
+        return new BoundingBox
+        {
+            Left = coord.X - padding,
+            Bottom = coord.Y - padding,
+            Right = coord.X + padding,
+            Top = coord.Y + padding
+        };
     }
 
     #endregion

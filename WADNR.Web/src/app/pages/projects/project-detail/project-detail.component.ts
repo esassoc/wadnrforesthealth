@@ -1,7 +1,7 @@
 import { AsyncPipe, DatePipe } from "@angular/common";
 import { Component, Input, OnDestroy, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, fromEvent, Observable, shareReplay, startWith, Subject, Subscription, switchMap, take } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, fromEvent, Observable, shareReplay, skip, startWith, Subject, Subscription, switchMap, take } from "rxjs";
 import { debounceTime, map } from "rxjs/operators";
 import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap } from "leaflet";
@@ -27,6 +27,7 @@ import { GenericFeatureCollectionLayerComponent } from "src/app/shared/component
 import { ImageGalleryComponent, ImageGalleryItem } from "src/app/shared/components/image-gallery/image-gallery.component";
 import { ScrollSpyStickyDirective } from "src/app/shared/directives/scroll-spy-sticky.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { LeafletHelperService } from "src/app/shared/services/leaflet-helper.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
@@ -45,6 +46,7 @@ import { FundSourceService } from "src/app/shared/generated/api/fund-source.serv
 import { ProgramIndexService } from "src/app/shared/generated/api/program-index.service";
 import { ProjectCodeService } from "src/app/shared/generated/api/project-code.service";
 import { ProjectDetail } from "src/app/shared/generated/model/project-detail";
+import { BoundingBoxDto } from "src/app/shared/models/bounding-box-dto";
 import { ProjectApprovalStatusEnum } from "src/app/shared/generated/enum/project-approval-status-enum";
 import { ProjectUpdateStateEnum } from "src/app/shared/generated/enum/project-update-state-enum";
 import { ProjectOrganizationItem } from "src/app/shared/generated/model/project-organization-item";
@@ -91,11 +93,17 @@ import { ProjectMapExtentEditorComponent, ProjectMapExtentEditorData } from "../
 import { GeographicAssignmentStep } from "src/app/shared/generated/model/geographic-assignment-step";
 import { GeographicOverrideRequest } from "src/app/shared/generated/model/geographic-override-request";
 import { DropdownToggleDirective } from "src/app/shared/directives/dropdown-toggle.directive";
+import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 
 @Component({
     selector: "project-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, DatePipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ImageGalleryComponent, ScrollSpyStickyDirective, DropdownToggleDirective],
+    imports: [PageHeaderComponent, AsyncPipe, DatePipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ImageGalleryComponent, ScrollSpyStickyDirective, DropdownToggleDirective, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent],
     templateUrl: "./project-detail.component.html",
     styleUrls: ["./project-detail.component.scss"],
 })
@@ -106,8 +114,9 @@ export class ProjectDetailComponent implements OnDestroy {
 
     private _projectID$ = new BehaviorSubject<number | null>(null);
 
-    // Make enum available to template
+    // Make enums available to template
     ProjectApprovalStatusEnum = ProjectApprovalStatusEnum;
+    OverlayMode = OverlayMode;
 
     public projectID$: Observable<number>;
     public project$: Observable<ProjectDetail>;
@@ -138,6 +147,7 @@ export class ProjectDetailComponent implements OnDestroy {
     public auditLogColumnDefs: ColDef<ProjectAuditLogGridRow>[] = [];
 
     // Map-related properties
+    public projectBoundingBox$: Observable<BoundingBoxDto | undefined>;
     public locationLayers$: Observable<GenericLayer[]>;
     public map: LeafletMap;
     public layerControl: L.Control.Layers;
@@ -236,6 +246,7 @@ export class ProjectDetailComponent implements OnDestroy {
         private programIndexService: ProgramIndexService,
         private projectCodeService: ProjectCodeService,
         private utilityFunctions: UtilityFunctionsService,
+        private leafletHelperService: LeafletHelperService,
         private dialogService: DialogService,
         private confirmService: ConfirmService,
         private alertService: AlertService,
@@ -252,6 +263,14 @@ export class ProjectDetailComponent implements OnDestroy {
         this.project$ = combineLatest([this.projectID$, this.refreshProject$.pipe(startWith(undefined))]).pipe(
             switchMap(([projectID]) => this.projectService.getProject(projectID)),
             shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.projectBoundingBox$ = this.project$.pipe(
+            map(project => {
+                const bb = project?.DefaultBoundingBox;
+                if (!bb) return undefined;
+                return new BoundingBoxDto({ Left: bb.Left, Bottom: bb.Bottom, Right: bb.Right, Top: bb.Top });
+            })
         );
 
         this.treatments$ = this.projectID$.pipe(
@@ -1466,28 +1485,44 @@ export class ProjectDetailComponent implements OnDestroy {
             });
     }
 
+    // Refresh project data and re-fit the map to the updated bounding box
+    private refreshProjectAndMapBounds(): void {
+        this.refreshProject$.next();
+        this.projectBoundingBox$.pipe(skip(1), take(1)).subscribe(bb => {
+            if (this.map && bb) {
+                this.leafletHelperService.fitMapToBoundingBox(this.map, bb);
+            }
+        });
+    }
+
     // Location Edit modal openers
+    private getProjectBoundingBox(project: ProjectDetail): BoundingBoxDto | undefined {
+        const bb = project?.DefaultBoundingBox;
+        if (!bb) return undefined;
+        return new BoundingBoxDto({ Left: bb.Left, Bottom: bb.Bottom, Right: bb.Right, Top: bb.Top });
+    }
+
     openEditLocationSimpleModal(project: ProjectDetail): void {
-        const data: ProjectLocationSimpleEditorData = { projectID: project.ProjectID };
+        const data: ProjectLocationSimpleEditorData = { projectID: project.ProjectID, boundingBox: this.getProjectBoundingBox(project) };
 
         this.dialogService
             .open(ProjectLocationSimpleEditorComponent, { data, width: "900px" })
             .afterClosed$.subscribe((result) => {
                 if (result) {
-                    this.refreshProject$.next();
+                    this.refreshProjectAndMapBounds();
                     this.refreshLocationLayers$.next();
                 }
             });
     }
 
     openEditLocationDetailedModal(project: ProjectDetail): void {
-        const data: ProjectLocationDetailedEditorData = { projectID: project.ProjectID };
+        const data: ProjectLocationDetailedEditorData = { projectID: project.ProjectID, boundingBox: this.getProjectBoundingBox(project) };
 
         this.dialogService
             .open(ProjectLocationDetailedEditorComponent, { data, width: "1100px" })
             .afterClosed$.subscribe((result) => {
                 if (result) {
-                    this.refreshProject$.next();
+                    this.refreshProjectAndMapBounds();
                     this.refreshLocationLayers$.next();
                 }
             });
@@ -1496,6 +1531,7 @@ export class ProjectDetailComponent implements OnDestroy {
     openEditPriorityLandscapesModal(project: ProjectDetail): void {
         const data: ProjectGeographicAreaEditorData = {
             projectID: project.ProjectID,
+            boundingBox: this.getProjectBoundingBox(project),
             title: "Priority Landscapes",
             wmsLayerName: "WADNRForestHealth:PriorityLandscape",
             wmsIdField: "PriorityLandscapeID",
@@ -1517,6 +1553,7 @@ export class ProjectDetailComponent implements OnDestroy {
     openEditDnrUplandRegionsModal(project: ProjectDetail): void {
         const data: ProjectGeographicAreaEditorData = {
             projectID: project.ProjectID,
+            boundingBox: this.getProjectBoundingBox(project),
             title: "DNR Upland Regions",
             wmsLayerName: "WADNRForestHealth:DNRUplandRegion",
             wmsIdField: "DNRUplandRegionID",
@@ -1538,6 +1575,7 @@ export class ProjectDetailComponent implements OnDestroy {
     openEditCountiesModal(project: ProjectDetail): void {
         const data: ProjectGeographicAreaEditorData = {
             projectID: project.ProjectID,
+            boundingBox: this.getProjectBoundingBox(project),
             title: "Counties",
             wmsLayerName: "WADNRForestHealth:County",
             wmsIdField: "CountyID",
@@ -1557,13 +1595,13 @@ export class ProjectDetailComponent implements OnDestroy {
     }
 
     openEditMapExtentModal(project: ProjectDetail): void {
-        const data: ProjectMapExtentEditorData = { projectID: project.ProjectID };
+        const data: ProjectMapExtentEditorData = { projectID: project.ProjectID, boundingBox: this.getProjectBoundingBox(project) };
 
         this.dialogService
             .open(ProjectMapExtentEditorComponent, { data, width: "800px" })
             .afterClosed$.subscribe((result) => {
                 if (result) {
-                    this.refreshProject$.next();
+                    this.refreshProjectAndMapBounds();
                 }
             });
     }

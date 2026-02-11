@@ -10,6 +10,7 @@
 import { OrganizationLookupItem } from './organization-lookup-item';
 import { ProjectTypeLookupItemWithColor } from './project-type-lookup-item-with-color';
 import { PersonLookupItemWithEmail } from './person-lookup-item-with-email';
+import { BoundingBox } from './bounding-box';
 import { ProjectStageLookupItem } from './project-stage-lookup-item';
 
 
@@ -23,6 +24,7 @@ export class ProjectFactSheet {
     PrimaryContact?: PersonLookupItemWithEmail;
     ProjectStage?: ProjectStageLookupItem;
     Duration?: string | null;
+    DefaultBoundingBox?: BoundingBox;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -37,6 +39,7 @@ export interface ProjectFactSheetForm {
     PrimaryContact?: FormControl<PersonLookupItemWithEmail>;
     ProjectStage?: FormControl<ProjectStageLookupItem>;
     Duration?: FormControl<string>;
+    DefaultBoundingBox?: FormControl<BoundingBox>;
 }
 
 export class ProjectFactSheetFormControls { 
@@ -111,6 +114,16 @@ export class ProjectFactSheetFormControls {
         }
     );
     public static Duration = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static DefaultBoundingBox = (value: FormControlState<BoundingBox> | BoundingBox = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<BoundingBox>(
         value,
         formControlOptions ?? 
         {

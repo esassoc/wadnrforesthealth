@@ -11,6 +11,7 @@ import { ProjectTypeLookupItem } from './project-type-lookup-item';
 import { OrganizationLookupItem } from './organization-lookup-item';
 import { ProjectOrganizationItem } from './project-organization-item';
 import { FundSourceAllocationRequestItem } from './fund-source-allocation-request-item';
+import { BoundingBox } from './bounding-box';
 import { ProjectPersonItem } from './project-person-item';
 import { ClassificationLookupItem } from './classification-lookup-item';
 import { TagLookupItem } from './tag-lookup-item';
@@ -48,6 +49,7 @@ export class ProjectDetail {
     FundingSourceNotes?: string | null;
     FundSourceAllocationRequests?: Array<FundSourceAllocationRequestItem> | null;
     Agreements?: Array<AgreementLookupItem> | null;
+    DefaultBoundingBox?: BoundingBox;
     HasLocationData?: boolean;
     ProjectLocationNotes?: string | null;
     Counties?: Array<string> | null;
@@ -98,6 +100,7 @@ export interface ProjectDetailForm {
     FundingSourceNotes?: FormControl<string>;
     FundSourceAllocationRequests?: FormControl<Array<FundSourceAllocationRequestItem>>;
     Agreements?: FormControl<Array<AgreementLookupItem>>;
+    DefaultBoundingBox?: FormControl<BoundingBox>;
     HasLocationData?: FormControl<boolean>;
     ProjectLocationNotes?: FormControl<string>;
     Counties?: FormControl<Array<string>>;
@@ -379,6 +382,16 @@ export class ProjectDetailFormControls {
         }
     );
     public static Agreements = (value: FormControlState<Array<AgreementLookupItem>> | Array<AgreementLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<AgreementLookupItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static DefaultBoundingBox = (value: FormControlState<BoundingBox> | BoundingBox = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<BoundingBox>(
         value,
         formControlOptions ?? 
         {

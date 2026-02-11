@@ -22,6 +22,12 @@ import { GeometryHelper } from "src/app/shared/helpers/geometry-helper";
 import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
 import { ProjectLocationTypeEnum, ProjectLocationTypesAsSelectDropdownOptions } from "src/app/shared/generated/enum/project-location-type-enum";
 import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
+import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 import { ImportGdbModalComponent, ImportGdbModalData } from "src/app/pages/projects/project-create-workflow/steps/location-detailed/import-gdb-modal/import-gdb-modal.component";
 
 /**
@@ -69,7 +75,12 @@ interface FeatureFormControls {
         ReactiveFormsModule,
         WADNRMapComponent,
         WorkflowStepActionsComponent,
-        FormFieldComponent
+        FormFieldComponent,
+        CountiesLayerComponent,
+        PriorityLandscapesLayerComponent,
+        DNRUplandRegionsLayerComponent,
+        GenericWmsWfsLayerComponent,
+        ExternalMapLayersComponent
     ],
     templateUrl: "./update-location-detailed-step.component.html",
     styleUrls: ["./update-location-detailed-step.component.scss"]
@@ -81,6 +92,7 @@ export class UpdateLocationDetailedStepComponent extends UpdateWorkflowStepBase 
     public vm$: Observable<{ isLoading: boolean; data: ProjectUpdateLocationDetailedStep | null }>;
 
     public FormFieldType = FormFieldType;
+    public OverlayMode = OverlayMode;
 
     // Map state
     public map: L.Map;

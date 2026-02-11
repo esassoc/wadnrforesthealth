@@ -18,15 +18,23 @@ import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { LocationSimpleStep } from "src/app/shared/generated/model/location-simple-step";
 import { LocationSimpleStepRequest } from "src/app/shared/generated/model/location-simple-step-request";
 import { ProjectLocationSimpleTypeEnum } from "src/app/shared/generated/enum/project-location-simple-type-enum";
+import { BoundingBoxDto } from "src/app/shared/models/bounding-box-dto";
+import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 
 export interface ProjectLocationSimpleEditorData {
     projectID: number;
+    boundingBox?: BoundingBoxDto;
 }
 
 @Component({
     selector: "project-location-simple-editor",
     standalone: true,
-    imports: [CommonModule, AsyncPipe, DecimalPipe, ReactiveFormsModule, FormFieldComponent, WADNRMapComponent, ModalAlertsComponent],
+    imports: [CommonModule, AsyncPipe, DecimalPipe, ReactiveFormsModule, FormFieldComponent, WADNRMapComponent, ModalAlertsComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent],
     templateUrl: "./project-location-simple-editor.component.html",
 })
 export class ProjectLocationSimpleEditorComponent extends BaseModal implements OnInit {
@@ -34,6 +42,7 @@ export class ProjectLocationSimpleEditorComponent extends BaseModal implements O
 
     public FormFieldType = FormFieldType;
     public ProjectLocationSimpleTypeEnum = ProjectLocationSimpleTypeEnum;
+    public OverlayMode = OverlayMode;
     public isLoading$ = new BehaviorSubject<boolean>(true);
     public isSubmitting = false;
 
@@ -44,6 +53,7 @@ export class ProjectLocationSimpleEditorComponent extends BaseModal implements O
 
     public form: FormGroup;
     public map: L.Map;
+    public layerControl: any;
     public marker: L.Marker | null = null;
     public mapIsReady = false;
 
@@ -126,6 +136,7 @@ export class ProjectLocationSimpleEditorComponent extends BaseModal implements O
 
     handleMapLoad(event: WADNRMapInitEvent): void {
         this.map = event.map;
+        this.layerControl = event.layerControl;
         this.mapIsReady = true;
 
         this.map.on("click", (e: L.LeafletMouseEvent) => {

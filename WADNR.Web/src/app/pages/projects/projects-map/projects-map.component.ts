@@ -25,6 +25,12 @@ import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/w
 import { ProjectLocationsSimpleLayerComponent } from "src/app/shared/components/leaflet/layers/project-locations-simple-layer/project-locations-simple-layer.component";
 import { MapSearchComponent } from "src/app/shared/components/leaflet/map-search/map-search.component";
 import { ProjectStageMapLegendComponent } from "src/app/shared/components/project-stage-map-legend/project-stage-map-legend.component";
+import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 import * as L from "leaflet";
 // ButtonLoadingDirective removed from imports because it's not used in this template
 
@@ -45,9 +51,15 @@ import * as L from "leaflet";
         ProjectLocationsSimpleLayerComponent,
         MapSearchComponent,
         ProjectStageMapLegendComponent,
+        CountiesLayerComponent,
+        PriorityLandscapesLayerComponent,
+        DNRUplandRegionsLayerComponent,
+        GenericWmsWfsLayerComponent,
+        ExternalMapLayersComponent,
     ],
 })
 export class ProjectsMapComponent implements OnInit {
+    public OverlayMode = OverlayMode;
     public customRichTextTypeID: number = FirmaPageTypeEnum.ProjectMap;
     public projectPoints$: Observable<IFeature[]>;
     public mapHeight = "700px";

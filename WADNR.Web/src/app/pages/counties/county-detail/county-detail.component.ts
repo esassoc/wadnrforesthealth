@@ -11,6 +11,11 @@ import { ProjectCountyDetailGridRow } from "src/app/shared/generated/model/proje
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
+import { IFeature } from "src/app/shared/generated/model/i-feature";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { ColDef } from "node_modules/ag-grid-community/dist/types/src/entities/colDef";
@@ -18,7 +23,7 @@ import { ColDef } from "node_modules/ag-grid-community/dist/types/src/entities/c
 @Component({
     selector: "county-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRMapComponent, CountiesLayerComponent, WADNRGridComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRMapComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, ExternalMapLayersComponent, GenericFeatureCollectionLayerComponent, WADNRGridComponent],
     templateUrl: "./county-detail.component.html",
     styleUrls: ["./county-detail.component.scss"],
 })
@@ -26,12 +31,14 @@ export class CountyDetailComponent {
     public countyID$: Observable<number>;
     public county$: Observable<CountyDetail>;
     public projects$: Observable<ProjectCountyDetailGridRow[]>;
+    public projectFeatures$: Observable<IFeature[]>;
 
     public map: Map;
     public layerControl: L.Control.Layers;
     public mapIsReady: boolean = false;
     public highlightedCountyLayerMode = OverlayMode.Single;
     public allCountiesLayerMode = OverlayMode.ReferenceOnly;
+    public OverlayMode = OverlayMode;
     public columnDefs: ColDef<ProjectCountyDetailGridRow>[] = [];
     public pinnedTotalsRow = {
         fields: ["EstimatedTotalCost", "TotalAmount"],
@@ -55,6 +62,11 @@ export class CountyDetailComponent {
 
         this.projects$ = this.countyID$.pipe(
             switchMap((countyID) => this.countyService.listProjectsForCountyIDCounty(countyID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.projectFeatures$ = this.countyID$.pipe(
+            switchMap((countyID) => this.countyService.listProjectsFeatureCollectionForCountyIDCounty(countyID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 

@@ -21,7 +21,7 @@ function stripBase(apiBaseUrl: string, uri: string): string | null {
 
 const ANON_EXACT: ExactMap = {
   'DELETE': [],
-  'GET': ["/","/agreements","/classification-systems","/classification-systems/lookup","/classifications","/counties","/custom-pages/menu-item","/dnr-upland-regions","/field-definitions","/fund-source-allocations","/fund-source-allocations/lookup","/fund-sources","/interaction-events","/invoices","/invoices/approval-statuses","/lookups/classification-systems-with-classifications","/lookups/funding-sources","/lookups/organization-relationship-types","/lookups/person-relationship-types","/organization-types","/organizations","/organizations/lookup","/priority-landscapes","/program-indices","/program-indices/lookup","/program-indices/search","/programs","/project-codes","/project-codes/lookup","/project-codes/search","/project-documents/types","/project-images/timings","/project-types","/project-types/lookup","/project-types/taxonomy","/projects","/projects/mapped-point/feature-collection","/projects/no-simple-location","/tags","/taxonomy-branches","/taxonomy-branches/lookup","/taxonomy-trunks","/taxonomy-trunks/lookup","/with-project-count"],
+  'GET': ["/","/agreements","/classification-systems","/classification-systems/lookup","/classifications","/counties","/custom-pages/menu-item","/dnr-upland-regions","/external-map-layers/other-maps","/external-map-layers/priority-landscape","/external-map-layers/project-map","/field-definitions","/fund-source-allocations","/fund-source-allocations/lookup","/fund-sources","/interaction-events","/invoices","/invoices/approval-statuses","/lookups/classification-systems-with-classifications","/lookups/funding-sources","/lookups/organization-relationship-types","/lookups/person-relationship-types","/organization-types","/organizations","/organizations/lookup","/priority-landscapes","/program-indices","/program-indices/lookup","/program-indices/search","/programs","/project-codes","/project-codes/lookup","/project-codes/search","/project-documents/types","/project-images/timings","/project-types","/project-types/lookup","/project-types/taxonomy","/projects","/projects/mapped-point/feature-collection","/projects/no-simple-location","/tags","/taxonomy-branches","/taxonomy-branches/lookup","/taxonomy-trunks","/taxonomy-trunks/lookup","/with-project-count"],
   'POST': [],
   'PUT': [],
 };
@@ -45,11 +45,13 @@ const ANON_REGEX: RegexMap = {
     new RegExp("^/classification-systems/[^/]+$"),
     new RegExp("^/classifications/[^/]+$"),
     new RegExp("^/counties/[^/]+$"),
+    new RegExp("^/counties/[^/]+/projects/feature-collection$"),
     new RegExp("^/custom-pages/[^/]+$"),
     new RegExp("^/custom-pages/navigation-section/[^/]+$"),
     new RegExp("^/custom-rich-texts/[^/]+$"),
     new RegExp("^/dnr-upland-regions/[^/]+$"),
     new RegExp("^/dnr-upland-regions/[^/]+/fund-source-allocations$"),
+    new RegExp("^/dnr-upland-regions/[^/]+/projects/feature-collection$"),
     new RegExp("^/field-definitions/[^/]+$"),
     new RegExp("^/file-resources/GetWithApiKey/[^/]+$"),
     new RegExp("^/file-resources/[^/]+$"),
@@ -76,6 +78,7 @@ const ANON_REGEX: RegexMap = {
     new RegExp("^/priority-landscapes/[^/]+$"),
     new RegExp("^/priority-landscapes/[^/]+/file-resources$"),
     new RegExp("^/priority-landscapes/[^/]+/projects$"),
+    new RegExp("^/priority-landscapes/[^/]+/projects/feature-collection$"),
     new RegExp("^/program-indices/[^/]+$"),
     new RegExp("^/programs/[^/]+$"),
     new RegExp("^/programs/[^/]+/notifications$"),

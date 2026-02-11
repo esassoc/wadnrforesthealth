@@ -23,9 +23,17 @@ import { LocationDetailedItemRequest } from "src/app/shared/generated/model/loca
 import { ProjectLocationItem } from "src/app/shared/generated/model/project-location-item";
 import { ProjectLocationTypeEnum, ProjectLocationTypesAsSelectDropdownOptions } from "src/app/shared/generated/enum/project-location-type-enum";
 import { ImportGdbModalComponent, ImportGdbModalData } from "src/app/pages/projects/project-create-workflow/steps/location-detailed/import-gdb-modal/import-gdb-modal.component";
+import { BoundingBoxDto } from "src/app/shared/models/bounding-box-dto";
+import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 
 export interface ProjectLocationDetailedEditorData {
     projectID: number;
+    boundingBox?: BoundingBoxDto;
 }
 
 type GeometryShapeType = "Polygon" | "Line" | "Point";
@@ -57,7 +65,7 @@ interface FeatureFormControls {
 @Component({
     selector: "project-location-detailed-editor",
     standalone: true,
-    imports: [CommonModule, AsyncPipe, LowerCasePipe, ReactiveFormsModule, FormFieldComponent, WADNRMapComponent, ModalAlertsComponent],
+    imports: [CommonModule, AsyncPipe, LowerCasePipe, ReactiveFormsModule, FormFieldComponent, WADNRMapComponent, ModalAlertsComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent],
     templateUrl: "./project-location-detailed-editor.component.html",
     styleUrls: ["./project-location-detailed-editor.component.scss"],
 })
@@ -65,6 +73,7 @@ export class ProjectLocationDetailedEditorComponent extends BaseModal implements
     public ref: DialogRef<ProjectLocationDetailedEditorData, boolean> = inject(DialogRef);
 
     public FormFieldType = FormFieldType;
+    public OverlayMode = OverlayMode;
     public isLoading$ = new BehaviorSubject<boolean>(true);
     public isSubmitting = false;
 
