@@ -11,6 +11,7 @@ api/dnr-upland-region.service.ts
 api/external-map-layer.service.ts
 api/field-definition.service.ts
 api/file-resource.service.ts
+api/firma-home-page-image.service.ts
 api/focus-area.service.ts
 api/fund-source-allocation.service.ts
 api/fund-source.service.ts
@@ -92,6 +93,7 @@ model/field-definition-detail.ts
 model/file-resource-interaction-event-detail.ts
 model/file-resource-lookup-item.ts
 model/file-resource-priority-landscape-detail.ts
+model/firma-home-page-image-detail.ts
 model/firma-page-detail.ts
 model/firma-page-type-detail.ts
 model/firma-page-upsert-request.ts
@@ -221,6 +223,7 @@ model/project-external-link-save-request.ts
 model/project-external-link-update-item-request.ts
 model/project-external-link-update-item.ts
 model/project-fact-sheet.ts
+model/project-featured.ts
 model/project-fund-source-allocation-request-item-request.ts
 model/project-funding-detail.ts
 model/project-funding-save-request.ts

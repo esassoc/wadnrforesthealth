@@ -1,6 +1,6 @@
 <header-nav></header-nav>
 
-<main class="site">
+<main class="site" [class.home]="isHomePage">
     <div class="site-wrapper">
         <!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
         @if (!isIframe) {

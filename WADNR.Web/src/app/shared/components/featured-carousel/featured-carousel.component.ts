@@ -2,8 +2,8 @@ import { Component, Input, OnDestroy, OnInit, computed, signal } from "@angular/
 import { NgClass } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { trigger, transition, style, animate, state } from "@angular/animations";
-import { FeaturedProjectDto } from "../../generated/model/models";
-import { environment } from "src/environments/environment.prod";
+import { ProjectFeatured } from "../../generated/model/project-featured";
+import { environment } from "src/environments/environment";
 import { getFileResourceUrlFromBase } from "src/app/shared/utils/file-resource-utils";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 
@@ -40,7 +40,7 @@ export interface FeaturedProjectVm {
 })
 export class FeaturedCarouselComponent implements OnInit, OnDestroy {
     /** Projects to render */
-    @Input({ required: true }) projects: FeaturedProjectDto[] = [];
+    @Input({ required: true }) projects: ProjectFeatured[] = [];
 
     /** Provide a function to turn file GUID -> URL (so this component is app-agnostic) */
     @Input() imageUrlBuilder?: (guid: string) => string;

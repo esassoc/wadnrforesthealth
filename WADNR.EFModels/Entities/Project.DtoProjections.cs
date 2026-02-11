@@ -3,6 +3,25 @@ using WADNR.Models.DataTransferObjects;
 
 namespace WADNR.EFModels.Entities;
 
+/// <summary>
+/// Intermediate row for the AsFeaturedRaw projection. Fields that can't translate to SQL
+/// (string.Join for Implementers, Duration formatting) are resolved in memory in ListFeaturedAsync.
+/// </summary>
+public class ProjectFeaturedRaw
+{
+    public int ProjectID { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
+    public string ProjectNumber { get; set; } = string.Empty;
+    public string? ActionPriority { get; set; }
+    public List<string> Implementers { get; set; } = new();
+    public string Stage { get; set; } = string.Empty;
+    public int? PlannedYear { get; set; }
+    public int? CompletionYear { get; set; }
+    public string ProjectDescription { get; set; } = string.Empty;
+    public Guid? KeyPhotoFileResourceGuid { get; set; }
+    public string? KeyPhotoCaption { get; set; }
+}
+
 public static class ProjectProjections
 {
     public static readonly Expression<Func<Project, ProjectDetail>> AsDetail = x => new ProjectDetail
@@ -444,6 +463,32 @@ public static class ProjectProjections
         EstimatedTotalCost = x.EstimatedTotalCost,
         TotalAmount = null,
         ProjectDescription = x.ProjectDescription
+    };
+
+    // Intermediate row for featured projects — SQL-translatable fields only.
+    // string.Join (Implementers) and Duration formatting happen in memory in ListFeaturedAsync.
+    public static readonly Expression<Func<Project, ProjectFeaturedRaw>> AsFeaturedRaw = x => new ProjectFeaturedRaw
+    {
+        ProjectID = x.ProjectID,
+        ProjectName = x.ProjectName,
+        ProjectNumber = x.FhtProjectNumber,
+        ActionPriority = x.ProjectType.TaxonomyBranch.TaxonomyTrunk.TaxonomyTrunkName,
+        Implementers = x.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => po.Organization.DisplayName)
+            .ToList(),
+        Stage = x.ProjectStage.ProjectStageName,
+        PlannedYear = x.PlannedDate != null ? (int?)x.PlannedDate.Value.Year : null,
+        CompletionYear = x.CompletionDate != null ? (int?)x.CompletionDate.Value.Year : null,
+        ProjectDescription = x.ProjectDescription ?? string.Empty,
+        KeyPhotoFileResourceGuid = x.ProjectImages
+            .Where(pi => pi.IsKeyPhoto)
+            .Select(pi => (Guid?)pi.FileResource.FileResourceGUID)
+            .FirstOrDefault(),
+        KeyPhotoCaption = x.ProjectImages
+            .Where(pi => pi.IsKeyPhoto)
+            .Select(pi => pi.Caption)
+            .FirstOrDefault(),
     };
 
     public static readonly Expression<Func<Project, ProjectLookupItem>> AsLookupItem = x => new ProjectLookupItem

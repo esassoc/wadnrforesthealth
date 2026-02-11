@@ -40,6 +40,14 @@ public class ProjectController(
         return Ok(projects);
     }
 
+    [HttpGet("featured")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<ProjectFeatured>>> ListFeatured()
+    {
+        var projects = await Projects.ListFeaturedAsync(DbContext);
+        return Ok(projects);
+    }
+
     [HttpGet("{projectID}")]
     [AllowAnonymous]
     [ProjectViewFeature]

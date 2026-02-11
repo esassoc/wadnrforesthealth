@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using NetTopologySuite.Features;
@@ -441,6 +442,43 @@ public static class Projects
             .ToListAsync();
 
         return projects;
+    }
+
+    public static async Task<List<ProjectFeatured>> ListFeaturedAsync(WADNRDbContext dbContext)
+    {
+        // Two-step query: SQL-translatable projection first, then in-memory mapping
+        // for string.Join (Implementers) and Duration formatting.
+        var rawRows = await dbContext.Projects
+            .AsNoTracking()
+            .Where(IsActiveProjectExpr)
+            .Where(p => p.IsFeatured)
+            .OrderBy(p => p.ProjectName)
+            .Select(ProjectProjections.AsFeaturedRaw)
+            .ToListAsync();
+
+        return rawRows.Select(r => new ProjectFeatured
+        {
+            ProjectID = r.ProjectID,
+            ProjectName = r.ProjectName,
+            ProjectNumber = r.ProjectNumber,
+            ActionPriority = r.ActionPriority ?? string.Empty,
+            Implementers = string.Join(", ", r.Implementers),
+            Stage = r.Stage,
+            Duration = FormatDuration(r.PlannedYear, r.CompletionYear),
+            ProjectDescription = r.ProjectDescription,
+            KeyPhotoFileResourceGuid = r.KeyPhotoFileResourceGuid,
+            KeyPhotoCaption = r.KeyPhotoCaption,
+        }).ToList();
+    }
+
+    private static string FormatDuration(int? startYear, int? completionYear)
+    {
+        if (startYear == completionYear && startYear.HasValue)
+        {
+            return startYear.Value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        return $"{startYear?.ToString(CultureInfo.InvariantCulture) ?? "?"} - {completionYear?.ToString(CultureInfo.InvariantCulture) ?? "?"}";
     }
 
     #region User-Aware Methods for Role-Based Visibility

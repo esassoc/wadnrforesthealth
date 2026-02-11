@@ -1,8 +1,66 @@
-<main class="site">
-    <div class="site__hero">
-        <h1>Welcome to the Home Page</h1>
+<div>
+    <!-- 1. Hero image carousel (full-width, edge-to-edge) -->
+    @if (carouselImages$ | async; as carouselImages) {
+    @if (carouselImages.length > 0) {
+    <section class="hero-carousel">
+        <image-carousel [images]="carouselImages" [autoAdvanceInterval]="5000"></image-carousel>
+    </section>
+    }
+    }
+
+    <!-- 2. Two-column layout (8/4 matching legacy) -->
+    <div class="home-content grid-12">
+        <!-- Left column: main rich text -->
+        <div class="g-col-8">
+            <div class="home-richtext">
+                <custom-rich-text [customRichTextTypeID]="homePageTypeID"></custom-rich-text>
+            </div>
+        </div>
+
+        <!-- Right column: actions + map -->
+        <div class="g-col-4">
+            <!-- Action buttons (authenticated only) -->
+            @if (isAuthenticated$ | async) {
+            <a class="btn btn-primary home-action-btn" routerLink="/projects/new">Add Project</a>
+            <a class="btn btn-primary home-action-btn" routerLink="/projects">GIS Import/Update</a>
+            <a class="btn btn-primary home-action-btn" routerLink="/projects">Update Project</a>
+            }
+
+            <!-- Project map -->
+            <h4 class="home-sidebar__heading">Project Map</h4>
+            <custom-rich-text [customRichTextTypeID]="homeMapInfoTypeID"></custom-rich-text>
+
+            <a routerLink="/projects/map" class="home-map__link">
+                <wadnr-map [mapHeight]="'400px'" [disableMapInteraction]="true" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
+                    @if (mapIsReady) {
+                    <project-locations-simple-layer
+                        [map]="map"
+                        [layerControl]="layerControl"
+                        [projectPoints]="projectPoints$ | async"
+                        [colorByPropertyName]="'ProjectStageID'"
+                        [legendColorsToUse]="legendColorsToUse"
+                        [renderAsCircleMarkers]="true"
+                        [showDetailedPopup]="false">
+                    </project-locations-simple-layer>
+                    }
+                </wadnr-map>
+            </a>
+            <project-stage-map-legend></project-stage-map-legend>
+        </div>
     </div>
-    <div class="site__about">
-        <custom-rich-text [customRichTextTypeID]="customRichTextTypeID"></custom-rich-text>
-    </div>
-</main>
+
+    <!-- 3. Featured projects -->
+    @if (featuredProjects$ | async; as featuredProjects) {
+    @if (featuredProjects.length > 0) {
+    <section class="home-featured">
+        <h4>Featured Projects</h4>
+        <featured-carousel [projects]="featuredProjects" [interval]="8000"></featured-carousel>
+    </section>
+    }
+    }
+
+    <!-- 4. Additional info -->
+    <section class="home-additional-info">
+        <custom-rich-text [customRichTextTypeID]="homeAdditionalInfoTypeID"></custom-rich-text>
+    </section>
+</div>

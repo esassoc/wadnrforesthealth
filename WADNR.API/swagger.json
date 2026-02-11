@@ -2076,6 +2076,46 @@
         "x-anonymous": true
       }
     },
+    "/firma-home-page-images": {
+      "get": {
+        "tags": [
+          "FirmaHomePageImage"
+        ],
+        "operationId": "List_FirmaHomePageImage",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FirmaHomePageImageDetail"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FirmaHomePageImageDetail"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FirmaHomePageImageDetail"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
     "/focus-areas": {
       "get": {
         "tags": [
@@ -5684,6 +5724,46 @@
             }
           }
         }
+      }
+    },
+    "/projects/featured": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListFeatured_Project",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectFeatured"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectFeatured"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectFeatured"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}": {
@@ -16093,6 +16173,28 @@
         },
         "additionalProperties": false
       },
+      "FirmaHomePageImageDetail": {
+        "type": "object",
+        "properties": {
+          "FirmaHomePageImageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceGUID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Caption": {
+            "type": "string",
+            "nullable": true
+          },
+          "SortOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "FirmaPageDetail": {
         "type": "object",
         "properties": {
@@ -20866,6 +20968,53 @@
         },
         "additionalProperties": false
       },
+      "ProjectFeatured": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ActionPriority": {
+            "type": "string",
+            "nullable": true
+          },
+          "Implementers": {
+            "type": "string",
+            "nullable": true
+          },
+          "Stage": {
+            "type": "string",
+            "nullable": true
+          },
+          "Duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "KeyPhotoFileResourceGuid": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "KeyPhotoCaption": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectFundSourceAllocationRequestItemRequest": {
         "type": "object",
         "properties": {
@@ -24640,6 +24789,9 @@
     },
     {
       "name": "FileResource"
+    },
+    {
+      "name": "FirmaHomePageImage"
     },
     {
       "name": "FocusArea"

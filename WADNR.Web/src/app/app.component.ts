@@ -14,6 +14,7 @@ import { HeaderNavComponent } from "./shared/components";
 })
 export class AppComponent {
     public isIframe = false;
+    public isHomePage = false;
 
     public currentYear: number = new Date().getFullYear();
 
@@ -39,6 +40,7 @@ export class AppComponent {
                 // lazy loaded route ended
                 this.busyService.setBusy(false);
             } else if (event instanceof NavigationEnd) {
+                this.isHomePage = event.urlAfterRedirects === "/" || event.urlAfterRedirects === "";
                 window.scrollTo(0, 0);
             }
         });
