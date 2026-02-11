@@ -18,7 +18,7 @@ services:
       - RECAPTCHA_SCORE_THRESHOLD=${RECAPTCHA_SCORE_THRESHOLD}
       - SitkaCaptureServiceUrl=${SitkaCaptureServiceUrl}
       - WebUrl=${WebUrl}
-      - GDALAPIBaseUrl=http://wadnr.gdalapi:8080
+      - GDALAPIBaseUrl=${GDALAPIBaseUrl}
       - EnableE2ETestAuth=${EnableE2ETestAuth}  
     ports:
       - "3211:8080"
