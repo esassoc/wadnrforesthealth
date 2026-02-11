@@ -544,7 +544,9 @@ stages:
                 api.image.tag="$(Build.BuildNumber)-$(environment)"
                 api.image.repository="$(kv-containerRegistry)/wadnr/api"
                 web.image.tag="$(Build.BuildNumber)-$(environment)"
+                gdalapi.image.tag="$(Build.BuildNumber)-$(environment)"
                 web.image.repository="$(kv-containerRegistry)/wadnr/web"
                 geoserver.image.repository="$(kv-containerRegistry)/kartoza/geoserver"
+                gdalapi.image.repository="$(kv-containerRegistry)/wadnr/gdalapi"
                 sitkacapture.image.repository="$(kv-containerRegistry)/sitkacapture:latest"
               force: false
