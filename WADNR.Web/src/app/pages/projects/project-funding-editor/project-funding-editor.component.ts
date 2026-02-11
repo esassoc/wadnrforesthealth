@@ -14,11 +14,11 @@ import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
-import { LookupService } from "src/app/shared/generated/api/lookup.service";
+import { FundingSourceService } from "src/app/shared/generated/api/funding-source.service";
 import { FundSourceAllocationService } from "src/app/shared/generated/api/fund-source-allocation.service";
 import { ProjectFundingDetail } from "src/app/shared/generated/model/project-funding-detail";
 import { ProjectFundingSaveRequest } from "src/app/shared/generated/model/project-funding-save-request";
-import { FundingSourceOption } from "src/app/shared/generated/model/funding-source-option";
+import { FundingSourceLookupItem } from "src/app/shared/generated/model/funding-source-lookup-item";
 
 export interface ProjectFundingEditorData {
     projectID: number;
@@ -59,7 +59,7 @@ export class ProjectFundingEditorComponent extends BaseModal implements OnInit {
 
     constructor(
         private projectService: ProjectService,
-        private lookupService: LookupService,
+        private fundingSourceService: FundingSourceService,
         private fundSourceAllocationService: FundSourceAllocationService,
         alertService: AlertService
     ) {
@@ -81,7 +81,7 @@ export class ProjectFundingEditorComponent extends BaseModal implements OnInit {
 
         forkJoin({
             funding: this.projectService.getFundingProject(projectID).pipe(catchError(() => of(null as ProjectFundingDetail | null))),
-            fundingSources: this.lookupService.listFundingSourcesLookup().pipe(catchError(() => of([] as FundingSourceOption[]))),
+            fundingSources: this.fundingSourceService.listFundingSource().pipe(catchError(() => of([] as FundingSourceLookupItem[]))),
             allocations: this.fundSourceAllocationService.listFundSourceAllocation().pipe(catchError(() => of([] as any[]))),
         }).subscribe(({ funding, fundingSources, allocations }) => {
             const selectedFSIDs = new Set(funding?.SelectedFundingSourceIDs ?? []);

@@ -277,7 +277,7 @@ export class OrganizationDetailComponent {
 
     openEditModal(organization: OrganizationDetail): void {
         forkJoin({
-            organizationTypes: this.organizationTypeService.listOrganizationType(),
+            organizationTypes: this.organizationTypeService.listLookupOrganizationType(),
             people: this.personService.listPerson()
         }).subscribe(({ organizationTypes, people }) => {
             const dialogRef = this.dialogService.open(OrganizationModalComponent, {

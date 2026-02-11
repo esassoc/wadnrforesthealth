@@ -8,7 +8,7 @@ import { CreateWorkflowStepBase } from "src/app/shared/components/workflow/creat
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
-import { LookupService } from "src/app/shared/generated/api/lookup.service";
+import { ClassificationSystemService } from "src/app/shared/generated/api/classification-system.service";
 import { ProjectClassificationsStep } from "src/app/shared/generated/model/project-classifications-step";
 import { ProjectClassificationsStepRequest } from "src/app/shared/generated/model/project-classifications-step-request";
 import { ProjectClassificationRequestItem } from "src/app/shared/generated/model/project-classification-request-item";
@@ -48,7 +48,7 @@ export class ClassificationsStepComponent extends CreateWorkflowStepBase impleme
 
     constructor(
         private projectService: ProjectService,
-        private lookupService: LookupService
+        private classificationSystemService: ClassificationSystemService
     ) {
         super();
     }
@@ -57,7 +57,7 @@ export class ClassificationsStepComponent extends CreateWorkflowStepBase impleme
         this.initProjectID();
 
         // Fetch classification systems (doesn't depend on projectID)
-        const classificationSystems$ = this.lookupService.listClassificationSystemsWithClassificationsLookup().pipe(
+        const classificationSystems$ = this.classificationSystemService.listWithClassificationsClassificationSystem().pipe(
             catchError((err) => {
                 console.error("Failed to load classification systems:", err);
                 return of([] as ClassificationSystemWithClassifications[]);

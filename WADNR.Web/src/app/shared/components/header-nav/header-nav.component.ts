@@ -9,10 +9,11 @@ import { CustomPageNavigationSectionEnum } from "src/app/shared/generated/enum/c
 import { CustomPageService } from "src/app/shared/generated/api/custom-page.service";
 import { CustomPageMenuItem } from "src/app/shared/generated/model/custom-page-menu-item";
 import { forkJoin, Observable, of } from "rxjs";
-import { catchError, shareReplay } from "rxjs/operators";
+import { catchError, map, shareReplay } from "rxjs/operators";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { PersonDetail } from "src/app/shared/generated/model/person-detail";
 import { RoleEnum } from "src/app/shared/generated/enum/role-enum";
+import { RelationshipTypeService } from "src/app/shared/generated/api/relationship-type.service";
 
 @Component({
     selector: "header-nav",
@@ -29,10 +30,12 @@ export class HeaderNavComponent implements OnInit {
     }>;
 
     public currentUser$: Observable<PersonDetail | null>;
+    public hasCanStewardProjectsRelationship$: Observable<boolean>;
 
     constructor(
         private customPageService: CustomPageService,
-        private authenticationService: AuthenticationService
+        private authenticationService: AuthenticationService,
+        private relationshipTypeService: RelationshipTypeService
     ) {
         this.currentUser$ = this.authenticationService.currentUserSetObservable;
     }
@@ -52,6 +55,12 @@ export class HeaderNavComponent implements OnInit {
             financials: getSectionMenuItems(CustomPageNavigationSectionEnum.Financials),
             programInfo: getSectionMenuItems(CustomPageNavigationSectionEnum.ProgramInfo),
         }).pipe(shareReplay(1));
+
+        this.hasCanStewardProjectsRelationship$ = this.relationshipTypeService.listSummaryRelationshipType().pipe(
+            map((types) => types.some((t) => t.CanStewardProjects)),
+            catchError(() => of(false)),
+            shareReplay(1)
+        );
     }
 
     public showTestingWarning(): boolean {
@@ -95,6 +104,12 @@ export class HeaderNavComponent implements OnInit {
         if (!user) return false;
         const roleID = user.BaseRole?.RoleID;
         return roleID === RoleEnum.Admin || roleID === RoleEnum.EsaAdmin;
+    }
+
+    public canViewVendors(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        const roleID = user.BaseRole?.RoleID;
+        return roleID === RoleEnum.Admin || roleID === RoleEnum.EsaAdmin || roleID === RoleEnum.ProjectSteward;
     }
 
     public canCreateProject(user: PersonDetail | null): boolean {

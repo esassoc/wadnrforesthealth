@@ -788,6 +788,46 @@
         "x-anonymous": true
       }
     },
+    "/classification-systems/with-classifications": {
+      "get": {
+        "tags": [
+          "ClassificationSystem"
+        ],
+        "operationId": "ListWithClassifications_ClassificationSystem",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationSystemWithClassifications"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationSystemWithClassifications"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationSystemWithClassifications"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
     "/counties": {
       "get": {
         "tags": [
@@ -2194,6 +2234,46 @@
             }
           }
         }
+      }
+    },
+    "/funding-sources": {
+      "get": {
+        "tags": [
+          "FundingSource"
+        ],
+        "operationId": "List_FundingSource",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundingSourceLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundingSourceLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundingSourceLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
       }
     },
     "/fund-sources": {
@@ -3723,166 +3803,6 @@
         }
       }
     },
-    "/lookups/person-relationship-types": {
-      "get": {
-        "tags": [
-          "Lookup"
-        ],
-        "operationId": "ListPersonRelationshipTypes_Lookup",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PersonRelationshipTypeLookupItem"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PersonRelationshipTypeLookupItem"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PersonRelationshipTypeLookupItem"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-anonymous": true
-      }
-    },
-    "/lookups/organization-relationship-types": {
-      "get": {
-        "tags": [
-          "Lookup"
-        ],
-        "operationId": "ListOrganizationRelationshipTypes_Lookup",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OrganizationRelationshipTypeLookupItem"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OrganizationRelationshipTypeLookupItem"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OrganizationRelationshipTypeLookupItem"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-anonymous": true
-      }
-    },
-    "/lookups/funding-sources": {
-      "get": {
-        "tags": [
-          "Lookup"
-        ],
-        "operationId": "ListFundingSources_Lookup",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FundingSourceOption"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FundingSourceOption"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FundingSourceOption"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-anonymous": true
-      }
-    },
-    "/lookups/classification-systems-with-classifications": {
-      "get": {
-        "tags": [
-          "Lookup"
-        ],
-        "operationId": "ListClassificationSystemsWithClassifications_Lookup",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ClassificationSystemWithClassifications"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ClassificationSystemWithClassifications"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ClassificationSystemWithClassifications"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-anonymous": true
-      }
-    },
     "/organizations": {
       "get": {
         "tags": [
@@ -4472,6 +4392,93 @@
                 "schema": {
                   "type": "array",
                   "items": {
+                    "$ref": "#/components/schemas/OrganizationTypeGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationTypeGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationTypeGridRow"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      },
+      "post": {
+        "tags": [
+          "OrganizationType"
+        ],
+        "operationId": "Create_OrganizationType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationTypeUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationTypeUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationTypeUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationTypeGridRow"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationTypeGridRow"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationTypeGridRow"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organization-types/lookup": {
+      "get": {
+        "tags": [
+          "OrganizationType"
+        ],
+        "operationId": "ListLookup_OrganizationType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
                     "$ref": "#/components/schemas/OrganizationTypeLookupItem"
                   }
                 }
@@ -4496,6 +4503,127 @@
           }
         },
         "x-anonymous": true
+      }
+    },
+    "/organization-types/{organizationTypeID}": {
+      "get": {
+        "tags": [
+          "OrganizationType"
+        ],
+        "operationId": "Get_OrganizationType",
+        "parameters": [
+          {
+            "name": "organizationTypeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationTypeGridRow"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationTypeGridRow"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationTypeGridRow"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "OrganizationType"
+        ],
+        "operationId": "Update_OrganizationType",
+        "parameters": [
+          {
+            "name": "organizationTypeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationTypeUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationTypeUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationTypeUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationTypeGridRow"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationTypeGridRow"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationTypeGridRow"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "OrganizationType"
+        ],
+        "operationId": "Delete_OrganizationType",
+        "parameters": [
+          {
+            "name": "organizationTypeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/people": {
@@ -4760,6 +4888,66 @@
                   "items": {
                     "$ref": "#/components/schemas/InteractionEventGridRow"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/people/{personID}/primary-contact-organizations": {
+      "put": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "UpdatePrimaryContactOrganizations_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonPrimaryContactOrganizationsUpdateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonPrimaryContactOrganizationsUpdateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonPrimaryContactOrganizationsUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
                 }
               }
             }
@@ -12740,6 +12928,46 @@
         }
       }
     },
+    "/project-person-relationship-types": {
+      "get": {
+        "tags": [
+          "ProjectPersonRelationshipType"
+        ],
+        "operationId": "List_ProjectPersonRelationshipType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonRelationshipTypeLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonRelationshipTypeLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonRelationshipTypeLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
     "/project-types": {
       "get": {
         "tags": [
@@ -13125,6 +13353,294 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/relationship-types": {
+      "get": {
+        "tags": [
+          "RelationshipType"
+        ],
+        "operationId": "List_RelationshipType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RelationshipTypeGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RelationshipTypeGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RelationshipTypeGridRow"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      },
+      "post": {
+        "tags": [
+          "RelationshipType"
+        ],
+        "operationId": "Create_RelationshipType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RelationshipTypeUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RelationshipTypeUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RelationshipTypeUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelationshipTypeGridRow"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelationshipTypeGridRow"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelationshipTypeGridRow"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/relationship-types/lookup": {
+      "get": {
+        "tags": [
+          "RelationshipType"
+        ],
+        "operationId": "ListLookup_RelationshipType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RelationshipTypeLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RelationshipTypeLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RelationshipTypeLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/relationship-types/summary": {
+      "get": {
+        "tags": [
+          "RelationshipType"
+        ],
+        "operationId": "ListSummary_RelationshipType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RelationshipTypeSummary"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RelationshipTypeSummary"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RelationshipTypeSummary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/relationship-types/{relationshipTypeID}": {
+      "get": {
+        "tags": [
+          "RelationshipType"
+        ],
+        "operationId": "Get_RelationshipType",
+        "parameters": [
+          {
+            "name": "relationshipTypeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelationshipTypeGridRow"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelationshipTypeGridRow"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelationshipTypeGridRow"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "RelationshipType"
+        ],
+        "operationId": "Update_RelationshipType",
+        "parameters": [
+          {
+            "name": "relationshipTypeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RelationshipTypeUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RelationshipTypeUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RelationshipTypeUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelationshipTypeGridRow"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelationshipTypeGridRow"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelationshipTypeGridRow"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "RelationshipType"
+        ],
+        "operationId": "Delete_RelationshipType",
+        "parameters": [
+          {
+            "name": "relationshipTypeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -17259,7 +17775,7 @@
         },
         "additionalProperties": false
       },
-      "FundingSourceOption": {
+      "FundingSourceLookupItem": {
         "type": "object",
         "properties": {
           "FundingSourceID": {
@@ -18687,6 +19203,13 @@
           "AssociatedUsersCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "PrimaryContactPersonFullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CanStewardProjects": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -18705,28 +19228,35 @@
         },
         "additionalProperties": false
       },
-      "OrganizationRelationshipTypeLookupItem": {
+      "OrganizationTypeGridRow": {
         "type": "object",
         "properties": {
-          "RelationshipTypeID": {
+          "OrganizationTypeID": {
             "type": "integer",
             "format": "int32"
           },
-          "RelationshipTypeName": {
+          "OrganizationTypeName": {
             "type": "string",
             "nullable": true
           },
-          "RelationshipTypeDescription": {
+          "OrganizationTypeAbbreviation": {
             "type": "string",
             "nullable": true
           },
-          "CanOnlyBeRelatedOnceToAProject": {
+          "LegendColor": {
+            "type": "string",
+            "nullable": true
+          },
+          "ShowOnProjectMaps": {
             "type": "boolean"
           },
-          "IsPrimaryContact": {
+          "IsDefaultOrganizationType": {
             "type": "boolean"
           },
-          "SortOrder": {
+          "IsFundingType": {
+            "type": "boolean"
+          },
+          "OrganizationCount": {
             "type": "integer",
             "format": "int32"
           }
@@ -18743,6 +19273,33 @@
           "OrganizationTypeName": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrganizationTypeUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "OrganizationTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationTypeAbbreviation": {
+            "type": "string",
+            "nullable": true
+          },
+          "LegendColor": {
+            "type": "string",
+            "nullable": true
+          },
+          "ShowOnProjectMaps": {
+            "type": "boolean"
+          },
+          "IsDefaultOrganizationType": {
+            "type": "boolean"
+          },
+          "IsFundingType": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -19068,6 +19625,20 @@
           },
           "Email": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonPrimaryContactOrganizationsUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "OrganizationIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
             "nullable": true
           }
         },
@@ -23295,6 +23866,128 @@
         },
         "additionalProperties": false
       },
+      "RelationshipTypeGridRow": {
+        "type": "object",
+        "properties": {
+          "RelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RelationshipTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CanStewardProjects": {
+            "type": "boolean"
+          },
+          "IsPrimaryContact": {
+            "type": "boolean"
+          },
+          "CanOnlyBeRelatedOnceToAProject": {
+            "type": "boolean"
+          },
+          "ShowOnFactSheet": {
+            "type": "boolean"
+          },
+          "ReportInAccomplishmentsDashboard": {
+            "type": "boolean"
+          },
+          "RelationshipTypeDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "AssociatedOrganizationTypeNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "ProjectOrganizationCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RelationshipTypeLookupItem": {
+        "type": "object",
+        "properties": {
+          "RelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RelationshipTypeName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RelationshipTypeSummary": {
+        "type": "object",
+        "properties": {
+          "RelationshipTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RelationshipTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RelationshipTypeDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "CanStewardProjects": {
+            "type": "boolean"
+          },
+          "IsPrimaryContact": {
+            "type": "boolean"
+          },
+          "CanOnlyBeRelatedOnceToAProject": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RelationshipTypeUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "RelationshipTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RelationshipTypeDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "CanStewardProjects": {
+            "type": "boolean"
+          },
+          "IsPrimaryContact": {
+            "type": "boolean"
+          },
+          "CanOnlyBeRelatedOnceToAProject": {
+            "type": "boolean"
+          },
+          "ShowOnFactSheet": {
+            "type": "boolean"
+          },
+          "ReportInAccomplishmentsDashboard": {
+            "type": "boolean"
+          },
+          "OrganizationTypeIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "RoleDetail": {
         "type": "object",
         "properties": {
@@ -24797,6 +25490,9 @@
       "name": "FocusArea"
     },
     {
+      "name": "FundingSource"
+    },
+    {
       "name": "FundSource"
     },
     {
@@ -24810,9 +25506,6 @@
     },
     {
       "name": "InvoicePaymentRequest"
-    },
-    {
-      "name": "Lookup"
     },
     {
       "name": "Organization"
@@ -24851,7 +25544,13 @@
       "name": "ProjectNote"
     },
     {
+      "name": "ProjectPersonRelationshipType"
+    },
+    {
       "name": "ProjectType"
+    },
+    {
+      "name": "RelationshipType"
     },
     {
       "name": "Role"

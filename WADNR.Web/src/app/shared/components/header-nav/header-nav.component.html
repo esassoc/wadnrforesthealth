@@ -75,18 +75,17 @@
                 <li class="nav-item dropdown">
                     <a href="javascript:void(0);" [dropdownToggle]="projectsMenu" class="nav-link dropdown-toggle">Projects <icon icon="AngleDown"></icon></a>
                     <ul #projectsMenu class="dropdown-menu">
-                        @if (currentUser$ | async; as currentUserForProjects) {
-                            @if (canCreateProject(currentUserForProjects)) {
-                                <li><a routerLink="/projects/new" class="dropdown-item">+ Add Project</a></li>
-                                <li class="divider"></li>
-                            }
-                        }
                         <li><a routerLink="/projects/map" class="dropdown-item">Project Map</a></li>
                         <li class="divider"></li>
                         <li><a routerLink="/projects" class="dropdown-item">Full Project List</a></li>
                         <li><a routerLink="/projects-by-type" class="dropdown-item">Projects By Type</a></li>
                         <li><a routerLink="/projects-by-theme" class="dropdown-item">Projects By Theme</a></li>
                         <li><a routerLink="/tags" class="dropdown-item">Project Tags</a></li>
+                        @if (currentUser$ | async; as currentUserForPending) {
+                            @if (canViewManageMenu(currentUserForPending)) {
+                            <li><a routerLink="/pending-projects" class="dropdown-item">Pending Projects</a></li>
+                            }
+                        }
                         <li class="divider"></li>
                         <li><a routerLink="/interactions-events" class="dropdown-item">Full Interactions/Events List</a></li>
                         <li class="divider"></li>
@@ -123,8 +122,15 @@
                         <li><a routerLink="/focus-areas" class="dropdown-item">Focus Areas</a></li>
                         <li><a routerLink="/counties" class="dropdown-item">Counties</a></li>
                         <li class="divider"></li>
+                        @if (hasCanStewardProjectsRelationship$ | async) {
+                        <li><a routerLink="/project-steward-organizations" class="dropdown-item">Project Steward Organizations</a></li>
+                        }
                         <li><a routerLink="/organizations" class="dropdown-item">Contributing Organizations</a></li>
-                        <li><a routerLink="/vendors" class="dropdown-item">Vendors</a></li>
+                        @if (currentUser$ | async; as currentUserForVendors) {
+                            @if (canViewVendors(currentUserForVendors)) {
+                            <li><a routerLink="/vendors" class="dropdown-item">Vendors</a></li>
+                            }
+                        }
                         <li class="divider"></li>
                         @for (menuItem of navigationMenus.programInfo; track menuItem.CustomPageID ?? menuItem.CustomPageVanityUrl) {
                         <li>
@@ -140,30 +146,56 @@
                         <ul #manageMenu class="dropdown-menu">
                             <!-- Group 1: Classification -->
                             <li><a routerLink="/project-types" class="dropdown-item">Project Types</a></li>
-                            <li><a routerLink="/classification-systems" class="dropdown-item">Classification Systems</a></li>
+                            <li><a routerLink="/projects-by-theme" class="dropdown-item">Project Themes</a></li>
                             <li class="divider"></li>
                             <!-- Group 2: System Config -->
                             <li><a routerLink="/people" class="dropdown-item">Users and Contacts</a></li>
-                            <li><a routerLink="/roles" class="dropdown-item">Roles</a></li>
+                            <li><a routerLink="/featured-projects" class="dropdown-item">Featured Projects</a></li>
+                            <li><a routerLink="/project-updates" class="dropdown-item">Project Updates</a></li>
+                            <li><a routerLink="/homepage-configuration" class="dropdown-item">Homepage Configuration</a></li>
                             <li class="divider"></li>
                             <!-- Group 3: Content Editing -->
+                            <li><a routerLink="/manage-page-content" class="dropdown-item">Manage Page Content</a></li>
                             <li><a routerLink="/labels-and-definitions" class="dropdown-item">Custom Labels &amp; Definitions</a></li>
+                            <li><a routerLink="/manage-custom-pages" class="dropdown-item">Custom Pages</a></li>
                             <li class="divider"></li>
-                            <!-- Group 4: Supporting Entities -->
-                            <li><a routerLink="/focus-areas" class="dropdown-item">Focus Areas</a></li>
-                            <li><a routerLink="/program-indices" class="dropdown-item">Program Indices</a></li>
-                            <li><a routerLink="/project-codes" class="dropdown-item">Project Codes</a></li>
-                            <li><a routerLink="/fund-source-allocations" class="dropdown-item">Fund Source Allocations</a></li>
-                            <li><a routerLink="/invoices" class="dropdown-item">Invoices</a></li>
-                            <li><a routerLink="/vendors" class="dropdown-item">Vendors</a></li>
+                            <!-- Group 4: Other -->
+                            <li><a routerLink="/internal-setup-notes" class="dropdown-item">Internal Setup Notes</a></li>
+                            <li><a routerLink="/style-guide" class="dropdown-item">Style Guide</a></li>
+                            <li><a routerLink="/upload-excel-files" class="dropdown-item">Upload Excel Files / ETL</a></li>
+                            <li class="divider"></li>
+                            <!-- Group 5: Organizations -->
+                            <li><a routerLink="/organization-and-relationship-types" class="dropdown-item">Organization Types</a></li>
+                            @if (canViewVendors(currentUserForManage)) {
+                            <li><a routerLink="/manage-find-your-forester" class="dropdown-item">Manage Find Your Forester</a></li>
+                            }
+                            <li><a routerLink="/map-layers" class="dropdown-item">Map Layers</a></li>
+                            <li class="divider"></li>
+                            <!-- Group 6: Jobs -->
+                            <li><a routerLink="/jobs" class="dropdown-item">Jobs</a></li>
+                            <li class="divider"></li>
+                            <!-- Group 7: JSON APIs -->
+                            <li><a routerLink="/json-apis" class="dropdown-item">JSON APIs</a></li>
                             @if (isAdmin(currentUserForManage)) {
                             <li class="divider"></li>
-                            <!-- Group 5: Admin Only -->
+                            <!-- Group 8: Admin Only -->
                             <li><a href="/hangfire" class="dropdown-item" target="_blank">Hangfire <icon icon="ExternalLink"></icon></a></li>
                             }
                         </ul>
                     </li>
                     }
+                }
+                @if (currentUser$ | async; as currentUserForReports) {
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0);" [dropdownToggle]="reportsMenu" class="nav-link dropdown-toggle">Reports <icon icon="AngleDown"></icon></a>
+                    <ul #reportsMenu class="dropdown-menu">
+                        <li><a routerLink="/reports/projects" class="dropdown-item">Projects</a></li>
+                        @if (isAdmin(currentUserForReports)) {
+                        <li class="divider"></li>
+                        <li><a routerLink="/reports" class="dropdown-item">Manage Report Templates</a></li>
+                        }
+                    </ul>
+                </li>
                 }
                 <!-- first right-aligned item -->
                 @if (currentUser$ | async; as currentUser) {

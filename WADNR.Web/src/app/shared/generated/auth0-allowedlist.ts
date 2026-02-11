@@ -21,7 +21,7 @@ function stripBase(apiBaseUrl: string, uri: string): string | null {
 
 const ANON_EXACT: ExactMap = {
   'DELETE': [],
-  'GET': ["/","/agreements","/classification-systems","/classification-systems/lookup","/classifications","/counties","/custom-pages/menu-item","/dnr-upland-regions","/external-map-layers/other-maps","/external-map-layers/priority-landscape","/external-map-layers/project-map","/field-definitions","/firma-home-page-images","/fund-source-allocations","/fund-source-allocations/lookup","/fund-sources","/interaction-events","/invoices","/invoices/approval-statuses","/lookups/classification-systems-with-classifications","/lookups/funding-sources","/lookups/organization-relationship-types","/lookups/person-relationship-types","/organization-types","/organizations","/organizations/lookup","/priority-landscapes","/program-indices","/program-indices/lookup","/program-indices/search","/programs","/project-codes","/project-codes/lookup","/project-codes/search","/project-documents/types","/project-images/timings","/project-types","/project-types/lookup","/project-types/taxonomy","/projects","/projects/featured","/projects/mapped-point/feature-collection","/projects/no-simple-location","/tags","/taxonomy-branches","/taxonomy-branches/lookup","/taxonomy-trunks","/taxonomy-trunks/lookup","/with-project-count"],
+  'GET': ["/","/agreements","/classification-systems","/classification-systems/lookup","/classification-systems/with-classifications","/classifications","/counties","/custom-pages/menu-item","/dnr-upland-regions","/external-map-layers/other-maps","/external-map-layers/priority-landscape","/external-map-layers/project-map","/field-definitions","/firma-home-page-images","/fund-source-allocations","/fund-source-allocations/lookup","/fund-sources","/funding-sources","/interaction-events","/invoices","/invoices/approval-statuses","/organization-types","/organization-types/lookup","/organizations","/organizations/lookup","/priority-landscapes","/program-indices","/program-indices/lookup","/program-indices/search","/programs","/project-codes","/project-codes/lookup","/project-codes/search","/project-documents/types","/project-images/timings","/project-person-relationship-types","/project-types","/project-types/lookup","/project-types/taxonomy","/projects","/projects/featured","/projects/mapped-point/feature-collection","/projects/no-simple-location","/relationship-types","/relationship-types/lookup","/relationship-types/summary","/tags","/taxonomy-branches","/taxonomy-branches/lookup","/taxonomy-trunks","/taxonomy-trunks/lookup","/with-project-count"],
   'POST': [],
   'PUT': [],
 };
@@ -29,7 +29,7 @@ const ANON_EXACT: ExactMap = {
 const SECURED_EXACT: ExactMap = {
   'DELETE': [],
   'GET': ["/focus-areas","/people","/people/lookup","/roles","/vendors","/vendors/search"],
-  'POST': ["/agreements","/classifications","/counties","/dnr-upland-regions","/fund-sources","/interaction-events","/invoice-payment-requests","/invoices","/organizations","/priority-landscapes","/programs","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/sitkacapture/generate-pdf","/support-requests","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
+  'POST': ["/agreements","/classifications","/counties","/dnr-upland-regions","/fund-sources","/interaction-events","/invoice-payment-requests","/invoices","/organization-types","/organizations","/priority-landscapes","/programs","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/relationship-types","/sitkacapture/generate-pdf","/support-requests","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
   'PUT': [],
 };
 
@@ -125,6 +125,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/fund-sources/[^/]+$"),
     new RegExp("^/interaction-events/[^/]+$"),
     new RegExp("^/invoices/[^/]+/voucher$"),
+    new RegExp("^/organization-types/[^/]+$"),
     new RegExp("^/organizations/[^/]+$"),
     new RegExp("^/organizations/[^/]+/boundary$"),
     new RegExp("^/priority-landscapes/[^/]+$"),
@@ -137,6 +138,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/projects/[^/]+$"),
     new RegExp("^/projects/[^/]+/block-list$"),
     new RegExp("^/projects/[^/]+/update-workflow/current$"),
+    new RegExp("^/relationship-types/[^/]+$"),
     new RegExp("^/tags/[^/]+$"),
     new RegExp("^/taxonomy-branches/[^/]+$"),
     new RegExp("^/taxonomy-trunks/[^/]+$"),
@@ -149,6 +151,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/dnr-upland-regions/[^/]+/projects$"),
     new RegExp("^/focus-areas/[^/]+$"),
     new RegExp("^/fund-sources/[^/]+/notes-internal$"),
+    new RegExp("^/organization-types/[^/]+$"),
     new RegExp("^/organizations/[^/]+/projects$"),
     new RegExp("^/organizations/[^/]+/projects/pending$"),
     new RegExp("^/people/[^/]+$"),
@@ -201,6 +204,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/projects/[^/]+/update-workflow/steps/treatments$"),
     new RegExp("^/projects/[^/]+/update-workflow/treatment-areas$"),
     new RegExp("^/projects/[^/]+/update-workflow/treatments/[^/]+$"),
+    new RegExp("^/relationship-types/[^/]+$"),
     new RegExp("^/roles/[^/]+$"),
     new RegExp("^/roles/[^/]+/people$"),
     new RegExp("^/tags/[^/]+/projects$"),
@@ -244,7 +248,9 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/fund-sources/[^/]+$"),
     new RegExp("^/interaction-events/[^/]+$"),
     new RegExp("^/invoices/[^/]+$"),
+    new RegExp("^/organization-types/[^/]+$"),
     new RegExp("^/organizations/[^/]+$"),
+    new RegExp("^/people/[^/]+/primary-contact-organizations$"),
     new RegExp("^/priority-landscapes/[^/]+$"),
     new RegExp("^/programs/[^/]+$"),
     new RegExp("^/project-documents/[^/]+$"),
@@ -290,6 +296,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/projects/[^/]+/update-workflow/steps/priority-landscapes$"),
     new RegExp("^/projects/[^/]+/update-workflow/steps/treatments$"),
     new RegExp("^/projects/[^/]+/update-workflow/treatments/[^/]+$"),
+    new RegExp("^/relationship-types/[^/]+$"),
     new RegExp("^/tags/[^/]+$"),
     new RegExp("^/taxonomy-branches/[^/]+$"),
     new RegExp("^/taxonomy-trunks/[^/]+$"),

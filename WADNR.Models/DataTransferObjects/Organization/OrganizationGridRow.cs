@@ -10,4 +10,6 @@ public class OrganizationGridRow
     public int AssociatedProjectsCount { get; set; }
     public int AssociatedFundSourcesCount { get; set; }
     public int AssociatedUsersCount { get; set; }
+    public string? PrimaryContactPersonFullName { get; set; }
+    public bool CanStewardProjects { get; set; }
 }

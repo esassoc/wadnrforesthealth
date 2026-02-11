@@ -7,12 +7,12 @@ import { catchError } from "rxjs/operators";
 import { CreateWorkflowStepBase } from "src/app/shared/components/workflow/create-workflow-step-base";
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
-import { LookupService } from "src/app/shared/generated/api/lookup.service";
+import { FundingSourceService } from "src/app/shared/generated/api/funding-source.service";
 import { FundSourceAllocationService } from "src/app/shared/generated/api/fund-source-allocation.service";
 import { ExpectedFundingStep } from "src/app/shared/generated/model/expected-funding-step";
 import { ExpectedFundingStepRequest } from "src/app/shared/generated/model/expected-funding-step-request";
 import { FundSourceAllocationRequestRequestItem } from "src/app/shared/generated/model/fund-source-allocation-request-request-item";
-import { FundingSourceOption } from "src/app/shared/generated/model/funding-source-option";
+import { FundingSourceLookupItem } from "src/app/shared/generated/model/funding-source-lookup-item";
 import { FundSourceAllocationLookupItem } from "src/app/shared/generated/model/fund-source-allocation-lookup-item";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -67,7 +67,7 @@ export class ExpectedFundingStepComponent extends CreateWorkflowStepBase impleme
 
     constructor(
         private projectService: ProjectService,
-        private lookupService: LookupService,
+        private fundingSourceService: FundingSourceService,
         private fundSourceAllocationService: FundSourceAllocationService
     ) {
         super();
@@ -77,10 +77,10 @@ export class ExpectedFundingStepComponent extends CreateWorkflowStepBase impleme
         this.initProjectID();
 
         // Fetch lookups (don't depend on projectID)
-        const fundingSources$ = this.lookupService.listFundingSourcesLookup().pipe(
+        const fundingSources$ = this.fundingSourceService.listFundingSource().pipe(
             catchError((err) => {
                 console.error("Failed to load funding sources:", err);
-                return of([] as FundingSourceOption[]);
+                return of([] as FundingSourceLookupItem[]);
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );

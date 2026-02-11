@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Security.Claims;
 using WADNR.Models.DataTransferObjects;
 using WADNR.Models.Helpers;
@@ -150,6 +151,24 @@ public static class People
         PopulateRoles(person, personRoleIDs);
 
         return person;
+    }
+
+    public static async Task<PersonDetail?> UpdatePrimaryContactOrganizationsAsync(WADNRDbContext dbContext, int personID, PersonPrimaryContactOrganizationsUpdateRequest dto)
+    {
+        // Clear all orgs where this person is the primary contact
+        await dbContext.Organizations
+            .Where(o => o.PrimaryContactPersonID == personID)
+            .ExecuteUpdateAsync(s => s.SetProperty(o => o.PrimaryContactPersonID, (int?)null));
+
+        // Set this person as primary contact on the new list
+        if (dto.OrganizationIDs.Count > 0)
+        {
+            await dbContext.Organizations
+                .Where(o => dto.OrganizationIDs.Contains(o.OrganizationID))
+                .ExecuteUpdateAsync(s => s.SetProperty(o => o.PrimaryContactPersonID, personID));
+        }
+
+        return await GetByIDAsDetailAsync(dbContext, personID);
     }
 
     public static async Task<PersonDetail?> UpdateClaims(WADNRDbContext dbContext, ClaimsPrincipal claimsPrincipal)

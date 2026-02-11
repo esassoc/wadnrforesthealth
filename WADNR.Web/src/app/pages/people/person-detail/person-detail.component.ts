@@ -1,8 +1,9 @@
 import { AsyncPipe, DatePipe } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { BehaviorSubject, distinctUntilChanged, filter, Observable, shareReplay, switchMap } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, Observable, shareReplay, switchMap } from "rxjs";
 import { ColDef } from "ag-grid-community";
+import { DialogService } from "@ngneat/dialog";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -10,10 +11,12 @@ import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-g
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 
 import { PersonService } from "src/app/shared/generated/api/person.service";
+import { OrganizationService } from "src/app/shared/generated/api/organization.service";
 import { PersonDetail } from "src/app/shared/generated/model/person-detail";
 import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row";
 import { AgreementGridRow } from "src/app/shared/generated/model/agreement-grid-row";
 import { InteractionEventGridRow } from "src/app/shared/generated/model/interaction-event-grid-row";
+import { PersonPrimaryContactOrgsModalComponent, PersonPrimaryContactOrgsModalData } from "../person-primary-contact-orgs-modal/person-primary-contact-orgs-modal.component";
 
 @Component({
     selector: "person-detail",
@@ -28,6 +31,7 @@ export class PersonDetailComponent {
     }
 
     private _personID$ = new BehaviorSubject<number | null>(null);
+    private refreshData$ = new BehaviorSubject<void>(undefined);
 
     public personID$: Observable<number>;
     public person$: Observable<PersonDetail>;
@@ -41,6 +45,8 @@ export class PersonDetailComponent {
 
     constructor(
         private personService: PersonService,
+        private organizationService: OrganizationService,
+        private dialogService: DialogService,
         private utilityFunctions: UtilityFunctionsService
     ) {}
 
@@ -51,8 +57,8 @@ export class PersonDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.person$ = this.personID$.pipe(
-            switchMap((personID) => this.personService.getPerson(personID)),
+        this.person$ = combineLatest([this.personID$, this.refreshData$]).pipe(
+            switchMap(([personID]) => this.personService.getPerson(personID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -117,5 +123,23 @@ export class PersonDetailComponent {
                 InRouterLink: "/people/",
             }),
         ];
+    }
+
+    openEditPrimaryContactOrgs(person: PersonDetail): void {
+        this.organizationService.listLookupOrganization().subscribe(allOrgs => {
+            const dialogRef = this.dialogService.open(PersonPrimaryContactOrgsModalComponent, {
+                data: {
+                    person,
+                    allOrganizations: allOrgs,
+                } as PersonPrimaryContactOrgsModalData,
+                width: "600px",
+            });
+
+            dialogRef.afterClosed$.subscribe(result => {
+                if (result) {
+                    this.refreshData$.next();
+                }
+            });
+        });
     }
 }

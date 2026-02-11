@@ -1,0 +1,61 @@
+<div class="modal-header">
+    <h3>{{ modalTitle }}</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.OrganizationTypeName"
+            fieldLabel="Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter organization type name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.OrganizationTypeAbbreviation"
+            fieldLabel="Abbreviation"
+            [type]="FormFieldType.Text"
+            placeholder="Enter abbreviation">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.LegendColor"
+            fieldLabel="Legend Color"
+            [type]="FormFieldType.Text"
+            placeholder="#000000">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ShowOnProjectMaps"
+            fieldLabel="Show on Project Maps"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.IsDefaultOrganizationType"
+            fieldLabel="Is Default"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.IsFundingType"
+            fieldLabel="Is Funding Type"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Save' }}
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>

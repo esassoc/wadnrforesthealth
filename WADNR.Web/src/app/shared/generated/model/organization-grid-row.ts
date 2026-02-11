@@ -19,6 +19,8 @@ export class OrganizationGridRow {
     AssociatedProjectsCount?: number;
     AssociatedFundSourcesCount?: number;
     AssociatedUsersCount?: number;
+    PrimaryContactPersonFullName?: string | null;
+    CanStewardProjects?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -33,6 +35,8 @@ export interface OrganizationGridRowForm {
     AssociatedProjectsCount?: FormControl<number>;
     AssociatedFundSourcesCount?: FormControl<number>;
     AssociatedUsersCount?: FormControl<number>;
+    PrimaryContactPersonFullName?: FormControl<string>;
+    CanStewardProjects?: FormControl<boolean>;
 }
 
 export class OrganizationGridRowFormControls { 
@@ -107,6 +111,26 @@ export class OrganizationGridRowFormControls {
         }
     );
     public static AssociatedUsersCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PrimaryContactPersonFullName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CanStewardProjects = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

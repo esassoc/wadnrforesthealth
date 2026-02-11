@@ -114,12 +114,13 @@
                     </div>
                 }
 
-                @if (person.PrimaryContactOrganizations && person.PrimaryContactOrganizations.length > 0) {
-                    <div class="card mt-3">
-                        <div class="card-header">
-                            <span class="card-title">Primary Contact For Organizations</span>
-                        </div>
-                        <div class="card-body">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <span class="card-title">Primary Contact For Organizations</span>
+                        <button class="btn btn-sm btn-primary float-end" (click)="openEditPrimaryContactOrgs(person)">Edit</button>
+                    </div>
+                    <div class="card-body">
+                        @if (person.PrimaryContactOrganizations && person.PrimaryContactOrganizations.length > 0) {
                             <ul class="list-unstyled mb-0">
                                 @for (org of person.PrimaryContactOrganizations; track org.OrganizationID) {
                                     <li>
@@ -127,9 +128,11 @@
                                     </li>
                                 }
                             </ul>
-                        </div>
+                        } @else {
+                            <p class="text-muted mb-0">No organizations assigned.</p>
+                        }
                     </div>
-                }
+                </div>
             </div>
         </div>
 

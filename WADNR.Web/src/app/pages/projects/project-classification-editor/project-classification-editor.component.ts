@@ -12,7 +12,7 @@ import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
-import { LookupService } from "src/app/shared/generated/api/lookup.service";
+import { ClassificationSystemService } from "src/app/shared/generated/api/classification-system.service";
 import { ProjectClassificationDetailItem } from "src/app/shared/generated/model/project-classification-detail-item";
 import { ProjectClassificationSaveRequest } from "src/app/shared/generated/model/project-classification-save-request";
 import { ClassificationSystemWithClassifications } from "src/app/shared/generated/model/classification-system-with-classifications";
@@ -51,7 +51,7 @@ export class ProjectClassificationEditorComponent extends BaseModal implements O
 
     constructor(
         private projectService: ProjectService,
-        private lookupService: LookupService,
+        private classificationSystemService: ClassificationSystemService,
         alertService: AlertService
     ) {
         super(alertService);
@@ -61,7 +61,7 @@ export class ProjectClassificationEditorComponent extends BaseModal implements O
         const projectID = this.ref.data.projectID;
 
         forkJoin({
-            systems: this.lookupService.listClassificationSystemsWithClassificationsLookup().pipe(
+            systems: this.classificationSystemService.listWithClassificationsClassificationSystem().pipe(
                 catchError(() => of([] as ClassificationSystemWithClassifications[]))
             ),
             existing: this.projectService.listClassificationsForEditProject(projectID).pipe(

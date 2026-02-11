@@ -46,4 +46,12 @@ public class ClassificationSystemController(
         var classificationSystems = await ClassificationSystems.ListAsLookupItemAsync(DbContext);
         return Ok(classificationSystems);
     }
+
+    [HttpGet("with-classifications")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<ClassificationSystemWithClassifications>>> ListWithClassifications()
+    {
+        var items = await ClassificationSystems.ListWithClassificationsAsync(DbContext);
+        return Ok(items);
+    }
 }

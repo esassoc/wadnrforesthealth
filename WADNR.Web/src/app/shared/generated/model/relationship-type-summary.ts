@@ -10,28 +10,28 @@
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
-export class OrganizationRelationshipTypeLookupItem { 
+export class RelationshipTypeSummary { 
     RelationshipTypeID?: number;
     RelationshipTypeName?: string | null;
     RelationshipTypeDescription?: string | null;
-    CanOnlyBeRelatedOnceToAProject?: boolean;
+    CanStewardProjects?: boolean;
     IsPrimaryContact?: boolean;
-    SortOrder?: number;
+    CanOnlyBeRelatedOnceToAProject?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
 }
 
-export interface OrganizationRelationshipTypeLookupItemForm { 
+export interface RelationshipTypeSummaryForm { 
     RelationshipTypeID?: FormControl<number>;
     RelationshipTypeName?: FormControl<string>;
     RelationshipTypeDescription?: FormControl<string>;
-    CanOnlyBeRelatedOnceToAProject?: FormControl<boolean>;
+    CanStewardProjects?: FormControl<boolean>;
     IsPrimaryContact?: FormControl<boolean>;
-    SortOrder?: FormControl<number>;
+    CanOnlyBeRelatedOnceToAProject?: FormControl<boolean>;
 }
 
-export class OrganizationRelationshipTypeLookupItemFormControls { 
+export class RelationshipTypeSummaryFormControls { 
     public static RelationshipTypeID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
@@ -62,7 +62,7 @@ export class OrganizationRelationshipTypeLookupItemFormControls {
             ],
         }
     );
-    public static CanOnlyBeRelatedOnceToAProject = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+    public static CanStewardProjects = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {
@@ -82,7 +82,7 @@ export class OrganizationRelationshipTypeLookupItemFormControls {
             ],
         }
     );
-    public static SortOrder = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static CanOnlyBeRelatedOnceToAProject = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

@@ -1,0 +1,33 @@
+<div class="modal-header">
+    <h3>Edit Primary Contact Organizations</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <p>Select organizations for which <strong>{{ personFullName }}</strong> is the primary contact.</p>
+
+    <form-field
+        [formControl]="selectedOrganizationIDs"
+        fieldLabel="Organizations"
+        [type]="FormFieldType.Select"
+        [formInputOptions]="organizationOptions"
+        formInputOptionLabel="Label"
+        formInputOptionValue="Value"
+        [multiple]="true"
+        placeholder="Select organizations">
+    </form-field>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Save' }}
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>

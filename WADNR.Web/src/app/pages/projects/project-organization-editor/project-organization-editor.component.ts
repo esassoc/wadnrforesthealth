@@ -16,11 +16,11 @@ import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
-import { LookupService } from "src/app/shared/generated/api/lookup.service";
+import { RelationshipTypeService } from "src/app/shared/generated/api/relationship-type.service";
 import { ProjectOrganizationItem } from "src/app/shared/generated/model/project-organization-item";
 import { ProjectOrganizationSaveRequest } from "src/app/shared/generated/model/project-organization-save-request";
 import { ProjectOrganizationItemRequest } from "src/app/shared/generated/model/project-organization-item-request";
-import { OrganizationRelationshipTypeLookupItem } from "src/app/shared/generated/model/organization-relationship-type-lookup-item";
+import { RelationshipTypeSummary } from "src/app/shared/generated/model/relationship-type-summary";
 
 export interface ProjectOrganizationEditorData {
     projectID: number;
@@ -28,7 +28,7 @@ export interface ProjectOrganizationEditorData {
 }
 
 interface OrganizationsByType {
-    relationshipType: OrganizationRelationshipTypeLookupItem;
+    relationshipType: RelationshipTypeSummary;
     canOnlyBeRelatedOnce: boolean;
     formControl: FormControl<number | null>;
     fieldDefinitionName: string | null;
@@ -60,7 +60,7 @@ export class ProjectOrganizationEditorComponent extends BaseModal implements OnI
     constructor(
         private projectService: ProjectService,
         private organizationService: OrganizationService,
-        private lookupService: LookupService,
+        private relationshipTypeService: RelationshipTypeService,
         alertService: AlertService
     ) {
         super(alertService);
@@ -70,8 +70,8 @@ export class ProjectOrganizationEditorComponent extends BaseModal implements OnI
         const data = this.ref.data;
 
         forkJoin({
-            relationshipTypes: this.lookupService.listOrganizationRelationshipTypesLookup().pipe(
-                catchError(() => of([] as OrganizationRelationshipTypeLookupItem[]))
+            relationshipTypes: this.relationshipTypeService.listSummaryRelationshipType().pipe(
+                catchError(() => of([] as RelationshipTypeSummary[]))
             ),
             organizations: this.organizationService.listLookupOrganization().pipe(
                 catchError(() => of([] as any[]))

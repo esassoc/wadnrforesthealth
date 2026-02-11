@@ -8,12 +8,12 @@ import { UpdateWorkflowStepBase } from "src/app/shared/components/workflow/updat
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
-import { LookupService } from "src/app/shared/generated/api/lookup.service";
+import { RelationshipTypeService } from "src/app/shared/generated/api/relationship-type.service";
 import { ProjectUpdateOrganizationsStep } from "src/app/shared/generated/model/project-update-organizations-step";
 import { ProjectUpdateOrganizationsStepRequest } from "src/app/shared/generated/model/project-update-organizations-step-request";
 import { ProjectOrganizationUpdateItem } from "src/app/shared/generated/model/project-organization-update-item";
 import { ProjectOrganizationUpdateItemRequest } from "src/app/shared/generated/model/project-organization-update-item-request";
-import { OrganizationRelationshipTypeLookupItem } from "src/app/shared/generated/model/organization-relationship-type-lookup-item";
+import { RelationshipTypeSummary } from "src/app/shared/generated/model/relationship-type-summary";
 import { OrganizationLookupItem } from "src/app/shared/generated/model/organization-lookup-item";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -22,7 +22,7 @@ import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 
 interface OrganizationsByType {
-    relationshipType: OrganizationRelationshipTypeLookupItem;
+    relationshipType: RelationshipTypeSummary;
     canOnlyBeRelatedOnce: boolean;
     formControl: FormControl<number | null>;
     fieldDefinitionName: string | null;
@@ -62,7 +62,7 @@ export class UpdateOrganizationsStepComponent extends UpdateWorkflowStepBase imp
     constructor(
         private projectService: ProjectService,
         private organizationService: OrganizationService,
-        private lookupService: LookupService
+        private relationshipTypeService: RelationshipTypeService
     ) {
         super();
     }
@@ -71,10 +71,10 @@ export class UpdateOrganizationsStepComponent extends UpdateWorkflowStepBase imp
         this.initProjectID();
         this.initHasChanges();
 
-        const relationshipTypes$ = this.lookupService.listOrganizationRelationshipTypesLookup().pipe(
+        const relationshipTypes$ = this.relationshipTypeService.listSummaryRelationshipType().pipe(
             catchError((err) => {
                 console.error("Failed to load relationship types:", err);
-                return of([] as OrganizationRelationshipTypeLookupItem[]);
+                return of([] as RelationshipTypeSummary[]);
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );

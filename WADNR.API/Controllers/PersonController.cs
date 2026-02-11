@@ -74,4 +74,17 @@ public class PersonController(
         var events = await InteractionEvents.ListForPersonAsGridRowAsync(DbContext, personID);
         return Ok(events);
     }
+
+    [HttpPut("{personID}/primary-contact-organizations")]
+    [UserManageFeature]
+    [EntityNotFound(typeof(Person), "personID")]
+    public async Task<ActionResult<PersonDetail>> UpdatePrimaryContactOrganizations([FromRoute] int personID, [FromBody] PersonPrimaryContactOrganizationsUpdateRequest dto)
+    {
+        var updated = await People.UpdatePrimaryContactOrganizationsAsync(DbContext, personID, dto);
+        if (updated == null)
+        {
+            return NotFound();
+        }
+        return Ok(updated);
+    }
 }

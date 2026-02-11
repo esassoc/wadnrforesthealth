@@ -88,6 +88,10 @@ public static class OrganizationProjections
             .Distinct()
             .Count(),
         AssociatedFundSourcesCount = x.FundSources.Count,
-        AssociatedUsersCount = x.People.Count
+        AssociatedUsersCount = x.People.Count,
+        PrimaryContactPersonFullName = x.PrimaryContactPerson != null
+            ? x.PrimaryContactPerson.FirstName + " " + x.PrimaryContactPerson.LastName : null,
+        CanStewardProjects = x.OrganizationType.OrganizationTypeRelationshipTypes
+            .Any(otrt => otrt.RelationshipType.CanStewardProjects),
     };
 }

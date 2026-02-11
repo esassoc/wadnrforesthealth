@@ -7,13 +7,13 @@ import { catchError } from "rxjs/operators";
 import { UpdateWorkflowStepBase } from "src/app/shared/components/workflow/update-workflow-step-base";
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
-import { LookupService } from "src/app/shared/generated/api/lookup.service";
+import { FundingSourceService } from "src/app/shared/generated/api/funding-source.service";
 import { FundSourceAllocationService } from "src/app/shared/generated/api/fund-source-allocation.service";
 import { ProjectUpdateExpectedFundingStep } from "src/app/shared/generated/model/project-update-expected-funding-step";
 import { ProjectUpdateExpectedFundingStepRequest } from "src/app/shared/generated/model/project-update-expected-funding-step-request";
 import { FundSourceAllocationRequestUpdateItem } from "src/app/shared/generated/model/fund-source-allocation-request-update-item";
 import { FundSourceAllocationRequestUpdateItemRequest } from "src/app/shared/generated/model/fund-source-allocation-request-update-item-request";
-import { FundingSourceOption } from "src/app/shared/generated/model/funding-source-option";
+import { FundingSourceLookupItem } from "src/app/shared/generated/model/funding-source-lookup-item";
 import { FundSourceAllocationLookupItem } from "src/app/shared/generated/model/fund-source-allocation-lookup-item";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -76,7 +76,7 @@ export class UpdateExpectedFundingStepComponent extends UpdateWorkflowStepBase i
 
     constructor(
         private projectService: ProjectService,
-        private lookupService: LookupService,
+        private fundingSourceService: FundingSourceService,
         private fundSourceAllocationService: FundSourceAllocationService
     ) {
         super();
@@ -86,10 +86,10 @@ export class UpdateExpectedFundingStepComponent extends UpdateWorkflowStepBase i
         this.initProjectID();
         this.initHasChanges();
 
-        const fundingSources$ = this.lookupService.listFundingSourcesLookup().pipe(
+        const fundingSources$ = this.fundingSourceService.listFundingSource().pipe(
             catchError((err) => {
                 console.error("Failed to load funding sources:", err);
-                return of([] as FundingSourceOption[]);
+                return of([] as FundingSourceLookupItem[]);
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );

@@ -10,21 +10,21 @@
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
-export class FundingSourceOption { 
-    FundingSourceID?: number;
-    FundingSourceName?: string | null;
+export class RelationshipTypeLookupItem { 
+    RelationshipTypeID?: number;
+    RelationshipTypeName?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
 }
 
-export interface FundingSourceOptionForm { 
-    FundingSourceID?: FormControl<number>;
-    FundingSourceName?: FormControl<string>;
+export interface RelationshipTypeLookupItemForm { 
+    RelationshipTypeID?: FormControl<number>;
+    RelationshipTypeName?: FormControl<string>;
 }
 
-export class FundingSourceOptionFormControls { 
-    public static FundingSourceID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+export class RelationshipTypeLookupItemFormControls { 
+    public static RelationshipTypeID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -34,7 +34,7 @@ export class FundingSourceOptionFormControls {
             ],
         }
     );
-    public static FundingSourceName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static RelationshipTypeName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
