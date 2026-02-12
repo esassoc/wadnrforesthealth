@@ -31,6 +31,7 @@ namespace ProjectFirma.Web.Views.ProjectUpdate
     public class BasicsValidationResultsTest
     {
         [Test]
+        [Ignore("No more validation is completed on Project Updates so this test is no longer valid")]
         public void ProjectUpdateYearRangesTest()
         {
             var projectUpdate = TestFramework.TestProjectUpdate.Create();

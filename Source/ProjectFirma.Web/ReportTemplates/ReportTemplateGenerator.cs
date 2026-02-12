@@ -326,6 +326,7 @@ namespace ProjectFirma.Web.ReportTemplates
                 errorMessage = exception.Errors;
                 sourceCode = exception.SourceCode;
                 reportIsValid = false;
+                SitkaLogger.RegisterLogger();
                 SitkaLogger.Instance.LogDetailedErrorMessage($"There was a SharpDocxCompilationException validating a report template. Temporary template file location:\"{tempDirectory}\" Error Message: \"{errorMessage}\". Source Code: \"{sourceCode}\"", exception);
             }
             catch (Exception exception)
