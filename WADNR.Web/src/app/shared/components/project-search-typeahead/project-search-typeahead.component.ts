@@ -1,8 +1,8 @@
 import { Component, ViewChild, ElementRef, OnDestroy, TemplateRef, ViewContainerRef, ViewEncapsulation } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { Router } from "@angular/router";
-import { debounceTime, distinctUntilChanged, switchMap, startWith, map, shareReplay } from "rxjs/operators";
-import { BehaviorSubject, Observable, of } from "rxjs";
+import { NavigationStart, Router } from "@angular/router";
+import { debounceTime, distinctUntilChanged, switchMap, startWith, map, shareReplay, filter } from "rxjs/operators";
+import { BehaviorSubject, Observable, Subscription, of } from "rxjs";
 import { AsyncPipe, CommonModule } from "@angular/common";
 import { Overlay, OverlayRef, OverlayModule } from "@angular/cdk/overlay";
 import { TemplatePortal, PortalModule } from "@angular/cdk/portal";
@@ -30,6 +30,7 @@ export class ProjectSearchTypeaheadComponent implements OnDestroy {
 
     private overlayRef: OverlayRef | null = null;
     private search$ = new BehaviorSubject<string>("");
+    private routerSub: Subscription;
 
     searchState$: Observable<SearchState> = this.search$.pipe(
         debounceTime(200),
@@ -52,9 +53,16 @@ export class ProjectSearchTypeaheadComponent implements OnDestroy {
         private vcr: ViewContainerRef,
         private router: Router,
         private searchService: SearchService
-    ) {}
+    ) {
+        this.routerSub = this.router.events.pipe(filter((e) => e instanceof NavigationStart)).subscribe(() => {
+            this.searchControl.setValue("");
+            this.search$.next("");
+            this.closeDropdown();
+        });
+    }
 
     ngOnDestroy() {
+        this.routerSub.unsubscribe();
         this.closeDropdown();
     }
 

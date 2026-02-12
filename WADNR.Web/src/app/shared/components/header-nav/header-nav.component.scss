@@ -177,8 +177,12 @@
             box-shadow: var(--shadow-100);
         }
 
-        .qa-warning .nav-link {
-            padding-top: 0.5rem;
+        .qa-warning {
+            pointer-events: none;
+
+            .nav-link {
+                padding-top: 0.5rem;
+            }
         }
 
         .btn-warning {

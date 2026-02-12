@@ -45,10 +45,7 @@ project-search-typeahead.main-nav__search {
         background: transparent;
         color: var(--gray-700);
         padding: 0;
-
-        &:hover {
-            background: var(--gray-50);
-        }
+        cursor: default;
     }
 }
 
