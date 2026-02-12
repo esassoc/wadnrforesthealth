@@ -45,6 +45,7 @@ import { PersonService } from "src/app/shared/generated/api/person.service";
 import { FundSourceService } from "src/app/shared/generated/api/fund-source.service";
 import { ProgramIndexService } from "src/app/shared/generated/api/program-index.service";
 import { ProjectCodeService } from "src/app/shared/generated/api/project-code.service";
+import { ReportTemplateService } from "src/app/shared/generated/api/report-template.service";
 import { ProjectDetail } from "src/app/shared/generated/model/project-detail";
 import { BoundingBoxDto } from "src/app/shared/models/bounding-box-dto";
 import { ProjectApprovalStatusEnum } from "src/app/shared/generated/enum/project-approval-status-enum";
@@ -245,6 +246,7 @@ export class ProjectDetailComponent implements OnDestroy {
         private fundSourceService: FundSourceService,
         private programIndexService: ProgramIndexService,
         private projectCodeService: ProjectCodeService,
+        private reportTemplateService: ReportTemplateService,
         private utilityFunctions: UtilityFunctionsService,
         private leafletHelperService: LeafletHelperService,
         private dialogService: DialogService,
@@ -1297,8 +1299,35 @@ export class ProjectDetailComponent implements OnDestroy {
     }
 
     downloadApprovalLetter(project: ProjectDetail): void {
-        // TODO: Implement approval letter download - requires API endpoint
-        this.alertService.pushAlert(new Alert("Approval letter download functionality coming soon.", AlertContext.Info, true));
+        this.reportTemplateService.generateApprovalLetterReportTemplate(project.ProjectID).subscribe({
+            next: (blob) => {
+                this.downloadBlob(blob, `${project.ProjectName} - Financial Assistance Approval Letter.docx`);
+            },
+            error: () => {
+                this.alertService.pushAlert(new Alert("An error occurred while generating the approval letter.", AlertContext.Danger, true));
+            },
+        });
+    }
+
+    downloadInvoicePaymentRequest(project: ProjectDetail, pr: InvoicePaymentRequestGridRow): void {
+        this.reportTemplateService.generateInvoicePaymentRequestReportTemplate(pr.InvoicePaymentRequestID).subscribe({
+            next: (blob) => {
+                const dateStr = pr.InvoicePaymentRequestDate ? new Date(pr.InvoicePaymentRequestDate).toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" }).replace(/\//g, "-") : "";
+                this.downloadBlob(blob, `${project.ProjectName} - Invoice Payment Request ${dateStr}.docx`);
+            },
+            error: () => {
+                this.alertService.pushAlert(new Alert("An error occurred while generating the invoice payment request.", AlertContext.Danger, true));
+            },
+        });
+    }
+
+    private downloadBlob(blob: Blob, filename: string): void {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
     }
 
     // Invoice/PaymentRequest modal openers

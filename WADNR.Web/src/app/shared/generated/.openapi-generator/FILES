@@ -34,6 +34,7 @@ api/project-person-relationship-type.service.ts
 api/project-type.service.ts
 api/project.service.ts
 api/relationship-type.service.ts
+api/report-template.service.ts
 api/role.service.ts
 api/search.service.ts
 api/sitka-capture.service.ts
@@ -130,6 +131,7 @@ model/gdb-default-mapping-item.ts
 model/gdb-feature-class-preview.ts
 model/gdb-import-basics.ts
 model/gdb-layer-approval.ts
+model/generate-reports-request.ts
 model/generic-layer.ts
 model/geographic-assignment-step.ts
 model/geographic-lookup-item.ts
@@ -310,6 +312,10 @@ model/relationship-type-grid-row.ts
 model/relationship-type-lookup-item.ts
 model/relationship-type-summary.ts
 model/relationship-type-upsert-request.ts
+model/report-template-detail.ts
+model/report-template-grid-row.ts
+model/report-template-lookup-item.ts
+model/report-template-model-lookup-item.ts
 model/role-detail.ts
 model/role-grid-row.ts
 model/role-lookup-item.ts

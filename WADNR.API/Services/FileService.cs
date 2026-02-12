@@ -147,7 +147,8 @@ namespace WADNR.API.Services
             {
                 foreach (var fileResourceInfo in fileResources)
                 {
-                    var fileInZip = archive.CreateEntry($"{fileResourceInfo.OriginalBaseFilename}.{fileResourceInfo.OriginalFileExtension}");
+                    var ext = fileResourceInfo.OriginalFileExtension;
+                    var fileInZip = archive.CreateEntry($"{fileResourceInfo.OriginalBaseFilename}{(ext.StartsWith(".") ? "" : ".")}{ext}");
                     var blobStream = await GetFileStreamFromBlobStorage(fileResourceInfo.FileResourceGUID.ToString());
 
                     await using var s = fileInZip.Open();

@@ -1,0 +1,19 @@
+<page-header pageTitle="Project Reports" [customRichTextTypeID]="customRichTextTypeID"></page-header>
+
+<div class="page-body">
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 0.5rem;">
+        <button
+            class="btn btn-sm btn-primary"
+            (click)="openGenerateModal()"
+            [disabled]="selectedRows.length === 0">
+            Generate Reports
+        </button>
+    </div>
+    <wadnr-grid
+        [rowData]="projects$ | async"
+        [columnDefs]="columnDefs"
+        defaultRowSelection="multiRow"
+        (selectionChanged)="onSelectionChanged($event)"
+        downloadFileName="projects">
+    </wadnr-grid>
+</div>

@@ -10,6 +10,7 @@ public static class InvoicePaymentRequests
         return await dbContext.InvoicePaymentRequests
             .AsNoTracking()
             .Where(x => x.ProjectID == projectID)
+            .OrderByDescending(x => x.InvoicePaymentRequestDate)
             .Select(InvoicePaymentRequestProjections.AsGridRow)
             .ToListAsync();
     }

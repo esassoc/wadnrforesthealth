@@ -7,11 +7,11 @@
             <!-- Block List buttons (admin only, when project has programs) -->
             @if (canShowBlockListButton(project)) {
                 @if (!project.ExistsInImportBlockList) {
-                    <button class="btn btn-secondary" (click)="addToBlockList(project)">
+                    <button class="btn btn-secondary btn-sm" (click)="addToBlockList(project)">
                         <i class="fa fa-ban"></i> Add to Block List
                     </button>
                 } @else {
-                    <button class="btn btn-warning" (click)="removeFromBlockList(project)">
+                    <button class="btn btn-warning btn-sm" (click)="removeFromBlockList(project)">
                         <i class="fa fa-exclamation-triangle"></i> Remove from Block List
                     </button>
                 }
@@ -19,14 +19,14 @@
 
             <!-- Update Project button (for approved projects) -->
             @if (canShowUpdateProjectButton(project)) {
-                <button class="btn btn-primary" (click)="navigateToUpdateWorkflow(project)">
+                <button class="btn btn-primary btn-sm" (click)="navigateToUpdateWorkflow(project)">
                     <i class="fa fa-edit"></i> {{ getUpdateProjectButtonText(project) }}
                 </button>
             }
 
             <!-- Edit Pending Project button -->
             @if (project.UserCanEdit && isPendingProject(project) && !isRejected(project)) {
-                <a [routerLink]="['/projects/edit', project.ProjectID, 'basics']" class="btn btn-primary">
+                <a [routerLink]="['/projects/edit', project.ProjectID, 'basics']" class="btn btn-primary btn-sm">
                     <i class="fa fa-edit"></i>
                     {{ project.ProjectApprovalStatusID === ProjectApprovalStatusEnum.PendingApproval ? 'Review Pending Project' : 'Edit Pending Project' }}
                 </a>
@@ -34,14 +34,14 @@
 
             <!-- View Fact Sheet button -->
             @if (project.CanViewFactSheet) {
-                <a [routerLink]="['/projects/fact-sheet', project.ProjectID]" class="btn btn-primary">
+                <a [routerLink]="['/projects/fact-sheet', project.ProjectID]" class="btn btn-primary btn-sm">
                     <i class="fa fa-file-text"></i> View Fact Sheet
                 </a>
             }
 
             <!-- Download Financial Assistance Approval Letter -->
             @if (canShowApprovalLetter(project)) {
-                <button class="btn btn-primary" (click)="downloadApprovalLetter(project)">
+                <button class="btn btn-primary btn-sm" (click)="downloadApprovalLetter(project)">
                     <i class="fa fa-envelope"></i> Download Financial Assistance Approval Letter
                 </button>
             }
@@ -208,7 +208,7 @@
                         <div class="g-col-6">
                             @if (project.HasLocationData) {
                                 @if (locationLayers$ | async; as locationLayers) {
-                                    <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" [showLegend]="false" [boundingBox]="projectBoundingBox$ | async" (onMapLoad)="handleMapReady($event)">
+                                    <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" [showLegend]="false" [collapseLayerControlOnLoad]="true" [boundingBox]="projectBoundingBox$ | async" (onMapLoad)="handleMapReady($event)">
                                         @if (mapIsReady) {
                                             @for (layer of locationLayers; track layer.LayerName) {
                                                 <generic-feature-collection-layer
@@ -499,9 +499,12 @@
                                 @for (pr of paymentRequests; track pr.InvoicePaymentRequestID) {
                                     <div class="payment-request-card" style="border: 1px solid #ddd; border-radius: 4px; padding: 1rem; margin-bottom: 1.5rem;">
                                         @if (project.UserCanDirectEdit) {
-                                            <div style="text-align: right; margin-bottom: 0.5rem;">
+                                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.25rem; margin-bottom: 0.5rem;">
                                                 <button class="btn btn-primary btn-sm" (click)="openAddInvoiceModal(pr.InvoicePaymentRequestID)">
                                                     <i class="fa fa-plus"></i> Create New Invoice
+                                                </button>
+                                                <button class="btn btn-primary btn-sm" (click)="downloadInvoicePaymentRequest(project, pr)">
+                                                    <i class="fa fa-envelope"></i> Download Invoice Payment Request
                                                 </button>
                                             </div>
                                         }

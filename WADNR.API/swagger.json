@@ -13645,6 +13645,446 @@
         }
       }
     },
+    "/report-templates": {
+      "get": {
+        "tags": [
+          "ReportTemplate"
+        ],
+        "operationId": "List_ReportTemplate",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportTemplateGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportTemplateGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportTemplateGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ReportTemplate"
+        ],
+        "operationId": "Create_ReportTemplate",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "displayName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "reportTemplateModelID": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "fileResource": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "displayName": {
+                  "style": "form"
+                },
+                "description": {
+                  "style": "form"
+                },
+                "reportTemplateModelID": {
+                  "style": "form"
+                },
+                "fileResource": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportTemplateDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportTemplateDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportTemplateDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/report-templates/{reportTemplateID}": {
+      "get": {
+        "tags": [
+          "ReportTemplate"
+        ],
+        "operationId": "Get_ReportTemplate",
+        "parameters": [
+          {
+            "name": "reportTemplateID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportTemplateDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportTemplateDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportTemplateDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ReportTemplate"
+        ],
+        "operationId": "Update_ReportTemplate",
+        "parameters": [
+          {
+            "name": "reportTemplateID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "displayName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "reportTemplateModelID": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "fileResource": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "displayName": {
+                  "style": "form"
+                },
+                "description": {
+                  "style": "form"
+                },
+                "reportTemplateModelID": {
+                  "style": "form"
+                },
+                "fileResource": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportTemplateDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportTemplateDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportTemplateDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ReportTemplate"
+        ],
+        "operationId": "Delete_ReportTemplate",
+        "parameters": [
+          {
+            "name": "reportTemplateID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/report-templates/generate-reports": {
+      "post": {
+        "tags": [
+          "ReportTemplate"
+        ],
+        "operationId": "GenerateReports_ReportTemplate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateReportsRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateReportsRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateReportsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/report-templates/system/approval-letter/{projectID}": {
+      "post": {
+        "tags": [
+          "ReportTemplate"
+        ],
+        "operationId": "GenerateApprovalLetter_ReportTemplate",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/report-templates/system/invoice-payment-request/{invoicePaymentRequestID}": {
+      "post": {
+        "tags": [
+          "ReportTemplate"
+        ],
+        "operationId": "GenerateInvoicePaymentRequest_ReportTemplate",
+        "parameters": [
+          {
+            "name": "invoicePaymentRequestID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/report-templates/models": {
+      "get": {
+        "tags": [
+          "ReportTemplate"
+        ],
+        "operationId": "ListModels_ReportTemplate",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportTemplateModelLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportTemplateModelLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportTemplateModelLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/report-templates/by-model/{reportTemplateModelID}": {
+      "get": {
+        "tags": [
+          "ReportTemplate"
+        ],
+        "operationId": "ListByModel_ReportTemplate",
+        "parameters": [
+          {
+            "name": "reportTemplateModelID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportTemplateLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportTemplateLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportTemplateLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/roles": {
       "get": {
         "tags": [
@@ -17950,6 +18390,24 @@
           },
           "ShouldImport": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GenerateReportsRequest": {
+        "type": "object",
+        "properties": {
+          "ReportTemplateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ModelIDList": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -23988,6 +24446,128 @@
         },
         "additionalProperties": false
       },
+      "ReportTemplateDetail": {
+        "type": "object",
+        "properties": {
+          "ReportTemplateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceGuid": {
+            "type": "string",
+            "nullable": true
+          },
+          "OriginalFileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "ReportTemplateModelID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ReportTemplateModelDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ReportTemplateModelTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ReportTemplateModelTypeDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsSystemTemplate": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReportTemplateGridRow": {
+        "type": "object",
+        "properties": {
+          "ReportTemplateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "ReportTemplateModelID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ReportTemplateModelDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsSystemTemplate": {
+            "type": "boolean"
+          },
+          "FileResourceGuid": {
+            "type": "string",
+            "nullable": true
+          },
+          "OriginalFileName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReportTemplateLookupItem": {
+        "type": "object",
+        "properties": {
+          "ReportTemplateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ReportTemplateModelID": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReportTemplateModelLookupItem": {
+        "type": "object",
+        "properties": {
+          "ReportTemplateModelID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ReportTemplateModelName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ReportTemplateModelDisplayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "RoleDetail": {
         "type": "object",
         "properties": {
@@ -25551,6 +26131,9 @@
     },
     {
       "name": "RelationshipType"
+    },
+    {
+      "name": "ReportTemplate"
     },
     {
       "name": "Role"

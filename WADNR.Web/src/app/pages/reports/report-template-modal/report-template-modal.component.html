@@ -1,0 +1,56 @@
+<div class="modal-header">
+    <h3>{{ modalTitle }}</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.displayName"
+            fieldLabel="Display Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter display name (max 50 characters)">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.description"
+            fieldLabel="Description"
+            [type]="FormFieldType.Textarea"
+            placeholder="Enter description (max 250 characters)">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.reportTemplateModelID"
+            fieldLabel="Report Template Model"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="modelOptions"
+            formInputOptionLabel="Label"
+            formInputOptionValue="Value"
+            placeholder="Select model">
+        </form-field>
+
+        <form-field
+            [formControl]="fileControl"
+            fieldLabel="Template File (.docx)"
+            [type]="FormFieldType.File"
+            uploadFileAccepts=".docx,.doc">
+        </form-field>
+        @if (mode === 'edit' && reportTemplate?.OriginalFileName) {
+            <small class="text-muted">Current file: {{ reportTemplate.OriginalFileName }}. Select a new file to replace it.</small>
+        }
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Save' }}
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>

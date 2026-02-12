@@ -1,0 +1,14 @@
+<page-header pageTitle="Manage Report Templates" [customRichTextTypeID]="customRichTextTypeID"></page-header>
+
+<div class="page-body">
+    <wadnr-grid
+        [rowData]="reportTemplates$ | async"
+        [columnDefs]="columnDefs"
+        downloadFileName="report-templates">
+        <div customGridActionsRight>
+            <button class="btn btn-sm btn-primary" (click)="openCreateModal()">
+                New Report Template
+            </button>
+        </div>
+    </wadnr-grid>
+</div>
