@@ -94,6 +94,17 @@ project-search-typeahead.main-nav__search {
 .result-stage { color: #007dc3; }
 .result-type { font-style: italic; }
 
+.typeahead-count {
+    position: sticky;
+    bottom: 0;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: #666;
+    background: #f9f9f9;
+    border-top: 1px solid #eee;
+    text-align: right;
+}
+
 .typeahead-message {
     padding: 12px;
     color: #888;

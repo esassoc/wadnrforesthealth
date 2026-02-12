@@ -37,6 +37,7 @@
                         </li>
                     }
                 </ul>
+                <div class="typeahead-count">Showing {{ state.results.length }} result{{ state.results.length !== 1 ? 's' : '' }}</div>
             } @else {
                 <div class="typeahead-message">No results found</div>
             }
