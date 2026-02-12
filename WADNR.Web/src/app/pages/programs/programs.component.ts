@@ -46,8 +46,8 @@ export class ProgramsComponent {
             this.utilityFunctions.createBasicColumnDef("Short Name", "ProgramShortName"),
             this.utilityFunctions.createYearColumnDef("Project Count", "ProjectCount", { Width: 120 }),
             // Flags
-            this.utilityFunctions.createBooleanColumnDef("Active?", "IsActive"),
-            this.utilityFunctions.createBooleanColumnDef("Default For Import Only?", "IsDefaultProgramForImportOnly"),
+            this.utilityFunctions.createBooleanColumnDef("Active?", "IsActive", { CustomDropdownFilterField: "IsActive" }),
+            this.utilityFunctions.createBooleanColumnDef("Default For Import Only?", "IsDefaultProgramForImportOnly", { CustomDropdownFilterField: "IsDefaultProgramForImportOnly" }),
         ];
         this.programs$ = this.ProgramService.listProgram();
     }
