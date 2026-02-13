@@ -6,6 +6,7 @@ public class GdbFeatureClassPreview
     public string FeatureType { get; set; } = string.Empty;
     public int FeatureCount { get; set; }
     public List<string> PropertyNames { get; set; } = new();
+    public string GeoJson { get; set; }
 }
 
 public class GdbApproveRequest

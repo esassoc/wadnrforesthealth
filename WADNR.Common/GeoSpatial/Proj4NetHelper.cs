@@ -8,6 +8,7 @@ namespace WADNR.Common.GeoSpatial
     {
         public const int NAD_83_CA_ZONE_VI_SRID = 2230;
         public const int NAD_83_HARN_CA_ZONE_VI_SRID = 2771;
+        public const int NAD_83_WA_SOUTH_SRID = 2927;
         public const int WEB_MERCATOR = 4326;
 
         private static readonly Dictionary<int, string> CoordinateSystemsWkTs = new()
@@ -181,7 +182,32 @@ namespace WADNR.Common.GeoSpatial
                         AUTHORITY[""EPSG"",""9001""]],
                     AXIS[""Easting"",EAST],
                     AXIS[""Northing"",NORTH],
-                    AUTHORITY[""EPSG"",""2771""]]"
+                    AUTHORITY[""EPSG"",""2771""]]",
+            [2927] = @"
+                PROJCS[""NAD83 / Washington South (ftUS)"",
+                    GEOGCS[""NAD83"",
+                        DATUM[""North_American_Datum_1983"",
+                            SPHEROID[""GRS 1980"",6378137,298.257222101,
+                                AUTHORITY[""EPSG"",""7019""]],
+                            TOWGS84[0,0,0,0,0,0,0],
+                            AUTHORITY[""EPSG"",""6269""]],
+                        PRIMEM[""Greenwich"",0,
+                            AUTHORITY[""EPSG"",""8901""]],
+                        UNIT[""degree"",0.0174532925199433,
+                            AUTHORITY[""EPSG"",""9122""]],
+                        AUTHORITY[""EPSG"",""4269""]],
+                    PROJECTION[""Lambert_Conformal_Conic_2SP""],
+                    PARAMETER[""standard_parallel_1"",47.33333333333334],
+                    PARAMETER[""standard_parallel_2"",45.83333333333334],
+                    PARAMETER[""latitude_of_origin"",45.33333333333334],
+                    PARAMETER[""central_meridian"",-120.5],
+                    PARAMETER[""false_easting"",1640416.667],
+                    PARAMETER[""false_northing"",0],
+                    UNIT[""US survey foot"",0.3048006096012192,
+                        AUTHORITY[""EPSG"",""9003""]],
+                    AXIS[""X"",EAST],
+                    AXIS[""Y"",NORTH],
+                    AUTHORITY[""EPSG"",""2927""]]"
         };
 
         private static Geometry Transform(Geometry geom, MathTransform transform, int targetSrid)
@@ -205,6 +231,21 @@ namespace WADNR.Common.GeoSpatial
                 : new CoordinateSystemFactory().CreateFromWkt(CoordinateSystemsWkTs[geometry.SRID]);
             var transformation = new CoordinateTransformationFactory().CreateFromCoordinateSystems(fromCoordinateSystem, targetCoordinateSystem);
             return Transform(geometry, transformation.MathTransform, NAD_83_HARN_CA_ZONE_VI_SRID);
+        }
+
+        public static Geometry ProjectTo2927(this Geometry geometry)
+        {
+            if (geometry.SRID == NAD_83_WA_SOUTH_SRID)
+            {
+                return geometry;
+            }
+
+            var targetCoordinateSystem = new CoordinateSystemFactory().CreateFromWkt(CoordinateSystemsWkTs[NAD_83_WA_SOUTH_SRID]);
+            var fromCoordinateSystem = geometry.SRID == WEB_MERCATOR
+                ? GeographicCoordinateSystem.WGS84
+                : new CoordinateSystemFactory().CreateFromWkt(CoordinateSystemsWkTs[geometry.SRID]);
+            var transformation = new CoordinateTransformationFactory().CreateFromCoordinateSystems(fromCoordinateSystem, targetCoordinateSystem);
+            return Transform(geometry, transformation.MathTransform, NAD_83_WA_SOUTH_SRID);
         }
 
         public static Geometry ProjectTo2230(this Geometry geometry)

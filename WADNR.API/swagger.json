@@ -2236,6 +2236,241 @@
         }
       }
     },
+    "/focus-areas/{focusAreaID}/location": {
+      "get": {
+        "tags": [
+          "FocusArea"
+        ],
+        "operationId": "GetLocation_FocusArea",
+        "parameters": [
+          {
+            "name": "focusAreaID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FocusArea"
+        ],
+        "operationId": "DeleteLocation_FocusArea",
+        "parameters": [
+          {
+            "name": "focusAreaID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/focus-areas/{focusAreaID}/location/upload-gdb": {
+      "post": {
+        "tags": [
+          "FocusArea"
+        ],
+        "operationId": "UploadGdbForLocation_FocusArea",
+        "parameters": [
+          {
+            "name": "focusAreaID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbFeatureClassPreview"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbFeatureClassPreview"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbFeatureClassPreview"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/focus-areas/{focusAreaID}/location/staged-features": {
+      "get": {
+        "tags": [
+          "FocusArea"
+        ],
+        "operationId": "GetStagedFeatures_FocusArea",
+        "parameters": [
+          {
+            "name": "focusAreaID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StagedFeatureLayer"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StagedFeatureLayer"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StagedFeatureLayer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/focus-areas/{focusAreaID}/location/approve-gdb": {
+      "post": {
+        "tags": [
+          "FocusArea"
+        ],
+        "operationId": "ApproveGdbForLocation_FocusArea",
+        "parameters": [
+          {
+            "name": "focusAreaID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SinglePolygonApproveRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SinglePolygonApproveRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SinglePolygonApproveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/funding-sources": {
       "get": {
         "tags": [
@@ -2961,6 +3196,447 @@
           }
         },
         "x-anonymous": true
+      }
+    },
+    "/gis-bulk-import/source-organizations": {
+      "get": {
+        "tags": [
+          "GisBulkImport"
+        ],
+        "operationId": "ListSourceOrganizations_GisBulkImport",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GisUploadSourceOrganizationSummary"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GisUploadSourceOrganizationSummary"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GisUploadSourceOrganizationSummary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gis-bulk-import/attempts": {
+      "post": {
+        "tags": [
+          "GisBulkImport"
+        ],
+        "operationId": "CreateAttempt_GisBulkImport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GisUploadAttemptCreateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GisUploadAttemptCreateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GisUploadAttemptCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GisUploadAttemptDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GisUploadAttemptDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GisUploadAttemptDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gis-bulk-import/attempts/{gisUploadAttemptID}": {
+      "get": {
+        "tags": [
+          "GisBulkImport"
+        ],
+        "operationId": "GetAttempt_GisBulkImport",
+        "parameters": [
+          {
+            "name": "gisUploadAttemptID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GisUploadAttemptDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GisUploadAttemptDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GisUploadAttemptDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gis-bulk-import/attempts/{gisUploadAttemptID}/upload": {
+      "post": {
+        "tags": [
+          "GisBulkImport"
+        ],
+        "operationId": "UploadFile_GisBulkImport",
+        "parameters": [
+          {
+            "name": "gisUploadAttemptID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GisUploadAttemptDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GisUploadAttemptDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GisUploadAttemptDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gis-bulk-import/attempts/{gisUploadAttemptID}/features": {
+      "get": {
+        "tags": [
+          "GisBulkImport"
+        ],
+        "operationId": "GetFeatures_GisBulkImport",
+        "parameters": [
+          {
+            "name": "gisUploadAttemptID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GisFeatureGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GisFeatureGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GisFeatureGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gis-bulk-import/attempts/{gisUploadAttemptID}/features-geojson": {
+      "get": {
+        "tags": [
+          "GisBulkImport"
+        ],
+        "operationId": "GetFeaturesGeoJson_GisBulkImport",
+        "parameters": [
+          {
+            "name": "gisUploadAttemptID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gis-bulk-import/attempts/{gisUploadAttemptID}/metadata-attributes": {
+      "get": {
+        "tags": [
+          "GisBulkImport"
+        ],
+        "operationId": "GetMetadataAttributes_GisBulkImport",
+        "parameters": [
+          {
+            "name": "gisUploadAttemptID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GisMetadataAttributeItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GisMetadataAttributeItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GisMetadataAttributeItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gis-bulk-import/attempts/{gisUploadAttemptID}/default-mappings": {
+      "get": {
+        "tags": [
+          "GisBulkImport"
+        ],
+        "operationId": "GetDefaultMappings_GisBulkImport",
+        "parameters": [
+          {
+            "name": "gisUploadAttemptID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GisMetadataMappingDefaults"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GisMetadataMappingDefaults"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GisMetadataMappingDefaults"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gis-bulk-import/attempts/{gisUploadAttemptID}/import": {
+      "post": {
+        "tags": [
+          "GisBulkImport"
+        ],
+        "operationId": "ImportProjects_GisBulkImport",
+        "parameters": [
+          {
+            "name": "gisUploadAttemptID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GisBulkImportRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GisBulkImportRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GisBulkImportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GisBulkImportResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GisBulkImportResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GisBulkImportResult"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/interaction-events": {
@@ -4378,6 +5054,169 @@
         "x-anonymous": true
       }
     },
+    "/organizations/{organizationID}/boundary/upload-gdb": {
+      "post": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "UploadGdbForBoundary_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbFeatureClassPreview"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbFeatureClassPreview"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbFeatureClassPreview"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organizations/{organizationID}/boundary/staged-features": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "GetStagedBoundaryFeatures_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StagedFeatureLayer"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StagedFeatureLayer"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StagedFeatureLayer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organizations/{organizationID}/boundary/approve-gdb": {
+      "post": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "ApproveGdbForBoundary_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SinglePolygonApproveRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SinglePolygonApproveRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SinglePolygonApproveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/organization-types": {
       "get": {
         "tags": [
@@ -5626,6 +6465,204 @@
           }
         },
         "x-anonymous": true
+      }
+    },
+    "/programs/{programID}/gis-import-config/basics": {
+      "put": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "UpdateGdbImportBasics_Program",
+        "parameters": [
+          {
+            "name": "programID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GdbImportBasicsUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GdbImportBasicsUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GdbImportBasicsUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GdbImportBasics"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GdbImportBasics"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GdbImportBasics"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/programs/{programID}/gis-import-config/default-mappings": {
+      "put": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "UpdateGdbDefaultMappings_Program",
+        "parameters": [
+          {
+            "name": "programID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GdbDefaultMappingUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GdbDefaultMappingUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GdbDefaultMappingUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbDefaultMappingItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbDefaultMappingItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbDefaultMappingItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/programs/{programID}/gis-import-config/crosswalk-values": {
+      "put": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "UpdateGdbCrosswalkValues_Program",
+        "parameters": [
+          {
+            "name": "programID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GdbCrosswalkUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GdbCrosswalkUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GdbCrosswalkUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbCrosswalkItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbCrosswalkItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GdbCrosswalkItem"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/program-indices": {
@@ -18268,6 +19305,37 @@
         },
         "additionalProperties": false
       },
+      "GdbCrosswalkItemUpsert": {
+        "type": "object",
+        "properties": {
+          "FieldDefinitionID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "GisCrossWalkSourceValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "GisCrossWalkMappedValue": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GdbCrosswalkUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "Crosswalks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GdbCrosswalkItemUpsert"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "GdbDefaultMappingItem": {
         "type": "object",
         "properties": {
@@ -18285,6 +19353,33 @@
           },
           "GisDefaultMappingColumnName": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GdbDefaultMappingItemUpsert": {
+        "type": "object",
+        "properties": {
+          "FieldDefinitionID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "GisDefaultMappingColumnName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GdbDefaultMappingUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "Mappings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GdbDefaultMappingItemUpsert"
+            },
             "nullable": true
           }
         },
@@ -18310,6 +19405,10 @@
             "items": {
               "type": "string"
             },
+            "nullable": true
+          },
+          "GeoJson": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -18351,6 +19450,64 @@
           "DefaultLeadImplementerOrganizationName": {
             "type": "string",
             "nullable": true
+          },
+          "ImportAsDetailedLocationInsteadOfTreatments": {
+            "type": "boolean"
+          },
+          "ImportAsDetailedLocationInAdditionToTreatments": {
+            "type": "boolean"
+          },
+          "ProjectDescriptionDefaultText": {
+            "type": "string",
+            "nullable": true
+          },
+          "ApplyStartDateToProject": {
+            "type": "boolean"
+          },
+          "ApplyCompletedDateToProject": {
+            "type": "boolean"
+          },
+          "ApplyStartDateToTreatments": {
+            "type": "boolean"
+          },
+          "ApplyEndDateToTreatments": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GdbImportBasicsUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectTypeDefaultName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TreatmentTypeDefaultName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ImportIsFlattened": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "AdjustProjectTypeBasedOnTreatmentTypes": {
+            "type": "boolean"
+          },
+          "ProjectStageDefaultID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DataDeriveProjectStage": {
+            "type": "boolean"
+          },
+          "DefaultLeadImplementerOrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RelationshipTypeForDefaultOrganizationID": {
+            "type": "integer",
+            "format": "int32"
           },
           "ImportAsDetailedLocationInsteadOfTreatments": {
             "type": "boolean"
@@ -18621,6 +19778,417 @@
       },
       "GeometryRelate": {
         "type": "object",
+        "additionalProperties": false
+      },
+      "GisBulkImportRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectIdentifierMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectNameMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentTypeMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "CompletionDateMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "StartDateMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectStageMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "LeadImplementerMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FootprintAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PrivateLandownerMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatmentDetailedActivityTypeMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatedAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PruningAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ThinningAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ChippingAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "MasticationAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "GrazingAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "LopScatAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "BiomassRemovalAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "HandPileAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "HandPileBurnAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "MachinePileBurnAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "BroadcastBurnAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "OtherAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GisBulkImportResult": {
+        "type": "object",
+        "properties": {
+          "ProjectsCreated": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectsUpdated": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectsSkipped": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentsCreated": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "LocationsCreated": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GisFeatureGridRow": {
+        "type": "object",
+        "properties": {
+          "GisFeatureID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "GisImportFeatureKey": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "IsValid": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "CalculatedArea": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "MetadataValues": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "nullable": true
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GisMetadataAttributeItem": {
+        "type": "object",
+        "properties": {
+          "GisMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "GisMetadataAttributeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "SortOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GisMetadataMappingDefaults": {
+        "type": "object",
+        "properties": {
+          "ProjectIdentifierMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectNameMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatmentTypeMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "CompletionDateMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "StartDateMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectStageMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "LeadImplementerMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FootprintAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PrivateLandownerMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatmentDetailedActivityTypeMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "TreatedAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PruningAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ThinningAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ChippingAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "MasticationAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "GrazingAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "LopScatAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "BiomassRemovalAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "HandPileAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "HandPileBurnAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "MachinePileBurnAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "BroadcastBurnAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "OtherAcresMetadataAttributeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ImportIsFlattened": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GisUploadAttemptCreateRequest": {
+        "type": "object",
+        "properties": {
+          "GisUploadSourceOrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GisUploadAttemptDetail": {
+        "type": "object",
+        "properties": {
+          "GisUploadAttemptID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "GisUploadSourceOrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "GisUploadSourceOrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "GisUploadAttemptCreateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "CreatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FileUploadSuccessful": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "FeaturesSaved": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "AttributesSaved": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "AreaCalculationComplete": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "ImportedToGeoJson": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "FeatureCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GisUploadSourceOrganizationSummary": {
+        "type": "object",
+        "properties": {
+          "GisUploadSourceOrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "GisUploadSourceOrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgramID": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
         "additionalProperties": false
       },
       "IAttributesTable": {
@@ -24647,6 +26215,30 @@
         },
         "additionalProperties": false
       },
+      "SinglePolygonApproveRequest": {
+        "type": "object",
+        "properties": {
+          "SelectedGeometryWkt": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StagedFeatureLayer": {
+        "type": "object",
+        "properties": {
+          "FeatureClassName": {
+            "type": "string",
+            "nullable": true
+          },
+          "GeoJson": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "StepDiffResponse": {
         "type": "object",
         "properties": {
@@ -26077,6 +27669,9 @@
     },
     {
       "name": "FundSourceAllocation"
+    },
+    {
+      "name": "GisBulkImport"
     },
     {
       "name": "InteractionEvent"

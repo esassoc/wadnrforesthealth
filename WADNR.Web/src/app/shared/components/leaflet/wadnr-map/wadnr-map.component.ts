@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, NgZone, OnDestroy, OnInit, Output } from "@angular/core";
+import { AfterViewInit, Component, EventEmitter, Input, NgZone, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from "@angular/core";
 
 import { Control, LeafletEvent, Map, MapOptions, DomUtil, ControlPosition } from "leaflet";
 import "src/scripts/leaflet.groupedlayercontrol.js";
@@ -28,7 +28,7 @@ import { GroupedLayers } from "src/scripts/leaflet.groupedlayercontrol";
         },
     ],
 })
-export class WADNRMapComponent implements OnInit, AfterViewInit, OnDestroy {
+export class WADNRMapComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
     public mapID: string = "map_" + Date.now().toString(36) + Math.random().toString(36).substring(13);
     public legendID: string = this.mapID + "Legend";
     public map: Map;
@@ -73,6 +73,15 @@ export class WADNRMapComponent implements OnInit, AfterViewInit, OnDestroy {
         this.zone.run(() => {
             this.onMapLoad.emit(new WADNRMapInitEvent(this.map, this.layerControl));
         });
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes["boundingBox"] && !changes["boundingBox"].firstChange && this.map && this.boundingBox) {
+            this.map.fitBounds([
+                [this.boundingBox.Bottom, this.boundingBox.Left],
+                [this.boundingBox.Top, this.boundingBox.Right],
+            ]);
+        }
     }
 
     ngAfterViewInit(): void {

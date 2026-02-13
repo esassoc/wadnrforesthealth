@@ -1,0 +1,281 @@
+@if (loaded$ | async) {
+    <div class="card">
+        <div class="card-header">
+            <h3>Validate Metadata</h3>
+        </div>
+        <div class="card-body">
+            <!-- Features Grid + Map -->
+            <h4>Uploaded Features <span class="badge bg-secondary">{{ features?.length }} features</span></h4>
+            <hybrid-map-grid
+                [rowData]="features"
+                [columnDefs]="featureColumnDefs"
+                downloadFileName="GIS_Features"
+                entityIDField="GisFeatureID"
+                (onMapLoad)="handleMapReady($event)"
+                [selectedValue]="selectedFeatureID"
+                (selectedValueChange)="onSelectedFeatureIDChanged($event)">
+                <generic-feature-collection-layer
+                    [map]="map"
+                    [layerControl]="layerControl"
+                    layerName="GIS Features"
+                    layerColor="#3388ff"
+                    [featureCollection]="featureCollection"
+                    [displayOnLoad]="true"
+                    identifierProperty="GisFeatureID"
+                    [selectedIDs]="selectedFeatureID ? [selectedFeatureID] : null"
+                    (selectedIDsChange)="onSelectedFeatureIDChanged($event)">
+                </generic-feature-collection-layer>
+            </hybrid-map-grid>
+
+            <!-- Required Mappings -->
+            <h4 class="mt-3">Required Mappings</h4>
+            <p>Map the GIS attribute columns to the corresponding system fields below.</p>
+            <div class="grid-12" style="row-gap: 0.25rem">
+                <div class="g-col-6">
+                    <form-field
+                        [formControl]="projectIdentifierControl"
+                        fieldLabel="Project Identifier (FHT Number)"
+                        [type]="FormFieldType.Select"
+                        [formInputOptions]="attributeOptions"
+                        placeholder="Select column">
+                    </form-field>
+                </div>
+                <div class="g-col-6">
+                    <form-field
+                        [formControl]="projectNameControl"
+                        fieldLabel="Project Name"
+                        [type]="FormFieldType.Select"
+                        [formInputOptions]="attributeOptions"
+                        placeholder="Select column">
+                    </form-field>
+                </div>
+            </div>
+
+            <!-- Optional Project Mappings -->
+            <h4 class="mt-3">Optional Project Mappings</h4>
+            <div class="grid-12" style="row-gap: 0.25rem">
+                <div class="g-col-4">
+                    <form-field
+                        [formControl]="startDateControl"
+                        fieldLabel="Start Date"
+                        [type]="FormFieldType.Select"
+                        [formInputOptions]="attributeOptions"
+                        placeholder="Select column">
+                    </form-field>
+                </div>
+                <div class="g-col-4">
+                    <form-field
+                        [formControl]="completionDateControl"
+                        fieldLabel="Completion Date"
+                        [type]="FormFieldType.Select"
+                        [formInputOptions]="attributeOptions"
+                        placeholder="Select column">
+                    </form-field>
+                </div>
+                <div class="g-col-4">
+                    <form-field
+                        [formControl]="projectStageControl"
+                        fieldLabel="Project Stage"
+                        [type]="FormFieldType.Select"
+                        [formInputOptions]="attributeOptions"
+                        placeholder="Select column">
+                    </form-field>
+                </div>
+                <div class="g-col-4">
+                    <form-field
+                        [formControl]="leadImplementerControl"
+                        fieldLabel="Lead Implementer"
+                        [type]="FormFieldType.Select"
+                        [formInputOptions]="attributeOptions"
+                        placeholder="Select column">
+                    </form-field>
+                </div>
+                <div class="g-col-4">
+                    <form-field
+                        [formControl]="footprintAcresControl"
+                        fieldLabel="Footprint Acres"
+                        [type]="FormFieldType.Select"
+                        [formInputOptions]="attributeOptions"
+                        placeholder="Select column">
+                    </form-field>
+                    <small class="text-muted">If left blank, will be calculated from the geospatial shape</small>
+                </div>
+                <div class="g-col-4">
+                    <form-field
+                        [formControl]="privateLandownerControl"
+                        fieldLabel="Private Landowner"
+                        [type]="FormFieldType.Select"
+                        [formInputOptions]="attributeOptions"
+                        placeholder="Select column">
+                    </form-field>
+                </div>
+            </div>
+
+            <!-- Non-flattened: Treatment Type, Treatment Detailed Activity Type, Treated Acres -->
+            @if (!importIsFlattened) {
+                <h4 class="mt-3">Treatment Mappings</h4>
+                <div class="grid-12" style="row-gap: 0.25rem">
+                    <div class="g-col-4">
+                        <form-field
+                            [formControl]="treatmentTypeControl"
+                            fieldLabel="Treatment Type"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="attributeOptions"
+                            placeholder="Select column">
+                        </form-field>
+                    </div>
+                    <div class="g-col-4">
+                        <form-field
+                            [formControl]="treatmentDetailedActivityTypeControl"
+                            fieldLabel="Treatment Detailed Activity Type"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="attributeOptions"
+                            placeholder="Select column">
+                        </form-field>
+                    </div>
+                    <div class="g-col-4">
+                        <form-field
+                            [formControl]="treatedAcresControl"
+                            fieldLabel="Treated Acres"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="attributeOptions"
+                            placeholder="Select column">
+                        </form-field>
+                        <small class="text-muted">If left blank, will be calculated from the geospatial shape</small>
+                    </div>
+                </div>
+            }
+
+            <!-- Flattened: Individual acre breakdown fields -->
+            @if (importIsFlattened) {
+                <h4 class="mt-3">Treatment Acre Mappings</h4>
+                <div class="grid-12" style="row-gap: 0.25rem">
+                    <div class="g-col-4">
+                        <form-field
+                            [formControl]="pruningAcresControl"
+                            fieldLabel="Pruning Acres"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="attributeOptions"
+                            placeholder="Select column">
+                        </form-field>
+                    </div>
+                    <div class="g-col-4">
+                        <form-field
+                            [formControl]="thinningAcresControl"
+                            fieldLabel="Thinning Acres"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="attributeOptions"
+                            placeholder="Select column">
+                        </form-field>
+                    </div>
+                    <div class="g-col-4">
+                        <form-field
+                            [formControl]="chippingAcresControl"
+                            fieldLabel="Chipping Acres"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="attributeOptions"
+                            placeholder="Select column">
+                        </form-field>
+                    </div>
+                    <div class="g-col-4">
+                        <form-field
+                            [formControl]="masticationAcresControl"
+                            fieldLabel="Mastication Acres"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="attributeOptions"
+                            placeholder="Select column">
+                        </form-field>
+                    </div>
+                    <div class="g-col-4">
+                        <form-field
+                            [formControl]="grazingAcresControl"
+                            fieldLabel="Grazing Acres"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="attributeOptions"
+                            placeholder="Select column">
+                        </form-field>
+                    </div>
+                    <div class="g-col-4">
+                        <form-field
+                            [formControl]="lopScatAcresControl"
+                            fieldLabel="Lop &amp; Scatter Acres"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="attributeOptions"
+                            placeholder="Select column">
+                        </form-field>
+                    </div>
+                    <div class="g-col-4">
+                        <form-field
+                            [formControl]="biomassRemovalAcresControl"
+                            fieldLabel="Biomass Removal Acres"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="attributeOptions"
+                            placeholder="Select column">
+                        </form-field>
+                    </div>
+                    <div class="g-col-4">
+                        <form-field
+                            [formControl]="handPileAcresControl"
+                            fieldLabel="Hand Pile Acres"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="attributeOptions"
+                            placeholder="Select column">
+                        </form-field>
+                    </div>
+                    <div class="g-col-4">
+                        <form-field
+                            [formControl]="handPileBurnAcresControl"
+                            fieldLabel="Hand Pile Burn Acres"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="attributeOptions"
+                            placeholder="Select column">
+                        </form-field>
+                    </div>
+                    <div class="g-col-4">
+                        <form-field
+                            [formControl]="machinePileBurnAcresControl"
+                            fieldLabel="Machine Pile Burn Acres"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="attributeOptions"
+                            placeholder="Select column">
+                        </form-field>
+                    </div>
+                    <div class="g-col-4">
+                        <form-field
+                            [formControl]="broadcastBurnAcresControl"
+                            fieldLabel="Broadcast Burn Acres"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="attributeOptions"
+                            placeholder="Select column">
+                        </form-field>
+                    </div>
+                    <div class="g-col-4">
+                        <form-field
+                            [formControl]="otherAcresControl"
+                            fieldLabel="Other Acres"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="attributeOptions"
+                            placeholder="Select column">
+                        </form-field>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="card-footer d-flex justify-content-end gap-2">
+            <button class="btn btn-primary" (click)="runImport()" [disabled]="(isImporting$ | async) || !projectIdentifierControl.value || !projectNameControl.value">
+                @if (isImporting$ | async) {
+                    <span class="fa fa-spinner fa-spin"></span> Importing...
+                } @else {
+                    Create Projects
+                }
+            </button>
+        </div>
+    </div>
+} @else {
+    <div class="card">
+        <div class="card-body text-center py-4">
+            <span class="fa fa-spinner fa-spin fa-2x"></span>
+            <p class="mt-2">Loading metadata attributes...</p>
+        </div>
+    </div>
+}

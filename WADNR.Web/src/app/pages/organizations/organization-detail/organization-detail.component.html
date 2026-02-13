@@ -1,297 +1,297 @@
 @if (organization$ | async; as organization) {
-<breadcrumb [items]="[{ label: 'Contributing Organizations', url: '/organizations' }, { label: organization.OrganizationName }]" [linkLast]="false"></breadcrumb>
-<page-header pageTitle="{{ organization.OrganizationName }}"></page-header>
+    <breadcrumb [items]="[{ label: 'Contributing Organizations', url: '/organizations' }, { label: organization.OrganizationName }]" [linkLast]="false"></breadcrumb>
+    <page-header pageTitle="{{ organization.OrganizationName }}"></page-header>
 
-<div class="grid-12">
-    <!-- Basics Card -->
-    <div class="g-col-6">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">
-                    <a href="javascript:void(0)" (click)="openEditModal(organization)" title="Edit Organization" style="color: inherit;">
-                        <i class="fa fa-edit"></i>
-                    </a>
-                    Basics
-                </span>
-            </div>
-            <div class="card-body">
-                <div class="grid-12">
-                    @if (organization.LogoFileResourceUrl) {
-                    <div class="g-col-12" style="text-align: center; margin-bottom: 1rem;">
-                        <img [src]="getLogoUrl(organization.LogoFileResourceUrl)" alt="Organization Logo" style="max-width: 100px; max-height: 200px;" />
-                    </div>
-                    }
+    <div class="grid-12">
+        <!-- Basics Card -->
+        <div class="g-col-6">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">
+                        <a href="javascript:void(0)" (click)="openEditModal(organization)" title="Edit Organization" style="color: inherit">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        Basics
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="grid-12">
+                        @if (organization.LogoFileResourceUrl) {
+                            <div class="g-col-12" style="text-align: center; margin-bottom: 1rem">
+                                <img [src]="getLogoUrl(organization.LogoFileResourceUrl)" alt="Organization Logo" style="max-width: 100px; max-height: 200px" />
+                            </div>
+                        }
 
-                    <div class="g-col-6 field-label">Name</div>
-                    <div class="g-col-6">{{ organization.OrganizationName || "—" }}</div>
+                        <div class="g-col-6 field-label">Name</div>
+                        <div class="g-col-6">{{ organization.OrganizationName || "—" }}</div>
 
-                    <div class="g-col-6 field-label">Short Name</div>
-                    <div class="g-col-6">{{ organization.OrganizationShortName || "—" }}</div>
+                        <div class="g-col-6 field-label">Short Name</div>
+                        <div class="g-col-6">{{ organization.OrganizationShortName || "—" }}</div>
 
-                    <div class="g-col-6 field-label">
-                        <field-definition fieldDefinition="OrganizationType"></field-definition>
-                    </div>
-                    <div class="g-col-6">{{ organization.OrganizationTypeName || "—" }}</div>
+                        <div class="g-col-6 field-label">
+                            <field-definition fieldDefinition="OrganizationType"></field-definition>
+                        </div>
+                        <div class="g-col-6">{{ organization.OrganizationTypeName || "—" }}</div>
 
-                    <div class="g-col-6 field-label">
-                        <field-definition fieldDefinition="OrganizationPrimaryContact"></field-definition>
-                    </div>
-                    <div class="g-col-6">
-                        @if (organization.PrimaryContactPersonID) {
-                            <person-link [personID]="organization.PrimaryContactPersonID" [displayText]="organization.PrimaryContactPersonFullName"></person-link>
-                            @if (organization.PrimaryContactPersonOrganization) {
-                                ({{ organization.PrimaryContactPersonOrganization }})
+                        <div class="g-col-6 field-label">
+                            <field-definition fieldDefinition="OrganizationPrimaryContact"></field-definition>
+                        </div>
+                        <div class="g-col-6">
+                            @if (organization.PrimaryContactPersonID) {
+                                <person-link [personID]="organization.PrimaryContactPersonID" [displayText]="organization.PrimaryContactPersonFullName"></person-link>
+                                @if (organization.PrimaryContactPersonOrganization) {
+                                    ({{ organization.PrimaryContactPersonOrganization }})
+                                }
+                            } @else {
+                                —
                             }
-                        } @else {
-                            —
-                        }
-                    </div>
+                        </div>
 
-                    <div class="g-col-6 field-label">Vendor</div>
-                    <div class="g-col-6">
-                        @if (organization.VendorName) {
-                            {{ organization.VendorName }}
-                            @if (organization.VendorNumber) {
-                                ({{ organization.VendorNumber }})
+                        <div class="g-col-6 field-label">Vendor</div>
+                        <div class="g-col-6">
+                            @if (organization.VendorName) {
+                                {{ organization.VendorName }}
+                                @if (organization.VendorNumber) {
+                                    ({{ organization.VendorNumber }})
+                                }
+                            } @else {
+                                —
                             }
-                        } @else {
-                            —
-                        }
-                    </div>
+                        </div>
 
-                    <div class="g-col-6 field-label">Home Page</div>
-                    <div class="g-col-6">
-                        @if (organization.OrganizationUrl) {
-                            <a [href]="organization.OrganizationUrl" target="_blank" class="wrap-long-string">{{ organization.OrganizationUrl }}</a>
-                        } @else {
-                            —
-                        }
+                        <div class="g-col-6 field-label">Home Page</div>
+                        <div class="g-col-6">
+                            @if (organization.OrganizationUrl) {
+                                <a [href]="organization.OrganizationUrl" target="_blank" class="wrap-long-string">{{ organization.OrganizationUrl }}</a>
+                            } @else {
+                                —
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Fund Source Allocations Card -->
-    <div class="g-col-6">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Fund Source Allocations</span>
+        <!-- Fund Source Allocations Card -->
+        <div class="g-col-6">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Fund Source Allocations</span>
+                </div>
+                <div class="card-body">
+                    @if (organization.FundSourceAllocations && organization.FundSourceAllocations.length > 0) {
+                        <ul>
+                            @for (allocation of organization.FundSourceAllocations; track allocation.FundSourceAllocationID) {
+                                <li>
+                                    <a [routerLink]="['/fund-source-allocations', allocation.FundSourceAllocationID]">{{ allocation.FundSourceAllocationName }}</a>
+                                </li>
+                            }
+                        </ul>
+                    } @else {
+                        <p class="system-text">No Fund Source Allocations set for this Contributing Organization.</p>
+                    }
+                </div>
             </div>
-            <div class="card-body">
-                @if (organization.FundSourceAllocations && organization.FundSourceAllocations.length > 0) {
-                    <ul>
-                        @for (allocation of organization.FundSourceAllocations; track allocation.FundSourceAllocationID) {
-                            <li><a [routerLink]="['/fund-source-allocations', allocation.FundSourceAllocationID]">{{ allocation.FundSourceAllocationName }}</a></li>
+        </div>
+
+        <!-- Programs Grid Card -->
+        @if (programs$ | async; as programs) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Programs</span>
+                    </div>
+                    <div class="card-body">
+                        @if (programs.length > 0) {
+                            <wadnr-grid [rowData]="programs" [columnDefs]="programColumnDefs" height="300px" downloadFileName="Organization_Programs"> </wadnr-grid>
+                        } @else {
+                            <p class="system-text">No Programs associated with this Contributing Organization.</p>
                         }
-                    </ul>
-                } @else {
-                    <p class="system-text">No Fund Source Allocations set for this Contributing Organization.</p>
-                }
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+        }
 
-    <!-- Programs Grid Card -->
-    @if (programs$ | async; as programs) {
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Programs</span>
-            </div>
-            <div class="card-body">
-                @if (programs.length > 0) {
-                    <wadnr-grid
-                        [rowData]="programs"
-                        [columnDefs]="programColumnDefs"
-                        height="300px"
-                        downloadFileName="Organization_Programs">
-                    </wadnr-grid>
-                } @else {
-                    <p class="system-text">No Programs associated with this Contributing Organization.</p>
-                }
-            </div>
-        </div>
-    </div>
-    }
-
-    <!-- Map Card - Project Locations and Boundary -->
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header flex-between">
-                <span class="card-title">Project Locations and Boundary</span>
-                @if (organization.HasOrganizationBoundary) {
-                    <button class="btn btn-danger btn-sm" (click)="confirmDeleteBoundary(organization)">
-                        <icon icon="Delete"></icon> Delete Boundary
-                    </button>
-                }
-            </div>
-            <div class="card-body">
-                @if (hasSpatialData$ | async) {
-                    <p>The map displays the Contributing Organization boundary, and the locations of any active Projects that have spatial data.</p>
-                    <wadnr-map
-                        [mapHeight]="'500px'"
-                        [selectedTileLayer]="'Terrain'"
-                        [showLegend]="true"
-                        (onMapLoad)="handleMapReady($event)">
-
-                        <!-- Organization Boundary Layer -->
-                        @if (mapIsReady) {
-                            @if (boundaryFeatures$ | async; as boundaryFeatures) {
-                                @if (boundaryFeatures.length > 0) {
+        <!-- Map Card - Project Locations and Boundary -->
+        <div class="g-col-12">
+            <div class="card">
+                <div class="card-header flex-between">
+                    <span class="card-title">Project Locations and Boundary</span>
+                    <div>
+                        <button class="btn btn-primary btn-sm" (click)="openUploadBoundaryModal(organization)"><icon icon="Upload"></icon> Upload Boundary</button>
+                        @if (organization.HasOrganizationBoundary) {
+                            <button class="btn btn-danger btn-sm ms-1" (click)="confirmDeleteBoundary(organization)"><icon icon="Delete"></icon> Delete Boundary</button>
+                        }
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (hasSpatialData$ | async) {
+                        <p>The map displays the Contributing Organization boundary, and the locations of any active Projects that have spatial data.</p>
+                        <wadnr-map [mapHeight]="'500px'" [selectedTileLayer]="'Terrain'" [boundingBox]="boundaryBoundingBox$ | async" (onMapLoad)="handleMapReady($event)">
+                            @if (mapIsReady()) {
+                                <project-locations-simple-layer
+                                    [map]="map"
+                                    [layerControl]="layerControl"
+                                    [projectPoints]="projectLocationFeatures$ | async"
+                                    [colorByPropertyName]="'ProjectStageID'"
+                                    [legendColorsToUse]="legendColorsToUse"
+                                    [filterPropertyName]="''"
+                                    [filterPropertyValues]="[]"
+                                    [clusterPoints]="false"
+                                    [renderAsCircleMarkers]="true"
+                                    [showDetailedPopup]="false">
+                                </project-locations-simple-layer>
+                                <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
+                                <generic-wms-wfs-layer
+                                    [map]="map"
+                                    [layerControl]="layerControl"
+                                    [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'"
+                                    [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"
+                                    [identifierProperty]="'ProjectID'"
+                                    [overlayLabel]="'All Project Locations (Simple)'"
+                                    [wmsStyle]="'location_simple'"
+                                    [displayOnLoad]="false"
+                                    [fitBoundsOnWmsAddToControl]="false"
+                                    [addToLayerControl]="true">
+                                </generic-wms-wfs-layer>
+                                <generic-wms-wfs-layer
+                                    [map]="map"
+                                    [layerControl]="layerControl"
+                                    [wmsLayerName]="'WADNRForestHealth:ProjectLocationDetailed'"
+                                    [wfsFeatureType]="'WADNRForestHealth:ProjectLocationDetailed'"
+                                    [identifierProperty]="'ProjectID'"
+                                    [overlayLabel]="'All Project Locations (Detailed)'"
+                                    [wmsStyle]="'location_detailed'"
+                                    [displayOnLoad]="false"
+                                    [fitBoundsOnWmsAddToControl]="false"
+                                    [addToLayerControl]="true">
+                                </generic-wms-wfs-layer>
+                                <priority-landscapes-layer
+                                    [map]="map"
+                                    [layerControl]="layerControl"
+                                    [mode]="OverlayMode.ReferenceOnly"
+                                    [displayOnLoad]="false"
+                                    [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                                <dnr-upland-regions-layer
+                                    [map]="map"
+                                    [layerControl]="layerControl"
+                                    [mode]="OverlayMode.ReferenceOnly"
+                                    [displayOnLoad]="false"
+                                    [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
+                                <counties-layer
+                                    [map]="map"
+                                    [layerControl]="layerControl"
+                                    [mode]="OverlayMode.ReferenceOnly"
+                                    [displayOnLoad]="false"
+                                    [fitBoundsOnWmsAddToControl]="false"></counties-layer>
+                                @if (organization.HasOrganizationBoundary) {
                                     <generic-feature-collection-layer
                                         [map]="map"
                                         [layerControl]="layerControl"
-                                        [featureCollection]="boundaryFeatures"
+                                        [featureCollection]="boundaryFeatures$ | async"
                                         [layerName]="'Organization Boundary'"
                                         [layerColor]="'#FF6600'"
                                         [displayOnLoad]="true"
-                                        (dataBounds)="handleBoundaryDataBounds($event)">
+                                        [sortOrder]="100">
                                     </generic-feature-collection-layer>
                                 }
                             }
-                        }
-
-                        <!-- Project Locations Layer -->
-                        @if (mapIsReady) {
-                            <project-locations-simple-layer
-                                [map]="map"
-                                [layerControl]="layerControl"
-                                [projectPoints]="projectLocationFeatures$ | async"
-                                [colorByPropertyName]="'ProjectStageID'"
-                                [legendColorsToUse]="legendColorsToUse"
-                                [filterPropertyName]="''"
-                                [filterPropertyValues]="[]"
-                                [clusterPoints]="false"
-                                [renderAsCircleMarkers]="true"
-                                [showDetailedPopup]="false">
-                            </project-locations-simple-layer>
-                            <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
-                            <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
-                                [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"
-                                [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Simple)'" [wmsStyle]="'location_simple'"
-                                [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
-                            </generic-wms-wfs-layer>
-                            <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
-                                [wmsLayerName]="'WADNRForestHealth:ProjectLocationDetailed'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationDetailed'"
-                                [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Detailed)'" [wmsStyle]="'location_detailed'"
-                                [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
-                            </generic-wms-wfs-layer>
-                            <priority-landscapes-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
-                            <dnr-upland-regions-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
-                            <counties-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></counties-layer>
-                        }
-                    </wadnr-map>
-                    <small class="text-muted">To zoom, hold down Shift and drag a rectangle.</small>
-                } @else {
-                    <p class="system-text">No spatial data associated with this Contributing Organization.</p>
-                }
-            </div>
-        </div>
-    </div>
-
-    <!-- Projects Summary and Grid Card -->
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Projects</span>
-            </div>
-            <div class="card-body">
-                <p>{{ organization.OrganizationName }} is:</p>
-                <ul>
-                    <li>
-                        the <strong>Lead Implementer</strong> for
-                        <strong>{{ organization.NumberOfLeadImplementedProjects }}</strong>
-                        {{ organization.NumberOfLeadImplementedProjects === 1 ? 'Project' : 'Projects' }}
-                    </li>
-                    <li>
-                        the <strong>Project Steward</strong> for
-                        <strong>{{ organization.NumberOfStewardedProjects }}</strong>
-                        {{ organization.NumberOfStewardedProjects === 1 ? 'Project' : 'Projects' }}
-                    </li>
-                    <li>
-                        a contributor to
-                        <strong>{{ organization.NumberOfProjectsContributedTo }}</strong>
-                        {{ organization.NumberOfProjectsContributedTo === 1 ? 'Project' : 'Projects' }}
-                    </li>
-                </ul>
-                @if (projects$ | async; as projects) {
-                    @if (projects.length > 0) {
-                        <wadnr-grid
-                            [rowData]="projects"
-                            [columnDefs]="projectColumnDefs"
-                            height="300px"
-                            downloadFileName="Organization_Projects">
-                        </wadnr-grid>
+                        </wadnr-map>
+                        <small class="text-muted">To zoom, hold down Shift and drag a rectangle.</small>
                     } @else {
-                        <p class="system-text">No Projects associated with this Contributing Organization.</p>
+                        <p class="system-text">No spatial data associated with this Contributing Organization.</p>
                     }
-                }
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Agreements Grid Card -->
-    @if (agreements$ | async; as agreements) {
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Agreements</span>
-            </div>
-            <div class="card-body">
-                <p>{{ organization.OrganizationName }} is associated with the following Agreements:</p>
-                @if (agreements.length > 0) {
-                    <wadnr-grid
-                        [rowData]="agreements"
-                        [columnDefs]="agreementColumnDefs"
-                        height="300px"
-                        downloadFileName="Organization_Agreements">
-                    </wadnr-grid>
-                } @else {
-                    <p class="system-text">No Agreements associated with this Contributing Organization.</p>
-                }
-            </div>
-        </div>
-    </div>
-    }
-
-    <!-- Pending Projects Grid Card -->
-    @if (pendingProjects$ | async; as pendingProjects) {
-        @if (pendingProjects.length > 0) {
+        <!-- Projects Summary and Grid Card -->
         <div class="g-col-12">
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">Pending Projects (Not Visible to the Public)</span>
+                    <span class="card-title">Projects</span>
                 </div>
                 <div class="card-body">
-                    <wadnr-grid
-                        [rowData]="pendingProjects"
-                        [columnDefs]="projectColumnDefs"
-                        height="300px"
-                        downloadFileName="Organization_PendingProjects">
-                    </wadnr-grid>
+                    <p>{{ organization.OrganizationName }} is:</p>
+                    <ul>
+                        <li>
+                            the <strong>Lead Implementer</strong> for
+                            <strong>{{ organization.NumberOfLeadImplementedProjects }}</strong>
+                            {{ organization.NumberOfLeadImplementedProjects === 1 ? "Project" : "Projects" }}
+                        </li>
+                        <li>
+                            the <strong>Project Steward</strong> for
+                            <strong>{{ organization.NumberOfStewardedProjects }}</strong>
+                            {{ organization.NumberOfStewardedProjects === 1 ? "Project" : "Projects" }}
+                        </li>
+                        <li>
+                            a contributor to
+                            <strong>{{ organization.NumberOfProjectsContributedTo }}</strong>
+                            {{ organization.NumberOfProjectsContributedTo === 1 ? "Project" : "Projects" }}
+                        </li>
+                    </ul>
+                    @if (projects$ | async; as projects) {
+                        @if (projects.length > 0) {
+                            <wadnr-grid [rowData]="projects" [columnDefs]="projectColumnDefs" height="300px" downloadFileName="Organization_Projects"> </wadnr-grid>
+                        } @else {
+                            <p class="system-text">No Projects associated with this Contributing Organization.</p>
+                        }
+                    }
                 </div>
             </div>
         </div>
-        }
-    }
 
-    <!-- Users Card -->
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header"><span class="card-title">Users</span></div>
-            <div class="card-body">
-                @if (organization.People && organization.People.length > 0) {
-                    <ul>
-                        @for (person of organization.People; track person.PersonID) {
-                            <li><person-link [personID]="person.PersonID" [displayText]="person.FullNameFirstLast"></person-link></li>
+        <!-- Agreements Grid Card -->
+        @if (agreements$ | async; as agreements) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Agreements</span>
+                    </div>
+                    <div class="card-body">
+                        <p>{{ organization.OrganizationName }} is associated with the following Agreements:</p>
+                        @if (agreements.length > 0) {
+                            <wadnr-grid [rowData]="agreements" [columnDefs]="agreementColumnDefs" height="300px" downloadFileName="Organization_Agreements"> </wadnr-grid>
+                        } @else {
+                            <p class="system-text">No Agreements associated with this Contributing Organization.</p>
                         }
-                    </ul>
-                } @else {
-                    <p class="system-text">No Users belong to this Contributing Organization.</p>
-                }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Pending Projects Grid Card -->
+        @if (pendingProjects$ | async; as pendingProjects) {
+            @if (pendingProjects.length > 0) {
+                <div class="g-col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Pending Projects (Not Visible to the Public)</span>
+                        </div>
+                        <div class="card-body">
+                            <wadnr-grid [rowData]="pendingProjects" [columnDefs]="projectColumnDefs" height="300px" downloadFileName="Organization_PendingProjects"> </wadnr-grid>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        <!-- Users Card -->
+        <div class="g-col-12">
+            <div class="card">
+                <div class="card-header"><span class="card-title">Users</span></div>
+                <div class="card-body">
+                    @if (organization.People && organization.People.length > 0) {
+                        <ul>
+                            @for (person of organization.People; track person.PersonID) {
+                                <li><person-link [personID]="person.PersonID" [displayText]="person.FullNameFirstLast"></person-link></li>
+                            }
+                        </ul>
+                    } @else {
+                        <p class="system-text">No Users belong to this Contributing Organization.</p>
+                    }
+                </div>
             </div>
         </div>
     </div>
-</div>
 }

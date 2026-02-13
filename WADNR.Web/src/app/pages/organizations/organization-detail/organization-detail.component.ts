@@ -1,9 +1,9 @@
 import { AsyncPipe } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, signal } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, startWith, switchMap } from "rxjs";
+import { BehaviorSubject, Subject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, startWith, switchMap } from "rxjs";
 import { ColDef } from "ag-grid-community";
-import { Map as LeafletMap, Control, LatLngBounds } from "leaflet";
+import { Map as LeafletMap, Control } from "leaflet";
 import { DialogService } from "@ngneat/dialog";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
@@ -27,6 +27,7 @@ import { ConfirmService } from "src/app/shared/services/confirm/confirm.service"
 import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
+import { BoundingBoxDto } from "src/app/shared/models/bounding-box-dto";
 import { environment } from "src/environments/environment";
 
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
@@ -38,6 +39,7 @@ import { ProjectOrganizationDetailGridRow } from "src/app/shared/generated/model
 import { AgreementGridRow } from "src/app/shared/generated/model/agreement-grid-row";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
 import { OrganizationModalComponent, OrganizationModalData } from "../organization-modal/organization-modal.component";
+import { SelectSinglePolygonGdbModalComponent, SelectSinglePolygonGdbModalData } from "src/app/shared/components/select-single-polygon-gdb-modal/select-single-polygon-gdb-modal.component";
 
 @Component({
     selector: "organization-detail",
@@ -58,9 +60,10 @@ export class OrganizationDetailComponent {
     public boundaryFeatures$: Observable<IFeature[]>;
     public projectLocationFeatures$: Observable<IFeature[]>;
     public hasSpatialData$: Observable<boolean>;
+    public boundaryBoundingBox$: Observable<BoundingBoxDto | undefined>;
     public map: LeafletMap;
     public layerControl: Control.Layers;
-    public mapIsReady: boolean = false;
+    public mapIsReady = signal(false);
 
     public programColumnDefs: ColDef<ProgramGridRow>[] = [];
     public projectColumnDefs: ColDef<ProjectOrganizationDetailGridRow>[] = [];
@@ -68,7 +71,7 @@ export class OrganizationDetailComponent {
     public legendColorsToUse: Record<string, Palette> = PROJECT_STAGE_LEGEND_COLORS;
     public OverlayMode = OverlayMode;
 
-    private refreshData$ = new BehaviorSubject<void>(undefined);
+    private refreshData$ = new Subject<void>();
 
     constructor(
         private route: ActivatedRoute,
@@ -90,7 +93,7 @@ export class OrganizationDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.organization$ = combineLatest([this.organizationID$, this.refreshData$]).pipe(
+        this.organization$ = combineLatest([this.organizationID$, this.refreshData$.pipe(startWith(undefined))]).pipe(
             switchMap(([organizationID]) => this.organizationService.getOrganization(organizationID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
@@ -115,9 +118,9 @@ export class OrganizationDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        // Map feature observables
-        this.boundaryFeatures$ = this.organizationID$.pipe(
-            switchMap((organizationID) => this.organizationService.getBoundaryOrganization(organizationID)),
+        // Map feature observables - respond to refreshData$ so uploads/deletes reload the map
+        this.boundaryFeatures$ = combineLatest([this.organizationID$, this.refreshData$.pipe(startWith(undefined))]).pipe(
+            switchMap(([organizationID]) => this.organizationService.getBoundaryOrganization(organizationID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -138,6 +141,11 @@ export class OrganizationDetailComponent {
                 const locationsCount = Array.isArray(locations) ? locations.length : ((locations as any)?.features?.length ?? 0);
                 return boundaryCount > 0 || locationsCount > 0;
             }),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.boundaryBoundingBox$ = this.boundaryFeatures$.pipe(
+            map((features) => this.computeBoundingBox(features)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -266,13 +274,36 @@ export class OrganizationDetailComponent {
     handleMapReady(event: WADNRMapInitEvent): void {
         this.map = event.map;
         this.layerControl = event.layerControl;
-        this.mapIsReady = true;
+        this.mapIsReady.set(true);
     }
 
-    handleBoundaryDataBounds(bounds: LatLngBounds | null): void {
-        if (bounds && this.map) {
-            this.map.fitBounds(bounds, { padding: [20, 20] });
+    private computeBoundingBox(features: IFeature[] | any): BoundingBoxDto | undefined {
+        const coords: number[][] = [];
+        const extract = (obj: any) => {
+            if (Array.isArray(obj)) {
+                if (obj.length >= 2 && typeof obj[0] === "number" && typeof obj[1] === "number") {
+                    coords.push(obj);
+                } else {
+                    obj.forEach(extract);
+                }
+            } else if (obj && typeof obj === "object") {
+                if (obj.coordinates) extract(obj.coordinates);
+                if (obj.Coordinates) extract(obj.Coordinates);
+                if (obj.geometry) extract(obj.geometry);
+                if (obj.Geometry) extract(obj.Geometry);
+                if (Array.isArray(obj.features)) obj.features.forEach(extract);
+            }
+        };
+        extract(features);
+        if (coords.length === 0) return undefined;
+        let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
+        for (const [lng, lat] of coords) {
+            if (lng < minLng) minLng = lng;
+            if (lng > maxLng) maxLng = lng;
+            if (lat < minLat) minLat = lat;
+            if (lat > maxLat) maxLat = lat;
         }
+        return new BoundingBoxDto({ Left: minLng, Bottom: minLat, Right: maxLng, Top: maxLat });
     }
 
     openEditModal(organization: OrganizationDetail): void {
@@ -326,6 +357,26 @@ export class OrganizationDetailComponent {
                 }
             });
         }
+    }
+
+    openUploadBoundaryModal(organization: OrganizationDetail): void {
+        const dialogRef = this.dialogService.open(SelectSinglePolygonGdbModalComponent, {
+            data: {
+                entityID: organization.OrganizationID,
+                entityLabel: "Organization",
+                uploadFn: (id, file) => this.organizationService.uploadGdbForBoundaryOrganization(id, file),
+                approveFn: (id, request) => this.organizationService.approveGdbForBoundaryOrganization(id, request),
+                stagedGeoJsonFn: (id) => this.organizationService.getStagedBoundaryFeaturesOrganization(id)
+            } as SelectSinglePolygonGdbModalData,
+            size: "lg"
+        });
+
+        dialogRef.afterClosed$.subscribe(result => {
+            if (result) {
+                this.alertService.pushAlert(new Alert("Organization boundary updated successfully.", AlertContext.Success, true));
+                this.refreshData$.next();
+            }
+        });
     }
 
     async confirmDeleteBoundary(organization: OrganizationDetail): Promise<void> {

@@ -15,12 +15,19 @@ import { environment } from "src/environments/environment";
 import { ProgramService } from "src/app/shared/generated/api/program.service";
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
 import { PersonService } from "src/app/shared/generated/api/person.service";
+import { RelationshipTypeService } from "src/app/shared/generated/api/relationship-type.service";
+import { ProjectStagesAsSelectDropdownOptions } from "src/app/shared/generated/enum/project-stage-enum";
 import { ProgramDetail } from "src/app/shared/generated/model/program-detail";
 import { ProjectProgramDetailGridRow } from "src/app/shared/generated/model/project-program-detail-grid-row";
 import { ProgramNotificationGridRow } from "src/app/shared/generated/model/program-notification-grid-row";
 import { GdbDefaultMappingItem } from "src/app/shared/generated/model/gdb-default-mapping-item";
 import { GdbCrosswalkItem } from "src/app/shared/generated/model/gdb-crosswalk-item";
 import { ProgramModalComponent, ProgramModalData } from "../program-modal/program-modal.component";
+import { EditImportBasicsModalComponent, EditImportBasicsModalData } from "../edit-import-basics-modal/edit-import-basics-modal.component";
+import { EditDefaultMappingsModalComponent, EditDefaultMappingsModalData } from "../edit-default-mappings-modal/edit-default-mappings-modal.component";
+import { EditCrosswalkValuesModalComponent, EditCrosswalkValuesModalData } from "../edit-crosswalk-values-modal/edit-crosswalk-values-modal.component";
+import { FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
+import { GdbImportBasics } from "src/app/shared/generated/model/gdb-import-basics";
 
 @Component({
     selector: "program-detail",
@@ -45,6 +52,7 @@ export class ProgramDetailComponent {
         private programService: ProgramService,
         private organizationService: OrganizationService,
         private personService: PersonService,
+        private relationshipTypeService: RelationshipTypeService,
         private utilityFunctions: UtilityFunctionsService,
         private dialogService: DialogService
     ) {}
@@ -147,5 +155,79 @@ export class ProgramDetailComponent {
     getCrosswalksByField(crosswalks: GdbCrosswalkItem[] | undefined, fieldDisplayName: string): GdbCrosswalkItem[] {
         if (!crosswalks) return [];
         return crosswalks.filter(c => c.FieldDefinitionDisplayName === fieldDisplayName);
+    }
+
+    openEditImportBasicsModal(program: ProgramDetail): void {
+        if (!program.GdbImportBasics) return;
+
+        forkJoin({
+            organizations: this.organizationService.listOrganization(),
+            relationshipTypes: this.relationshipTypeService.listLookupRelationshipType(),
+        }).subscribe(({ organizations, relationshipTypes }) => {
+            const projectStageOptions: FormInputOption[] = ProjectStagesAsSelectDropdownOptions;
+
+            const organizationOptions: FormInputOption[] = organizations.map(o => ({
+                Value: o.OrganizationID,
+                Label: o.OrganizationName,
+                disabled: false,
+            }));
+
+            const relationshipTypeOptions: FormInputOption[] = relationshipTypes.map(rt => ({
+                Value: rt.RelationshipTypeID,
+                Label: rt.RelationshipTypeName,
+                disabled: false,
+            }));
+
+            const dialogRef = this.dialogService.open(EditImportBasicsModalComponent, {
+                data: {
+                    programID: program.ProgramID,
+                    basics: program.GdbImportBasics,
+                    projectStageOptions,
+                    organizationOptions,
+                    relationshipTypeOptions,
+                } as EditImportBasicsModalData,
+                size: "lg",
+            });
+
+            dialogRef.afterClosed$.subscribe(result => {
+                if (result) {
+                    this.refreshData$.next();
+                }
+            });
+        });
+    }
+
+    openEditDefaultMappingsModal(program: ProgramDetail): void {
+        const dialogRef = this.dialogService.open(EditDefaultMappingsModalComponent, {
+            data: {
+                programID: program.ProgramID,
+                mappings: program.GdbDefaultMappings ?? [],
+                isFlattened: program.GdbImportBasics?.ImportIsFlattened ?? false,
+            } as EditDefaultMappingsModalData,
+            size: "lg",
+        });
+
+        dialogRef.afterClosed$.subscribe(result => {
+            if (result) {
+                this.refreshData$.next();
+            }
+        });
+    }
+
+    openEditCrosswalkValuesModal(program: ProgramDetail): void {
+        const dialogRef = this.dialogService.open(EditCrosswalkValuesModalComponent, {
+            data: {
+                programID: program.ProgramID,
+                crosswalks: program.GdbCrosswalkValues ?? [],
+                isFlattened: program.GdbImportBasics?.ImportIsFlattened ?? false,
+            } as EditCrosswalkValuesModalData,
+            size: "lg",
+        });
+
+        dialogRef.afterClosed$.subscribe(result => {
+            if (result) {
+                this.refreshData$.next();
+            }
+        });
     }
 }

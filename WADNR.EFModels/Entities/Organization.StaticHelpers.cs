@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Features;
+using NetTopologySuite.IO;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.Shared;
 
 namespace WADNR.EFModels.Entities;
 
@@ -161,5 +163,65 @@ public static class Organizations
         }
 
         return featureCollection;
+    }
+
+    public static async Task ClearAndSaveBoundaryStagingAsync(WADNRDbContext dbContext, int organizationID, List<GdbFeatureClassPreview> featureClasses, Func<string, Task<string>> getGeoJsonForLayer)
+    {
+        var existingStaging = await dbContext.OrganizationBoundaryStagings
+            .Where(s => s.OrganizationID == organizationID)
+            .ToListAsync();
+        dbContext.OrganizationBoundaryStagings.RemoveRange(existingStaging);
+
+        foreach (var fc in featureClasses)
+        {
+            var geoJson = await getGeoJsonForLayer(fc.FeatureClassName);
+            dbContext.OrganizationBoundaryStagings.Add(new OrganizationBoundaryStaging
+            {
+                OrganizationID = organizationID,
+                FeatureClassName = fc.FeatureClassName,
+                GeoJson = geoJson
+            });
+        }
+
+        await dbContext.SaveChangesAsync();
+    }
+
+    public static async Task<List<StagedFeatureLayer>> GetStagedBoundaryFeaturesAsync(WADNRDbContext dbContext, int organizationID)
+    {
+        return await dbContext.OrganizationBoundaryStagings
+            .AsNoTracking()
+            .Where(s => s.OrganizationID == organizationID)
+            .Select(s => new StagedFeatureLayer
+            {
+                FeatureClassName = s.FeatureClassName,
+                GeoJson = s.GeoJson
+            })
+            .ToListAsync();
+    }
+
+    public static async Task<bool> ApproveBoundaryAsync(WADNRDbContext dbContext, int organizationID, string wkt)
+    {
+        var entity = await dbContext.Organizations
+            .FirstOrDefaultAsync(x => x.OrganizationID == organizationID);
+
+        if (entity == null)
+        {
+            return false;
+        }
+
+        var reader = new WKTReader();
+        var geometry = reader.Read(wkt);
+        geometry.SRID = 4326;
+
+        entity.OrganizationBoundary = geometry;
+
+        // Clear staging rows
+        var stagingRows = await dbContext.OrganizationBoundaryStagings
+            .Where(s => s.OrganizationID == organizationID)
+            .ToListAsync();
+        dbContext.OrganizationBoundaryStagings.RemoveRange(stagingRows);
+
+        await dbContext.SaveChangesAsync();
+        return true;
     }
 }

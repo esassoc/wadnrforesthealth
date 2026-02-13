@@ -1208,7 +1208,9 @@ public static class Projects
                 geometry.SRID = 4326;
 
                 string locationName = null;
-                if (!string.IsNullOrEmpty(approval.SelectedPropertyName) && feature.Attributes != null)
+                if (!string.IsNullOrEmpty(approval.SelectedPropertyName)
+                    && feature.Attributes != null
+                    && feature.Attributes.Exists(approval.SelectedPropertyName))
                 {
                     var propValue = feature.Attributes[approval.SelectedPropertyName];
                     if (propValue != null)

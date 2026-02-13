@@ -666,28 +666,39 @@ public class ProjectController(
             return BadRequest(new { ErrorMessage = "File must be a .zip archive containing a File Geodatabase (.gdb)." });
         }
 
-        var featureClasses = await gdalApiService.OgrInfoGdbToFeatureClassInfo(file);
-
-        // Clear old staging rows for this project/user and save the GeoJSON for each feature class
-        var existingStaging = await DbContext.ProjectLocationStagings
-            .Where(s => s.ProjectID == projectID && s.PersonID == CallingUser.PersonID)
-            .ToListAsync();
-        DbContext.ProjectLocationStagings.RemoveRange(existingStaging);
-
-        foreach (var fc in featureClasses)
+        List<GdbFeatureClassPreview> featureClasses;
+        try
         {
-            var geoJson = await gdalApiService.Ogr2OgrGdbLayerToGeoJson(file, fc.FeatureClassName);
-            DbContext.ProjectLocationStagings.Add(new ProjectLocationStaging
+            featureClasses = await gdalApiService.OgrInfoGdbToFeatureClassInfo(file);
+
+            // Clear old staging rows for this project/user and save the GeoJSON for each feature class
+            var existingStaging = await DbContext.ProjectLocationStagings
+                .Where(s => s.ProjectID == projectID && s.PersonID == CallingUser.PersonID)
+                .ToListAsync();
+            DbContext.ProjectLocationStagings.RemoveRange(existingStaging);
+
+            foreach (var fc in featureClasses)
             {
-                ProjectID = projectID,
-                PersonID = CallingUser.PersonID,
-                FeatureClassName = fc.FeatureClassName,
-                GeoJson = geoJson,
-                ShouldImport = false
-            });
+                var geoJson = await gdalApiService.Ogr2OgrGdbLayerToGeoJson(file, fc.FeatureClassName);
+                fc.GeoJson = geoJson;
+                DbContext.ProjectLocationStagings.Add(new ProjectLocationStaging
+                {
+                    ProjectID = projectID,
+                    PersonID = CallingUser.PersonID,
+                    FeatureClassName = fc.FeatureClassName,
+                    GeoJson = geoJson,
+                    ShouldImport = false
+                });
+            }
+
+            await DbContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "GDB import failed for project {ProjectID}", projectID);
+            return StatusCode(500, new { ErrorMessage = "Failed to process the GDB file. The file may be corrupt or the import service may be unavailable. Please try again." });
         }
 
-        await DbContext.SaveChangesAsync();
         return Ok(featureClasses);
     }
 
@@ -1272,28 +1283,39 @@ public class ProjectController(
             return NotFound();
         }
 
-        var featureClasses = await gdalApiService.OgrInfoGdbToFeatureClassInfo(file);
-
-        // Clear old staging rows for this batch/user and save the GeoJSON for each feature class
-        var existingStaging = await DbContext.ProjectLocationStagingUpdates
-            .Where(s => s.ProjectUpdateBatchID == batch.ProjectUpdateBatchID && s.PersonID == CallingUser.PersonID)
-            .ToListAsync();
-        DbContext.ProjectLocationStagingUpdates.RemoveRange(existingStaging);
-
-        foreach (var fc in featureClasses)
+        List<GdbFeatureClassPreview> featureClasses;
+        try
         {
-            var geoJson = await gdalApiService.Ogr2OgrGdbLayerToGeoJson(file, fc.FeatureClassName);
-            DbContext.ProjectLocationStagingUpdates.Add(new ProjectLocationStagingUpdate
+            featureClasses = await gdalApiService.OgrInfoGdbToFeatureClassInfo(file);
+
+            // Clear old staging rows for this batch/user and save the GeoJSON for each feature class
+            var existingStaging = await DbContext.ProjectLocationStagingUpdates
+                .Where(s => s.ProjectUpdateBatchID == batch.ProjectUpdateBatchID && s.PersonID == CallingUser.PersonID)
+                .ToListAsync();
+            DbContext.ProjectLocationStagingUpdates.RemoveRange(existingStaging);
+
+            foreach (var fc in featureClasses)
             {
-                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-                PersonID = CallingUser.PersonID,
-                FeatureClassName = fc.FeatureClassName,
-                GeoJson = geoJson,
-                ShouldImport = false
-            });
+                var geoJson = await gdalApiService.Ogr2OgrGdbLayerToGeoJson(file, fc.FeatureClassName);
+                fc.GeoJson = geoJson;
+                DbContext.ProjectLocationStagingUpdates.Add(new ProjectLocationStagingUpdate
+                {
+                    ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
+                    PersonID = CallingUser.PersonID,
+                    FeatureClassName = fc.FeatureClassName,
+                    GeoJson = geoJson,
+                    ShouldImport = false
+                });
+            }
+
+            await DbContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "GDB import failed for project {ProjectID}", projectID);
+            return StatusCode(500, new { ErrorMessage = "Failed to process the GDB file. The file may be corrupt or the import service may be unavailable. Please try again." });
         }
 
-        await DbContext.SaveChangesAsync();
         return Ok(featureClasses);
     }
 
@@ -2144,27 +2166,38 @@ public class ProjectController(
             return BadRequest(new { ErrorMessage = "File must be a .zip archive containing a File Geodatabase (.gdb)." });
         }
 
-        var featureClasses = await gdalApiService.OgrInfoGdbToFeatureClassInfo(file);
-
-        var existingStaging = await DbContext.ProjectLocationStagings
-            .Where(s => s.ProjectID == projectID && s.PersonID == CallingUser.PersonID)
-            .ToListAsync();
-        DbContext.ProjectLocationStagings.RemoveRange(existingStaging);
-
-        foreach (var fc in featureClasses)
+        List<GdbFeatureClassPreview> featureClasses;
+        try
         {
-            var geoJson = await gdalApiService.Ogr2OgrGdbLayerToGeoJson(file, fc.FeatureClassName);
-            DbContext.ProjectLocationStagings.Add(new ProjectLocationStaging
+            featureClasses = await gdalApiService.OgrInfoGdbToFeatureClassInfo(file);
+
+            var existingStaging = await DbContext.ProjectLocationStagings
+                .Where(s => s.ProjectID == projectID && s.PersonID == CallingUser.PersonID)
+                .ToListAsync();
+            DbContext.ProjectLocationStagings.RemoveRange(existingStaging);
+
+            foreach (var fc in featureClasses)
             {
-                ProjectID = projectID,
-                PersonID = CallingUser.PersonID,
-                FeatureClassName = fc.FeatureClassName,
-                GeoJson = geoJson,
-                ShouldImport = false
-            });
+                var geoJson = await gdalApiService.Ogr2OgrGdbLayerToGeoJson(file, fc.FeatureClassName);
+                fc.GeoJson = geoJson;
+                DbContext.ProjectLocationStagings.Add(new ProjectLocationStaging
+                {
+                    ProjectID = projectID,
+                    PersonID = CallingUser.PersonID,
+                    FeatureClassName = fc.FeatureClassName,
+                    GeoJson = geoJson,
+                    ShouldImport = false
+                });
+            }
+
+            await DbContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "GDB import failed for project {ProjectID}", projectID);
+            return StatusCode(500, new { ErrorMessage = "Failed to process the GDB file. The file may be corrupt or the import service may be unavailable. Please try again." });
         }
 
-        await DbContext.SaveChangesAsync();
         return Ok(featureClasses);
     }
 

@@ -1,12 +1,18 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NetTopologySuite.Features;
 using WADNR.API.Services;
+using WADNR.API.Services.Attributes;
 using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
+using WADNR.Models.DataTransferObjects;
 using WADNR.Models.DataTransferObjects.FocusArea;
+using WADNR.Models.DataTransferObjects.Shared;
 
 namespace WADNR.API.Controllers;
 
@@ -15,7 +21,8 @@ namespace WADNR.API.Controllers;
 public class FocusAreaController(
     WADNRDbContext dbContext,
     ILogger<FocusAreaController> logger,
-    IOptions<WADNRConfiguration> configuration)
+    IOptions<WADNRConfiguration> configuration,
+    GDALAPIService gdalApiService = null)
     : SitkaController<FocusAreaController>(dbContext, logger, configuration)
 {
     [HttpGet]
@@ -28,6 +35,7 @@ public class FocusAreaController(
 
     [HttpGet("{focusAreaID}")]
     [NormalUserFeature]
+    [EntityNotFound(typeof(FocusArea), "focusAreaID")]
     public async Task<ActionResult<FocusAreaDetail>> GetByID([FromRoute] int focusAreaID)
     {
         var focusArea = await FocusAreas.GetByIDAsDetailAsync(DbContext, focusAreaID);
@@ -38,4 +46,84 @@ public class FocusAreaController(
         return Ok(focusArea);
     }
 
+    [HttpGet("{focusAreaID}/location")]
+    [NormalUserFeature]
+    [EntityNotFound(typeof(FocusArea), "focusAreaID")]
+    public async Task<ActionResult<FeatureCollection>> GetLocation([FromRoute] int focusAreaID)
+    {
+        var features = await FocusAreas.GetLocationAsFeatureCollectionAsync(DbContext, focusAreaID);
+        return Ok(features);
+    }
+
+    [HttpPost("{focusAreaID}/location/upload-gdb")]
+    [AdminFeature]
+    [EntityNotFound(typeof(FocusArea), "focusAreaID")]
+    [RequestSizeLimit(500_000_000)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 500_000_000)]
+    public async Task<ActionResult<List<GdbFeatureClassPreview>>> UploadGdbForLocation([FromRoute] int focusAreaID, IFormFile file)
+    {
+        if (gdalApiService == null)
+        {
+            return StatusCode(503, new { ErrorMessage = "GDB import is not configured on this server." });
+        }
+
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest(new { ErrorMessage = "A file is required." });
+        }
+
+        if (!file.FileName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+        {
+            return BadRequest(new { ErrorMessage = "File must be a .zip archive containing a File Geodatabase (.gdb)." });
+        }
+
+        var featureClasses = await gdalApiService.OgrInfoGdbToFeatureClassInfo(file);
+
+        await FocusAreas.ClearAndSaveStagingAsync(DbContext, focusAreaID, featureClasses,
+            featureClassName => gdalApiService.Ogr2OgrGdbLayerToGeoJson(file, featureClassName));
+
+        return Ok(featureClasses);
+    }
+
+    [HttpGet("{focusAreaID}/location/staged-features")]
+    [AdminFeature]
+    [EntityNotFound(typeof(FocusArea), "focusAreaID")]
+    public async Task<ActionResult<List<StagedFeatureLayer>>> GetStagedFeatures([FromRoute] int focusAreaID)
+    {
+        var features = await FocusAreas.GetStagedFeaturesAsync(DbContext, focusAreaID);
+        return Ok(features);
+    }
+
+    [HttpPost("{focusAreaID}/location/approve-gdb")]
+    [AdminFeature]
+    [EntityNotFound(typeof(FocusArea), "focusAreaID")]
+    public async Task<IActionResult> ApproveGdbForLocation([FromRoute] int focusAreaID, [FromBody] SinglePolygonApproveRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.SelectedGeometryWkt))
+        {
+            return BadRequest(new { ErrorMessage = "A geometry selection is required." });
+        }
+
+        var success = await FocusAreas.ApproveSinglePolygonAsync(DbContext, focusAreaID, request.SelectedGeometryWkt);
+        if (!success)
+        {
+            return NotFound();
+        }
+
+        return Ok();
+    }
+
+    [HttpDelete("{focusAreaID}/location")]
+    [AdminFeature]
+    [EntityNotFound(typeof(FocusArea), "focusAreaID")]
+    public async Task<IActionResult> DeleteLocation([FromRoute] int focusAreaID)
+    {
+        var deleted = await FocusAreas.DeleteLocationAsync(DbContext, focusAreaID);
+        if (!deleted)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
 }

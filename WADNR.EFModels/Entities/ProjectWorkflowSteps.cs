@@ -396,7 +396,9 @@ public static class ProjectWorkflowSteps
 
                 // Use selected property as name, falling back to feature class + index
                 string locationName = null;
-                if (!string.IsNullOrEmpty(approval.SelectedPropertyName) && feature.Attributes != null)
+                if (!string.IsNullOrEmpty(approval.SelectedPropertyName)
+                    && feature.Attributes != null
+                    && feature.Attributes.Exists(approval.SelectedPropertyName))
                 {
                     var propValue = feature.Attributes[approval.SelectedPropertyName];
                     if (propValue != null)

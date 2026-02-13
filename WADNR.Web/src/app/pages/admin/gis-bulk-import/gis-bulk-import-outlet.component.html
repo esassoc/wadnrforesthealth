@@ -1,0 +1,40 @@
+@if (attemptDetail$ | async; as detail) {
+    <page-header pageTitle="GIS Bulk Import"></page-header>
+
+    <div class="dashboard workflow">
+        <div class="sidebar">
+            <div class="sidebar-body sticky-nav">
+                <workflow-nav>
+                    <workflow-nav-item
+                        [navRouterLink]="getInstructionsLink()"
+                        [complete]="true"
+                        [required]="false">
+                        Instructions
+                    </workflow-nav-item>
+                    @for (group of stepGroups; track group.title) {
+                        <workflow-nav-group
+                            [title]="group.title"
+                            [expanded]="false"
+                            [complete]="isGroupComplete(detail, group)"
+                            [childRoutes]="getGroupChildRoutes(group)">
+                            @for (step of group.steps; track step.key) {
+                                <workflow-nav-item
+                                    [navRouterLink]="getStepLink(step)"
+                                    [complete]="isStepComplete(detail, step)"
+                                    [disabled]="isStepDisabled(detail, step)"
+                                    [required]="step.required">
+                                    {{ step.name }}
+                                </workflow-nav-item>
+                            }
+                        </workflow-nav-group>
+                    }
+                </workflow-nav>
+            </div>
+        </div>
+        <div class="main">
+            <div class="outlet-container">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+}

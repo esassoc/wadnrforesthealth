@@ -94,3 +94,14 @@
     border-width: 0 6px 7px;
     top: 0;
 }
+
+#dropdown-host {
+    position: fixed;
+    inset: 0;
+    z-index: 1060;
+    pointer-events: none;
+
+    > .ng-dropdown-panel {
+        pointer-events: auto;
+    }
+}

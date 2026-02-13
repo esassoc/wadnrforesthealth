@@ -1,0 +1,73 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Upload GDB - {{ data.entityLabel }}</h3>
+</div>
+
+<div class="modal-body">
+    @if (errorMessage$ | async; as errorMessage) {
+        <div class="alert alert-danger">{{ errorMessage }}</div>
+    }
+
+    @if ((step$ | async) === 'upload') {
+        <p>Upload a zipped File Geodatabase (.gdb.zip) to set the {{ data.entityLabel }} location boundary.</p>
+
+        <form-field
+            [formControl]="fileControl"
+            fieldLabel="GDB File (.zip)"
+            [type]="FormFieldType.File"
+            uploadFileAccepts=".zip">
+        </form-field>
+
+        @if (isUploading$ | async) {
+            <div class="text-center p-3">
+                <i class="fas fa-spinner fa-spin"></i> Processing file...
+            </div>
+        }
+    }
+
+    @if ((step$ | async) === 'select') {
+        <p>Click a polygon on the map to select the boundary for this {{ data.entityLabel }}.</p>
+
+        <wadnr-map
+            [mapHeight]="'400px'"
+            [selectedTileLayer]="'Terrain'"
+            [showLegend]="false"
+            (onMapLoad)="handleMapReady($event)">
+        </wadnr-map>
+
+        @if (hasSelection$ | async) {
+            <div class="alert alert-success mt-2 mb-0">
+                <i class="fas fa-check-circle"></i> Polygon selected. Click "Approve" to save.
+            </div>
+        }
+
+        @if (isApproving$ | async) {
+            <div class="text-center p-3">
+                <i class="fas fa-spinner fa-spin"></i> Saving selection...
+            </div>
+        }
+    }
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="cancel()" [disabled]="(isUploading$ | async) || (isApproving$ | async)">Cancel</button>
+
+    @if ((step$ | async) === 'upload') {
+        <button type="button"
+                class="btn btn-primary"
+                (click)="upload()"
+                [disabled]="!fileControl.value || (isUploading$ | async)">
+            Upload
+        </button>
+    }
+
+    @if ((step$ | async) === 'select') {
+        <button type="button"
+                class="btn btn-primary"
+                (click)="approve()"
+                [disabled]="!(hasSelection$ | async) || (isApproving$ | async)">
+            Approve
+        </button>
+    }
+</div>
+</div>

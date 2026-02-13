@@ -22,7 +22,11 @@
             <!-- Action buttons (authenticated only) -->
             @if (isAuthenticated$ | async) {
             <a class="btn btn-primary home-action-btn" routerLink="/projects/new">Add Project</a>
-            <a class="btn btn-primary home-action-btn" routerLink="/projects">GIS Import/Update</a>
+            @if (currentUser$ | async; as currentUser) {
+                @if (canCreateGisUpload(currentUser)) {
+                <button class="btn btn-primary home-action-btn" (click)="openGisImportModal()">GIS Import/Update</button>
+                }
+            }
             <a class="btn btn-primary home-action-btn" routerLink="/projects">Update Project</a>
             }
 

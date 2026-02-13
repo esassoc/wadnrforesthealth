@@ -317,6 +317,17 @@ export const routes: Routes = [
     { path: "reports/projects", title: "Project Reports", loadComponent: () => import("./pages/reports/project-reports/project-reports.component").then((m) => m.ProjectReportsComponent) },
     { path: "reports/ipr", title: "IPR Reports", loadComponent: () => import("./pages/reports/ipr-reports/ipr-reports.component").then((m) => m.IprReportsComponent) },
     { path: "reports", title: "Manage Report Templates", loadComponent: () => import("./pages/reports/reports.component").then((m) => m.ReportsComponent) },
+    {
+        path: "gis-bulk-import/:attemptID",
+        title: "GIS Bulk Import",
+        loadComponent: () => import("./pages/admin/gis-bulk-import/gis-bulk-import-outlet.component").then((m) => m.GisBulkImportOutletComponent),
+        children: [
+            { path: "", redirectTo: "instructions", pathMatch: "full" },
+            { path: "instructions", loadComponent: () => import("./pages/admin/gis-bulk-import/steps/instructions/instructions-step.component").then((m) => m.InstructionsStepComponent) },
+            { path: "upload", loadComponent: () => import("./pages/admin/gis-bulk-import/steps/upload/upload-step.component").then((m) => m.UploadStepComponent) },
+            { path: "validate-metadata", loadComponent: () => import("./pages/admin/gis-bulk-import/steps/validate-metadata/validate-metadata-step.component").then((m) => m.ValidateMetadataStepComponent) },
+        ],
+    },
     { path: "shared-stewardship", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "not-found", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "**", loadComponent: () => import("./shared/components/custom-page/custom-page.component").then((m) => m.CustomPageComponent) },

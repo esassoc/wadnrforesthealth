@@ -1,9 +1,9 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.API.Services.Authorization;
@@ -95,5 +95,35 @@ public class ProgramController(
     {
         var notifications = await Programs.ListNotificationsForProgramAsync(DbContext, programID);
         return Ok(notifications);
+    }
+
+    [HttpPut("{programID}/gis-import-config/basics")]
+    [ProgramManageFeature]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
+    public async Task<ActionResult<GdbImportBasics>> UpdateGdbImportBasics([FromRoute] int programID, [FromBody] GdbImportBasicsUpsertRequest request)
+    {
+        var result = await Programs.UpdateGdbImportBasicsAsync(DbContext, programID, request);
+        if (result == null) return NotFound();
+        return Ok(result);
+    }
+
+    [HttpPut("{programID}/gis-import-config/default-mappings")]
+    [ProgramManageFeature]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
+    public async Task<ActionResult<List<GdbDefaultMappingItem>>> UpdateGdbDefaultMappings([FromRoute] int programID, [FromBody] GdbDefaultMappingUpsertRequest request)
+    {
+        var result = await Programs.UpdateGdbDefaultMappingsAsync(DbContext, programID, request);
+        if (result == null) return NotFound();
+        return Ok(result);
+    }
+
+    [HttpPut("{programID}/gis-import-config/crosswalk-values")]
+    [ProgramManageFeature]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
+    public async Task<ActionResult<List<GdbCrosswalkItem>>> UpdateGdbCrosswalkValues([FromRoute] int programID, [FromBody] GdbCrosswalkUpsertRequest request)
+    {
+        var result = await Programs.UpdateGdbCrosswalkValuesAsync(DbContext, programID, request);
+        if (result == null) return NotFound();
+        return Ok(result);
     }
 }

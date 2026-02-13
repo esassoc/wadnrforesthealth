@@ -15,6 +15,7 @@ export class GdbFeatureClassPreview {
     FeatureType?: string | null;
     FeatureCount?: number;
     PropertyNames?: Array<string> | null;
+    GeoJson?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -25,6 +26,7 @@ export interface GdbFeatureClassPreviewForm {
     FeatureType?: FormControl<string>;
     FeatureCount?: FormControl<number>;
     PropertyNames?: FormControl<Array<string>>;
+    GeoJson?: FormControl<string>;
 }
 
 export class GdbFeatureClassPreviewFormControls { 
@@ -59,6 +61,16 @@ export class GdbFeatureClassPreviewFormControls {
         }
     );
     public static PropertyNames = (value: FormControlState<Array<string>> | Array<string> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<string>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static GeoJson = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

@@ -1,13 +1,17 @@
 import { Component } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { ColDef } from "ag-grid-community";
 import { Observable } from "rxjs";
+import { DialogService } from "@ngneat/dialog";
 
+import { AuthenticationService } from "src/app/services/authentication.service";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
+import { RoleEnum } from "src/app/shared/generated/enum/role-enum";
+import { PersonDetail } from "src/app/shared/generated/model/person-detail";
 import { ProjectGridComponent } from "src/app/shared/components/project-grid/project-grid.component";
 import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row";
 
@@ -18,12 +22,36 @@ import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row"
 })
 export class ProjectsComponent {
     public projects$: Observable<ProjectGridRow[]>;
+    public currentUser$: Observable<PersonDetail | null>;
     public columnDefs: ColDef[];
     public customRichTextTypeID = FirmaPageTypeEnum.FullProjectList;
 
-    constructor(private projectService: ProjectService) {}
+    constructor(
+        private projectService: ProjectService,
+        private authenticationService: AuthenticationService,
+        private dialogService: DialogService,
+        private router: Router,
+    ) {}
 
     ngOnInit(): void {
+        this.currentUser$ = this.authenticationService.currentUserSetObservable;
         this.projects$ = this.projectService.listProject();
+    }
+
+    canCreateGisUpload(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        const roleID = user.BaseRole?.RoleID;
+        return roleID === RoleEnum.Admin || roleID === RoleEnum.EsaAdmin || roleID === RoleEnum.ProjectSteward;
+    }
+
+    openGisImportModal(): void {
+        import("../admin/gis-bulk-import/select-source-org-modal/select-source-org-modal.component").then(({ SelectSourceOrgModalComponent }) => {
+            const ref = this.dialogService.open(SelectSourceOrgModalComponent, { size: "md" });
+            ref.afterClosed$.subscribe((attemptID) => {
+                if (attemptID) {
+                    this.router.navigate(["/gis-bulk-import", attemptID, "instructions"]);
+                }
+            });
+        });
     }
 }

@@ -1,0 +1,36 @@
+<div class="card">
+    <div class="card-header">
+        <h3>Upload GIS File</h3>
+    </div>
+    <div class="card-body">
+        @if (vm$ | async; as vm) {
+            <p>
+                <strong>Program: <a [routerLink]="['/programs', vm.programID]">{{ vm.programName }}</a></strong>
+            </p>
+        }
+
+        <p>Use this page to upload a geospatial data file for importing treatments and projects.</p>
+        <p>After you upload your file you will be able to preview and verify the uploaded data.</p>
+        <hr />
+
+        <div class="grid-12">
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="fileControl"
+                    fieldLabel="GIS File (.zip)"
+                    [type]="FormFieldType.File"
+                    uploadFileAccepts=".zip">
+                </form-field>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer d-flex justify-content-end gap-2">
+        <button class="btn btn-primary" (click)="uploadFile()" [disabled]="(isUploading$ | async) || !fileControl.value">
+            @if (isUploading$ | async) {
+                <span class="fa fa-spinner fa-spin"></span> Uploading and processing...
+            } @else {
+                Upload &amp; Continue
+            }
+        </button>
+    </div>
+</div>

@@ -2,13 +2,14 @@ import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
+import { BehaviorSubject, Observable } from "rxjs";
+import * as L from "leaflet";
 
 import { GdbFeatureClassPreview } from "src/app/shared/generated/model/gdb-feature-class-preview";
 import { GdbApproveRequest } from "src/app/shared/generated/model/gdb-approve-request";
 import { GdbLayerApproval } from "src/app/shared/generated/model/gdb-layer-approval";
 import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
+import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 
 /**
  * Data passed into the modal when opened.
@@ -25,6 +26,7 @@ interface LayerRow {
     featureClassName: string;
     featureType: string;
     featureCount: number;
+    geoJson: string | null;
     propertyOptions: FormInputOption[];
     shouldImportControl: FormControl<boolean>;
     selectedPropertyControl: FormControl<string>;
@@ -33,7 +35,7 @@ interface LayerRow {
 @Component({
     selector: "import-gdb-modal",
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormFieldComponent],
+    imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, WADNRMapComponent],
     templateUrl: "./import-gdb-modal.component.html",
     styleUrls: ["./import-gdb-modal.component.scss"]
 })
@@ -41,13 +43,18 @@ export class ImportGdbModalComponent {
     private dialogRef = inject(DialogRef<ImportGdbModalData, boolean>);
 
     FormFieldType = FormFieldType;
-    step: "upload" | "review" = "upload";
-    isUploading = false;
-    isApproving = false;
-    errorMessage: string | null = null;
+    step$ = new BehaviorSubject<"upload" | "review">("upload");
+    isUploading$ = new BehaviorSubject<boolean>(false);
+    isApproving$ = new BehaviorSubject<boolean>(false);
+    errorMessage$ = new BehaviorSubject<string | null>(null);
 
     fileControl = new FormControl<File | null>(null);
     layers: LayerRow[] = [];
+
+    map: L.Map;
+    layerControl: L.Control.Layers;
+    mapIsReady = false;
+    private previewColors = ["#3388ff", "#ff6633", "#33cc66", "#cc33ff", "#ffcc00"];
 
     get data(): ImportGdbModalData {
         return this.dialogRef.data;
@@ -58,15 +65,14 @@ export class ImportGdbModalComponent {
         if (!file) return;
 
         if (!file.name.endsWith(".zip")) {
-            this.errorMessage = "File must be a .zip archive containing a File Geodatabase (.gdb).";
+            this.errorMessage$.next("File must be a .zip archive containing a File Geodatabase (.gdb).");
             return;
         }
 
-        this.isUploading = true;
-        this.errorMessage = null;
+        this.isUploading$.next(true);
+        this.errorMessage$.next(null);
 
         this.data.uploadFn(this.data.projectID, file)
-            .pipe(finalize(() => this.isUploading = false))
             .subscribe({
                 next: (featureClasses) => {
                     this.layers = featureClasses.map(fc => {
@@ -94,23 +100,59 @@ export class ImportGdbModalComponent {
                             featureClassName: fc.FeatureClassName ?? "",
                             featureType: fc.FeatureType ?? "",
                             featureCount: fc.FeatureCount ?? 0,
+                            geoJson: fc.GeoJson ?? null,
                             propertyOptions,
                             shouldImportControl,
                             selectedPropertyControl
                         };
                     });
-                    this.step = "review";
+                    this.isUploading$.next(false);
+                    this.step$.next("review");
                 },
                 error: (err) => {
-                    this.errorMessage = err?.error?.ErrorMessage ?? "An error occurred uploading the file. Please try again.";
+                    this.errorMessage$.next(err?.error?.ErrorMessage ?? "An error occurred uploading the file. Please try again.");
+                    this.isUploading$.next(false);
                 }
             });
+    }
+
+    handleMapReady(event: WADNRMapInitEvent): void {
+        this.map = event.map;
+        this.layerControl = event.layerControl;
+        this.mapIsReady = true;
+        this.renderPreviewLayers();
+    }
+
+    private renderPreviewLayers(): void {
+        if (!this.map) return;
+        const allBounds = L.latLngBounds([]);
+        this.layers.forEach((layer, index) => {
+            if (!layer.geoJson) return;
+            const color = this.previewColors[index % this.previewColors.length];
+            let geoJsonData: any;
+            try {
+                geoJsonData = JSON.parse(layer.geoJson);
+            } catch {
+                return;
+            }
+            const geoJsonLayer = L.geoJSON(geoJsonData, {
+                style: () => ({ color, weight: 2, fillColor: color, fillOpacity: 0.2 })
+            });
+            geoJsonLayer.addTo(this.map);
+            const bounds = geoJsonLayer.getBounds();
+            if (bounds.isValid()) {
+                allBounds.extend(bounds);
+            }
+        });
+        if (allBounds.isValid()) {
+            this.map.fitBounds(allBounds, { padding: [20, 20] });
+        }
     }
 
     approve(): void {
         const selected = this.layers.filter(l => l.shouldImportControl.value);
         if (selected.length === 0) {
-            this.errorMessage = "Select at least one layer to import.";
+            this.errorMessage$.next("Select at least one layer to import.");
             return;
         }
 
@@ -122,8 +164,8 @@ export class ImportGdbModalComponent {
             } as GdbLayerApproval))
         };
 
-        this.isApproving = true;
-        this.errorMessage = null;
+        this.isApproving$.next(true);
+        this.errorMessage$.next(null);
 
         this.layers.forEach(l => {
             l.shouldImportControl.disable();
@@ -131,21 +173,19 @@ export class ImportGdbModalComponent {
         });
 
         this.data.approveFn(this.data.projectID, request)
-            .pipe(finalize(() => {
-                this.isApproving = false;
-                this.layers.forEach(l => {
-                    l.shouldImportControl.enable();
-                    if (l.shouldImportControl.value) {
-                        l.selectedPropertyControl.enable();
-                    }
-                });
-            }))
             .subscribe({
                 next: () => {
                     this.dialogRef.close(true);
                 },
                 error: (err) => {
-                    this.errorMessage = err?.error?.ErrorMessage ?? "An error occurred importing the layers. Please try again.";
+                    this.errorMessage$.next(err?.error?.ErrorMessage ?? "An error occurred importing the layers. Please try again.");
+                    this.isApproving$.next(false);
+                    this.layers.forEach(l => {
+                        l.shouldImportControl.enable();
+                        if (l.shouldImportControl.value) {
+                            l.selectedPropertyControl.enable();
+                        }
+                    });
                 }
             });
     }

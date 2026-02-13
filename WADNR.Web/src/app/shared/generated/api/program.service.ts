@@ -15,6 +15,18 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
+import { GdbCrosswalkItem } from '../model/gdb-crosswalk-item';
+// @ts-ignore
+import { GdbCrosswalkUpsertRequest } from '../model/gdb-crosswalk-upsert-request';
+// @ts-ignore
+import { GdbDefaultMappingItem } from '../model/gdb-default-mapping-item';
+// @ts-ignore
+import { GdbDefaultMappingUpsertRequest } from '../model/gdb-default-mapping-upsert-request';
+// @ts-ignore
+import { GdbImportBasics } from '../model/gdb-import-basics';
+// @ts-ignore
+import { GdbImportBasicsUpsertRequest } from '../model/gdb-import-basics-upsert-request';
+// @ts-ignore
 import { ProgramDetail } from '../model/program-detail';
 // @ts-ignore
 import { ProgramGridRow } from '../model/program-grid-row';
@@ -363,6 +375,210 @@ export class ProgramService extends BaseService {
         return this.httpClient.request<Array<ProjectProgramDetailGridRow>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param programID 
+     * @param gdbCrosswalkUpsertRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateGdbCrosswalkValuesProgram(programID: number, gdbCrosswalkUpsertRequest?: GdbCrosswalkUpsertRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<GdbCrosswalkItem>>;
+    public updateGdbCrosswalkValuesProgram(programID: number, gdbCrosswalkUpsertRequest?: GdbCrosswalkUpsertRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<GdbCrosswalkItem>>>;
+    public updateGdbCrosswalkValuesProgram(programID: number, gdbCrosswalkUpsertRequest?: GdbCrosswalkUpsertRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<GdbCrosswalkItem>>>;
+    public updateGdbCrosswalkValuesProgram(programID: number, gdbCrosswalkUpsertRequest?: GdbCrosswalkUpsertRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (programID === null || programID === undefined) {
+            throw new Error('Required parameter programID was null or undefined when calling updateGdbCrosswalkValuesProgram.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/programs/${this.configuration.encodeParam({name: "programID", value: programID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/gis-import-config/crosswalk-values`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<GdbCrosswalkItem>>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: gdbCrosswalkUpsertRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param programID 
+     * @param gdbDefaultMappingUpsertRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateGdbDefaultMappingsProgram(programID: number, gdbDefaultMappingUpsertRequest?: GdbDefaultMappingUpsertRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<GdbDefaultMappingItem>>;
+    public updateGdbDefaultMappingsProgram(programID: number, gdbDefaultMappingUpsertRequest?: GdbDefaultMappingUpsertRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<GdbDefaultMappingItem>>>;
+    public updateGdbDefaultMappingsProgram(programID: number, gdbDefaultMappingUpsertRequest?: GdbDefaultMappingUpsertRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<GdbDefaultMappingItem>>>;
+    public updateGdbDefaultMappingsProgram(programID: number, gdbDefaultMappingUpsertRequest?: GdbDefaultMappingUpsertRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (programID === null || programID === undefined) {
+            throw new Error('Required parameter programID was null or undefined when calling updateGdbDefaultMappingsProgram.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/programs/${this.configuration.encodeParam({name: "programID", value: programID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/gis-import-config/default-mappings`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<GdbDefaultMappingItem>>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: gdbDefaultMappingUpsertRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param programID 
+     * @param gdbImportBasicsUpsertRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateGdbImportBasicsProgram(programID: number, gdbImportBasicsUpsertRequest?: GdbImportBasicsUpsertRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<GdbImportBasics>;
+    public updateGdbImportBasicsProgram(programID: number, gdbImportBasicsUpsertRequest?: GdbImportBasicsUpsertRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<GdbImportBasics>>;
+    public updateGdbImportBasicsProgram(programID: number, gdbImportBasicsUpsertRequest?: GdbImportBasicsUpsertRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<GdbImportBasics>>;
+    public updateGdbImportBasicsProgram(programID: number, gdbImportBasicsUpsertRequest?: GdbImportBasicsUpsertRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (programID === null || programID === undefined) {
+            throw new Error('Required parameter programID was null or undefined when calling updateGdbImportBasicsProgram.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/programs/${this.configuration.encodeParam({name: "programID", value: programID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/gis-import-config/basics`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<GdbImportBasics>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: gdbImportBasicsUpsertRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

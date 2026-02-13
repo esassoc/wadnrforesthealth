@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "WADNR.GDALAPI": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:58721;http://localhost:58722"
+    }
+  }
+}

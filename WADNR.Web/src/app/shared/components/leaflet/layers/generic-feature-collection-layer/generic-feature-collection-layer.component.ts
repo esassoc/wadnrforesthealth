@@ -3,6 +3,7 @@ import * as L from "leaflet";
 import { Feature, FeatureCollection, GeoJsonProperties, Geometry as GeoJsonGeometry } from "geojson";
 import { MapLayerBase } from "../map-layer-base.component";
 import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
+import { MAP_SELECTED_COLOR } from "src/app/shared/models/map-colors";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
 
 @Component({
@@ -16,14 +17,19 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
     @Input() layerName: string;
     @Input() layerColor: string;
     @Input() featureCollection: IFeature[] | null = null;
+    @Input() identifierProperty: string;
+    @Input() selectedIDs: number[] | null = null;
 
     /** Emits the current bounds of rendered features (null if empty/unknown). */
     @Output() dataBounds = new EventEmitter<L.LatLngBounds | null>();
+    @Output() selectedIDsChange = new EventEmitter<number>();
 
     public legendGeometry: "point" | "line" | "polygon" = "polygon";
 
     private geoJsonLayer: L.GeoJSON | null = null;
+    private highlightLayer: L.FeatureGroup | null = null;
     private overlayInitialized = false;
+    private selectionFromMapClick = false;
     private lastLegendGeometry: GenericFeatureCollectionLayerComponent["legendGeometry"] | null = null;
 
     ngAfterViewInit(): void {
@@ -35,7 +41,11 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
     ngOnChanges(changes: any): void {
         this.updateLegendGeometry();
         this.tryInitializeOverlay();
-        this.refreshData();
+        if (changes.selectedIDs && !changes.featureCollection) {
+            this.refreshSelection();
+        } else {
+            this.refreshData();
+        }
     }
 
     /**
@@ -167,6 +177,57 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
 
         const bounds = this.geoJsonLayer.getBounds();
         this.dataBounds.emit(bounds && bounds.isValid() ? bounds : null);
+
+        this.refreshSelection();
+    }
+
+    private refreshSelection(): void {
+        if (!this.map) return;
+
+        const shouldFitBounds = !this.selectionFromMapClick;
+        this.selectionFromMapClick = false;
+
+        // Remove old highlight
+        if (this.highlightLayer) {
+            this.map.removeLayer(this.highlightLayer);
+            this.highlightLayer = null;
+        }
+
+        if (!this.selectedIDs?.length || !this.identifierProperty || !this.geoJsonLayer) return;
+
+        this.highlightLayer = L.featureGroup();
+        const selectedSet = new Set(this.selectedIDs);
+
+        this.geoJsonLayer.eachLayer((layer: any) => {
+            const props = layer.feature?.properties;
+            if (!props) return;
+            const id = props[this.identifierProperty];
+            if (id != null && selectedSet.has(Number(id))) {
+                const geometryType = layer.feature?.geometry?.type;
+                const isPoint = geometryType === "Point" || geometryType === "MultiPoint";
+                if (isPoint) {
+                    const latlng = layer.getLatLng?.();
+                    if (latlng) {
+                        L.marker(latlng, { icon: MarkerHelper.svgMarkerIcon(MAP_SELECTED_COLOR) }).addTo(this.highlightLayer);
+                    }
+                } else {
+                    L.geoJSON(layer.feature, {
+                        style: { color: MAP_SELECTED_COLOR, weight: 3, opacity: 0.8, fillColor: MAP_SELECTED_COLOR, fillOpacity: 0.15 },
+                    }).addTo(this.highlightLayer);
+                }
+
+                // Only fit bounds when selection came from outside (e.g. grid click), not from a map click
+                if (shouldFitBounds && this.selectedIDs.length === 1) {
+                    if (typeof layer.getBounds === "function") {
+                        this.map.fitBounds(layer.getBounds());
+                    } else if (typeof layer.getLatLng === "function") {
+                        this.map.panTo(layer.getLatLng());
+                    }
+                }
+            }
+        });
+
+        this.highlightLayer.addTo(this.map);
     }
 
     private normalizeFeatureCollection(input: any): FeatureCollection | null {
@@ -366,6 +427,18 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
 
     private wireFeatureEvents(layer: L.Layer): void {
         layer.on("click", (e: any) => {
+            // Emit selection if identifierProperty is configured
+            if (this.identifierProperty) {
+                const props = (layer as any).feature?.properties;
+                const id = props?.[this.identifierProperty];
+                if (id != null) {
+                    this.selectionFromMapClick = true;
+                    this.selectedIDsChange.emit(Number(id));
+                    return;
+                }
+            }
+
+            // Fallback: just pan to the feature
             const target = this.getPanTargetLatLng(layer, e);
             if (target && this.map) {
                 this.map.panTo(target);

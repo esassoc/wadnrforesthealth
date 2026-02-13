@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WADNR.API", "WADNR.API\WADN
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SitkaCaptureService", "SitkaCaptureService\SitkaCaptureService.csproj", "{0F740152-B243-3A40-3203-0753D58CDD60}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WADNR.GDALAPI", "WADNR.GDALAPI\WADNR.GDALAPI.csproj", "{C5CF1288-B646-4D2B-D085-021681E1387A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{0F740152-B243-3A40-3203-0753D58CDD60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F740152-B243-3A40-3203-0753D58CDD60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F740152-B243-3A40-3203-0753D58CDD60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5CF1288-B646-4D2B-D085-021681E1387A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5CF1288-B646-4D2B-D085-021681E1387A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5CF1288-B646-4D2B-D085-021681E1387A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5CF1288-B646-4D2B-D085-021681E1387A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

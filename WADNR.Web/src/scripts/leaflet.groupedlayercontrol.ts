@@ -181,7 +181,8 @@ export class GroupedLayers extends Control {
         this._domGroups.length = 0;
         let baseLayersPresent = false,
             overlaysPresent = false;
-        for (const obj of this._layers) {
+        const sorted = [...this._layers].sort((a, b) => (a.sortOrder ?? 1) - (b.sortOrder ?? 1));
+        for (const obj of sorted) {
             this._addItem(obj);
             overlaysPresent = overlaysPresent || !!obj.overlay;
             baseLayersPresent = baseLayersPresent || !obj.overlay;

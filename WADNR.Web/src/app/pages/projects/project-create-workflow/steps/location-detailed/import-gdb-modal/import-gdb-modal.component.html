@@ -1,13 +1,14 @@
+<div class="modal">
 <div class="modal-header">
     <h3>Import GDB File</h3>
 </div>
 
 <div class="modal-body">
-    @if (errorMessage) {
+    @if (errorMessage$ | async; as errorMessage) {
         <div class="alert alert-danger">{{ errorMessage }}</div>
     }
 
-    @if (step === 'upload') {
+    @if ((step$ | async) === 'upload') {
         <p>Upload a zipped File Geodatabase (.gdb.zip) to import location boundaries.</p>
 
         <form-field
@@ -17,14 +18,14 @@
             uploadFileAccepts=".zip">
         </form-field>
 
-        @if (isUploading) {
+        @if (isUploading$ | async) {
             <div class="text-center p-3">
                 <i class="fas fa-spinner fa-spin"></i> Processing file...
             </div>
         }
     }
 
-    @if (step === 'review') {
+    @if ((step$ | async) === 'review') {
         <p>Select the layers to import and choose which property to use as the location name.</p>
 
         <table class="table table-sm">
@@ -65,7 +66,14 @@
             </tbody>
         </table>
 
-        @if (isApproving) {
+        <wadnr-map class="mt-3"
+            [mapHeight]="'350px'"
+            [selectedTileLayer]="'Terrain'"
+            [showLegend]="false"
+            (onMapLoad)="handleMapReady($event)">
+        </wadnr-map>
+
+        @if (isApproving$ | async) {
             <div class="text-center p-3">
                 <i class="fas fa-spinner fa-spin"></i> Importing layers...
             </div>
@@ -74,23 +82,24 @@
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-outline-secondary" (click)="cancel()" [disabled]="isUploading || isApproving">Cancel</button>
+    <button type="button" class="btn btn-outline-secondary" (click)="cancel()" [disabled]="(isUploading$ | async) || (isApproving$ | async)">Cancel</button>
 
-    @if (step === 'upload') {
+    @if ((step$ | async) === 'upload') {
         <button type="button"
                 class="btn btn-primary"
                 (click)="upload()"
-                [disabled]="!fileControl.value || isUploading">
+                [disabled]="!fileControl.value || (isUploading$ | async)">
             Upload
         </button>
     }
 
-    @if (step === 'review') {
+    @if ((step$ | async) === 'review') {
         <button type="button"
                 class="btn btn-primary"
                 (click)="approve()"
-                [disabled]="isApproving">
+                [disabled]="isApproving$ | async">
             Import Selected Layers
         </button>
     }
+</div>
 </div>

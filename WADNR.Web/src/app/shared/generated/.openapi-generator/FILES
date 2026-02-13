@@ -16,6 +16,7 @@ api/focus-area.service.ts
 api/fund-source-allocation.service.ts
 api/fund-source.service.ts
 api/funding-source.service.ts
+api/gis-bulk-import.service.ts
 api/interaction-event.service.ts
 api/invoice-payment-request.service.ts
 api/invoice.service.ts
@@ -126,9 +127,14 @@ model/fund-source-status-lookup-item.ts
 model/fund-source-upsert-request.ts
 model/funding-source-lookup-item.ts
 model/gdb-approve-request.ts
+model/gdb-crosswalk-item-upsert.ts
 model/gdb-crosswalk-item.ts
+model/gdb-crosswalk-upsert-request.ts
+model/gdb-default-mapping-item-upsert.ts
 model/gdb-default-mapping-item.ts
+model/gdb-default-mapping-upsert-request.ts
 model/gdb-feature-class-preview.ts
+model/gdb-import-basics-upsert-request.ts
 model/gdb-import-basics.ts
 model/gdb-layer-approval.ts
 model/generate-reports-request.ts
@@ -138,6 +144,14 @@ model/geographic-lookup-item.ts
 model/geographic-override-request.ts
 model/geometry-factory.ts
 model/geometry.ts
+model/gis-bulk-import-request.ts
+model/gis-bulk-import-result.ts
+model/gis-feature-grid-row.ts
+model/gis-metadata-attribute-item.ts
+model/gis-metadata-mapping-defaults.ts
+model/gis-upload-attempt-create-request.ts
+model/gis-upload-attempt-detail.ts
+model/gis-upload-source-organization-summary.ts
 model/i-attributes-table.ts
 model/i-feature.ts
 model/interaction-event-detail.ts
@@ -319,6 +333,8 @@ model/report-template-model-lookup-item.ts
 model/role-detail.ts
 model/role-grid-row.ts
 model/role-lookup-item.ts
+model/single-polygon-approve-request.ts
+model/staged-feature-layer.ts
 model/step-diff-response.ts
 model/support-request-create.ts
 model/system-info-detail.ts

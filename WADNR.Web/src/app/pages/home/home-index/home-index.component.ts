@@ -1,13 +1,16 @@
 import { Component, OnInit } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { Observable, map } from "rxjs";
+import { DialogService } from "@ngneat/dialog";
 
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { FirmaHomePageImageService } from "src/app/shared/generated/api/firma-home-page-image.service";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
+import { RoleEnum } from "src/app/shared/generated/enum/role-enum";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
+import { PersonDetail } from "src/app/shared/generated/model/person-detail";
 import { ProjectFeatured } from "src/app/shared/generated/model/project-featured";
 import { PROJECT_STAGE_LEGEND_COLORS } from "src/app/shared/models/legend-colors";
 import { ImageCarouselItem } from "src/app/shared/components/image-carousel/image-carousel.component";
@@ -43,6 +46,7 @@ export class HomeIndexComponent implements OnInit {
 
     // Observables
     isAuthenticated$: Observable<boolean>;
+    currentUser$: Observable<PersonDetail | null>;
     carouselImages$: Observable<ImageCarouselItem[]>;
     featuredProjects$: Observable<ProjectFeatured[]>;
     projectPoints$: Observable<IFeature[]>;
@@ -57,10 +61,13 @@ export class HomeIndexComponent implements OnInit {
         private authenticationService: AuthenticationService,
         private firmaHomePageImageService: FirmaHomePageImageService,
         private projectService: ProjectService,
+        private dialogService: DialogService,
+        private router: Router,
     ) {}
 
     ngOnInit(): void {
-        this.isAuthenticated$ = this.authenticationService.currentUserSetObservable.pipe(
+        this.currentUser$ = this.authenticationService.currentUserSetObservable;
+        this.isAuthenticated$ = this.currentUser$.pipe(
             map((user) => user != null),
         );
 
@@ -82,5 +89,22 @@ export class HomeIndexComponent implements OnInit {
         this.map = event.map;
         this.layerControl = event.layerControl;
         this.mapIsReady = true;
+    }
+
+    canCreateGisUpload(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        const roleID = user.BaseRole?.RoleID;
+        return roleID === RoleEnum.Admin || roleID === RoleEnum.EsaAdmin || roleID === RoleEnum.ProjectSteward;
+    }
+
+    openGisImportModal(): void {
+        import("../../admin/gis-bulk-import/select-source-org-modal/select-source-org-modal.component").then(({ SelectSourceOrgModalComponent }) => {
+            const ref = this.dialogService.open(SelectSourceOrgModalComponent, { size: "md" });
+            ref.afterClosed$.subscribe((attemptID) => {
+                if (attemptID) {
+                    this.router.navigate(["/gis-bulk-import", attemptID, "instructions"]);
+                }
+            });
+        });
     }
 }

@@ -227,3 +227,91 @@ Before adding any form input (text, select, checkbox, textarea, date picker, etc
 ```
 
 The `<field-definition>` component adds a help icon with popover, which is appropriate for form field labels but not for card/section titles.
+
+---
+
+## Modal Template Structure
+
+**All modals MUST wrap their content in `<div class="modal">`** for the CSS flex layout (`_modal.scss`) to work. Without it, tall modals overflow instead of scrolling.
+
+Use the standard three-section structure inside the wrapper:
+
+```html
+<!-- CORRECT: modal wrapper with standard sections -->
+<div class="modal">
+  <div class="modal-header">
+    <h4>Edit Entity</h4>
+  </div>
+  <div class="modal-body">
+    <!-- form fields, content -->
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="close()">Cancel</button>
+    <button class="btn btn-primary" (click)="save()">Save</button>
+  </div>
+</div>
+```
+
+```html
+<!-- WRONG: missing modal wrapper — tall content will overflow instead of scroll -->
+<div class="modal-header">
+  <h4>Edit Entity</h4>
+</div>
+<div class="modal-body">
+  <!-- content -->
+</div>
+<div class="modal-footer">
+  <button class="btn btn-secondary" (click)="close()">Cancel</button>
+  <button class="btn btn-primary" (click)="save()">Save</button>
+</div>
+```
+
+All modals use `@ngneat/dialog` with `DialogRef<InputData, OutputData>`. Use `ViewEncapsulation.None` when the modal contains injected innerHTML (like diff HTML) that needs global styles.
+
+---
+
+## Loading States
+
+**Prefer the built-in loading directives over hand-rolled spinner markup.**
+
+### `[loadingSpinner]` — Content area loading overlay
+
+Location: `WADNR.Web/src/app/shared/directives/loading.directive.ts`
+
+Attribute directive that adds an animated overlay spinner to any container. Takes an `ILoadingSpinnerOptions` object:
+- `isLoading: boolean` — show/hide the spinner
+- `loadingHeight?: number` — minimum height (px) while loading
+- `opacity?: number` — background overlay opacity
+
+```html
+<!-- CORRECT: Use loadingSpinner directive -->
+<div class="modal-body" [loadingSpinner]="{ isLoading, loadingHeight: 200 }">
+  <!-- content -->
+</div>
+
+<div class="card-body" [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 100 }">
+  <!-- content -->
+</div>
+```
+
+### `[buttonLoading]` — Button spinner
+
+Location: `WADNR.Web/src/app/shared/directives/button-loading.directive.ts`
+
+Attribute directive that prepends a spinning FA icon to a button when true. Takes a `boolean`.
+
+```html
+<!-- CORRECT: Use buttonLoading directive -->
+<button class="btn btn-primary" (click)="save()" [buttonLoading]="isSubmitting">Save</button>
+
+<!-- WRONG: Don't hand-roll spinner icons -->
+<button class="btn btn-primary" (click)="save()">
+  <span *ngIf="isSubmitting" class="fas fa-spinner fa-spin"></span>
+  Save
+</button>
+
+<!-- WRONG: Don't use conditional button text instead of a spinner -->
+<button class="btn btn-primary" (click)="save()">
+  {{ isSubmitting ? 'Saving...' : 'Save' }}
+</button>
+```

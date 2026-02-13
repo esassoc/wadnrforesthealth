@@ -232,4 +232,127 @@ public static class Programs
 
         return notifications;
     }
+
+    public static async Task<GdbImportBasics?> UpdateGdbImportBasicsAsync(WADNRDbContext dbContext, int programID, GdbImportBasicsUpsertRequest request)
+    {
+        var sourceOrg = await dbContext.GisUploadSourceOrganizations
+            .FirstOrDefaultAsync(s => s.ProgramID == programID);
+
+        if (sourceOrg == null) return null;
+
+        sourceOrg.ProjectTypeDefaultName = request.ProjectTypeDefaultName;
+        sourceOrg.TreatmentTypeDefaultName = request.TreatmentTypeDefaultName;
+        sourceOrg.ImportIsFlattened = request.ImportIsFlattened;
+        sourceOrg.AdjustProjectTypeBasedOnTreatmentTypes = request.AdjustProjectTypeBasedOnTreatmentTypes;
+        sourceOrg.ProjectStageDefaultID = request.ProjectStageDefaultID;
+        sourceOrg.DataDeriveProjectStage = request.DataDeriveProjectStage;
+        sourceOrg.DefaultLeadImplementerOrganizationID = request.DefaultLeadImplementerOrganizationID;
+        sourceOrg.RelationshipTypeForDefaultOrganizationID = request.RelationshipTypeForDefaultOrganizationID;
+        sourceOrg.ImportAsDetailedLocationInsteadOfTreatments = request.ImportAsDetailedLocationInsteadOfTreatments;
+        sourceOrg.ImportAsDetailedLocationInAdditionToTreatments = request.ImportAsDetailedLocationInAdditionToTreatments;
+        sourceOrg.ProjectDescriptionDefaultText = request.ProjectDescriptionDefaultText;
+        sourceOrg.ApplyStartDateToProject = request.ApplyStartDateToProject;
+        sourceOrg.ApplyCompletedDateToProject = request.ApplyCompletedDateToProject;
+        sourceOrg.ApplyStartDateToTreatments = request.ApplyStartDateToTreatments;
+        sourceOrg.ApplyEndDateToTreatments = request.ApplyEndDateToTreatments;
+
+        await dbContext.SaveChangesAsync();
+
+        return await GetGdbImportBasicsAsync(dbContext, sourceOrg);
+    }
+
+    private static async Task<GdbImportBasics> GetGdbImportBasicsAsync(WADNRDbContext dbContext, GisUploadSourceOrganization sourceOrg)
+    {
+        string? stageName = null;
+        if (ProjectStage.AllLookupDictionary.TryGetValue(sourceOrg.ProjectStageDefaultID, out var projectStage))
+        {
+            stageName = projectStage.ProjectStageName;
+        }
+
+        var orgName = await dbContext.Organizations
+            .Where(o => o.OrganizationID == sourceOrg.DefaultLeadImplementerOrganizationID)
+            .Select(o => o.OrganizationName)
+            .FirstOrDefaultAsync();
+
+        return new GdbImportBasics
+        {
+            GisUploadSourceOrganizationID = sourceOrg.GisUploadSourceOrganizationID,
+            ProjectTypeDefaultName = sourceOrg.ProjectTypeDefaultName,
+            TreatmentTypeDefaultName = sourceOrg.TreatmentTypeDefaultName,
+            ImportIsFlattened = sourceOrg.ImportIsFlattened,
+            AdjustProjectTypeBasedOnTreatmentTypes = sourceOrg.AdjustProjectTypeBasedOnTreatmentTypes,
+            ProjectStageDefaultID = sourceOrg.ProjectStageDefaultID,
+            ProjectStageDefaultName = stageName,
+            DataDeriveProjectStage = sourceOrg.DataDeriveProjectStage,
+            DefaultLeadImplementerOrganizationName = orgName,
+            ImportAsDetailedLocationInsteadOfTreatments = sourceOrg.ImportAsDetailedLocationInsteadOfTreatments,
+            ImportAsDetailedLocationInAdditionToTreatments = sourceOrg.ImportAsDetailedLocationInAdditionToTreatments,
+            ProjectDescriptionDefaultText = sourceOrg.ProjectDescriptionDefaultText,
+            ApplyStartDateToProject = sourceOrg.ApplyStartDateToProject,
+            ApplyCompletedDateToProject = sourceOrg.ApplyCompletedDateToProject,
+            ApplyStartDateToTreatments = sourceOrg.ApplyStartDateToTreatments,
+            ApplyEndDateToTreatments = sourceOrg.ApplyEndDateToTreatments
+        };
+    }
+
+    public static async Task<List<GdbDefaultMappingItem>?> UpdateGdbDefaultMappingsAsync(WADNRDbContext dbContext, int programID, GdbDefaultMappingUpsertRequest request)
+    {
+        var sourceOrg = await dbContext.GisUploadSourceOrganizations
+            .FirstOrDefaultAsync(s => s.ProgramID == programID);
+
+        if (sourceOrg == null) return null;
+
+        // Remove existing mappings
+        var existing = await dbContext.GisDefaultMappings
+            .Where(m => m.GisUploadSourceOrganizationID == sourceOrg.GisUploadSourceOrganizationID)
+            .ToListAsync();
+        dbContext.GisDefaultMappings.RemoveRange(existing);
+
+        // Add new mappings
+        foreach (var mapping in request.Mappings)
+        {
+            if (string.IsNullOrWhiteSpace(mapping.GisDefaultMappingColumnName)) continue;
+
+            dbContext.GisDefaultMappings.Add(new GisDefaultMapping
+            {
+                GisUploadSourceOrganizationID = sourceOrg.GisUploadSourceOrganizationID,
+                FieldDefinitionID = mapping.FieldDefinitionID,
+                GisDefaultMappingColumnName = mapping.GisDefaultMappingColumnName
+            });
+        }
+
+        await dbContext.SaveChangesAsync();
+        return await ListGdbDefaultMappingsForProgramAsync(dbContext, sourceOrg.GisUploadSourceOrganizationID);
+    }
+
+    public static async Task<List<GdbCrosswalkItem>?> UpdateGdbCrosswalkValuesAsync(WADNRDbContext dbContext, int programID, GdbCrosswalkUpsertRequest request)
+    {
+        var sourceOrg = await dbContext.GisUploadSourceOrganizations
+            .FirstOrDefaultAsync(s => s.ProgramID == programID);
+
+        if (sourceOrg == null) return null;
+
+        // Remove existing crosswalks
+        var existing = await dbContext.GisCrossWalkDefaults
+            .Where(c => c.GisUploadSourceOrganizationID == sourceOrg.GisUploadSourceOrganizationID)
+            .ToListAsync();
+        dbContext.GisCrossWalkDefaults.RemoveRange(existing);
+
+        // Add new crosswalks
+        foreach (var crosswalk in request.Crosswalks)
+        {
+            if (string.IsNullOrWhiteSpace(crosswalk.GisCrossWalkSourceValue)) continue;
+
+            dbContext.GisCrossWalkDefaults.Add(new GisCrossWalkDefault
+            {
+                GisUploadSourceOrganizationID = sourceOrg.GisUploadSourceOrganizationID,
+                FieldDefinitionID = crosswalk.FieldDefinitionID,
+                GisCrossWalkSourceValue = crosswalk.GisCrossWalkSourceValue,
+                GisCrossWalkMappedValue = crosswalk.GisCrossWalkMappedValue
+            });
+        }
+
+        await dbContext.SaveChangesAsync();
+        return await ListGdbCrosswalkValuesForProgramAsync(dbContext, sourceOrg.GisUploadSourceOrganizationID);
+    }
 }

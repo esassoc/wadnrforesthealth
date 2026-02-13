@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WADNR.Common\WADNR.Common.csproj" />
     <ProjectReference Include="..\WADNR.Models\WADNR.Models.csproj" />
   </ItemGroup>
 

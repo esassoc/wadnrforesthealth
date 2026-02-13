@@ -1,0 +1,22 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit Default Mappings</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts"></modal-alerts>
+    <p>Enter the GDB column names that correspond to each system field. Leave blank for fields that should not be mapped.</p>
+    <div class="grid-12">
+        @for (field of visibleFields; track field.fieldDefinitionID) {
+        <div class="g-col-6">
+            <form-field [formControl]="field.control" [fieldLabel]="field.label" [type]="FormFieldType.Text"></form-field>
+        </div>
+        }
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-secondary" (click)="ref.close(null)">Cancel</button>
+    <button class="btn btn-primary" (click)="save()" [disabled]="isSubmitting">
+        @if (isSubmitting) { <span class="fa fa-spinner fa-spin"></span> } Save
+    </button>
+</div>
+</div>

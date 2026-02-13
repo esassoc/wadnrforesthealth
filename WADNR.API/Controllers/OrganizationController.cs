@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -10,6 +12,7 @@ using WADNR.API.Services.Attributes;
 using WADNR.API.Services.Authorization;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.Shared;
 
 namespace WADNR.API.Controllers;
 
@@ -18,7 +21,8 @@ namespace WADNR.API.Controllers;
 public class OrganizationController(
     WADNRDbContext dbContext,
     ILogger<OrganizationController> logger,
-    IOptions<WADNRConfiguration> configuration)
+    IOptions<WADNRConfiguration> configuration,
+    GDALAPIService gdalApiService = null)
     : SitkaController<OrganizationController>(dbContext, logger, configuration)
 {
     [HttpGet]
@@ -158,5 +162,63 @@ public class OrganizationController(
     {
         var features = await Organizations.GetProjectLocationsAsFeatureCollectionAsync(DbContext, organizationID);
         return Ok(features);
+    }
+
+    [HttpPost("{organizationID}/boundary/upload-gdb")]
+    [UserManageFeature]
+    [EntityNotFound(typeof(Organization), "organizationID")]
+    [RequestSizeLimit(500_000_000)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 500_000_000)]
+    public async Task<ActionResult<List<GdbFeatureClassPreview>>> UploadGdbForBoundary([FromRoute] int organizationID, IFormFile file)
+    {
+        if (gdalApiService == null)
+        {
+            return StatusCode(503, new { ErrorMessage = "GDB import is not configured on this server." });
+        }
+
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest(new { ErrorMessage = "A file is required." });
+        }
+
+        if (!file.FileName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+        {
+            return BadRequest(new { ErrorMessage = "File must be a .zip archive containing a File Geodatabase (.gdb)." });
+        }
+
+        var featureClasses = await gdalApiService.OgrInfoGdbToFeatureClassInfo(file);
+
+        await Organizations.ClearAndSaveBoundaryStagingAsync(DbContext, organizationID, featureClasses,
+            featureClassName => gdalApiService.Ogr2OgrGdbLayerToGeoJson(file, featureClassName));
+
+        return Ok(featureClasses);
+    }
+
+    [HttpGet("{organizationID}/boundary/staged-features")]
+    [UserManageFeature]
+    [EntityNotFound(typeof(Organization), "organizationID")]
+    public async Task<ActionResult<List<StagedFeatureLayer>>> GetStagedBoundaryFeatures([FromRoute] int organizationID)
+    {
+        var features = await Organizations.GetStagedBoundaryFeaturesAsync(DbContext, organizationID);
+        return Ok(features);
+    }
+
+    [HttpPost("{organizationID}/boundary/approve-gdb")]
+    [UserManageFeature]
+    [EntityNotFound(typeof(Organization), "organizationID")]
+    public async Task<IActionResult> ApproveGdbForBoundary([FromRoute] int organizationID, [FromBody] SinglePolygonApproveRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.SelectedGeometryWkt))
+        {
+            return BadRequest(new { ErrorMessage = "A geometry selection is required." });
+        }
+
+        var success = await Organizations.ApproveBoundaryAsync(DbContext, organizationID, request.SelectedGeometryWkt);
+        if (!success)
+        {
+            return NotFound();
+        }
+
+        return Ok();
     }
 }
