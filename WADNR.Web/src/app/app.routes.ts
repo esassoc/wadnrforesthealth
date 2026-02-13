@@ -70,10 +70,11 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/dnr-upland-regions/dnr-upland-region-detail.component").then((m) => m.DNRUplandRegionDetailComponent),
     },
     { path: "find-your-forester", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
-    { path: "focus-areas", title: "Focus Areas", loadComponent: () => import("./pages/focus-areas/focus-areas.component").then((m) => m.FocusAreasComponent) },
+    { path: "focus-areas", title: "Focus Areas", canActivate: [authGuard], loadComponent: () => import("./pages/focus-areas/focus-areas.component").then((m) => m.FocusAreasComponent) },
     {
         path: `focus-areas/:${routeParams.focusAreaID}`,
         title: "Focus Area Detail",
+        canActivate: [authGuard],
         loadComponent: () => import("./pages/focus-areas/focus-area-detail/focus-area-detail.component").then((m) => m.FocusAreaDetailComponent),
     },
     { path: "forest-health-monitoring", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
@@ -112,6 +113,7 @@ export const routes: Routes = [
     },
     {
         path: `labels-and-definitions/:${routeParams.definitionID}`,
+        canActivate: [authGuard],
         loadComponent: () => import("./pages/field-definition-edit/field-definition-edit.component").then((m) => m.FieldDefinitionEditComponent),
     },
     {
@@ -192,23 +194,27 @@ export const routes: Routes = [
     {
         path: "roles",
         title: "Roles",
+        canActivate: [authGuard],
         loadComponent: () => import("./pages/roles/roles.component").then((m) => m.RolesComponent),
     },
     {
         path: `roles/:${routeParams.roleID}`,
         title: "Role Detail",
+        canActivate: [authGuard],
         loadComponent: () => import("./pages/roles/role-detail/role-detail.component").then((m) => m.RoleDetailComponent),
     },
-    { path: "vendors", title: "Vendors", loadComponent: () => import("./pages/vendors/vendors.component").then((m) => m.VendorsComponent) },
-    { path: "people", title: "Users and Contacts", loadComponent: () => import("./pages/people/people.component").then((m) => m.PeopleComponent) },
+    { path: "vendors", title: "Vendors", canActivate: [authGuard], loadComponent: () => import("./pages/vendors/vendors.component").then((m) => m.VendorsComponent) },
+    { path: "people", title: "Users and Contacts", canActivate: [authGuard], loadComponent: () => import("./pages/people/people.component").then((m) => m.PeopleComponent) },
     {
         path: `people/:${routeParams.personID}`,
         title: "User/Contact Detail",
+        canActivate: [authGuard],
         loadComponent: () => import("./pages/people/person-detail/person-detail.component").then((m) => m.PersonDetailComponent),
     },
     {
         path: `vendors/:${routeParams.vendorID}`,
         title: "Vendor Detail",
+        canActivate: [authGuard],
         loadComponent: () => import("./pages/vendors/vendor-detail/vendor-detail.component").then((m) => m.VendorDetailComponent),
     },
     { path: "projects", title: "Full Project List", loadComponent: () => import("./pages/projects/projects.component").then((m) => m.ProjectsComponent) },
@@ -300,6 +306,7 @@ export const routes: Routes = [
     {
         path: "organization-and-relationship-types",
         title: "Organization Types & Relationship Types",
+        canActivate: [authGuard],
         loadComponent: () => import("./pages/admin/organization-and-relationship-types/organization-and-relationship-types.component").then((m) => m.OrganizationAndRelationshipTypesComponent),
     },
     { path: "pending-projects", title: "Pending Projects", canActivate: [authGuard], loadComponent: () => import("./pages/pending-projects/pending-projects.component").then((m) => m.PendingProjectsComponent) },
@@ -315,12 +322,13 @@ export const routes: Routes = [
     { path: "map-layers", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "jobs", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "json-apis", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
-    { path: "reports/projects", title: "Project Reports", loadComponent: () => import("./pages/reports/project-reports/project-reports.component").then((m) => m.ProjectReportsComponent) },
-    { path: "reports/ipr", title: "IPR Reports", loadComponent: () => import("./pages/reports/ipr-reports/ipr-reports.component").then((m) => m.IprReportsComponent) },
-    { path: "reports", title: "Manage Report Templates", loadComponent: () => import("./pages/reports/reports.component").then((m) => m.ReportsComponent) },
+    { path: "reports/projects", title: "Project Reports", canActivate: [authGuard], loadComponent: () => import("./pages/reports/project-reports/project-reports.component").then((m) => m.ProjectReportsComponent) },
+    { path: "reports/ipr", title: "IPR Reports", canActivate: [authGuard], loadComponent: () => import("./pages/reports/ipr-reports/ipr-reports.component").then((m) => m.IprReportsComponent) },
+    { path: "reports", title: "Manage Report Templates", canActivate: [authGuard], loadComponent: () => import("./pages/reports/reports.component").then((m) => m.ReportsComponent) },
     {
         path: "gis-bulk-import/:attemptID",
         title: "GIS Bulk Import",
+        canActivate: [authGuard],
         loadComponent: () => import("./pages/admin/gis-bulk-import/gis-bulk-import-outlet.component").then((m) => m.GisBulkImportOutletComponent),
         children: [
             { path: "", redirectTo: "instructions", pathMatch: "full" },
