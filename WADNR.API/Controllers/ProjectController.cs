@@ -48,6 +48,14 @@ public class ProjectController(
         return Ok(projects);
     }
 
+    [HttpGet("pending")]
+    [ProjectPendingViewFeature]
+    public async Task<ActionResult<IEnumerable<PendingProjectGridRow>>> ListPending()
+    {
+        var projects = await Projects.ListPendingAsGridRowForUserAsync(DbContext, CallingUser);
+        return Ok(projects);
+    }
+
     [HttpGet("{projectID}")]
     [AllowAnonymous]
     [ProjectViewFeature]

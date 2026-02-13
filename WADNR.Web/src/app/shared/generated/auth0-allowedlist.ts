@@ -28,7 +28,7 @@ const ANON_EXACT: ExactMap = {
 
 const SECURED_EXACT: ExactMap = {
   'DELETE': [],
-  'GET': ["/focus-areas","/gis-bulk-import/source-organizations","/people","/people/lookup","/report-templates","/report-templates/models","/roles","/vendors","/vendors/search"],
+  'GET': ["/focus-areas","/gis-bulk-import/source-organizations","/people","/people/lookup","/projects/pending","/report-templates","/report-templates/models","/roles","/vendors","/vendors/search"],
   'POST': ["/agreements","/classifications","/counties","/dnr-upland-regions","/fund-sources","/gis-bulk-import/attempts","/interaction-events","/invoice-payment-requests","/invoices","/organization-types","/organizations","/priority-landscapes","/programs","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/relationship-types","/report-templates","/report-templates/generate-reports","/sitkacapture/generate-pdf","/support-requests","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
   'PUT': [],
 };

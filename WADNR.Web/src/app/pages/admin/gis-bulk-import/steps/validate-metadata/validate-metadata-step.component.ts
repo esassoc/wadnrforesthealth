@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { AsyncPipe, DecimalPipe } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { BehaviorSubject, filter, forkJoin, Observable, shareReplay, switchMap, tap } from "rxjs";
@@ -21,7 +21,7 @@ import { IFeature } from "src/app/shared/generated/model/i-feature";
 @Component({
     selector: "gis-validate-metadata-step",
     standalone: true,
-    imports: [AsyncPipe, DecimalPipe, ReactiveFormsModule, FormFieldComponent, HybridMapGridComponent, GenericFeatureCollectionLayerComponent],
+    imports: [AsyncPipe, ReactiveFormsModule, FormFieldComponent, HybridMapGridComponent, GenericFeatureCollectionLayerComponent],
     templateUrl: "./validate-metadata-step.component.html",
 })
 export class ValidateMetadataStepComponent implements OnInit {
@@ -82,7 +82,7 @@ export class ValidateMetadataStepComponent implements OnInit {
     constructor(
         private gisBulkImportService: GisBulkImportService,
         private alertService: AlertService,
-        private router: Router,
+        private router: Router
     ) {}
 
     ngOnInit(): void {
@@ -94,7 +94,7 @@ export class ValidateMetadataStepComponent implements OnInit {
                     defaults: this.gisBulkImportService.getDefaultMappingsGisBulkImport(attemptID),
                     features: this.gisBulkImportService.getFeaturesGisBulkImport(attemptID),
                     geojson: this.gisBulkImportService.getFeaturesGeoJsonGisBulkImport(attemptID),
-                }),
+                })
             ),
             tap(({ attributes, defaults, features, geojson }) => {
                 this.attributeOptions = [
@@ -123,7 +123,7 @@ export class ValidateMetadataStepComponent implements OnInit {
                 this.featureCollection = geojson;
             }),
             switchMap(() => [true]),
-            shareReplay({ bufferSize: 1, refCount: true }),
+            shareReplay({ bufferSize: 1, refCount: true })
         );
     }
 
@@ -137,7 +137,8 @@ export class ValidateMetadataStepComponent implements OnInit {
         if (defaults.LeadImplementerMetadataAttributeID) this.leadImplementerControl.setValue(defaults.LeadImplementerMetadataAttributeID);
         if (defaults.FootprintAcresMetadataAttributeID) this.footprintAcresControl.setValue(defaults.FootprintAcresMetadataAttributeID);
         if (defaults.PrivateLandownerMetadataAttributeID) this.privateLandownerControl.setValue(defaults.PrivateLandownerMetadataAttributeID);
-        if (defaults.TreatmentDetailedActivityTypeMetadataAttributeID) this.treatmentDetailedActivityTypeControl.setValue(defaults.TreatmentDetailedActivityTypeMetadataAttributeID);
+        if (defaults.TreatmentDetailedActivityTypeMetadataAttributeID)
+            this.treatmentDetailedActivityTypeControl.setValue(defaults.TreatmentDetailedActivityTypeMetadataAttributeID);
         if (defaults.TreatedAcresMetadataAttributeID) this.treatedAcresControl.setValue(defaults.TreatedAcresMetadataAttributeID);
         if (defaults.PruningAcresMetadataAttributeID) this.pruningAcresControl.setValue(defaults.PruningAcresMetadataAttributeID);
         if (defaults.ThinningAcresMetadataAttributeID) this.thinningAcresControl.setValue(defaults.ThinningAcresMetadataAttributeID);

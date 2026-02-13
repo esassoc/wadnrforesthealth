@@ -877,6 +877,45 @@ public static class Projects
     }
 
     /// <summary>
+    /// Lists all pending projects visible to the calling user as grid rows.
+    /// Applies global pending visibility filtering.
+    /// </summary>
+    public static async Task<List<PendingProjectGridRow>> ListPendingAsGridRowForUserAsync(
+        WADNRDbContext dbContext,
+        PersonDetail? callingUser)
+    {
+        var query = ProjectVisibility.ApplyGlobalPendingVisibilityFilter(dbContext.Projects, callingUser);
+
+        var rows = await query
+            .AsNoTracking()
+            .OrderBy(x => x.ProjectName)
+            .Select(ProjectProjections.AsPendingGridRow)
+            .ToListAsync();
+
+        // Populate LastUpdatedDate in-memory from ProjectUpdateBatches
+        var projectIds = rows.Select(r => r.ProjectID).ToList();
+        if (projectIds.Count > 0)
+        {
+            var lastUpdatedByProject = await dbContext.ProjectUpdateBatches
+                .AsNoTracking()
+                .Where(b => projectIds.Contains(b.ProjectID))
+                .GroupBy(b => b.ProjectID)
+                .Select(g => new { ProjectID = g.Key, LastUpdateDate = g.Max(b => b.LastUpdateDate) })
+                .ToDictionaryAsync(x => x.ProjectID, x => x.LastUpdateDate);
+
+            foreach (var r in rows)
+            {
+                if (lastUpdatedByProject.TryGetValue(r.ProjectID, out var lastUpdate))
+                {
+                    r.LastUpdatedDate = lastUpdate;
+                }
+            }
+        }
+
+        return rows;
+    }
+
+    /// <summary>
     /// Lists projects with no simple location visible to the calling user.
     /// </summary>
     public static async Task<List<ProjectSimpleTree>> ListWithNoSimpleLocationAsProjectSimpleTreeForUserAsync(

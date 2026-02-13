@@ -116,6 +116,41 @@ public static class ProjectVisibility
     }
 
     /// <summary>
+    /// Applies visibility filtering for the global pending projects list (not org-scoped).
+    /// Anonymous/Unassigned → empty. Elevated → all pending. Others → own org's pending only.
+    /// </summary>
+    public static IQueryable<Project> ApplyGlobalPendingVisibilityFilter(
+        IQueryable<Project> query,
+        PersonDetail? user)
+    {
+        // Anonymous or Unassigned cannot see pending projects
+        if (user == null || user.IsAnonymousOrUnassigned)
+        {
+            return query.Where(p => false);
+        }
+
+        var pendingBase = query.Where(p =>
+            PendingStatusIds.Contains(p.ProjectApprovalStatusID) &&
+            !p.ProjectType.LimitVisibilityToAdmin);
+
+        // Elevated users see all pending projects
+        if (user.HasElevatedProjectAccess)
+        {
+            return pendingBase;
+        }
+
+        // CanViewAdminLimitedProjects or Normal users: own org's pending only
+        if (user.OrganizationID.HasValue)
+        {
+            var orgId = user.OrganizationID.Value;
+            return pendingBase.Where(p =>
+                p.ProjectOrganizations.Any(po => po.OrganizationID == orgId));
+        }
+
+        return query.Where(p => false);
+    }
+
+    /// <summary>
     /// Checks if a user can view a specific project (for single-entity endpoints).
     /// </summary>
     /// <param name="user">The calling user (null for anonymous).</param>

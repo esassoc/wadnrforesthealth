@@ -1,4 +1,5 @@
 import { Routes } from "@angular/router";
+import { authGuard } from "./shared/guards/auth.guard";
 import { projectEditGuard } from "./shared/guards/project-edit.guard";
 
 export const routeParams = {
@@ -301,7 +302,7 @@ export const routes: Routes = [
         title: "Organization Types & Relationship Types",
         loadComponent: () => import("./pages/admin/organization-and-relationship-types/organization-and-relationship-types.component").then((m) => m.OrganizationAndRelationshipTypesComponent),
     },
-    { path: "pending-projects", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    { path: "pending-projects", title: "Pending Projects", canActivate: [authGuard], loadComponent: () => import("./pages/pending-projects/pending-projects.component").then((m) => m.PendingProjectsComponent) },
     { path: "featured-projects", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "project-updates", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "homepage-configuration", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },

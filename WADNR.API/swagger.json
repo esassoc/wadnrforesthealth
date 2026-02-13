@@ -6991,6 +6991,45 @@
         "x-anonymous": true
       }
     },
+    "/projects/pending": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListPending_Project",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PendingProjectGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PendingProjectGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PendingProjectGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects/{projectID}": {
       "get": {
         "tags": [
@@ -21360,6 +21399,93 @@
           "VendorID": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PendingProjectGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectType": {
+            "$ref": "#/components/schemas/ProjectTypeLookupItem"
+          },
+          "ProjectStage": {
+            "$ref": "#/components/schemas/ProjectStageLookupItem"
+          },
+          "ProjectApprovalStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectApprovalStatusName": {
+            "type": "string",
+            "nullable": true
+          },
+          "LeadImplementerOrganization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "Programs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProgramLookupItem"
+            },
+            "nullable": true
+          },
+          "PriorityLandscape": {
+            "$ref": "#/components/schemas/PriorityLandscapeLookupItem"
+          },
+          "County": {
+            "$ref": "#/components/schemas/CountyLookupItem"
+          },
+          "ProjectInitiationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "SubmittedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastUpdatedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
             "nullable": true
           }
         },

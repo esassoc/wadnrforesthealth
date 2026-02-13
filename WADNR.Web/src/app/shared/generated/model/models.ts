@@ -130,6 +130,7 @@ export * from './organization-type-grid-row';
 export * from './organization-type-lookup-item';
 export * from './organization-type-upsert-request';
 export * from './organization-upsert-request';
+export * from './pending-project-grid-row';
 export * from './person-detail';
 export * from './person-first-name-last-name';
 export * from './person-grid-row';
