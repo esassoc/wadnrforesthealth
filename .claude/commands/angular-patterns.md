@@ -61,6 +61,40 @@ export class EntityDetailComponent {
 
 ---
 
+## Route Guards
+
+**Every route MUST have a `canActivate` guard that matches the API controller's authorization attribute.**
+
+When adding a route to `app.routes.ts`, check the corresponding API controller's auth decorator and apply the correct guard:
+
+| API Controller Attribute | Route Guard |
+|--------------------------|-------------|
+| `[AllowAnonymous]` | None (public) |
+| `[Authorize]`, `[NormalUserFeature]`, `[VendorViewFeature]`, `[PageContentManageFeature]`, `[AdminFeature]`, or any other auth attribute | `canActivate: [authGuard]` |
+| Project create/edit workflows | `canActivate: [projectEditGuard]` |
+
+Guards are in `WADNR.Web/src/app/shared/guards/`.
+
+```typescript
+// CORRECT: API controller has [NormalUserFeature] — route is guarded
+{
+    path: "focus-areas",
+    title: "Focus Areas",
+    canActivate: [authGuard],
+    loadComponent: () => import("./pages/focus-areas/focus-areas.component").then((m) => m.FocusAreasComponent),
+},
+
+// WRONG: API controller has [NormalUserFeature] but route has no guard
+// Unauthenticated users will see a broken page with 401/403 errors
+{
+    path: "focus-areas",
+    title: "Focus Areas",
+    loadComponent: () => import("./pages/focus-areas/focus-areas.component").then((m) => m.FocusAreasComponent),
+},
+```
+
+---
+
 ## Template Pattern
 
 Use `@if` with async pipe for observable data:
