@@ -108,7 +108,95 @@ public static class FundSourceAllocationProjections
         FundSourceAllocationPriorityName = x.FundSourceAllocationPriority != null ? x.FundSourceAllocationPriority.FundSourceAllocationPriorityNumber.ToString() : null,
         FundSourceAllocationPriorityColor = x.FundSourceAllocationPriority != null ? x.FundSourceAllocationPriority.FundSourceAllocationPriorityColor : null,
         HasFundFSPs = x.HasFundFSPs,
-        ProjectCount = x.ProjectFundSourceAllocationRequests.Select(p => p.ProjectID).Distinct().Count()
+        ProjectCount = x.ProjectFundSourceAllocationRequests.Select(p => p.ProjectID).Distinct().Count(),
+        FundSourceManagerName = x.FundSourceManager != null
+            ? x.FundSourceManager.FirstName + " " + x.FundSourceManager.LastName
+            : null,
+        ProgramManagerNames = string.Join(", ",
+            x.FundSourceAllocationProgramManagers
+                .Select(pm => pm.Person.FirstName + " " + pm.Person.LastName)),
+        FundSourceStatusID = x.FundSource.FundSourceStatusID,
+        DivisionID = x.DivisionID,
+        FederalFundCodeAbbrev = x.FederalFundCode != null
+            ? x.FederalFundCode.FederalFundCodeAbbrev : null,
+        ProgramIndexProjectCodeDisplay = string.Join(", ",
+            x.FundSourceAllocationProgramIndexProjectCodes
+                .Select(y => y.ProgramIndex.ProgramIndexCode
+                    + (y.ProjectCode != null ? " / " + y.ProjectCode.ProjectCodeName : "")))
+    };
+
+    public static readonly Expression<Func<FundSourceAllocationBudgetLineItem, FundSourceAllocationBudgetLineItemGridRow>> AsBudgetLineItemGridRow = x => new FundSourceAllocationBudgetLineItemGridRow
+    {
+        FundSourceAllocationBudgetLineItemID = x.FundSourceAllocationBudgetLineItemID,
+        CostTypeID = x.CostTypeID,
+        FundSourceAllocationBudgetLineItemAmount = x.FundSourceAllocationBudgetLineItemAmount,
+        FundSourceAllocationBudgetLineItemNote = x.FundSourceAllocationBudgetLineItemNote
+    };
+
+    public static readonly Expression<Func<ProjectFundSourceAllocationRequest, FundSourceAllocationProjectGridRow>> AsProjectGridRow = x => new FundSourceAllocationProjectGridRow
+    {
+        ProjectID = x.ProjectID,
+        ProjectName = x.Project.ProjectName,
+        FhtProjectNumber = x.Project.FhtProjectNumber,
+        MatchAmount = x.MatchAmount,
+        PayAmount = x.PayAmount,
+        TotalAmount = x.TotalAmount
+    };
+
+    public static readonly Expression<Func<AgreementFundSourceAllocation, FundSourceAllocationAgreementGridRow>> AsAgreementGridRow = x => new FundSourceAllocationAgreementGridRow
+    {
+        AgreementID = x.AgreementID,
+        AgreementNumber = x.Agreement.AgreementNumber,
+        AgreementTitle = x.Agreement.AgreementTitle,
+        AgreementTypeAbbrev = x.Agreement.AgreementType.AgreementTypeAbbrev,
+        OrganizationID = x.Agreement.OrganizationID,
+        OrganizationName = x.Agreement.Organization.OrganizationName,
+        StartDate = x.Agreement.StartDate,
+        EndDate = x.Agreement.EndDate,
+        AgreementAmount = x.Agreement.AgreementAmount
+    };
+
+    public static readonly Expression<Func<FundSourceAllocationChangeLog, FundSourceAllocationChangeLogGridRow>> AsChangeLogGridRow = x => new FundSourceAllocationChangeLogGridRow
+    {
+        FundSourceAllocationChangeLogID = x.FundSourceAllocationChangeLogID,
+        OldValue = x.FundSourceAllocationAmountOldValue,
+        NewValue = x.FundSourceAllocationAmountNewValue,
+        Note = x.FundSourceAllocationAmountNote,
+        ChangePersonID = x.ChangePersonID,
+        ChangePersonName = x.ChangePerson.FirstName + " " + x.ChangePerson.LastName,
+        ChangeDate = x.ChangeDate
+    };
+
+    public static readonly Expression<Func<FundSourceAllocationFileResource, FundSourceAllocationFileGridRow>> AsFileGridRow = x => new FundSourceAllocationFileGridRow
+    {
+        FundSourceAllocationFileResourceID = x.FundSourceAllocationFileResourceID,
+        FileResourceID = x.FileResourceID,
+        FileResourceGUID = x.FileResource.FileResourceGUID,
+        DisplayName = x.DisplayName,
+        Description = x.Description,
+        OriginalBaseFilename = x.FileResource.OriginalBaseFilename,
+        FileResourceMimeTypeName = x.FileResource.FileResourceMimeType.FileResourceMimeTypeDisplayName,
+        CreateDate = x.FileResource.CreateDate
+    };
+
+    public static readonly Expression<Func<FundSourceAllocationExpenditure, FundSourceAllocationExpenditureGridRow>> AsExpenditureGridRow = x => new FundSourceAllocationExpenditureGridRow
+    {
+        FundSourceAllocationExpenditureID = x.FundSourceAllocationExpenditureID,
+        CostTypeID = x.CostTypeID,
+        Biennium = x.Biennium,
+        FiscalMonth = x.FiscalMonth,
+        CalendarYear = x.CalendarYear,
+        CalendarMonth = x.CalendarMonth,
+        ExpenditureAmount = x.ExpenditureAmount
+    };
+
+    public static readonly Expression<Func<FundSourceAllocationProgramIndexProjectCode, FundSourceAllocationProgramIndexProjectCodeItem>> AsProgramIndexProjectCodeItem = x => new FundSourceAllocationProgramIndexProjectCodeItem
+    {
+        FundSourceAllocationProgramIndexProjectCodeID = x.FundSourceAllocationProgramIndexProjectCodeID,
+        ProgramIndexID = x.ProgramIndexID,
+        ProgramIndexCode = x.ProgramIndex.ProgramIndexCode,
+        ProjectCodeID = x.ProjectCodeID,
+        ProjectCodeName = x.ProjectCode != null ? x.ProjectCode.ProjectCodeName : null
     };
 
     public static readonly Expression<Func<FundSourceAllocation, FundSourceAllocationDetail>> AsDetail = x => new FundSourceAllocationDetail
@@ -122,6 +210,11 @@ public static class FundSourceAllocationProjections
         LikelyToUse = x.LikelyToUse,
         FundSourceID = x.FundSourceID,
         FundSourceNumber = x.FundSource.FundSourceNumber,
+        FundSourceName = x.FundSource.FundSourceName,
+        FundSourceStatusID = x.FundSource.FundSourceStatusID,
+        FundSourceTypeID = x.FundSource.FundSourceTypeID,
+        FundSourceTypeName = x.FundSource.FundSourceType != null ? x.FundSource.FundSourceType.FundSourceTypeName : null,
+        CFDANumber = x.FundSource.CFDANumber,
         DNRUplandRegionID = x.DNRUplandRegionID,
         DNRUplandRegionName = x.DNRUplandRegion != null ? x.DNRUplandRegion.DNRUplandRegionName : null,
         OrganizationID = x.OrganizationID,
@@ -129,7 +222,7 @@ public static class FundSourceAllocationProjections
         FederalFundCodeID = x.FederalFundCodeID,
         FederalFundCodeName = x.FederalFundCode != null ? x.FederalFundCode.FederalFundCodeAbbrev : null,
         DivisionID = x.DivisionID,
-        DivisionName = null, // Resolved client-side in GetByIDAsDetailAsync
+        DivisionName = null, // Resolved post-query in GetByIDAsDetailAsync
         FundSourceManagerID = x.FundSourceManagerID,
         FundSourceManagerName = x.FundSourceManager != null ? x.FundSourceManager.FirstName + " " + x.FundSourceManager.LastName : null,
         FundSourceAllocationPriorityID = x.FundSourceAllocationPriorityID,
@@ -139,7 +232,23 @@ public static class FundSourceAllocationProjections
         FundSourceAllocationSourceName = x.FundSourceAllocationSource != null ? x.FundSourceAllocationSource.FundSourceAllocationSourceDisplayName : null,
         ProjectCount = x.ProjectFundSourceAllocationRequests.Select(p => p.ProjectID).Distinct().Count(),
         AgreementCount = x.AgreementFundSourceAllocations.Select(a => a.AgreementID).Distinct().Count(),
-        ProgramIndexCount = x.FundSourceAllocationProgramIndexProjectCodes.Where(p => p.ProgramIndexID != null).Select(p => p.ProgramIndexID).Distinct().Count(),
-        ProjectCodeCount = x.FundSourceAllocationProgramIndexProjectCodes.Where(p => p.ProjectCodeID != null).Select(p => p.ProjectCodeID).Distinct().Count()
+        ProgramManagers = x.FundSourceAllocationProgramManagers
+            .Select(pm => new PersonLookupItem { PersonID = pm.PersonID, FullName = pm.Person.FirstName + " " + pm.Person.LastName })
+            .ToList(),
+        LikelyToUsePeople = x.LikelyToUse == true
+            ? x.FundSourceAllocationLikelyPeople
+                .Select(lp => new PersonLookupItem { PersonID = lp.PersonID, FullName = lp.Person.FirstName + " " + lp.Person.LastName })
+                .ToList()
+            : new List<PersonLookupItem>(),
+        ProgramIndexProjectCodes = x.FundSourceAllocationProgramIndexProjectCodes
+            .Select(y => new FundSourceAllocationProgramIndexProjectCodeItem
+            {
+                FundSourceAllocationProgramIndexProjectCodeID = y.FundSourceAllocationProgramIndexProjectCodeID,
+                ProgramIndexID = y.ProgramIndexID,
+                ProgramIndexCode = y.ProgramIndex.ProgramIndexCode,
+                ProjectCodeID = y.ProjectCodeID,
+                ProjectCodeName = y.ProjectCode != null ? y.ProjectCode.ProjectCodeName : null
+            })
+            .ToList()
     };
 }

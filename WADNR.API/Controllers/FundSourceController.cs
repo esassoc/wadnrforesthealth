@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
@@ -17,7 +19,8 @@ namespace WADNR.API.Controllers;
 public class FundSourceController(
     WADNRDbContext dbContext,
     ILogger<FundSourceController> logger,
-    IOptions<WADNRConfiguration> configuration)
+    IOptions<WADNRConfiguration> configuration,
+    FileService fileService)
     : SitkaController<FundSourceController>(dbContext, logger, configuration)
 {
     [HttpGet]
@@ -26,6 +29,14 @@ public class FundSourceController(
     {
         var sources = await FundSources.ListAsGridRowAsync(DbContext);
         return Ok(sources);
+    }
+
+    [HttpGet("lookup")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<FundSourceLookupItem>>> ListLookup()
+    {
+        var items = await FundSources.ListAsLookupItemAsync(DbContext);
+        return Ok(items);
     }
 
     [HttpGet("{fundSourceID}")]
@@ -122,6 +133,33 @@ public class FundSourceController(
     {
         var files = await FundSources.ListFilesAsync(DbContext, fundSourceID);
         return Ok(files);
+    }
+
+    [HttpPost("{fundSourceID}/files")]
+    [FundSourceManageFeature]
+    [Consumes("multipart/form-data")]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<ActionResult<FundSourceFileResourceGridRow>> UploadFile(
+        [FromRoute] int fundSourceID,
+        [FromForm] string displayName,
+        [FromForm] string? description,
+        IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest("File is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(displayName) || displayName.Length > 200)
+        {
+            return BadRequest("Display name is required and must be 200 characters or less.");
+        }
+
+        var fileResource = await fileService.CreateFileResource(DbContext, file, CallingUser.PersonID);
+        await FundSources.CreateFileAsync(DbContext, fundSourceID, fileResource.FileResourceID, displayName, description);
+
+        var files = await FundSources.ListFilesAsync(DbContext, fundSourceID);
+        return Ok(files.FirstOrDefault(f => f.FileResourceID == fileResource.FileResourceID));
     }
 
     [HttpGet("{fundSourceID}/notes")]

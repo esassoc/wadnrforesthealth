@@ -97,6 +97,27 @@
     height: var(--spacing-700);
 }
 
+.multi-file-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-200);
+    margin-bottom: var(--spacing-200);
+}
+
+.multi-file-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-200);
+}
+
+.multi-file-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 // Disabled state styling
 textarea:disabled,
 input:disabled,

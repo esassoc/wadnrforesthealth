@@ -73,6 +73,7 @@ public static class FundSourceProjections
     public static readonly Expression<Func<FundSource, FundSourceLookupItem>> AsLookupItem = x => new FundSourceLookupItem
     {
         FundSourceID = x.FundSourceID,
-        FundSourceNumber = x.FundSourceNumber
+        FundSourceNumber = x.FundSourceNumber,
+        FundSourceName = x.FundSourceName
     };
 }

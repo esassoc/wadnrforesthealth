@@ -31,6 +31,14 @@ public class DNRUplandRegionController(
         return Ok(items);
     }
 
+    [HttpGet("lookup")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<DNRUplandRegionLookupItem>>> ListLookup()
+    {
+        var items = await DNRUplandRegions.ListAsLookupItemAsync(DbContext);
+        return Ok(items);
+    }
+
     [HttpGet("{dnrUplandRegionID}")]
     [AllowAnonymous]
     [EntityNotFound(typeof(DNRUplandRegion), "dnrUplandRegionID")]

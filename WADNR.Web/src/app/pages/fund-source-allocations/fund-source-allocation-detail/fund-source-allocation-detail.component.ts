@@ -1,19 +1,43 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { BehaviorSubject, distinctUntilChanged, filter, Observable, shareReplay, switchMap } from "rxjs";
+import { DialogService } from "@ngneat/dialog";
+import { CellValueChangedEvent, ColDef } from "ag-grid-community";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, shareReplay, startWith, Subject, switchMap } from "rxjs";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { PersonLinkComponent } from "src/app/shared/components/person-link/person-link.component";
+import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
+import { PieChartComponent } from "src/app/shared/components/charts/pie-chart/pie-chart.component";
+import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
+import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 
 import { FundSourceAllocationService } from "src/app/shared/generated/api/fund-source-allocation.service";
+import { FundSourceAllocationNoteService } from "src/app/shared/generated/api/fund-source-allocation-note.service";
+import { FundSourceAllocationNoteInternalService } from "src/app/shared/generated/api/fund-source-allocation-note-internal.service";
 import { FundSourceAllocationDetail } from "src/app/shared/generated/model/fund-source-allocation-detail";
+import { FundSourceAllocationBudgetLineItemGridRow } from "src/app/shared/generated/model/fund-source-allocation-budget-line-item-grid-row";
+import { FundSourceAllocationProjectGridRow } from "src/app/shared/generated/model/fund-source-allocation-project-grid-row";
+import { FundSourceAllocationAgreementGridRow } from "src/app/shared/generated/model/fund-source-allocation-agreement-grid-row";
+import { FundSourceAllocationChangeLogGridRow } from "src/app/shared/generated/model/fund-source-allocation-change-log-grid-row";
+import { FundSourceAllocationNoteGridRow } from "src/app/shared/generated/model/fund-source-allocation-note-grid-row";
+import { FundSourceAllocationNoteInternalGridRow } from "src/app/shared/generated/model/fund-source-allocation-note-internal-grid-row";
+import { FundSourceAllocationFileGridRow } from "src/app/shared/generated/model/fund-source-allocation-file-grid-row";
+import { FundSourceAllocationExpenditureGridRow } from "src/app/shared/generated/model/fund-source-allocation-expenditure-grid-row";
+import { FundSourceAllocationExpenditureSummary } from "src/app/shared/generated/model/fund-source-allocation-expenditure-summary";
+
+export interface BudgetVsActualsRow {
+    CostTypeName: string;
+    Budget: number;
+    Expenditures: number;
+    Difference: number;
+}
 
 @Component({
     selector: "fund-source-allocation-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, PersonLinkComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, PersonLinkComponent, WADNRGridComponent, PieChartComponent, FieldDefinitionComponent],
     templateUrl: "./fund-source-allocation-detail.component.html",
     styleUrls: ["./fund-source-allocation-detail.component.scss"],
 })
@@ -23,11 +47,36 @@ export class FundSourceAllocationDetailComponent {
     }
 
     private _fundSourceAllocationID$ = new BehaviorSubject<number | null>(null);
+    private refreshData$ = new Subject<void>();
 
     public fundSourceAllocationID$: Observable<number>;
     public fundSourceAllocation$: Observable<FundSourceAllocationDetail>;
+    public budgetLineItems$: Observable<FundSourceAllocationBudgetLineItemGridRow[]>;
+    public projects$: Observable<FundSourceAllocationProjectGridRow[]>;
+    public agreements$: Observable<FundSourceAllocationAgreementGridRow[]>;
+    public changeLogs$: Observable<FundSourceAllocationChangeLogGridRow[]>;
+    public notes$: Observable<FundSourceAllocationNoteGridRow[]>;
+    public internalNotes$: Observable<FundSourceAllocationNoteInternalGridRow[]>;
+    public files$: Observable<FundSourceAllocationFileGridRow[]>;
+    public expenditures$: Observable<FundSourceAllocationExpenditureGridRow[]>;
+    public expenditureSummary$: Observable<FundSourceAllocationExpenditureSummary[]>;
+    public allocationCurrentBalance$: Observable<number | null>;
+    public budgetVsActuals$: Observable<BudgetVsActualsRow[]>;
 
-    constructor(private fundSourceAllocationService: FundSourceAllocationService) {}
+    public currentAllocationID: number;
+
+    public budgetLineItemColumnDefs: ColDef<FundSourceAllocationBudgetLineItemGridRow>[];
+    public projectColumnDefs: ColDef<FundSourceAllocationProjectGridRow>[];
+    public expenditureColumnDefs: ColDef<FundSourceAllocationExpenditureGridRow>[];
+    public budgetVsActualsColumnDefs: ColDef<BudgetVsActualsRow>[];
+
+    constructor(
+        private fundSourceAllocationService: FundSourceAllocationService,
+        private noteService: FundSourceAllocationNoteService,
+        private noteInternalService: FundSourceAllocationNoteInternalService,
+        private dialogService: DialogService,
+        private utilityFunctions: UtilityFunctionsService
+    ) {}
 
     ngOnInit(): void {
         this.fundSourceAllocationID$ = this._fundSourceAllocationID$.pipe(
@@ -36,25 +85,233 @@ export class FundSourceAllocationDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.fundSourceAllocation$ = this.fundSourceAllocationID$.pipe(
-            switchMap((fundSourceAllocationID) => this.fundSourceAllocationService.getByIDFundSourceAllocation(fundSourceAllocationID)),
+        this.fundSourceAllocationID$.subscribe((id) => (this.currentAllocationID = id));
+
+        const refresh$ = this.refreshData$.pipe(startWith(undefined));
+
+        this.fundSourceAllocation$ = combineLatest([this.fundSourceAllocationID$, refresh$]).pipe(
+            switchMap(([id]) => this.fundSourceAllocationService.getByIDFundSourceAllocation(id)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        this.budgetLineItems$ = combineLatest([this.fundSourceAllocationID$, refresh$]).pipe(
+            switchMap(([id]) => this.fundSourceAllocationService.listBudgetLineItemsFundSourceAllocation(id)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.projects$ = this.fundSourceAllocationID$.pipe(
+            switchMap((id) => this.fundSourceAllocationService.listProjectsFundSourceAllocation(id)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.agreements$ = this.fundSourceAllocationID$.pipe(
+            switchMap((id) => this.fundSourceAllocationService.listAgreementsFundSourceAllocation(id)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.changeLogs$ = combineLatest([this.fundSourceAllocationID$, refresh$]).pipe(
+            switchMap(([id]) => this.fundSourceAllocationService.listChangeLogsFundSourceAllocation(id)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.notes$ = combineLatest([this.fundSourceAllocationID$, refresh$]).pipe(
+            switchMap(([id]) => this.fundSourceAllocationService.listNotesFundSourceAllocation(id)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.internalNotes$ = combineLatest([this.fundSourceAllocationID$, refresh$]).pipe(
+            switchMap(([id]) => this.fundSourceAllocationService.listNotesInternalFundSourceAllocation(id)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.files$ = combineLatest([this.fundSourceAllocationID$, refresh$]).pipe(
+            switchMap(([id]) => this.fundSourceAllocationService.listFilesFundSourceAllocation(id)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.expenditures$ = this.fundSourceAllocationID$.pipe(
+            switchMap((id) => this.fundSourceAllocationService.listExpendituresFundSourceAllocation(id)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.expenditureSummary$ = this.fundSourceAllocationID$.pipe(
+            switchMap((id) => this.fundSourceAllocationService.listExpenditureSummaryFundSourceAllocation(id)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.allocationCurrentBalance$ = combineLatest([this.budgetLineItems$, this.expenditureSummary$]).pipe(
+            map(([budgetItems, expenditureSummary]) => {
+                const totalBudget = budgetItems.reduce((sum, item) => sum + (item.FundSourceAllocationBudgetLineItemAmount ?? 0), 0);
+                const totalExpenditure = expenditureSummary.reduce((sum, item) => sum + (item.TotalAmount ?? 0), 0);
+                return totalBudget - totalExpenditure;
+            }),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.budgetVsActuals$ = combineLatest([this.budgetLineItems$, this.expenditureSummary$]).pipe(
+            map(([budgetItems, expenditureSummary]) => {
+                const costTypes = new Set<string>();
+                budgetItems.forEach((item) => costTypes.add(item.CostTypeName ?? "Unknown"));
+                expenditureSummary.forEach((item) => costTypes.add(item.CostTypeName ?? "Unknown"));
+
+                return Array.from(costTypes).map((costType) => {
+                    const budget = budgetItems
+                        .filter((item) => (item.CostTypeName ?? "Unknown") === costType)
+                        .reduce((sum, item) => sum + (item.FundSourceAllocationBudgetLineItemAmount ?? 0), 0);
+                    const expenditures = expenditureSummary
+                        .filter((item) => (item.CostTypeName ?? "Unknown") === costType)
+                        .reduce((sum, item) => sum + (item.TotalAmount ?? 0), 0);
+                    return { CostTypeName: costType, Budget: budget, Expenditures: expenditures, Difference: budget - expenditures };
+                });
+            }),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.budgetLineItemColumnDefs = [
+            this.utilityFunctions.createBasicColumnDef("Cost Type", "CostTypeName"),
+            this.utilityFunctions.createCurrencyColumnDef("Amount", "FundSourceAllocationBudgetLineItemAmount", { MaxDecimalPlacesToDisplay: 2, Editable: true }),
+            this.utilityFunctions.createBasicColumnDef("Note", "FundSourceAllocationBudgetLineItemNote", { Editable: true }),
+        ];
+
+        this.projectColumnDefs = [
+            this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", { InRouterLink: "/projects/" }),
+            this.utilityFunctions.createBasicColumnDef("Project Stage", "ProjectStageName", { CustomDropdownFilterField: "ProjectStageName" }),
+            this.utilityFunctions.createCurrencyColumnDef("Match Amount", "MatchAmount", { MaxDecimalPlacesToDisplay: 2 }),
+            this.utilityFunctions.createCurrencyColumnDef("DNR Pay Amount", "PayAmount", { MaxDecimalPlacesToDisplay: 2 }),
+            this.utilityFunctions.createCurrencyColumnDef("Total Amount", "TotalAmount", { MaxDecimalPlacesToDisplay: 2 }),
+        ];
+
+        this.expenditureColumnDefs = [
+            this.utilityFunctions.createBasicColumnDef("Cost Type", "CostTypeName", { CustomDropdownFilterField: "CostTypeName" }),
+            this.utilityFunctions.createBasicColumnDef("Biennium", "Biennium"),
+            this.utilityFunctions.createBasicColumnDef("Fiscal Month", "FiscalMonth"),
+            this.utilityFunctions.createBasicColumnDef("Calendar Year", "CalendarYear"),
+            this.utilityFunctions.createBasicColumnDef("Calendar Month", "CalendarMonth"),
+            this.utilityFunctions.createCurrencyColumnDef("Expenditure", "ExpenditureAmount", { MaxDecimalPlacesToDisplay: 2 }),
+        ];
+
+        this.budgetVsActualsColumnDefs = [
+            this.utilityFunctions.createBasicColumnDef("Cost Type", "CostTypeName"),
+            this.utilityFunctions.createCurrencyColumnDef("Budget", "Budget", { MaxDecimalPlacesToDisplay: 2 }),
+            this.utilityFunctions.createCurrencyColumnDef("Expenditures From Datamart", "Expenditures", { MaxDecimalPlacesToDisplay: 2 }),
+            this.utilityFunctions.createCurrencyColumnDef("Budget Minus Expenditures", "Difference", { MaxDecimalPlacesToDisplay: 2 }),
+        ];
+    }
+
+    openEditModal(allocation: FundSourceAllocationDetail): void {
+        import("./fund-source-allocation-edit-modal.component").then(({ FundSourceAllocationEditModalComponent }) => {
+            const dialogRef = this.dialogService.open(FundSourceAllocationEditModalComponent, {
+                data: { allocation, mode: "edit" as const },
+                size: "lg",
+            });
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (result) this.refreshData$.next();
+            });
+        });
+    }
+
+    openEditProgramIndexProjectCodesModal(allocation: FundSourceAllocationDetail): void {
+        import("./edit-program-index-project-codes-modal.component").then(({ EditProgramIndexProjectCodesModalComponent }) => {
+            const dialogRef = this.dialogService.open(EditProgramIndexProjectCodesModalComponent, {
+                data: {
+                    fundSourceAllocationID: allocation.FundSourceAllocationID,
+                    existingPairs: allocation.ProgramIndexProjectCodes ?? [],
+                },
+                size: "md",
+            });
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (result) this.refreshData$.next();
+            });
+        });
+    }
+
+    openNoteModal(fundSourceAllocationID: number, isInternal: boolean, mode: "create" | "edit" = "create", noteID?: number, existingNote?: string): void {
+        import("./fund-source-allocation-note-modal.component").then(({ FundSourceAllocationNoteModalComponent }) => {
+            const dialogRef = this.dialogService.open(FundSourceAllocationNoteModalComponent, {
+                data: { mode, fundSourceAllocationID, isInternal, noteID, existingNote },
+                size: "md",
+            });
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (result) this.refreshData$.next();
+            });
+        });
+    }
+
+    deleteNote(noteID: number, isInternal: boolean): void {
+        if (!confirm("Are you sure you want to delete this note?")) return;
+        if (isInternal) {
+            this.noteInternalService.deleteFundSourceAllocationNoteInternal(noteID).subscribe(() => this.refreshData$.next());
+        } else {
+            this.noteService.deleteFundSourceAllocationNote(noteID).subscribe(() => this.refreshData$.next());
+        }
+    }
+
+    openFileModal(fundSourceAllocationID: number): void {
+        import("./fund-source-allocation-file-modal.component").then(({ FundSourceAllocationFileModalComponent }) => {
+            const dialogRef = this.dialogService.open(FundSourceAllocationFileModalComponent, {
+                data: { fundSourceAllocationID },
+                size: "md",
+            });
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (result) this.refreshData$.next();
+            });
+        });
+    }
+
+    deleteFile(fundSourceAllocationID: number, fileResourceID: number): void {
+        if (!confirm("Are you sure you want to delete this file?")) return;
+        this.fundSourceAllocationService.deleteFileFundSourceAllocation(fundSourceAllocationID, fileResourceID).subscribe(() => this.refreshData$.next());
+    }
+
+    onBudgetLineItemChanged(event: CellValueChangedEvent): void {
+        const allItems: any[] = [];
+        event.api.forEachNode((node) =>
+            allItems.push({
+                CostTypeID: node.data.CostTypeID,
+                Amount: node.data.FundSourceAllocationBudgetLineItemAmount,
+                Note: node.data.FundSourceAllocationBudgetLineItemNote,
+            })
+        );
+        this.fundSourceAllocationService
+            .saveBudgetLineItemsFundSourceAllocation(this.currentAllocationID, { Items: allItems })
+            .subscribe(() => this.refreshData$.next());
+    }
+
+    getChartData(summary: FundSourceAllocationExpenditureSummary[]): Array<{ label: string; value: number }> {
+        return summary.map((s) => ({ label: s.CostTypeName ?? "Unknown", value: s.TotalAmount ?? 0 }));
     }
 
     formatCurrency(value: number | null | undefined): string {
-        if (value == null) return "—";
-        return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+        if (value == null) return "\u2014";
+        return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
     }
 
     formatDate(value: string | null | undefined): string {
-        if (!value) return "—";
+        if (!value) return "\u2014";
         const date = new Date(value);
-        return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+    }
+
+    formatDateTime(value: string | null | undefined): string {
+        if (!value) return "\u2014";
+        const date = new Date(value);
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const year = date.getFullYear();
+        let hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, "0");
+        const ampm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12 || 12;
+        return `${month}/${day}/${year} ${hours}:${minutes} ${ampm}`;
     }
 
     formatBoolean(value: boolean | null | undefined): string {
-        if (value == null) return "—";
+        if (value == null) return "\u2014";
         return value ? "Yes" : "No";
+    }
+
+    formatPipc(allocation: FundSourceAllocationDetail): string {
+        if (!allocation.ProgramIndexProjectCodes?.length) return "\u2014";
+        return allocation.ProgramIndexProjectCodes.map((p) => `${p.ProgramIndexCode ?? ""}-(${p.ProjectCodeName ?? "not found"})`).join(", ");
     }
 }

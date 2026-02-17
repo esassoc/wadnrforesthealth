@@ -209,6 +209,30 @@ public static class FundSources
             .ToListAsync();
     }
 
+    public static async Task<List<FundSourceLookupItem>> ListAsLookupItemAsync(WADNRDbContext dbContext)
+    {
+        return await dbContext.FundSources.AsNoTracking()
+            .OrderBy(x => x.FundSourceNumber)
+            .Select(FundSourceProjections.AsLookupItem)
+            .ToListAsync();
+    }
+
+    public static async Task<FundSourceFileResource> CreateFileAsync(
+        WADNRDbContext dbContext, int fundSourceID, int fileResourceID, string displayName, string? description)
+    {
+        var entity = new FundSourceFileResource
+        {
+            FundSourceID = fundSourceID,
+            FileResourceID = fileResourceID,
+            DisplayName = displayName,
+            Description = description
+        };
+
+        dbContext.FundSourceFileResources.Add(entity);
+        await dbContext.SaveChangesAsync();
+        return entity;
+    }
+
     public static async Task<List<FundSourceNoteInternalGridRow>> ListInternalNotesAsync(WADNRDbContext dbContext, int fundSourceID)
     {
         return await dbContext.FundSourceNoteInternals

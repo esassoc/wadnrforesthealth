@@ -17,4 +17,12 @@ public class FundSourceAllocationGridRow
     public string? FundSourceAllocationPriorityColor { get; set; }
     public bool? HasFundFSPs { get; set; }
     public int ProjectCount { get; set; }
+    public string? FundSourceManagerName { get; set; }
+    public string? ProgramManagerNames { get; set; }
+    public int? FundSourceStatusID { get; set; }
+    public string? FundSourceStatusName { get; set; }
+    public int? DivisionID { get; set; }
+    public string? DivisionName { get; set; }
+    public string? FederalFundCodeAbbrev { get; set; }
+    public string? ProgramIndexProjectCodeDisplay { get; set; }
 }

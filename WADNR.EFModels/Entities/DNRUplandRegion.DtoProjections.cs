@@ -25,4 +25,10 @@ public static class DNRUplandRegionProjections
         ProjectCount = x.ProjectRegions
             .Count(pr => pr.Project.ProjectApprovalStatusID == Projects.ApprovedStatusId && !pr.Project.ProjectType.LimitVisibilityToAdmin)
     };
+
+    public static readonly Expression<Func<DNRUplandRegion, DNRUplandRegionLookupItem>> AsLookupItem = x => new DNRUplandRegionLookupItem
+    {
+        DNRUplandRegionID = x.DNRUplandRegionID,
+        DNRUplandRegionName = x.DNRUplandRegionName
+    };
 }

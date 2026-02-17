@@ -40,6 +40,7 @@ export class FormFieldComponent {
     @Input() units: string;
     @Input() name: string;
     @Input() fieldDefinitionName: string;
+    @Input() fieldDefinitionLabelOverride: string;
     @Input() toggleHeight: string = "";
     @Input() mask: string;
     @Input() horizontal: boolean = false;
@@ -60,6 +61,7 @@ export class FormFieldComponent {
     @ViewChild("fileUploadField") fileUploadField: any;
     public fileName: string = null;
     public fileExtension: string = null;
+    public selectedFiles: File[] = [];
 
     public val: any;
     set value(val) {
@@ -81,6 +83,9 @@ export class FormFieldComponent {
 
     writeValue(value: any): void {
         this.val = value;
+        if (this.multiple && this.type === FormFieldType.File) {
+            this.selectedFiles = Array.isArray(value) ? [...value] : [];
+        }
     }
 
     registerOnChange(fn: any): void {
@@ -96,17 +101,32 @@ export class FormFieldComponent {
     }
 
     onFileChange(event: any): void {
-        let file = event.target.files[0];
-        this.value = file;
-        if (file) {
-            const name = file.name;
-            const i = name.lastIndexOf(".");
-            this.fileName = i > 0 ? name.slice(0, i) : name;
-            this.fileExtension = i > 0 ? name.slice(i) : "";
+        if (this.multiple) {
+            const newFiles: File[] = Array.from(event.target.files ?? []);
+            if (newFiles.length) {
+                this.selectedFiles = [...this.selectedFiles, ...newFiles];
+                this.value = [...this.selectedFiles];
+            }
+            // Reset native input so the same file can be re-added
+            event.target.value = "";
         } else {
-            this.fileName = null;
-            this.fileExtension = null;
+            let file = event.target.files[0];
+            this.value = file;
+            if (file) {
+                const name = file.name;
+                const i = name.lastIndexOf(".");
+                this.fileName = i > 0 ? name.slice(0, i) : name;
+                this.fileExtension = i > 0 ? name.slice(i) : "";
+            } else {
+                this.fileName = null;
+                this.fileExtension = null;
+            }
         }
+    }
+
+    removeFile(index: number): void {
+        this.selectedFiles.splice(index, 1);
+        this.value = [...this.selectedFiles];
     }
 
     onClickFileUpload(event: any): void {

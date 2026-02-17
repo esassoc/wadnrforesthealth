@@ -7,6 +7,8 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { FundSourceAllocationProgramIndexProjectCodeItem } from './fund-source-allocation-program-index-project-code-item';
+import { PersonLookupItem } from './person-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
@@ -20,6 +22,12 @@ export class FundSourceAllocationDetail {
     LikelyToUse?: boolean | null;
     FundSourceID?: number;
     FundSourceNumber?: string | null;
+    FundSourceName?: string | null;
+    FundSourceStatusID?: number | null;
+    FundSourceStatusName?: string | null;
+    FundSourceTypeID?: number | null;
+    FundSourceTypeName?: string | null;
+    CFDANumber?: string | null;
     DNRUplandRegionID?: number | null;
     DNRUplandRegionName?: string | null;
     OrganizationID?: number | null;
@@ -37,8 +45,9 @@ export class FundSourceAllocationDetail {
     FundSourceAllocationSourceName?: string | null;
     ProjectCount?: number;
     AgreementCount?: number;
-    ProgramIndexCount?: number;
-    ProjectCodeCount?: number;
+    ProgramManagers?: Array<PersonLookupItem> | null;
+    LikelyToUsePeople?: Array<PersonLookupItem> | null;
+    ProgramIndexProjectCodes?: Array<FundSourceAllocationProgramIndexProjectCodeItem> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -54,6 +63,12 @@ export interface FundSourceAllocationDetailForm {
     LikelyToUse?: FormControl<boolean>;
     FundSourceID?: FormControl<number>;
     FundSourceNumber?: FormControl<string>;
+    FundSourceName?: FormControl<string>;
+    FundSourceStatusID?: FormControl<number>;
+    FundSourceStatusName?: FormControl<string>;
+    FundSourceTypeID?: FormControl<number>;
+    FundSourceTypeName?: FormControl<string>;
+    CFDANumber?: FormControl<string>;
     DNRUplandRegionID?: FormControl<number>;
     DNRUplandRegionName?: FormControl<string>;
     OrganizationID?: FormControl<number>;
@@ -71,8 +86,9 @@ export interface FundSourceAllocationDetailForm {
     FundSourceAllocationSourceName?: FormControl<string>;
     ProjectCount?: FormControl<number>;
     AgreementCount?: FormControl<number>;
-    ProgramIndexCount?: FormControl<number>;
-    ProjectCodeCount?: FormControl<number>;
+    ProgramManagers?: FormControl<Array<PersonLookupItem>>;
+    LikelyToUsePeople?: FormControl<Array<PersonLookupItem>>;
+    ProgramIndexProjectCodes?: FormControl<Array<FundSourceAllocationProgramIndexProjectCodeItem>>;
 }
 
 export class FundSourceAllocationDetailFormControls { 
@@ -157,6 +173,66 @@ export class FundSourceAllocationDetailFormControls {
         }
     );
     public static FundSourceNumber = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceStatusID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceStatusName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceTypeID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceTypeName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CFDANumber = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -336,7 +412,7 @@ export class FundSourceAllocationDetailFormControls {
             ],
         }
     );
-    public static ProgramIndexCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static ProgramManagers = (value: FormControlState<Array<PersonLookupItem>> | Array<PersonLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<PersonLookupItem>>(
         value,
         formControlOptions ?? 
         {
@@ -346,7 +422,17 @@ export class FundSourceAllocationDetailFormControls {
             ],
         }
     );
-    public static ProjectCodeCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static LikelyToUsePeople = (value: FormControlState<Array<PersonLookupItem>> | Array<PersonLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<PersonLookupItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProgramIndexProjectCodes = (value: FormControlState<Array<FundSourceAllocationProgramIndexProjectCodeItem>> | Array<FundSourceAllocationProgramIndexProjectCodeItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<FundSourceAllocationProgramIndexProjectCodeItem>>(
         value,
         formControlOptions ?? 
         {

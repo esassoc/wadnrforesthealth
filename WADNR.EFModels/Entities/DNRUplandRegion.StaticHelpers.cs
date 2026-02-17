@@ -15,6 +15,14 @@ public static class DNRUplandRegions
         return entities;
     }
 
+    public static async Task<List<DNRUplandRegionLookupItem>> ListAsLookupItemAsync(WADNRDbContext dbContext)
+    {
+        return await dbContext.DNRUplandRegions.AsNoTracking()
+            .OrderBy(x => x.DNRUplandRegionName)
+            .Select(DNRUplandRegionProjections.AsLookupItem)
+            .ToListAsync();
+    }
+
     public static async Task<DNRUplandRegionDetail?> GetByIDAsDetailAsync(WADNRDbContext dbContext, int dnrUplandRegionID)
     {
         var entity = await dbContext.DNRUplandRegions

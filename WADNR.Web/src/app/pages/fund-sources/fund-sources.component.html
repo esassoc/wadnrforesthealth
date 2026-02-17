@@ -1,5 +1,37 @@
 <page-header pageTitle="Fund Sources" [customRichTextTypeID]="customRichTextTypeID"></page-header>
 
 <div class="page-body">
-    <wadnr-grid [rowData]="fundSources$ | async" [columnDefs]="columnDefs" downloadFileName="fund-sources" [gridTitle]="'Fund Sources'"></wadnr-grid>
+    <wadnr-grid
+        [rowData]="fundSources$ | async"
+        [columnDefs]="columnDefs"
+        downloadFileName="fund-sources"
+        [gridTitle]="'Fund Sources'"
+        [defaultRowSelection]="'singleRow'"
+        (selectionChanged)="onFundSourceSelected($event)">
+        <div customGridActionsRight>
+            <button class="btn btn-sm btn-primary" (click)="createNewFundSource()">
+                <span class="fas fa-plus"></span> Create New
+            </button>
+        </div>
+    </wadnr-grid>
+
+    <div class="mt-3">
+        @if (noMatchingAllocations) {
+            <div class="alert alert-info">
+                No allocations found for fund source {{ selectedFundSourceNumber }}. Showing all allocations.
+            </div>
+        }
+        <wadnr-grid
+            [rowData]="allAllocations"
+            [columnDefs]="allocationColumnDefs"
+            downloadFileName="fund-source-allocations"
+            [gridTitle]="allocationGridTitle"
+            (gridReady)="onAllocationGridReady($event)">
+            <div customGridActionsRight>
+                <button class="btn btn-sm btn-primary" (click)="createNewAllocation()">
+                    <span class="fas fa-plus"></span> Create New
+                </button>
+            </div>
+        </wadnr-grid>
+    </div>
 </div>

@@ -13,6 +13,12 @@ public class FundSourceAllocationDetail
     // Fund Source
     public int FundSourceID { get; set; }
     public string FundSourceNumber { get; set; } = string.Empty;
+    public string? FundSourceName { get; set; }
+    public int? FundSourceStatusID { get; set; }
+    public string? FundSourceStatusName { get; set; }
+    public int? FundSourceTypeID { get; set; }
+    public string? FundSourceTypeName { get; set; }
+    public string? CFDANumber { get; set; }
 
     // DNR Upland Region
     public int? DNRUplandRegionID { get; set; }
@@ -46,6 +52,11 @@ public class FundSourceAllocationDetail
     // Related counts
     public int ProjectCount { get; set; }
     public int AgreementCount { get; set; }
-    public int ProgramIndexCount { get; set; }
-    public int ProjectCodeCount { get; set; }
+
+    // People
+    public List<PersonLookupItem> ProgramManagers { get; set; } = new();
+    public List<PersonLookupItem> LikelyToUsePeople { get; set; } = new();
+
+    // Program Index / Project Code pairs
+    public List<FundSourceAllocationProgramIndexProjectCodeItem> ProgramIndexProjectCodes { get; set; } = new();
 }

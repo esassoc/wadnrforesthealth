@@ -84,7 +84,6 @@ export const routes: Routes = [
         title: "Fund Source Detail",
         loadComponent: () => import("./pages/fund-sources/fund-source-detail/fund-source-detail.component").then((m) => m.FundSourceDetailComponent),
     },
-    { path: "fund-source-allocations", title: "Fund Source Allocations", loadComponent: () => import("./pages/fund-source-allocations/fund-source-allocations.component").then((m) => m.FundSourceAllocationsComponent) },
     {
         path: `fund-source-allocations/:${routeParams.fundSourceAllocationID}`,
         title: "Fund Source Allocation Detail",

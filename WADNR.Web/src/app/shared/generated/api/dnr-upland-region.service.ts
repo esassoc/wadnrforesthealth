@@ -19,6 +19,8 @@ import { DNRUplandRegionDetail } from '../model/dnr-upland-region-detail';
 // @ts-ignore
 import { DNRUplandRegionGridRow } from '../model/dnr-upland-region-grid-row';
 // @ts-ignore
+import { DNRUplandRegionLookupItem } from '../model/dnr-upland-region-lookup-item';
+// @ts-ignore
 import { DNRUplandRegionUpsertRequest } from '../model/dnr-upland-region-upsert-request';
 // @ts-ignore
 import { FocusAreaGridRow } from '../model/focus-area-grid-row';
@@ -365,6 +367,57 @@ export class DNRUplandRegionService extends BaseService {
         let localVarPath = `/dnr-upland-regions/${this.configuration.encodeParam({name: "dnrUplandRegionID", value: dnrUplandRegionID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/fund-source-allocations`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Array<FundSourceAllocationDNRUplandRegionDetailGridRow>>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public listLookupDNRUplandRegion(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<DNRUplandRegionLookupItem>>;
+    public listLookupDNRUplandRegion(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<DNRUplandRegionLookupItem>>>;
+    public listLookupDNRUplandRegion(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<DNRUplandRegionLookupItem>>>;
+    public listLookupDNRUplandRegion(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/dnr-upland-regions/lookup`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<DNRUplandRegionLookupItem>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

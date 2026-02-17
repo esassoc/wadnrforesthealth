@@ -26,6 +26,14 @@ export class FundSourceAllocationGridRow {
     FundSourceAllocationPriorityColor?: string | null;
     HasFundFSPs?: boolean | null;
     ProjectCount?: number;
+    FundSourceManagerName?: string | null;
+    ProgramManagerNames?: string | null;
+    FundSourceStatusID?: number | null;
+    FundSourceStatusName?: string | null;
+    DivisionID?: number | null;
+    DivisionName?: string | null;
+    FederalFundCodeAbbrev?: string | null;
+    ProgramIndexProjectCodeDisplay?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -47,6 +55,14 @@ export interface FundSourceAllocationGridRowForm {
     FundSourceAllocationPriorityColor?: FormControl<string>;
     HasFundFSPs?: FormControl<boolean>;
     ProjectCount?: FormControl<number>;
+    FundSourceManagerName?: FormControl<string>;
+    ProgramManagerNames?: FormControl<string>;
+    FundSourceStatusID?: FormControl<number>;
+    FundSourceStatusName?: FormControl<string>;
+    DivisionID?: FormControl<number>;
+    DivisionName?: FormControl<string>;
+    FederalFundCodeAbbrev?: FormControl<string>;
+    ProgramIndexProjectCodeDisplay?: FormControl<string>;
 }
 
 export class FundSourceAllocationGridRowFormControls { 
@@ -191,6 +207,86 @@ export class FundSourceAllocationGridRowFormControls {
         }
     );
     public static ProjectCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceManagerName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProgramManagerNames = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceStatusID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceStatusName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static DivisionID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static DivisionName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FederalFundCodeAbbrev = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProgramIndexProjectCodeDisplay = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
