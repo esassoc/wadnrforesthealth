@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, signal } from "@angular/core";
 import { AsyncPipe, CommonModule, DecimalPipe } from "@angular/common";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { map, Observable, of, shareReplay, startWith, switchMap } from "rxjs";
@@ -53,7 +53,7 @@ export class UpdateLocationSimpleStepComponent extends UpdateWorkflowStepBase im
     public map: L.Map;
     public layerControl: any;
     public marker: L.Marker | null = null;
-    public mapIsReady = false;
+    public mapIsReady = signal(false);
 
     private _geographicInfo$ = new BehaviorSubject<{
         priorityLandscapeName: string | null;
@@ -126,10 +126,10 @@ export class UpdateLocationSimpleStepComponent extends UpdateWorkflowStepBase im
             projectLocationNotes: data.ProjectLocationNotes,
         });
 
-        if (data.Latitude && data.Longitude && this.mapIsReady) {
+        if (data.Latitude && data.Longitude && this.mapIsReady()) {
             this.addMarker(data.Latitude, data.Longitude);
             this.updateGeographicInfo(data.Latitude, data.Longitude);
-        } else if (this.mapIsReady) {
+        } else if (this.mapIsReady()) {
             this.clearMarker();
             this._geographicInfo$.next({ priorityLandscapeName: null, dnrUplandRegionName: null, countyName: null, isLoading: false });
         }
@@ -170,7 +170,7 @@ export class UpdateLocationSimpleStepComponent extends UpdateWorkflowStepBase im
     handleMapLoad(event: WADNRMapInitEvent): void {
         this.map = event.map;
         this.layerControl = event.layerControl;
-        this.mapIsReady = true;
+        this.mapIsReady.set(true);
 
         this.map.on("click", (e: L.LeafletMouseEvent) => {
             if (this.isPointOnMapMode && !this.isSaving) {

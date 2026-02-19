@@ -584,7 +584,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ProjectBasicsStep>> GetCreateBasicsStep([FromRoute] int projectID)
     {
-        var dto = await ProjectWorkflowSteps.GetBasicsStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetBasicsStepAsync(DbContext, projectID);
         if (dto == null)
         {
             return NotFound();
@@ -597,7 +597,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ProjectBasicsStep>> SaveCreateBasicsStep([FromRoute] int projectID, [FromBody] ProjectBasicsStepRequest request)
     {
-        var dto = await ProjectWorkflowSteps.SaveBasicsStepAsync(DbContext, projectID, request, CallingUser.PersonID);
+        var dto = await ProjectCreateWorkflowSteps.SaveBasicsStepAsync(DbContext, projectID, request, CallingUser.PersonID);
         if (dto == null)
         {
             return NotFound();
@@ -609,7 +609,7 @@ public class ProjectController(
     [ProjectEditFeature]
     public async Task<ActionResult<ProjectBasicsStep>> CreateProjectFromBasicsStep([FromBody] ProjectBasicsStepRequest request)
     {
-        var dto = await ProjectWorkflowSteps.CreateProjectFromBasicsStepAsync(DbContext, request, CallingUser.PersonID);
+        var dto = await ProjectCreateWorkflowSteps.CreateProjectFromBasicsStepAsync(DbContext, request, CallingUser.PersonID);
         return CreatedAtAction(nameof(GetCreateBasicsStep), new { projectID = dto.ProjectID }, dto);
     }
 
@@ -622,7 +622,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<LocationSimpleStep>> GetCreateLocationSimpleStep([FromRoute] int projectID)
     {
-        var dto = await ProjectWorkflowSteps.GetLocationSimpleStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetLocationSimpleStepAsync(DbContext, projectID);
         if (dto == null)
         {
             return NotFound();
@@ -635,7 +635,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<LocationSimpleStep>> SaveCreateLocationSimpleStep([FromRoute] int projectID, [FromBody] LocationSimpleStepRequest request)
     {
-        var dto = await ProjectWorkflowSteps.SaveLocationSimpleStepAsync(DbContext, projectID, request);
+        var dto = await ProjectCreateWorkflowSteps.SaveLocationSimpleStepAsync(DbContext, projectID, request);
         if (dto == null)
         {
             return NotFound();
@@ -652,7 +652,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<LocationDetailedStep>> GetCreateLocationDetailedStep([FromRoute] int projectID)
     {
-        var dto = await ProjectWorkflowSteps.GetLocationDetailedStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetLocationDetailedStepAsync(DbContext, projectID);
         if (dto == null)
         {
             return NotFound();
@@ -665,7 +665,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<LocationDetailedStep>> SaveCreateLocationDetailedStep([FromRoute] int projectID, [FromBody] LocationDetailedStepRequest request)
     {
-        var dto = await ProjectWorkflowSteps.SaveLocationDetailedStepAsync(DbContext, projectID, request);
+        var dto = await ProjectCreateWorkflowSteps.SaveLocationDetailedStepAsync(DbContext, projectID, request);
         if (dto == null)
         {
             return NotFound();
@@ -736,7 +736,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<LocationDetailedStep>> ApproveGdbForCreateWorkflow([FromRoute] int projectID, [FromBody] GdbApproveRequest request)
     {
-        var dto = await ProjectWorkflowSteps.ApproveGdbImportAsync(DbContext, projectID, CallingUser.PersonID, request);
+        var dto = await ProjectCreateWorkflowSteps.ApproveGdbImportAsync(DbContext, projectID, CallingUser.PersonID, request);
         if (dto == null)
         {
             return NotFound();
@@ -753,7 +753,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<GeographicAssignmentStep>> GetCreatePriorityLandscapesStep([FromRoute] int projectID)
     {
-        var dto = await ProjectWorkflowSteps.GetPriorityLandscapesStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetPriorityLandscapesStepAsync(DbContext, projectID);
         if (dto == null)
         {
             return NotFound();
@@ -766,7 +766,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<GeographicAssignmentStep>> SaveCreatePriorityLandscapesStep([FromRoute] int projectID, [FromBody] GeographicOverrideRequest request)
     {
-        var dto = await ProjectWorkflowSteps.SavePriorityLandscapesStepAsync(DbContext, projectID, request);
+        var dto = await ProjectCreateWorkflowSteps.SavePriorityLandscapesStepAsync(DbContext, projectID, request);
         if (dto == null)
         {
             return NotFound();
@@ -779,7 +779,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<GeographicAssignmentStep>> GetCreateDnrUplandRegionsStep([FromRoute] int projectID)
     {
-        var dto = await ProjectWorkflowSteps.GetDnrUplandRegionsStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetDnrUplandRegionsStepAsync(DbContext, projectID);
         if (dto == null)
         {
             return NotFound();
@@ -792,7 +792,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<GeographicAssignmentStep>> SaveCreateDnrUplandRegionsStep([FromRoute] int projectID, [FromBody] GeographicOverrideRequest request)
     {
-        var dto = await ProjectWorkflowSteps.SaveDnrUplandRegionsStepAsync(DbContext, projectID, request);
+        var dto = await ProjectCreateWorkflowSteps.SaveDnrUplandRegionsStepAsync(DbContext, projectID, request);
         if (dto == null)
         {
             return NotFound();
@@ -805,7 +805,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<GeographicAssignmentStep>> GetCreateCountiesStep([FromRoute] int projectID)
     {
-        var dto = await ProjectWorkflowSteps.GetCountiesStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetCountiesStepAsync(DbContext, projectID);
         if (dto == null)
         {
             return NotFound();
@@ -818,7 +818,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<GeographicAssignmentStep>> SaveCreateCountiesStep([FromRoute] int projectID, [FromBody] GeographicOverrideRequest request)
     {
-        var dto = await ProjectWorkflowSteps.SaveCountiesStepAsync(DbContext, projectID, request);
+        var dto = await ProjectCreateWorkflowSteps.SaveCountiesStepAsync(DbContext, projectID, request);
         if (dto == null)
         {
             return NotFound();
@@ -835,7 +835,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ProjectOrganizationsStep>> GetCreateOrganizationsStep([FromRoute] int projectID)
     {
-        var dto = await ProjectWorkflowSteps.GetOrganizationsStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetOrganizationsStepAsync(DbContext, projectID);
         if (dto == null)
         {
             return NotFound();
@@ -848,7 +848,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ProjectOrganizationsStep>> SaveCreateOrganizationsStep([FromRoute] int projectID, [FromBody] ProjectOrganizationsStepRequest request)
     {
-        var dto = await ProjectWorkflowSteps.SaveOrganizationsStepAsync(DbContext, projectID, request);
+        var dto = await ProjectCreateWorkflowSteps.SaveOrganizationsStepAsync(DbContext, projectID, request);
         if (dto == null)
         {
             return NotFound();
@@ -865,7 +865,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ProjectContactsStep>> GetCreateContactsStep([FromRoute] int projectID)
     {
-        var dto = await ProjectWorkflowSteps.GetContactsStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetContactsStepAsync(DbContext, projectID);
         if (dto == null)
         {
             return NotFound();
@@ -878,7 +878,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ProjectContactsStep>> SaveCreateContactsStep([FromRoute] int projectID, [FromBody] ProjectContactsStepRequest request)
     {
-        var dto = await ProjectWorkflowSteps.SaveContactsStepAsync(DbContext, projectID, request);
+        var dto = await ProjectCreateWorkflowSteps.SaveContactsStepAsync(DbContext, projectID, request);
         if (dto == null)
         {
             return NotFound();
@@ -895,7 +895,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ExpectedFundingStep>> GetCreateExpectedFundingStep([FromRoute] int projectID)
     {
-        var dto = await ProjectWorkflowSteps.GetExpectedFundingStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetExpectedFundingStepAsync(DbContext, projectID);
         if (dto == null)
         {
             return NotFound();
@@ -908,7 +908,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ExpectedFundingStep>> SaveCreateExpectedFundingStep([FromRoute] int projectID, [FromBody] ExpectedFundingStepRequest request)
     {
-        var dto = await ProjectWorkflowSteps.SaveExpectedFundingStepAsync(DbContext, projectID, request);
+        var dto = await ProjectCreateWorkflowSteps.SaveExpectedFundingStepAsync(DbContext, projectID, request);
         if (dto == null)
         {
             return NotFound();
@@ -925,7 +925,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ProjectClassificationsStep>> GetCreateClassificationsStep([FromRoute] int projectID)
     {
-        var dto = await ProjectWorkflowSteps.GetClassificationsStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetClassificationsStepAsync(DbContext, projectID);
         if (dto == null)
         {
             return NotFound();
@@ -938,7 +938,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ProjectClassificationsStep>> SaveCreateClassificationsStep([FromRoute] int projectID, [FromBody] ProjectClassificationsStepRequest request)
     {
-        var dto = await ProjectWorkflowSteps.SaveClassificationsStepAsync(DbContext, projectID, request);
+        var dto = await ProjectCreateWorkflowSteps.SaveClassificationsStepAsync(DbContext, projectID, request);
         if (dto == null)
         {
             return NotFound();
@@ -955,7 +955,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<WorkflowStateTransitionResponse>> SubmitCreateForApproval([FromRoute] int projectID, [FromBody] WorkflowStateTransitionRequest? request)
     {
-        var response = await ProjectWorkflowSteps.SubmitForApprovalAsync(DbContext, projectID, CallingUser.PersonID, request?.Comment);
+        var response = await ProjectCreateWorkflowSteps.SubmitForApprovalAsync(DbContext, projectID, CallingUser.PersonID, request?.Comment);
         if (!response.Success)
         {
             return BadRequest(response);
@@ -978,7 +978,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<WorkflowStateTransitionResponse>> ApproveCreate([FromRoute] int projectID, [FromBody] WorkflowStateTransitionRequest? request)
     {
-        var response = await ProjectWorkflowSteps.ApproveAsync(DbContext, projectID, CallingUser.PersonID, request?.Comment);
+        var response = await ProjectCreateWorkflowSteps.ApproveAsync(DbContext, projectID, CallingUser.PersonID, request?.Comment);
         if (!response.Success)
         {
             return BadRequest(response);
@@ -1001,7 +1001,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<WorkflowStateTransitionResponse>> ReturnCreate([FromRoute] int projectID, [FromBody] WorkflowStateTransitionRequest? request)
     {
-        var response = await ProjectWorkflowSteps.ReturnAsync(DbContext, projectID, CallingUser.PersonID, request?.Comment);
+        var response = await ProjectCreateWorkflowSteps.ReturnAsync(DbContext, projectID, CallingUser.PersonID, request?.Comment);
         if (!response.Success)
         {
             return BadRequest(response);
@@ -1024,7 +1024,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<WorkflowStateTransitionResponse>> RejectCreate([FromRoute] int projectID, [FromBody] WorkflowStateTransitionRequest? request)
     {
-        var response = await ProjectWorkflowSteps.RejectAsync(DbContext, projectID, CallingUser.PersonID, request?.Comment);
+        var response = await ProjectCreateWorkflowSteps.RejectAsync(DbContext, projectID, CallingUser.PersonID, request?.Comment);
         if (!response.Success)
         {
             return BadRequest(response);
@@ -1047,7 +1047,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<WorkflowStateTransitionResponse>> WithdrawCreate([FromRoute] int projectID, [FromBody] WorkflowStateTransitionRequest? request)
     {
-        var response = await ProjectWorkflowSteps.WithdrawAsync(DbContext, projectID, CallingUser.PersonID, request?.Comment);
+        var response = await ProjectCreateWorkflowSteps.WithdrawAsync(DbContext, projectID, CallingUser.PersonID, request?.Comment);
         if (!response.Success)
         {
             return BadRequest(response);
@@ -2467,7 +2467,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<LocationSimpleStep>> GetLocationSimple([FromRoute] int projectID)
     {
-        var dto = await ProjectWorkflowSteps.GetLocationSimpleStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetLocationSimpleStepAsync(DbContext, projectID);
         if (dto == null)
         {
             return NotFound();
@@ -2497,7 +2497,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<LocationDetailedStep>> GetLocationDetailed([FromRoute] int projectID)
     {
-        var dto = await ProjectWorkflowSteps.GetLocationDetailedStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetLocationDetailedStepAsync(DbContext, projectID);
         if (dto == null)
         {
             return NotFound();
@@ -2604,7 +2604,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<GeographicAssignmentStep>> GetPriorityLandscapes([FromRoute] int projectID)
     {
-        var dto = await ProjectWorkflowSteps.GetPriorityLandscapesStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetPriorityLandscapesStepAsync(DbContext, projectID);
         if (dto == null)
         {
             return NotFound();
@@ -2617,7 +2617,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<GeographicAssignmentStep>> SavePriorityLandscapes([FromRoute] int projectID, [FromBody] GeographicOverrideRequest request)
     {
-        var dto = await ProjectWorkflowSteps.SavePriorityLandscapesStepAsync(DbContext, projectID, request);
+        var dto = await ProjectCreateWorkflowSteps.SavePriorityLandscapesStepAsync(DbContext, projectID, request);
         if (dto == null)
         {
             return NotFound();
@@ -2630,7 +2630,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<GeographicAssignmentStep>> GetDnrUplandRegions([FromRoute] int projectID)
     {
-        var dto = await ProjectWorkflowSteps.GetDnrUplandRegionsStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetDnrUplandRegionsStepAsync(DbContext, projectID);
         if (dto == null)
         {
             return NotFound();
@@ -2643,7 +2643,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<GeographicAssignmentStep>> SaveDnrUplandRegions([FromRoute] int projectID, [FromBody] GeographicOverrideRequest request)
     {
-        var dto = await ProjectWorkflowSteps.SaveDnrUplandRegionsStepAsync(DbContext, projectID, request);
+        var dto = await ProjectCreateWorkflowSteps.SaveDnrUplandRegionsStepAsync(DbContext, projectID, request);
         if (dto == null)
         {
             return NotFound();
@@ -2656,7 +2656,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<GeographicAssignmentStep>> GetCounties([FromRoute] int projectID)
     {
-        var dto = await ProjectWorkflowSteps.GetCountiesStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetCountiesStepAsync(DbContext, projectID);
         if (dto == null)
         {
             return NotFound();
@@ -2669,7 +2669,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<GeographicAssignmentStep>> SaveCounties([FromRoute] int projectID, [FromBody] GeographicOverrideRequest request)
     {
-        var dto = await ProjectWorkflowSteps.SaveCountiesStepAsync(DbContext, projectID, request);
+        var dto = await ProjectCreateWorkflowSteps.SaveCountiesStepAsync(DbContext, projectID, request);
         if (dto == null)
         {
             return NotFound();

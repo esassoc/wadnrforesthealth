@@ -1134,7 +1134,7 @@ public static class Projects
 
         await dbContext.SaveChangesAsync();
 
-        return await ProjectWorkflowSteps.GetLocationSimpleStepAsync(dbContext, projectID);
+        return await ProjectCreateWorkflowSteps.GetLocationSimpleStepAsync(dbContext, projectID);
     }
 
     #endregion
@@ -1211,7 +1211,7 @@ public static class Projects
 
         await dbContext.SaveChangesAsync();
 
-        return await ProjectWorkflowSteps.GetLocationDetailedStepAsync(dbContext, projectID);
+        return await ProjectCreateWorkflowSteps.GetLocationDetailedStepAsync(dbContext, projectID);
     }
 
     public static async Task<LocationDetailedStep?> ApproveGdbImportDirectEditAsync(WADNRDbContext dbContext, int projectID, int personID, GdbApproveRequest request)
@@ -1286,7 +1286,7 @@ public static class Projects
         await dbContext.SaveChangesAsync();
 
         // No AutoAssignGeographicRegionsAsync call — direct edit preserves manual geographic selections
-        return await ProjectWorkflowSteps.GetLocationDetailedStepAsync(dbContext, projectID);
+        return await ProjectCreateWorkflowSteps.GetLocationDetailedStepAsync(dbContext, projectID);
     }
 
     #endregion

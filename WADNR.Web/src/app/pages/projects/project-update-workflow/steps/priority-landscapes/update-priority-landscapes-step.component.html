@@ -80,7 +80,7 @@
                         <div class="g-col-7">
                             <div class="map-container" [class.saving]="state.saving">
                                 <wadnr-map (onMapLoad)="handleMapLoad($event)">
-                                    @if (mapIsReady) {
+                                    @if (mapIsReady()) {
                                         <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
                                         <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
                                             [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"

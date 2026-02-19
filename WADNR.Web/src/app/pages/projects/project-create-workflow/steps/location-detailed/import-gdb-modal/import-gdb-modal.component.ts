@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
@@ -53,7 +53,7 @@ export class ImportGdbModalComponent {
 
     map: L.Map;
     layerControl: L.Control.Layers;
-    mapIsReady = false;
+    mapIsReady = signal(false);
     private previewColors = ["#3388ff", "#ff6633", "#33cc66", "#cc33ff", "#ffcc00"];
 
     get data(): ImportGdbModalData {
@@ -119,7 +119,7 @@ export class ImportGdbModalComponent {
     handleMapReady(event: WADNRMapInitEvent): void {
         this.map = event.map;
         this.layerControl = event.layerControl;
-        this.mapIsReady = true;
+        this.mapIsReady.set(true);
         this.renderPreviewLayers();
     }
 

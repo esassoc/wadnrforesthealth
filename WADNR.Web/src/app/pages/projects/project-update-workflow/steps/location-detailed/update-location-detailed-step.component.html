@@ -23,7 +23,7 @@
             <!-- Map (always rendered so Leaflet initializes in parallel with API call) -->
             <div class="map-container mb-3">
                 <wadnr-map [mapHeight]="'400px'" (onMapLoad)="handleMapLoad($event)">
-                    @if (mapIsReady) {
+                    @if (mapIsReady()) {
                         <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
                         <generic-wms-wfs-layer
                             [map]="map"

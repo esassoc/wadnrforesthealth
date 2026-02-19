@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, signal } from "@angular/core";
 import { AsyncPipe, CommonModule, LowerCasePipe } from "@angular/common";
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, skip, startWith, Subscription, switchMap, take } from "rxjs";
 import { catchError } from "rxjs/operators";
@@ -100,7 +100,7 @@ export class UpdateLocationDetailedStepComponent extends UpdateWorkflowStepBase 
     public map: L.Map;
     public layerControl: any;
     public featureGroup: L.FeatureGroup;
-    public mapIsReady = false;
+    public mapIsReady = signal(false);
     private mapReady$ = new BehaviorSubject<boolean>(false);
     private subs = new Subscription();
 
@@ -257,7 +257,7 @@ export class UpdateLocationDetailedStepComponent extends UpdateWorkflowStepBase 
         this.map = event.map;
         this.layerControl = event.layerControl;
         this.featureGroup = L.featureGroup().addTo(this.map);
-        this.mapIsReady = true;
+        this.mapIsReady.set(true);
 
         this.setupGeomanControls();
 

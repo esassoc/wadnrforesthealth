@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, signal } from "@angular/core";
 import { AsyncPipe, CommonModule } from "@angular/common";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { map, Observable, of, shareReplay, startWith, switchMap, combineLatest, BehaviorSubject } from "rxjs";
@@ -58,7 +58,7 @@ export class PriorityLandscapesStepComponent extends CreateWorkflowStepBase impl
     // Map
     public map: L.Map;
     public layerControl: any;
-    public mapIsReady = false;
+    public mapIsReady = signal(false);
     private projectMarker: L.Marker | null = null;
     private selectedLayer: L.TileLayer.WMS | null = null;
     private projectLatitude: number | null = null;
@@ -113,7 +113,7 @@ export class PriorityLandscapesStepComponent extends CreateWorkflowStepBase impl
                 if (locationData) {
                     this.projectLatitude = locationData.Latitude;
                     this.projectLongitude = locationData.Longitude;
-                    if (this.mapIsReady) {
+                    if (this.mapIsReady()) {
                         this.addProjectMarker();
                     }
                 }
@@ -205,7 +205,7 @@ export class PriorityLandscapesStepComponent extends CreateWorkflowStepBase impl
     handleMapLoad(event: WADNRMapInitEvent): void {
         this.map = event.map;
         this.layerControl = event.layerControl;
-        this.mapIsReady = true;
+        this.mapIsReady.set(true);
 
         // Add base layer showing all priority landscapes
         const baseLayer = L.tileLayer.wms(`${environment.geoserverMapServiceUrl}/wms`, {

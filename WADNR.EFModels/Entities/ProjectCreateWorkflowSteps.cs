@@ -9,7 +9,7 @@ namespace WADNR.EFModels.Entities;
 /// <summary>
 /// Static helper methods for the ProjectCreate workflow steps.
 /// </summary>
-public static class ProjectWorkflowSteps
+public static class ProjectCreateWorkflowSteps
 {
     #region Basics Step
 

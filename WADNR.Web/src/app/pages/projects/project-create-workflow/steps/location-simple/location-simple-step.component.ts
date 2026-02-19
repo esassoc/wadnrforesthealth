@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, signal } from "@angular/core";
 import { AsyncPipe, CommonModule, DecimalPipe } from "@angular/common";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { map, Observable, of, shareReplay, startWith, switchMap } from "rxjs";
@@ -53,7 +53,7 @@ export class LocationSimpleStepComponent extends CreateWorkflowStepBase implemen
     public map: L.Map;
     public layerControl: any;
     public marker: L.Marker | null = null;
-    public mapIsReady = false;
+    public mapIsReady = signal(false);
 
     // Location information (dynamically queried from WFS)
     private _geographicInfo$ = new BehaviorSubject<{
@@ -129,7 +129,7 @@ export class LocationSimpleStepComponent extends CreateWorkflowStepBase implemen
 
         // If we have coordinates, add marker after map is ready
         // Geographic info will be fetched from WFS when map loads
-        if (data.Latitude && data.Longitude && this.mapIsReady) {
+        if (data.Latitude && data.Longitude && this.mapIsReady()) {
             this.addMarker(data.Latitude, data.Longitude);
             this.updateGeographicInfo(data.Latitude, data.Longitude);
         }
@@ -172,7 +172,7 @@ export class LocationSimpleStepComponent extends CreateWorkflowStepBase implemen
     handleMapLoad(event: WADNRMapInitEvent): void {
         this.map = event.map;
         this.layerControl = event.layerControl;
-        this.mapIsReady = true;
+        this.mapIsReady.set(true);
 
         // Add click handler to place marker (only in PointOnMap mode and not saving)
         this.map.on("click", (e: L.LeafletMouseEvent) => {

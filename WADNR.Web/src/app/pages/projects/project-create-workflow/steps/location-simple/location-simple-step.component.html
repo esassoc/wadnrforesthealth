@@ -106,7 +106,7 @@
                         <p class="text-muted mb-2">To zoom, hold down Shift and drag a rectangle.</p>
                         <div class="map-container" style="height: 500px" [class.saving]="state.saving">
                             <wadnr-map (onMapLoad)="handleMapLoad($event)">
-                                @if (mapIsReady) {
+                                @if (mapIsReady()) {
                                     <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
                                     <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
                                         [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"
