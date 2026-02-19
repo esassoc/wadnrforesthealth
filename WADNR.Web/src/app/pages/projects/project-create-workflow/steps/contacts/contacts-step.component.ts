@@ -164,6 +164,7 @@ export class ContactsStepComponent extends CreateWorkflowStepBase implements OnI
                 },
             ];
         }
+        this.setFormDirty();
     }
 
     // For multi-select types - auto-add on selection
@@ -195,6 +196,7 @@ export class ContactsStepComponent extends CreateWorkflowStepBase implements OnI
 
         // Reset the dropdown
         cbt.formControl.reset();
+        this.setFormDirty();
     }
 
     removeContact(cbt: ContactsByType, personID: number): void {
@@ -208,6 +210,7 @@ export class ContactsStepComponent extends CreateWorkflowStepBase implements OnI
                 cbt.availablePeopleOptions = [...cbt.availablePeopleOptions, personOption];
             }
         }
+        this.setFormDirty();
     }
 
     onSave(navigate: boolean): void {

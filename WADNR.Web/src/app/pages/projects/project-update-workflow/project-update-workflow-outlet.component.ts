@@ -11,15 +11,17 @@ import { WorkflowNavItemComponent } from "src/app/shared/components/workflow-nav
 import { WorkflowNavGroupComponent } from "src/app/shared/components/workflow-nav/workflow-nav-group/workflow-nav-group.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { DropdownToggleDirective } from "src/app/shared/directives/dropdown-toggle.directive";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { FeedbackModalComponent } from "src/app/shared/components/feedback-modal/feedback-modal.component";
+import { UpdateHistoryModalComponent, UpdateHistoryModalData } from "../update-history-modal/update-history-modal.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { UpdateWorkflowProgressResponse } from "src/app/shared/generated/model/update-workflow-progress-response";
 import { ProjectUpdateStateEnum } from "src/app/shared/generated/enum/project-update-state-enum";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
-import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { WorkflowProgressService } from "src/app/shared/services/workflow-progress.service";
+import { AsyncConfirmModalComponent, AsyncConfirmModalData } from "src/app/shared/components/async-confirm-modal/async-confirm-modal.component";
 import { ReturnWithCommentsModalComponent, ReturnWithCommentsModalData } from "./return-with-comments-modal/return-with-comments-modal.component";
 
 export interface WorkflowStep {
@@ -50,6 +52,7 @@ export interface WorkflowStepGroup {
         WorkflowNavGroupComponent,
         IconComponent,
         DropdownToggleDirective,
+        ButtonLoadingDirective,
     ],
     templateUrl: "./project-update-workflow-outlet.component.html",
     styleUrls: ["./project-update-workflow-outlet.component.scss"],
@@ -68,8 +71,12 @@ export class ProjectUpdateWorkflowOutletComponent implements OnInit {
 
     public projectID$: Observable<number>;
     public progress$: Observable<UpdateWorkflowProgressResponse | null>;
+    public formDirty$: Observable<boolean>;
 
     public ProjectUpdateStateEnum = ProjectUpdateStateEnum;
+
+    // Loading state for return action (uses custom modal, not async-confirm)
+    public isReturning$ = new BehaviorSubject<boolean>(false);
 
     public stepGroups: WorkflowStepGroup[] = [
         {
@@ -110,7 +117,6 @@ export class ProjectUpdateWorkflowOutletComponent implements OnInit {
         private projectService: ProjectService,
         private router: Router,
         private alertService: AlertService,
-        private confirmService: ConfirmService,
         private dialogService: DialogService,
         private workflowProgressService: WorkflowProgressService
     ) {}
@@ -120,6 +126,8 @@ export class ProjectUpdateWorkflowOutletComponent implements OnInit {
             filter((id): id is number => id != null && !Number.isNaN(id)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        this.formDirty$ = this.workflowProgressService.formDirty$;
 
         this.progress$ = this._projectID$.pipe(
             filter((id): id is number => id != null && !Number.isNaN(id)),
@@ -134,76 +142,55 @@ export class ProjectUpdateWorkflowOutletComponent implements OnInit {
     }
 
     submitForApproval(projectID: number, projectName: string): void {
-        this.confirmService
-            .confirm({
-                title: "Submit Update for review",
-                message: `Are you sure you want to submit the updates for Project "${projectName}" to the reviewer?`,
-                buttonTextYes: "Continue",
-                buttonTextNo: "Cancel",
-                buttonClassYes: "btn-primary",
-            })
-            .then((confirmed) => {
-                if (confirmed) {
-                    this.projectService.submitUpdateForApprovalProject(projectID).subscribe({
-                        next: () => {
-                            this.alertService.pushAlert(new Alert("Update submitted for approval successfully.", AlertContext.Success, true));
-                            this.workflowProgressService.triggerRefresh();
-                        },
-                        error: (err) => {
-                            const message = err?.error?.ErrorMessage ?? err?.error ?? "Failed to submit update.";
-                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                        },
-                    });
+        const data: AsyncConfirmModalData = {
+            title: "Submit Update for review",
+            message: `Are you sure you want to submit the updates for Project "${projectName}" to the reviewer?`,
+            buttonTextYes: "Continue",
+            buttonClassYes: "btn-primary",
+            actionFn: () => this.projectService.submitUpdateForApprovalProject(projectID),
+        };
+        this.dialogService
+            .open(AsyncConfirmModalComponent, { data, size: "md" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.alertService.pushAlert(new Alert("Update submitted for approval successfully.", AlertContext.Success, true));
+                    this.router.navigate(["/projects", projectID]);
                 }
             });
     }
 
     deleteUpdate(projectID: number, projectName: string): void {
-        this.confirmService
-            .confirm({
-                title: "Delete Update",
-                message: `Are you sure you want to delete all pending updates for Project "${projectName}"? This cannot be undone.`,
-                buttonTextYes: "Delete",
-                buttonTextNo: "Cancel",
-                buttonClassYes: "btn-danger",
-            })
-            .then((confirmed) => {
-                if (confirmed) {
-                    this.projectService.deleteUpdateBatchProject(projectID).subscribe({
-                        next: () => {
-                            this.alertService.pushAlert(new Alert("Update deleted successfully.", AlertContext.Success, true));
-                            this.router.navigate(["/projects", projectID]);
-                        },
-                        error: (err) => {
-                            const message = err?.error?.ErrorMessage ?? err?.error ?? "Failed to delete update.";
-                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                        },
-                    });
+        const data: AsyncConfirmModalData = {
+            title: "Delete Update",
+            message: `Are you sure you want to delete all pending updates for Project "${projectName}"? This cannot be undone.`,
+            buttonTextYes: "Delete",
+            buttonClassYes: "btn-danger",
+            actionFn: () => this.projectService.deleteUpdateBatchProject(projectID),
+        };
+        this.dialogService
+            .open(AsyncConfirmModalComponent, { data, size: "md" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.alertService.pushAlert(new Alert("Update deleted successfully.", AlertContext.Success, true));
+                    this.router.navigate(["/projects", projectID]);
                 }
             });
     }
 
     approveUpdate(projectID: number, projectName: string): void {
-        this.confirmService
-            .confirm({
-                title: "Approve Update",
-                message: `Are you sure you want to approve the updates for Project "${projectName}"? This will apply all changes to the project.`,
-                buttonTextYes: "Approve",
-                buttonTextNo: "Cancel",
-                buttonClassYes: "btn-primary",
-            })
-            .then((confirmed) => {
-                if (confirmed) {
-                    this.projectService.approveUpdateProject(projectID).subscribe({
-                        next: () => {
-                            this.alertService.pushAlert(new Alert("Update approved and changes applied successfully.", AlertContext.Success, true));
-                            this.router.navigate(["/projects", projectID]);
-                        },
-                        error: (err) => {
-                            const message = err?.error?.ErrorMessage ?? err?.error ?? "Failed to approve update.";
-                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                        },
-                    });
+        const data: AsyncConfirmModalData = {
+            title: "Approve Update",
+            message: `Are you sure you want to approve the updates for Project "${projectName}"? This will apply all changes to the project.`,
+            buttonTextYes: "Approve",
+            buttonClassYes: "btn-primary",
+            actionFn: () => this.projectService.approveUpdateProject(projectID),
+        };
+        this.dialogService
+            .open(AsyncConfirmModalComponent, { data, size: "md" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.alertService.pushAlert(new Alert("Update approved and changes applied successfully.", AlertContext.Success, true));
+                    this.router.navigate(["/projects", projectID]);
                 }
             });
     }
@@ -214,12 +201,14 @@ export class ProjectUpdateWorkflowOutletComponent implements OnInit {
             .open(ReturnWithCommentsModalComponent, { data, size: "lg" })
             .afterClosed$.subscribe((result) => {
                 if (result) {
+                    this.isReturning$.next(true);
                     this.projectService.returnUpdateProject(projectID, result).subscribe({
                         next: () => {
                             this.alertService.pushAlert(new Alert("Update returned for revisions.", AlertContext.Success, true));
-                            this.workflowProgressService.triggerRefresh();
+                            this.router.navigate(["/projects", projectID]);
                         },
                         error: (err) => {
+                            this.isReturning$.next(false);
                             const message = err?.error?.ErrorMessage ?? err?.error ?? "Failed to return update.";
                             this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
                         },
@@ -297,6 +286,15 @@ export class ProjectUpdateWorkflowOutletComponent implements OnInit {
                 currentPageUrl: window.location.href,
             },
             size: "md",
+        });
+    }
+
+    openHistoryModal(projectID: number): void {
+        this.projectService.listUpdateBatchHistoryProject(projectID).subscribe((entries) => {
+            this.dialogService.open(UpdateHistoryModalComponent, {
+                data: { entries } as UpdateHistoryModalData,
+                size: "md",
+            });
         });
     }
 

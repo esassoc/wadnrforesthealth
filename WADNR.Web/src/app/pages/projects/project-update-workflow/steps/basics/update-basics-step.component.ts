@@ -156,6 +156,8 @@ export class UpdateBasicsStepComponent extends UpdateWorkflowStepBase implements
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.trackFormDirty(this.form);
+
         const stepData$ = this.stepRefresh$.pipe(
             switchMap((id) => {
                 if (id == null || Number.isNaN(id)) {
@@ -259,6 +261,7 @@ export class UpdateBasicsStepComponent extends UpdateWorkflowStepBase implements
         const newIDs = currentIDs.filter((id) => id !== programID);
         this.form.patchValue({ programIDs: newIDs });
         this.selectedPrograms = this.selectedPrograms.filter((p) => p.ProgramID !== programID);
+        this.setFormDirty();
     }
 
     private formatDateForInput(dateStr: string): string {

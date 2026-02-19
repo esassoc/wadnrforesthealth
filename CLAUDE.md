@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Variables
 
-These variables are used by migration skills (`.claude/commands/*.md`). When copying skills to a new project, update these values to match your project structure.
+These variables are used by migration skills (`.claude/skills/`). When copying skills to a new project, update these values to match your project structure.
 
 | Variable | Value | Description |
 |----------|-------|-------------|
@@ -143,33 +143,29 @@ Follow these steps when migrating any entity/page:
 
 ---
 
-## Context Loading
+## Rules (Auto-Loaded Conventions)
 
-Load pattern skills based on where you're working:
+Rules in `.claude/rules/` are auto-loaded based on context. They define "how we do things."
 
-| Working in... | Load Skill | Why |
-|---------------|------------|-----|
-| WADNR.API, WADNR.EFModels, WADNR.Models, WADNR.Common | `/dotnet-patterns` | API conventions, EF query rules |
-| WADNR.Web | `/angular-patterns` | Component patterns, Bootstrap replacement |
-| WADNR.Database (`.sql` files, migrations) | `/database-patterns` | Migration scripts, scaffold pipeline |
-| Test files (`*.Tests`, `*.spec.ts`) | `/write-tests` | MSTest and Jasmine patterns |
-| **Plan mode** for implementation work | Load relevant pattern skills first | Ensures plan follows conventions |
-
-When in doubt, load the relevant pattern skill before writing code.
+| Rule | Applies When |
+|------|-------------|
+| `angular-patterns` | Working in WADNR.Web |
+| `dotnet-patterns` | Working in WADNR.API, EFModels, Models, Common |
+| `database-patterns` | Working with .sql files or schema changes |
+| `write-tests` | Creating unit tests |
 
 ---
 
-## Skill Quick Reference
+## Skills (On-Demand Workflows)
+
+Skills in `.claude/skills/` are invoked via `/skill-name`. They define step-by-step procedures.
 
 | Skill | When to Use |
 |-------|-------------|
-| `/dotnet-patterns` | Writing C# API code, controllers, static helpers, projections |
-| `/angular-patterns` | Writing Angular components, templates, services |
-| `/database-patterns` | Schema changes, migrations, code generation pipeline |
-| `/write-tests` | Creating MSTest or Jasmine unit tests |
 | `/migrate-page` | Full page migration from MVC to Angular |
-| `/migrate-grid` | Creating data grids with `<wadnr-grid>` |
-| `/migrate-map` | Creating maps with Leaflet |
+| `/migrate-grid` | Data grids with `<wadnr-grid>` |
+| `/migrate-map` | Maps with Leaflet |
 | `/migrate-workflow` | Multi-step wizard workflows |
 | `/crud-modal` | Create/Edit modal dialog forms |
-| `/check-migration-status` | Review MVC to Angular migration progress |
+| `/add-scrollspy-toc` | Scrollspy Table of Contents sidebar |
+| `/check-migration-status` | MVC to Angular migration audit |

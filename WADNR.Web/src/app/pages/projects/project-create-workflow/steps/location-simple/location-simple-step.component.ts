@@ -105,6 +105,8 @@ export class LocationSimpleStepComponent extends CreateWorkflowStepBase implemen
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.trackFormDirty(this.form);
+
         this.vm$ = locationData$.pipe(
             map((data) => {
                 if (data) {
@@ -180,6 +182,7 @@ export class LocationSimpleStepComponent extends CreateWorkflowStepBase implemen
                     latitude: e.latlng.lat,
                     longitude: e.latlng.lng,
                 });
+                this.setFormDirty();
                 // Query geographic areas for the clicked location
                 this.updateGeographicInfo(e.latlng.lat, e.latlng.lng);
             }
@@ -214,6 +217,7 @@ export class LocationSimpleStepComponent extends CreateWorkflowStepBase implemen
                 latitude: pos.lat,
                 longitude: pos.lng,
             });
+            this.setFormDirty();
             // Query geographic areas for the new marker position
             this.updateGeographicInfo(pos.lat, pos.lng);
         });

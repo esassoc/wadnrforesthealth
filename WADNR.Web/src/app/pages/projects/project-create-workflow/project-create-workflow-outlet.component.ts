@@ -70,6 +70,7 @@ export class ProjectCreateWorkflowOutletComponent implements OnInit {
 
     // Combined view model for the template
     public vm$: Observable<{ isNewProject: boolean; progress: CreateWorkflowProgressResponse | null }>;
+    public formDirty$: Observable<boolean>;
 
     public stepGroups: WorkflowStepGroup[] = [
         {
@@ -135,6 +136,8 @@ export class ProjectCreateWorkflowOutletComponent implements OnInit {
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        this.formDirty$ = this.workflowProgressService.formDirty$;
 
         // Combined view model for template - starts with new project state immediately
         this.vm$ = combineLatest([this._projectID$, this.progress$.pipe(startWith(null))]).pipe(
@@ -231,6 +234,95 @@ export class ProjectCreateWorkflowOutletComponent implements OnInit {
             },
             size: "md",
         });
+    }
+
+    canApprove(progress: CreateWorkflowProgressResponse | null): boolean {
+        return progress?.CanApprove ?? false;
+    }
+
+    canReturn(progress: CreateWorkflowProgressResponse | null): boolean {
+        return progress?.CanReturn ?? false;
+    }
+
+    canReject(progress: CreateWorkflowProgressResponse | null): boolean {
+        return progress?.CanReject ?? false;
+    }
+
+    approveProposal(projectID: number, projectName: string): void {
+        this.confirmService
+            .confirm({
+                title: "Approve Proposal",
+                message: `Are you sure you want to approve Project "${projectName}"?`,
+                buttonTextYes: "Approve",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-success",
+            })
+            .then((confirmed) => {
+                if (confirmed) {
+                    this.projectService.approveCreateProject(projectID, {}).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Project approved successfully.", AlertContext.Success, true));
+                            this.workflowProgressService.triggerRefresh();
+                            this.router.navigate(["/projects", projectID]);
+                        },
+                        error: (err) => {
+                            const message = err?.error?.ErrorMessage ?? err?.error ?? "Failed to approve project.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                }
+            });
+    }
+
+    returnProposal(projectID: number, projectName: string): void {
+        this.confirmService
+            .confirm({
+                title: "Return Proposal",
+                message: `Are you sure you want to return Project "${projectName}" to the submitter for revisions?`,
+                buttonTextYes: "Return",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-warning",
+            })
+            .then((confirmed) => {
+                if (confirmed) {
+                    this.projectService.returnCreateProject(projectID, {}).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Project returned for revisions.", AlertContext.Success, true));
+                            this.workflowProgressService.triggerRefresh();
+                        },
+                        error: (err) => {
+                            const message = err?.error?.ErrorMessage ?? err?.error ?? "Failed to return project.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                }
+            });
+    }
+
+    rejectProposal(projectID: number, projectName: string): void {
+        this.confirmService
+            .confirm({
+                title: "Reject Proposal",
+                message: `Are you sure you want to reject Project "${projectName}"? This action cannot be undone.`,
+                buttonTextYes: "Reject",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-danger",
+            })
+            .then((confirmed) => {
+                if (confirmed) {
+                    this.projectService.rejectCreateProject(projectID, {}).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Project rejected.", AlertContext.Success, true));
+                            this.workflowProgressService.triggerRefresh();
+                            this.router.navigate(["/projects", projectID]);
+                        },
+                        error: (err) => {
+                            const message = err?.error?.ErrorMessage ?? err?.error ?? "Failed to reject project.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                }
+            });
     }
 
     withdrawProposal(): void {

@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
+import { Observable } from "rxjs";
 
 import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
@@ -25,6 +26,9 @@ export interface ProjectNoteModalData {
     projectID: number;
     isInternal?: boolean;
     note?: ProjectNoteGridRow | ProjectInternalNoteGridRow;
+    noteUpdateID?: number;
+    createFn?: (dto: ProjectNoteUpsertRequest) => Observable<any>;
+    updateFn?: (dto: ProjectNoteUpsertRequest) => Observable<any>;
 }
 
 @Component({
@@ -99,68 +103,54 @@ export class ProjectNoteModalComponent extends BaseModal implements OnInit {
 
     private createNote(): void {
         const noteText = this.form.value.Note;
+        const dto = this.isInternal
+            ? new ProjectInternalNoteUpsertRequest({ ProjectID: this.projectID, Note: noteText })
+            : new ProjectNoteUpsertRequest({ ProjectID: this.projectID, Note: noteText });
 
-        if (this.isInternal) {
-            const dto = new ProjectInternalNoteUpsertRequest({ ProjectID: this.projectID, Note: noteText });
-            this.projectInternalNoteService.createProjectInternalNote(dto).subscribe({
-                next: (result) => {
-                    this.pushGlobalSuccess("Internal note added successfully.");
-                    this.ref.close(result);
-                },
-                error: (err) => {
-                    this.isSubmitting = false;
-                    const message = err?.error ?? err?.message ?? "An error occurred while adding the internal note.";
-                    this.addLocalAlert(message, AlertContext.Danger, true);
-                }
-            });
-        } else {
-            const dto = new ProjectNoteUpsertRequest({ ProjectID: this.projectID, Note: noteText });
-            this.projectNoteService.createProjectNote(dto).subscribe({
-                next: (result) => {
-                    this.pushGlobalSuccess("Note added successfully.");
-                    this.ref.close(result);
-                },
-                error: (err) => {
-                    this.isSubmitting = false;
-                    const message = err?.error ?? err?.message ?? "An error occurred while adding the note.";
-                    this.addLocalAlert(message, AlertContext.Danger, true);
-                }
-            });
-        }
+        const create$ = this.ref.data.createFn
+            ? this.ref.data.createFn(dto as ProjectNoteUpsertRequest)
+            : this.isInternal
+                ? this.projectInternalNoteService.createProjectInternalNote(dto as ProjectInternalNoteUpsertRequest)
+                : this.projectNoteService.createProjectNote(dto as ProjectNoteUpsertRequest);
+
+        const noteType = this.isInternal ? "Internal note" : "Note";
+        create$.subscribe({
+            next: (result) => {
+                this.pushGlobalSuccess(`${noteType} added successfully.`);
+                this.ref.close(result);
+            },
+            error: (err) => {
+                this.isSubmitting = false;
+                const message = err?.error ?? err?.message ?? `An error occurred while adding the ${noteType.toLowerCase()}.`;
+                this.addLocalAlert(message, AlertContext.Danger, true);
+            }
+        });
     }
 
     private updateNote(): void {
         const noteText = this.form.value.Note;
+        const dto = this.isInternal
+            ? new ProjectInternalNoteUpsertRequest({ ProjectID: this.projectID, Note: noteText })
+            : new ProjectNoteUpsertRequest({ ProjectID: this.projectID, Note: noteText });
 
-        if (this.isInternal) {
-            const internalNote = this.note as ProjectInternalNoteGridRow;
-            const dto = new ProjectInternalNoteUpsertRequest({ ProjectID: this.projectID, Note: noteText });
-            this.projectInternalNoteService.updateProjectInternalNote(internalNote.ProjectInternalNoteID, dto).subscribe({
-                next: (result) => {
-                    this.pushGlobalSuccess("Internal note updated successfully.");
-                    this.ref.close(result);
-                },
-                error: (err) => {
-                    this.isSubmitting = false;
-                    const message = err?.error ?? err?.message ?? "An error occurred while updating the internal note.";
-                    this.addLocalAlert(message, AlertContext.Danger, true);
-                }
-            });
-        } else {
-            const publicNote = this.note as ProjectNoteGridRow;
-            const dto = new ProjectNoteUpsertRequest({ ProjectID: this.projectID, Note: noteText });
-            this.projectNoteService.updateProjectNote(publicNote.ProjectNoteID, dto).subscribe({
-                next: (result) => {
-                    this.pushGlobalSuccess("Note updated successfully.");
-                    this.ref.close(result);
-                },
-                error: (err) => {
-                    this.isSubmitting = false;
-                    const message = err?.error ?? err?.message ?? "An error occurred while updating the note.";
-                    this.addLocalAlert(message, AlertContext.Danger, true);
-                }
-            });
-        }
+        const update$ = this.ref.data.updateFn
+            ? this.ref.data.updateFn(dto as ProjectNoteUpsertRequest)
+            : this.isInternal
+                ? this.projectInternalNoteService.updateProjectInternalNote((this.note as ProjectInternalNoteGridRow).ProjectInternalNoteID, dto as ProjectInternalNoteUpsertRequest)
+                : this.projectNoteService.updateProjectNote((this.note as ProjectNoteGridRow).ProjectNoteID, dto as ProjectNoteUpsertRequest);
+
+        const noteType = this.isInternal ? "Internal note" : "Note";
+        update$.subscribe({
+            next: (result) => {
+                this.pushGlobalSuccess(`${noteType} updated successfully.`);
+                this.ref.close(result);
+            },
+            error: (err) => {
+                this.isSubmitting = false;
+                const message = err?.error ?? err?.message ?? `An error occurred while updating the ${noteType.toLowerCase()}.`;
+                this.addLocalAlert(message, AlertContext.Danger, true);
+            }
+        });
     }
 
     cancel(): void {

@@ -10,7 +10,7 @@
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
-export class ProjectUpdateBatchResponse { 
+export class ProjectUpdateBatchDetail { 
     ProjectUpdateBatchID?: number;
     ProjectID?: number;
     ProjectName?: string | null;
@@ -34,7 +34,7 @@ export class ProjectUpdateBatchResponse {
     }
 }
 
-export interface ProjectUpdateBatchResponseForm { 
+export interface ProjectUpdateBatchDetailForm { 
     ProjectUpdateBatchID?: FormControl<number>;
     ProjectID?: FormControl<number>;
     ProjectName?: FormControl<string>;
@@ -55,7 +55,7 @@ export interface ProjectUpdateBatchResponseForm {
     CanDelete?: FormControl<boolean>;
 }
 
-export class ProjectUpdateBatchResponseFormControls { 
+export class ProjectUpdateBatchDetailFormControls { 
     public static ProjectUpdateBatchID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 

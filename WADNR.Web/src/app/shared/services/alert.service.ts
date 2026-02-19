@@ -25,10 +25,18 @@ export class AlertService {
 
         this.alerts.push(alert);
         this.alertSubject.next(this.alerts);
+
+        // Auto-dismiss success alerts after 5 seconds
+        if (alert.context === AlertContext.Success && alert.dismissible) {
+            setTimeout(() => {
+                this.removeAlert(alert);
+            }, 5000);
+        }
     }
 
     removeAlert(alert: Alert): void {
         const index: number = this.alerts.indexOf(alert);
+        if (index < 0) return;
         this.alerts.splice(index, 1);
         this.alertSubject.next(this.alerts);
     }

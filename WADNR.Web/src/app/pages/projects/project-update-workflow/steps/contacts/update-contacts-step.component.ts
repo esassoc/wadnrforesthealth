@@ -160,6 +160,7 @@ export class UpdateContactsStepComponent extends UpdateWorkflowStepBase implemen
                 },
             ];
         }
+        this.setFormDirty();
     }
 
     onMultiSelectChange(event: any, cbt: ContactsByType): void {
@@ -185,6 +186,7 @@ export class UpdateContactsStepComponent extends UpdateWorkflowStepBase implemen
         cbt.selectedContacts = [...cbt.selectedContacts, newContact];
         cbt.availablePeopleOptions = cbt.availablePeopleOptions.filter((p) => p.Value !== personID);
         cbt.formControl.reset();
+        this.setFormDirty();
     }
 
     removeContact(cbt: ContactsByType, personID: number): void {
@@ -197,6 +199,7 @@ export class UpdateContactsStepComponent extends UpdateWorkflowStepBase implemen
                 cbt.availablePeopleOptions = [...cbt.availablePeopleOptions, personOption];
             }
         }
+        this.setFormDirty();
     }
 
     onSave(navigate: boolean): void {

@@ -1,6 +1,7 @@
 # Testing Patterns
 
-Load this skill when creating unit tests for API controllers or Angular components.
+> **Scope**: fullstack
+> **Applies when**: Creating unit tests (*.Tests projects, *.spec.ts files)
 
 ## Cross-References
 

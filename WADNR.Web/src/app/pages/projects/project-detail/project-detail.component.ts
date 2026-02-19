@@ -78,10 +78,12 @@ import { ProjectDocumentModalComponent, ProjectDocumentModalData } from "../proj
 import { ProjectNoteModalComponent, ProjectNoteModalData } from "../project-note-modal/project-note-modal.component";
 import { ProjectImageModalComponent, ProjectImageModalData } from "../project-image-modal/project-image-modal.component";
 import { BlockListModalComponent, BlockListModalData } from "./block-list-modal/block-list-modal.component";
+import { AsyncConfirmModalComponent, AsyncConfirmModalData } from "src/app/shared/components/async-confirm-modal/async-confirm-modal.component";
 import { ProjectExternalLinkEditorComponent, ProjectExternalLinkEditorData } from "../project-external-link-editor/project-external-link-editor.component";
 import { ProjectOrganizationEditorComponent, ProjectOrganizationEditorData } from "../project-organization-editor/project-organization-editor.component";
 import { ProjectContactEditorComponent, ProjectContactEditorData } from "../project-contact-editor/project-contact-editor.component";
 import { ProjectBasicsEditorComponent, ProjectBasicsEditorData } from "../project-basics-editor/project-basics-editor.component";
+import { UpdateHistoryDiffModalComponent, UpdateHistoryDiffModalData } from "../update-history-diff-modal/update-history-diff-modal.component";
 import { ProjectTagEditorComponent, ProjectTagEditorData } from "../project-tag-editor/project-tag-editor.component";
 import { ProjectClassificationEditorComponent, ProjectClassificationEditorData } from "../project-classification-editor/project-classification-editor.component";
 import { ProjectFundingEditorComponent, ProjectFundingEditorData } from "../project-funding-editor/project-funding-editor.component";
@@ -695,7 +697,30 @@ export class ProjectDetailComponent implements OnDestroy {
             this.utilityFunctions.createDateColumnDef("Last Update", "LastUpdateDate", "short"),
             this.utilityFunctions.createBasicColumnDef("Updated By", "LastUpdatePersonName"),
             this.utilityFunctions.createBasicColumnDef("Status", "ProjectUpdateStateName"),
+            this.utilityFunctions.createActionsColumnDef((params) => {
+                const row = params.data as ProjectUpdateHistoryGridRow;
+                return [
+                    { ActionName: "Show Details", ActionHandler: () => this.openUpdateHistoryDiffModal(row), ActionIcon: "fa fa-search" },
+                ];
+            }),
         ];
+    }
+
+    openUpdateHistoryDiffModal(row: ProjectUpdateHistoryGridRow): void {
+        this.projectID$.pipe(take(1)).subscribe((projectID) => {
+            this.projectService.getUpdateHistoryDiffProject(projectID, row.ProjectUpdateBatchID).subscribe((diffSummary) => {
+                const data: UpdateHistoryDiffModalData = {
+                    updateDate: new Date(row.LastUpdateDate).toLocaleDateString("en-US", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                    }),
+                    diffSummary,
+                };
+                this.dialogService.open(UpdateHistoryDiffModalComponent, { data, width: "900px" });
+            });
+        });
     }
 
     private createNotificationColumnDefs(): ColDef<ProjectNotificationGridRow>[] {
@@ -1132,7 +1157,7 @@ export class ProjectDetailComponent implements OnDestroy {
                         this.projectService.approveCreateProject(project.ProjectID).subscribe({
                             next: () => {
                                 this.alertService.pushAlert(new Alert("Project has been approved.", AlertContext.Success, true));
-                                this._projectID$.next(project.ProjectID);
+                                this.refreshProject$.next(undefined);
                             },
                             error: (err) => {
                                 const message = err?.error ?? err?.message ?? "An error occurred while approving the project.";
@@ -1159,7 +1184,7 @@ export class ProjectDetailComponent implements OnDestroy {
                         this.projectService.returnCreateProject(project.ProjectID).subscribe({
                             next: () => {
                                 this.alertService.pushAlert(new Alert("Project has been returned for revisions.", AlertContext.Success, true));
-                                this._projectID$.next(project.ProjectID);
+                                this.refreshProject$.next(undefined);
                             },
                             error: (err) => {
                                 const message = err?.error ?? err?.message ?? "An error occurred while returning the project.";
@@ -1186,7 +1211,7 @@ export class ProjectDetailComponent implements OnDestroy {
                         this.projectService.rejectCreateProject(project.ProjectID).subscribe({
                             next: () => {
                                 this.alertService.pushAlert(new Alert("Project has been rejected.", AlertContext.Success, true));
-                                this._projectID$.next(project.ProjectID);
+                                this.refreshProject$.next(undefined);
                             },
                             error: (err) => {
                                 const message = err?.error ?? err?.message ?? "An error occurred while rejecting the project.";
@@ -1220,27 +1245,19 @@ export class ProjectDetailComponent implements OnDestroy {
             // Navigate to existing update workflow
             this.router.navigate(["/projects", project.ProjectID, "update"]);
         } else {
-            // Show confirmation modal before starting new update batch
-            this.confirmService
-                .confirm({
-                    title: "Starting project update",
-                    message:
-                        "To make changes to the project you must start a Project update.\nThe reviewer will then receive your update and either approve or return your Project update request.",
-                    buttonTextYes: "Create project update",
-                    buttonTextNo: "Cancel",
-                    buttonClassYes: "btn-primary",
-                })
-                .then((confirmed) => {
-                    if (confirmed) {
-                        this.projectService.startUpdateBatchProject(project.ProjectID).subscribe({
-                            next: () => {
-                                this.router.navigate(["/projects", project.ProjectID, "update"]);
-                            },
-                            error: (err) => {
-                                const message = err?.error ?? err?.message ?? "Failed to start project update.";
-                                this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                            },
-                        });
+            const data: AsyncConfirmModalData = {
+                title: "Starting project update",
+                message:
+                    "To make changes to the project you must start a Project update.\nThe reviewer will then receive your update and either approve or return your Project update request.",
+                buttonTextYes: "Create project update",
+                buttonClassYes: "btn-primary",
+                actionFn: () => this.projectService.startUpdateBatchProject(project.ProjectID),
+            };
+            this.dialogService
+                .open(AsyncConfirmModalComponent, { data, size: "md" })
+                .afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.router.navigate(["/projects", project.ProjectID, "update"]);
                     }
                 });
         }

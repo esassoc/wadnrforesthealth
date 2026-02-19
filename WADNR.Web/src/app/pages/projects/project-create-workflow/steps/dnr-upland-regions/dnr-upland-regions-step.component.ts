@@ -123,6 +123,8 @@ export class DnrUplandRegionsStepComponent extends CreateWorkflowStepBase implem
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.trackFormDirty(this.form);
+
         // Available options excludes already selected items
         this.availableOptions$ = combineLatest([this._selectedIDs$, this.vm$.pipe(map((vm) => vm.data?.AvailableOptions ?? []))]).pipe(
             map(([selectedIDs, allOptions]) => {
@@ -171,6 +173,7 @@ export class DnrUplandRegionsStepComponent extends CreateWorkflowStepBase implem
             this.form.patchValue({ selectedIDs: newIDs });
             this._selectedIDs$.next(newIDs);
             this.updateSelectedLayer();
+            this.setFormDirty();
         }
         // Clear the dropdown after adding
         this.form.controls["itemToAdd"].reset();
@@ -182,6 +185,7 @@ export class DnrUplandRegionsStepComponent extends CreateWorkflowStepBase implem
         this.form.patchValue({ selectedIDs: newIDs });
         this._selectedIDs$.next(newIDs);
         this.updateSelectedLayer();
+        this.setFormDirty();
     }
 
     toggleSelection(id: number): void {
@@ -193,6 +197,7 @@ export class DnrUplandRegionsStepComponent extends CreateWorkflowStepBase implem
             this.form.patchValue({ selectedIDs: newIDs });
             this._selectedIDs$.next(newIDs);
             this.updateSelectedLayer();
+            this.setFormDirty();
         }
     }
 

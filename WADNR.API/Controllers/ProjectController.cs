@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +29,7 @@ public class ProjectController(
     ILogger<ProjectController> logger,
     IOptions<WADNRConfiguration> configuration,
     ProjectNotificationService notificationService,
+    FileService fileService,
     GDALAPIService gdalApiService = null)
     : SitkaController<ProjectController>(dbContext, logger, configuration)
 {
@@ -54,6 +56,14 @@ public class ProjectController(
     {
         var projects = await Projects.ListPendingAsGridRowForUserAsync(DbContext, CallingUser);
         return Ok(projects);
+    }
+
+    [HttpGet("update-status")]
+    [NormalUserFeature]
+    public async Task<ActionResult<List<ProjectUpdateStatusGridRow>>> ListUpdateStatus()
+    {
+        var rows = await Projects.ListUpdateStatusForUserAsync(DbContext, CallingUser);
+        return Ok(rows);
     }
 
     [HttpGet("{projectID}")]
@@ -518,6 +528,17 @@ public class ProjectController(
     {
         var updates = await ProjectUpdateBatches.ListForProjectAsGridRowAsync(DbContext, projectID);
         return Ok(updates);
+    }
+
+    [HttpGet("{projectID}/update-history/{projectUpdateBatchID}/diff")]
+    [AllowAnonymous]
+    [ProjectViewFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<WADNR.Models.DataTransferObjects.ProjectUpdate.ProjectUpdateDiffSummary>> GetUpdateHistoryDiff(
+        [FromRoute] int projectID, [FromRoute] int projectUpdateBatchID)
+    {
+        var diffSummary = await ProjectUpdateDiffs.GetDiffSummaryAsync(DbContext, projectUpdateBatchID);
+        return Ok(diffSummary);
     }
 
     [HttpGet("{projectID}/notifications")]
@@ -1041,7 +1062,7 @@ public class ProjectController(
     [HttpPost("{projectID}/update-workflow/start")]
     [ProjectEditFeature]
     [EntityNotFound(typeof(Project), "projectID")]
-    public async Task<ActionResult<ProjectUpdateBatchResponse>> StartUpdateBatch([FromRoute] int projectID)
+    public async Task<ActionResult<ProjectUpdateBatchDetail>> StartUpdateBatch([FromRoute] int projectID)
     {
         try
         {
@@ -1056,12 +1077,17 @@ public class ProjectController(
         {
             return BadRequest(new { ErrorMessage = ex.Message });
         }
+        catch (DbUpdateException ex)
+        {
+            Logger.LogError(ex, "Database error starting update batch for project {ProjectID}", projectID);
+            return BadRequest(new { ErrorMessage = "Failed to start project update due to a data error. Please contact support if this persists." });
+        }
     }
 
     [HttpGet("{projectID}/update-workflow/current")]
     [ProjectEditFeature]
     [EntityNotFound(typeof(Project), "projectID")]
-    public async Task<ActionResult<ProjectUpdateBatchResponse>> GetCurrentUpdateBatch([FromRoute] int projectID)
+    public async Task<ActionResult<ProjectUpdateBatchDetail>> GetCurrentUpdateBatch([FromRoute] int projectID)
     {
         var batch = await ProjectUpdateWorkflowSteps.GetCurrentBatchAsync(DbContext, projectID);
         if (batch == null)
@@ -1091,6 +1117,19 @@ public class ProjectController(
         {
             return BadRequest(new { ErrorMessage = ex.Message });
         }
+    }
+
+    #endregion
+
+    #region Update Workflow - History
+
+    [HttpGet("{projectID}/update-workflow/history")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ActionResult<List<ProjectUpdateHistoryEntry>>> ListUpdateBatchHistory([FromRoute] int projectID)
+    {
+        var entries = await ProjectUpdateBatches.ListCurrentBatchHistoryAsync(DbContext, projectID);
+        return Ok(entries);
     }
 
     #endregion
@@ -1800,6 +1839,153 @@ public class ProjectController(
         }
     }
 
+    private static readonly HashSet<string> AllowedImageExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".jpg", ".jpeg", ".gif", ".png"
+    };
+
+    [HttpPost("{projectID}/update-workflow/steps/photos/images")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> CreateUpdatePhotoImage(
+        [FromRoute] int projectID,
+        [FromForm] string caption,
+        [FromForm] string credit,
+        [FromForm] int? projectImageTimingID,
+        [FromForm] bool excludeFromFactSheet,
+        IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest("Image file is required.");
+        }
+
+        var extension = Path.GetExtension(file.FileName);
+        if (string.IsNullOrEmpty(extension) || !AllowedImageExtensions.Contains(extension))
+        {
+            return BadRequest($"Invalid file type. Allowed types: {string.Join(", ", AllowedImageExtensions)}");
+        }
+
+        if (string.IsNullOrWhiteSpace(caption) || caption.Length > 200)
+        {
+            return BadRequest("Caption is required and must be 200 characters or less.");
+        }
+
+        if (string.IsNullOrWhiteSpace(credit) || credit.Length > 200)
+        {
+            return BadRequest("Credit is required and must be 200 characters or less.");
+        }
+
+        var batch = await ProjectUpdateWorkflowSteps.GetCurrentBatchAsync(DbContext, projectID);
+        if (batch == null)
+        {
+            return NotFound();
+        }
+
+        var fileResource = await fileService.CreateFileResource(DbContext, file, CallingUser.PersonID);
+
+        await ProjectUpdateWorkflowSteps.CreatePhotoUpdateAsync(
+            DbContext,
+            batch.ProjectUpdateBatchID,
+            fileResource.FileResourceID,
+            caption.Trim(),
+            credit.Trim(),
+            projectImageTimingID,
+            excludeFromFactSheet);
+
+        return Ok(new { Success = true });
+    }
+
+    [HttpPut("{projectID}/update-workflow/steps/photos/images/{projectImageUpdateID}")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<IActionResult> UpdateUpdatePhotoImage(
+        [FromRoute] int projectID,
+        [FromRoute] int projectImageUpdateID,
+        [FromBody] ProjectImageUpsertRequest request)
+    {
+        var batch = await ProjectUpdateWorkflowSteps.GetCurrentBatchAsync(DbContext, projectID);
+        if (batch == null)
+        {
+            return NotFound();
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Caption) || request.Caption.Length > 200)
+        {
+            return BadRequest("Caption is required and must be 200 characters or less.");
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Credit) || request.Credit.Length > 200)
+        {
+            return BadRequest("Credit is required and must be 200 characters or less.");
+        }
+
+        try
+        {
+            await ProjectUpdateWorkflowSteps.UpdatePhotoUpdateAsync(DbContext, projectImageUpdateID, request);
+            return Ok(new { Success = true });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { ErrorMessage = ex.Message });
+        }
+    }
+
+    [HttpDelete("{projectID}/update-workflow/steps/photos/images/{projectImageUpdateID}")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<IActionResult> DeleteUpdatePhotoImage(
+        [FromRoute] int projectID,
+        [FromRoute] int projectImageUpdateID)
+    {
+        var batch = await ProjectUpdateWorkflowSteps.GetCurrentBatchAsync(DbContext, projectID);
+        if (batch == null)
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            var fileResourceGuid = await ProjectUpdateWorkflowSteps.DeletePhotoUpdateAsync(DbContext, projectImageUpdateID);
+
+            if (fileResourceGuid != Guid.Empty)
+            {
+                await fileService.DeleteFileStreamFromBlobStorageAsync(fileResourceGuid.ToString());
+            }
+
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { ErrorMessage = ex.Message });
+        }
+    }
+
+    [HttpPost("{projectID}/update-workflow/steps/photos/images/{projectImageUpdateID}/set-key-photo")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<IActionResult> SetKeyPhotoUpdatePhoto(
+        [FromRoute] int projectID,
+        [FromRoute] int projectImageUpdateID)
+    {
+        var batch = await ProjectUpdateWorkflowSteps.GetCurrentBatchAsync(DbContext, projectID);
+        if (batch == null)
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            await ProjectUpdateWorkflowSteps.SetKeyPhotoUpdateAsync(DbContext, batch.ProjectUpdateBatchID, projectImageUpdateID);
+            return Ok();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { ErrorMessage = ex.Message });
+        }
+    }
+
     #endregion
 
     #region Update Workflow Steps - External Links
@@ -1898,6 +2084,197 @@ public class ProjectController(
         }
     }
 
+    private static readonly HashSet<string> AllowedDocumentExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".pdf", ".zip", ".doc", ".docx", ".xls", ".xlsx"
+    };
+
+    [HttpPost("{projectID}/update-workflow/steps/documents-notes/documents")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<IActionResult> CreateUpdateDocument(
+        [FromRoute] int projectID,
+        [FromForm] string displayName,
+        [FromForm] string? description,
+        [FromForm] int? projectDocumentTypeID,
+        IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest("Document file is required.");
+        }
+
+        var extension = Path.GetExtension(file.FileName);
+        if (string.IsNullOrEmpty(extension) || !AllowedDocumentExtensions.Contains(extension))
+        {
+            return BadRequest($"Invalid file type. Allowed types: {string.Join(", ", AllowedDocumentExtensions)}");
+        }
+
+        if (string.IsNullOrWhiteSpace(displayName) || displayName.Length > 200)
+        {
+            return BadRequest("Display name is required and must be 200 characters or less.");
+        }
+
+        var batch = await ProjectUpdateWorkflowSteps.GetCurrentBatchAsync(DbContext, projectID);
+        if (batch == null)
+        {
+            return NotFound();
+        }
+
+        var fileResource = await fileService.CreateFileResource(DbContext, file, CallingUser.PersonID);
+
+        await ProjectUpdateWorkflowSteps.CreateDocumentUpdateAsync(
+            DbContext,
+            batch.ProjectUpdateBatchID,
+            fileResource.FileResourceID,
+            displayName.Trim(),
+            description?.Trim(),
+            projectDocumentTypeID);
+
+        return Ok(new { Success = true });
+    }
+
+    [HttpPut("{projectID}/update-workflow/steps/documents-notes/documents/{projectDocumentUpdateID}")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<IActionResult> UpdateUpdateDocument(
+        [FromRoute] int projectID,
+        [FromRoute] int projectDocumentUpdateID,
+        [FromBody] ProjectDocumentUpsertRequest request)
+    {
+        var batch = await ProjectUpdateWorkflowSteps.GetCurrentBatchAsync(DbContext, projectID);
+        if (batch == null)
+        {
+            return NotFound();
+        }
+
+        if (string.IsNullOrWhiteSpace(request.DisplayName) || request.DisplayName.Length > 200)
+        {
+            return BadRequest("Display name is required and must be 200 characters or less.");
+        }
+
+        try
+        {
+            await ProjectUpdateWorkflowSteps.UpdateDocumentUpdateAsync(DbContext, projectDocumentUpdateID, request);
+            return Ok(new { Success = true });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { ErrorMessage = ex.Message });
+        }
+    }
+
+    [HttpDelete("{projectID}/update-workflow/steps/documents-notes/documents/{projectDocumentUpdateID}")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<IActionResult> DeleteUpdateDocument(
+        [FromRoute] int projectID,
+        [FromRoute] int projectDocumentUpdateID)
+    {
+        var batch = await ProjectUpdateWorkflowSteps.GetCurrentBatchAsync(DbContext, projectID);
+        if (batch == null)
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            var fileResourceGuid = await ProjectUpdateWorkflowSteps.DeleteDocumentUpdateAsync(DbContext, projectDocumentUpdateID);
+
+            if (fileResourceGuid != Guid.Empty)
+            {
+                await fileService.DeleteFileStreamFromBlobStorageAsync(fileResourceGuid.ToString());
+            }
+
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { ErrorMessage = ex.Message });
+        }
+    }
+
+    [HttpPost("{projectID}/update-workflow/steps/documents-notes/notes")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<IActionResult> CreateUpdateNote(
+        [FromRoute] int projectID,
+        [FromBody] ProjectNoteUpsertRequest request)
+    {
+        var batch = await ProjectUpdateWorkflowSteps.GetCurrentBatchAsync(DbContext, projectID);
+        if (batch == null)
+        {
+            return NotFound();
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Note) || request.Note.Length > 8000)
+        {
+            return BadRequest("Note is required and must be 8000 characters or less.");
+        }
+
+        await ProjectUpdateWorkflowSteps.CreateNoteUpdateAsync(
+            DbContext,
+            batch.ProjectUpdateBatchID,
+            request.Note.Trim(),
+            CallingUser.PersonID);
+
+        return Ok(new { Success = true });
+    }
+
+    [HttpPut("{projectID}/update-workflow/steps/documents-notes/notes/{projectNoteUpdateID}")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<IActionResult> UpdateUpdateNote(
+        [FromRoute] int projectID,
+        [FromRoute] int projectNoteUpdateID,
+        [FromBody] ProjectNoteUpsertRequest request)
+    {
+        var batch = await ProjectUpdateWorkflowSteps.GetCurrentBatchAsync(DbContext, projectID);
+        if (batch == null)
+        {
+            return NotFound();
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Note) || request.Note.Length > 8000)
+        {
+            return BadRequest("Note is required and must be 8000 characters or less.");
+        }
+
+        try
+        {
+            await ProjectUpdateWorkflowSteps.UpdateNoteUpdateAsync(DbContext, projectNoteUpdateID, request.Note.Trim());
+            return Ok(new { Success = true });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { ErrorMessage = ex.Message });
+        }
+    }
+
+    [HttpDelete("{projectID}/update-workflow/steps/documents-notes/notes/{projectNoteUpdateID}")]
+    [ProjectEditFeature]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<IActionResult> DeleteUpdateNote(
+        [FromRoute] int projectID,
+        [FromRoute] int projectNoteUpdateID)
+    {
+        var batch = await ProjectUpdateWorkflowSteps.GetCurrentBatchAsync(DbContext, projectID);
+        if (batch == null)
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            await ProjectUpdateWorkflowSteps.DeleteNoteUpdateAsync(DbContext, projectNoteUpdateID);
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { ErrorMessage = ex.Message });
+        }
+    }
+
     #endregion
 
     #region Update Workflow Per-Step Diff and Revert
@@ -1914,11 +2291,7 @@ public class ProjectController(
         }
 
         var response = await ProjectUpdateDiffs.GetStepDiffAsync(DbContext, batch.ProjectUpdateBatchID, stepKey);
-        return Ok(new WADNR.Models.DataTransferObjects.StepDiffResponse
-        {
-            HasChanges = response.HasChanges,
-            DiffHtml = response.DiffHtml
-        });
+        return Ok(response);
     }
 
     [HttpPost("{projectID}/update-workflow/steps/{stepKey}/revert")]

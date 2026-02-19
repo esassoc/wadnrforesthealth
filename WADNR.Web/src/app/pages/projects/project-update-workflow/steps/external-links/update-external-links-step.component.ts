@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { AsyncPipe, CommonModule } from "@angular/common";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, startWith, switchMap } from "rxjs";
+import { combineLatest, map, Observable, of, shareReplay, startWith, switchMap } from "rxjs";
 import { catchError } from "rxjs/operators";
 
 import { UpdateWorkflowStepBase } from "src/app/shared/components/workflow/update-workflow-step-base";
@@ -42,7 +42,6 @@ export class UpdateExternalLinksStepComponent extends UpdateWorkflowStepBase imp
     readonly stepKey = "ExternalLinks";
 
     public vm$: Observable<ExternalLinksViewModel>;
-    private refresh$ = new BehaviorSubject<void>(undefined);
 
     public FormFieldType = FormFieldType;
     public externalLinks: ProjectExternalLinkUpdateItem[] = [];
@@ -65,11 +64,8 @@ export class UpdateExternalLinksStepComponent extends UpdateWorkflowStepBase imp
         this.initProjectID();
         this.initHasChanges();
 
-        this.vm$ = combineLatest([this._projectID$, this.refresh$]).pipe(
-            switchMap(([id]) => {
-                if (id == null || Number.isNaN(id)) {
-                    return of(null);
-                }
+        this.vm$ = this.stepRefresh$.pipe(
+            switchMap((id) => {
                 return this.projectService.getUpdateExternalLinksStepProject(id).pipe(
                     catchError(() => {
                         this.alertService.pushAlert(new Alert("Failed to load external links data.", AlertContext.Danger, true));
@@ -122,6 +118,7 @@ export class UpdateExternalLinksStepComponent extends UpdateWorkflowStepBase imp
         this.externalLinks = [...this.externalLinks, newLink];
         this.isAddingLink = false;
         this.addLinkForm.reset();
+        this.setFormDirty();
     }
 
     async removeLink(index: number): Promise<void> {
@@ -137,6 +134,7 @@ export class UpdateExternalLinksStepComponent extends UpdateWorkflowStepBase imp
 
         if (confirmed) {
             this.externalLinks = this.externalLinks.filter((_, i) => i !== index);
+            this.setFormDirty();
         }
     }
 

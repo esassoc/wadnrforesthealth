@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { AsyncPipe, CommonModule, LowerCasePipe } from "@angular/common";
-import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, startWith, switchMap } from "rxjs";
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, startWith, Subscription, switchMap, take } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import * as L from "leaflet";
@@ -23,6 +23,7 @@ import { GeometryHelper } from "src/app/shared/helpers/geometry-helper";
 import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
 import { ProjectLocationTypeEnum, ProjectLocationTypesAsSelectDropdownOptions } from "src/app/shared/generated/enum/project-location-type-enum";
 import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
 import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
 import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
@@ -73,14 +74,29 @@ interface FeatureFormControls {
 @Component({
     selector: "location-detailed-step",
     standalone: true,
-    imports: [CommonModule, AsyncPipe, LowerCasePipe, ReactiveFormsModule, WADNRMapComponent, WorkflowStepActionsComponent, FormFieldComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent],
+    imports: [
+        CommonModule,
+        AsyncPipe,
+        LowerCasePipe,
+        ReactiveFormsModule,
+        WADNRMapComponent,
+        WorkflowStepActionsComponent,
+        FormFieldComponent,
+        LoadingDirective,
+        CountiesLayerComponent,
+        PriorityLandscapesLayerComponent,
+        DNRUplandRegionsLayerComponent,
+        GenericWmsWfsLayerComponent,
+        ExternalMapLayersComponent,
+    ],
     templateUrl: "./location-detailed-step.component.html",
     styleUrls: ["./location-detailed-step.component.scss"],
 })
 export class LocationDetailedStepComponent extends CreateWorkflowStepBase implements OnInit, OnDestroy {
     readonly nextStep = "priority-landscapes";
 
-    public vm$: Observable<{ isLoading: boolean; data: LocationDetailedStep | null; simpleLocation: LocationSimpleStep | null }>;
+    public vm$: Observable<{ isLoading: boolean; data: LocationDetailedStep | null }>;
+    public simpleLocationData$: Observable<LocationSimpleStep | null>;
 
     // Form field type for template
     public FormFieldType = FormFieldType;
@@ -93,10 +109,16 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
     public simpleLocationLayer: L.LayerGroup | null = null;
     public simpleLocationLatLng: L.LatLng | null = null;
     public mapIsReady = false;
+    private mapReady$ = new BehaviorSubject<boolean>(false);
+    private subs = new Subscription();
 
     // Feature state
     public features$ = new BehaviorSubject<LocationFeature[]>([]);
     public selectedFeatureId$ = new BehaviorSubject<number | null>(null);
+
+    // Cached derived lists (updated via refreshDerivedLists)
+    public visibleFeatures: LocationFeature[] = [];
+    public deletedFeatures: LocationFeature[] = [];
 
     // Form controls for each feature, keyed by leafletId
     private featureFormControls = new Map<number, FeatureFormControls>();
@@ -134,7 +156,7 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        const simpleLocationData$ = this._projectID$.pipe(
+        this.simpleLocationData$ = this._projectID$.pipe(
             switchMap((id) => {
                 if (id == null || Number.isNaN(id)) {
                     return of(null);
@@ -149,17 +171,50 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.vm$ = combineLatest([stepData$, simpleLocationData$]).pipe(
-            map(([data, simpleLocation]) => {
-                return { isLoading: false, data, simpleLocation };
+        this.vm$ = stepData$.pipe(
+            map((data) => {
+                return { isLoading: false, data };
             }),
-            startWith({ isLoading: true, data: null, simpleLocation: null }),
+            startWith({ isLoading: true, data: null }),
             shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        // Load features onto map when both map and data are ready
+        this.subs.add(
+            combineLatest([this.mapReady$, this.vm$])
+                .pipe(
+                    filter(([ready, vm]) => ready && !vm.isLoading),
+                    take(1)
+                )
+                .subscribe(([_, vm]) => {
+                    if (vm.data?.Locations && vm.data.Locations.length > 0) {
+                        this.loadExistingFeatures(vm.data.Locations);
+                    }
+                })
+        );
+
+        // Load simple location marker independently (non-blocking)
+        this.subs.add(
+            combineLatest([this.mapReady$, this.simpleLocationData$])
+                .pipe(
+                    filter(([ready]) => ready),
+                    take(1)
+                )
+                .subscribe(([_, simpleLocation]) => {
+                    if (simpleLocation?.Latitude && simpleLocation?.Longitude) {
+                        this.addSimpleLocationLayer(simpleLocation.Latitude, simpleLocation.Longitude);
+
+                        // If no detailed features loaded yet, zoom to simple location
+                        if (this.featureGroup && this.featureGroup.getLayers().length === 0) {
+                            this.map.setView([simpleLocation.Latitude, simpleLocation.Longitude], 14);
+                        }
+                    }
+                })
         );
     }
 
     ngOnDestroy(): void {
-        // Clean up map event listeners
+        this.subs.unsubscribe();
         if (this.map) {
             this.map.off("pm:create");
             this.map.off("pm:remove");
@@ -188,7 +243,7 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
             notes: new FormControl<string>(feature.ProjectLocationNotes ?? "", { nonNullable: true }),
         };
 
-        // Disable controls based on protection flags
+        // Disable protected fields
         if (feature.isFromArcGis) {
             controls.name.disable();
         }
@@ -200,6 +255,7 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
         controls.name.valueChanges.subscribe((value) => {
             feature.ProjectLocationName = value;
             feature.isModified = true;
+            this.setFormDirty();
         });
 
         controls.type.valueChanges.subscribe((value) => {
@@ -209,11 +265,13 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
                 feature.ProjectLocationTypeName = typeOption.Label;
             }
             feature.isModified = true;
+            this.setFormDirty();
         });
 
         controls.notes.valueChanges.subscribe((value) => {
             feature.ProjectLocationNotes = value;
             feature.isModified = true;
+            this.setFormDirty();
         });
 
         return controls;
@@ -243,21 +301,8 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
         this.map.on("pm:create", (e: any) => this.onFeatureCreated(e));
         this.map.on("pm:remove", (e: any) => this.onFeatureRemoved(e));
 
-        // Load existing features and simple location reference
-        this.vm$.subscribe((vm) => {
-            // Add simple location marker as toggleable reference layer
-            if (vm.simpleLocation?.Latitude && vm.simpleLocation?.Longitude) {
-                this.addSimpleLocationLayer(vm.simpleLocation.Latitude, vm.simpleLocation.Longitude);
-            }
-
-            // Load detailed locations
-            if (vm.data?.Locations && vm.data.Locations.length > 0) {
-                this.loadExistingFeatures(vm.data.Locations);
-            } else if (vm.simpleLocation?.Latitude && vm.simpleLocation?.Longitude) {
-                // If no detailed locations, zoom to simple location
-                this.map.setView([vm.simpleLocation.Latitude, vm.simpleLocation.Longitude], 14);
-            }
-        });
+        // Signal that the map is ready — triggers combineLatest gates in ngOnInit
+        this.mapReady$.next(true);
     }
 
     /**
@@ -471,22 +516,28 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
                 isDeleted: false,
             };
 
+            // All loaded features start with pmIgnore — registered on-demand when selected
+            (polygonLayer as any).options.pmIgnore = true;
+
             loadedFeatures.push(locationFeature);
-            this.featureGroup.addLayer(polygonLayer);
 
             // Apply correct style based on shape type
             this.applyDefaultStyle(locationFeature);
 
             this.bindLayerEvents(polygonLayer, locationFeature);
 
-            // Enable Geoman editing on this layer (skip for ArcGIS features)
-            if (!locationFeature.isFromArcGis) {
-                (polygonLayer as any).pm?.enable();
-                (polygonLayer as any).pm?.disable();
-            }
+            // Eager form control creation (before template renders)
+            this.featureFormControls.set(leafletId, this.createFeatureControls(locationFeature));
         }
 
+        // Batch add all layers at once (instead of N individual addLayer calls)
+        if (this.featureGroup) {
+            this.map.removeLayer(this.featureGroup);
+        }
+        this.featureGroup = L.featureGroup(loadedFeatures.map((f) => f.layer)).addTo(this.map);
+
         this.features$.next(loadedFeatures);
+        this.refreshDerivedLists();
 
         // Fit map to features if any exist
         if (this.featureGroup.getLayers().length > 0) {
@@ -521,7 +572,7 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
             ProjectLocationID: null,
             ProjectLocationTypeID: ProjectLocationTypeEnum.ProjectArea,
             ProjectLocationTypeName: "Project Area",
-            ProjectLocationName: `Location ${this.features$.value.filter((f) => !f.isDeleted).length + 1}`,
+            ProjectLocationName: `Location ${this.visibleFeatures.length + 1}`,
             ProjectLocationNotes: "",
             GeoJson: wkt,
             AreaInAcres: area,
@@ -537,7 +588,9 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
 
         this.features$.value.push(newFeature);
         this.features$.next(this.features$.value);
+        this.refreshDerivedLists();
         this.featureGroup.addLayer(layer);
+        this.setFormDirty();
 
         // Apply default style based on shape type
         this.applyDefaultStyle(newFeature);
@@ -564,7 +617,9 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
             // Reject removal of protected features
             if (feature.hasTreatments || feature.isFromArcGis) {
                 this.featureGroup.addLayer(layer);
-                this.alertService.pushAlert(new Alert("This location cannot be deleted because it has associated Treatments or was imported from ArcGIS.", AlertContext.Warning, true));
+                this.alertService.pushAlert(
+                    new Alert("This location cannot be deleted because it has associated Treatments or was imported from ArcGIS.", AlertContext.Warning, true)
+                );
                 return;
             }
 
@@ -578,9 +633,12 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
                 this.features$.next(this.features$.value);
             }
 
-            // Clear selection if deleted feature was selected
+            this.refreshDerivedLists();
+            this.setFormDirty();
+
+            // Deregister and clear selection if deleted feature was selected
             if (this.selectedFeatureId$.value === leafletId) {
-                this.selectedFeatureId$.next(null);
+                this.deregisterSelectedFeature();
             }
         }
     }
@@ -624,6 +682,8 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
         feature.isModified = true;
 
         this.features$.next(this.features$.value);
+        this.refreshDerivedLists();
+        this.setFormDirty();
     }
 
     /**
@@ -634,17 +694,26 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
             return;
         }
 
-        // Reset previous selection style
+        // Deregister previous feature from Geoman
         if (this.selectedFeatureId$.value !== null) {
             const prevFeature = this.features$.value.find((f) => f.leafletId === this.selectedFeatureId$.value);
-            if (prevFeature && prevFeature.layer) {
-                this.applyDefaultStyle(prevFeature);
+            if (prevFeature?.layer && !prevFeature.isFromArcGis) {
+                (prevFeature.layer as any).pm?.disable();
+                (prevFeature.layer as any).options.pmIgnore = true;
+                (L as any).PM.reInitLayer(prevFeature.layer);
             }
+            if (prevFeature) this.applyDefaultStyle(prevFeature);
         }
 
         // Set new selection
         this.selectedFeatureId$.next(feature.leafletId);
         this.applySelectedStyle(feature);
+
+        // Register new feature with Geoman (on-demand)
+        if (!feature.isFromArcGis) {
+            (feature.layer as any).options.pmIgnore = false;
+            (L as any).PM.reInitLayer(feature.layer);
+        }
 
         // Pan to feature
         if (this.map && feature.layer) {
@@ -653,6 +722,20 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
                 this.map.panTo(center);
             }
         }
+    }
+
+    /**
+     * Deregister the currently selected feature from Geoman and clear selection.
+     */
+    private deregisterSelectedFeature(): void {
+        if (this.selectedFeatureId$.value == null) return;
+        const prev = this.features$.value.find((f) => f.leafletId === this.selectedFeatureId$.value);
+        if (prev?.layer && !prev.isFromArcGis) {
+            (prev.layer as any).pm?.disable();
+            (prev.layer as any).options.pmIgnore = true;
+            (L as any).PM.reInitLayer(prev.layer);
+        }
+        this.selectedFeatureId$.next(null);
     }
 
     /**
@@ -671,9 +754,12 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
             this.features$.next(this.features$.value);
         }
 
-        // Clear selection if deleted feature was selected
+        this.refreshDerivedLists();
+        this.setFormDirty();
+
+        // Deregister and clear selection if deleted feature was selected
         if (this.selectedFeatureId$.value === feature.leafletId) {
-            this.selectedFeatureId$.next(null);
+            this.deregisterSelectedFeature();
         }
     }
 
@@ -697,6 +783,8 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
         this.bindLayerEvents(feature.layer, feature);
 
         this.features$.next(this.features$.value);
+        this.refreshDerivedLists();
+        this.setFormDirty();
     }
 
     /**
@@ -744,17 +832,11 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
     }
 
     /**
-     * Get visible (non-deleted) features for display.
+     * Update cached visible/deleted feature lists. Call after every features$.next().
      */
-    get visibleFeatures(): LocationFeature[] {
-        return this.features$.value.filter((f) => !f.isDeleted);
-    }
-
-    /**
-     * Get deleted features for the "restore" section.
-     */
-    get deletedFeatures(): LocationFeature[] {
-        return this.features$.value.filter((f) => f.isDeleted && !f.isNew);
+    private refreshDerivedLists(): void {
+        this.visibleFeatures = this.features$.value.filter((f) => !f.isDeleted);
+        this.deletedFeatures = this.features$.value.filter((f) => f.isDeleted && !f.isNew);
     }
 
     /**
@@ -794,11 +876,9 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
             size: "lg",
             data: {
                 projectID: pid,
-                uploadFn: (projectID: number, file: Blob) =>
-                    this.projectService.uploadGdbForCreateWorkflowProject(projectID, file),
-                approveFn: (projectID: number, request: any) =>
-                    this.projectService.approveGdbForCreateWorkflowProject(projectID, request)
-            } as ImportGdbModalData
+                uploadFn: (projectID: number, file: Blob) => this.projectService.uploadGdbForCreateWorkflowProject(projectID, file),
+                approveFn: (projectID: number, request: any) => this.projectService.approveGdbForCreateWorkflowProject(projectID, request),
+            } as ImportGdbModalData,
         });
 
         dialogRef.afterClosed$.subscribe((result) => {
@@ -808,6 +888,7 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
                     if (data) {
                         // Clear existing features and reload
                         this.features$.next([]);
+                        this.refreshDerivedLists();
                         this.featureGroup?.clearLayers();
                         this.loadExistingFeatures(data.Locations);
                     }

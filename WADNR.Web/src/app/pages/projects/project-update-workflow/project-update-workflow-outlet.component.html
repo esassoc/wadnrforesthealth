@@ -12,7 +12,17 @@
             <ul #actionsMenu class="dropdown-menu dropdown-menu-right">
                 <li>
                     <a [routerLink]="['/projects', progress.ProjectID]" class="dropdown-item">
-                        Project Details
+                        Go back to Project
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" (click)="openHistoryModal(progress.ProjectID)" class="dropdown-item">
+                        Show Update History
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/my-projects" [queryParams]="{ filter: 'requiring-update' }" class="dropdown-item">
+                        Back to Update My Projects list
                     </a>
                 </li>
                 <li>
@@ -23,8 +33,10 @@
                 @if (canEdit(progress)) {
                     <li class="divider"></li>
                     <li>
-                        <a href="javascript:void(0);" (click)="deleteUpdate(progress.ProjectID, progress.ProjectName)" class="dropdown-item text-danger">
-                            Delete Update
+                        <a href="javascript:void(0);"
+                            (click)="deleteUpdate(progress.ProjectID, progress.ProjectName)"
+                            class="dropdown-item text-danger">
+                            Delete Entire Update
                         </a>
                     </li>
                 }
@@ -95,7 +107,10 @@
                 </div>
                 <div class="workflow-footer__actions">
                     @if (canSubmit(progress)) {
-                        <button class="btn btn-primary" (click)="submitForApproval(progress.ProjectID, progress.ProjectName)">
+                        <button class="btn btn-primary"
+                            [disabled]="formDirty$ | async"
+                            [title]="(formDirty$ | async) ? 'Save your changes before submitting' : ''"
+                            (click)="submitForApproval(progress.ProjectID, progress.ProjectName)">
                             Submit
                         </button>
                     } @else if (canEdit(progress)) {
@@ -103,11 +118,15 @@
                         <button class="btn btn-primary" disabled>Submit</button>
                     }
                     @if (canApprove(progress)) {
-                        <button class="btn btn-warning me-2" (click)="returnUpdate(progress.ProjectID, progress.ProjectName)">
+                        <button class="btn btn-warning me-2"
+                            [disabled]="isReturning$ | async"
+                            [buttonLoading]="isReturning$ | async"
+                            (click)="returnUpdate(progress.ProjectID, progress.ProjectName)">
                             Return
                         </button>
                         @if (isReadyToApprove(progress)) {
-                            <button class="btn btn-success" (click)="approveUpdate(progress.ProjectID, progress.ProjectName)">
+                            <button class="btn btn-success"
+                                (click)="approveUpdate(progress.ProjectID, progress.ProjectName)">
                                 Approve
                             </button>
                         } @else {

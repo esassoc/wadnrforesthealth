@@ -188,6 +188,7 @@ export class TreatmentsStepComponent extends CreateWorkflowStepBase implements O
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
                         this.refresh$.next();
+                        this.workflowProgressService.triggerRefresh();
                     }
                 });
             });
@@ -216,6 +217,7 @@ export class TreatmentsStepComponent extends CreateWorkflowStepBase implements O
                         dialogRef.afterClosed$.subscribe((result) => {
                             if (result) {
                                 this.refresh$.next();
+                                this.workflowProgressService.triggerRefresh();
                             }
                         });
                     });
@@ -244,6 +246,7 @@ export class TreatmentsStepComponent extends CreateWorkflowStepBase implements O
                 next: () => {
                     this.alertService.pushAlert(new Alert("Treatment deleted successfully.", AlertContext.Success, true));
                     this.refresh$.next();
+                    this.workflowProgressService.triggerRefresh();
                 },
                 error: (err) => {
                     const message = err?.error ?? err?.message ?? "Failed to delete treatment.";

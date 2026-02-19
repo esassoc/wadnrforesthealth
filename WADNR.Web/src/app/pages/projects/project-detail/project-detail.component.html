@@ -20,7 +20,8 @@
             <!-- Update Project button (for approved projects) -->
             @if (canShowUpdateProjectButton(project)) {
                 <button class="btn btn-primary btn-sm" (click)="navigateToUpdateWorkflow(project)">
-                    <i class="fa fa-edit"></i> {{ getUpdateProjectButtonText(project) }}
+                    <i class="fa fa-edit"></i>
+                    {{ getUpdateProjectButtonText(project) }}
                 </button>
             }
 

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
+using WADNR.Common.GeoSpatial;
 using WADNR.EFModels.Workflows;
 using WADNR.Models.DataTransferObjects;
 
@@ -327,7 +328,7 @@ public static class ProjectWorkflowSteps
                 if (!string.IsNullOrEmpty(locRequest.GeoJson))
                 {
                     var reader = new NetTopologySuite.IO.WKTReader();
-                    existing.ProjectLocationGeometry = reader.Read(locRequest.GeoJson);
+                    existing.ProjectLocationGeometry = reader.Read(locRequest.GeoJson).MakeValid();
                     existing.ProjectLocationGeometry.SRID = 4326;
                 }
             }
@@ -345,7 +346,7 @@ public static class ProjectWorkflowSteps
                 if (!string.IsNullOrEmpty(locRequest.GeoJson))
                 {
                     var reader = new NetTopologySuite.IO.WKTReader();
-                    newLocation.ProjectLocationGeometry = reader.Read(locRequest.GeoJson);
+                    newLocation.ProjectLocationGeometry = reader.Read(locRequest.GeoJson).MakeValid();
                     newLocation.ProjectLocationGeometry.SRID = 4326;
                 }
 

@@ -34,6 +34,28 @@
                     }
                 </div>
             }
+            <!-- Currency -->
+            @case (FormFieldType.Currency) {
+                @if (!fieldDefinitionName && fieldLabel) {
+                    <div class="field-label" [class.required]="formControl | isRequired">
+                        {{ fieldLabel }}
+                    </div>
+                }
+                <div class="units-wrapper">
+                    <input
+                        type="text"
+                        [placeholder]="placeholder"
+                        [value]="currencyDisplayValue"
+                        (input)="onCurrencyInput($event)"
+                        (focus)="onCurrencyFocus()"
+                        (blur)="onCurrencyBlur()"
+                        [name]="name"
+                        inputmode="decimal" />
+                    @if (units) {
+                        <span class="units">{{ units }}</span>
+                    }
+                </div>
+            }
             <!-- Textarea -->
             @case (FormFieldType.Textarea) {
                 @if (!fieldDefinitionName && fieldLabel) {

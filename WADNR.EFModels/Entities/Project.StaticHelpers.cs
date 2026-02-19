@@ -6,6 +6,7 @@ using NetTopologySuite.Geometries;
 using System.Linq;
 using System.Linq.Expressions;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.ProjectUpdate;
 
 namespace WADNR.EFModels.Entities;
 
@@ -1344,11 +1345,10 @@ public static class Projects
 
     public static async Task<BoundingBox?> GetProjectBoundingBoxAsync(WADNRDbContext dbContext, int projectID)
     {
+        // Load project scalars only — geometry collections loaded on-demand below
+        // to avoid a 3-include Cartesian product across geometry tables.
         var project = await dbContext.Projects
             .AsNoTracking()
-            .Include(p => p.ProjectLocations)
-            .Include(p => p.ProjectRegions).ThenInclude(pr => pr.DNRUplandRegion)
-            .Include(p => p.ProjectPriorityLandscapes).ThenInclude(ppl => ppl.PriorityLandscape)
             .Where(p => p.ProjectID == projectID)
             .SingleOrDefaultAsync();
 
@@ -1358,10 +1358,12 @@ public static class Projects
         if (project.DefaultBoundingBox != null)
             return GeometryToBoundingBox(project.DefaultBoundingBox);
 
-        // 2. Detailed locations envelope
-        var locationGeometries = project.ProjectLocations
+        // 2. Detailed locations envelope (projection — only fetches geometry column)
+        var locationGeometries = await dbContext.ProjectLocations
+            .AsNoTracking()
+            .Where(pl => pl.ProjectID == projectID && pl.ProjectLocationGeometry != null)
             .Select(pl => pl.ProjectLocationGeometry)
-            .Where(g => g != null).ToList();
+            .ToListAsync();
         if (locationGeometries.Count > 0)
             return GeometryListToBoundingBox(locationGeometries);
 
@@ -1369,14 +1371,20 @@ public static class Projects
         if (project.ProjectLocationPoint != null)
             return PointToPaddedBoundingBox(project.ProjectLocationPoint, 0.001);
 
-        // 4. Regions + Priority Landscapes
-        var areaGeometries = project.ProjectRegions
+        // 4. Regions + Priority Landscapes (projection — only fetches geometry column)
+        var regionGeometries = await dbContext.ProjectRegions
+            .AsNoTracking()
+            .Where(pr => pr.ProjectID == projectID)
             .Select(pr => pr.DNRUplandRegion.DNRUplandRegionLocation)
             .Where(g => g != null)
-            .Concat(project.ProjectPriorityLandscapes
-                .Select(ppl => ppl.PriorityLandscape.PriorityLandscapeLocation)
-                .Where(g => g != null))
-            .ToList();
+            .ToListAsync();
+        var plGeometries = await dbContext.ProjectPriorityLandscapes
+            .AsNoTracking()
+            .Where(ppl => ppl.ProjectID == projectID)
+            .Select(ppl => ppl.PriorityLandscape.PriorityLandscapeLocation)
+            .Where(g => g != null)
+            .ToListAsync();
+        var areaGeometries = regionGeometries.Concat(plGeometries).ToList();
         if (areaGeometries.Count > 0)
             return GeometryListToBoundingBox(areaGeometries);
 
@@ -1422,6 +1430,79 @@ public static class Projects
             Right = coord.X + padding,
             Top = coord.Y + padding
         };
+    }
+
+    #endregion
+
+    #region Update Status
+
+    public static async Task<List<ProjectUpdateStatusGridRow>> ListUpdateStatusForUserAsync(
+        WADNRDbContext dbContext,
+        PersonDetail callingUser)
+    {
+        var isAdmin = callingUser.HasElevatedProjectAccess;
+
+        // Compute "my" org IDs
+        var stewardOrgIds = await dbContext.PersonStewardOrganizations
+            .AsNoTracking()
+            .Where(pso => pso.PersonID == callingUser.PersonID)
+            .Select(pso => pso.OrganizationID)
+            .ToListAsync();
+
+        var myOrgIds = new List<int>();
+        if (callingUser.OrganizationID.HasValue) myOrgIds.Add(callingUser.OrganizationID.Value);
+        myOrgIds.AddRange(stewardOrgIds);
+
+        // Base query: all approved projects
+        var query = dbContext.Projects
+            .AsNoTracking()
+            .Where(p => p.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Approved);
+
+        // Non-admins only see "my" projects
+        if (!isAdmin)
+        {
+            query = query.Where(p =>
+                p.ProjectOrganizations.Any(po => myOrgIds.Contains(po.OrganizationID))
+                || p.ProjectPeople.Any(pp => pp.PersonID == callingUser.PersonID));
+        }
+
+        var rows = await query
+            .OrderBy(p => p.ProjectName)
+            .Select(ProjectProjections.AsUpdateStatusGridRow)
+            .ToListAsync();
+
+        // For admins, determine IsMyProject for each row
+        HashSet<int>? myProjectIds = null;
+        if (isAdmin)
+        {
+            myProjectIds = (await dbContext.Projects
+                .AsNoTracking()
+                .Where(p => p.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Approved)
+                .Where(p =>
+                    p.ProjectOrganizations.Any(po => myOrgIds.Contains(po.OrganizationID))
+                    || p.ProjectPeople.Any(pp => pp.PersonID == callingUser.PersonID))
+                .Select(p => p.ProjectID)
+                .ToListAsync())
+                .ToHashSet();
+        }
+
+        // Resolve lookups client-side
+        foreach (var row in rows)
+        {
+            if (row.ProjectUpdateStateID.HasValue
+                && ProjectUpdateState.AllLookupDictionary.TryGetValue(row.ProjectUpdateStateID.Value, out var state))
+            {
+                row.ProjectUpdateStateName = state.ProjectUpdateStateDisplayName;
+            }
+            else
+            {
+                row.ProjectUpdateStateName = "Not Started";
+            }
+
+            row.IsMyProject = isAdmin ? myProjectIds!.Contains(row.ProjectID) : true;
+        }
+
+        return rows;
     }
 
     #endregion

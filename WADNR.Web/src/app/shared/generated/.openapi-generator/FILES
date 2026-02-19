@@ -86,6 +86,8 @@ model/create-workflow-progress-response-steps.ts
 model/create-workflow-progress-response.ts
 model/custom-page-detail.ts
 model/custom-page-menu-item.ts
+model/diff-field.ts
+model/diff-section.ts
 model/dimension.ts
 model/dnr-upland-region-detail.ts
 model/dnr-upland-region-grid-row.ts
@@ -325,7 +327,7 @@ model/project-type-taxonomy.ts
 model/project-type-upsert-request.ts
 model/project-update-basics-step-request.ts
 model/project-update-basics-step.ts
-model/project-update-batch-response.ts
+model/project-update-batch-detail.ts
 model/project-update-contacts-step-request.ts
 model/project-update-contacts-step.ts
 model/project-update-diff-summary.ts
@@ -337,6 +339,7 @@ model/project-update-external-links-step-request.ts
 model/project-update-external-links-step.ts
 model/project-update-geographic-step-request.ts
 model/project-update-geographic-step.ts
+model/project-update-history-entry.ts
 model/project-update-history-grid-row.ts
 model/project-update-location-detailed-step-request.ts
 model/project-update-location-detailed-step.ts
@@ -347,6 +350,7 @@ model/project-update-organizations-step.ts
 model/project-update-photos-step-request.ts
 model/project-update-photos-step.ts
 model/project-update-return-request.ts
+model/project-update-status-grid-row.ts
 model/project-update-treatments-step-request.ts
 model/project-update-treatments-step.ts
 model/project-upsert-request.ts

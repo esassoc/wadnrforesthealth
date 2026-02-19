@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 using System.Text.RegularExpressions;
+using WADNR.Common.GeoSpatial;
 using WADNR.Models.DataTransferObjects;
 
 namespace WADNR.EFModels.Entities;
@@ -16,25 +17,12 @@ public static class ProjectUpdateWorkflowSteps
     /// <summary>
     /// Starts a new Update batch by copying all data from the Project tables to the Update tables.
     /// </summary>
-    public static async Task<ProjectUpdateBatchResponse?> StartBatchAsync(WADNRDbContext dbContext, int projectID, int callingPersonID)
+    public static async Task<ProjectUpdateBatchDetail?> StartBatchAsync(WADNRDbContext dbContext, int projectID, int callingPersonID)
     {
         // Verify project exists and is in Approved status
+        // Load project scalar fields only — child collections are loaded separately below
+        // to avoid a massive Cartesian product join (14 includes with geometry columns).
         var project = await dbContext.Projects
-            .Include(p => p.ProjectPrograms)
-            .Include(p => p.ProjectPriorityLandscapes)
-            .Include(p => p.ProjectRegions)
-            .Include(p => p.ProjectCounties)
-            .Include(p => p.ProjectLocations)
-            .Include(p => p.ProjectOrganizations)
-            .Include(p => p.ProjectPeople)
-            .Include(p => p.ProjectFundingSources)
-            .Include(p => p.ProjectFundSourceAllocationRequests)
-            .Include(p => p.ProjectImages)
-            .Include(p => p.ProjectExternalLinks)
-            .Include(p => p.ProjectDocuments)
-            .Include(p => p.ProjectNotes)
-            .Include(p => p.Treatments)
-                .ThenInclude(t => t.ProjectLocation)
             .FirstOrDefaultAsync(p => p.ProjectID == projectID);
 
         if (project == null) return null;
@@ -44,240 +32,20 @@ public static class ProjectUpdateWorkflowSteps
             throw new InvalidOperationException("Project Updates can only be started for Approved projects.");
         }
 
-        // Check if there's already an active batch
-        var existingBatch = await dbContext.ProjectUpdateBatches
-            .FirstOrDefaultAsync(b => b.ProjectID == projectID &&
-                b.ProjectUpdateStateID != (int)ProjectUpdateStateEnum.Approved);
+        // Check if there's already an active batch (use latest batch, matching HasExistingUpdateBatch logic)
+        var latestBatch = await dbContext.ProjectUpdateBatches
+            .Where(b => b.ProjectID == projectID)
+            .OrderByDescending(b => b.ProjectUpdateBatchID)
+            .FirstOrDefaultAsync();
 
-        if (existingBatch != null)
+        if (latestBatch != null && latestBatch.ProjectUpdateStateID != (int)ProjectUpdateStateEnum.Approved)
         {
             throw new InvalidOperationException("An Update batch is already in progress for this project.");
         }
 
-        // Create the batch
-        var batch = new ProjectUpdateBatch
-        {
-            ProjectID = projectID,
-            ProjectUpdateStateID = (int)ProjectUpdateStateEnum.Created,
-            LastUpdateDate = DateTime.UtcNow,
-            LastUpdatePersonID = callingPersonID,
-            NoPriorityLandscapesExplanation = project.NoPriorityLandscapesExplanation,
-            NoRegionsExplanation = project.NoRegionsExplanation,
-            NoCountiesExplanation = project.NoCountiesExplanation
-        };
-        dbContext.ProjectUpdateBatches.Add(batch);
-        await dbContext.SaveChangesAsync();
-
-        // Copy project basics to ProjectUpdate
-        var projectUpdate = new ProjectUpdate
-        {
-            ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-            ProjectStageID = project.ProjectStageID,
-            ProjectDescription = project.ProjectDescription,
-            CompletionDate = project.CompletionDate,
-            EstimatedTotalCost = project.EstimatedTotalCost,
-            ProjectLocationPoint = project.ProjectLocationPoint,
-            ProjectLocationNotes = project.ProjectLocationNotes,
-            PlannedDate = project.PlannedDate,
-            ProjectLocationSimpleTypeID = project.ProjectLocationSimpleTypeID,
-            FocusAreaID = project.FocusAreaID,
-            ExpirationDate = project.ExpirationDate,
-            ProjectFundingSourceNotes = project.ProjectFundingSourceNotes,
-            PercentageMatch = project.PercentageMatch
-        };
-        dbContext.Set<ProjectUpdate>().Add(projectUpdate);
-
-        // Copy programs
-        foreach (var pp in project.ProjectPrograms)
-        {
-            dbContext.ProjectUpdatePrograms.Add(new ProjectUpdateProgram
-            {
-                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-                ProgramID = pp.ProgramID
-            });
-        }
-
-        // Copy priority landscapes
-        foreach (var pl in project.ProjectPriorityLandscapes)
-        {
-            dbContext.ProjectPriorityLandscapeUpdates.Add(new ProjectPriorityLandscapeUpdate
-            {
-                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-                PriorityLandscapeID = pl.PriorityLandscapeID
-            });
-        }
-
-        // Copy regions
-        foreach (var pr in project.ProjectRegions)
-        {
-            dbContext.ProjectRegionUpdates.Add(new ProjectRegionUpdate
-            {
-                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-                DNRUplandRegionID = pr.DNRUplandRegionID
-            });
-        }
-
-        // Copy counties
-        foreach (var pc in project.ProjectCounties)
-        {
-            dbContext.ProjectCountyUpdates.Add(new ProjectCountyUpdate
-            {
-                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-                CountyID = pc.CountyID
-            });
-        }
-
-        // Copy detailed locations
-        foreach (var loc in project.ProjectLocations)
-        {
-            dbContext.ProjectLocationUpdates.Add(new ProjectLocationUpdate
-            {
-                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-                ProjectLocationTypeID = loc.ProjectLocationTypeID,
-                ProjectLocationUpdateGeometry = loc.ProjectLocationGeometry,
-                ProjectLocationUpdateNotes = loc.ProjectLocationNotes,
-                ProjectLocationUpdateName = loc.ProjectLocationName
-            });
-        }
-
-        // Flush to assign ProjectLocationUpdate IDs (needed for treatment FK mapping)
-        await dbContext.SaveChangesAsync();
-
-        // Reload the batch's location updates with their assigned IDs
-        var locationUpdates = await dbContext.ProjectLocationUpdates
-            .Where(plu => plu.ProjectUpdateBatchID == batch.ProjectUpdateBatchID)
-            .ToListAsync();
-
-        // Copy treatments (must happen after locations are saved)
-        foreach (var treatment in project.Treatments)
-        {
-            // Match to the corresponding ProjectLocationUpdate by geometry + name
-            int? projectLocationUpdateID = null;
-            if (treatment.ProjectLocation != null)
-            {
-                var matchingLocation = locationUpdates.FirstOrDefault(plu =>
-                    plu.ProjectLocationUpdateName == treatment.ProjectLocation.ProjectLocationName &&
-                    plu.ProjectLocationUpdateGeometry.EqualsTopologically(treatment.ProjectLocation.ProjectLocationGeometry));
-                projectLocationUpdateID = matchingLocation?.ProjectLocationUpdateID;
-            }
-
-            dbContext.TreatmentUpdates.Add(new TreatmentUpdate
-            {
-                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-                ProjectLocationUpdateID = projectLocationUpdateID,
-                TreatmentTypeID = treatment.TreatmentTypeID,
-                TreatmentDetailedActivityTypeID = treatment.TreatmentDetailedActivityTypeID,
-                TreatmentCodeID = treatment.TreatmentCodeID,
-                TreatmentStartDate = treatment.TreatmentStartDate,
-                TreatmentEndDate = treatment.TreatmentEndDate,
-                TreatmentFootprintAcres = treatment.TreatmentFootprintAcres,
-                TreatmentTreatedAcres = treatment.TreatmentTreatedAcres,
-                TreatmentNotes = treatment.TreatmentNotes,
-                CostPerAcre = treatment.CostPerAcre,
-                TreatmentTypeImportedText = treatment.TreatmentTypeImportedText,
-                TreatmentDetailedActivityTypeImportedText = treatment.TreatmentDetailedActivityTypeImportedText,
-                ProgramID = treatment.ProgramID,
-                ImportedFromGis = treatment.ImportedFromGis,
-                CreateGisUploadAttemptID = treatment.CreateGisUploadAttemptID,
-                UpdateGisUploadAttemptID = treatment.UpdateGisUploadAttemptID
-            });
-        }
-
-        // Copy organizations
-        foreach (var po in project.ProjectOrganizations)
-        {
-            dbContext.ProjectOrganizationUpdates.Add(new ProjectOrganizationUpdate
-            {
-                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-                OrganizationID = po.OrganizationID,
-                RelationshipTypeID = po.RelationshipTypeID
-            });
-        }
-
-        // Copy contacts
-        foreach (var pp in project.ProjectPeople)
-        {
-            dbContext.ProjectPersonUpdates.Add(new ProjectPersonUpdate
-            {
-                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-                PersonID = pp.PersonID,
-                ProjectPersonRelationshipTypeID = pp.ProjectPersonRelationshipTypeID
-            });
-        }
-
-        // Copy funding sources
-        foreach (var pfs in project.ProjectFundingSources)
-        {
-            dbContext.ProjectFundingSourceUpdates.Add(new ProjectFundingSourceUpdate
-            {
-                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-                FundingSourceID = pfs.FundingSourceID
-            });
-        }
-
-        // Copy allocation requests
-        foreach (var ar in project.ProjectFundSourceAllocationRequests)
-        {
-            dbContext.ProjectFundSourceAllocationRequestUpdates.Add(new ProjectFundSourceAllocationRequestUpdate
-            {
-                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-                FundSourceAllocationID = ar.FundSourceAllocationID,
-                TotalAmount = ar.TotalAmount,
-                CreateDate = ar.CreateDate
-            });
-        }
-
-        // Copy images
-        foreach (var img in project.ProjectImages)
-        {
-            dbContext.ProjectImageUpdates.Add(new ProjectImageUpdate
-            {
-                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-                FileResourceID = img.FileResourceID,
-                Caption = img.Caption,
-                Credit = img.Credit,
-                IsKeyPhoto = img.IsKeyPhoto,
-                ExcludeFromFactSheet = img.ExcludeFromFactSheet
-            });
-        }
-
-        // Copy external links
-        foreach (var link in project.ProjectExternalLinks)
-        {
-            dbContext.ProjectExternalLinkUpdates.Add(new ProjectExternalLinkUpdate
-            {
-                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-                ExternalLinkLabel = link.ExternalLinkLabel,
-                ExternalLinkUrl = link.ExternalLinkUrl
-            });
-        }
-
-        // Copy documents
-        foreach (var doc in project.ProjectDocuments)
-        {
-            dbContext.ProjectDocumentUpdates.Add(new ProjectDocumentUpdate
-            {
-                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-                FileResourceID = doc.FileResourceID,
-                DisplayName = doc.DisplayName,
-                Description = doc.Description
-            });
-        }
-
-        // Copy notes
-        foreach (var note in project.ProjectNotes)
-        {
-            dbContext.ProjectNoteUpdates.Add(new ProjectNoteUpdate
-            {
-                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
-                Note = note.Note,
-                CreateDate = note.CreateDate,
-                CreatePersonID = note.CreatePersonID,
-                UpdateDate = note.UpdateDate
-            });
-        }
-
-        await dbContext.SaveChangesAsync();
+        // Execute stored procedure to create batch and copy all project data in a single database call
+        await dbContext.Database.ExecuteSqlInterpolatedAsync(
+            $"EXEC dbo.pStartProjectUpdateBatch @ProjectID={projectID}, @CallingPersonID={callingPersonID}");
 
         return await GetCurrentBatchAsync(dbContext, projectID);
     }
@@ -285,22 +53,13 @@ public static class ProjectUpdateWorkflowSteps
     /// <summary>
     /// Gets the current (non-approved) batch for a project.
     /// </summary>
-    public static async Task<ProjectUpdateBatchResponse?> GetCurrentBatchAsync(WADNRDbContext dbContext, int projectID)
+    public static async Task<ProjectUpdateBatchDetail?> GetCurrentBatchAsync(WADNRDbContext dbContext, int projectID)
     {
         var result = await dbContext.ProjectUpdateBatches
             .AsNoTracking()
             .Where(b => b.ProjectID == projectID &&
                 b.ProjectUpdateStateID != (int)ProjectUpdateStateEnum.Approved)
-            .Select(b => new ProjectUpdateBatchResponse
-            {
-                ProjectUpdateBatchID = b.ProjectUpdateBatchID,
-                ProjectID = b.ProjectID,
-                ProjectName = b.Project.ProjectName,
-                ProjectUpdateStateID = b.ProjectUpdateStateID,
-                ProjectUpdateStateName = null, // Resolved client-side below
-                LastUpdateDate = b.LastUpdateDate,
-                LastUpdatedByPersonName = b.LastUpdatePerson.FirstName + " " + b.LastUpdatePerson.LastName
-            })
+            .Select(ProjectUpdateBatchProjections.AsDetail)
             .FirstOrDefaultAsync();
 
         // Resolve lookup value client-side to avoid EF Core translation issues
@@ -317,24 +76,9 @@ public static class ProjectUpdateWorkflowSteps
     /// </summary>
     public static async Task<bool> DeleteBatchAsync(WADNRDbContext dbContext, int projectUpdateBatchID, int callingPersonID)
     {
+        // Load batch scalars only — child collections loaded separately to avoid
+        // Cartesian product joins (was 18 includes with geometry tables).
         var batch = await dbContext.ProjectUpdateBatches
-            .Include(b => b.ProjectUpdates)
-            .Include(b => b.ProjectUpdatePrograms)
-            .Include(b => b.ProjectCountyUpdates)
-            .Include(b => b.ProjectRegionUpdates)
-            .Include(b => b.ProjectPriorityLandscapeUpdates)
-            .Include(b => b.ProjectLocationUpdates)
-            .Include(b => b.ProjectLocationStagingUpdates)
-            .Include(b => b.TreatmentUpdates)
-            .Include(b => b.ProjectPersonUpdates)
-            .Include(b => b.ProjectOrganizationUpdates)
-            .Include(b => b.ProjectFundingSourceUpdates)
-            .Include(b => b.ProjectFundSourceAllocationRequestUpdates)
-            .Include(b => b.ProjectImageUpdates)
-            .Include(b => b.ProjectExternalLinkUpdates)
-            .Include(b => b.ProjectDocumentUpdates)
-            .Include(b => b.ProjectNoteUpdates)
-            .Include(b => b.ProjectUpdateHistories)
             .FirstOrDefaultAsync(b => b.ProjectUpdateBatchID == projectUpdateBatchID);
 
         if (batch == null) return false;
@@ -346,24 +90,91 @@ public static class ProjectUpdateWorkflowSteps
             throw new InvalidOperationException("Update batch can only be deleted when in Created or Returned state.");
         }
 
+        // Load each child collection separately (one simple query per table)
+        var projectUpdates = await dbContext.ProjectUpdates
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var projectUpdatePrograms = await dbContext.ProjectUpdatePrograms
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var countyUpdates = await dbContext.ProjectCountyUpdates
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var regionUpdates = await dbContext.ProjectRegionUpdates
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var priorityLandscapeUpdates = await dbContext.ProjectPriorityLandscapeUpdates
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var locationUpdates = await dbContext.ProjectLocationUpdates
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var locationStagingUpdates = await dbContext.ProjectLocationStagingUpdates
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var treatmentUpdates = await dbContext.TreatmentUpdates
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var personUpdates = await dbContext.ProjectPersonUpdates
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var organizationUpdates = await dbContext.ProjectOrganizationUpdates
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var fundingSourceUpdates = await dbContext.ProjectFundingSourceUpdates
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var allocationRequestUpdates = await dbContext.ProjectFundSourceAllocationRequestUpdates
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        // Include FileResource only on images/docs for orphan cleanup
+        var imageUpdates = await dbContext.ProjectImageUpdates
+            .Include(x => x.FileResource)
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var externalLinkUpdates = await dbContext.ProjectExternalLinkUpdates
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var documentUpdates = await dbContext.ProjectDocumentUpdates
+            .Include(x => x.FileResource)
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var noteUpdates = await dbContext.ProjectNoteUpdates
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var updateHistories = await dbContext.ProjectUpdateHistories
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+
+        // Clean up FileResources for newly-uploaded photos/documents (not shared with live project)
+        var imageFileResourceIDs = imageUpdates
+            .Where(piu => piu.FileResourceID.HasValue)
+            .Select(piu => piu.FileResourceID!.Value)
+            .Distinct().ToList();
+        var sharedImageFileResourceIDs = new HashSet<int>(
+            await dbContext.ProjectImages
+                .Where(pi => imageFileResourceIDs.Contains(pi.FileResourceID))
+                .Select(pi => pi.FileResourceID)
+                .ToListAsync());
+        var orphanedImageFiles = imageUpdates
+            .Where(piu => piu.FileResource != null && !sharedImageFileResourceIDs.Contains(piu.FileResourceID!.Value))
+            .Select(piu => piu.FileResource!)
+            .ToList();
+
+        var docFileResourceIDs = documentUpdates.Select(pdu => pdu.FileResourceID).Distinct().ToList();
+        var sharedDocFileResourceIDs = new HashSet<int>(
+            await dbContext.ProjectDocuments
+                .Where(pd => docFileResourceIDs.Contains(pd.FileResourceID))
+                .Select(pd => pd.FileResourceID)
+                .ToListAsync());
+        var orphanedDocFiles = documentUpdates
+            .Where(pdu => pdu.FileResource != null && !sharedDocFileResourceIDs.Contains(pdu.FileResourceID))
+            .Select(pdu => pdu.FileResource!)
+            .ToList();
+
         // Delete all related data manually (no cascading deletes in DB)
-        dbContext.ProjectUpdates.RemoveRange(batch.ProjectUpdates);
-        dbContext.ProjectUpdatePrograms.RemoveRange(batch.ProjectUpdatePrograms);
-        dbContext.ProjectCountyUpdates.RemoveRange(batch.ProjectCountyUpdates);
-        dbContext.ProjectRegionUpdates.RemoveRange(batch.ProjectRegionUpdates);
-        dbContext.ProjectPriorityLandscapeUpdates.RemoveRange(batch.ProjectPriorityLandscapeUpdates);
-        dbContext.ProjectLocationUpdates.RemoveRange(batch.ProjectLocationUpdates);
-        dbContext.ProjectLocationStagingUpdates.RemoveRange(batch.ProjectLocationStagingUpdates);
-        dbContext.TreatmentUpdates.RemoveRange(batch.TreatmentUpdates);
-        dbContext.ProjectPersonUpdates.RemoveRange(batch.ProjectPersonUpdates);
-        dbContext.ProjectOrganizationUpdates.RemoveRange(batch.ProjectOrganizationUpdates);
-        dbContext.ProjectFundingSourceUpdates.RemoveRange(batch.ProjectFundingSourceUpdates);
-        dbContext.ProjectFundSourceAllocationRequestUpdates.RemoveRange(batch.ProjectFundSourceAllocationRequestUpdates);
-        dbContext.ProjectImageUpdates.RemoveRange(batch.ProjectImageUpdates);
-        dbContext.ProjectExternalLinkUpdates.RemoveRange(batch.ProjectExternalLinkUpdates);
-        dbContext.ProjectDocumentUpdates.RemoveRange(batch.ProjectDocumentUpdates);
-        dbContext.ProjectNoteUpdates.RemoveRange(batch.ProjectNoteUpdates);
-        dbContext.ProjectUpdateHistories.RemoveRange(batch.ProjectUpdateHistories);
+        dbContext.ProjectUpdates.RemoveRange(projectUpdates);
+        dbContext.ProjectUpdatePrograms.RemoveRange(projectUpdatePrograms);
+        dbContext.ProjectCountyUpdates.RemoveRange(countyUpdates);
+        dbContext.ProjectRegionUpdates.RemoveRange(regionUpdates);
+        dbContext.ProjectPriorityLandscapeUpdates.RemoveRange(priorityLandscapeUpdates);
+        dbContext.TreatmentUpdates.RemoveRange(treatmentUpdates); // before locations (FK: TreatmentUpdate → ProjectLocationUpdate)
+        dbContext.ProjectLocationUpdates.RemoveRange(locationUpdates);
+        dbContext.ProjectLocationStagingUpdates.RemoveRange(locationStagingUpdates);
+        dbContext.ProjectPersonUpdates.RemoveRange(personUpdates);
+        dbContext.ProjectOrganizationUpdates.RemoveRange(organizationUpdates);
+        dbContext.ProjectFundingSourceUpdates.RemoveRange(fundingSourceUpdates);
+        dbContext.ProjectFundSourceAllocationRequestUpdates.RemoveRange(allocationRequestUpdates);
+        dbContext.ProjectImageUpdates.RemoveRange(imageUpdates);
+        dbContext.ProjectExternalLinkUpdates.RemoveRange(externalLinkUpdates);
+        dbContext.ProjectDocumentUpdates.RemoveRange(documentUpdates);
+        dbContext.ProjectNoteUpdates.RemoveRange(noteUpdates);
+        dbContext.ProjectUpdateHistories.RemoveRange(updateHistories);
+        dbContext.FileResources.RemoveRange(orphanedImageFiles);
+        dbContext.FileResources.RemoveRange(orphanedDocFiles);
 
         // Now delete the batch itself
         dbContext.ProjectUpdateBatches.Remove(batch);
@@ -662,7 +473,7 @@ public static class ProjectUpdateWorkflowSteps
             if (!string.IsNullOrEmpty(locRequest.GeoJson))
             {
                 var reader = new NetTopologySuite.IO.WKTReader();
-                geometry = reader.Read(locRequest.GeoJson);
+                geometry = reader.Read(locRequest.GeoJson).MakeValid();
                 geometry.SRID = 4326;
             }
 
@@ -1527,10 +1338,11 @@ public static class ProjectUpdateWorkflowSteps
                     Caption = img.Caption,
                     Credit = img.Credit,
                     IsKeyPhoto = img.IsKeyPhoto,
+                    ProjectImageTimingID = img.ProjectImageTimingID,
                     ExcludeFromFactSheet = img.ExcludeFromFactSheet,
                     SortOrder = sortOrder++,
                     FileResourceUrl = img.FileResource != null
-                        ? $"/api/file-resources/{img.FileResourceID}"
+                        ? $"/file-resources/{img.FileResource.FileResourceGUID}"
                         : null
                 }).ToList()
         };
@@ -1587,6 +1399,130 @@ public static class ProjectUpdateWorkflowSteps
         await dbContext.SaveChangesAsync();
 
         return await GetPhotosStepAsync(dbContext, projectUpdateBatchID);
+    }
+
+    public static async Task<ProjectImageUpdate> CreatePhotoUpdateAsync(
+        WADNRDbContext dbContext,
+        int projectUpdateBatchID,
+        int fileResourceID,
+        string caption,
+        string credit,
+        int? projectImageTimingID,
+        bool excludeFromFactSheet)
+    {
+        var hasExistingPhotos = await dbContext.ProjectImageUpdates
+            .AnyAsync(x => x.ProjectUpdateBatchID == projectUpdateBatchID);
+
+        var photoUpdate = new ProjectImageUpdate
+        {
+            ProjectUpdateBatchID = projectUpdateBatchID,
+            FileResourceID = fileResourceID,
+            Caption = caption,
+            Credit = credit,
+            ProjectImageTimingID = projectImageTimingID,
+            ExcludeFromFactSheet = excludeFromFactSheet,
+            IsKeyPhoto = !hasExistingPhotos
+        };
+
+        dbContext.ProjectImageUpdates.Add(photoUpdate);
+        await dbContext.SaveChangesAsync();
+        return photoUpdate;
+    }
+
+    public static async Task UpdatePhotoUpdateAsync(
+        WADNRDbContext dbContext,
+        int projectImageUpdateID,
+        ProjectImageUpsertRequest request)
+    {
+        var photoUpdate = await dbContext.ProjectImageUpdates
+            .Include(x => x.ProjectUpdateBatch)
+            .FirstOrDefaultAsync(x => x.ProjectImageUpdateID == projectImageUpdateID);
+
+        if (photoUpdate == null)
+            throw new InvalidOperationException($"ProjectImageUpdate with ID {projectImageUpdateID} not found.");
+
+        VerifyBatchIsEditable(photoUpdate.ProjectUpdateBatch);
+
+        photoUpdate.Caption = request.Caption;
+        photoUpdate.Credit = request.Credit;
+        photoUpdate.ProjectImageTimingID = request.ProjectImageTimingID;
+        photoUpdate.ExcludeFromFactSheet = request.ExcludeFromFactSheet;
+
+        await dbContext.SaveChangesAsync();
+    }
+
+    public static async Task<Guid> DeletePhotoUpdateAsync(WADNRDbContext dbContext, int projectImageUpdateID)
+    {
+        var photoUpdate = await dbContext.ProjectImageUpdates
+            .Include(x => x.FileResource)
+            .Include(x => x.ProjectUpdateBatch)
+            .FirstOrDefaultAsync(x => x.ProjectImageUpdateID == projectImageUpdateID);
+
+        if (photoUpdate == null)
+            throw new InvalidOperationException($"ProjectImageUpdate with ID {projectImageUpdateID} not found.");
+
+        VerifyBatchIsEditable(photoUpdate.ProjectUpdateBatch);
+
+        var batchID = photoUpdate.ProjectUpdateBatchID;
+        var wasKeyPhoto = photoUpdate.IsKeyPhoto;
+        var fileResourceGuid = Guid.Empty;
+
+        dbContext.ProjectImageUpdates.Remove(photoUpdate);
+
+        // FileResource sharing strategy: Unlike the legacy MVC which duplicated FileResource rows
+        // (with their inline FileResourceData) for each update batch, the modern workflow shares
+        // the same FileResourceID between ProjectImage and ProjectImageUpdate. This avoids
+        // duplicating blob storage entries. The tradeoff is that we must check for sharing before
+        // deleting a FileResource — if the original ProjectImage still references it, we skip
+        // the delete. See DeleteDocumentUpdateAsync for the same pattern.
+        if (photoUpdate.FileResource != null)
+        {
+            var isShared = await dbContext.ProjectImages
+                .AnyAsync(pi => pi.FileResourceID == photoUpdate.FileResourceID);
+
+            if (!isShared)
+            {
+                fileResourceGuid = photoUpdate.FileResource.FileResourceGUID;
+                dbContext.FileResources.Remove(photoUpdate.FileResource);
+            }
+        }
+
+        await dbContext.SaveChangesAsync();
+
+        if (wasKeyPhoto)
+        {
+            var nextPhoto = await dbContext.ProjectImageUpdates
+                .Where(x => x.ProjectUpdateBatchID == batchID)
+                .OrderBy(x => x.ProjectImageUpdateID)
+                .FirstOrDefaultAsync();
+
+            if (nextPhoto != null)
+            {
+                nextPhoto.IsKeyPhoto = true;
+                await dbContext.SaveChangesAsync();
+            }
+        }
+
+        return fileResourceGuid;
+    }
+
+    public static async Task SetKeyPhotoUpdateAsync(WADNRDbContext dbContext, int projectUpdateBatchID, int projectImageUpdateID)
+    {
+        var batch = await dbContext.ProjectUpdateBatches
+            .Include(b => b.ProjectImageUpdates)
+            .FirstOrDefaultAsync(b => b.ProjectUpdateBatchID == projectUpdateBatchID);
+
+        if (batch == null)
+            throw new InvalidOperationException($"ProjectUpdateBatch with ID {projectUpdateBatchID} not found.");
+
+        VerifyBatchIsEditable(batch);
+
+        foreach (var photo in batch.ProjectImageUpdates)
+        {
+            photo.IsKeyPhoto = photo.ProjectImageUpdateID == projectImageUpdateID;
+        }
+
+        await dbContext.SaveChangesAsync();
     }
 
     #endregion
@@ -1688,7 +1624,10 @@ public static class ProjectUpdateWorkflowSteps
                 FileResourceID = doc.FileResourceID,
                 DocumentTitle = doc.DisplayName,
                 DocumentDescription = doc.Description,
-                FileResourceUrl = $"/api/file-resources/{doc.FileResourceID}"
+                ProjectDocumentTypeID = doc.ProjectDocumentTypeID,
+                FileResourceUrl = doc.FileResource != null
+                    ? $"/file-resources/{doc.FileResource.FileResourceGUID}"
+                    : null
             }).ToList(),
             Notes = batch.ProjectNoteUpdates.Select(note => new ProjectNoteUpdateItem
             {
@@ -1780,6 +1719,141 @@ public static class ProjectUpdateWorkflowSteps
         await dbContext.SaveChangesAsync();
 
         return await GetDocumentsNotesStepAsync(dbContext, projectUpdateBatchID);
+    }
+
+    // Individual document CRUD for update workflow
+
+    public static async Task CreateDocumentUpdateAsync(
+        WADNRDbContext dbContext,
+        int projectUpdateBatchID,
+        int fileResourceID,
+        string displayName,
+        string? description,
+        int? projectDocumentTypeID)
+    {
+        var docUpdate = new ProjectDocumentUpdate
+        {
+            ProjectUpdateBatchID = projectUpdateBatchID,
+            FileResourceID = fileResourceID,
+            DisplayName = displayName,
+            Description = description,
+            ProjectDocumentTypeID = projectDocumentTypeID
+        };
+
+        dbContext.ProjectDocumentUpdates.Add(docUpdate);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public static async Task UpdateDocumentUpdateAsync(
+        WADNRDbContext dbContext,
+        int projectDocumentUpdateID,
+        ProjectDocumentUpsertRequest request)
+    {
+        var docUpdate = await dbContext.ProjectDocumentUpdates
+            .Include(x => x.ProjectUpdateBatch)
+            .FirstOrDefaultAsync(x => x.ProjectDocumentUpdateID == projectDocumentUpdateID);
+
+        if (docUpdate == null)
+            throw new InvalidOperationException($"ProjectDocumentUpdate with ID {projectDocumentUpdateID} not found.");
+
+        VerifyBatchIsEditable(docUpdate.ProjectUpdateBatch);
+
+        docUpdate.DisplayName = request.DisplayName;
+        docUpdate.Description = request.Description;
+        docUpdate.ProjectDocumentTypeID = request.ProjectDocumentTypeID;
+
+        await dbContext.SaveChangesAsync();
+    }
+
+    public static async Task<Guid> DeleteDocumentUpdateAsync(WADNRDbContext dbContext, int projectDocumentUpdateID)
+    {
+        var docUpdate = await dbContext.ProjectDocumentUpdates
+            .Include(x => x.FileResource)
+            .Include(x => x.ProjectUpdateBatch)
+            .FirstOrDefaultAsync(x => x.ProjectDocumentUpdateID == projectDocumentUpdateID);
+
+        if (docUpdate == null)
+            throw new InvalidOperationException($"ProjectDocumentUpdate with ID {projectDocumentUpdateID} not found.");
+
+        VerifyBatchIsEditable(docUpdate.ProjectUpdateBatch);
+
+        var fileResourceGuid = Guid.Empty;
+
+        dbContext.ProjectDocumentUpdates.Remove(docUpdate);
+
+        // Only delete the FileResource if it's not referenced by a live ProjectDocument.
+        // Documents and photos copied from the original project share the same FileResourceID
+        // (unlike legacy MVC which duplicated FileResource rows with inline data).
+        // See StartBatchAsync comment for why we use shared references + isShared checks.
+        if (docUpdate.FileResource != null)
+        {
+            var isShared = await dbContext.ProjectDocuments
+                .AnyAsync(d => d.FileResourceID == docUpdate.FileResourceID);
+
+            if (!isShared)
+            {
+                fileResourceGuid = docUpdate.FileResource.FileResourceGUID;
+                dbContext.FileResources.Remove(docUpdate.FileResource);
+            }
+        }
+
+        await dbContext.SaveChangesAsync();
+        return fileResourceGuid;
+    }
+
+    // Individual note CRUD for update workflow
+
+    public static async Task CreateNoteUpdateAsync(
+        WADNRDbContext dbContext,
+        int projectUpdateBatchID,
+        string note,
+        int callingPersonID)
+    {
+        var noteUpdate = new ProjectNoteUpdate
+        {
+            ProjectUpdateBatchID = projectUpdateBatchID,
+            Note = note,
+            CreateDate = DateTime.UtcNow,
+            CreatePersonID = callingPersonID
+        };
+
+        dbContext.ProjectNoteUpdates.Add(noteUpdate);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public static async Task UpdateNoteUpdateAsync(
+        WADNRDbContext dbContext,
+        int projectNoteUpdateID,
+        string note)
+    {
+        var noteUpdate = await dbContext.ProjectNoteUpdates
+            .Include(x => x.ProjectUpdateBatch)
+            .FirstOrDefaultAsync(x => x.ProjectNoteUpdateID == projectNoteUpdateID);
+
+        if (noteUpdate == null)
+            throw new InvalidOperationException($"ProjectNoteUpdate with ID {projectNoteUpdateID} not found.");
+
+        VerifyBatchIsEditable(noteUpdate.ProjectUpdateBatch);
+
+        noteUpdate.Note = note;
+        noteUpdate.UpdateDate = DateTime.UtcNow;
+
+        await dbContext.SaveChangesAsync();
+    }
+
+    public static async Task DeleteNoteUpdateAsync(WADNRDbContext dbContext, int projectNoteUpdateID)
+    {
+        var noteUpdate = await dbContext.ProjectNoteUpdates
+            .Include(x => x.ProjectUpdateBatch)
+            .FirstOrDefaultAsync(x => x.ProjectNoteUpdateID == projectNoteUpdateID);
+
+        if (noteUpdate == null)
+            throw new InvalidOperationException($"ProjectNoteUpdate with ID {projectNoteUpdateID} not found.");
+
+        VerifyBatchIsEditable(noteUpdate.ProjectUpdateBatch);
+
+        dbContext.ProjectNoteUpdates.Remove(noteUpdate);
+        await dbContext.SaveChangesAsync();
     }
 
     #endregion
@@ -1976,20 +2050,9 @@ public static class ProjectUpdateWorkflowSteps
 
         VerifyBatchIsEditable(batch);
 
+        // Load project scalars only — each revert sub-method loads only the
+        // specific collection(s) it needs, avoiding a 14-include Cartesian product.
         var project = await dbContext.Projects
-            .Include(p => p.ProjectPrograms)
-            .Include(p => p.ProjectPriorityLandscapes)
-            .Include(p => p.ProjectRegions)
-            .Include(p => p.ProjectCounties)
-            .Include(p => p.ProjectLocations)
-            .Include(p => p.ProjectOrganizations)
-            .Include(p => p.ProjectPeople)
-            .Include(p => p.ProjectFundingSources)
-            .Include(p => p.ProjectFundSourceAllocationRequests)
-            .Include(p => p.ProjectImages)
-            .Include(p => p.ProjectExternalLinks)
-            .Include(p => p.ProjectDocuments)
-            .Include(p => p.ProjectNotes)
             .FirstOrDefaultAsync(p => p.ProjectID == batch.ProjectID);
 
         if (project == null) return false;
@@ -2046,7 +2109,9 @@ public static class ProjectUpdateWorkflowSteps
             .ToListAsync();
         dbContext.ProjectUpdatePrograms.RemoveRange(existingPrograms);
 
-        foreach (var pp in project.ProjectPrograms)
+        var projectPrograms = await dbContext.ProjectPrograms
+            .Where(x => x.ProjectID == project.ProjectID).ToListAsync();
+        foreach (var pp in projectPrograms)
         {
             dbContext.ProjectUpdatePrograms.Add(new ProjectUpdateProgram
             {
@@ -2066,7 +2131,9 @@ public static class ProjectUpdateWorkflowSteps
             .ToListAsync();
         dbContext.ProjectOrganizationUpdates.RemoveRange(existingOrgs);
 
-        foreach (var po in project.ProjectOrganizations)
+        var projectOrganizations = await dbContext.ProjectOrganizations
+            .Where(x => x.ProjectID == project.ProjectID).ToListAsync();
+        foreach (var po in projectOrganizations)
         {
             dbContext.ProjectOrganizationUpdates.Add(new ProjectOrganizationUpdate
             {
@@ -2087,7 +2154,9 @@ public static class ProjectUpdateWorkflowSteps
             .ToListAsync();
         dbContext.ProjectPersonUpdates.RemoveRange(existingContacts);
 
-        foreach (var pp in project.ProjectPeople)
+        var projectPeople = await dbContext.ProjectPeople
+            .Where(x => x.ProjectID == project.ProjectID).ToListAsync();
+        foreach (var pp in projectPeople)
         {
             dbContext.ProjectPersonUpdates.Add(new ProjectPersonUpdate
             {
@@ -2117,7 +2186,9 @@ public static class ProjectUpdateWorkflowSteps
             .ToListAsync();
         dbContext.ProjectFundingSourceUpdates.RemoveRange(existingFunding);
 
-        foreach (var pfs in project.ProjectFundingSources)
+        var projectFundingSources = await dbContext.ProjectFundingSources
+            .Where(x => x.ProjectID == project.ProjectID).ToListAsync();
+        foreach (var pfs in projectFundingSources)
         {
             dbContext.ProjectFundingSourceUpdates.Add(new ProjectFundingSourceUpdate
             {
@@ -2131,7 +2202,9 @@ public static class ProjectUpdateWorkflowSteps
             .ToListAsync();
         dbContext.ProjectFundSourceAllocationRequestUpdates.RemoveRange(existingAllocations);
 
-        foreach (var ar in project.ProjectFundSourceAllocationRequests)
+        var projectAllocations = await dbContext.ProjectFundSourceAllocationRequests
+            .Where(x => x.ProjectID == project.ProjectID).ToListAsync();
+        foreach (var ar in projectAllocations)
         {
             dbContext.ProjectFundSourceAllocationRequestUpdates.Add(new ProjectFundSourceAllocationRequestUpdate
             {
@@ -2153,7 +2226,9 @@ public static class ProjectUpdateWorkflowSteps
             .ToListAsync();
         dbContext.ProjectExternalLinkUpdates.RemoveRange(existingLinks);
 
-        foreach (var link in project.ProjectExternalLinks)
+        var projectExternalLinks = await dbContext.ProjectExternalLinks
+            .Where(x => x.ProjectID == project.ProjectID).ToListAsync();
+        foreach (var link in projectExternalLinks)
         {
             dbContext.ProjectExternalLinkUpdates.Add(new ProjectExternalLinkUpdate
             {
@@ -2170,18 +2245,36 @@ public static class ProjectUpdateWorkflowSteps
     private static async Task<bool> RevertDocumentsNotesStepAsync(WADNRDbContext dbContext, ProjectUpdateBatch batch, Project project)
     {
         var existingDocs = await dbContext.ProjectDocumentUpdates
+            .Include(d => d.FileResource)
             .Where(d => d.ProjectUpdateBatchID == batch.ProjectUpdateBatchID)
             .ToListAsync();
-        dbContext.ProjectDocumentUpdates.RemoveRange(existingDocs);
 
-        foreach (var doc in project.ProjectDocuments)
+        // Same shared-FileResource cleanup as RevertPhotosStepAsync — see comment there.
+        var docFileResourceIDs = existingDocs.Select(d => d.FileResourceID).Distinct().ToList();
+        var sharedDocFileResourceIDs = new HashSet<int>(
+            await dbContext.ProjectDocuments
+                .Where(pd => docFileResourceIDs.Contains(pd.FileResourceID))
+                .Select(pd => pd.FileResourceID)
+                .ToListAsync());
+        var orphanedDocFiles = existingDocs
+            .Where(d => d.FileResource != null && !sharedDocFileResourceIDs.Contains(d.FileResourceID))
+            .Select(d => d.FileResource!)
+            .ToList();
+
+        dbContext.ProjectDocumentUpdates.RemoveRange(existingDocs);
+        dbContext.FileResources.RemoveRange(orphanedDocFiles);
+
+        var projectDocuments = await dbContext.ProjectDocuments
+            .Where(x => x.ProjectID == project.ProjectID).ToListAsync();
+        foreach (var doc in projectDocuments)
         {
             dbContext.ProjectDocumentUpdates.Add(new ProjectDocumentUpdate
             {
                 ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
                 FileResourceID = doc.FileResourceID,
                 DisplayName = doc.DisplayName,
-                Description = doc.Description
+                Description = doc.Description,
+                ProjectDocumentTypeID = doc.ProjectDocumentTypeID
             });
         }
 
@@ -2190,7 +2283,9 @@ public static class ProjectUpdateWorkflowSteps
             .ToListAsync();
         dbContext.ProjectNoteUpdates.RemoveRange(existingNotes);
 
-        foreach (var note in project.ProjectNotes)
+        var projectNotes = await dbContext.ProjectNotes
+            .Where(x => x.ProjectID == project.ProjectID).ToListAsync();
+        foreach (var note in projectNotes)
         {
             dbContext.ProjectNoteUpdates.Add(new ProjectNoteUpdate
             {
@@ -2228,7 +2323,9 @@ public static class ProjectUpdateWorkflowSteps
             .ToListAsync();
         dbContext.ProjectLocationUpdates.RemoveRange(existingLocs);
 
-        foreach (var loc in project.ProjectLocations)
+        var projectLocations = await dbContext.ProjectLocations
+            .Where(x => x.ProjectID == project.ProjectID).ToListAsync();
+        foreach (var loc in projectLocations)
         {
             dbContext.ProjectLocationUpdates.Add(new ProjectLocationUpdate
             {
@@ -2236,7 +2333,9 @@ public static class ProjectUpdateWorkflowSteps
                 ProjectLocationTypeID = loc.ProjectLocationTypeID,
                 ProjectLocationUpdateGeometry = loc.ProjectLocationGeometry,
                 ProjectLocationUpdateNotes = loc.ProjectLocationNotes,
-                ProjectLocationUpdateName = loc.ProjectLocationName
+                ProjectLocationUpdateName = loc.ProjectLocationName,
+                ArcGisObjectID = loc.ArcGisObjectID,
+                ArcGisGlobalID = loc.ArcGisGlobalID
             });
         }
 
@@ -2247,20 +2346,45 @@ public static class ProjectUpdateWorkflowSteps
     private static async Task<bool> RevertPhotosStepAsync(WADNRDbContext dbContext, ProjectUpdateBatch batch, Project project)
     {
         var existingPhotos = await dbContext.ProjectImageUpdates
+            .Include(i => i.FileResource)
             .Where(i => i.ProjectUpdateBatchID == batch.ProjectUpdateBatchID)
             .ToListAsync();
-        dbContext.ProjectImageUpdates.RemoveRange(existingPhotos);
 
-        foreach (var img in project.ProjectImages)
+        // Clean up FileResources that were newly uploaded during this update batch.
+        // Photos copied from the original project share their FileResourceID with ProjectImage,
+        // so those must NOT be deleted. Only FileResources unique to this batch are orphaned.
+        var photoFileResourceIDs = existingPhotos
+            .Where(p => p.FileResourceID.HasValue)
+            .Select(p => p.FileResourceID!.Value)
+            .Distinct()
+            .ToList();
+        var sharedPhotoFileResourceIDs = new HashSet<int>(
+            await dbContext.ProjectImages
+                .Where(pi => photoFileResourceIDs.Contains(pi.FileResourceID))
+                .Select(pi => pi.FileResourceID)
+                .ToListAsync());
+        var orphanedPhotoFiles = existingPhotos
+            .Where(p => p.FileResource != null && !sharedPhotoFileResourceIDs.Contains(p.FileResourceID!.Value))
+            .Select(p => p.FileResource!)
+            .ToList();
+
+        dbContext.ProjectImageUpdates.RemoveRange(existingPhotos);
+        dbContext.FileResources.RemoveRange(orphanedPhotoFiles);
+
+        var projectImages = await dbContext.ProjectImages
+            .Where(x => x.ProjectID == project.ProjectID).ToListAsync();
+        foreach (var img in projectImages)
         {
             dbContext.ProjectImageUpdates.Add(new ProjectImageUpdate
             {
                 ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
                 FileResourceID = img.FileResourceID,
+                ProjectImageID = img.ProjectImageID,
                 Caption = img.Caption,
                 Credit = img.Credit,
                 IsKeyPhoto = img.IsKeyPhoto,
-                ExcludeFromFactSheet = img.ExcludeFromFactSheet
+                ExcludeFromFactSheet = img.ExcludeFromFactSheet,
+                ProjectImageTimingID = img.ProjectImageTimingID
             });
         }
 
@@ -2275,7 +2399,9 @@ public static class ProjectUpdateWorkflowSteps
             .ToListAsync();
         dbContext.ProjectPriorityLandscapeUpdates.RemoveRange(existingPl);
 
-        foreach (var pl in project.ProjectPriorityLandscapes)
+        var projectPriorityLandscapes = await dbContext.ProjectPriorityLandscapes
+            .Where(x => x.ProjectID == project.ProjectID).ToListAsync();
+        foreach (var pl in projectPriorityLandscapes)
         {
             dbContext.ProjectPriorityLandscapeUpdates.Add(new ProjectPriorityLandscapeUpdate
             {
@@ -2297,7 +2423,9 @@ public static class ProjectUpdateWorkflowSteps
             .ToListAsync();
         dbContext.ProjectRegionUpdates.RemoveRange(existingRegions);
 
-        foreach (var pr in project.ProjectRegions)
+        var projectRegions = await dbContext.ProjectRegions
+            .Where(x => x.ProjectID == project.ProjectID).ToListAsync();
+        foreach (var pr in projectRegions)
         {
             dbContext.ProjectRegionUpdates.Add(new ProjectRegionUpdate
             {
@@ -2319,7 +2447,9 @@ public static class ProjectUpdateWorkflowSteps
             .ToListAsync();
         dbContext.ProjectCountyUpdates.RemoveRange(existingCounties);
 
-        foreach (var pc in project.ProjectCounties)
+        var projectCounties = await dbContext.ProjectCounties
+            .Where(x => x.ProjectID == project.ProjectID).ToListAsync();
+        foreach (var pc in projectCounties)
         {
             dbContext.ProjectCountyUpdates.Add(new ProjectCountyUpdate
             {
@@ -2336,17 +2466,51 @@ public static class ProjectUpdateWorkflowSteps
 
     private static async Task<bool> RevertTreatmentsStepAsync(WADNRDbContext dbContext, ProjectUpdateBatch batch, Project project)
     {
-        // Treatments are tied to ProjectLocationUpdates, so we need the location update ID mapping
-        // This is more complex - for now, just remove all treatments
-        // The user can re-add them manually if needed, or we'd need to revert locations first
         var existingTreatments = await dbContext.TreatmentUpdates
             .Where(t => t.ProjectUpdateBatchID == batch.ProjectUpdateBatchID)
             .ToListAsync();
         dbContext.TreatmentUpdates.RemoveRange(existingTreatments);
 
-        // We can't directly copy treatments without first reverting location detailed step
-        // because treatments reference ProjectLocationUpdateIDs that may not exist
-        // The recommended approach is to revert location-detailed first, then treatments
+        // Get current location updates for FK mapping
+        var locationUpdates = await dbContext.ProjectLocationUpdates
+            .Where(plu => plu.ProjectUpdateBatchID == batch.ProjectUpdateBatchID)
+            .ToListAsync();
+
+        var projectTreatments = await dbContext.Treatments
+            .Include(t => t.ProjectLocation)
+            .Where(t => t.ProjectLocation.ProjectID == project.ProjectID).ToListAsync();
+        foreach (var treatment in projectTreatments)
+        {
+            int? projectLocationUpdateID = null;
+            if (treatment.ProjectLocation != null)
+            {
+                var matchingLocation = locationUpdates.FirstOrDefault(plu =>
+                    plu.ProjectLocationUpdateName == treatment.ProjectLocation.ProjectLocationName &&
+                    plu.ProjectLocationUpdateGeometry.EqualsTopologically(treatment.ProjectLocation.ProjectLocationGeometry));
+                projectLocationUpdateID = matchingLocation?.ProjectLocationUpdateID;
+            }
+
+            dbContext.TreatmentUpdates.Add(new TreatmentUpdate
+            {
+                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
+                ProjectLocationUpdateID = projectLocationUpdateID,
+                TreatmentTypeID = treatment.TreatmentTypeID,
+                TreatmentDetailedActivityTypeID = treatment.TreatmentDetailedActivityTypeID,
+                TreatmentCodeID = treatment.TreatmentCodeID,
+                TreatmentStartDate = treatment.TreatmentStartDate,
+                TreatmentEndDate = treatment.TreatmentEndDate,
+                TreatmentFootprintAcres = treatment.TreatmentFootprintAcres,
+                TreatmentTreatedAcres = treatment.TreatmentTreatedAcres,
+                TreatmentNotes = treatment.TreatmentNotes,
+                CostPerAcre = treatment.CostPerAcre,
+                TreatmentTypeImportedText = treatment.TreatmentTypeImportedText,
+                TreatmentDetailedActivityTypeImportedText = treatment.TreatmentDetailedActivityTypeImportedText,
+                ProgramID = treatment.ProgramID,
+                ImportedFromGis = treatment.ImportedFromGis,
+                CreateGisUploadAttemptID = treatment.CreateGisUploadAttemptID,
+                UpdateGisUploadAttemptID = treatment.UpdateGisUploadAttemptID
+            });
+        }
 
         await dbContext.SaveChangesAsync();
         return true;
@@ -2389,226 +2553,9 @@ public static class ProjectUpdateWorkflowSteps
     /// </summary>
     private static async Task CommitChangesToProjectAsync(WADNRDbContext dbContext, ProjectUpdateBatch batch)
     {
-        var project = await dbContext.Projects
-            .Include(p => p.ProjectPrograms)
-            .Include(p => p.ProjectPriorityLandscapes)
-            .Include(p => p.ProjectRegions)
-            .Include(p => p.ProjectCounties)
-            .Include(p => p.ProjectLocations)
-            .Include(p => p.ProjectOrganizations)
-            .Include(p => p.ProjectPeople)
-            .Include(p => p.ProjectFundingSources)
-            .Include(p => p.ProjectFundSourceAllocationRequests)
-            .Include(p => p.ProjectImages)
-            .Include(p => p.ProjectExternalLinks)
-            .Include(p => p.ProjectDocuments)
-            .Include(p => p.ProjectNotes)
-            .FirstOrDefaultAsync(p => p.ProjectID == batch.ProjectID);
-
-        if (project == null) return;
-
-        // Load update data
-        var batchWithData = await dbContext.ProjectUpdateBatches
-            .Include(b => b.ProjectUpdates)
-            .Include(b => b.ProjectUpdatePrograms)
-            .Include(b => b.ProjectPriorityLandscapeUpdates)
-            .Include(b => b.ProjectRegionUpdates)
-            .Include(b => b.ProjectCountyUpdates)
-            .Include(b => b.ProjectLocationUpdates)
-            .Include(b => b.ProjectOrganizationUpdates)
-            .Include(b => b.ProjectPersonUpdates)
-            .Include(b => b.ProjectFundingSourceUpdates)
-            .Include(b => b.ProjectFundSourceAllocationRequestUpdates)
-            .Include(b => b.ProjectImageUpdates)
-            .Include(b => b.ProjectExternalLinkUpdates)
-            .Include(b => b.ProjectDocumentUpdates)
-            .Include(b => b.ProjectNoteUpdates)
-            .FirstAsync(b => b.ProjectUpdateBatchID == batch.ProjectUpdateBatchID);
-
-        var projectUpdate = batchWithData.ProjectUpdates.FirstOrDefault();
-        if (projectUpdate == null) return;
-
-        // Commit basic fields
-        project.ProjectDescription = projectUpdate.ProjectDescription;
-        project.ProjectStageID = projectUpdate.ProjectStageID;
-        project.PlannedDate = projectUpdate.PlannedDate;
-        project.CompletionDate = projectUpdate.CompletionDate;
-        project.ExpirationDate = projectUpdate.ExpirationDate;
-        project.EstimatedTotalCost = projectUpdate.EstimatedTotalCost;
-        project.FocusAreaID = projectUpdate.FocusAreaID;
-        project.PercentageMatch = projectUpdate.PercentageMatch;
-        project.ProjectLocationPoint = projectUpdate.ProjectLocationPoint;
-        project.ProjectLocationSimpleTypeID = projectUpdate.ProjectLocationSimpleTypeID;
-        project.ProjectLocationNotes = projectUpdate.ProjectLocationNotes;
-        project.ProjectFundingSourceNotes = projectUpdate.ProjectFundingSourceNotes;
-        project.NoPriorityLandscapesExplanation = batchWithData.NoPriorityLandscapesExplanation;
-        project.NoRegionsExplanation = batchWithData.NoRegionsExplanation;
-        project.NoCountiesExplanation = batchWithData.NoCountiesExplanation;
-
-        // Sync Programs
-        dbContext.ProjectPrograms.RemoveRange(project.ProjectPrograms);
-        foreach (var pp in batchWithData.ProjectUpdatePrograms)
-        {
-            dbContext.ProjectPrograms.Add(new ProjectProgram
-            {
-                ProjectID = project.ProjectID,
-                ProgramID = pp.ProgramID
-            });
-        }
-
-        // Sync Priority Landscapes
-        dbContext.ProjectPriorityLandscapes.RemoveRange(project.ProjectPriorityLandscapes);
-        foreach (var pl in batchWithData.ProjectPriorityLandscapeUpdates)
-        {
-            dbContext.ProjectPriorityLandscapes.Add(new ProjectPriorityLandscape
-            {
-                ProjectID = project.ProjectID,
-                PriorityLandscapeID = pl.PriorityLandscapeID
-            });
-        }
-
-        // Sync Regions
-        dbContext.ProjectRegions.RemoveRange(project.ProjectRegions);
-        foreach (var pr in batchWithData.ProjectRegionUpdates)
-        {
-            dbContext.ProjectRegions.Add(new ProjectRegion
-            {
-                ProjectID = project.ProjectID,
-                DNRUplandRegionID = pr.DNRUplandRegionID
-            });
-        }
-
-        // Sync Counties
-        dbContext.ProjectCounties.RemoveRange(project.ProjectCounties);
-        foreach (var pc in batchWithData.ProjectCountyUpdates)
-        {
-            dbContext.ProjectCounties.Add(new ProjectCounty
-            {
-                ProjectID = project.ProjectID,
-                CountyID = pc.CountyID
-            });
-        }
-
-        // Sync Locations
-        dbContext.ProjectLocations.RemoveRange(project.ProjectLocations);
-        foreach (var loc in batchWithData.ProjectLocationUpdates)
-        {
-            dbContext.ProjectLocations.Add(new ProjectLocation
-            {
-                ProjectID = project.ProjectID,
-                ProjectLocationTypeID = loc.ProjectLocationTypeID,
-                ProjectLocationGeometry = loc.ProjectLocationUpdateGeometry,
-                ProjectLocationNotes = loc.ProjectLocationUpdateNotes,
-                ProjectLocationName = loc.ProjectLocationUpdateName
-            });
-        }
-
-        // Sync Organizations
-        dbContext.ProjectOrganizations.RemoveRange(project.ProjectOrganizations);
-        foreach (var po in batchWithData.ProjectOrganizationUpdates)
-        {
-            dbContext.ProjectOrganizations.Add(new ProjectOrganization
-            {
-                ProjectID = project.ProjectID,
-                OrganizationID = po.OrganizationID,
-                RelationshipTypeID = po.RelationshipTypeID
-            });
-        }
-
-        // Sync Contacts
-        dbContext.ProjectPeople.RemoveRange(project.ProjectPeople);
-        foreach (var pp in batchWithData.ProjectPersonUpdates)
-        {
-            dbContext.ProjectPeople.Add(new ProjectPerson
-            {
-                ProjectID = project.ProjectID,
-                PersonID = pp.PersonID,
-                ProjectPersonRelationshipTypeID = pp.ProjectPersonRelationshipTypeID
-            });
-        }
-
-        // Sync Funding Sources
-        dbContext.ProjectFundingSources.RemoveRange(project.ProjectFundingSources);
-        foreach (var pfs in batchWithData.ProjectFundingSourceUpdates)
-        {
-            dbContext.ProjectFundingSources.Add(new ProjectFundingSource
-            {
-                ProjectID = project.ProjectID,
-                FundingSourceID = pfs.FundingSourceID
-            });
-        }
-
-        // Sync Allocation Requests
-        dbContext.ProjectFundSourceAllocationRequests.RemoveRange(project.ProjectFundSourceAllocationRequests);
-        foreach (var ar in batchWithData.ProjectFundSourceAllocationRequestUpdates)
-        {
-            dbContext.ProjectFundSourceAllocationRequests.Add(new ProjectFundSourceAllocationRequest
-            {
-                ProjectID = project.ProjectID,
-                FundSourceAllocationID = ar.FundSourceAllocationID,
-                TotalAmount = ar.TotalAmount,
-                CreateDate = ar.CreateDate
-            });
-        }
-
-        // Sync Images
-        dbContext.ProjectImages.RemoveRange(project.ProjectImages);
-        foreach (var img in batchWithData.ProjectImageUpdates)
-        {
-            if (img.FileResourceID.HasValue)
-            {
-                dbContext.ProjectImages.Add(new ProjectImage
-                {
-                    ProjectID = project.ProjectID,
-                    FileResourceID = img.FileResourceID.Value,
-                    Caption = img.Caption,
-                    Credit = img.Credit,
-                    IsKeyPhoto = img.IsKeyPhoto,
-                    ExcludeFromFactSheet = img.ExcludeFromFactSheet
-                });
-            }
-        }
-
-        // Sync External Links
-        dbContext.ProjectExternalLinks.RemoveRange(project.ProjectExternalLinks);
-        foreach (var link in batchWithData.ProjectExternalLinkUpdates)
-        {
-            dbContext.ProjectExternalLinks.Add(new ProjectExternalLink
-            {
-                ProjectID = project.ProjectID,
-                ExternalLinkLabel = link.ExternalLinkLabel,
-                ExternalLinkUrl = link.ExternalLinkUrl
-            });
-        }
-
-        // Sync Documents
-        dbContext.ProjectDocuments.RemoveRange(project.ProjectDocuments);
-        foreach (var doc in batchWithData.ProjectDocumentUpdates)
-        {
-            dbContext.ProjectDocuments.Add(new ProjectDocument
-            {
-                ProjectID = project.ProjectID,
-                FileResourceID = doc.FileResourceID,
-                DisplayName = doc.DisplayName,
-                Description = doc.Description
-            });
-        }
-
-        // Sync Notes
-        dbContext.ProjectNotes.RemoveRange(project.ProjectNotes);
-        foreach (var note in batchWithData.ProjectNoteUpdates)
-        {
-            dbContext.ProjectNotes.Add(new ProjectNote
-            {
-                ProjectID = project.ProjectID,
-                Note = note.Note,
-                CreateDate = note.CreateDate,
-                CreatePersonID = note.CreatePersonID,
-                UpdateDate = note.UpdateDate
-            });
-        }
-
-        await dbContext.SaveChangesAsync();
+        // Execute stored procedure to merge all update data back to project tables in a single transaction
+        await dbContext.Database.ExecuteSqlInterpolatedAsync(
+            $"EXEC dbo.pCommitProjectUpdateToProject @ProjectUpdateBatchID={batch.ProjectUpdateBatchID}");
     }
 
     #endregion

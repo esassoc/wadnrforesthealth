@@ -1,5 +1,8 @@
 # Migrate Map Skill
 
+> **Scope**: fullstack
+> **Prereqs**: Load `/dotnet-patterns` and `/angular-patterns` first
+
 When the user invokes `/migrate-map <EntityName>`:
 
 ## Overview
@@ -359,3 +362,13 @@ public allFeaturesMode = OverlayMode.All;              // All features displayed
 ### Wrong initial bounds
 - Pass `boundingBox` input to map component
 - Or let layer component handle bounds with `fitBoundsOnWmsAddToControl`
+
+---
+
+## Cross-References
+
+| If you're also doing... | Load |
+|-------------------------|------|
+| Building the page around the map | `/angular-patterns` |
+| Adding grids alongside the map | `/migrate-grid` |
+| Writing tests | `/write-tests` |

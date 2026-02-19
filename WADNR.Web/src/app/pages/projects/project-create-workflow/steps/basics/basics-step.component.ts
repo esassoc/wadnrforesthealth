@@ -186,6 +186,8 @@ export class BasicsStepComponent extends CreateWorkflowStepBase implements OnIni
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.trackFormDirty(this.form);
+
         // Load project data if we have a projectID
         const projectData$ = this._projectID$.pipe(
             switchMap((id) => {
@@ -278,6 +280,7 @@ export class BasicsStepComponent extends CreateWorkflowStepBase implements OnIni
         const newIDs = currentIDs.filter((id) => id !== programID);
         this.form.patchValue({ programIDs: newIDs });
         this.selectedPrograms = this.selectedPrograms.filter((p) => p.ProgramID !== programID);
+        this.setFormDirty();
     }
 
     getAvailableProgramOptions(programOptions: FormInputOption[]): FormInputOption[] {
@@ -317,10 +320,12 @@ export class BasicsStepComponent extends CreateWorkflowStepBase implements OnIni
             this.projectService.createProjectFromBasicsStepProject(request).subscribe({
                 next: (result) => {
                     this.isSaving = false;
-                    this.alertService.pushAlert(new Alert("Project created successfully.", AlertContext.Success, true));
+                    this.workflowProgressService.setFormDirty(false);
                     // Navigate to edit route (with project ID) - stay on basics or go to next step
                     const nextStep = navigate ? this.nextStep : "basics";
-                    this.router.navigate(["/projects", "edit", result.ProjectID, nextStep]);
+                    this.router.navigate(["/projects", "edit", result.ProjectID, nextStep]).then(() => {
+                        this.alertService.pushAlert(new Alert("Project created successfully.", AlertContext.Success, true));
+                    });
                 },
                 error: (err) => {
                     this.isSaving = false;
@@ -334,9 +339,14 @@ export class BasicsStepComponent extends CreateWorkflowStepBase implements OnIni
                 this.projectService.saveCreateBasicsStepProject(projectID, request).subscribe({
                     next: () => {
                         this.isSaving = false;
-                        this.alertService.pushAlert(new Alert("Project updated successfully.", AlertContext.Success, true));
+                        this.workflowProgressService.setFormDirty(false);
+                        this.form.markAsPristine();
                         if (navigate) {
-                            this.navigateToNextStep(projectID);
+                            this.navigateToNextStep(projectID).then(() => {
+                                this.alertService.pushAlert(new Alert("Project updated successfully.", AlertContext.Success, true));
+                            });
+                        } else {
+                            this.alertService.pushAlert(new Alert("Project updated successfully.", AlertContext.Success, true));
                         }
                     },
                     error: (err) => {

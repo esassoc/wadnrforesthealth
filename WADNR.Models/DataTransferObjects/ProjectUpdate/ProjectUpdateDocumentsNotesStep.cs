@@ -20,6 +20,7 @@ public class ProjectDocumentUpdateItem
     public int FileResourceID { get; set; }
     public string DocumentTitle { get; set; } = string.Empty;
     public string? DocumentDescription { get; set; }
+    public int? ProjectDocumentTypeID { get; set; }
     public string? FileResourceUrl { get; set; }
 }
 

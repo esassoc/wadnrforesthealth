@@ -17,6 +17,7 @@ export class ProjectImageUpdateItem {
     Caption?: string | null;
     Credit?: string | null;
     IsKeyPhoto?: boolean;
+    ProjectImageTimingID?: number | null;
     ExcludeFromFactSheet?: boolean;
     SortOrder?: number;
     FileResourceUrl?: string | null;
@@ -32,6 +33,7 @@ export interface ProjectImageUpdateItemForm {
     Caption?: FormControl<string>;
     Credit?: FormControl<string>;
     IsKeyPhoto?: FormControl<boolean>;
+    ProjectImageTimingID?: FormControl<number>;
     ExcludeFromFactSheet?: FormControl<boolean>;
     SortOrder?: FormControl<number>;
     FileResourceUrl?: FormControl<string>;
@@ -89,6 +91,16 @@ export class ProjectImageUpdateItemFormControls {
         }
     );
     public static IsKeyPhoto = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectImageTimingID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

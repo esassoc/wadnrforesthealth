@@ -1,0 +1,33 @@
+<page-header [pageTitle]="pageTitle"></page-header>
+<div class="page-body">
+    <div class="mb-3">
+        <span class="me-2"><strong>Show:</strong></span>
+        <label class="me-3">
+            <input type="radio" name="filter" [checked]="activeFilter === 'requiring-update'" (change)="setFilter('requiring-update')" class="me-1" />
+            My Projects Requiring an Update
+        </label>
+        <label class="me-3">
+            <input type="radio" name="filter" [checked]="activeFilter === 'recently-submitted'" (change)="setFilter('recently-submitted')" class="me-1" />
+            My Recently Submitted Projects
+        </label>
+        <label class="me-3">
+            <input type="radio" name="filter" [checked]="activeFilter === null" (change)="setFilter(null)" class="me-1" />
+            All My Projects
+        </label>
+        @if (isAdmin) {
+            <label class="me-3">
+                <input type="radio" name="filter" [checked]="activeFilter === 'submitted-projects'" (change)="setFilter('submitted-projects')" class="me-1" />
+                Submitted Projects
+            </label>
+            <label class="me-3">
+                <input type="radio" name="filter" [checked]="activeFilter === 'all-projects'" (change)="setFilter('all-projects')" class="me-1" />
+                All Projects
+            </label>
+        }
+    </div>
+    <wadnr-grid
+        [rowData]="filteredProjects$ | async"
+        [columnDefs]="columnDefs"
+        downloadFileName="my-projects">
+    </wadnr-grid>
+</div>

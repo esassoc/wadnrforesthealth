@@ -1,5 +1,8 @@
 # Add Scrollspy TOC Skill
 
+> **Scope**: frontend
+> **Prereqs**: Load `/angular-patterns` first
+
 When the user invokes `/add-scrollspy-toc <ComponentName>`:
 
 ## Overview
@@ -359,3 +362,12 @@ isSectionExpanded(section: YourSectionType): boolean {
 - [ ] TOC sidebar has `position: sticky` with appropriate `top` value
 - [ ] Mobile responsive (grid collapses to single column)
 - [ ] Active state styling applied correctly
+
+---
+
+## Cross-References
+
+| If you're also doing... | Load |
+|-------------------------|------|
+| Building the page component | `/angular-patterns` |
+| Adding data grids to sections | `/migrate-grid` |

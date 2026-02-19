@@ -167,6 +167,7 @@ export class UpdateOrganizationsStepComponent extends UpdateWorkflowStepBase imp
                 },
             ];
         }
+        this.setFormDirty();
     }
 
     onMultiSelectChange(event: any, obt: OrganizationsByType): void {
@@ -193,6 +194,7 @@ export class UpdateOrganizationsStepComponent extends UpdateWorkflowStepBase imp
         obt.selectedOrganizations = [...obt.selectedOrganizations, newOrg];
         obt.availableOrganizationOptions = obt.availableOrganizationOptions.filter((o) => o.Value !== organizationID);
         obt.formControl.reset();
+        this.setFormDirty();
     }
 
     removeOrganization(obt: OrganizationsByType, organizationID: number): void {
@@ -205,6 +207,7 @@ export class UpdateOrganizationsStepComponent extends UpdateWorkflowStepBase imp
                 obt.availableOrganizationOptions = [...obt.availableOrganizationOptions, orgOption];
             }
         }
+        this.setFormDirty();
     }
 
     onSave(navigate: boolean): void {

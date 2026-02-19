@@ -44,7 +44,12 @@
       "Bash(Summary\" || echo \"No Home/Dashboard controllers found \")",
       "Bash(npx ng lint:*)",
       "WebSearch",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(git status:*)",
+      "Bash(Select-String -Pattern \"\\(error|Build succeeded\\)\")",
+      "Bash(Select-Object -Last 5)",
+      "Bash(npx:*)",
+      "Bash(sort:*)"
     ]
   }
 }

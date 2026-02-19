@@ -20,6 +20,7 @@ public class ProjectImageUpdateItem
     public string? Caption { get; set; }
     public string? Credit { get; set; }
     public bool IsKeyPhoto { get; set; }
+    public int? ProjectImageTimingID { get; set; }
     public bool ExcludeFromFactSheet { get; set; }
     public int SortOrder { get; set; }
     public string? FileResourceUrl { get; set; }

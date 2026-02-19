@@ -16,6 +16,7 @@ export class ProjectDocumentUpdateItem {
     FileResourceID?: number;
     DocumentTitle?: string | null;
     DocumentDescription?: string | null;
+    ProjectDocumentTypeID?: number | null;
     FileResourceUrl?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -28,6 +29,7 @@ export interface ProjectDocumentUpdateItemForm {
     FileResourceID?: FormControl<number>;
     DocumentTitle?: FormControl<string>;
     DocumentDescription?: FormControl<string>;
+    ProjectDocumentTypeID?: FormControl<number>;
     FileResourceUrl?: FormControl<string>;
 }
 
@@ -73,6 +75,16 @@ export class ProjectDocumentUpdateItemFormControls {
         }
     );
     public static DocumentDescription = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectDocumentTypeID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

@@ -173,6 +173,7 @@ export class OrganizationsStepComponent extends CreateWorkflowStepBase implement
                 },
             ];
         }
+        this.setFormDirty();
     }
 
     // For multi-select types - auto-add on selection
@@ -205,6 +206,7 @@ export class OrganizationsStepComponent extends CreateWorkflowStepBase implement
 
         // Reset the dropdown
         obt.formControl.reset();
+        this.setFormDirty();
     }
 
     removeOrganization(obt: OrganizationsByType, organizationID: number): void {
@@ -218,6 +220,7 @@ export class OrganizationsStepComponent extends CreateWorkflowStepBase implement
                 obt.availableOrganizationOptions = [...obt.availableOrganizationOptions, orgOption];
             }
         }
+        this.setFormDirty();
     }
 
     onSave(navigate: boolean): void {

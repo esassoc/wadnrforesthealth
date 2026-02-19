@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
+import { Observable } from "rxjs";
 
 import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
@@ -21,7 +22,11 @@ export interface ProjectDocumentModalData {
     mode: "create" | "edit";
     projectID: number;
     document?: ProjectDocumentGridRow;
+    documentUpdateID?: number;
     documentTypes: ProjectDocumentTypeLookupItem[];
+    createFn?: (projectID: number, displayName: string, description?: string,
+                projectDocumentTypeID?: number, file?: Blob) => Observable<any>;
+    updateFn?: (dto: ProjectDocumentUpsertRequest) => Observable<any>;
 }
 
 @Component({
@@ -121,14 +126,15 @@ export class ProjectDocumentModalComponent extends BaseModal implements OnInit {
 
     private createDocument(): void {
         const file = this.fileControl.value!;
+        const displayName = this.form.value.DisplayName!;
+        const description = this.form.value.Description || undefined;
+        const docTypeID = this.form.value.ProjectDocumentTypeID || undefined;
 
-        this.projectDocumentService.createProjectDocument(
-            this.projectID,
-            this.form.value.DisplayName!,
-            this.form.value.Description || undefined,
-            this.form.value.ProjectDocumentTypeID || undefined,
-            file
-        ).subscribe({
+        const create$ = this.ref.data.createFn
+            ? this.ref.data.createFn(this.projectID, displayName, description, docTypeID, file)
+            : this.projectDocumentService.createProjectDocument(this.projectID, displayName, description, docTypeID, file);
+
+        create$.subscribe({
             next: (result) => {
                 this.pushGlobalSuccess("Document uploaded successfully.");
                 this.ref.close(result);
@@ -148,7 +154,11 @@ export class ProjectDocumentModalComponent extends BaseModal implements OnInit {
             ProjectDocumentTypeID: this.form.value.ProjectDocumentTypeID || null
         });
 
-        this.projectDocumentService.updateProjectDocument(this.document!.ProjectDocumentID, dto).subscribe({
+        const update$ = this.ref.data.updateFn
+            ? this.ref.data.updateFn(dto)
+            : this.projectDocumentService.updateProjectDocument(this.document!.ProjectDocumentID, dto);
+
+        update$.subscribe({
             next: (result) => {
                 this.pushGlobalSuccess("Document updated successfully.");
                 this.ref.close(result);

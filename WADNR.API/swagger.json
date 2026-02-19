@@ -8515,6 +8515,45 @@
         }
       }
     },
+    "/projects/update-status": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListUpdateStatus_Project",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectUpdateStatusGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectUpdateStatusGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectUpdateStatusGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects/{projectID}": {
       "get": {
         "tags": [
@@ -10027,6 +10066,57 @@
                   "items": {
                     "$ref": "#/components/schemas/ProjectUpdateHistoryGridRow"
                   }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/projects/{projectID}/update-history/{projectUpdateBatchID}/diff": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetUpdateHistoryDiff_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "projectUpdateBatchID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateDiffSummary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateDiffSummary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateDiffSummary"
                 }
               }
             }
@@ -11669,17 +11759,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectUpdateBatchResponse"
+                  "$ref": "#/components/schemas/ProjectUpdateBatchDetail"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectUpdateBatchResponse"
+                  "$ref": "#/components/schemas/ProjectUpdateBatchDetail"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectUpdateBatchResponse"
+                  "$ref": "#/components/schemas/ProjectUpdateBatchDetail"
                 }
               }
             }
@@ -11710,17 +11800,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectUpdateBatchResponse"
+                  "$ref": "#/components/schemas/ProjectUpdateBatchDetail"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectUpdateBatchResponse"
+                  "$ref": "#/components/schemas/ProjectUpdateBatchDetail"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectUpdateBatchResponse"
+                  "$ref": "#/components/schemas/ProjectUpdateBatchDetail"
                 }
               }
             }
@@ -11746,6 +11836,56 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/history": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListUpdateBatchHistory_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectUpdateHistoryEntry"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectUpdateHistoryEntry"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectUpdateHistoryEntry"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -13237,6 +13377,191 @@
         }
       }
     },
+    "/projects/{projectID}/update-workflow/steps/photos/images": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "CreateUpdatePhotoImage_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "caption": {
+                    "type": "string"
+                  },
+                  "credit": {
+                    "type": "string"
+                  },
+                  "projectImageTimingID": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "excludeFromFactSheet": {
+                    "type": "boolean"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "caption": {
+                  "style": "form"
+                },
+                "credit": {
+                  "style": "form"
+                },
+                "projectImageTimingID": {
+                  "style": "form"
+                },
+                "excludeFromFactSheet": {
+                  "style": "form"
+                },
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/photos/images/{projectImageUpdateID}": {
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "UpdateUpdatePhotoImage_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "projectImageUpdateID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectImageUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectImageUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectImageUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "DeleteUpdatePhotoImage_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "projectImageUpdateID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/photos/images/{projectImageUpdateID}/set-key-photo": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SetKeyPhotoUpdatePhoto_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "projectImageUpdateID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/projects/{projectID}/update-workflow/steps/external-links": {
       "get": {
         "tags": [
@@ -13431,6 +13756,278 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/documents-notes/documents": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "CreateUpdateDocument_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "displayName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "projectDocumentTypeID": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "displayName": {
+                  "style": "form"
+                },
+                "description": {
+                  "style": "form"
+                },
+                "projectDocumentTypeID": {
+                  "style": "form"
+                },
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/documents-notes/documents/{projectDocumentUpdateID}": {
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "UpdateUpdateDocument_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "projectDocumentUpdateID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectDocumentUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectDocumentUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectDocumentUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "DeleteUpdateDocument_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "projectDocumentUpdateID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/documents-notes/notes": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "CreateUpdateNote_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectNoteUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectNoteUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectNoteUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/{projectID}/update-workflow/steps/documents-notes/notes/{projectNoteUpdateID}": {
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "UpdateUpdateNote_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "projectNoteUpdateID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectNoteUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectNoteUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectNoteUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "DeleteUpdateNote_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "projectNoteUpdateID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -19357,6 +19954,86 @@
           },
           "RegionEmail": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DiffField": {
+        "type": "object",
+        "properties": {
+          "Label": {
+            "type": "string",
+            "nullable": true
+          },
+          "OriginalValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "UpdatedValue": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DiffSection": {
+        "type": "object",
+        "properties": {
+          "Title": {
+            "type": "string",
+            "nullable": true
+          },
+          "Type": {
+            "type": "string",
+            "nullable": true
+          },
+          "Fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiffField"
+            },
+            "nullable": true
+          },
+          "Headers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "OriginalRows": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "nullable": true
+          },
+          "UpdatedRows": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "nullable": true
+          },
+          "OriginalItems": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "UpdatedItems": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
             "nullable": true
           }
         },
@@ -25692,6 +26369,11 @@
             "type": "string",
             "nullable": true
           },
+          "ProjectDocumentTypeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "FileResourceUrl": {
             "type": "string",
             "nullable": true
@@ -26225,6 +26907,11 @@
           },
           "IsKeyPhoto": {
             "type": "boolean"
+          },
+          "ProjectImageTimingID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           },
           "ExcludeFromFactSheet": {
             "type": "boolean"
@@ -27569,7 +28256,7 @@
         },
         "additionalProperties": false
       },
-      "ProjectUpdateBatchResponse": {
+      "ProjectUpdateBatchDetail": {
         "type": "object",
         "properties": {
           "ProjectUpdateBatchID": {
@@ -27711,6 +28398,13 @@
           },
           "HasExpectedFundingChanges": {
             "type": "boolean"
+          },
+          "StructuredStepDiffs": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/StepDiffResponse"
+            },
+            "nullable": true
           },
           "HasAnyChanges": {
             "type": "boolean",
@@ -27898,6 +28592,28 @@
             "nullable": true
           },
           "NoSelectionExplanation": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateHistoryEntry": {
+        "type": "object",
+        "properties": {
+          "TransitionDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ProjectUpdateStateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectUpdateStateName": {
+            "type": "string",
+            "nullable": true
+          },
+          "UpdatePersonName": {
             "type": "string",
             "nullable": true
           }
@@ -28094,6 +28810,63 @@
           "OrganizationsComment": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateStatusGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectStageName": {
+            "type": "string",
+            "nullable": true
+          },
+          "LeadImplementerOrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectUpdateBatchID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectUpdateStateID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectUpdateStateName": {
+            "type": "string",
+            "nullable": true
+          },
+          "LastUpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastUpdatedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsMyProject": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -28560,8 +29333,11 @@
           "HasChanges": {
             "type": "boolean"
           },
-          "DiffHtml": {
-            "type": "string",
+          "Sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiffSection"
+            },
             "nullable": true
           }
         },

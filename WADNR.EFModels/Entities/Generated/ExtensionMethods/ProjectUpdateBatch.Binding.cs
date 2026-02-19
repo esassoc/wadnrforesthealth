@@ -19,7 +19,6 @@ namespace WADNR.EFModels.Entities
             public const int GeospatialAreaComment = 1000;
             public const int ExpectedFundingComment = 1000;
             public const int OrganizationsComment = 1000;
-            public const int OrganizationsDiffLog = 1;
             public const int ContactsComment = 1000;
             public const int NoRegionsExplanation = 4000;
             public const int ProjectAttributesComment = 1000;

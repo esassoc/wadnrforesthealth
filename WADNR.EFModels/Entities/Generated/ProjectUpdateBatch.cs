@@ -73,7 +73,6 @@ public partial class ProjectUpdateBatch
     [Unicode(false)]
     public string? OrganizationsComment { get; set; }
 
-    [StringLength(1)]
     [Unicode(false)]
     public string? OrganizationsDiffLog { get; set; }
 
@@ -102,6 +101,9 @@ public partial class ProjectUpdateBatch
     [StringLength(4000)]
     [Unicode(false)]
     public string? NoCountiesExplanation { get; set; }
+
+    [Unicode(false)]
+    public string? StructuredDiffLogJson { get; set; }
 
     [ForeignKey("LastUpdatePersonID")]
     [InverseProperty("ProjectUpdateBatches")]

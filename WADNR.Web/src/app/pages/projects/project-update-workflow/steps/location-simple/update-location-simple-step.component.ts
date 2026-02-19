@@ -89,6 +89,8 @@ export class UpdateLocationSimpleStepComponent extends UpdateWorkflowStepBase im
         this.initProjectID();
         this.initHasChanges();
 
+        this.trackFormDirty(this.form);
+
         const locationData$ = this.stepRefresh$.pipe(
             switchMap((id) => {
                 if (id == null || Number.isNaN(id)) {
@@ -177,6 +179,7 @@ export class UpdateLocationSimpleStepComponent extends UpdateWorkflowStepBase im
                     latitude: e.latlng.lat,
                     longitude: e.latlng.lng,
                 });
+                this.setFormDirty();
                 this.updateGeographicInfo(e.latlng.lat, e.latlng.lng);
             }
         });
@@ -208,6 +211,7 @@ export class UpdateLocationSimpleStepComponent extends UpdateWorkflowStepBase im
                 latitude: pos.lat,
                 longitude: pos.lng,
             });
+            this.setFormDirty();
             this.updateGeographicInfo(pos.lat, pos.lng);
         });
     }

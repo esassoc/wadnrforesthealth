@@ -4,45 +4,68 @@
             <span class="card-title">Detailed Location</span>
         </div>
         <div class="card-body">
-            @if (state.vm.isLoading) {
-                <div class="text-center p-4">Loading...</div>
-            } @else {
-                <p class="mb-3">
-                    Draw project location boundaries on the map using the polygon tool. Click a feature on the map or in the table to select it.
-                    Use the edit button to modify vertices, or the delete button to remove features.
-                </p>
+            <p class="mb-3">
+                Draw project location boundaries on the map using the polygon tool. Click a feature on the map or in the table to select it. Use the edit button to modify vertices,
+                or the delete button to remove features.
+            </p>
 
-                <div class="mb-3">
-                    <button type="button" class="btn btn-sm btn-outline-primary" (click)="openImportGdbModal()">
-                        <i class="fas fa-file-import"></i> Import GDB File
-                    </button>
-                </div>
+            <div class="mb-3">
+                <button type="button" class="btn btn-sm btn-outline-primary" (click)="openImportGdbModal()"><i class="fas fa-file-import"></i> Import GDB File</button>
+            </div>
 
-                <!-- Map -->
-                <div class="map-container mb-3">
-                    <wadnr-map
-                        [mapHeight]="'400px'"
-                        (onMapLoad)="handleMapLoad($event)">
-                        @if (mapIsReady) {
-                            <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
-                            <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
-                                [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"
-                                [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Simple)'" [wmsStyle]="'location_simple'"
-                                [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
-                            </generic-wms-wfs-layer>
-                            <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
-                                [wmsLayerName]="'WADNRForestHealth:ProjectLocationDetailed'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationDetailed'"
-                                [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Detailed)'" [wmsStyle]="'location_detailed'"
-                                [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
-                            </generic-wms-wfs-layer>
-                            <priority-landscapes-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
-                            <dnr-upland-regions-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
-                            <counties-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></counties-layer>
-                        }
-                    </wadnr-map>
-                </div>
+            <!-- Map (always rendered so Leaflet initializes in parallel with API call) -->
+            <div class="map-container mb-3">
+                <wadnr-map [mapHeight]="'400px'" (onMapLoad)="handleMapLoad($event)">
+                    @if (mapIsReady) {
+                        <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
+                        <generic-wms-wfs-layer
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'"
+                            [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"
+                            [identifierProperty]="'ProjectID'"
+                            [overlayLabel]="'All Project Locations (Simple)'"
+                            [wmsStyle]="'location_simple'"
+                            [displayOnLoad]="false"
+                            [fitBoundsOnWmsAddToControl]="false"
+                            [addToLayerControl]="true">
+                        </generic-wms-wfs-layer>
+                        <generic-wms-wfs-layer
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [wmsLayerName]="'WADNRForestHealth:ProjectLocationDetailed'"
+                            [wfsFeatureType]="'WADNRForestHealth:ProjectLocationDetailed'"
+                            [identifierProperty]="'ProjectID'"
+                            [overlayLabel]="'All Project Locations (Detailed)'"
+                            [wmsStyle]="'location_detailed'"
+                            [displayOnLoad]="false"
+                            [fitBoundsOnWmsAddToControl]="false"
+                            [addToLayerControl]="true">
+                        </generic-wms-wfs-layer>
+                        <priority-landscapes-layer
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [mode]="OverlayMode.ReferenceOnly"
+                            [displayOnLoad]="false"
+                            [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                        <dnr-upland-regions-layer
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [mode]="OverlayMode.ReferenceOnly"
+                            [displayOnLoad]="false"
+                            [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
+                        <counties-layer
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [mode]="OverlayMode.ReferenceOnly"
+                            [displayOnLoad]="false"
+                            [fitBoundsOnWmsAddToControl]="false"></counties-layer>
+                    }
+                </wadnr-map>
+            </div>
 
-                <!-- Features Table -->
+            <!-- Features Table -->
+            <div [loadingSpinner]="{ isLoading: state.vm.isLoading, loadingHeight: 100 }">
                 @if (visibleFeatures.length > 0) {
                     <div class="mb-3">
                         <h5>Locations</h5>
@@ -58,50 +81,36 @@
                             </thead>
                             <tbody>
                                 @for (feature of visibleFeatures; track feature.leafletId) {
-                                    <tr [class.selected]="selectedFeatureId$.value === feature.leafletId"
+                                    <tr
+                                        [class.selected]="selectedFeatureId$.value === feature.leafletId"
                                         [class.modified]="feature.isModified || feature.isNew"
                                         (click)="selectFeature(feature)">
                                         <td class="text-center align-middle">
-                                            @if (feature.hasTreatments) {
-                                                <span class="text-muted fw-bold" title="Has associated Treatments">*</span>
-                                            } @else if (feature.isFromArcGis) {
-                                                <span class="text-muted fw-bold" title="Imported from ArcGIS">**</span>
+                                            @if (feature.hasTreatments || feature.isFromArcGis) {
+                                                <span class="text-muted fw-bold" [title]="feature.hasTreatments ? 'Has associated Treatments' : 'Imported from ArcGIS'">
+                                                    {{ feature.hasTreatments ? '*' : '**' }}
+                                                </span>
                                             } @else {
-                                                <button type="button"
-                                                        class="btn btn-sm btn-link text-danger p-0"
-                                                        (click)="deleteFeature(feature); $event.stopPropagation()"
-                                                        title="Delete location">
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-link text-danger p-0"
+                                                    (click)="deleteFeature(feature); $event.stopPropagation()"
+                                                    title="Delete location">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             }
                                         </td>
                                         <td (click)="$event.stopPropagation()">
-                                            <form-field
-                                                [formControl]="getFeatureControls(feature).name"
-                                                [type]="FormFieldType.Text"
-                                                placeholder="Enter name"
-                                                maxlength="100">
-                                            </form-field>
+                                            <form-field [formControl]="getFeatureControls(feature).name" [type]="FormFieldType.Text" placeholder="Enter name" maxlength="100"></form-field>
                                         </td>
                                         <td class="align-middle">
-                                            <span class="shape-badge shape-{{ feature.shapeType | lowercase }}">
-                                                {{ feature.shapeType }}
-                                            </span>
+                                            <span class="shape-badge shape-{{ feature.shapeType | lowercase }}">{{ feature.shapeType }}</span>
                                         </td>
                                         <td (click)="$event.stopPropagation()">
-                                            <form-field
-                                                [formControl]="getFeatureControls(feature).type"
-                                                [type]="FormFieldType.Select"
-                                                [formInputOptions]="locationTypeOptions">
-                                            </form-field>
+                                            <form-field [formControl]="getFeatureControls(feature).type" [type]="FormFieldType.Select" [formInputOptions]="locationTypeOptions"></form-field>
                                         </td>
                                         <td (click)="$event.stopPropagation()">
-                                            <form-field
-                                                [formControl]="getFeatureControls(feature).notes"
-                                                [type]="FormFieldType.Textarea"
-                                                placeholder="Optional notes"
-                                                maxlength="255">
-                                            </form-field>
+                                            <form-field [formControl]="getFeatureControls(feature).notes" [type]="FormFieldType.Textarea" placeholder="Optional notes" maxlength="255"></form-field>
                                         </td>
                                     </tr>
                                 }
@@ -112,7 +121,7 @@
                             <div>** Geometries from ArcGIS are not editable, but you may add or edit the notes field.</div>
                         </div>
                     </div>
-                } @else {
+                } @else if (!state.vm.isLoading) {
                     <div class="alert alert-info">
                         <em>No locations defined. Use the polygon draw control on the map to add location boundaries.</em>
                     </div>
@@ -131,12 +140,7 @@
                                             <span class="text-muted ms-2">({{ feature.ProjectLocationTypeName }})</span>
                                         </td>
                                         <td class="text-end">
-                                            <button type="button"
-                                                    class="btn btn-sm btn-link p-0"
-                                                    (click)="restoreFeature(feature)"
-                                                    title="Restore location">
-                                                Restore
-                                            </button>
+                                            <button type="button" class="btn btn-sm btn-link p-0" (click)="restoreFeature(feature)" title="Restore location">Restore</button>
                                         </td>
                                     </tr>
                                 }
@@ -144,14 +148,10 @@
                         </table>
                     </div>
                 }
-            }
+            </div>
         </div>
         <div class="card-footer">
-            <workflow-step-actions
-                [isSaving]="isSaving"
-                (save)="onSave(false)"
-                (saveAndContinue)="onSave(true)">
-            </workflow-step-actions>
+            <workflow-step-actions [isSaving]="isSaving" (save)="onSave(false)" (saveAndContinue)="onSave(true)"> </workflow-step-actions>
         </div>
     </div>
 } @else {

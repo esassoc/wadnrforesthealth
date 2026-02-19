@@ -22,7 +22,7 @@ export class FieldDefinitionComponent implements OnInit, AfterViewInit, OnDestro
     @Input() fieldDefinition: string;
     @Input() labelOverride: string;
     @Input() inline: boolean = false;
-    @Input() useBodyContainer: boolean = false;
+    @Input() useBodyContainer: boolean = true;
 
     @ViewChild("tinyMceEditor") tinyMceEditor: EditorComponent;
     public tinyMceConfig: object;

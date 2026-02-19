@@ -135,6 +135,7 @@ export class PhotosStepComponent extends CreateWorkflowStepBase implements OnIni
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
                         this.refresh$.next();
+                        this.workflowProgressService.triggerRefresh();
                     }
                 });
             });
@@ -160,6 +161,7 @@ export class PhotosStepComponent extends CreateWorkflowStepBase implements OnIni
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
                         this.refresh$.next();
+                        this.workflowProgressService.triggerRefresh();
                     }
                 });
             });
@@ -179,6 +181,7 @@ export class PhotosStepComponent extends CreateWorkflowStepBase implements OnIni
                 next: () => {
                     this.alertService.pushAlert(new Alert("Photo deleted successfully.", AlertContext.Success, true));
                     this.refresh$.next();
+                    this.workflowProgressService.triggerRefresh();
                 },
                 error: (err) => {
                     const message = err?.error ?? err?.message ?? "Failed to delete photo.";
@@ -228,6 +231,7 @@ export class PhotosStepComponent extends CreateWorkflowStepBase implements OnIni
                 this.originalKeyPhotoID = this.selectedKeyPhotoID;
                 this.isSelectingKeyPhoto = false;
                 this.refresh$.next();
+                this.workflowProgressService.triggerRefresh();
             },
             error: (err) => {
                 const message = err?.error ?? err?.message ?? "Failed to set key photo.";
@@ -239,11 +243,14 @@ export class PhotosStepComponent extends CreateWorkflowStepBase implements OnIni
     onSave(navigate: boolean): void {
         // Photos are managed through individual upload/delete operations
         // rather than a batch save endpoint. The Save button here acknowledges the current state.
-        this.alertService.pushAlert(new Alert("Photos step completed.", AlertContext.Success, true));
         if (navigate) {
             this.projectID$.pipe(take(1)).subscribe((projectID) => {
-                this.navigateToNextStep(projectID);
+                this.navigateToNextStep(projectID).then(() => {
+                    this.alertService.pushAlert(new Alert("Photos step completed.", AlertContext.Success, true));
+                });
             });
+        } else {
+            this.alertService.pushAlert(new Alert("Photos step completed.", AlertContext.Success, true));
         }
     }
 }

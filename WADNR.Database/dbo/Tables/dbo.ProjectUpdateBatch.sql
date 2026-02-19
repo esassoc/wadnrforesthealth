@@ -19,13 +19,14 @@ CREATE TABLE [dbo].[ProjectUpdateBatch](
 	[ExpectedFundingComment] [varchar](1000) NULL,
 	[ExpectedFundingDiffLog] [varchar](max) NULL,
 	[OrganizationsComment] [varchar](1000) NULL,
-	[OrganizationsDiffLog] [varchar](1) NULL,
+	[OrganizationsDiffLog] [varchar](max) NULL,
 	[NoExpendituresToReportExplanation] [varchar](max) NULL,
 	[ContactsComment] [varchar](1000) NULL,
 	[NoRegionsExplanation] [varchar](4000) NULL,
 	[ProjectAttributesComment] [varchar](1000) NULL,
 	[ProjectAttributesDiffLog] [dbo].[html] NULL,
 	[NoPriorityLandscapesExplanation] [varchar](4000) NULL,
-	[NoCountiesExplanation] [varchar](4000) NULL
+	[NoCountiesExplanation] [varchar](4000) NULL,
+	[StructuredDiffLogJson] [varchar](max) NULL
 )
 GO

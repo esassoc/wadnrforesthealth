@@ -1,0 +1,429 @@
+// Scoped to modal class — ViewEncapsulation.None is used for injected HTML
+.update-history-diff-modal {
+
+    // Toolbar: subtitle on left, checkbox on right
+    .diff-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--gray-200, #e5e5e5);
+
+        .diff-subtitle {
+            font-size: 0.95rem;
+            color: var(--gray-700, #555);
+        }
+
+        .form-check {
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-check-label {
+            font-size: 0.875rem;
+        }
+    }
+
+    // Color legend
+    .diff-legend {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.8rem;
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.15rem 0.5rem;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        .legend-added {
+            background-color: #cfc;
+        }
+
+        .legend-deleted {
+            background-color: #fec8c8;
+            text-decoration: line-through;
+        }
+
+        .legend-unchanged {
+            background-color: var(--gray-100, #f5f5f5);
+            border: 1px solid var(--gray-300, #ccc);
+        }
+    }
+
+    // Section panels — all full width, stacked vertically
+    .diff-section-panel {
+        margin-bottom: 1rem;
+        border: 1px solid var(--gray-300, #ccc);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .diff-section-header {
+        background-color: var(--primary, #003366);
+        color: #fff;
+        padding: 0.5rem 0.75rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .diff-badge {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.4rem;
+        border-radius: 3px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .diff-badge-changed {
+        background-color: rgba(255, 255, 255, 0.25);
+        color: #fff;
+    }
+
+    .diff-badge-unchanged {
+        background-color: rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .diff-section-body {
+        padding: 0.75rem;
+    }
+
+    .diff-no-changes {
+        color: var(--gray-500, #999);
+        margin: 0;
+    }
+
+    // =========================================================================
+    // Structured diff styles (fields, table, list)
+    // Mirrors step-diff-modal.component.scss
+    // =========================================================================
+
+    // Section headings within a step panel
+    .diff-section-body h5 {
+        margin: 1.25rem 0 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--primary, #003366);
+        border-bottom: 2px solid var(--primary, #003366);
+        padding-bottom: 0.25rem;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+
+    // Shared table styles for structured diffs
+    .diff-fields-table,
+    .diff-table-section {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 0.5rem;
+
+        th {
+            padding: 0.5rem 0.75rem;
+            font-weight: 600;
+            color: var(--primary, #003366);
+            border-bottom: 2px solid var(--gray-300, #ccc);
+            text-align: left;
+        }
+
+        td {
+            padding: 0.5rem 0.75rem;
+            vertical-align: top;
+            border-bottom: 1px solid var(--gray-200, #e5e5e5);
+            word-break: break-word;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+    }
+
+    // Fields table: label column styling
+    .diff-fields-table {
+        .diff-label {
+            font-weight: 600;
+            color: var(--primary, #003366);
+            white-space: nowrap;
+            width: 200px;
+        }
+
+        .diff-changed .diff-deleted {
+            background-color: #fec8c8;
+            text-decoration: line-through;
+        }
+
+        .diff-changed .diff-added {
+            background-color: #cfc;
+        }
+    }
+
+    // Table section: row-level diff highlighting
+    .diff-table-section {
+        .diff-row-added td {
+            background-color: #cfc;
+        }
+
+        .diff-row-deleted td {
+            background-color: #fec8c8;
+            text-decoration: line-through;
+        }
+    }
+
+    // List section
+    .diff-list {
+        padding-left: 1.25rem;
+        margin: 0.25rem 0;
+        list-style-type: disc;
+
+        li {
+            padding: 0.125rem 0;
+        }
+
+        .diff-item-added {
+            background-color: #cfc;
+            padding: 0.125rem 0.25rem;
+        }
+
+        .diff-item-deleted {
+            background-color: #fec8c8;
+            text-decoration: line-through;
+            padding: 0.125rem 0.25rem;
+        }
+    }
+
+    // Empty state
+    .diff-empty {
+        color: var(--gray-500, #999);
+    }
+
+    // Hide deletions toggle (structured diffs)
+    .hide-deletions {
+        .diff-row-deleted,
+        .diff-item-deleted,
+        .diff-deleted {
+            display: none !important;
+        }
+    }
+
+    // =========================================================================
+    // Legacy Bootstrap grid classes used in stored Basics diffs
+    // The legacy MVC app rendered diffs with Bootstrap 3 grid:
+    //   <div class="basicsLayout">
+    //     <div class="row"><div class="col-sm-3">Label</div><div class="col-sm-9">Value</div></div>
+    //     <hr />
+    //   </div>
+    // These classes don't exist in the Angular app, so we provide equivalents.
+    // =========================================================================
+
+    .basicsLayout {
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0.3rem 0;
+        }
+
+        // Map Bootstrap col-sm-* to flex widths
+        [class*="col-sm-"],
+        [class*="col-md-"],
+        [class*="col-xs-"],
+        [class*="col-lg-"] {
+            min-height: 1px;
+            padding: 0 0.5rem;
+        }
+
+        .col-sm-3, .col-md-3, .col-xs-3 {
+            flex: 0 0 25%;
+            max-width: 25%;
+            font-weight: 600;
+            color: var(--gray-800, #333);
+        }
+
+        .col-sm-9, .col-md-9, .col-xs-9 {
+            flex: 0 0 75%;
+            max-width: 75%;
+        }
+
+        .col-sm-4, .col-md-4, .col-xs-4 {
+            flex: 0 0 33.333%;
+            max-width: 33.333%;
+            font-weight: 600;
+            color: var(--gray-800, #333);
+        }
+
+        .col-sm-8, .col-md-8, .col-xs-8 {
+            flex: 0 0 66.667%;
+            max-width: 66.667%;
+        }
+
+        .col-sm-6, .col-md-6, .col-xs-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
+
+        .col-sm-12, .col-md-12, .col-xs-12 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid var(--gray-200, #e5e5e5);
+            margin: 0.4rem 0;
+        }
+    }
+
+    // =========================================================================
+    // Legacy summaryLayout table (used in Notes / other sections)
+    //   <table class="summaryLayout">...</table>
+    // =========================================================================
+
+    .summaryLayout {
+        display: table !important;
+        width: 100%;
+        border-collapse: collapse;
+
+        tr {
+            display: table-row !important;
+        }
+
+        td, th {
+            display: table-cell !important;
+            padding: 0.3rem 0.5rem;
+            vertical-align: top;
+        }
+    }
+
+    // =========================================================================
+    // Legacy noListStyle list (used in External Links)
+    //   <ul class="noListStyle"><li>...</li></ul>
+    // =========================================================================
+
+    .noListStyle {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+            padding: 0.3rem 0;
+        }
+    }
+
+    // =========================================================================
+    // New-format diff tables (from ProjectUpdateDiffs.cs after migration)
+    //   <table class='diff-table'><tr><td>Label</td><td>Value</td></tr>...</table>
+    // =========================================================================
+
+    .diff-table {
+        display: table !important;
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+
+        tr {
+            display: table-row !important;
+        }
+
+        th,
+        td {
+            display: table-cell !important;
+            padding: 0.4rem 0.6rem;
+            vertical-align: top;
+            border-bottom: 1px solid var(--gray-200, #e5e5e5);
+            word-break: break-word;
+        }
+
+        th {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--primary, #003366);
+            border-bottom: 2px solid var(--gray-300, #ccc);
+            text-align: left;
+        }
+
+        td:first-child {
+            font-weight: 600;
+            color: var(--gray-800, #333);
+            white-space: nowrap;
+            width: 220px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+    }
+
+    // =========================================================================
+    // Fallback: bare <table> without class inside section body
+    // Some stored diffs may use <table> without any class attribute
+    // =========================================================================
+
+    .diff-section-body > div > table:not([class]) {
+        display: table !important;
+        width: 100%;
+        border-collapse: collapse;
+
+        tr { display: table-row !important; }
+
+        td, th {
+            display: table-cell !important;
+            padding: 0.3rem 0.5rem;
+            vertical-align: top;
+        }
+
+        td:first-child {
+            font-weight: 600;
+            color: var(--gray-800, #333);
+            white-space: nowrap;
+            width: 220px;
+        }
+    }
+
+    // =========================================================================
+    // HtmlDiff output styling (<ins>, <del>, change classes)
+    // =========================================================================
+
+    ins {
+        background-color: #cfc;
+        text-decoration: none;
+        padding: 0 2px;
+    }
+
+    del {
+        background-color: #fec8c8;
+        text-decoration: line-through;
+        color: #999;
+        padding: 0 2px;
+    }
+
+    .added-element,
+    .added-photo {
+        background-color: #cfc;
+    }
+
+    .deleted-element,
+    .deleted-photo {
+        background-color: #fec8c8;
+        text-decoration: line-through;
+    }
+
+    // Hide deletions toggle (legacy HTML diffs)
+    .hide-deletions {
+        del,
+        .deleted-element,
+        .deleted-photo {
+            display: none !important;
+        }
+    }
+}

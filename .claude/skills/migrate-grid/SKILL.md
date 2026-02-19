@@ -1,6 +1,23 @@
 # Migrate Grid Skill
 
+> **Scope**: fullstack
+> **Prereqs**: Load `/dotnet-patterns` and `/angular-patterns` first
+
 When the user invokes `/migrate-grid <EntityName> <GridName>`:
+
+## Contents
+
+1. [Analyze Legacy Grid Implementation](#1-analyze-legacy-grid-implementation)
+2. [Design Grid Row DTO](#2-design-grid-row-dto)
+3. [Create Projection Expression](#3-create-projection-expression)
+4. [Create Static Helper Method](#4-create-static-helper-method)
+5. [Add API Endpoint](#5-add-api-endpoint)
+6. [Create Angular Column Definitions](#6-create-angular-column-definitions)
+7. [Angular Template Pattern](#7-angular-template-pattern)
+8. [Grid Component Input Reference](#8-grid-component-input-reference)
+9. [Column Parity Checklist](#9-column-parity-checklist)
+10. [Common Patterns](#10-common-patterns)
+11. [Migration Checklist](#11-migration-checklist)
 
 ## Overview
 
@@ -643,3 +660,12 @@ confirmDelete(entity: EntityGridRowDto): void {
 - [ ] Verified links navigate correctly
 - [ ] Verified CSV export works
 - [ ] Verified field definition tooltips appear
+
+---
+
+## Cross-References
+
+| If you're also doing... | Load |
+|-------------------------|------|
+| Creating CRUD modals for grid rows | `/crud-modal` |
+| Writing tests for grid components | `/write-tests` |

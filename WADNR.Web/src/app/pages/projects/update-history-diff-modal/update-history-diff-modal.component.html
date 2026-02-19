@@ -1,0 +1,166 @@
+<div class="modal update-history-diff-modal">
+    <div class="modal-header">
+        <h3>Project Update Change Log</h3>
+    </div>
+
+    <div class="modal-body">
+        <div class="diff-toolbar">
+            <span class="diff-subtitle">Project Update from {{ updateDate }}</span>
+            <label class="form-check">
+                <input
+                    type="checkbox"
+                    class="form-check-input"
+                    [checked]="showDeletions"
+                    (change)="toggleDeletions()">
+                <span class="form-check-label">Show deletion details</span>
+            </label>
+        </div>
+
+        <div class="diff-legend">
+            <span class="legend-item legend-added">Added</span>
+            <span class="legend-item legend-deleted">Deleted</span>
+            <span class="legend-item legend-unchanged">Unchanged</span>
+        </div>
+
+        @if (hasStructuredDiffs) {
+            <!-- Structured rendering: all 13 steps -->
+            <div [class.hide-deletions]="!showDeletions">
+                @for (step of structuredSections; track step.key) {
+                    <div class="diff-section-panel">
+                        <div class="diff-section-header">
+                            <span>{{ step.title }}</span>
+                            @if (hasStepChanges(step.key)) {
+                                <span class="diff-badge diff-badge-changed">Changed</span>
+                            } @else {
+                                <span class="diff-badge diff-badge-unchanged">No Changes</span>
+                            }
+                        </div>
+                        <div class="diff-section-body">
+                            @if (hasStepChanges(step.key)) {
+                                @for (section of getStepSections(step.key); track section.Title ?? $index) {
+                                    @if (section.Title) {
+                                        <h5>{{ section.Title }}</h5>
+                                    }
+
+                                    <!-- Fields section -->
+                                    @if (section.Type === 'fields') {
+                                        <table class="diff-fields-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Field</th>
+                                                    <th>Original</th>
+                                                    <th>Updated</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (field of section.Fields; track field.Label) {
+                                                    <tr [class.diff-changed]="isFieldChanged(field)">
+                                                        <td class="diff-label">{{ field.Label }}</td>
+                                                        <td [class.diff-deleted]="isFieldChanged(field)">{{ field.OriginalValue }}</td>
+                                                        <td [class.diff-added]="isFieldChanged(field)">{{ field.UpdatedValue }}</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+
+                                    <!-- Table section -->
+                                    @if (section.Type === 'table') {
+                                        <table class="diff-table-section">
+                                            <thead>
+                                                <tr>
+                                                    @for (header of section.Headers; track header) {
+                                                        <th>{{ header }}</th>
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (row of getUnchangedRows(section); track $index) {
+                                                    <tr>
+                                                        @for (cell of row; track $index) {
+                                                            <td>{{ cell }}</td>
+                                                        }
+                                                    </tr>
+                                                }
+                                                @for (row of getAddedRows(section); track $index) {
+                                                    <tr class="diff-row-added">
+                                                        @for (cell of row; track $index) {
+                                                            <td>{{ cell }}</td>
+                                                        }
+                                                    </tr>
+                                                }
+                                                @for (row of getRemovedRows(section); track $index) {
+                                                    <tr class="diff-row-deleted">
+                                                        @for (cell of row; track $index) {
+                                                            <td>{{ cell }}</td>
+                                                        }
+                                                    </tr>
+                                                }
+                                                @if ((section.OriginalRows?.length ?? 0) === 0 && (section.UpdatedRows?.length ?? 0) === 0) {
+                                                    <tr>
+                                                        <td [attr.colspan]="section.Headers?.length ?? 1" class="diff-empty">
+                                                            <em>None</em>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+
+                                    <!-- List section -->
+                                    @if (section.Type === 'list') {
+                                        <ul class="diff-list">
+                                            @for (item of getUnchangedItems(section); track item) {
+                                                <li>{{ item }}</li>
+                                            }
+                                            @for (item of getAddedItems(section); track item) {
+                                                <li class="diff-item-added">{{ item }}</li>
+                                            }
+                                            @if (showDeletions) {
+                                                @for (item of getRemovedItems(section); track item) {
+                                                    <li class="diff-item-deleted">{{ item }}</li>
+                                                }
+                                            }
+                                            @if ((section.OriginalItems?.length ?? 0) === 0 && (section.UpdatedItems?.length ?? 0) === 0) {
+                                                <li class="diff-empty"><em>None</em></li>
+                                            }
+                                        </ul>
+                                    }
+                                }
+                            } @else {
+                                <p class="diff-no-changes"><em>No changes to {{ step.title }} section</em></p>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        } @else {
+            <!-- Legacy HTML fallback: 5 sections with [innerHTML] -->
+            <div [class.hide-deletions]="!showDeletions">
+                @for (section of legacySections; track section.title) {
+                    <div class="diff-section-panel">
+                        <div class="diff-section-header">
+                            <span>{{ section.title }}</span>
+                            @if (hasLegacySectionChanges(section)) {
+                                <span class="diff-badge diff-badge-changed">Changed</span>
+                            } @else {
+                                <span class="diff-badge diff-badge-unchanged">No Changes</span>
+                            }
+                        </div>
+                        <div class="diff-section-body">
+                            @if (hasLegacySectionChanges(section)) {
+                                <div [innerHTML]="getSectionHtml(section)"></div>
+                            } @else {
+                                <p class="diff-no-changes"><em>No changes to {{ section.title }} section</em></p>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="close()">Close</button>
+    </div>
+</div>

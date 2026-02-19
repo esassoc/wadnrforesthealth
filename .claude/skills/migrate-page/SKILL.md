@@ -1,5 +1,8 @@
 # Migrate Page Skill
 
+> **Scope**: fullstack
+> **Prereqs**: Load `/dotnet-patterns` and `/angular-patterns` first
+
 When the user invokes `/migrate-page <EntityName>`:
 
 ## 1. Analyze Legacy Code
@@ -279,3 +282,14 @@ npm start
 - [ ] Angular tests pass
 - [ ] Legacy code deprecated/removed
 - [ ] Manual testing complete
+
+---
+
+## Cross-References
+
+| If you're also doing... | Load |
+|-------------------------|------|
+| Creating data grids | `/migrate-grid` |
+| Creating maps | `/migrate-map` |
+| Creating CRUD modals | `/crud-modal` |
+| Writing tests | `/write-tests` |

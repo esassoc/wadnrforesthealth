@@ -118,6 +118,9 @@ export class UpdateExpectedFundingStepComponent extends UpdateWorkflowStepBase i
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.estimatedTotalCostControl.valueChanges.subscribe(() => this.setFormDirty());
+        this.fundingSourceNotesControl.valueChanges.subscribe(() => this.setFormDirty());
+
         this.vm$ = combineLatest([stepData$, fundingSources$, fundSourceAllocations$]).pipe(
             map(([data, fundingSources, fundSourceAllocations]) => {
                 const fundingSourceCheckboxes: FundingSourceCheckbox[] = [];
@@ -138,8 +141,8 @@ export class UpdateExpectedFundingStepComponent extends UpdateWorkflowStepBase i
                 }));
 
                 if (data) {
-                    this.estimatedTotalCostControl.setValue(data.EstimatedTotalCost ?? null);
-                    this.fundingSourceNotesControl.setValue(data.ProjectFundingSourceNotes ?? "");
+                    this.estimatedTotalCostControl.setValue(data.EstimatedTotalCost ?? null, { emitEvent: false });
+                    this.fundingSourceNotesControl.setValue(data.ProjectFundingSourceNotes ?? "", { emitEvent: false });
                     this.allocationRequests = (data.AllocationRequests ?? []).map(ar => ({
                         projectFundSourceAllocationRequestUpdateID: ar.ProjectFundSourceAllocationRequestUpdateID ?? undefined,
                         fundSourceAllocationID: ar.FundSourceAllocationID!,
@@ -167,6 +170,7 @@ export class UpdateExpectedFundingStepComponent extends UpdateWorkflowStepBase i
 
     toggleFundingSource(checkbox: FundingSourceCheckbox): void {
         checkbox.checked = !checkbox.checked;
+        this.setFormDirty();
     }
 
     private updateAvailableAllocationOptions(allOptions?: FormInputOption[]): void {
@@ -199,11 +203,13 @@ export class UpdateExpectedFundingStepComponent extends UpdateWorkflowStepBase i
 
         this.allocationToAddControl.reset();
         this.updateAvailableAllocationOptions();
+        this.setFormDirty();
     }
 
     removeAllocation(allocationID: number): void {
         this.allocationRequests = this.allocationRequests.filter(ar => ar.fundSourceAllocationID !== allocationID);
         this.updateAvailableAllocationOptions();
+        this.setFormDirty();
     }
 
     getTotalAmount(): number {

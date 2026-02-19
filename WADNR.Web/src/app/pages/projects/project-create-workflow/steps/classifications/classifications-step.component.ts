@@ -133,6 +133,7 @@ export class ClassificationsStepComponent extends CreateWorkflowStepBase impleme
                 selection.notesControl.setValue("");
                 selection.notesControl.disable();
             }
+            this.setFormDirty();
         }
     }
 

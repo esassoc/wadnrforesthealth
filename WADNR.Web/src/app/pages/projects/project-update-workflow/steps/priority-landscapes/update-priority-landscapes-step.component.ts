@@ -122,6 +122,8 @@ export class UpdatePriorityLandscapesStepComponent extends UpdateWorkflowStepBas
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.trackFormDirty(this.form);
+
         this.availableOptions$ = combineLatest([this._selectedIDs$, this.vm$.pipe(map((vm) => vm.data?.AvailableOptions ?? []))]).pipe(
             map(([selectedIDs, allOptions]) => {
                 return allOptions
@@ -167,6 +169,7 @@ export class UpdatePriorityLandscapesStepComponent extends UpdateWorkflowStepBas
             this.form.patchValue({ selectedIDs: newIDs });
             this._selectedIDs$.next(newIDs);
             this.updateSelectedLayer();
+            this.setFormDirty();
         }
         this.form.controls["itemToAdd"].reset();
     }
@@ -177,6 +180,7 @@ export class UpdatePriorityLandscapesStepComponent extends UpdateWorkflowStepBas
         this.form.patchValue({ selectedIDs: newIDs });
         this._selectedIDs$.next(newIDs);
         this.updateSelectedLayer();
+        this.setFormDirty();
     }
 
     toggleSelection(id: number): void {
@@ -188,6 +192,7 @@ export class UpdatePriorityLandscapesStepComponent extends UpdateWorkflowStepBas
             this.form.patchValue({ selectedIDs: newIDs });
             this._selectedIDs$.next(newIDs);
             this.updateSelectedLayer();
+            this.setFormDirty();
         }
     }
 

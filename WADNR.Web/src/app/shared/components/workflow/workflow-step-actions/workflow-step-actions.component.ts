@@ -146,11 +146,11 @@ export class WorkflowStepActionsComponent {
             .subscribe({
                 next: (response) => {
                     this._isLoadingDiff$.next(false);
-                    if (response?.HasChanges && response.DiffHtml) {
+                    if (response?.HasChanges && response.Sections?.length) {
                         this.dialogService.open(StepDiffModalComponent, {
                             data: {
                                 stepKey: this.stepKey,
-                                diffHtml: response.DiffHtml
+                                sections: response.Sections
                             },
                             size: "lg"
                         });

@@ -1,6 +1,25 @@
 # CRUD Modal Skill
 
+> **Scope**: fullstack
+> **Prereqs**: Load `/dotnet-patterns` and `/angular-patterns` first
+
 When the user invokes `/crud-modal <EntityName>`:
+
+## Contents
+
+1. [Analyze Legacy Forms](#1-analyze-legacy-forms)
+2. [Create Upsert Request DTO](#2-create-upsert-request-dto)
+3. [Add API Endpoints](#3-add-api-endpoints)
+4. [Create Static Helper Methods](#4-create-static-helper-methods)
+5. [Create Modal Component](#5-create-modal-component)
+6. [FormFieldType Reference](#6-formfieldtype-reference)
+7. [Opening the Modal](#7-opening-the-modal)
+8. [Delete Confirmation Pattern](#8-delete-confirmation-pattern)
+9. [Adding Edit/Delete Buttons](#9-adding-editdelete-buttons)
+10. [Permission Checks (Frontend)](#10-permission-checks-frontend)
+11. [Form Validation Display](#11-form-validation-display)
+12. [Migration Checklist](#12-migration-checklist)
+13. [Common Issues and Solutions](#13-common-issues-and-solutions)
 
 ## Overview
 
@@ -415,11 +434,11 @@ export class EntityModalComponent extends BaseModal implements OnInit {
             placeholder="0.00">
         </form-field>
 
-        <!-- Checkbox -->
+        <!-- Check (boolean) -->
         <form-field
             [formControl]="form.controls.IsActive"
             fieldLabel="Active"
-            [type]="FormFieldType.Checkbox">
+            [type]="FormFieldType.Check">
         </form-field>
     </form>
 </div>
@@ -447,16 +466,50 @@ export class EntityModalComponent extends BaseModal implements OnInit {
 export enum FormFieldType {
     Text = "text",
     Textarea = "textarea",
-    Number = "number",
+    Check = "check",
+    Toggle = "toggle",
     Date = "date",
     Select = "select",
-    Checkbox = "checkbox",
-    Email = "email",
-    Phone = "phone",
-    Password = "password",
-    MultiSelect = "multiselect"
+    Number = "number",
+    Radio = "radio",
+    RTE = "rte",
+    File = "file",
 }
 ```
+
+### FormInputOption Interface
+
+```typescript
+export interface FormInputOption {
+    Value: any;
+    Label: string;
+    SortOrder?: number | null | undefined;
+    Group?: string | null | undefined;
+    disabled: boolean | null | undefined;
+}
+```
+
+### Key `<form-field>` @Input() Properties
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `formControl` | `FormControl` | FormControl binding |
+| `fieldLabel` | `string` | Label text |
+| `placeholder` | `string` | Placeholder text |
+| `type` | `FormFieldType` | Input type (default: `Text`) |
+| `formInputOptions` | `FormInputOption[]` | Options for Select/Radio |
+| `formInputOptionLabel` | `string` | Property name for option labels (default: `"Label"`) |
+| `formInputOptionValue` | `string` | Property name for option values (default: `"Value"`) |
+| `multiple` | `boolean` | Allow multiple selections (default: `false`) |
+| `fieldDefinitionName` | `string` | Field definition tooltip |
+| `fieldDefinitionLabelOverride` | `string` | Override label in tooltip |
+| `checkLabel` | `string` | Label for checkbox |
+| `toggleTrue` / `toggleFalse` | `string` | Text for toggle states |
+| `units` | `string` | Unit text (e.g., `"acres"`) |
+| `mask` | `string` | Input mask pattern (ngx-mask) |
+| `horizontal` | `boolean` | Horizontal layout (default: `false`) |
+| `readOnly` | `boolean` | Read-only mode (default: `false`) |
+| `uploadFileAccepts` | `string` | File accept types (e.g., `".docx,.doc"`) |
 
 ---
 

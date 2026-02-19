@@ -29,7 +29,7 @@
                             <field-definition fieldDefinition="EstimatedTotalCost"></field-definition>
                         </div>
                         <div class="form-input">
-                            <form-field [formControl]="estimatedTotalCostControl" [type]="FormFieldType.Number" [readOnly]="state.saving" placeholder="0.00"> </form-field>
+                            <form-field [formControl]="estimatedTotalCostControl" [type]="FormFieldType.Currency" [readOnly]="state.saving" placeholder="$0.00"> </form-field>
                         </div>
                     </div>
 
@@ -84,7 +84,6 @@
                                     <th style="width: 40px"></th>
                                     <th>WA DNR Fund Source Allocation</th>
                                     <th style="width: 180px; text-align: right">Total Amount</th>
-                                    <th style="width: 120px; text-align: right">Total</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -102,16 +101,14 @@
                                         </td>
                                         <td>{{ ar.fundSourceAllocationName }}</td>
                                         <td>
-                                            <form-field [formControl]="ar.amountControl" [type]="FormFieldType.Number" [readOnly]="state.saving" placeholder="0.00"> </form-field>
+                                            <form-field [formControl]="ar.amountControl" [type]="FormFieldType.Currency" [readOnly]="state.saving" placeholder="$0.00"> </form-field>
                                         </td>
-                                        <td class="text-right">{{ ar.amountControl.value | currency }}</td>
                                     </tr>
                                 }
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <th colspan="2">Total</th>
-                                    <th class="text-right">{{ getTotalAmount() | currency }}</th>
                                     <th class="text-right">{{ getTotalAmount() | currency }}</th>
                                 </tr>
                             </tfoot>

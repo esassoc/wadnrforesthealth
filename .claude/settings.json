@@ -18,7 +18,9 @@
       "Skill(migrate-page)",
       "Skill(migrate-grid)",
       "Skill(migrate-map)",
-      "Skill(crud-modal)"
+      "Skill(migrate-workflow)",
+      "Skill(crud-modal)",
+      "Skill(add-scrollspy-toc)"
     ]
   }
 }

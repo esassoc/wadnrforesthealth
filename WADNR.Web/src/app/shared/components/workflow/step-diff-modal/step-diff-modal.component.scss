@@ -21,110 +21,104 @@
 
 // Hide deletions toggle
 .diff-content.hide-deletions {
-    .deleted-element,
-    del {
+    .diff-row-deleted,
+    .diff-item-deleted,
+    .diff-deleted {
         display: none !important;
     }
 }
 
-// Styles for injected diff HTML content
-.diff-content {
-    // Added elements - green background
-    .added-element,
-    ins {
-        background-color: #cfc !important;
-        text-decoration: none !important;
-        padding: 0 2px;
-    }
+// Section headings
+.diff-content h5 {
+    margin: 1.25rem 0 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary, #003366);
+    border-bottom: 2px solid var(--primary, #003366);
+    padding-bottom: 0.25rem;
+}
 
-    // Deleted elements - pink/red background with strikethrough
-    .deleted-element,
-    del {
-        background-color: #fec8c8 !important;
-        text-decoration: line-through !important;
-        padding: 0 2px;
-    }
+// Shared table styles
+.diff-fields-table,
+.diff-table-section {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0.5rem;
 
-    // Table styling for diff tables
-    table,
-    table.table,
-    table.table-bordered,
-    table.table-striped,
-    table.diff-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 0;
-        border: none !important;
-        background-color: transparent !important;
-
-        thead,
-        th {
-            display: none !important;
-        }
-
-        tbody {
-            background-color: transparent !important;
-        }
-
-        tr {
-            border-bottom: 1px solid var(--gray-200) !important;
-            background-color: transparent !important;
-            background: none !important;
-
-            &:nth-child(odd),
-            &:nth-child(even) {
-                background-color: transparent !important;
-                background: none !important;
-            }
-
-            &:last-child {
-                border-bottom: none !important;
-            }
-
-            &:hover {
-                background-color: transparent !important;
-            }
-        }
-
-        td {
-            padding: 0.5rem 0.75rem !important;
-            border: none !important;
-            vertical-align: top;
-            background-color: transparent !important;
-            background: none !important;
-
-            &:first-child {
-                font-weight: 600;
-                color: var(--primary, #003366);
-                width: 220px;
-                white-space: nowrap;
-                padding-left: 0.5rem !important;
-            }
-
-            &:last-child {
-                word-break: break-word;
-            }
-        }
-    }
-
-    // Lists
-    ul {
-        padding-left: 1.25rem;
-        margin: 0.25rem 0;
-        list-style-type: disc;
-
-        li {
-            padding: 0.125rem 0;
-        }
-    }
-
-    // Section headings
-    h5 {
-        margin: 1.25rem 0 0.5rem;
-        font-size: 0.9rem;
+    th {
+        padding: 0.5rem 0.75rem;
         font-weight: 600;
         color: var(--primary, #003366);
-        border-bottom: 2px solid var(--primary, #003366);
-        padding-bottom: 0.25rem;
+        border-bottom: 2px solid var(--gray-300);
+        text-align: left;
     }
+
+    td {
+        padding: 0.5rem 0.75rem;
+        vertical-align: top;
+        border-bottom: 1px solid var(--gray-200);
+        word-break: break-word;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+}
+
+// Fields table: label column styling
+.diff-fields-table {
+    .diff-label {
+        font-weight: 600;
+        color: var(--primary, #003366);
+        white-space: nowrap;
+        width: 200px;
+    }
+
+    .diff-changed .diff-deleted {
+        background-color: #fec8c8;
+        text-decoration: line-through;
+    }
+
+    .diff-changed .diff-added {
+        background-color: #cfc;
+    }
+}
+
+// Table section: row-level diff highlighting
+.diff-table-section {
+    .diff-row-added td {
+        background-color: #cfc;
+    }
+
+    .diff-row-deleted td {
+        background-color: #fec8c8;
+        text-decoration: line-through;
+    }
+}
+
+// List section
+.diff-list {
+    padding-left: 1.25rem;
+    margin: 0.25rem 0;
+    list-style-type: disc;
+
+    li {
+        padding: 0.125rem 0;
+    }
+
+    .diff-item-added {
+        background-color: #cfc;
+        padding: 0.125rem 0.25rem;
+    }
+
+    .diff-item-deleted {
+        background-color: #fec8c8;
+        text-decoration: line-through;
+        padding: 0.125rem 0.25rem;
+    }
+}
+
+// Empty state
+.diff-empty {
+    color: var(--gray-500);
 }

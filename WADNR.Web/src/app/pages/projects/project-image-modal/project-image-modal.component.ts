@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
+import { Observable } from "rxjs";
 
 import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
@@ -18,7 +19,11 @@ export interface ProjectImageModalData {
     mode: "create" | "edit";
     projectID: number;
     image?: ProjectImageGridRow;
+    imageUpdateID?: number;
     timingOptions: ProjectImageTimingLookupItem[];
+    createFn?: (projectID: number, caption: string, credit: string, timingID?: number,
+                excludeFromFactSheet?: boolean, file?: Blob) => Observable<any>;
+    updateFn?: (dto: ProjectImageUpsertRequest) => Observable<any>;
 }
 
 @Component({
@@ -119,15 +124,16 @@ export class ProjectImageModalComponent extends BaseModal implements OnInit {
 
     private createImage(): void {
         const file = this.fileControl.value!;
+        const caption = this.form.value.Caption!;
+        const credit = this.form.value.Credit!;
+        const timingID = this.form.value.ProjectImageTimingID ?? undefined;
+        const excludeFromFactSheet = this.form.value.ExcludeFromFactSheet ?? false;
 
-        this.projectImageService.createProjectImage(
-            this.projectID,
-            this.form.value.Caption!,
-            this.form.value.Credit!,
-            this.form.value.ProjectImageTimingID ?? undefined,
-            this.form.value.ExcludeFromFactSheet ?? false,
-            file
-        ).subscribe({
+        const create$ = this.ref.data.createFn
+            ? this.ref.data.createFn(this.projectID, caption, credit, timingID, excludeFromFactSheet, file)
+            : this.projectImageService.createProjectImage(this.projectID, caption, credit, timingID, excludeFromFactSheet, file);
+
+        create$.subscribe({
             next: (result) => {
                 this.pushGlobalSuccess("Photo uploaded successfully.");
                 this.ref.close(result);
@@ -148,7 +154,11 @@ export class ProjectImageModalComponent extends BaseModal implements OnInit {
             ExcludeFromFactSheet: this.form.value.ExcludeFromFactSheet ?? false
         };
 
-        this.projectImageService.updateProjectImage(this.image!.ProjectImageID, dto).subscribe({
+        const update$ = this.ref.data.updateFn
+            ? this.ref.data.updateFn(dto)
+            : this.projectImageService.updateProjectImage(this.image!.ProjectImageID, dto);
+
+        update$.subscribe({
             next: (result) => {
                 this.pushGlobalSuccess("Photo updated successfully.");
                 this.ref.close(result);

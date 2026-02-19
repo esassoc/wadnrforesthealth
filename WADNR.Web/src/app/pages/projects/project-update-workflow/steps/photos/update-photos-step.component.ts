@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { AsyncPipe, CommonModule } from "@angular/common";
-import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, startWith, switchMap, take } from "rxjs";
+import { combineLatest, map, Observable, of, shareReplay, startWith, switchMap, take } from "rxjs";
 import { catchError, filter } from "rxjs/operators";
 import { DialogService } from "@ngneat/dialog";
 
@@ -17,6 +17,7 @@ import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { ProjectImageModalComponent, ProjectImageModalData } from "src/app/pages/projects/project-image-modal/project-image-modal.component";
 import { ProjectImagePreviewComponent, ProjectImagePreviewData } from "src/app/pages/projects/project-image-modal/project-image-preview.component";
+import { environment } from "src/environments/environment";
 
 interface PhotosViewModel {
     isLoading: boolean;
@@ -37,7 +38,6 @@ export class UpdatePhotosStepComponent extends UpdateWorkflowStepBase implements
     readonly stepKey = "Photos";
 
     public vm$: Observable<PhotosViewModel>;
-    private refresh$ = new BehaviorSubject<void>(undefined);
 
     public isSelectingKeyPhoto = false;
     public selectedKeyPhotoID: number | null = null;
@@ -61,11 +61,8 @@ export class UpdatePhotosStepComponent extends UpdateWorkflowStepBase implements
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        const photos$ = combineLatest([this._projectID$, this.refresh$]).pipe(
-            switchMap(([id]) => {
-                if (id == null || Number.isNaN(id)) {
-                    return of({ data: null, photos: [] as ProjectImageUpdateItem[] });
-                }
+        const photos$ = this.stepRefresh$.pipe(
+            switchMap((id) => {
                 return this.projectService.getUpdatePhotosStepProject(id).pipe(
                     map((data) => ({ data, photos: data?.Photos ?? [] })),
                     catchError(() => {
@@ -98,7 +95,10 @@ export class UpdatePhotosStepComponent extends UpdateWorkflowStepBase implements
     }
 
     getPhotoUrl(photo: ProjectImageUpdateItem): string {
-        return photo.FileResourceUrl ?? "";
+        if (photo.FileResourceUrl) {
+            return `${environment.mainAppApiUrl}${photo.FileResourceUrl}`;
+        }
+        return "";
     }
 
     getPhotoCaption(photo: ProjectImageUpdateItem): string {
@@ -121,13 +121,15 @@ export class UpdatePhotosStepComponent extends UpdateWorkflowStepBase implements
                         mode: "create",
                         projectID,
                         timingOptions,
+                        createFn: (pid, caption, credit, timingID, excludeFromFactSheet, file) =>
+                            this.projectService.createUpdatePhotoImageProject(pid, caption, credit, timingID, excludeFromFactSheet, file)
                     } as ProjectImageModalData,
                     width: "700px",
                 });
 
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
-                        this.refresh$.next();
+                        this.refreshStepData$.next();
                     }
                 });
             });
@@ -144,15 +146,23 @@ export class UpdatePhotosStepComponent extends UpdateWorkflowStepBase implements
                     data: {
                         mode: "edit",
                         projectID,
-                        image: photo,
+                        image: {
+                            Caption: photo.Caption,
+                            Credit: photo.Credit,
+                            ProjectImageTimingID: photo.ProjectImageTimingID,
+                            ExcludeFromFactSheet: photo.ExcludeFromFactSheet,
+                        } as any,
+                        imageUpdateID: photo.ProjectImageUpdateID,
                         timingOptions,
+                        updateFn: (dto) =>
+                            this.projectService.updateUpdatePhotoImageProject(projectID, photo.ProjectImageUpdateID, dto)
                     } as ProjectImageModalData,
                     width: "700px",
                 });
 
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
-                        this.refresh$.next();
+                        this.refreshStepData$.next();
                     }
                 });
             });
@@ -170,16 +180,23 @@ export class UpdatePhotosStepComponent extends UpdateWorkflowStepBase implements
         });
 
         if (confirmed) {
-            this.projectImageService.deleteProjectImage(photo.ProjectImageUpdateID).subscribe({
-                next: () => {
-                    this.alertService.pushAlert(new Alert("Photo deleted successfully.", AlertContext.Success, true));
-                    this.refresh$.next();
-                },
-                error: (err) => {
-                    const message = err?.error ?? err?.message ?? "Failed to delete photo.";
-                    this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                },
-            });
+            this.stepRefresh$
+                .pipe(
+                    filter((id): id is number => id != null),
+                    take(1)
+                )
+                .subscribe((projectID) => {
+                    this.projectService.deleteUpdatePhotoImageProject(projectID, photo.ProjectImageUpdateID).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Photo deleted successfully.", AlertContext.Success, true));
+                            this.refreshStepData$.next();
+                        },
+                        error: (err) => {
+                            const message = err?.error ?? err?.message ?? "Failed to delete photo.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                });
         }
     }
 
@@ -202,7 +219,7 @@ export class UpdatePhotosStepComponent extends UpdateWorkflowStepBase implements
 
     openPreview(photo: ProjectImageUpdateItem): void {
         this.dialogService.open(ProjectImagePreviewComponent, {
-            data: { photo } as ProjectImagePreviewData,
+            data: { photo, imageUrl: this.getPhotoUrl(photo) } as ProjectImagePreviewData,
             width: "auto",
             maxWidth: "95vw",
             closeButton: true,
@@ -216,26 +233,36 @@ export class UpdatePhotosStepComponent extends UpdateWorkflowStepBase implements
             return;
         }
 
-        this.projectImageService.setKeyPhotoProjectImage(this.selectedKeyPhotoID).subscribe({
-            next: () => {
-                this.alertService.pushAlert(new Alert("Key photo updated successfully.", AlertContext.Success, true));
-                this.originalKeyPhotoID = this.selectedKeyPhotoID;
-                this.isSelectingKeyPhoto = false;
-                this.refresh$.next();
-            },
-            error: (err) => {
-                const message = err?.error ?? err?.message ?? "Failed to set key photo.";
-                this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-            },
-        });
+        this.stepRefresh$
+            .pipe(
+                filter((id): id is number => id != null),
+                take(1)
+            )
+            .subscribe((projectID) => {
+                this.projectService.setKeyPhotoUpdatePhotoProject(projectID, this.selectedKeyPhotoID!).subscribe({
+                    next: () => {
+                        this.alertService.pushAlert(new Alert("Key photo updated successfully.", AlertContext.Success, true));
+                        this.originalKeyPhotoID = this.selectedKeyPhotoID;
+                        this.isSelectingKeyPhoto = false;
+                        this.refreshStepData$.next();
+                    },
+                    error: (err) => {
+                        const message = err?.error ?? err?.message ?? "Failed to set key photo.";
+                        this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                    },
+                });
+            });
     }
 
     onSave(navigate: boolean): void {
-        this.alertService.pushAlert(new Alert("Photos step completed.", AlertContext.Success, true));
         if (navigate) {
             this.projectID$.pipe(take(1)).subscribe((projectID) => {
-                this.navigateToNextStep(projectID);
+                this.navigateToNextStep(projectID).then(() => {
+                    this.alertService.pushAlert(new Alert("Photos step completed.", AlertContext.Success, true));
+                });
             });
+        } else {
+            this.alertService.pushAlert(new Alert("Photos step completed.", AlertContext.Success, true));
         }
     }
 }

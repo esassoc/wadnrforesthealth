@@ -440,108 +440,136 @@ public static class ProjectUpdateWorkflowProgress
     {
         var result = new Dictionary<string, bool>();
 
-        // Load batch and project data for comparison
+        // Load batch and project scalars only — child collections are loaded separately
+        // to avoid massive Cartesian product joins (especially with geometry columns).
         var batch = await dbContext.ProjectUpdateBatches
             .AsNoTracking()
-            .Include(b => b.ProjectUpdates)
-            .Include(b => b.ProjectUpdatePrograms)
-            .Include(b => b.ProjectOrganizationUpdates)
-            .Include(b => b.ProjectPersonUpdates)
-            .Include(b => b.ProjectFundingSourceUpdates)
-            .Include(b => b.ProjectFundSourceAllocationRequestUpdates)
-            .Include(b => b.ProjectExternalLinkUpdates)
-            .Include(b => b.ProjectDocumentUpdates)
-            .Include(b => b.ProjectNoteUpdates)
-            .Include(b => b.ProjectLocationUpdates)
-            .Include(b => b.ProjectImageUpdates)
-            .Include(b => b.ProjectPriorityLandscapeUpdates)
-            .Include(b => b.ProjectRegionUpdates)
-            .Include(b => b.ProjectCountyUpdates)
-            .Include(b => b.TreatmentUpdates)
             .FirstOrDefaultAsync(b => b.ProjectUpdateBatchID == projectUpdateBatchID);
 
         var project = await dbContext.Projects
             .AsNoTracking()
-            .Include(p => p.ProjectPrograms)
-            .Include(p => p.ProjectOrganizations)
-            .Include(p => p.ProjectPeople)
-            .Include(p => p.ProjectFundingSources)
-            .Include(p => p.ProjectFundSourceAllocationRequests)
-            .Include(p => p.ProjectExternalLinks)
-            .Include(p => p.ProjectDocuments)
-            .Include(p => p.ProjectNotes)
-            .Include(p => p.ProjectLocations)
-            .Include(p => p.ProjectImages)
-            .Include(p => p.ProjectPriorityLandscapes)
-            .Include(p => p.ProjectRegions)
-            .Include(p => p.ProjectCounties)
             .FirstOrDefaultAsync(p => p.ProjectID == projectID);
 
         if (batch == null || project == null) return result;
 
-        var projectUpdate = batch.ProjectUpdates.FirstOrDefault();
+        var projectUpdate = await dbContext.Set<ProjectUpdate>()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(pu => pu.ProjectUpdateBatchID == projectUpdateBatchID);
+
+        // Load each collection pair separately for comparison
+        var projectPrograms = await dbContext.ProjectPrograms.AsNoTracking()
+            .Where(x => x.ProjectID == projectID).ToListAsync();
+        var updatePrograms = await dbContext.ProjectUpdatePrograms.AsNoTracking()
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
 
         // Basics: compare basic fields and programs
-        result["Basics"] = HasBasicsChanges(project, projectUpdate, batch.ProjectUpdatePrograms.ToList());
+        result["Basics"] = HasBasicsChanges(project, projectUpdate, projectPrograms, updatePrograms);
 
         // LocationSimple: compare point location
         result["LocationSimple"] = HasLocationSimpleChanges(project, projectUpdate);
 
         // LocationDetailed: compare location counts and names
-        result["LocationDetailed"] = HasLocationDetailedChanges(project.ProjectLocations.ToList(), batch.ProjectLocationUpdates.ToList());
+        var projectLocations = await dbContext.ProjectLocations.AsNoTracking()
+            .Where(x => x.ProjectID == projectID).ToListAsync();
+        var updateLocations = await dbContext.ProjectLocationUpdates.AsNoTracking()
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        result["LocationDetailed"] = HasLocationDetailedChanges(projectLocations, updateLocations);
 
         // PriorityLandscapes
+        var projectPriorityLandscapeIDs = await dbContext.ProjectPriorityLandscapes.AsNoTracking()
+            .Where(x => x.ProjectID == projectID).Select(x => x.PriorityLandscapeID).ToListAsync();
+        var updatePriorityLandscapeIDs = await dbContext.ProjectPriorityLandscapeUpdates.AsNoTracking()
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).Select(x => x.PriorityLandscapeID).ToListAsync();
         result["PriorityLandscapes"] = HasGeographicChanges(
-            project.ProjectPriorityLandscapes.Select(x => x.PriorityLandscapeID).ToHashSet(),
-            batch.ProjectPriorityLandscapeUpdates.Select(x => x.PriorityLandscapeID).ToHashSet(),
+            projectPriorityLandscapeIDs.ToHashSet(),
+            updatePriorityLandscapeIDs.ToHashSet(),
             project.NoPriorityLandscapesExplanation,
             batch.NoPriorityLandscapesExplanation);
 
         // DnrUplandRegions
+        var projectRegionIDs = await dbContext.ProjectRegions.AsNoTracking()
+            .Where(x => x.ProjectID == projectID).Select(x => x.DNRUplandRegionID).ToListAsync();
+        var updateRegionIDs = await dbContext.ProjectRegionUpdates.AsNoTracking()
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).Select(x => x.DNRUplandRegionID).ToListAsync();
         result["DnrUplandRegions"] = HasGeographicChanges(
-            project.ProjectRegions.Select(x => x.DNRUplandRegionID).ToHashSet(),
-            batch.ProjectRegionUpdates.Select(x => x.DNRUplandRegionID).ToHashSet(),
+            projectRegionIDs.ToHashSet(),
+            updateRegionIDs.ToHashSet(),
             project.NoRegionsExplanation,
             batch.NoRegionsExplanation);
 
         // Counties
+        var projectCountyIDs = await dbContext.ProjectCounties.AsNoTracking()
+            .Where(x => x.ProjectID == projectID).Select(x => x.CountyID).ToListAsync();
+        var updateCountyIDs = await dbContext.ProjectCountyUpdates.AsNoTracking()
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).Select(x => x.CountyID).ToListAsync();
         result["Counties"] = HasGeographicChanges(
-            project.ProjectCounties.Select(x => x.CountyID).ToHashSet(),
-            batch.ProjectCountyUpdates.Select(x => x.CountyID).ToHashSet(),
+            projectCountyIDs.ToHashSet(),
+            updateCountyIDs.ToHashSet(),
             project.NoCountiesExplanation,
             batch.NoCountiesExplanation);
 
         // Treatments - compare by count for simplicity
         var projectTreatmentCount = await dbContext.Treatments
             .CountAsync(t => t.ProjectLocation.ProjectID == projectID);
-        result["Treatments"] = projectTreatmentCount != batch.TreatmentUpdates.Count;
+        var updateTreatmentCount = await dbContext.TreatmentUpdates
+            .CountAsync(t => t.ProjectUpdateBatchID == projectUpdateBatchID);
+        result["Treatments"] = projectTreatmentCount != updateTreatmentCount;
 
         // Contacts
-        result["Contacts"] = HasContactsChanges(project.ProjectPeople.ToList(), batch.ProjectPersonUpdates.ToList());
+        var projectPeople = await dbContext.ProjectPeople.AsNoTracking()
+            .Where(x => x.ProjectID == projectID).ToListAsync();
+        var updatePeople = await dbContext.ProjectPersonUpdates.AsNoTracking()
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        result["Contacts"] = HasContactsChanges(projectPeople, updatePeople);
 
         // Organizations
-        result["Organizations"] = HasOrganizationsChanges(project.ProjectOrganizations.ToList(), batch.ProjectOrganizationUpdates.ToList());
+        var projectOrganizations = await dbContext.ProjectOrganizations.AsNoTracking()
+            .Where(x => x.ProjectID == projectID).ToListAsync();
+        var updateOrganizations = await dbContext.ProjectOrganizationUpdates.AsNoTracking()
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        result["Organizations"] = HasOrganizationsChanges(projectOrganizations, updateOrganizations);
 
         // ExpectedFunding
-        result["ExpectedFunding"] = HasExpectedFundingChanges(project, projectUpdate, batch);
+        var projectFundingSources = await dbContext.ProjectFundingSources.AsNoTracking()
+            .Where(x => x.ProjectID == projectID).ToListAsync();
+        var updateFundingSources = await dbContext.ProjectFundingSourceUpdates.AsNoTracking()
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var projectAllocations = await dbContext.ProjectFundSourceAllocationRequests.AsNoTracking()
+            .Where(x => x.ProjectID == projectID).ToListAsync();
+        var updateAllocations = await dbContext.ProjectFundSourceAllocationRequestUpdates.AsNoTracking()
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        result["ExpectedFunding"] = HasExpectedFundingChanges(project, projectUpdate,
+            projectFundingSources, updateFundingSources, projectAllocations, updateAllocations);
 
         // Photos
-        result["Photos"] = HasPhotosChanges(project.ProjectImages.ToList(), batch.ProjectImageUpdates.ToList());
+        var projectImages = await dbContext.ProjectImages.AsNoTracking()
+            .Where(x => x.ProjectID == projectID).ToListAsync();
+        var updateImages = await dbContext.ProjectImageUpdates.AsNoTracking()
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        result["Photos"] = HasPhotosChanges(projectImages, updateImages);
 
         // ExternalLinks
-        result["ExternalLinks"] = HasExternalLinksChanges(project.ProjectExternalLinks.ToList(), batch.ProjectExternalLinkUpdates.ToList());
+        var projectExternalLinks = await dbContext.ProjectExternalLinks.AsNoTracking()
+            .Where(x => x.ProjectID == projectID).ToListAsync();
+        var updateExternalLinks = await dbContext.ProjectExternalLinkUpdates.AsNoTracking()
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        result["ExternalLinks"] = HasExternalLinksChanges(projectExternalLinks, updateExternalLinks);
 
         // DocumentsNotes
-        result["DocumentsNotes"] = HasDocumentsNotesChanges(
-            project.ProjectDocuments.ToList(),
-            project.ProjectNotes.ToList(),
-            batch.ProjectDocumentUpdates.ToList(),
-            batch.ProjectNoteUpdates.ToList());
+        var projectDocuments = await dbContext.ProjectDocuments.AsNoTracking()
+            .Where(x => x.ProjectID == projectID).ToListAsync();
+        var projectNotes = await dbContext.ProjectNotes.AsNoTracking()
+            .Where(x => x.ProjectID == projectID).ToListAsync();
+        var updateDocuments = await dbContext.ProjectDocumentUpdates.AsNoTracking()
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        var updateNotes = await dbContext.ProjectNoteUpdates.AsNoTracking()
+            .Where(x => x.ProjectUpdateBatchID == projectUpdateBatchID).ToListAsync();
+        result["DocumentsNotes"] = HasDocumentsNotesChanges(projectDocuments, projectNotes, updateDocuments, updateNotes);
 
         return result;
     }
 
-    private static bool HasBasicsChanges(Project project, ProjectUpdate? update, List<ProjectUpdateProgram> updatePrograms)
+    private static bool HasBasicsChanges(Project project, ProjectUpdate? update, List<ProjectProgram> projectPrograms, List<ProjectUpdateProgram> updatePrograms)
     {
         if (update == null) return false;
 
@@ -555,7 +583,7 @@ public static class ProjectUpdateWorkflowProgress
         if (project.PercentageMatch != update.PercentageMatch) return true;
 
         // Check programs
-        var projectProgramIDs = project.ProjectPrograms.Select(p => p.ProgramID).OrderBy(x => x).ToList();
+        var projectProgramIDs = projectPrograms.Select(p => p.ProgramID).OrderBy(x => x).ToList();
         var updateProgramIDs = updatePrograms.Select(p => p.ProgramID).OrderBy(x => x).ToList();
         return !projectProgramIDs.SequenceEqual(updateProgramIDs);
     }
@@ -610,7 +638,10 @@ public static class ProjectUpdateWorkflowProgress
         return !projPairs.SequenceEqual(updatePairs);
     }
 
-    private static bool HasExpectedFundingChanges(Project project, ProjectUpdate? update, ProjectUpdateBatch batch)
+    private static bool HasExpectedFundingChanges(
+        Project project, ProjectUpdate? update,
+        List<ProjectFundingSource> projectFundingSources, List<ProjectFundingSourceUpdate> updateFundingSources,
+        List<ProjectFundSourceAllocationRequest> projectAllocations, List<ProjectFundSourceAllocationRequestUpdate> updateAllocations)
     {
         if (update != null)
         {
@@ -618,11 +649,11 @@ public static class ProjectUpdateWorkflowProgress
             if (project.ProjectFundingSourceNotes != update.ProjectFundingSourceNotes) return true;
         }
 
-        var projFundingIDs = project.ProjectFundingSources.Select(f => f.FundingSourceID).OrderBy(x => x).ToList();
-        var updateFundingIDs = batch.ProjectFundingSourceUpdates.Select(f => f.FundingSourceID).OrderBy(x => x).ToList();
+        var projFundingIDs = projectFundingSources.Select(f => f.FundingSourceID).OrderBy(x => x).ToList();
+        var updateFundingIDs = updateFundingSources.Select(f => f.FundingSourceID).OrderBy(x => x).ToList();
         if (!projFundingIDs.SequenceEqual(updateFundingIDs)) return true;
 
-        if (project.ProjectFundSourceAllocationRequests.Count != batch.ProjectFundSourceAllocationRequestUpdates.Count) return true;
+        if (projectAllocations.Count != updateAllocations.Count) return true;
 
         return false;
     }

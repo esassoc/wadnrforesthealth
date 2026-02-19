@@ -1,6 +1,7 @@
 # .NET API Patterns
 
-Load this skill when working in WADNR.API, WADNR.EFModels, WADNR.Models, WADNR.Common, or SitkaCaptureService.
+> **Scope**: backend
+> **Applies when**: Working in WADNR.API, WADNR.EFModels, WADNR.Models, WADNR.Common, or SitkaCaptureService
 
 ## Cross-References
 
@@ -8,6 +9,7 @@ Load this skill when working in WADNR.API, WADNR.EFModels, WADNR.Models, WADNR.C
 |-------------------------|------|
 | Database schema changes | `/database-patterns` |
 | Writing API tests | `/write-tests` |
+| Creating CRUD endpoints | `/crud-modal` |
 
 ---
 
@@ -250,3 +252,30 @@ public static async Task<EntityDetail?> GetByIDAsDetailAsync(DbContext dbContext
     return detail;
 }
 ```
+
+---
+
+## Authorization Attributes
+
+All custom attributes live in `WADNR.API/Services/Authorization/` and extend `BaseAuthorizationAttribute` (unless noted).
+
+| Attribute | Roles Granted | Use Case |
+|-----------|---------------|----------|
+| `[AllowAnonymous]` | No auth required | Public GET endpoints |
+| `[LoggedInFeature]` | Any authenticated user | Basic logged-in access |
+| `[LoggedInUnclassifiedFeature]` | Any authenticated user (direct `AuthorizeAttribute`) | Unclassified user actions |
+| `[NormalUserFeature]` | Normal, ProjectSteward, Admin, EsaAdmin | Standard user features |
+| `[ProjectViewFeature]` | Anonymous allowed (special attribute) | Public project viewing |
+| `[ProjectEditFeature]` | Normal, ProjectSteward, Admin, EsaAdmin, CanEditProgram (supplemental) | Project create/edit |
+| `[ProjectApproveFeature]` | ProjectSteward, Admin, EsaAdmin | Approve/return projects |
+| `[ProjectPendingViewFeature]` | Normal, ProjectSteward, Admin, EsaAdmin, CanEditProgram (supplemental) | View pending projects |
+| `[ProjectEditAsAdminFeature]` | ProjectSteward, Admin, EsaAdmin, CanEditProgram (supplemental) | Admin-level project edits |
+| `[AdminFeature]` | Admin, EsaAdmin | Admin-only operations |
+| `[AgreementManageFeature]` | Admin, EsaAdmin, CanManageFundSourcesAndAgreements (supplemental) | Agreement CRUD |
+| `[FundSourceManageFeature]` | Admin, EsaAdmin, CanManageFundSourcesAndAgreements (supplemental) | Fund source CRUD |
+| `[PageContentManageFeature]` | Admin, EsaAdmin, CanManagePageContent (supplemental) | CMS page editing |
+| `[ProgramManageFeature]` | Admin, EsaAdmin, CanEditProgram (supplemental) | Program management |
+| `[UserManageFeature]` | Admin, EsaAdmin, CanAddEditUsersContactsOrganizations (supplemental) | User/org management |
+| `[VendorViewFeature]` | Admin, EsaAdmin, ProjectSteward | Vendor data access |
+
+**Supplemental roles** are added via `SupplementalRoleEnum` — users get these in addition to their base role.

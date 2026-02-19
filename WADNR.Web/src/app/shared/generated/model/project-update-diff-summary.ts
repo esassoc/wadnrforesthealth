@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { StepDiffResponse } from './step-diff-response';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
@@ -21,6 +22,7 @@ export class ProjectUpdateDiffSummary {
     HasExternalLinksChanges?: boolean;
     HasNotesChanges?: boolean;
     HasExpectedFundingChanges?: boolean;
+    StructuredStepDiffs?: { [key: string]: StepDiffResponse; } | null;
     readonly HasAnyChanges?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -38,6 +40,7 @@ export interface ProjectUpdateDiffSummaryForm {
     HasExternalLinksChanges?: FormControl<boolean>;
     HasNotesChanges?: FormControl<boolean>;
     HasExpectedFundingChanges?: FormControl<boolean>;
+    StructuredStepDiffs?: FormControl<{ [key: string]: StepDiffResponse; }>;
     HasAnyChanges?: FormControl<boolean>;
 }
 
@@ -133,6 +136,16 @@ export class ProjectUpdateDiffSummaryFormControls {
         }
     );
     public static HasExpectedFundingChanges = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static StructuredStepDiffs = (value: FormControlState<{ [key: string]: StepDiffResponse; }> | { [key: string]: StepDiffResponse; } = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<{ [key: string]: StepDiffResponse; }>(
         value,
         formControlOptions ?? 
         {

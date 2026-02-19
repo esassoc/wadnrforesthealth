@@ -1,5 +1,6 @@
-import { Component, EventEmitter, HostBinding, Input, Output, ViewChild } from "@angular/core";
+import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, ViewChild } from "@angular/core";
 import { FormControl, NG_VALUE_ACCESSOR, FormsModule, ReactiveFormsModule, FormArray } from "@angular/forms";
+import { Subscription } from "rxjs";
 import { TinyMceConfigPipe } from "src/app/shared/pipes/tiny-mce-config.pipe";
 import { RequiredPipe } from "src/app/shared/pipes/required.pipe";
 import { InputErrorsComponent } from "src/app/shared/components/inputs/input-errors/input-errors.component";
@@ -27,7 +28,7 @@ import { NgSelectModule } from "@ng-select/ng-select";
     ],
     imports: [NgxMaskDirective, FormsModule, ReactiveFormsModule, EditorComponent, FieldDefinitionComponent, InputErrorsComponent, RequiredPipe, TinyMceConfigPipe, NgSelectModule],
 })
-export class FormFieldComponent {
+export class FormFieldComponent implements OnInit, OnDestroy {
     public FormFieldType = FormFieldType;
     @Output() change = new EventEmitter<any>();
     @Input() formControl: FormControl;
@@ -137,6 +138,59 @@ export class FormFieldComponent {
     onNgSelectChange(event: any): void {
         this.change.emit(event);
     }
+
+    // Currency formatting
+    private currencyFormatter = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+    public currencyDisplayValue: string = "";
+    private currencySubscription: Subscription;
+
+    ngOnInit(): void {
+        if (this.type === FormFieldType.Currency && this.formControl) {
+            this.updateCurrencyDisplay();
+            this.currencySubscription = this.formControl.valueChanges.subscribe(() => {
+                if (!this.currencyFocused) {
+                    this.updateCurrencyDisplay();
+                }
+            });
+        }
+    }
+
+    ngOnDestroy(): void {
+        this.currencySubscription?.unsubscribe();
+    }
+
+    private currencyFocused = false;
+
+    updateCurrencyDisplay(): void {
+        const raw = this.formControl?.value;
+        if (raw != null && raw !== "") {
+            this.currencyDisplayValue = this.currencyFormatter.format(Number(raw));
+        } else {
+            this.currencyDisplayValue = "";
+        }
+    }
+
+    onCurrencyFocus(): void {
+        this.currencyFocused = true;
+        const raw = this.formControl?.value;
+        this.currencyDisplayValue = (raw != null && raw !== "") ? String(raw) : "";
+    }
+
+    onCurrencyBlur(): void {
+        this.currencyFocused = false;
+        const parsed = parseFloat(this.currencyDisplayValue.replace(/[^0-9.\-]/g, ""));
+        if (!isNaN(parsed)) {
+            this.formControl.setValue(parsed);
+            this.formControl.markAsDirty();
+        } else {
+            this.formControl.setValue(null);
+        }
+        this.updateCurrencyDisplay();
+    }
+
+    onCurrencyInput(event: Event): void {
+        this.currencyDisplayValue = (event.target as HTMLInputElement).value;
+    }
 }
 
 export enum FormFieldType {
@@ -150,6 +204,7 @@ export enum FormFieldType {
     Radio = "radio",
     RTE = "rte",
     File = "file",
+    Currency = "currency",
 }
 
 export interface FormInputOption {

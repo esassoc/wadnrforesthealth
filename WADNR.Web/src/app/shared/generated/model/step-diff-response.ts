@@ -7,12 +7,13 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { DiffSection } from './diff-section';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class StepDiffResponse { 
     HasChanges?: boolean;
-    DiffHtml?: string | null;
+    Sections?: Array<DiffSection> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -20,7 +21,7 @@ export class StepDiffResponse {
 
 export interface StepDiffResponseForm { 
     HasChanges?: FormControl<boolean>;
-    DiffHtml?: FormControl<string>;
+    Sections?: FormControl<Array<DiffSection>>;
 }
 
 export class StepDiffResponseFormControls { 
@@ -34,7 +35,7 @@ export class StepDiffResponseFormControls {
             ],
         }
     );
-    public static DiffHtml = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+    public static Sections = (value: FormControlState<Array<DiffSection>> | Array<DiffSection> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<DiffSection>>(
         value,
         formControlOptions ?? 
         {

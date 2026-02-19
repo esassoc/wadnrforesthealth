@@ -15,7 +15,98 @@
         </label>
     </div>
 
-    <div class="diff-content" [class.hide-deletions]="!showDeletions" [innerHTML]="diffHtml"></div>
+    <div class="diff-content" [class.hide-deletions]="!showDeletions">
+        @for (section of sections; track section.Title ?? $index) {
+            @if (section.Title) {
+                <h5>{{ section.Title }}</h5>
+            }
+
+            <!-- Fields section: label / original / updated -->
+            @if (section.Type === 'fields') {
+                <table class="diff-fields-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Original</th>
+                            <th>Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (field of section.Fields; track field.Label) {
+                            <tr [class.diff-changed]="isFieldChanged(field)">
+                                <td class="diff-label">{{ field.Label }}</td>
+                                <td [class.diff-deleted]="isFieldChanged(field)">{{ field.OriginalValue }}</td>
+                                <td [class.diff-added]="isFieldChanged(field)">{{ field.UpdatedValue }}</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            <!-- Table section: rows added/removed/unchanged -->
+            @if (section.Type === 'table') {
+                <table class="diff-table-section">
+                    <thead>
+                        <tr>
+                            @for (header of section.Headers; track header) {
+                                <th>{{ header }}</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (row of getUnchangedRows(section); track $index) {
+                            <tr>
+                                @for (cell of row; track $index) {
+                                    <td>{{ cell }}</td>
+                                }
+                            </tr>
+                        }
+                        @for (row of getAddedRows(section); track $index) {
+                            <tr class="diff-row-added">
+                                @for (cell of row; track $index) {
+                                    <td>{{ cell }}</td>
+                                }
+                            </tr>
+                        }
+                        @for (row of getRemovedRows(section); track $index) {
+                            <tr class="diff-row-deleted">
+                                @for (cell of row; track $index) {
+                                    <td>{{ cell }}</td>
+                                }
+                            </tr>
+                        }
+                        @if ((section.OriginalRows?.length ?? 0) === 0 && (section.UpdatedRows?.length ?? 0) === 0) {
+                            <tr>
+                                <td [attr.colspan]="section.Headers?.length ?? 1" class="diff-empty">
+                                    <em>None</em>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            <!-- List section: items added/removed/unchanged -->
+            @if (section.Type === 'list') {
+                <ul class="diff-list">
+                    @for (item of getUnchangedItems(section); track item) {
+                        <li>{{ item }}</li>
+                    }
+                    @for (item of getAddedItems(section); track item) {
+                        <li class="diff-item-added">{{ item }}</li>
+                    }
+                    @if (showDeletions) {
+                        @for (item of getRemovedItems(section); track item) {
+                            <li class="diff-item-deleted">{{ item }}</li>
+                        }
+                    }
+                    @if ((section.OriginalItems?.length ?? 0) === 0 && (section.UpdatedItems?.length ?? 0) === 0) {
+                        <li class="diff-empty"><em>None</em></li>
+                    }
+                </ul>
+            }
+        }
+    </div>
 </div>
 
 <div class="modal-footer">

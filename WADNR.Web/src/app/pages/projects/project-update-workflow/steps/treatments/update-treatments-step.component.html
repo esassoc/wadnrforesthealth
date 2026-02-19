@@ -14,9 +14,14 @@
                 </p>
 
                 <div class="section-header mb-3">
-                    <button class="btn btn-primary btn-sm" (click)="openAddTreatmentModal(vm.treatmentAreas)">
-                        <icon icon="Data"></icon> Add Treatment
-                    </button>
+                    <span [title]="(!vm.treatmentAreas || vm.treatmentAreas.length === 0) ? 'Add detailed locations with a Location Type of \'Treatment Area\' before adding treatments' : ''">
+                        <button class="btn btn-primary btn-sm"
+                            [style.pointer-events]="(!vm.treatmentAreas || vm.treatmentAreas.length === 0) ? 'none' : null"
+                            [disabled]="!vm.treatmentAreas || vm.treatmentAreas.length === 0"
+                            (click)="openAddTreatmentModal(vm.treatmentAreas)">
+                            + Add Treatment
+                        </button>
+                    </span>
                 </div>
 
                 @if (vm.treatments && vm.treatments.length > 0) {

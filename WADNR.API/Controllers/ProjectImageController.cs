@@ -50,7 +50,7 @@ public class ProjectImageController(
     }
 
     [HttpPost]
-    [ProjectEditAsAdminFeature]
+    [ProjectEditFeature]
     [Consumes("multipart/form-data")]
     public async Task<ActionResult<ProjectImageDetail>> Create(
         [FromForm] int projectID,
@@ -109,7 +109,7 @@ public class ProjectImageController(
     }
 
     [HttpPut("{projectImageID}")]
-    [ProjectEditAsAdminFeature]
+    [ProjectEditFeature]
     public async Task<ActionResult<ProjectImageDetail>> Update(
         [FromRoute] int projectImageID,
         [FromBody] ProjectImageUpsertRequest request)
@@ -139,7 +139,7 @@ public class ProjectImageController(
     }
 
     [HttpDelete("{projectImageID}")]
-    [ProjectEditAsAdminFeature]
+    [ProjectEditFeature]
     public async Task<IActionResult> Delete([FromRoute] int projectImageID)
     {
         var projectImage = await DbContext.ProjectImages
@@ -160,7 +160,7 @@ public class ProjectImageController(
     }
 
     [HttpPost("{projectImageID}/set-key-photo")]
-    [ProjectEditAsAdminFeature]
+    [ProjectEditFeature]
     public async Task<IActionResult> SetKeyPhoto([FromRoute] int projectImageID)
     {
         var projectImage = await DbContext.ProjectImages.FindAsync(projectImageID);

@@ -110,6 +110,7 @@ export class DocumentsNotesStepComponent extends CreateWorkflowStepBase implemen
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
                         this.refresh$.next();
+                        this.workflowProgressService.triggerRefresh();
                     }
                 });
             });
@@ -135,6 +136,7 @@ export class DocumentsNotesStepComponent extends CreateWorkflowStepBase implemen
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
                         this.refresh$.next();
+                        this.workflowProgressService.triggerRefresh();
                     }
                 });
             });
@@ -154,6 +156,7 @@ export class DocumentsNotesStepComponent extends CreateWorkflowStepBase implemen
                 next: () => {
                     this.alertService.pushAlert(new Alert("Document deleted successfully.", AlertContext.Success, true));
                     this.refresh$.next();
+                    this.workflowProgressService.triggerRefresh();
                 },
                 error: (err) => {
                     const message = err?.error ?? err?.message ?? "Failed to delete document.";
@@ -182,6 +185,7 @@ export class DocumentsNotesStepComponent extends CreateWorkflowStepBase implemen
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
                         this.refresh$.next();
+                        this.workflowProgressService.triggerRefresh();
                     }
                 });
             });
@@ -206,6 +210,7 @@ export class DocumentsNotesStepComponent extends CreateWorkflowStepBase implemen
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
                         this.refresh$.next();
+                        this.workflowProgressService.triggerRefresh();
                     }
                 });
             });
@@ -225,6 +230,7 @@ export class DocumentsNotesStepComponent extends CreateWorkflowStepBase implemen
                 next: () => {
                     this.alertService.pushAlert(new Alert("Note deleted successfully.", AlertContext.Success, true));
                     this.refresh$.next();
+                    this.workflowProgressService.triggerRefresh();
                 },
                 error: (err) => {
                     const message = err?.error ?? err?.message ?? "Failed to delete note.";

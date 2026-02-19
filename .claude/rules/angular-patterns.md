@@ -1,6 +1,7 @@
 # Angular Patterns
 
-Load this skill when working in WADNR.Web.
+> **Scope**: frontend
+> **Applies when**: Working in WADNR.Web
 
 ## Cross-References
 
@@ -9,6 +10,8 @@ Load this skill when working in WADNR.Web.
 | Writing component tests | `/write-tests` |
 | Creating data grids | `/migrate-grid` |
 | Creating maps | `/migrate-map` |
+| Creating CRUD modals | `/crud-modal` |
+| Adding scrollspy TOC | `/add-scrollspy-toc` |
 
 ---
 
@@ -92,6 +95,37 @@ Guards are in `WADNR.Web/src/app/shared/guards/`.
     loadComponent: () => import("./pages/focus-areas/focus-areas.component").then((m) => m.FocusAreasComponent),
 },
 ```
+
+### UnsavedChangesGuard
+
+For routes with forms, add `canDeactivate: [UnsavedChangesGuard]` to prevent accidental navigation away from unsaved changes.
+
+**Guard**: `WADNR.Web/src/app/shared/guards/unsaved-changes.guard.ts`
+
+**Interface**: Components must implement `IDeactivateComponent`:
+
+```typescript
+import { IDeactivateComponent } from "src/app/shared/guards/unsaved-changes.guard";
+
+export class MyFormComponent implements IDeactivateComponent {
+    canExit(): boolean {
+        return !this.form.dirty;
+    }
+}
+```
+
+**Route config**:
+
+```typescript
+{
+    path: "entities/edit/:entityID",
+    canActivate: [authGuard],
+    canDeactivate: [UnsavedChangesGuard],
+    loadComponent: () => import("./pages/entities/entity-edit.component").then((m) => m.EntityEditComponent),
+},
+```
+
+**Workflow steps**: Both `CreateWorkflowStepBase` and `UpdateWorkflowStepBase` already implement `IDeactivateComponent` — track dirty state with `trackFormDirty(form)` and call `form.markAsPristine()` after save.
 
 ---
 

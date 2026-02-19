@@ -1,10 +1,12 @@
-import { Component, inject, Input } from "@angular/core";
+import { Component, inject, Input, OnDestroy } from "@angular/core";
+import { FormGroup } from "@angular/forms";
 import { Router } from "@angular/router";
-import { BehaviorSubject, filter, Observable, of, shareReplay, switchMap, take } from "rxjs";
+import { BehaviorSubject, filter, Observable, of, shareReplay, Subscription, switchMap, take } from "rxjs";
 
 import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
+import { IDeactivateComponent } from "src/app/shared/guards/unsaved-changes.guard";
 import { WorkflowProgressService } from "src/app/shared/services/workflow-progress.service";
 
 /**
@@ -34,7 +36,7 @@ import { WorkflowProgressService } from "src/app/shared/services/workflow-progre
  * ```
  */
 @Component({ template: "" })
-export abstract class CreateWorkflowStepBase {
+export abstract class CreateWorkflowStepBase implements OnDestroy, IDeactivateComponent {
     protected router = inject(Router);
     protected alertService = inject(AlertService);
     protected workflowProgressService = inject(WorkflowProgressService);
@@ -58,6 +60,10 @@ export abstract class CreateWorkflowStepBase {
         }
     }
 
+    // Form dirty tracking
+    private _formDirtySub: Subscription | null = null;
+    private _trackedForm: FormGroup | null = null;
+
     // Saving state
     private _isSaving$ = new BehaviorSubject<boolean>(false);
     public isSaving$ = this._isSaving$.asObservable();
@@ -68,6 +74,35 @@ export abstract class CreateWorkflowStepBase {
 
     set isSaving(value: boolean) {
         this._isSaving$.next(value);
+    }
+
+    ngOnDestroy(): void {
+        this._formDirtySub?.unsubscribe();
+        this.workflowProgressService.setFormDirty(false);
+    }
+
+    /**
+     * Subscribe to form.valueChanges and update the shared formDirty$ state.
+     * Call this in ngOnInit() after building the form.
+     * Uses form.dirty (only set by user interaction, not patchValue) to avoid false positives.
+     */
+    protected trackFormDirty(form: FormGroup): void {
+        this._trackedForm = form;
+        this._formDirtySub?.unsubscribe();
+        this._formDirtySub = form.valueChanges.subscribe(() => {
+            this.workflowProgressService.setFormDirty(form.dirty);
+        });
+    }
+
+    /**
+     * Manually mark the form as dirty for non-FormGroup steps or programmatic user actions.
+     */
+    protected setFormDirty(): void {
+        this.workflowProgressService.setFormDirty(true);
+    }
+
+    canExit(): boolean {
+        return !this.workflowProgressService.isFormDirty;
     }
 
     /**
@@ -108,14 +143,19 @@ export abstract class CreateWorkflowStepBase {
         saveOperation(projectID).subscribe({
             next: (result) => {
                 this.isSaving = false;
-                this.alertService.pushAlert(new Alert(successMessage, AlertContext.Success, true));
+                this.workflowProgressService.setFormDirty(false);
+                this._trackedForm?.markAsPristine();
                 if (onSuccess) {
                     onSuccess(result);
                 }
                 // Refresh sidebar progress
                 this.workflowProgressService.triggerRefresh();
                 if (navigate) {
-                    this.navigateToNextStep(projectID);
+                    this.navigateToNextStep(projectID).then(() => {
+                        this.alertService.pushAlert(new Alert(successMessage, AlertContext.Success, true, "step-save-success"));
+                    });
+                } else {
+                    this.alertService.pushAlert(new Alert(successMessage, AlertContext.Success, true, "step-save-success"));
                 }
             },
             error: (err) => {
@@ -129,14 +169,14 @@ export abstract class CreateWorkflowStepBase {
     /**
      * Navigate to the next step in the workflow.
      */
-    protected navigateToNextStep(projectID: number): void {
-        this.router.navigate(["/projects", "edit", projectID, this.nextStep]);
+    protected navigateToNextStep(projectID: number): Promise<boolean> {
+        return this.router.navigate(["/projects", "edit", projectID, this.nextStep]);
     }
 
     /**
      * Navigate to a specific step in the workflow.
      */
-    protected navigateToStep(projectID: number, step: string): void {
-        this.router.navigate(["/projects", "edit", projectID, step]);
+    protected navigateToStep(projectID: number, step: string): Promise<boolean> {
+        return this.router.navigate(["/projects", "edit", projectID, step]);
     }
 }

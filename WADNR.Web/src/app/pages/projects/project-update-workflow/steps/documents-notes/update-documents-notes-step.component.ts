@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { AsyncPipe, CommonModule, DatePipe } from "@angular/common";
-import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, startWith, switchMap, take } from "rxjs";
+import { combineLatest, map, Observable, of, shareReplay, startWith, switchMap, take } from "rxjs";
 import { catchError, filter } from "rxjs/operators";
 import { DialogService } from "@ngneat/dialog";
 
@@ -8,7 +8,6 @@ import { UpdateWorkflowStepBase } from "src/app/shared/components/workflow/updat
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectDocumentService } from "src/app/shared/generated/api/project-document.service";
-import { ProjectNoteService } from "src/app/shared/generated/api/project-note.service";
 import { ProjectUpdateDocumentsNotesStep } from "src/app/shared/generated/model/project-update-documents-notes-step";
 import { ProjectDocumentUpdateItem } from "src/app/shared/generated/model/project-document-update-item";
 import { ProjectNoteUpdateItem } from "src/app/shared/generated/model/project-note-update-item";
@@ -19,6 +18,8 @@ import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { ProjectDocumentModalComponent, ProjectDocumentModalData } from "src/app/pages/projects/project-document-modal/project-document-modal.component";
 import { ProjectNoteModalComponent, ProjectNoteModalData } from "src/app/pages/projects/project-note-modal/project-note-modal.component";
+import { ProjectNoteUpsertRequest } from "src/app/shared/generated/model/project-note-upsert-request";
+import { environment } from "src/environments/environment";
 
 interface DocumentsNotesViewModel {
     isLoading: boolean;
@@ -40,12 +41,10 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
     readonly stepKey = "DocumentsNotes";
 
     public vm$: Observable<DocumentsNotesViewModel>;
-    private refresh$ = new BehaviorSubject<void>(undefined);
 
     constructor(
         private projectService: ProjectService,
         private projectDocumentService: ProjectDocumentService,
-        private projectNoteService: ProjectNoteService,
         private dialogService: DialogService,
         private confirmService: ConfirmService
     ) {
@@ -61,11 +60,8 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        const data$ = combineLatest([this._projectID$, this.refresh$]).pipe(
-            switchMap(([id]) => {
-                if (id == null || Number.isNaN(id)) {
-                    return of(null);
-                }
+        const data$ = this.stepRefresh$.pipe(
+            switchMap((id) => {
                 return this.projectService.getUpdateDocumentsNotesStepProject(id).pipe(
                     catchError(() => {
                         this.alertService.pushAlert(new Alert("Failed to load documents and notes data.", AlertContext.Danger, true));
@@ -91,7 +87,10 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
 
     // Document Methods
     getDocumentDownloadUrl(doc: ProjectDocumentUpdateItem): string {
-        return doc.FileResourceUrl ?? "";
+        if (doc.FileResourceUrl) {
+            return `${environment.mainAppApiUrl}${doc.FileResourceUrl}`;
+        }
+        return "";
     }
 
     openAddDocumentModal(documentTypes: ProjectDocumentTypeLookupItem[]): void {
@@ -106,13 +105,15 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
                         mode: "create",
                         projectID,
                         documentTypes,
+                        createFn: (pid, displayName, description, docTypeID, file) =>
+                            this.projectService.createUpdateDocumentProject(pid, displayName, description, docTypeID, file)
                     } as ProjectDocumentModalData,
                     width: "600px",
                 });
 
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
-                        this.refresh$.next();
+                        this.refreshStepData$.next();
                     }
                 });
             });
@@ -125,19 +126,29 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
                 take(1)
             )
             .subscribe((projectID) => {
+                // Map ProjectDocumentUpdateItem to the shape the modal expects (ProjectDocumentGridRow)
+                const docTypeName = documentTypes.find(t => t.ProjectDocumentTypeID === doc.ProjectDocumentTypeID)?.ProjectDocumentTypeDisplayName ?? null;
                 const dialogRef = this.dialogService.open(ProjectDocumentModalComponent, {
                     data: {
                         mode: "edit",
                         projectID,
-                        document: doc,
+                        document: {
+                            ProjectDocumentID: doc.ProjectDocumentUpdateID,
+                            DisplayName: doc.DocumentTitle,
+                            Description: doc.DocumentDescription,
+                            DocumentTypeName: docTypeName,
+                            FileResourceID: doc.FileResourceID,
+                        } as any,
                         documentTypes,
+                        updateFn: (dto) =>
+                            this.projectService.updateUpdateDocumentProject(projectID, doc.ProjectDocumentUpdateID, dto)
                     } as ProjectDocumentModalData,
                     width: "600px",
                 });
 
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
-                        this.refresh$.next();
+                        this.refreshStepData$.next();
                     }
                 });
             });
@@ -155,16 +166,23 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
         });
 
         if (confirmed) {
-            this.projectDocumentService.deleteProjectDocument(doc.ProjectDocumentUpdateID).subscribe({
-                next: () => {
-                    this.alertService.pushAlert(new Alert("Document deleted successfully.", AlertContext.Success, true));
-                    this.refresh$.next();
-                },
-                error: (err) => {
-                    const message = err?.error ?? err?.message ?? "Failed to delete document.";
-                    this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                },
-            });
+            this.stepRefresh$
+                .pipe(
+                    filter((id): id is number => id != null),
+                    take(1)
+                )
+                .subscribe((projectID) => {
+                    this.projectService.deleteUpdateDocumentProject(projectID, doc.ProjectDocumentUpdateID).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Document deleted successfully.", AlertContext.Success, true));
+                            this.refreshStepData$.next();
+                        },
+                        error: (err) => {
+                            const message = err?.error ?? err?.message ?? "Failed to delete document.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                });
         }
     }
 
@@ -180,13 +198,15 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
                     data: {
                         mode: "create",
                         projectID,
+                        createFn: (dto: ProjectNoteUpsertRequest) =>
+                            this.projectService.createUpdateNoteProject(projectID, dto)
                     } as ProjectNoteModalData,
                     width: "600px",
                 });
 
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
-                        this.refresh$.next();
+                        this.refreshStepData$.next();
                     }
                 });
             });
@@ -204,13 +224,15 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
                         mode: "edit",
                         projectID,
                         note,
+                        updateFn: (dto: ProjectNoteUpsertRequest) =>
+                            this.projectService.updateUpdateNoteProject(projectID, note.ProjectNoteUpdateID, dto)
                     } as ProjectNoteModalData,
                     width: "600px",
                 });
 
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
-                        this.refresh$.next();
+                        this.refreshStepData$.next();
                     }
                 });
             });
@@ -228,16 +250,23 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
         });
 
         if (confirmed) {
-            this.projectNoteService.deleteProjectNote(note.ProjectNoteUpdateID).subscribe({
-                next: () => {
-                    this.alertService.pushAlert(new Alert("Note deleted successfully.", AlertContext.Success, true));
-                    this.refresh$.next();
-                },
-                error: (err) => {
-                    const message = err?.error ?? err?.message ?? "Failed to delete note.";
-                    this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                },
-            });
+            this.stepRefresh$
+                .pipe(
+                    filter((id): id is number => id != null),
+                    take(1)
+                )
+                .subscribe((projectID) => {
+                    this.projectService.deleteUpdateNoteProject(projectID, note.ProjectNoteUpdateID).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Note deleted successfully.", AlertContext.Success, true));
+                            this.refreshStepData$.next();
+                        },
+                        error: (err) => {
+                            const message = err?.error ?? err?.message ?? "Failed to delete note.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                });
         }
     }
 

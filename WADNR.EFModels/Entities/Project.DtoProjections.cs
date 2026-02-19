@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.ProjectUpdate;
 
 namespace WADNR.EFModels.Entities;
 
@@ -554,6 +555,37 @@ public static class ProjectProjections
     {
         ProjectID = x.ProjectID,
         ProjectName = x.ProjectName
+    };
+
+    public static readonly Expression<Func<Project, ProjectUpdateStatusGridRow>> AsUpdateStatusGridRow = p => new ProjectUpdateStatusGridRow
+    {
+        ProjectID = p.ProjectID,
+        ProjectName = p.ProjectName,
+        FhtProjectNumber = p.FhtProjectNumber,
+        ProjectStageName = p.ProjectStage.ProjectStageName,
+        LeadImplementerOrganizationName = p.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => po.Organization.OrganizationName)
+            .FirstOrDefault(),
+        EstimatedTotalCost = p.EstimatedTotalCost,
+        ProjectUpdateBatchID = p.ProjectUpdateBatches
+            .OrderByDescending(b => b.LastUpdateDate)
+            .Select(b => (int?)b.ProjectUpdateBatchID)
+            .FirstOrDefault(),
+        ProjectUpdateStateID = p.ProjectUpdateBatches
+            .OrderByDescending(b => b.LastUpdateDate)
+            .Select(b => (int?)b.ProjectUpdateStateID)
+            .FirstOrDefault(),
+        ProjectUpdateStateName = null, // Resolved client-side
+        LastUpdateDate = p.ProjectUpdateBatches
+            .OrderByDescending(b => b.LastUpdateDate)
+            .Select(b => (DateTime?)b.LastUpdateDate)
+            .FirstOrDefault(),
+        LastUpdatedByPersonName = p.ProjectUpdateBatches
+            .OrderByDescending(b => b.LastUpdateDate)
+            .Select(b => b.LastUpdatePerson.FirstName + " " + b.LastUpdatePerson.LastName)
+            .FirstOrDefault(),
+        IsMyProject = false, // Resolved in static helper
     };
 
     public static Expression<Func<Project, ProjectOrganizationDetailGridRow>> AsProjectOrganizationDetailGridRow(int organizationID) => x => new ProjectOrganizationDetailGridRow

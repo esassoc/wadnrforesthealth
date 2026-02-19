@@ -1,9 +1,9 @@
 namespace WADNR.Models.DataTransferObjects;
 
 /// <summary>
-/// Response for a Project Update batch (versioned editing session for approved projects).
+/// Detail DTO for a Project Update batch (versioned editing session for approved projects).
 /// </summary>
-public class ProjectUpdateBatchResponse
+public class ProjectUpdateBatchDetail
 {
     public int ProjectUpdateBatchID { get; set; }
     public int ProjectID { get; set; }

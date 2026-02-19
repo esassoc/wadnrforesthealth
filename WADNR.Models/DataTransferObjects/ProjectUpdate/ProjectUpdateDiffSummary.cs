@@ -1,3 +1,5 @@
+using WADNR.Models.DataTransferObjects;
+
 namespace WADNR.Models.DataTransferObjects.ProjectUpdate;
 
 /// <summary>
@@ -17,7 +19,14 @@ public class ProjectUpdateDiffSummary
     public bool HasNotesChanges { get; set; }
     public bool HasExpectedFundingChanges { get; set; }
 
+    /// <summary>
+    /// Structured step diffs (new format). Null for legacy batches that only have HTML diffs.
+    /// Keys are kebab-case step names (e.g., "basics", "expected-funding").
+    /// </summary>
+    public Dictionary<string, StepDiffResponse>? StructuredStepDiffs { get; set; }
+
     public bool HasAnyChanges => HasBasicsChanges || HasOrganizationsChanges ||
                                   HasExternalLinksChanges || HasNotesChanges ||
-                                  HasExpectedFundingChanges;
+                                  HasExpectedFundingChanges ||
+                                  StructuredStepDiffs?.Values.Any(d => d.HasChanges) == true;
 }

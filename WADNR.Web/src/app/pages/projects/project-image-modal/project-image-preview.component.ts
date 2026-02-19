@@ -1,10 +1,12 @@
 import { Component, inject } from "@angular/core";
 import { DialogRef } from "@ngneat/dialog";
 import { ProjectImageGridRow } from "src/app/shared/generated/model/project-image-grid-row";
+import { ProjectImageUpdateItem } from "src/app/shared/generated/model/project-image-update-item";
 import { environment } from "src/environments/environment";
 
 export interface ProjectImagePreviewData {
-    photo: ProjectImageGridRow;
+    photo: ProjectImageGridRow | ProjectImageUpdateItem;
+    imageUrl?: string;
 }
 
 @Component({
@@ -51,23 +53,30 @@ export interface ProjectImagePreviewData {
 })
 export class ProjectImagePreviewComponent {
     public ref: DialogRef<ProjectImagePreviewData, void> = inject(DialogRef);
-    public photo: ProjectImageGridRow;
+    public photo: ProjectImageGridRow | ProjectImageUpdateItem;
+    private imageUrl?: string;
 
     constructor() {
         this.photo = this.ref.data.photo;
+        this.imageUrl = this.ref.data.imageUrl;
     }
 
     getPhotoUrl(): string {
-        return `${environment.mainAppApiUrl}/file-resources/${this.photo.FileResourceGuid}`;
+        if (this.imageUrl) {
+            return this.imageUrl;
+        }
+        const gridRow = this.photo as ProjectImageGridRow;
+        return `${environment.mainAppApiUrl}/file-resources/${gridRow.FileResourceGuid}`;
     }
 
     getCaption(): string {
-        let caption = this.photo.Caption;
-        if (this.photo.ProjectImageTimingDisplayName) {
-            caption += ` (Timing: ${this.photo.ProjectImageTimingDisplayName})`;
+        let caption = this.photo.Caption ?? "";
+        const gridRow = this.photo as ProjectImageGridRow;
+        if (gridRow.ProjectImageTimingDisplayName) {
+            caption += ` (Timing: ${gridRow.ProjectImageTimingDisplayName})`;
         }
-        if (this.photo.ContentLength) {
-            caption += ` (~${this.formatFileSize(this.photo.ContentLength)})`;
+        if (gridRow.ContentLength) {
+            caption += ` (~${this.formatFileSize(gridRow.ContentLength)})`;
         }
         if (this.photo.Credit) {
             caption += ` Credit: ${this.photo.Credit}`;

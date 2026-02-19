@@ -1,8 +1,26 @@
 # Migrate Workflow Skill
 
+> **Scope**: fullstack
+> **Prereqs**: Load `/dotnet-patterns` and `/angular-patterns` first
+
 When the user invokes `/migrate-workflow <EntityName>`:
 
 This skill guides migration of multi-step wizard workflows from legacy MVC to Angular + ASP.NET Core API. Use it for entities with sequential data entry steps, such as registrations, assessments, or multi-page forms.
+
+## Contents
+
+1. [Analyze Legacy Workflow](#1-analyze-legacy-workflow)
+2. [Backend: Workflow Progress Class](#2-backend-workflow-progress-class)
+3. [Backend: Step DTOs](#3-backend-step-dtos)
+4. [Backend: Controller Workflow Endpoints](#4-backend-controller-workflow-endpoints)
+5. [Backend: State Transitions](#5-backend-state-transitions)
+6. [Frontend: State Transition Actions](#6-frontend-state-transition-actions)
+7. [Generate TypeScript](#7-generate-typescript)
+8. [Frontend: Workflow Progress Service](#8-frontend-workflow-progress-service)
+9. [Frontend: Workflow Outlet Component](#9-frontend-workflow-outlet-component)
+10. [Frontend: Step Components](#10-frontend-step-components)
+11. [Frontend: Route Configuration](#11-frontend-route-configuration)
+12. [Checklist Before Completion](#12-checklist-before-completion)
 
 ## Prerequisites
 
@@ -1287,3 +1305,14 @@ Add routes to `{FrontendProject}/src/app/app.routes.ts`:
 - [ ] Route params use `@Input()` binding
 - [ ] Components are standalone with explicit imports
 - [ ] State validation before transitions (Check.Require)
+
+---
+
+## Cross-References
+
+| If you're also doing... | Load |
+|-------------------------|------|
+| Creating data grids in steps | `/migrate-grid` |
+| Creating maps in steps | `/migrate-map` |
+| Creating CRUD modals in steps | `/crud-modal` |
+| Writing tests | `/write-tests` |

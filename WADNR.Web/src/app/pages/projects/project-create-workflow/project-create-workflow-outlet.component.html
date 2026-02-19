@@ -84,8 +84,26 @@
                             New Project Status: <strong>{{ vm.progress.ProjectApprovalStatusName }}</strong>
                         </span>
                         @if (vm.progress.CanSubmit) {
-                            <button class="btn btn-primary" (click)="submitForApproval(vm.progress.ProjectID, vm.progress.ProjectName)">
+                            <button class="btn btn-primary"
+                                [disabled]="formDirty$ | async"
+                                [title]="(formDirty$ | async) ? 'Save your changes before submitting' : ''"
+                                (click)="submitForApproval(vm.progress.ProjectID, vm.progress.ProjectName)">
                                 Submit
+                            </button>
+                        }
+                        @if (canReturn(vm.progress)) {
+                            <button class="btn btn-warning me-2" (click)="returnProposal(vm.progress.ProjectID, vm.progress.ProjectName)">
+                                Return
+                            </button>
+                        }
+                        @if (canReject(vm.progress)) {
+                            <button class="btn btn-danger me-2" (click)="rejectProposal(vm.progress.ProjectID, vm.progress.ProjectName)">
+                                Reject
+                            </button>
+                        }
+                        @if (canApprove(vm.progress)) {
+                            <button class="btn btn-success" (click)="approveProposal(vm.progress.ProjectID, vm.progress.ProjectName)">
+                                Approve
                             </button>
                         }
                     </div>

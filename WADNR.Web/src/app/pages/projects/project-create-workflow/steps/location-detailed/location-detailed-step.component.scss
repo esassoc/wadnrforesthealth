@@ -60,11 +60,19 @@
         }
 
         &.modified {
-            td:nth-child(2)::before {
-                content: "*";
-                color: #0d6efd;
-                font-weight: bold;
-                margin-right: 0.25rem;
+            td:nth-child(2) {
+                position: relative;
+                padding-left: 1rem;
+
+                &::before {
+                    content: "*";
+                    color: #0d6efd;
+                    font-weight: bold;
+                    position: absolute;
+                    left: 0.25rem;
+                    top: 50%;
+                    transform: translateY(-50%);
+                }
             }
         }
     }
@@ -94,16 +102,15 @@
                     display: none;
                 }
 
-                input[type="text"],
+                input[type="text"]:not(.ng-input input),
                 textarea {
-                    border-color: transparent;
-                    background-color: transparent;
+                    border: 1px solid #ced4da;
+                    background-color: #fff;
                     padding: 0.25rem 0.5rem;
                     color: #212529;
 
-                    &:focus,
-                    &:hover {
-                        border-color: #ced4da;
+                    &:focus {
+                        border-color: #86b7fe;
                         background-color: #fff;
                     }
                 }
@@ -118,18 +125,15 @@
                 .ng-select {
                     .ng-select-container {
                         min-height: 31px;
-                        border-color: transparent;
-                        background-color: transparent;
+                        border: 1px solid #ced4da;
+                        background-color: #fff;
 
                         .ng-value-container {
                             .ng-value {
                                 color: #212529 !important;
                             }
 
-                            // Hide the search input by default - only show when focused
                             .ng-input {
-                                opacity: 0;
-
                                 > input {
                                     color: #212529 !important;
                                 }
@@ -139,11 +143,6 @@
                                 color: #6c757d;
                             }
                         }
-
-                        &:hover {
-                            border-color: #ced4da;
-                            background-color: #fff;
-                        }
                     }
 
                     &.ng-select-focused,
@@ -151,26 +150,6 @@
                         .ng-select-container {
                             border-color: #86b7fe;
                             background-color: #fff;
-
-                            .ng-value-container {
-                                // Hide the selected value when open so search input has full space
-                                .ng-value {
-                                    display: none;
-                                }
-
-                                // Show the search input when focused
-                                .ng-input {
-                                    opacity: 1;
-                                }
-                            }
-                        }
-                    }
-
-                    &.ng-select-opened {
-                        .ng-select-container {
-                            .ng-value-container .ng-value {
-                                color: #212529 !important;
-                            }
                         }
                     }
 

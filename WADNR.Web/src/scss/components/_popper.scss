@@ -4,7 +4,7 @@
     display: none;
     min-width: 300px;
     max-width: 300px;
-    z-index: 400;
+    z-index: 1070;
 
     &[data-popper-placement^="right"] > [data-popper-arrow] {
         left: -5px;
@@ -66,10 +66,22 @@
             border-bottom-left-radius: 0.5rem;
             border-bottom-right-radius: 0.5rem;
             text-align: left;
+            max-height: 50vh;
+            overflow-y: auto;
         }
     }
 }
 
 *[data-popper][data-show] {
     display: inline-block;
+}
+
+// Widen popover when TinyMCE editor is present (edit mode)
+*[data-popper]:has(editor) {
+    min-width: 500px;
+    max-width: 500px;
+
+    .popover-body {
+        max-height: 60vh;
+    }
 }
