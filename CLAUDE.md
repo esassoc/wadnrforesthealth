@@ -166,6 +166,7 @@ Skills in `.claude/skills/` are invoked via `/skill-name`. They define step-by-s
 | `/migrate-grid` | Data grids with `<wadnr-grid>` |
 | `/migrate-map` | Maps with Leaflet |
 | `/migrate-workflow` | Multi-step wizard workflows |
+| `/implement-workflow` | Build create + update workflows from scratch or clone Project workflow to new solution |
 | `/crud-modal` | Create/Edit modal dialog forms |
 | `/add-scrollspy-toc` | Scrollspy Table of Contents sidebar |
 | `/check-migration-status` | MVC to Angular migration audit |
