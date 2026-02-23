@@ -130,6 +130,7 @@ export class UpdatePhotosStepComponent extends UpdateWorkflowStepBase implements
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
                         this.refreshStepData$.next();
+                        this.workflowProgressService.triggerRefresh();
                     }
                 });
             });
@@ -163,6 +164,7 @@ export class UpdatePhotosStepComponent extends UpdateWorkflowStepBase implements
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
                         this.refreshStepData$.next();
+                        this.workflowProgressService.triggerRefresh();
                     }
                 });
             });
@@ -190,6 +192,7 @@ export class UpdatePhotosStepComponent extends UpdateWorkflowStepBase implements
                         next: () => {
                             this.alertService.pushAlert(new Alert("Photo deleted successfully.", AlertContext.Success, true));
                             this.refreshStepData$.next();
+                            this.workflowProgressService.triggerRefresh();
                         },
                         error: (err) => {
                             const message = err?.error ?? err?.message ?? "Failed to delete photo.";
@@ -245,6 +248,7 @@ export class UpdatePhotosStepComponent extends UpdateWorkflowStepBase implements
                         this.originalKeyPhotoID = this.selectedKeyPhotoID;
                         this.isSelectingKeyPhoto = false;
                         this.refreshStepData$.next();
+                        this.workflowProgressService.triggerRefresh();
                     },
                     error: (err) => {
                         const message = err?.error ?? err?.message ?? "Failed to set key photo.";

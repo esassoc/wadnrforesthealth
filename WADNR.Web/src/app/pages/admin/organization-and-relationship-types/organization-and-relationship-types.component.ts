@@ -89,9 +89,9 @@ export class OrganizationAndRelationshipTypesComponent implements OnInit {
         this.orgTypeColumnDefs.push(
             this.utilityFunctions.createBasicColumnDef("Organization Type Name", "OrganizationTypeName", { Width: 240 }),
             this.utilityFunctions.createBasicColumnDef("Abbreviation", "OrganizationTypeAbbreviation", { Width: 200 }),
-            this.utilityFunctions.createBooleanColumnDef("Is Default?", "IsDefaultOrganizationType", { Width: 80 }),
-            this.utilityFunctions.createBooleanColumnDef("Is Funding Type?", "IsFundingType", { Width: 80 }),
-            this.utilityFunctions.createBooleanColumnDef("Show on Project Map?", "ShowOnProjectMaps", { Width: 150 }),
+            this.utilityFunctions.createBooleanColumnDef("Is Default?", "IsDefaultOrganizationType", { Width: 80, CustomDropdownFilterField: "IsDefaultOrganizationType" }),
+            this.utilityFunctions.createBooleanColumnDef("Is Funding Type?", "IsFundingType", { Width: 80, CustomDropdownFilterField: "IsFundingType" }),
+            this.utilityFunctions.createBooleanColumnDef("Show on Project Map?", "ShowOnProjectMaps", { Width: 150, CustomDropdownFilterField: "ShowOnProjectMaps" }),
             {
                 headerName: "Legend Color",
                 field: "LegendColor",
@@ -122,10 +122,10 @@ export class OrganizationAndRelationshipTypesComponent implements OnInit {
 
         this.relTypeColumnDefs.push(
             this.utilityFunctions.createBasicColumnDef("Project Relationship Type Name", "RelationshipTypeName", { Width: 240 }),
-            this.utilityFunctions.createBooleanColumnDef("Can Steward Projects?", "CanStewardProjects", { Width: 90 }),
-            this.utilityFunctions.createBooleanColumnDef("Serves as Primary Contact?", "IsPrimaryContact", { Width: 90 }),
-            this.utilityFunctions.createBooleanColumnDef("Must be Related to a Project Once?", "CanOnlyBeRelatedOnceToAProject", { Width: 90 }),
-            this.utilityFunctions.createBooleanColumnDef("Show on Project Fact Sheet", "ShowOnFactSheet", { Width: 90 }),
+            this.utilityFunctions.createBooleanColumnDef("Can Steward Projects?", "CanStewardProjects", { Width: 90, CustomDropdownFilterField: "CanStewardProjects" }),
+            this.utilityFunctions.createBooleanColumnDef("Serves as Primary Contact?", "IsPrimaryContact", { Width: 90, CustomDropdownFilterField: "IsPrimaryContact" }),
+            this.utilityFunctions.createBooleanColumnDef("Must be Related to a Project Once?", "CanOnlyBeRelatedOnceToAProject", { Width: 90, CustomDropdownFilterField: "CanOnlyBeRelatedOnceToAProject" }),
+            this.utilityFunctions.createBooleanColumnDef("Show on Project Fact Sheet", "ShowOnFactSheet", { Width: 90, CustomDropdownFilterField: "ShowOnFactSheet" }),
         );
 
         // Dynamic columns: one per organization type

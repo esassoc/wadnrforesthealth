@@ -87,6 +87,9 @@ export class FormFieldComponent implements OnInit, OnDestroy {
         if (this.multiple && this.type === FormFieldType.File) {
             this.selectedFiles = Array.isArray(value) ? [...value] : [];
         }
+        if (this.type === FormFieldType.Currency && !this.currencyFocused) {
+            this.updateCurrencyDisplay();
+        }
     }
 
     registerOnChange(fn: any): void {

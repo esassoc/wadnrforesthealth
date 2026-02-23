@@ -51,7 +51,7 @@ export class OrganizationsComponent {
                 WrapHeaderText: true,
                 AutoHeaderHeight: true,
             }),
-            this.utilityFunctions.createBooleanColumnDef("Is Active", "IsActive"),
+            this.utilityFunctions.createBooleanColumnDef("Is Active", "IsActive", { CustomDropdownFilterField: "IsActive" }),
         ];
 
         this.organizations$ = this.organizationService.listOrganization();

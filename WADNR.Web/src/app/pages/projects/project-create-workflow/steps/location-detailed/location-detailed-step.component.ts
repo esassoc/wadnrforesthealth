@@ -700,7 +700,6 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
             if (prevFeature?.layer && !prevFeature.isFromArcGis) {
                 (prevFeature.layer as any).pm?.disable();
                 (prevFeature.layer as any).options.pmIgnore = true;
-                (L as any).PM.reInitLayer(prevFeature.layer);
             }
             if (prevFeature) this.applyDefaultStyle(prevFeature);
         }
@@ -712,7 +711,6 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
         // Register new feature with Geoman (on-demand)
         if (!feature.isFromArcGis) {
             (feature.layer as any).options.pmIgnore = false;
-            (L as any).PM.reInitLayer(feature.layer);
         }
 
         // Pan to feature
@@ -733,7 +731,6 @@ export class LocationDetailedStepComponent extends CreateWorkflowStepBase implem
         if (prev?.layer && !prev.isFromArcGis) {
             (prev.layer as any).pm?.disable();
             (prev.layer as any).options.pmIgnore = true;
-            (L as any).PM.reInitLayer(prev.layer);
         }
         this.selectedFeatureId$.next(null);
     }

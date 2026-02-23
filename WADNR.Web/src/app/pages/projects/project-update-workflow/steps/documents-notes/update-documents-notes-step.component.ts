@@ -5,7 +5,6 @@ import { catchError, filter } from "rxjs/operators";
 import { DialogService } from "@ngneat/dialog";
 
 import { UpdateWorkflowStepBase } from "src/app/shared/components/workflow/update-workflow-step-base";
-import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectDocumentService } from "src/app/shared/generated/api/project-document.service";
 import { ProjectUpdateDocumentsNotesStep } from "src/app/shared/generated/model/project-update-documents-notes-step";
@@ -32,7 +31,7 @@ interface DocumentsNotesViewModel {
 @Component({
     selector: "update-documents-notes-step",
     standalone: true,
-    imports: [CommonModule, AsyncPipe, DatePipe, IconComponent, WorkflowStepActionsComponent],
+    imports: [CommonModule, AsyncPipe, DatePipe, IconComponent],
     templateUrl: "./update-documents-notes-step.component.html",
     styleUrls: ["./update-documents-notes-step.component.scss"],
 })
@@ -53,7 +52,6 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
 
     ngOnInit(): void {
         this.initProjectID();
-        this.initHasChanges();
 
         const documentTypes$ = this.projectDocumentService.listTypesProjectDocument().pipe(
             catchError(() => of([] as ProjectDocumentTypeLookupItem[])),
@@ -114,6 +112,7 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
                         this.refreshStepData$.next();
+                        this.workflowProgressService.triggerRefresh();
                     }
                 });
             });
@@ -149,6 +148,7 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
                         this.refreshStepData$.next();
+                        this.workflowProgressService.triggerRefresh();
                     }
                 });
             });
@@ -176,6 +176,7 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
                         next: () => {
                             this.alertService.pushAlert(new Alert("Document deleted successfully.", AlertContext.Success, true));
                             this.refreshStepData$.next();
+                            this.workflowProgressService.triggerRefresh();
                         },
                         error: (err) => {
                             const message = err?.error ?? err?.message ?? "Failed to delete document.";
@@ -207,6 +208,7 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
                         this.refreshStepData$.next();
+                        this.workflowProgressService.triggerRefresh();
                     }
                 });
             });
@@ -233,6 +235,7 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
                 dialogRef.afterClosed$.subscribe((result) => {
                     if (result) {
                         this.refreshStepData$.next();
+                        this.workflowProgressService.triggerRefresh();
                     }
                 });
             });
@@ -260,6 +263,7 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
                         next: () => {
                             this.alertService.pushAlert(new Alert("Note deleted successfully.", AlertContext.Success, true));
                             this.refreshStepData$.next();
+                            this.workflowProgressService.triggerRefresh();
                         },
                         error: (err) => {
                             const message = err?.error ?? err?.message ?? "Failed to delete note.";
@@ -270,15 +274,4 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
         }
     }
 
-    onSave(navigate: boolean): void {
-        // Documents and notes are managed through individual modals
-        // This just acknowledges completion of the step
-        this.alertService.pushAlert(new Alert("Documents & Notes step completed.", AlertContext.Success, true));
-        if (navigate) {
-            // Navigate to the review/submit page or back to project detail
-            this.projectID$.pipe(take(1)).subscribe((projectID) => {
-                this.router.navigate(["/projects", projectID, "update", "review"]);
-            });
-        }
-    }
 }

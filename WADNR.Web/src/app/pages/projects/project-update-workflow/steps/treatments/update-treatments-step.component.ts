@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { AsyncPipe, CommonModule } from "@angular/common";
-import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, startWith, switchMap, take } from "rxjs";
+import { combineLatest, map, Observable, of, shareReplay, startWith, switchMap, take } from "rxjs";
 import { catchError, filter } from "rxjs/operators";
 import { ColDef } from "ag-grid-community";
 import { DialogService } from "@ngneat/dialog";
@@ -42,7 +42,6 @@ export class UpdateTreatmentsStepComponent extends UpdateWorkflowStepBase implem
     readonly stepKey = "Treatments";
 
     public vm$: Observable<TreatmentsViewModel>;
-    private refresh$ = new BehaviorSubject<void>(undefined);
     private currentTreatmentAreas: TreatmentAreaUpdateLookupItem[] = [];
 
     public columnDefs: ColDef[] = [];
@@ -59,11 +58,8 @@ export class UpdateTreatmentsStepComponent extends UpdateWorkflowStepBase implem
         this.initHasChanges();
         this.setupColumns();
 
-        this.vm$ = combineLatest([this._projectID$, this.refresh$]).pipe(
-            switchMap(([id]) => {
-                if (id == null || Number.isNaN(id)) {
-                    return of({ data: null, treatments: [] as TreatmentUpdateItem[], treatmentAreas: [] as TreatmentAreaUpdateLookupItem[] });
-                }
+        this.vm$ = this.stepRefresh$.pipe(
+            switchMap((id) => {
                 return combineLatest({
                     data: this.projectService.getUpdateTreatmentsStepProject(id).pipe(
                         catchError(() => of(null))
@@ -192,7 +188,8 @@ export class UpdateTreatmentsStepComponent extends UpdateWorkflowStepBase implem
 
             dialogRef.afterClosed$.subscribe(result => {
                 if (result) {
-                    this.refresh$.next();
+                    this.refreshStepData$.next();
+                    this.workflowProgressService.triggerRefresh();
                 }
             });
         });
@@ -219,7 +216,8 @@ export class UpdateTreatmentsStepComponent extends UpdateWorkflowStepBase implem
 
                     dialogRef.afterClosed$.subscribe(result => {
                         if (result) {
-                            this.refresh$.next();
+                            this.refreshStepData$.next();
+                            this.workflowProgressService.triggerRefresh();
                         }
                     });
                 },

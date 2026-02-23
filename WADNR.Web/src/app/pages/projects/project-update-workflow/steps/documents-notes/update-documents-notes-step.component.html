@@ -1,5 +1,4 @@
 @if (vm$ | async; as vm) {
-    @if ({ hasChanges: hasChanges$ | async }; as state) {
     <div class="card">
         <div class="card-header">
             <span class="card-title">Update Documents & Notes</span>
@@ -92,21 +91,7 @@
                 </div>
             }
         </div>
-        <div class="card-footer d-flex justify-content-end">
-            <workflow-step-actions [showRevertActions]="true"
-                [isSaving]="false"
-                [hasChanges]="state.hasChanges"
-                [stepKey]="stepKey"
-                [projectID]="(projectID$ | async)"
-                saveButtonText="Save"
-                continueButtonText="Save & Review"
-                (save)="onSave(false)"
-                (saveAndContinue)="onSave(true)"
-                (reverted)="onStepReverted()">
-            </workflow-step-actions>
-        </div>
     </div>
-    }
 } @else {
     <div class="card">
         <div class="card-body">

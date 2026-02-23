@@ -585,7 +585,7 @@ export class ProjectDetailComponent implements OnDestroy {
         return [
             this.utilityFunctions.createBasicColumnDef("Caption", "Caption"),
             this.utilityFunctions.createBasicColumnDef("Credit", "Credit"),
-            this.utilityFunctions.createBooleanColumnDef("Key Photo", "IsKeyPhoto"),
+            this.utilityFunctions.createBooleanColumnDef("Key Photo", "IsKeyPhoto", { CustomDropdownFilterField: "IsKeyPhoto" }),
             this.utilityFunctions.createDateColumnDef("Created", "CreatedDate", "short"),
         ];
     }
