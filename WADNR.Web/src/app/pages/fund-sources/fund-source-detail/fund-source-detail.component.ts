@@ -148,8 +148,12 @@ export class FundSourceDetailComponent {
             this.utilityFunctions.createCurrencyColumnDef("Amount", "AgreementAmount", {
                 MaxDecimalPlacesToDisplay: 2,
             }),
-            this.utilityFunctions.createBasicColumnDef("Program Index", "ProgramIndices"),
-            this.utilityFunctions.createBasicColumnDef("Project Code", "ProjectCodes"),
+            this.utilityFunctions.createBasicColumnDef("Program Index", "ProgramIndices", {
+                CustomDropdownFilterField: "ProgramIndices",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Project Code", "ProjectCodes", {
+                CustomDropdownFilterField: "ProjectCodes",
+            }),
         ];
     }
 

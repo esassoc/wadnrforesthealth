@@ -90,6 +90,7 @@ export class AgreementsComponent {
             }),
             this.utilityFunctions.createBasicColumnDef("Project Codes", "ProjectCodes", {
                 FieldDefinitionType: "ProjectCode",
+                CustomDropdownFilterField: "ProjectCodes",
             }),
         ];
 

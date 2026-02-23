@@ -218,8 +218,12 @@ export class DNRUplandRegionDetailComponent {
                     return bg ? { "background-color": bg } : {};
                 },
             }),
-            this.utilityFunctions.createJoinedBasicColumnDef("Program Index", "ProgramIndices.ProgramIndexCode"),
-            this.utilityFunctions.createJoinedBasicColumnDef("Project Code", "ProjectCodes.ProjectCodeName"),
+            this.utilityFunctions.createJoinedBasicColumnDef("Program Index", "ProgramIndices.ProgramIndexCode", {
+                CustomDropdownFilterField: "ProgramIndices.ProgramIndexCode",
+            }),
+            this.utilityFunctions.createJoinedBasicColumnDef("Project Code", "ProjectCodes.ProjectCodeName", {
+                CustomDropdownFilterField: "ProjectCodes.ProjectCodeName",
+            }),
             this.utilityFunctions.createBasicColumnDef("Fund Source Number", "FundSource.FundSourceNumber", {
                 FieldDefinitionType: "FundSourceNumber",
             }),

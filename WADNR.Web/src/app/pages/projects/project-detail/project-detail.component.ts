@@ -655,8 +655,12 @@ export class ProjectDetailComponent implements OnDestroy {
             this.utilityFunctions.createDateColumnDef("Invoice Date", "InvoiceDate", "short"),
             this.utilityFunctions.createBasicColumnDef("Fund", "Fund"),
             this.utilityFunctions.createBasicColumnDef("Appn", "Appn"),
-            this.utilityFunctions.createBasicColumnDef("Program Index", "ProgramIndexCode"),
-            this.utilityFunctions.createBasicColumnDef("Project Code", "ProjectCodeName"),
+            this.utilityFunctions.createBasicColumnDef("Program Index", "ProgramIndexCode", {
+                CustomDropdownFilterField: "ProgramIndexCode",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Project Code", "ProjectCodeName", {
+                CustomDropdownFilterField: "ProjectCodeName",
+            }),
             this.utilityFunctions.createBasicColumnDef("Sub Object", "SubObject"),
             this.utilityFunctions.createBasicColumnDef("Organization Code", "OrganizationCodeName"),
             this.utilityFunctions.createCurrencyColumnDef("Match Amount", "MatchAmount"),

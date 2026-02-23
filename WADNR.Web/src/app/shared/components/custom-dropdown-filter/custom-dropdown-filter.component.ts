@@ -24,7 +24,6 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
     };
 
     agInit(params): void {
-        debugger;
         this.params = params;
 
         if (params.colDef.filterParams) {
@@ -46,7 +45,7 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
             const nodeValue = this.getNodeValue(rowNode);
             const values = this.normalizeToArrayIfNeeded(nodeValue);
 
-            if (Array.isArray(nodeValue)) {
+            if (Array.isArray(nodeValue) || values.length > 1) {
                 encounteredArray = true;
             }
 
@@ -217,6 +216,10 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
     private normalizeToArrayIfNeeded(value: any): any[] {
         if (Array.isArray(value)) {
             return value;
+        }
+        // Split comma-separated strings into individual values
+        if (typeof value === "string" && value.includes(",")) {
+            return value.split(",").map((v) => v.trim()).filter((v) => v.length > 0);
         }
         return [value];
     }

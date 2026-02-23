@@ -264,9 +264,11 @@ export class OrganizationDetailComponent {
             }),
             this.utilityFunctions.createBasicColumnDef("Program Index", "ProgramIndices", {
                 FieldDefinitionType: "ProgramIndex",
+                CustomDropdownFilterField: "ProgramIndices",
             }),
             this.utilityFunctions.createBasicColumnDef("Project Code", "ProjectCodes", {
                 FieldDefinitionType: "ProjectCode",
+                CustomDropdownFilterField: "ProjectCodes",
             }),
         ];
     }
