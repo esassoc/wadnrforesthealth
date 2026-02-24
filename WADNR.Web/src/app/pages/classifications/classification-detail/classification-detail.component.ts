@@ -1,17 +1,20 @@
 import { AsyncPipe } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, switchMap } from "rxjs";
+import { combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, startWith, Subject, switchMap } from "rxjs";
+import { DialogService } from "@ngneat/dialog";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { AuthenticationService } from "src/app/services/authentication.service";
 import { ClassificationService } from "src/app/shared/generated/api/classification.service";
 import { ClassificationDetail } from "src/app/shared/generated/model/classification-detail";
 import { ProjectClassificationDetailGridRow } from "src/app/shared/generated/model/project-classification-detail-grid-row";
 import { ColDef } from "ag-grid-community";
+import { ClassificationModalComponent, ClassificationModalData } from "../classification-modal/classification-modal.component";
 
 @Component({
     selector: "classification-detail",
@@ -21,7 +24,6 @@ import { ColDef } from "ag-grid-community";
     styleUrls: ["./classification-detail.component.scss"],
 })
 export class ClassificationDetailComponent {
-    /** Loads the classification and its projects together so the page can render once. */
     public classificationDetailPageData$: Observable<{ classification: ClassificationDetail; projects: ProjectClassificationDetailGridRow[] }>;
     public classificationID$: Observable<number>;
 
@@ -31,17 +33,32 @@ export class ClassificationDetailComponent {
         filteredOnly: true,
     };
 
-    constructor(private route: ActivatedRoute, private classificationService: ClassificationService, private utilityFunctions: UtilityFunctionsService) {}
+    public isAdmin$: Observable<boolean>;
+    private refreshData$ = new Subject<void>();
+
+    constructor(
+        private route: ActivatedRoute,
+        private classificationService: ClassificationService,
+        private utilityFunctions: UtilityFunctionsService,
+        private authenticationService: AuthenticationService,
+        private dialogService: DialogService
+    ) {}
 
     ngOnInit(): void {
+        this.isAdmin$ = this.authenticationService.currentUserSetObservable.pipe(
+            map((user) => this.authenticationService.isUserAnAdministrator(user)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
         this.classificationID$ = this.route.paramMap.pipe(
             map((p) => (p.get("classificationID") ? Number(p.get("classificationID")) : null)),
             filter((classificationID): classificationID is number => classificationID != null && !Number.isNaN(classificationID)),
-            distinctUntilChanged()
+            distinctUntilChanged(),
+            shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.classificationDetailPageData$ = this.classificationID$.pipe(
-            switchMap((classificationID) =>
+        this.classificationDetailPageData$ = combineLatest([this.classificationID$, this.refreshData$.pipe(startWith(undefined))]).pipe(
+            switchMap(([classificationID]) =>
                 forkJoin({
                     classification: this.classificationService.getClassification(classificationID),
                     projects: this.classificationService.listProjectsForClassificationIDClassification(classificationID),
@@ -79,4 +96,21 @@ export class ClassificationDetailComponent {
             this.utilityFunctions.createBasicColumnDef("Theme Notes", "ProjectThemeNotes"),
         ];
     }
+
+    openEditModal(classification: ClassificationDetail): void {
+        const dialogRef = this.dialogService.open(ClassificationModalComponent, {
+            data: {
+                mode: "edit",
+                classification: classification,
+            } as ClassificationModalData,
+            size: "md",
+        });
+
+        dialogRef.afterClosed$.subscribe((result) => {
+            if (result) {
+                this.refreshData$.next();
+            }
+        });
+    }
+
 }

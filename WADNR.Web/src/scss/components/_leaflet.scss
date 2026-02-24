@@ -26,6 +26,10 @@ input.leaflet-control-layers-selector + span {
     display: block;
 }
 
+.leaflet-control-layers-close-button {
+    cursor: pointer;
+}
+
 // for the get action boundaries
 .selecting-location .leaflet-interactive.boundary {
     cursor: crosshair !important;

@@ -25,6 +25,7 @@ public static class ClassificationProjections
             ThemeColor = c.ThemeColor,
             GoalStatement = c.GoalStatement,
             KeyImageFileResourceID = c.KeyImageFileResourceID,
+            KeyImageFileResourceGUID = c.KeyImageFileResource != null ? c.KeyImageFileResource.FileResourceGUID : (Guid?)null,
             ClassificationSortOrder = c.ClassificationSortOrder
         });
 

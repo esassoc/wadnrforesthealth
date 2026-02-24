@@ -1,4 +1,10 @@
-<page-header pageTitle="Projects By Theme" [customRichTextTypeID]="customRichTextTypeID"></page-header>
+<page-header pageTitle="Projects By Theme" [customRichTextTypeID]="customRichTextTypeID">
+    @if (isAdmin$ | async) {
+    <button class="btn btn-primary" (click)="openCreateModal()">
+        <i class="fa fa-plus"></i> Create Theme
+    </button>
+    }
+</page-header>
 
 <div class="page-body">
     @if (classifications$ | async; as classifications) {

@@ -4,7 +4,16 @@
 <div class="grid-12">
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header"><span class="card-title">Basics</span></div>
+            <div class="card-header">
+                <span class="card-title">
+                    @if (isAdmin$ | async) {
+                    <a href="javascript:void(0)" (click)="openEditModal(projectType)" title="Edit Project Type" style="color: inherit">
+                        <i class="fa fa-edit" style="transform: none"></i>
+                    </a>
+                    }
+                    Basics
+                </span>
+            </div>
             <div class="card-body">
                 <div class="grid-12">
                     <div class="g-col-4">
@@ -57,6 +66,20 @@
                             [renderAsCircleMarkers]="true"
                             [showDetailedPopup]="false">
                         </project-locations-simple-layer>
+                        <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
+                        <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                            [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"
+                            [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Simple)'" [wmsStyle]="'location_simple'"
+                            [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                        </generic-wms-wfs-layer>
+                        <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                            [wmsLayerName]="'WADNRForestHealth:ProjectLocationDetailed'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationDetailed'"
+                            [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Detailed)'" [wmsStyle]="'location_detailed'"
+                            [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                        </generic-wms-wfs-layer>
+                        <priority-landscapes-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                        <dnr-upland-regions-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
+                        <counties-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></counties-layer>
                         }
                     </wadnr-map>
                 </div>

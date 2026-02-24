@@ -14,6 +14,7 @@ import { FormControl, FormControlOptions, FormControlState, Validators } from "@
 export class ProjectTypeTaxonomy { 
     ProjectTypeID?: number;
     ProjectTypeName?: string | null;
+    ThemeColor?: string | null;
     Projects?: Array<ProjectLookupItem> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -23,6 +24,7 @@ export class ProjectTypeTaxonomy {
 export interface ProjectTypeTaxonomyForm { 
     ProjectTypeID?: FormControl<number>;
     ProjectTypeName?: FormControl<string>;
+    ThemeColor?: FormControl<string>;
     Projects?: FormControl<Array<ProjectLookupItem>>;
 }
 
@@ -38,6 +40,16 @@ export class ProjectTypeTaxonomyFormControls {
         }
     );
     public static ProjectTypeName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ThemeColor = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

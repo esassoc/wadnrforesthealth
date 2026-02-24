@@ -41,6 +41,15 @@ public class OrganizationController(
         return Ok(organizations);
     }
 
+    [HttpGet("lead-implementers")]
+    [AllowAnonymous]
+    [ProjectViewFeature]
+    public async Task<ActionResult<IEnumerable<OrganizationLookupItem>>> ListLeadImplementers()
+    {
+        var organizations = await Organizations.ListLeadImplementersAsLookupItemAsync(DbContext, CallingUser);
+        return Ok(organizations);
+    }
+
     [HttpGet("{organizationID}")]
     [AllowAnonymous]
     [EntityNotFound(typeof(Organization), "organizationID")]

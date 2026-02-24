@@ -12,3 +12,10 @@
     display: inline-block;
     flex: 0 0 auto;
 }
+
+.key-image {
+    max-width: 300px;
+    max-height: 200px;
+    border: 1px solid rgba(black, 0.15);
+    border-radius: 0.25rem;
+}

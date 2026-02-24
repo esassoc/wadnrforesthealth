@@ -7,12 +7,12 @@
             <div class="controls-row controls-row--primary">
                 <div class="control-group control-group--inline">
                     <label><strong>Color Projects by:</strong></label>
-                    <ng-select class="lt-panel-w-280" [items]="colorByOptions" bindLabel="Label" bindValue="Value" formControlName="colorBy" [clearable]="false"> </ng-select>
+                    <ng-select #colorBySelect class="lt-panel-w-280" [items]="colorByOptions" bindLabel="Label" bindValue="Value" formControlName="colorBy" [clearable]="false" (open)="onDropdownOpen(colorBySelect)"> </ng-select>
                 </div>
 
                 <div class="control-group control-group--inline">
                     <label><strong>Filter Projects by:</strong></label>
-                    <ng-select class="lt-panel-w-320" [items]="filterTypeOptions" bindLabel="Label" bindValue="Value" formControlName="filterType" [clearable]="false">
+                    <ng-select #filterTypeSelect class="lt-panel-w-320" [items]="filterTypeOptions" bindLabel="Label" bindValue="Value" formControlName="filterType" [clearable]="false" (open)="onDropdownOpen(filterTypeSelect)">
                         <ng-template ng-option-tmp let-item="item" let-index="index" let-active="active" let-selected="selected">
                             <!-- Render a thin divider for items flagged as dividers (Value starts with __divider_) -->
                             @if(!(item?.Value && ('' + item.Value).startsWith('__divider_'))) {
@@ -26,7 +26,7 @@
 
                 <div class="control-group control-group--values control-group--inline">
                     @if (filterValueOptions$ | async; as filterValueOptions) {
-                    <ng-select class="lt-panel-w-540" [items]="filterValueOptions" bindLabel="Label" bindValue="Value" multiple formControlName="filterValues">
+                    <ng-select #filterValuesSelect class="lt-panel-w-540" [items]="filterValueOptions" bindLabel="Label" bindValue="Value" multiple formControlName="filterValues" (open)="onDropdownOpen(filterValuesSelect)">
                         <ng-template ng-header-tmp>
                             <div class="ng-select-header-actions">
                                 <button type="button" class="btn btn-link" (click)="selectAllFilterValues(); $event.stopPropagation()">Select all</button>

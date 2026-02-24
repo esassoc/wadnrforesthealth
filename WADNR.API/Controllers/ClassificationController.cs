@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -17,7 +18,8 @@ namespace WADNR.API.Controllers;
 public class ClassificationController(
     WADNRDbContext dbContext,
     ILogger<ClassificationController> logger,
-    IOptions<WADNRConfiguration> configuration)
+    IOptions<WADNRConfiguration> configuration,
+    FileService fileService)
     : SitkaController<ClassificationController>(dbContext, logger, configuration)
 {
     [HttpGet]
@@ -93,5 +95,19 @@ public class ClassificationController(
     {
         var projects = await Projects.ListAsClassificationDetailGridRowForUserAsync(DbContext, classificationID, CallingUser);
         return Ok(projects);
+    }
+
+    [HttpPost("upload-key-image")]
+    [AdminFeature]
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<int>> UploadKeyImage(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest("File is required.");
+        }
+
+        var fileResource = await fileService.CreateFileResource(DbContext, file, CallingUser.PersonID);
+        return Ok(fileResource.FileResourceID);
     }
 }

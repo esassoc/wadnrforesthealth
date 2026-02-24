@@ -666,6 +666,59 @@
         }
       }
     },
+    "/classifications/upload-key-image": {
+      "post": {
+        "tags": [
+          "Classification"
+        ],
+        "operationId": "UploadKeyImage_Classification",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/classification-systems": {
       "get": {
         "tags": [
@@ -6057,6 +6110,46 @@
           "Organization"
         ],
         "operationId": "ListLookup_Organization",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/organizations/lead-implementers": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "ListLeadImplementers_Organization",
         "responses": {
           "200": {
             "description": "OK",
@@ -16289,8 +16382,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/project-types/{projectTypeID}": {
@@ -19325,6 +19417,11 @@
           "KeyImageFileResourceID": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "KeyImageFileResourceGUID": {
+            "type": "string",
+            "format": "uuid",
             "nullable": true
           },
           "ClassificationSortOrder": {
@@ -28072,6 +28169,10 @@
             "format": "int32"
           },
           "ProjectTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ThemeColor": {
             "type": "string",
             "nullable": true
           },

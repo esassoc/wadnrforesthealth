@@ -43,6 +43,13 @@
             transform: translateY(-6px);
         }
 
+        // When field-definition is inside a card-title, inherit the card-title
+        // font-size and color so it matches other card headers.
+        field-definition .field-definition-label {
+            font-size: inherit;
+            color: inherit;
+        }
+
         // Don't shift icons that are part of the field-definition label UI.
         // (Those icons should be vertically centered with their label text.)
         field-definition i {

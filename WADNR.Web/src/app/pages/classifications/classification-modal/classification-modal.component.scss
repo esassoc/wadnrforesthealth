@@ -1,0 +1,42 @@
+.theme-color-field {
+    display: flex;
+    align-items: flex-end;
+
+    form-field {
+        flex: 1;
+        min-width: 0;
+
+        ::ng-deep input {
+            border-top-right-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+            border-right: none !important;
+        }
+    }
+
+    .color-swatch {
+        width: 2rem;
+        height: 2rem;
+        flex-shrink: 0;
+        border: 1px solid rgba(black, 0.2);
+        border-left: none;
+        border-top-right-radius: 0.25rem;
+        border-bottom-right-radius: 0.25rem;
+    }
+}
+
+.existing-image {
+    margin-bottom: 0.5rem;
+
+    .field-label {
+        display: block;
+        margin-bottom: 0.25rem;
+        font-weight: 600;
+    }
+}
+
+.key-image-preview {
+    max-width: 200px;
+    max-height: 150px;
+    border: 1px solid rgba(black, 0.15);
+    border-radius: 0.25rem;
+}

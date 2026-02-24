@@ -1,0 +1,79 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>{{ title }}</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.DisplayName"
+            fieldLabel="Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter theme name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ClassificationDescription"
+            fieldLabel="Description"
+            [type]="FormFieldType.RTE">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.GoalStatement"
+            fieldLabel="Goal Statement"
+            [type]="FormFieldType.Textarea"
+            placeholder="Enter goal statement">
+        </form-field>
+
+        <div class="theme-color-field">
+            <form-field
+                [formControl]="form.controls.ThemeColor"
+                fieldLabel="Theme Color"
+                [type]="FormFieldType.Text"
+                placeholder="#RRGGBB">
+            </form-field>
+            <div class="color-swatch"
+                [style.background-color]="form.controls.ThemeColor.value || 'transparent'">
+            </div>
+        </div>
+
+        @if (mode === 'create') {
+        <form-field
+            [formControl]="form.controls.ClassificationSystemID"
+            fieldLabel="Classification System"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="classificationSystemOptions">
+        </form-field>
+        }
+
+        @if (existingImageGUID && !keyImageControl.value) {
+        <div class="existing-image">
+            <label class="field-label">Current Key Image</label>
+            <img [src]="'/api/file-resources/' + existingImageGUID" alt="Current key image" class="key-image-preview">
+        </div>
+        }
+
+        <form-field
+            [formControl]="keyImageControl"
+            fieldLabel="Key Image"
+            [type]="FormFieldType.File"
+            uploadFileAccepts=".jpg,.jpeg,.png,.gif">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [buttonLoading]="isSubmitting">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

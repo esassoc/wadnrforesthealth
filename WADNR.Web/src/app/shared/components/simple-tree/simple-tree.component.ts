@@ -16,6 +16,8 @@ export interface SimpleTreeNode {
     href?: string;
     routerLink?: any;
     target?: string;
+    /** Optional theme color (hex) applied as CSS custom property --node-theme-color */
+    themeColor?: string;
     // optional mixed title parts: each part can be plain text or a link
     titleParts?: Array<{
         text: string;
@@ -210,6 +212,7 @@ export class SimpleTreeComponent implements OnInit, OnChanges {
         depth: number;
         hasChildren: boolean;
         rootId?: string | null;
+        rootThemeColor?: string | null;
         isGroupStart?: boolean;
         isGroupEnd?: boolean;
     }> {
@@ -218,6 +221,7 @@ export class SimpleTreeComponent implements OnInit, OnChanges {
             depth: number;
             hasChildren: boolean;
             rootId?: string | null;
+            rootThemeColor?: string | null;
             isGroupStart?: boolean;
             isGroupEnd?: boolean;
         };
@@ -239,10 +243,10 @@ export class SimpleTreeComponent implements OnInit, OnChanges {
 
         walk(nodes, 0);
 
-        // compute rootId for each visible item by searching the original nodes tree
-        const computeRootId = (key: string | undefined): string | null => {
+        // compute rootId and rootThemeColor for each visible item by searching the original nodes tree
+        const computeRootInfo = (key: string | undefined): { rootId: string | null; themeColor: string | null } => {
             if (!key) {
-                return null;
+                return { rootId: null, themeColor: null };
             }
             // search this.nodes for the top-level ancestor whose subtree contains the key
             const roots = this.nodes || [];
@@ -265,14 +269,16 @@ export class SimpleTreeComponent implements OnInit, OnChanges {
                 if (search(r, key)) {
                     // extract id portion from root.key e.g. 'area-12' -> '12', 'project-type-12' -> '12'
                     const m = (r.key || "").match(/-([^-]+)$/);
-                    return m ? m[1] : null;
+                    return { rootId: m ? m[1] : null, themeColor: r.themeColor || null };
                 }
             }
-            return null;
+            return { rootId: null, themeColor: null };
         };
 
         for (let i = 0; i < out.length; i++) {
-            out[i].rootId = computeRootId(out[i].node?.key);
+            const info = computeRootInfo(out[i].node?.key);
+            out[i].rootId = info.rootId;
+            out[i].rootThemeColor = info.themeColor;
         }
 
         // mark group boundaries for contiguous items with the same rootId

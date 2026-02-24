@@ -52,8 +52,12 @@
         display: flex;
         align-items: center;
 
-        label.blank-option {
-            font-style: italic;
+        label {
+            cursor: pointer;
+
+            &.blank-option {
+                font-style: italic;
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from "@angular/core";
+import { Component, ElementRef, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AgGridAngular, AgGridModule } from "ag-grid-angular";
 import {
@@ -123,6 +123,7 @@ export class WADNRGridComponent implements OnInit, OnChanges {
 
     public gridTheme: Theme = themeBalham.withPart(this.fontAwesomeIcons);
     public popupParent: HTMLElement | null = null;
+    private el = inject(ElementRef);
 
     ngOnInit(): void {
         ModuleRegistry.registerModules([AllCommunityModule]);
@@ -193,6 +194,9 @@ export class WADNRGridComponent implements OnInit, OnChanges {
         this.gridLoaded = true;
 
         this.updatePinnedTotalsRow();
+
+        // Check if any columns with a default sort have clipped header text
+        setTimeout(() => this.expandClippedHeaders());
     }
 
     public onGridColumnsChanged(event: GridColumnsChangedEvent) {
@@ -259,6 +263,35 @@ export class WADNRGridComponent implements OnInit, OnChanges {
         this.filteredRowsCount = filteredRowsCount;
 
         this.updatePinnedTotalsRow();
+    }
+
+    public onSortChanged(): void {
+        if (this.suppressColumnSizing) return;
+        // Wait for sort icons to render, then check for clipped headers
+        setTimeout(() => this.expandClippedHeaders());
+    }
+
+    private expandClippedHeaders(): void {
+        if (!this.gridApi) return;
+
+        const nativeEl: HTMLElement = this.el.nativeElement;
+
+        for (const col of this.gridApi.getColumns() ?? []) {
+            if (col.getColDef().suppressAutoSize) continue;
+
+            const colId = col.getColId();
+            const headerCell = nativeEl.querySelector(`.ag-header-cell[col-id="${colId}"]`);
+            if (!headerCell) continue;
+
+            const textEl = headerCell.querySelector('.ag-header-cell-text') as HTMLElement;
+            if (!textEl) continue;
+
+            if (textEl.scrollWidth > textEl.clientWidth + 1) {
+                const deficit = textEl.scrollWidth - textEl.clientWidth;
+                const currentWidth = col.getActualWidth();
+                this.gridApi.setColumnWidths([{ key: col, newWidth: currentWidth + deficit + 4 }]);
+            }
+        }
     }
 
     public onRowDataUpdated(event: RowDataUpdatedEvent) {

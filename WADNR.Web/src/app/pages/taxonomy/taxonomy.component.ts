@@ -68,6 +68,7 @@ export class TaxonomyComponent {
                 titleParts: ptParts,
                 children,
                 count: ptCount,
+                themeColor: (a as any).ThemeColor || null,
             } as SimpleTreeNode;
         });
     }

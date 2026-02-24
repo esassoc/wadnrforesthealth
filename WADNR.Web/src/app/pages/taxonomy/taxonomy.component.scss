@@ -8,23 +8,6 @@
     max-width: 800px;
 }
 
-/* Example: per-project-type border colors when top-level borders are enabled. 
-   The tree adds `simple-tree--top-level-border-enabled` to the root when `showTopLevelBorder` is true,
-   and each top-level node has `data-root-id` with the root id and `data-depth` attribute.
-   You can customize the map below with your project type ids and colors. */
-
-$project-type-colors: (
-    2218: #0000ff,
-    2221: #989696,
-    2222: #008000,
-    2225: #ffa500,
-    2226: #398039,
-    2228: #008000,
-    2229: #008000,
-    2230: #0000ff,
-    2231: #5e18eb,
-);
-
 // Reserve a consistent right-side slot so the Map button aligns
 // even when count badges have different widths (or are missing).
 $taxonomy-badge-slot-width: 4.25rem;
@@ -65,8 +48,8 @@ simple-tree ::ng-deep {
     div.simple-tree--top-level-border-enabled {
         // per-item borders: left/right on every grouped item, top on group-start, bottom on group-end
         .simple-tree__node--root-group {
-            border-left: 4px solid rgba(0, 0, 0, 0.06);
-            border-right: 4px solid rgba(0, 0, 0, 0.06);
+            border-left: 4px solid var(--node-theme-color, rgba(0, 0, 0, 0.06));
+            border-right: 4px solid var(--node-theme-color, rgba(0, 0, 0, 0.06));
             padding: 0.25rem 0.5rem;
             margin: 0.15rem 0;
             background: #fff;
@@ -76,15 +59,30 @@ simple-tree ::ng-deep {
         }
 
         .simple-tree__group-start.simple-tree__node--root-group {
-            border-top: 4px solid rgba(0, 0, 0, 0.06);
+            border-top: 4px solid var(--node-theme-color, rgba(0, 0, 0, 0.06));
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.02) inset;
         }
 
         .simple-tree__group-end.simple-tree__node--root-group {
-            border-bottom: 4px solid rgba(0, 0, 0, 0.06);
+            border-bottom: 4px solid var(--node-theme-color, rgba(0, 0, 0, 0.06));
             border-bottom-left-radius: 8px;
             border-bottom-right-radius: 8px;
+        }
+
+        // Map button styling — uses theme color from CSS custom property
+        .simple-tree__node--root-group .map-btn {
+            background-color: var(--node-theme-color, var(--primary));
+            color: var(--white);
+            border: 1px solid var(--node-theme-color, var(--primary));
+            filter: brightness(1);
+            margin-left: auto;
+            text-decoration: none;
+
+            &:hover {
+                filter: brightness(0.85);
+            }
         }
 
         // collapse gaps between adjacent grouped nodes for a seamless box
@@ -101,37 +99,10 @@ simple-tree ::ng-deep {
             left: 0.5rem;
             right: 0.5rem;
             height: 1px;
-            border-bottom: 1px dotted rgba(0, 0, 0, 0.12);
+            border-bottom: 1px dotted var(--node-theme-color, rgba(0, 0, 0, 0.12));
+            opacity: 0.32;
             pointer-events: none;
             z-index: 3;
-        }
-
-        // per-root color overrides from the map
-        @each $id, $color in $project-type-colors {
-            [data-root-id="#{$id}"].simple-tree__node--root-group {
-                border-left-color: $color;
-                border-right-color: $color;
-            }
-
-            // Map button styling within a root group
-            [data-root-id="#{$id}"].simple-tree__node--root-group .map-btn {
-                background-color: $color;
-                color: var(--white);
-                border: 1px solid darken($color, 10%);
-                margin-left: auto;
-                text-decoration: none;
-            }
-            [data-root-id="#{$id}"].simple-tree__group-start.simple-tree__node--root-group {
-                border-top-color: $color;
-                box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.02) inset;
-            }
-            [data-root-id="#{$id}"].simple-tree__group-end.simple-tree__node--root-group {
-                border-bottom-color: $color;
-            }
-            // color the dotted separator to match the group's color but subtly
-            [data-root-id="#{$id}"].simple-tree__node--root-group + .simple-tree__node--root-group::before {
-                border-bottom-color: rgba(red($color), green($color), blue($color), 0.32);
-            }
         }
 
         // hover highlight for group start

@@ -18,6 +18,7 @@ export class ClassificationDetail {
     ThemeColor?: string | null;
     GoalStatement?: string | null;
     KeyImageFileResourceID?: number | null;
+    KeyImageFileResourceGUID?: string | null;
     ClassificationSortOrder?: number | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -32,6 +33,7 @@ export interface ClassificationDetailForm {
     ThemeColor?: FormControl<string>;
     GoalStatement?: FormControl<string>;
     KeyImageFileResourceID?: FormControl<number>;
+    KeyImageFileResourceGUID?: FormControl<string>;
     ClassificationSortOrder?: FormControl<number>;
 }
 
@@ -97,6 +99,16 @@ export class ClassificationDetailFormControls {
         }
     );
     public static KeyImageFileResourceID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static KeyImageFileResourceGUID = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

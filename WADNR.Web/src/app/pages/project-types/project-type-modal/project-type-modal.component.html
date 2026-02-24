@@ -1,0 +1,55 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit Project Type</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.ProjectTypeName"
+            fieldLabel="Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter project type name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ProjectTypeDescription"
+            fieldLabel="Description"
+            [type]="FormFieldType.RTE">
+        </form-field>
+
+        <div class="theme-color-field">
+            <form-field
+                [formControl]="form.controls.ThemeColor"
+                fieldLabel="Theme Color"
+                [type]="FormFieldType.Text"
+                placeholder="#RRGGBB">
+            </form-field>
+            <div class="color-swatch"
+                [style.background-color]="form.controls.ThemeColor.value || 'transparent'">
+            </div>
+        </div>
+
+        <form-field
+            [formControl]="form.controls.LimitVisibilityToAdmin"
+            fieldLabel="Limit Visibility to Admin"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [buttonLoading]="isSubmitting">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

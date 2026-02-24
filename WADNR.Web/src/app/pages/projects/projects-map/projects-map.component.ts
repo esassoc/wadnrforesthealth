@@ -10,12 +10,12 @@ import { ProjectLocationFilterTypes } from "src/app/shared/generated/enum/projec
 import { ProjectColorByTypes } from "src/app/shared/generated/enum/project-color-by-type-enum";
 import { SelectDropdownOption, FormInputOption, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
 import { Palette, PROJECT_STAGE_LEGEND_COLORS } from "src/app/shared/models/legend-colors";
-import { NgSelectModule } from "@ng-select/ng-select";
+import { NgSelectModule, NgSelectComponent } from "@ng-select/ng-select";
 import { Router, ActivatedRoute } from "@angular/router";
 import { ProjectStagesAsSelectDropdownOptions } from "src/app/shared/generated/enum/project-stage-enum";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
-import { ClassificationGridRow, OrganizationGridRow, ProgramGridRow, ProjectSimpleTree, ProjectTypeGridRow } from "src/app/shared/generated/model/models";
+import { ClassificationGridRow, OrganizationLookupItem, ProgramGridRow, ProjectSimpleTree, ProjectTypeGridRow } from "src/app/shared/generated/model/models";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProgramService } from "src/app/shared/generated/api/program.service";
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
@@ -110,6 +110,9 @@ export class ProjectsMapComponent implements OnInit {
     private _selectedFilterValuesCache: string[] = [];
     private _filterValuesSub: Subscription | null = null;
 
+    // Saved map view from query params (applied once when map is ready)
+    private _savedMapView: { lat: number; lng: number; zoom: number } | null = null;
+
     // projects with no simple location list visibility
     public showProjectWithNoSimpleLocationList = false;
 
@@ -161,6 +164,17 @@ export class ProjectsMapComponent implements OnInit {
             this.form.get("cluster")?.setValue(c);
             this.cluster = c;
         }
+        const qpZoom = qp.get("zoom");
+        const qpLat = qp.get("lat");
+        const qpLng = qp.get("lng");
+        if (qpZoom && qpLat && qpLng) {
+            const zoom = Number(qpZoom);
+            const lat = Number(qpLat);
+            const lng = Number(qpLng);
+            if (!isNaN(zoom) && !isNaN(lat) && !isNaN(lng)) {
+                this._savedMapView = { lat, lng, zoom };
+            }
+        }
         // derive color-by options from generated ProjectColorByTypes (map to property names)
         this.colorByOptions = ProjectColorByTypes.filter((x) => x.DisplayName == "Stage").map(
             (x: any) => ({ Value: String((x.Name ?? x.Name) + "ID"), Label: x.DisplayName } as SelectDropdownOption)
@@ -173,7 +187,7 @@ export class ProjectsMapComponent implements OnInit {
             projectTypes: this.projectTypeService.listProjectType(),
             programs: this.programService.listProgram(),
             classifications: this.classificationService.listClassification(),
-            organizations: this.organizationService.listOrganization(),
+            organizations: this.organizationService.listLeadImplementersOrganization(),
         }).pipe(
             map((r: any) => ({
                 projectTypes: (r.projectTypes || []).map((i: ProjectTypeGridRow) => ({
@@ -188,7 +202,7 @@ export class ProjectsMapComponent implements OnInit {
                     Value: String(i.ClassificationID),
                     Label: i.DisplayName,
                 })),
-                organizations: (r.organizations || []).map((i: OrganizationGridRow) => ({
+                organizations: (r.organizations || []).map((i: OrganizationLookupItem) => ({
                     Value: String(i.OrganizationID),
                     Label: i.OrganizationName,
                 })),
@@ -322,6 +336,13 @@ export class ProjectsMapComponent implements OnInit {
             const clusterVal = this.form.get("cluster")?.value;
             if (clusterVal) params.set("cluster", clusterVal ? "1" : "0");
             else params.delete("cluster");
+            // map view
+            if (this.map) {
+                const center = this.map.getCenter();
+                params.set("zoom", String(this.map.getZoom()));
+                params.set("lat", center.lat.toFixed(5));
+                params.set("lng", center.lng.toFixed(5));
+            }
 
             // return full href
             return url.toString();
@@ -336,6 +357,12 @@ export class ProjectsMapComponent implements OnInit {
             if (filterValues && filterValues.length) qp.push(`filterValues=${encodeURIComponent(filterValues.map((v: any) => String(v)).join(","))}`);
             const clusterVal = this.form.get("cluster")?.value;
             if (clusterVal) qp.push(`cluster=${clusterVal ? "1" : "0"}`);
+            if (this.map) {
+                const center = this.map.getCenter();
+                qp.push(`zoom=${this.map.getZoom()}`);
+                qp.push(`lat=${center.lat.toFixed(5)}`);
+                qp.push(`lng=${center.lng.toFixed(5)}`);
+            }
             return `${window.location.pathname}${qp.length ? "?" + qp.join("&") : ""}`;
         }
     }
@@ -431,6 +458,11 @@ export class ProjectsMapComponent implements OnInit {
         this.map = event.map;
         this.layerControl = event.layerControl;
         this.mapIsReady = true;
+
+        if (this._savedMapView) {
+            this.map.setView([this._savedMapView.lat, this._savedMapView.lng], this._savedMapView.zoom);
+            this._savedMapView = null;
+        }
     }
 
     ngAfterViewInit(): void {
@@ -525,6 +557,15 @@ export class ProjectsMapComponent implements OnInit {
             this._filterValuesSub.unsubscribe();
             this._filterValuesSub = null;
         }
+    }
+
+    // ng-select scrolls to the marked/selected item via a microtask when opened.
+    // requestAnimationFrame runs after that microtask but before the browser paints.
+    public onDropdownOpen(select: NgSelectComponent) {
+        requestAnimationFrame(() => {
+            const panel = select.element.querySelector(".ng-dropdown-panel-items");
+            if (panel) panel.scrollTop = 0;
+        });
     }
 
     // Select all available filter values (useful for ng-select "Select All")

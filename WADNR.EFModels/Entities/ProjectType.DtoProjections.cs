@@ -29,13 +29,15 @@ public static class ProjectTypeProjections
             LimitVisibilityToAdmin = pt.LimitVisibilityToAdmin
         });
 
-    public static IQueryable<ProjectTypeTaxonomy> AsTaxonomy(IQueryable<ProjectType> query)
+    public static IQueryable<ProjectTypeTaxonomy> AsTaxonomy(IQueryable<ProjectType> query, bool canViewAdminLimited)
         => query.Select(f => new ProjectTypeTaxonomy
         {
             ProjectTypeID = f.ProjectTypeID,
             ProjectTypeName = f.ProjectTypeName,
+            ThemeColor = f.ThemeColor,
             Projects = f.Projects
-                .Where(p => p.ProjectApprovalStatusID == Projects.ApprovedStatusId && !p.ProjectType.LimitVisibilityToAdmin)
+                .Where(p => p.ProjectApprovalStatusID == Projects.ApprovedStatusId
+                         && (canViewAdminLimited || !p.ProjectType.LimitVisibilityToAdmin))
                 .OrderBy(p => p.ProjectName)
                 .Select(x => new ProjectLookupItem
                 {

@@ -34,6 +34,30 @@ public static class Organizations
             .ToListAsync();
     }
 
+    public static async Task<List<OrganizationLookupItem>> ListLeadImplementersAsLookupItemAsync(WADNRDbContext dbContext, PersonDetail? callingUser)
+    {
+        var visibleProjects = ProjectVisibility.ApplyVisibilityFilter(dbContext.Projects, callingUser);
+
+        var organizationIDs = await dbContext.ProjectOrganizations
+            .AsNoTracking()
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Where(po => visibleProjects.Any(p => p.ProjectID == po.ProjectID))
+            .Select(po => po.OrganizationID)
+            .Distinct()
+            .ToListAsync();
+
+        return await dbContext.Organizations
+            .AsNoTracking()
+            .Where(o => organizationIDs.Contains(o.OrganizationID))
+            .OrderBy(o => o.OrganizationName)
+            .Select(o => new OrganizationLookupItem
+            {
+                OrganizationID = o.OrganizationID,
+                OrganizationName = o.OrganizationName
+            })
+            .ToListAsync();
+    }
+
     public static async Task<OrganizationDetail?> GetByIDAsDetailAsync(WADNRDbContext dbContext, int organizationID)
     {
         var entity = await dbContext.Organizations

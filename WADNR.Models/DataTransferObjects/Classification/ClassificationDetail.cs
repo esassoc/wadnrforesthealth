@@ -9,5 +9,6 @@ public class ClassificationDetail
     public string ThemeColor { get; set; } = string.Empty;
     public string? GoalStatement { get; set; }
     public int? KeyImageFileResourceID { get; set; }
+    public Guid? KeyImageFileResourceGUID { get; set; }
     public int? ClassificationSortOrder { get; set; }
 }

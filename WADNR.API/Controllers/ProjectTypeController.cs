@@ -41,10 +41,10 @@ public class ProjectTypeController(
     }
 
     [HttpGet("taxonomy")]
-    [AllowAnonymous]
+    [ProjectViewFeature]
     public async Task<ActionResult<IEnumerable<ProjectTypeTaxonomy>>> Taxonomy()
     {
-        var projectTypeTaxonomies = await ProjectTypes.ListTaxonomyAsync(DbContext);
+        var projectTypeTaxonomies = await ProjectTypes.ListTaxonomyAsync(DbContext, CallingUser);
         return Ok(projectTypeTaxonomies);
     }
 

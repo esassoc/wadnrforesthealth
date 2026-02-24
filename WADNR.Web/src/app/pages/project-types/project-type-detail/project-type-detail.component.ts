@@ -1,8 +1,9 @@
 import { AsyncPipe } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { distinctUntilChanged, filter, map, Observable, shareReplay, switchMap } from "rxjs";
+import { combineLatest, distinctUntilChanged, filter, map, Observable, shareReplay, startWith, Subject, switchMap } from "rxjs";
 import * as L from "leaflet";
+import { DialogService } from "@ngneat/dialog";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -11,6 +12,7 @@ import { ProjectLocationsSimpleLayerComponent } from "src/app/shared/components/
 import { ProjectStageMapLegendComponent } from "src/app/shared/components/project-stage-map-legend/project-stage-map-legend.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { AuthenticationService } from "src/app/services/authentication.service";
 import { ProjectTypeService } from "src/app/shared/generated/api/project-type.service";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
 import { ProjectProjectTypeDetailGridRow } from "src/app/shared/generated/model/project-project-type-detail-grid-row";
@@ -19,6 +21,13 @@ import { ColDef } from "ag-grid-community";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 import { Palette, PROJECT_STAGE_LEGEND_COLORS } from "src/app/shared/models/legend-colors";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
+import { ProjectTypeModalComponent, ProjectTypeModalData } from "../project-type-modal/project-type-modal.component";
 
 @Component({
     selector: "project-type-detail",
@@ -33,6 +42,11 @@ import { LoadingDirective } from "src/app/shared/directives/loading.directive";
         WADNRMapComponent,
         ProjectLocationsSimpleLayerComponent,
         ProjectStageMapLegendComponent,
+        ExternalMapLayersComponent,
+        GenericWmsWfsLayerComponent,
+        PriorityLandscapesLayerComponent,
+        DNRUplandRegionsLayerComponent,
+        CountiesLayerComponent,
     ],
     templateUrl: "./project-type-detail.component.html",
     styleUrls: ["./project-type-detail.component.scss"],
@@ -54,10 +68,25 @@ export class ProjectTypeDetailComponent {
     public mapIsReady: boolean = false;
     public layerControl: any;
     public legendColorsToUse: Record<string, Palette> = PROJECT_STAGE_LEGEND_COLORS;
+    public OverlayMode = OverlayMode;
+    public isAdmin$: Observable<boolean>;
 
-    constructor(private route: ActivatedRoute, private projectTypeService: ProjectTypeService, private utilityFunctions: UtilityFunctionsService) {}
+    private refreshData$ = new Subject<void>();
+
+    constructor(
+        private route: ActivatedRoute,
+        private projectTypeService: ProjectTypeService,
+        private utilityFunctions: UtilityFunctionsService,
+        private authenticationService: AuthenticationService,
+        private dialogService: DialogService
+    ) {}
 
     ngOnInit(): void {
+        this.isAdmin$ = this.authenticationService.currentUserSetObservable.pipe(
+            map((user) => this.authenticationService.isUserAnAdministrator(user)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
         this.projectTypeID$ = this.route.paramMap.pipe(
             map((p) => (p.get("projectTypeID") ? Number(p.get("projectTypeID")) : null)),
             filter((projectTypeID): projectTypeID is number => projectTypeID != null && !Number.isNaN(projectTypeID)),
@@ -65,8 +94,8 @@ export class ProjectTypeDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.projectType$ = this.projectTypeID$.pipe(
-            switchMap((projectTypeID) => this.projectTypeService.getProjectType(projectTypeID)),
+        this.projectType$ = combineLatest([this.projectTypeID$, this.refreshData$.pipe(startWith(undefined))]).pipe(
+            switchMap(([projectTypeID]) => this.projectTypeService.getProjectType(projectTypeID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -89,11 +118,17 @@ export class ProjectTypeDetailComponent {
                 InRouterLink: "/projects/",
                 FieldDefinitionType: "ProjectName",
             }),
-            this.utilityFunctions.createLinkColumnDef("Primary Contact Organization", "PrimaryContactOrganization.OrganizationName", "PrimaryContactOrganization.OrganizationID", {
-                InRouterLink: "/organizations/",
-                FieldDefinitionType: "PrimaryContactOrganization",
-                CustomDropdownFilterField: "PrimaryContactOrganization.OrganizationName",
-            }),
+            this.utilityFunctions.createLinkColumnDef(
+                "Primary Contact Contributing Organization",
+                "PrimaryContactOrganization.OrganizationName",
+                "PrimaryContactOrganization.OrganizationID",
+                {
+                    InRouterLink: "/organizations/",
+                    FieldDefinitionType: "PrimaryContactOrganization",
+                    FieldDefinitionLabelOverride: "Primary Contact Contributing Organization",
+                    CustomDropdownFilterField: "PrimaryContactOrganization.OrganizationName",
+                }
+            ),
             this.utilityFunctions.createBasicColumnDef("Project Stage", "ProjectStage.ProjectStageName", {
                 FieldDefinitionType: "ProjectStage",
                 CustomDropdownFilterField: "ProjectStage.ProjectStageName",
@@ -122,5 +157,21 @@ export class ProjectTypeDetailComponent {
         this.map = event.map;
         this.layerControl = event.layerControl;
         this.mapIsReady = true;
+    }
+
+    openEditModal(projectType: ProjectTypeDetail): void {
+        const dialogRef = this.dialogService.open(ProjectTypeModalComponent, {
+            data: {
+                mode: "edit",
+                projectType: projectType,
+            } as ProjectTypeModalData,
+            size: "md",
+        });
+
+        dialogRef.afterClosed$.subscribe((result) => {
+            if (result) {
+                this.refreshData$.next();
+            }
+        });
     }
 }
