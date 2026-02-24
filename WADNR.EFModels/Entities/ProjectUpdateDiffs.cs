@@ -1145,15 +1145,19 @@ public static class ProjectUpdateDiffs
 
     private static async Task<StepDiffResponse> GetTreatmentsStepDiffAsync(WADNRDbContext dbContext, Project project, ProjectUpdateBatch batch)
     {
+        var usCulture = CultureInfo.GetCultureInfo("en-US");
+
         var projectTreatments = await dbContext.Treatments
             .AsNoTracking()
             .Include(t => t.ProjectLocation)
+            .Include(t => t.Program)
             .Where(t => t.ProjectLocation.ProjectID == project.ProjectID)
             .ToListAsync();
 
         var updateTreatments = await dbContext.TreatmentUpdates
             .AsNoTracking()
             .Include(t => t.ProjectLocationUpdate)
+            .Include(t => t.Program)
             .Where(t => t.ProjectUpdateBatchID == batch.ProjectUpdateBatchID)
             .ToListAsync();
 
@@ -1164,8 +1168,17 @@ public static class ProjectUpdateDiffs
                 var locName = t.ProjectLocation?.ProjectLocationName ?? "(unknown)";
                 var typeName = TreatmentType.AllLookupDictionary.TryGetValue(t.TreatmentTypeID, out var tt) ? tt.TreatmentTypeDisplayName : "(unknown)";
                 var actName = TreatmentDetailedActivityType.AllLookupDictionary.TryGetValue(t.TreatmentDetailedActivityTypeID, out var at) ? at.TreatmentDetailedActivityTypeDisplayName : "(unknown)";
+                var codeName = t.TreatmentCodeID.HasValue && TreatmentCode.AllLookupDictionary.TryGetValue(t.TreatmentCodeID.Value, out var tc) ? tc.TreatmentCodeDisplayName : "(none)";
+                var startDate = t.TreatmentStartDate?.ToString("M/d/yyyy") ?? "(none)";
+                var endDate = t.TreatmentEndDate?.ToString("M/d/yyyy") ?? "(none)";
+                var footprint = t.TreatmentFootprintAcres.ToString("F2");
                 var acres = t.TreatmentTreatedAcres?.ToString("F2") ?? "(none)";
-                return new List<string> { locName, typeName, actName, acres };
+                var costPerAcre = t.CostPerAcre?.ToString("C", usCulture) ?? "(none)";
+                var totalCost = t.CostPerAcre.HasValue && t.TreatmentTreatedAcres.HasValue
+                    ? (t.CostPerAcre.Value * t.TreatmentTreatedAcres.Value).ToString("C", usCulture)
+                    : "(none)";
+                var program = t.Program?.ProgramName ?? "(none)";
+                return new List<string> { locName, typeName, actName, codeName, startDate, endDate, footprint, acres, costPerAcre, totalCost, program };
             })
             .ToList();
 
@@ -1176,8 +1189,17 @@ public static class ProjectUpdateDiffs
                 var locName = t.ProjectLocationUpdate?.ProjectLocationUpdateName ?? "(unknown)";
                 var typeName = TreatmentType.AllLookupDictionary.TryGetValue(t.TreatmentTypeID, out var tt) ? tt.TreatmentTypeDisplayName : "(unknown)";
                 var actName = TreatmentDetailedActivityType.AllLookupDictionary.TryGetValue(t.TreatmentDetailedActivityTypeID, out var at) ? at.TreatmentDetailedActivityTypeDisplayName : "(unknown)";
+                var codeName = t.TreatmentCodeID.HasValue && TreatmentCode.AllLookupDictionary.TryGetValue(t.TreatmentCodeID.Value, out var tc) ? tc.TreatmentCodeDisplayName : "(none)";
+                var startDate = t.TreatmentStartDate?.ToString("M/d/yyyy") ?? "(none)";
+                var endDate = t.TreatmentEndDate?.ToString("M/d/yyyy") ?? "(none)";
+                var footprint = t.TreatmentFootprintAcres.ToString("F2");
                 var acres = t.TreatmentTreatedAcres?.ToString("F2") ?? "(none)";
-                return new List<string> { locName, typeName, actName, acres };
+                var costPerAcre = t.CostPerAcre?.ToString("C", usCulture) ?? "(none)";
+                var totalCost = t.CostPerAcre.HasValue && t.TreatmentTreatedAcres.HasValue
+                    ? (t.CostPerAcre.Value * t.TreatmentTreatedAcres.Value).ToString("C", usCulture)
+                    : "(none)";
+                var program = t.Program?.ProgramName ?? "(none)";
+                return new List<string> { locName, typeName, actName, codeName, startDate, endDate, footprint, acres, costPerAcre, totalCost, program };
             })
             .ToList();
 
@@ -1190,7 +1212,7 @@ public static class ProjectUpdateDiffs
                 new DiffSection
                 {
                     Type = "table",
-                    Headers = ["Location", "Type", "Activity", "Acres"],
+                    Headers = ["Treatment Area", "Type", "Activity", "Code", "Start Date", "End Date", "Footprint (Acres)", "Treated (Acres)", "Cost/Acre", "Total Cost", "Program"],
                     OriginalRows = originalRows,
                     UpdatedRows = updatedRows
                 }

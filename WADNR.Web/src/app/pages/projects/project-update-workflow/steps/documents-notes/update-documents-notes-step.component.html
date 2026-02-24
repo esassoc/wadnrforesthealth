@@ -91,6 +91,16 @@
                 </div>
             }
         </div>
+        <div class="card-footer">
+            <workflow-step-actions
+                [showRevertActions]="true"
+                [showSaveActions]="false"
+                [hasChanges]="hasChanges$ | async"
+                [stepKey]="stepKey"
+                [projectID]="projectID$ | async"
+                (reverted)="onStepReverted()">
+            </workflow-step-actions>
+        </div>
     </div>
 } @else {
     <div class="card">

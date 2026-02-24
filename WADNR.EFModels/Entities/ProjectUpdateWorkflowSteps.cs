@@ -2318,10 +2318,19 @@ public static class ProjectUpdateWorkflowSteps
 
     private static async Task<bool> RevertLocationDetailedStepAsync(WADNRDbContext dbContext, ProjectUpdateBatch batch, Project project)
     {
+        // Delete child TreatmentUpdates before removing ProjectLocationUpdates (FK constraint)
+        var existingTreatments = await dbContext.TreatmentUpdates
+            .Where(t => t.ProjectUpdateBatchID == batch.ProjectUpdateBatchID)
+            .ToListAsync();
+        dbContext.TreatmentUpdates.RemoveRange(existingTreatments);
+
         var existingLocs = await dbContext.ProjectLocationUpdates
             .Where(l => l.ProjectUpdateBatchID == batch.ProjectUpdateBatchID)
             .ToListAsync();
         dbContext.ProjectLocationUpdates.RemoveRange(existingLocs);
+
+        // Flush deletes so new inserts get fresh IDs
+        await dbContext.SaveChangesAsync();
 
         var projectLocations = await dbContext.ProjectLocations
             .Where(x => x.ProjectID == project.ProjectID).ToListAsync();
@@ -2336,6 +2345,50 @@ public static class ProjectUpdateWorkflowSteps
                 ProjectLocationUpdateName = loc.ProjectLocationName,
                 ArcGisObjectID = loc.ArcGisObjectID,
                 ArcGisGlobalID = loc.ArcGisGlobalID
+            });
+        }
+
+        // Save new locations so they have IDs for treatment FK mapping
+        await dbContext.SaveChangesAsync();
+
+        // Re-create TreatmentUpdates mapped to the new ProjectLocationUpdates
+        var newLocationUpdates = await dbContext.ProjectLocationUpdates
+            .Where(plu => plu.ProjectUpdateBatchID == batch.ProjectUpdateBatchID)
+            .ToListAsync();
+
+        var projectTreatments = await dbContext.Treatments
+            .Include(t => t.ProjectLocation)
+            .Where(t => t.ProjectLocation.ProjectID == project.ProjectID).ToListAsync();
+        foreach (var treatment in projectTreatments)
+        {
+            int? projectLocationUpdateID = null;
+            if (treatment.ProjectLocation != null)
+            {
+                var matchingLocation = newLocationUpdates.FirstOrDefault(plu =>
+                    plu.ProjectLocationUpdateName == treatment.ProjectLocation.ProjectLocationName &&
+                    plu.ProjectLocationUpdateGeometry.EqualsTopologically(treatment.ProjectLocation.ProjectLocationGeometry));
+                projectLocationUpdateID = matchingLocation?.ProjectLocationUpdateID;
+            }
+
+            dbContext.TreatmentUpdates.Add(new TreatmentUpdate
+            {
+                ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
+                ProjectLocationUpdateID = projectLocationUpdateID,
+                TreatmentTypeID = treatment.TreatmentTypeID,
+                TreatmentDetailedActivityTypeID = treatment.TreatmentDetailedActivityTypeID,
+                TreatmentCodeID = treatment.TreatmentCodeID,
+                TreatmentStartDate = treatment.TreatmentStartDate,
+                TreatmentEndDate = treatment.TreatmentEndDate,
+                TreatmentFootprintAcres = treatment.TreatmentFootprintAcres,
+                TreatmentTreatedAcres = treatment.TreatmentTreatedAcres,
+                TreatmentNotes = treatment.TreatmentNotes,
+                CostPerAcre = treatment.CostPerAcre,
+                TreatmentTypeImportedText = treatment.TreatmentTypeImportedText,
+                TreatmentDetailedActivityTypeImportedText = treatment.TreatmentDetailedActivityTypeImportedText,
+                ProgramID = treatment.ProgramID,
+                ImportedFromGis = treatment.ImportedFromGis,
+                CreateGisUploadAttemptID = treatment.CreateGisUploadAttemptID,
+                UpdateGisUploadAttemptID = treatment.UpdateGisUploadAttemptID
             });
         }
 

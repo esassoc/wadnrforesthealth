@@ -52,6 +52,9 @@ export class WorkflowStepActionsComponent {
     /** Whether to show revert/show-changes actions (update mode). */
     @Input() showRevertActions: boolean = false;
 
+    /** Whether to show save/save-and-continue buttons. Defaults to true. */
+    @Input() showSaveActions: boolean = true;
+
     /** Whether a save operation is in progress. */
     @Input() isSaving: boolean = false;
 

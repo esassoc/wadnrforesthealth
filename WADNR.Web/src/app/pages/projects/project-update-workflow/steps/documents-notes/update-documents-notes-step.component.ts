@@ -12,6 +12,7 @@ import { ProjectDocumentUpdateItem } from "src/app/shared/generated/model/projec
 import { ProjectNoteUpdateItem } from "src/app/shared/generated/model/project-note-update-item";
 import { ProjectDocumentTypeLookupItem } from "src/app/shared/generated/model/project-document-type-lookup-item";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
+import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
@@ -31,7 +32,7 @@ interface DocumentsNotesViewModel {
 @Component({
     selector: "update-documents-notes-step",
     standalone: true,
-    imports: [CommonModule, AsyncPipe, DatePipe, IconComponent],
+    imports: [CommonModule, AsyncPipe, DatePipe, IconComponent, WorkflowStepActionsComponent],
     templateUrl: "./update-documents-notes-step.component.html",
     styleUrls: ["./update-documents-notes-step.component.scss"],
 })
@@ -52,6 +53,7 @@ export class UpdateDocumentsNotesStepComponent extends UpdateWorkflowStepBase im
 
     ngOnInit(): void {
         this.initProjectID();
+        this.initHasChanges();
 
         const documentTypes$ = this.projectDocumentService.listTypesProjectDocument().pipe(
             catchError(() => of([] as ProjectDocumentTypeLookupItem[])),
