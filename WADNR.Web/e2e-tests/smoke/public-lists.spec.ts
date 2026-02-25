@@ -13,13 +13,10 @@ test.describe("Public list pages", () => {
     await expect(page.locator(".ag-row").first()).toBeVisible({ timeout: 30000 });
   });
 
-  // Focus Areas list endpoint requires [NormalUserFeature] (not [AllowAnonymous]),
-  // so the Auth0 SDK must provide a real token for data to load.
-  // Without a real Auth0 session, we can only verify the page structure renders.
-  test("focus areas list renders", async ({ page }) => {
+  test("focus areas list renders with data", async ({ page }) => {
     await page.goto("/focus-areas");
     await expect(page.getByRole("heading", { name: "Focus Areas" })).toBeVisible();
-    await expect(page.locator("ag-grid-angular")).toBeVisible({ timeout: 15000 });
+    await expect(page.locator(".ag-row").first()).toBeVisible({ timeout: 30000 });
   });
 
   test("counties list renders with data", async ({ page }) => {

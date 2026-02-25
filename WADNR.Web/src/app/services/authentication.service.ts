@@ -34,9 +34,17 @@ export class AuthenticationService {
                 this.claimsUser = user as any;
                 this.postUser();
             } else {
-                this.claimsUser = null;
-                this.currentUser = null;
-                this._currentUserSetSubject.next(this.currentUser);
+                // E2E test mode: Auth0 has no session, but we can bootstrap
+                // from localStorage. The e2e interceptor adds the header so
+                // the backend TestAuthHandler authenticates the request.
+                const e2eGlobalID = localStorage.getItem("__e2e_globalID");
+                if (e2eGlobalID) {
+                    this.postUser();
+                } else {
+                    this.claimsUser = null;
+                    this.currentUser = null;
+                    this._currentUserSetSubject.next(this.currentUser);
+                }
             }
         });
     }

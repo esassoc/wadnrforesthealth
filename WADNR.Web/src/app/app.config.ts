@@ -17,6 +17,12 @@ import { provideDialogConfig } from "@ngneat/dialog";
 import { SumPipe } from "./shared/pipes/sum.pipe";
 import { authHttpInterceptorFn, provideAuth0 } from "@auth0/auth0-angular";
 import { buildAuth0AllowedList } from "./shared/generated/auth0-allowedlist";
+import { e2eAuthInterceptor } from "./shared/interceptors/e2e-auth.interceptor";
+
+// When running under Playwright e2e tests, localStorage.__e2e_globalID is set
+// before Angular bootstraps. In that case, give Auth0 an empty allowedList so
+// its interceptor becomes a no-op (won't block requests for missing tokens).
+const isE2E = !!localStorage.getItem("__e2e_globalID");
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -33,10 +39,10 @@ export const appConfig: ApplicationConfig = {
             useRefreshTokens: true,
             cacheLocation: "localstorage",
             httpInterceptor: {
-                allowedList: buildAuth0AllowedList(environment.mainAppApiUrl),
+                allowedList: isE2E ? [] : buildAuth0AllowedList(environment.mainAppApiUrl),
             },
         }),
-        provideHttpClient(withInterceptorsFromDi(), withInterceptors([authHttpInterceptorFn])),
+        provideHttpClient(withInterceptorsFromDi(), withInterceptors([e2eAuthInterceptor, authHttpInterceptorFn])),
         importProvidersFrom(
             ApiModule.forRoot(() => {
                 return new Configuration({

@@ -3,34 +3,31 @@ import { Page } from "@playwright/test";
 const TEST_AUTH_HEADER = "X-E2E-User-GlobalID";
 
 /**
- * Intercepts all API calls made by the Angular app and injects the
- * X-E2E-User-GlobalID header. The request still goes to the real API —
- * we're just adding a header so the TestAuthHandler can identify the user.
- */
-async function injectTestAuthHeader(page: Page, globalID: string) {
-  await page.route("**/api/**", async (route) => {
-    const headers = {
-      ...route.request().headers(),
-      [TEST_AUTH_HEADER]: globalID,
-    };
-    await route.continue({ headers });
-  });
-}
-
-/**
  * Sets up test authentication for E2E tests.
  *
- * This injects the X-E2E-User-GlobalID header on all /api/ requests.
- * For endpoints marked [AllowAnonymous] on the backend, this is sufficient —
- * the request goes through and the header identifies the user.
+ * 1. Sets localStorage.__e2e_globalID via addInitScript() so the Angular app
+ *    detects e2e mode before it bootstraps. This causes:
+ *    - app.config.ts to give Auth0 an empty allowedList (no-op interceptor)
+ *    - AuthenticationService to call postUser() even without an Auth0 session
+ *    - e2eAuthInterceptor to add the X-E2E-User-GlobalID header to all requests
  *
- * For endpoints that require auth (e.g. [NormalUserFeature]), the Auth0
- * authHttpInterceptorFn must also let the request through. This requires
- * the Auth0 SDK to have a valid token. Without a real Auth0 session,
- * secured-only endpoints will not receive data.
+ * 2. Also intercepts /api/ routes at the Playwright level as a belt-and-suspenders
+ *    fallback for any requests that might bypass the Angular HTTP client.
  *
- * Call this in test.beforeEach() for tests that need an authenticated user.
+ * Call this in test.beforeEach() BEFORE any page.goto().
  */
 export async function setupTestAuth(page: Page, globalID: string) {
-  await injectTestAuthHeader(page, globalID);
+    // Set localStorage before Angular bootstraps
+    await page.addInitScript((id) => {
+        localStorage.setItem("__e2e_globalID", id);
+    }, globalID);
+
+    // Fallback: intercept API routes at the Playwright level
+    await page.route("**/api/**", async (route) => {
+        const headers = {
+            ...route.request().headers(),
+            [TEST_AUTH_HEADER]: globalID,
+        };
+        await route.continue({ headers });
+    });
 }

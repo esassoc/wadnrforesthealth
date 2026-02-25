@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("Homepage", () => {
   test("should load the homepage", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: "Welcome to the Home Page" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Project Map" })).toBeVisible();
   });
 
   test("should display the main navigation", async ({ page }) => {
