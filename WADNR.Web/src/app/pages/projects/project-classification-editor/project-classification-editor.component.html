@@ -1,64 +1,55 @@
 <div class="modal">
-<div class="modal-header">
-    <h3>Edit Classifications</h3>
-</div>
-<div class="modal-body" [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 200 }">
-    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+    <div class="modal-header">
+        <h3>Edit Project Themes</h3>
+    </div>
+    <div class="modal-body" [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 200 }">
+        <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
-    <p class="mb-3">
-        Select classifications for this project. You may optionally add notes for each classification.
-    </p>
+        <p class="mb-3">
+            Click the checkboxes below to associate this Project with one or more Project Themes.
+        </p>
 
-    @for (system of classificationSystems; track system.classificationSystemID) {
-        <div class="mb-4">
-            <h5>{{ system.classificationSystemName }}</h5>
-            @for (classification of system.classifications; track classification.classificationID) {
-                <div class="mb-2">
-                    <div class="form-check">
-                        <input
-                            class="form-check-input"
-                            type="checkbox"
-                            [(ngModel)]="classification.checked"
-                            [id]="'classification-' + classification.classificationID"
-                            [disabled]="isSubmitting">
-                        <label class="form-check-label" [for]="'classification-' + classification.classificationID">
-                            {{ classification.displayName }}
-                        </label>
-                    </div>
-                    @if (classification.checked) {
-                        <div class="ms-4 mt-1">
-                            <textarea
-                                class="form-control form-control-sm"
-                                rows="2"
-                                placeholder="Notes (optional)..."
-                                [(ngModel)]="classification.notes"
-                                [disabled]="isSubmitting">
-                            </textarea>
+        @for (system of classificationSystems; track system.ClassificationSystemID; let last = $last) {
+            <div class="classification-system-section">
+                @for (classification of system.Classifications; track classification.ClassificationID) {
+                    <div class="classification-row grid-12 mb-3">
+                        <div class="g-col-6">
+                            <label class="classification-label">
+                                <input type="checkbox"
+                                    [checked]="isSelected(classification.ClassificationID)"
+                                    (change)="toggleSelection(classification.ClassificationID)"
+                                    [disabled]="isSubmitting">
+                                <span class="classification-name">{{ classification.DisplayName }}</span>
+                            </label>
+                            @if (classification.ClassificationDescription) {
+                                <div class="classification-description"
+                                    [innerHTML]="classification.ClassificationDescription">
+                                </div>
+                            }
                         </div>
-                    }
-                </div>
+                        <div class="g-col-6">
+                            <form-field
+                                [formControl]="getNotesControl(classification.ClassificationID)"
+                                [type]="FormFieldType.Textarea"
+                                [placeholder]="'Select the ' + system.ClassificationSystemName + ' and describe how it applies to the Project.'">
+                            </form-field>
+                        </div>
+                    </div>
+                }
+            </div>
+            @if (!last) {
+                <hr>
             }
-        </div>
-    }
+        }
 
-    @if (classificationSystems.length === 0) {
-        <div class="alert alert-info">
-            <em>No classification systems are configured.</em>
-        </div>
-    }
-</div>
-<div class="modal-footer">
-    <button
-        class="btn btn-primary"
-        (click)="save()"
-        [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Saving...' : 'Save' }}
-    </button>
-    <button
-        class="btn btn-secondary"
-        (click)="cancel()"
-        [disabled]="isSubmitting">
-        Cancel
-    </button>
-</div>
+        @if (classificationSystems.length === 0) {
+            <div class="alert alert-info">
+                <em>No classification systems are configured.</em>
+            </div>
+        }
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="save()" [buttonLoading]="isSubmitting">Save</button>
+        <button class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
+    </div>
 </div>

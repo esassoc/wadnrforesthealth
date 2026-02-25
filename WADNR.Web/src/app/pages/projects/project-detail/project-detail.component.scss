@@ -246,6 +246,18 @@
     margin: 0;
 }
 
+.location-info {
+    > .list-unstyled,
+    > .grid-12,
+    > p:not(.text-muted) {
+        padding-left: 1rem;
+    }
+
+    > .text-muted {
+        padding-left: 1rem;
+    }
+}
+
 // Mobile responsive: collapse to single column
 @media (max-width: 992px) {
     .dashboard-layout {
@@ -255,6 +267,24 @@
     .toc-sidebar {
         display: none;
     }
+}
+
+.classification-row {
+    padding-top: 0.5rem;
+}
+
+a.classification-name {
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.classification-notes {
+    color: #6c757d;
+    margin-top: 0.25rem;
 }
 
 .tags-list {

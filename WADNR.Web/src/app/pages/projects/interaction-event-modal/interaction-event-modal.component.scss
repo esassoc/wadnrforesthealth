@@ -1,0 +1,23 @@
+.selected-items-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    .selected-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0;
+
+        a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+
+            &.disabled {
+                pointer-events: none;
+                opacity: 0.5;
+            }
+        }
+    }
+}

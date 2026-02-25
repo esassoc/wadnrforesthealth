@@ -23,6 +23,20 @@ export class PopperDirective {
                     },
                 },
             },
+            {
+                name: "flip",
+                options: {
+                    fallbackPlacements: ["bottom", "right", "left"],
+                    boundary: "viewport",
+                },
+            },
+            {
+                name: "preventOverflow",
+                options: {
+                    boundary: "viewport",
+                    padding: 8,
+                },
+            },
         ],
     };
     @HostListener("click", ["$event"]) onClick(event) {

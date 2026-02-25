@@ -10,7 +10,7 @@
             <div class="g-col-6">
                 <form-field
                     [formControl]="form.controls.TreatmentTypeID"
-                    fieldLabel="Treatment Type"
+                    fieldDefinitionName="TreatmentType"
                     [type]="FormFieldType.Select"
                     [formInputOptions]="treatmentTypeOptions"
                     placeholder="Select treatment type">
@@ -19,7 +19,8 @@
             <div class="g-col-6">
                 <form-field
                     [formControl]="form.controls.TreatmentDetailedActivityTypeID"
-                    fieldLabel="Detailed Activity Type"
+                    fieldDefinitionName="TreatmentDetailedActivityType"
+                    fieldDefinitionLabelOverride="Detailed Activity Type"
                     [type]="FormFieldType.Select"
                     [formInputOptions]="treatmentDetailedActivityTypeOptions"
                     placeholder="Select activity type">
@@ -40,7 +41,7 @@
             <div class="g-col-6">
                 <form-field
                     [formControl]="form.controls.TreatmentCodeID"
-                    fieldLabel="Treatment Code"
+                    fieldDefinitionName="TreatmentCode"
                     [type]="FormFieldType.Select"
                     [formInputOptions]="treatmentCodeOptions"
                     placeholder="Select treatment code (optional)">
@@ -52,14 +53,16 @@
             <div class="g-col-6">
                 <form-field
                     [formControl]="form.controls.TreatmentStartDate"
-                    fieldLabel="Start Date"
+                    fieldDefinitionName="TreatmentStartDate"
+                    fieldDefinitionLabelOverride="Start Date"
                     [type]="FormFieldType.Date">
                 </form-field>
             </div>
             <div class="g-col-6">
                 <form-field
                     [formControl]="form.controls.TreatmentEndDate"
-                    fieldLabel="End Date"
+                    fieldDefinitionName="TreatmentEndDate"
+                    fieldDefinitionLabelOverride="End Date"
                     [type]="FormFieldType.Date">
                 </form-field>
             </div>
@@ -69,7 +72,7 @@
             <div class="g-col-4">
                 <form-field
                     [formControl]="form.controls.TreatmentFootprintAcres"
-                    fieldLabel="Footprint Acres"
+                    fieldDefinitionName="FootprintAcres"
                     [type]="FormFieldType.Number"
                     placeholder="0.00">
                 </form-field>
@@ -77,7 +80,7 @@
             <div class="g-col-4">
                 <form-field
                     [formControl]="form.controls.TreatmentTreatedAcres"
-                    fieldLabel="Treated Acres"
+                    fieldDefinitionName="TreatedAcres"
                     [type]="FormFieldType.Number"
                     placeholder="0.00 (optional)">
                 </form-field>
@@ -85,9 +88,9 @@
             <div class="g-col-4">
                 <form-field
                     [formControl]="form.controls.CostPerAcre"
-                    fieldLabel="Cost Per Acre"
-                    [type]="FormFieldType.Number"
-                    placeholder="0.00 (optional)">
+                    fieldDefinitionName="TreatmentCostPerAcre"
+                    fieldDefinitionLabelOverride="Cost Per Acre"
+                    [type]="FormFieldType.Currency">
                 </form-field>
             </div>
         </div>
@@ -104,8 +107,9 @@
     <button
         class="btn btn-primary"
         (click)="save()"
-        [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Saving...' : 'Save' }}
+        [disabled]="isSubmitting"
+        [buttonLoading]="isSubmitting">
+        Save
     </button>
     <button
         class="btn btn-secondary"

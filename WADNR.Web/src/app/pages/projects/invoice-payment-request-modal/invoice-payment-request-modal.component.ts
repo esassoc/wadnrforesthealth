@@ -7,8 +7,10 @@ import { debounceTime, distinctUntilChanged, switchMap, map, catchError } from "
 import { NgSelectModule } from "@ng-select/ng-select";
 
 import { FormFieldComponent, FormFieldType, SelectDropdownOption } from "src/app/shared/components/forms/form-field/form-field.component";
+import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 
@@ -30,7 +32,7 @@ export interface InvoicePaymentRequestModalData {
 @Component({
     selector: "invoice-payment-request-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, AsyncPipe, FormFieldComponent, ModalAlertsComponent, NgSelectModule],
+    imports: [ReactiveFormsModule, AsyncPipe, FormFieldComponent, FieldDefinitionComponent, ModalAlertsComponent, ButtonLoadingDirective, NgSelectModule],
     templateUrl: "./invoice-payment-request-modal.component.html",
     styleUrls: ["./invoice-payment-request-modal.component.scss"]
 })

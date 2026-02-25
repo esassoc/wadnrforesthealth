@@ -3,6 +3,7 @@ import { FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
 
 import { FormFieldComponent, FormFieldType, SelectDropdownOption } from "src/app/shared/components/forms/form-field/form-field.component";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { AlertService } from "src/app/shared/services/alert.service";
@@ -30,7 +31,7 @@ export interface TreatmentModalData {
 @Component({
     selector: "treatment-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent],
+    imports: [ReactiveFormsModule, FormFieldComponent, ButtonLoadingDirective, ModalAlertsComponent],
     templateUrl: "./treatment-modal.component.html",
     styleUrls: ["./treatment-modal.component.scss"]
 })

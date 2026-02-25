@@ -12,7 +12,6 @@ import { ProjectUpdateTreatmentsStep } from "src/app/shared/generated/model/proj
 import { TreatmentUpdateItem } from "src/app/shared/generated/model/treatment-update-item";
 import { TreatmentAreaUpdateLookupItem } from "src/app/shared/generated/model/treatment-area-update-lookup-item";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
-import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { UpdateTreatmentModalComponent, UpdateTreatmentModalData } from "./update-treatment-modal.component";
@@ -27,15 +26,9 @@ interface TreatmentsViewModel {
 @Component({
     selector: "update-treatments-step",
     standalone: true,
-    imports: [
-        CommonModule,
-        AsyncPipe,
-        WADNRGridComponent,
-        IconComponent,
-        WorkflowStepActionsComponent
-    ],
+    imports: [CommonModule, AsyncPipe, WADNRGridComponent, WorkflowStepActionsComponent],
     templateUrl: "./update-treatments-step.component.html",
-    styleUrls: ["./update-treatments-step.component.scss"]
+    styleUrls: ["./update-treatments-step.component.scss"],
 })
 export class UpdateTreatmentsStepComponent extends UpdateWorkflowStepBase implements OnInit {
     readonly nextStep = "contacts";
@@ -61,17 +54,13 @@ export class UpdateTreatmentsStepComponent extends UpdateWorkflowStepBase implem
         this.vm$ = this.stepRefresh$.pipe(
             switchMap((id) => {
                 return combineLatest({
-                    data: this.projectService.getUpdateTreatmentsStepProject(id).pipe(
-                        catchError(() => of(null))
-                    ),
-                    treatmentAreas: this.projectService.listUpdateTreatmentAreasProject(id).pipe(
-                        catchError(() => of([] as TreatmentAreaUpdateLookupItem[]))
-                    )
+                    data: this.projectService.getUpdateTreatmentsStepProject(id).pipe(catchError(() => of(null))),
+                    treatmentAreas: this.projectService.listUpdateTreatmentAreasProject(id).pipe(catchError(() => of([] as TreatmentAreaUpdateLookupItem[]))),
                 }).pipe(
-                    map(result => ({
+                    map((result) => ({
                         data: result.data,
                         treatments: result.data?.Treatments ?? [],
-                        treatmentAreas: result.treatmentAreas
+                        treatmentAreas: result.treatmentAreas,
                     }))
                 );
             }),
@@ -79,13 +68,13 @@ export class UpdateTreatmentsStepComponent extends UpdateWorkflowStepBase implem
                 this.alertService.pushAlert(new Alert("Failed to load treatments data.", AlertContext.Danger, true));
                 return of({ data: null, treatments: [] as TreatmentUpdateItem[], treatmentAreas: [] as TreatmentAreaUpdateLookupItem[] });
             }),
-            map(data => {
+            map((data) => {
                 this.currentTreatmentAreas = data.treatmentAreas;
                 return {
                     isLoading: false,
                     data: data.data,
                     treatments: data.treatments,
-                    treatmentAreas: data.treatmentAreas
+                    treatmentAreas: data.treatmentAreas,
                 };
             }),
             startWith({ isLoading: true, data: null, treatments: [], treatmentAreas: [] } as TreatmentsViewModel),
@@ -120,7 +109,7 @@ export class UpdateTreatmentsStepComponent extends UpdateWorkflowStepBase implem
                     if (editBtn) {
                         this.openEditTreatmentModal(treatment);
                     }
-                }
+                },
             },
             { headerName: "Treatment Area", field: "ProjectLocationName", flex: 1, minWidth: 120 },
             { headerName: "Type", field: "TreatmentTypeName", flex: 1, minWidth: 100 },
@@ -131,102 +120,106 @@ export class UpdateTreatmentsStepComponent extends UpdateWorkflowStepBase implem
                 field: "TreatmentStartDate",
                 flex: 1,
                 minWidth: 100,
-                valueFormatter: (params) => this.formatDate(params.value)
+                valueFormatter: (params) => this.formatDate(params.value),
             },
             {
                 headerName: "End Date",
                 field: "TreatmentEndDate",
                 flex: 1,
                 minWidth: 100,
-                valueFormatter: (params) => this.formatDate(params.value)
+                valueFormatter: (params) => this.formatDate(params.value),
             },
             {
                 headerName: "Footprint (Acres)",
                 field: "TreatmentFootprintAcres",
                 flex: 1,
                 minWidth: 100,
-                valueFormatter: (params) => params.value?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? ""
+                valueFormatter: (params) => params.value?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? "",
             },
             {
                 headerName: "Treated (Acres)",
                 field: "TreatmentTreatedAcres",
                 flex: 1,
                 minWidth: 100,
-                valueFormatter: (params) => params.value?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? ""
+                valueFormatter: (params) => params.value?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? "",
             },
             {
                 headerName: "Cost/Acre",
                 field: "CostPerAcre",
                 flex: 1,
                 minWidth: 80,
-                valueFormatter: (params) => params.value != null ? `$${params.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ""
+                valueFormatter: (params) => (params.value != null ? `$${params.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ""),
             },
             {
                 headerName: "Total Cost",
                 field: "TotalCost",
                 flex: 1,
                 minWidth: 80,
-                valueFormatter: (params) => params.value != null ? `$${params.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ""
+                valueFormatter: (params) => (params.value != null ? `$${params.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ""),
             },
-            { headerName: "Program", field: "ProgramName", flex: 1, minWidth: 100 }
+            { headerName: "Program", field: "ProgramName", flex: 1, minWidth: 100 },
         ];
     }
 
     openAddTreatmentModal(treatmentAreas: TreatmentAreaUpdateLookupItem[]): void {
-        this.stepRefresh$.pipe(
-            filter((id): id is number => id != null),
-            take(1)
-        ).subscribe(projectID => {
-            const dialogRef = this.dialogService.open(UpdateTreatmentModalComponent, {
-                data: {
-                    mode: "create",
-                    projectID,
-                    treatmentAreas
-                } as UpdateTreatmentModalData,
-                width: "700px"
-            });
+        this.stepRefresh$
+            .pipe(
+                filter((id): id is number => id != null),
+                take(1)
+            )
+            .subscribe((projectID) => {
+                const dialogRef = this.dialogService.open(UpdateTreatmentModalComponent, {
+                    data: {
+                        mode: "create",
+                        projectID,
+                        treatmentAreas,
+                    } as UpdateTreatmentModalData,
+                    width: "700px",
+                });
 
-            dialogRef.afterClosed$.subscribe(result => {
-                if (result) {
-                    this.refreshStepData$.next();
-                    this.workflowProgressService.triggerRefresh();
-                }
+                dialogRef.afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refreshStepData$.next();
+                        this.workflowProgressService.triggerRefresh();
+                    }
+                });
             });
-        });
     }
 
     openEditTreatmentModal(treatment: TreatmentUpdateItem): void {
         if (!treatment.TreatmentUpdateID) return;
 
-        this.stepRefresh$.pipe(
-            filter((id): id is number => id != null),
-            take(1)
-        ).subscribe(projectID => {
-            this.projectService.getTreatmentUpdateProject(projectID, treatment.TreatmentUpdateID).subscribe({
-                next: (treatmentDetail) => {
-                    const dialogRef = this.dialogService.open(UpdateTreatmentModalComponent, {
-                        data: {
-                            mode: "edit",
-                            projectID,
-                            treatment: treatmentDetail,
-                            treatmentAreas: this.currentTreatmentAreas
-                        } as UpdateTreatmentModalData,
-                        width: "700px"
-                    });
+        this.stepRefresh$
+            .pipe(
+                filter((id): id is number => id != null),
+                take(1)
+            )
+            .subscribe((projectID) => {
+                this.projectService.getTreatmentUpdateProject(projectID, treatment.TreatmentUpdateID).subscribe({
+                    next: (treatmentDetail) => {
+                        const dialogRef = this.dialogService.open(UpdateTreatmentModalComponent, {
+                            data: {
+                                mode: "edit",
+                                projectID,
+                                treatment: treatmentDetail,
+                                treatmentAreas: this.currentTreatmentAreas,
+                            } as UpdateTreatmentModalData,
+                            width: "700px",
+                        });
 
-                    dialogRef.afterClosed$.subscribe(result => {
-                        if (result) {
-                            this.refreshStepData$.next();
-                            this.workflowProgressService.triggerRefresh();
-                        }
-                    });
-                },
-                error: (err) => {
-                    const message = err?.error ?? err?.message ?? "Failed to load treatment details.";
-                    this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
-                }
+                        dialogRef.afterClosed$.subscribe((result) => {
+                            if (result) {
+                                this.refreshStepData$.next();
+                                this.workflowProgressService.triggerRefresh();
+                            }
+                        });
+                    },
+                    error: (err) => {
+                        const message = err?.error ?? err?.message ?? "Failed to load treatment details.";
+                        this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                    },
+                });
             });
-        });
     }
 
     private formatDate(dateString: string | null | undefined): string {

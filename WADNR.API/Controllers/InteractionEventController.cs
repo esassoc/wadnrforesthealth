@@ -1,8 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
@@ -15,11 +19,12 @@ using WADNR.Models.DataTransferObjects.FileResource;
 namespace WADNR.API.Controllers;
 
 [ApiController]
-[Route("interaction-events")]
+[Route("interactions-events")]
 public class InteractionEventController(
     WADNRDbContext dbContext,
     ILogger<InteractionEventController> logger,
-    IOptions<WADNRConfiguration> configuration)
+    IOptions<WADNRConfiguration> configuration,
+    FileService fileService)
     : SitkaController<InteractionEventController>(dbContext, logger, configuration)
 {
     [HttpGet]
@@ -115,5 +120,58 @@ public class InteractionEventController(
     {
         var resources = await FileResources.ListForInteractionEventIDAsync(DbContext, interactionEventID);
         return Ok(resources);
+    }
+
+    private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".pdf", ".zip", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".jpg", ".jpeg", ".png"
+    };
+
+    [HttpPost("{interactionEventID}/file-resources")]
+    [ProjectEditFeature]
+    [Consumes("multipart/form-data")]
+    [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
+    public async Task<ActionResult<FileResourceInteractionEventDetail>> CreateFileResource(
+        [FromRoute] int interactionEventID,
+        [FromForm] string displayName,
+        [FromForm] string? description,
+        IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest("File is required.");
+        }
+
+        var extension = Path.GetExtension(file.FileName);
+        if (string.IsNullOrEmpty(extension) || !AllowedExtensions.Contains(extension))
+        {
+            return BadRequest($"Invalid file type. Allowed types: {string.Join(", ", AllowedExtensions)}");
+        }
+
+        if (string.IsNullOrWhiteSpace(displayName) || displayName.Length > 200)
+        {
+            return BadRequest("Display name is required and must be 200 characters or less.");
+        }
+
+        if (description?.Length > 1000)
+        {
+            return BadRequest("Description must be 1000 characters or less.");
+        }
+
+        var fileResource = await fileService.CreateFileResource(DbContext, file, CallingUser.PersonID);
+
+        var interactionEventFileResource = new InteractionEventFileResource
+        {
+            InteractionEventID = interactionEventID,
+            FileResourceID = fileResource.FileResourceID,
+            DisplayName = displayName,
+            Description = description
+        };
+        DbContext.InteractionEventFileResources.Add(interactionEventFileResource);
+        await DbContext.SaveChangesAsync();
+
+        var detail = await FileResources.ListForInteractionEventIDAsync(DbContext, interactionEventID);
+        var created = detail.FirstOrDefault(x => x.FileResourceID == fileResource.FileResourceID);
+        return Ok(created);
     }
 }

@@ -1,6 +1,6 @@
 @if (params && !params.hidden) {
   <div class="menu-container">
-    <a class="btn btn-primary-outline btn-small" id="menu-dropdown" [dropdownToggle]="contextMenu">
+    <a class="btn btn-primary-outline btn-small" id="menu-dropdown" [dropdownToggle]="contextMenu" [dropdownToggleFixed]="true">
       {{ params.title }}
       <icon icon="CaretDown"></icon>
     </a>

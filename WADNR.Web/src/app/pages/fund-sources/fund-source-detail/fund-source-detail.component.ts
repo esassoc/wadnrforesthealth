@@ -1,13 +1,14 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { BehaviorSubject, distinctUntilChanged, filter, Observable, shareReplay, switchMap } from "rxjs";
+import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, shareReplay, switchMap } from "rxjs";
 import { ColDef } from "ag-grid-community";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { AuthenticationService } from "src/app/services/authentication.service";
 
 import { FundSourceService } from "src/app/shared/generated/api/fund-source.service";
 import { FundSourceDetail } from "src/app/shared/generated/model/fund-source-detail";
@@ -48,16 +49,23 @@ export class FundSourceDetailComponent {
     public noteColumnDefs: ColDef<FundSourceNoteGridRow>[] = [];
     public internalNoteColumnDefs: ColDef<FundSourceNoteInternalGridRow>[] = [];
 
-    // TODO: Replace with actual authentication check when auth is implemented
-    public isUserLoggedIn: boolean = true;
-    public canViewInternalNotes: boolean = true;
+    public isUserLoggedIn$: Observable<boolean>;
+    public canManageFundSources$: Observable<boolean>;
 
     constructor(
         private fundSourceService: FundSourceService,
-        private utilityFunctions: UtilityFunctionsService
+        private utilityFunctions: UtilityFunctionsService,
+        private authService: AuthenticationService,
     ) {}
 
     ngOnInit(): void {
+        this.isUserLoggedIn$ = this.authService.currentUserSetObservable.pipe(
+            map((user) => user != null),
+        );
+        this.canManageFundSources$ = this.authService.currentUserSetObservable.pipe(
+            map((user) => this.authService.canManageFundSources(user)),
+        );
+
         this.fundSourceID$ = this._fundSourceID$.pipe(
             filter((id): id is number => id != null && !Number.isNaN(id)),
             distinctUntilChanged(),

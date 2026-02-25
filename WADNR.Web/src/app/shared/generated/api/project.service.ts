@@ -17,8 +17,6 @@ import { Observable }                                        from 'rxjs';
 // @ts-ignore
 import { AddToBlockListRequest } from '../model/add-to-block-list-request';
 // @ts-ignore
-import { ClassificationLookupItem } from '../model/classification-lookup-item';
-// @ts-ignore
 import { CreateWorkflowProgressResponse } from '../model/create-workflow-progress-response';
 // @ts-ignore
 import { ExpectedFundingStep } from '../model/expected-funding-step';
@@ -106,6 +104,8 @@ import { ProjectImageGridRow } from '../model/project-image-grid-row';
 import { ProjectImageUpsertRequest } from '../model/project-image-upsert-request';
 // @ts-ignore
 import { ProjectInternalNoteGridRow } from '../model/project-internal-note-grid-row';
+// @ts-ignore
+import { ProjectLookupItem } from '../model/project-lookup-item';
 // @ts-ignore
 import { ProjectMapPopup } from '../model/project-map-popup';
 // @ts-ignore
@@ -3710,9 +3710,9 @@ export class ProjectService extends BaseService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listClassificationsProject(projectID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ClassificationLookupItem>>;
-    public listClassificationsProject(projectID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ClassificationLookupItem>>>;
-    public listClassificationsProject(projectID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ClassificationLookupItem>>>;
+    public listClassificationsProject(projectID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ProjectClassificationDetailItem>>;
+    public listClassificationsProject(projectID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ProjectClassificationDetailItem>>>;
+    public listClassificationsProject(projectID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ProjectClassificationDetailItem>>>;
     public listClassificationsProject(projectID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectID === null || projectID === undefined) {
             throw new Error('Required parameter projectID was null or undefined when calling listClassificationsProject.');
@@ -3747,7 +3747,7 @@ export class ProjectService extends BaseService {
 
         let localVarPath = `/projects/${this.configuration.encodeParam({name: "projectID", value: projectID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/classifications`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Array<ClassificationLookupItem>>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<Array<ProjectClassificationDetailItem>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -4239,6 +4239,57 @@ export class ProjectService extends BaseService {
         let localVarPath = `/projects/${this.configuration.encodeParam({name: "projectID", value: projectID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/locations/generic-layers`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Array<GenericLayer>>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public listLookupProject(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ProjectLookupItem>>;
+    public listLookupProject(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ProjectLookupItem>>>;
+    public listLookupProject(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ProjectLookupItem>>>;
+    public listLookupProject(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/projects/lookup`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<ProjectLookupItem>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

@@ -159,10 +159,24 @@ public static class ProjectProjections
 
         // Location
         HasLocationData = x.ProjectLocationPoint != null || x.ProjectLocations.Any(),
+        Latitude = x.ProjectLocationPoint != null ? x.ProjectLocationPoint.Coordinate.Y : (double?)null,
+        Longitude = x.ProjectLocationPoint != null ? x.ProjectLocationPoint.Coordinate.X : (double?)null,
         ProjectLocationNotes = x.ProjectLocationNotes,
-        Counties = x.ProjectCounties.Select(pc => pc.County.CountyName).ToList(),
-        Regions = x.ProjectRegions.Select(pr => pr.DNRUplandRegion.DNRUplandRegionName).ToList(),
-        PriorityLandscapes = x.ProjectPriorityLandscapes.Select(ppl => ppl.PriorityLandscape.PriorityLandscapeName).ToList()
+        Counties = x.ProjectCounties.Select(pc => new CountyLookupItem
+        {
+            CountyID = pc.County.CountyID,
+            CountyName = pc.County.CountyName
+        }).ToList(),
+        Regions = x.ProjectRegions.Select(pr => new DNRUplandRegionLookupItem
+        {
+            DNRUplandRegionID = pr.DNRUplandRegion.DNRUplandRegionID,
+            DNRUplandRegionName = pr.DNRUplandRegion.DNRUplandRegionName
+        }).ToList(),
+        PriorityLandscapes = x.ProjectPriorityLandscapes.Select(ppl => new PriorityLandscapeLookupItem
+        {
+            PriorityLandscapeID = ppl.PriorityLandscape.PriorityLandscapeID,
+            PriorityLandscapeName = ppl.PriorityLandscape.PriorityLandscapeName
+        }).ToList()
     };
 
     public static readonly Expression<Func<Project, ProjectMapPopup>> AsMapPopup = x => new ProjectMapPopup

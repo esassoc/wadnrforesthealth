@@ -2,7 +2,7 @@ import { Component, ViewContainerRef } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { Router } from "@angular/router";
 import { ColDef, GridApi, GridReadyEvent, SelectionChangedEvent } from "ag-grid-community";
-import { Observable } from "rxjs";
+import { map, Observable } from "rxjs";
 import { DialogService } from "@ngneat/dialog";
 
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -13,6 +13,7 @@ import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 
+import { AuthenticationService } from "src/app/services/authentication.service";
 import { FundSourceService } from "src/app/shared/generated/api/fund-source.service";
 import { FundSourceAllocationService } from "src/app/shared/generated/api/fund-source-allocation.service";
 import { FundSourceGridRow } from "src/app/shared/generated/model/fund-source-grid-row";
@@ -29,6 +30,7 @@ export class FundSourcesComponent {
     public fundSources$: Observable<FundSourceGridRow[]>;
     public columnDefs: ColDef[];
     public customRichTextTypeID = FirmaPageTypeEnum.FullFundSourceList;
+    public canManage$: Observable<boolean>;
 
     public allAllocations: FundSourceAllocationGridRow[] = [];
     public allocationColumnDefs: ColDef[];
@@ -43,11 +45,16 @@ export class FundSourcesComponent {
         private dialogService: DialogService,
         private alertService: AlertService,
         private confirmService: ConfirmService,
+        private authService: AuthenticationService,
         private viewContainerRef: ViewContainerRef,
         private router: Router,
     ) {}
 
     ngOnInit(): void {
+        this.canManage$ = this.authService.currentUserSetObservable.pipe(
+            map((user) => this.authService.canManageFundSources(user)),
+        );
+
         this.columnDefs = [
             this.utilityFunctions.createLinkColumnDef("Fund Source Number", "FundSourceNumber", "FundSourceID", {
                 FieldDefinitionType: "FundSourceNumber",
@@ -80,45 +87,57 @@ export class FundSourcesComponent {
             }),
         ];
 
-        this.allocationColumnDefs = [
-            this.utilityFunctions.createActionsColumnDef((params) => {
-                const row = params.data as FundSourceAllocationGridRow;
-                return [
-                    { ActionName: "Duplicate", ActionHandler: () => this.duplicateAllocation(row), ActionIcon: "fa fa-copy" },
-                    { ActionName: "Delete", ActionHandler: () => this.confirmDeleteAllocation(row), ActionIcon: "fa fa-trash" },
-                ];
-            }),
-            this.utilityFunctions.createLinkColumnDef("Fund Source Number", "FundSourceNumber", "FundSourceID", {
-                InRouterLink: "/fund-sources/",
-            }),
-            this.utilityFunctions.createLinkColumnDef("Allocation Name", "FundSourceAllocationName", "FundSourceAllocationID", {
-                InRouterLink: "/fund-source-allocations/",
-            }),
-            this.utilityFunctions.createCurrencyColumnDef("Allocation Amount", "AllocationAmount", {
-                MaxDecimalPlacesToDisplay: 2,
-            }),
-            this.utilityFunctions.createBasicColumnDef("Fund Source Manager", "FundSourceManagerName"),
-            this.utilityFunctions.createBasicColumnDef("Program Managers", "ProgramManagerNames"),
-            this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy"),
-            this.utilityFunctions.createDateColumnDef("End Date", "EndDate", "M/d/yyyy"),
-            this.utilityFunctions.createBasicColumnDef("Parent FS Status", "FundSourceStatusName", {
-                CustomDropdownFilterField: "FundSourceStatusName",
-            }),
-            this.utilityFunctions.createBasicColumnDef("Division", "DivisionName", {
-                CustomDropdownFilterField: "DivisionName",
-            }),
-            this.utilityFunctions.createBasicColumnDef("DNR Upland Region", "DNRUplandRegionName", {
-                CustomDropdownFilterField: "DNRUplandRegionName",
-            }),
-            this.utilityFunctions.createBasicColumnDef("Federal Fund Code", "FederalFundCodeAbbrev", {
-                CustomDropdownFilterField: "FederalFundCodeAbbrev",
-            }),
-            this.utilityFunctions.createBasicColumnDef("PI/PC Pairs", "ProgramIndexProjectCodeDisplay"),
-            this.utilityFunctions.createBasicColumnDef("Organization", "OrganizationName"),
-        ];
+        this.initAllocationColumnDefs();
 
         this.fundSources$ = this.fundSourceService.listFundSource();
         this.loadAllocations();
+    }
+
+    private initAllocationColumnDefs(): void {
+        this.authService.currentUserSetObservable.pipe(
+            map((user) => this.authService.canManageFundSources(user)),
+        ).subscribe((canManage) => {
+            const actionsColumn = canManage
+                ? [this.utilityFunctions.createActionsColumnDef((params) => {
+                    const row = params.data as FundSourceAllocationGridRow;
+                    return [
+                        { ActionName: "Duplicate", ActionHandler: () => this.duplicateAllocation(row), ActionIcon: "fa fa-copy" },
+                        { ActionName: "Delete", ActionHandler: () => this.confirmDeleteAllocation(row), ActionIcon: "fa fa-trash" },
+                    ];
+                })]
+                : [];
+
+            this.allocationColumnDefs = [
+                ...actionsColumn,
+                this.utilityFunctions.createLinkColumnDef("Fund Source Number", "FundSourceNumber", "FundSourceID", {
+                    InRouterLink: "/fund-sources/",
+                }),
+                this.utilityFunctions.createLinkColumnDef("Allocation Name", "FundSourceAllocationName", "FundSourceAllocationID", {
+                    InRouterLink: "/fund-source-allocations/",
+                }),
+                this.utilityFunctions.createCurrencyColumnDef("Allocation Amount", "AllocationAmount", {
+                    MaxDecimalPlacesToDisplay: 2,
+                }),
+                this.utilityFunctions.createBasicColumnDef("Fund Source Manager", "FundSourceManagerName"),
+                this.utilityFunctions.createBasicColumnDef("Program Managers", "ProgramManagerNames"),
+                this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy"),
+                this.utilityFunctions.createDateColumnDef("End Date", "EndDate", "M/d/yyyy"),
+                this.utilityFunctions.createBasicColumnDef("Parent FS Status", "FundSourceStatusName", {
+                    CustomDropdownFilterField: "FundSourceStatusName",
+                }),
+                this.utilityFunctions.createBasicColumnDef("Division", "DivisionName", {
+                    CustomDropdownFilterField: "DivisionName",
+                }),
+                this.utilityFunctions.createBasicColumnDef("DNR Upland Region", "DNRUplandRegionName", {
+                    CustomDropdownFilterField: "DNRUplandRegionName",
+                }),
+                this.utilityFunctions.createBasicColumnDef("Federal Fund Code", "FederalFundCodeAbbrev", {
+                    CustomDropdownFilterField: "FederalFundCodeAbbrev",
+                }),
+                this.utilityFunctions.createBasicColumnDef("PI/PC Pairs", "ProgramIndexProjectCodeDisplay"),
+                this.utilityFunctions.createBasicColumnDef("Organization", "OrganizationName"),
+            ];
+        });
     }
 
     public allocationGridTitle = "Fund Source Allocations";

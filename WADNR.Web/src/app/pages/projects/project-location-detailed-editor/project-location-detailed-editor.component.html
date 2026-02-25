@@ -1,17 +1,9 @@
 <div class="modal">
-@if (isLoading$ | async) {
-    <div class="modal-header">
-        <h4 class="modal-title">Edit Detailed Location</h4>
-    </div>
-    <div class="modal-body">
-        <div class="text-center p-4">Loading...</div>
-    </div>
-} @else {
     @if ({ visible: visibleFeatures$ | async, deleted: deletedFeatures$ | async, _sel: selectedFeatureId$ | async }; as state) {
     <div class="modal-header">
         <h4 class="modal-title">Edit Detailed Location</h4>
     </div>
-    <div class="modal-body">
+    <div class="modal-body" [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 300 }">
         <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
         <p class="mb-3">
@@ -28,7 +20,7 @@
         <!-- Map -->
         <div class="map-container mb-3">
             <wadnr-map [mapHeight]="'400px'" [boundingBox]="ref.data.boundingBox" (onMapLoad)="handleMapLoad($event)">
-                @if (mapIsReady) {
+                @if (mapIsReady()) {
                     <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
                     <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
                         [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"
@@ -154,10 +146,7 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
-        <button type="button" class="btn btn-primary" (click)="save()" [disabled]="isSubmitting">
-            {{ isSubmitting ? "Saving..." : "Save" }}
-        </button>
+        <button type="button" class="btn btn-primary" (click)="save()" [disabled]="isSubmitting" [buttonLoading]="isSubmitting">Save</button>
     </div>
     }
-}
 </div>

@@ -46,11 +46,6 @@ export class PersonDetail {
     AssignedPrograms?: Array<ProgramLookupItem> | null;
     Authenticators?: Array<string> | null;
     IsFullUser?: boolean;
-    readonly IsAnonymousOrUnassigned?: boolean;
-    readonly CanViewPendingProjects?: boolean;
-    readonly HasElevatedProjectAccess?: boolean;
-    readonly HasCanEditProgramRole?: boolean;
-    readonly CanViewAdminLimitedProjects?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -89,11 +84,6 @@ export interface PersonDetailForm {
     AssignedPrograms?: FormControl<Array<ProgramLookupItem>>;
     Authenticators?: FormControl<Array<string>>;
     IsFullUser?: FormControl<boolean>;
-    IsAnonymousOrUnassigned?: FormControl<boolean>;
-    CanViewPendingProjects?: FormControl<boolean>;
-    HasElevatedProjectAccess?: FormControl<boolean>;
-    HasCanEditProgramRole?: FormControl<boolean>;
-    CanViewAdminLimitedProjects?: FormControl<boolean>;
 }
 
 export class PersonDetailFormControls { 
@@ -408,56 +398,6 @@ export class PersonDetailFormControls {
         }
     );
     public static IsFullUser = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static IsAnonymousOrUnassigned = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static CanViewPendingProjects = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static HasElevatedProjectAccess = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static HasCanEditProgramRole = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static CanViewAdminLimitedProjects = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

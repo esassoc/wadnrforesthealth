@@ -7,4 +7,6 @@ public class InteractionEventUpsertRequest
     public string InteractionEventTitle { get; set; } = string.Empty;
     public string? InteractionEventDescription { get; set; }
     public DateTime InteractionEventDate { get; set; }
+    public List<int>? ProjectIDs { get; set; }
+    public List<int>? ContactIDs { get; set; }
 }

@@ -1,11 +1,13 @@
 import { AsyncPipe, DatePipe } from "@angular/common";
 import { Component, Input, OnDestroy, signal } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, fromEvent, Observable, shareReplay, skip, startWith, Subject, Subscription, switchMap, take } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, fromEvent, Observable, of, shareReplay, skip, startWith, Subject, Subscription, switchMap, take } from "rxjs";
 import { debounceTime, map } from "rxjs/operators";
 import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap } from "leaflet";
 import { DialogService } from "@ngneat/dialog";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 interface TocSection {
     id: string;
@@ -17,6 +19,16 @@ interface TocSection {
 interface TocChild {
     id: string;
     label: string;
+}
+
+interface ProjectPermissions {
+    userCanEdit: boolean;
+    userCanDirectEdit: boolean;
+    userCanDelete: boolean;
+    userCanApprove: boolean;
+    userIsAdmin: boolean;
+    userCanViewCostSharePDFs: boolean;
+    canStartUpdate: boolean;
 }
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
@@ -34,7 +46,12 @@ import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { GenericLayer } from "src/app/shared/generated/model/generic-layer";
 
+import { AuthenticationService } from "src/app/services/authentication.service";
+import { PersonDetail } from "src/app/shared/generated/model/person-detail";
+import { CostShareService } from "src/app/shared/generated/api/cost-share.service";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
+import { InteractionEventService } from "src/app/shared/generated/api/interaction-event.service";
+import { TreatmentService } from "src/app/shared/generated/api/treatment.service";
 import { ProjectDocumentService } from "src/app/shared/generated/api/project-document.service";
 import { ProjectNoteService } from "src/app/shared/generated/api/project-note.service";
 import { ProjectInternalNoteService } from "src/app/shared/generated/api/project-internal-note.service";
@@ -50,12 +67,13 @@ import { ProjectDetail } from "src/app/shared/generated/model/project-detail";
 import { BoundingBoxDto } from "src/app/shared/models/bounding-box-dto";
 import { ProjectApprovalStatusEnum } from "src/app/shared/generated/enum/project-approval-status-enum";
 import { ProjectUpdateStateEnum } from "src/app/shared/generated/enum/project-update-state-enum";
+import { TreatmentDetailedActivityTypes } from "src/app/shared/generated/enum/treatment-detailed-activity-type-enum";
 import { ProjectOrganizationItem } from "src/app/shared/generated/model/project-organization-item";
 import { ProjectPersonItem } from "src/app/shared/generated/model/project-person-item";
 import { FundSourceAllocationRequestItem } from "src/app/shared/generated/model/fund-source-allocation-request-item";
 import { TreatmentGridRow } from "src/app/shared/generated/model/treatment-grid-row";
 import { InteractionEventGridRow } from "src/app/shared/generated/model/interaction-event-grid-row";
-import { ClassificationLookupItem } from "src/app/shared/generated/model/classification-lookup-item";
+import { ProjectClassificationDetailItem } from "src/app/shared/generated/model/project-classification-detail-item";
 import { ProjectImageGridRow } from "src/app/shared/generated/model/project-image-grid-row";
 import { ProjectImageTimingLookupItem } from "src/app/shared/generated/model/project-image-timing-lookup-item";
 import { ProjectDocumentGridRow } from "src/app/shared/generated/model/project-document-grid-row";
@@ -79,6 +97,8 @@ import { ProjectNoteModalComponent, ProjectNoteModalData } from "../project-note
 import { ProjectImageModalComponent, ProjectImageModalData } from "../project-image-modal/project-image-modal.component";
 import { BlockListModalComponent, BlockListModalData } from "./block-list-modal/block-list-modal.component";
 import { AsyncConfirmModalComponent, AsyncConfirmModalData } from "src/app/shared/components/async-confirm-modal/async-confirm-modal.component";
+import { TreatmentModalComponent, TreatmentModalData } from "../treatment-modal/treatment-modal.component";
+import { InteractionEventModalComponent, InteractionEventModalData } from "../interaction-event-modal/interaction-event-modal.component";
 import { ProjectExternalLinkEditorComponent, ProjectExternalLinkEditorData } from "../project-external-link-editor/project-external-link-editor.component";
 import { ProjectOrganizationEditorComponent, ProjectOrganizationEditorData } from "../project-organization-editor/project-organization-editor.component";
 import { ProjectContactEditorComponent, ProjectContactEditorData } from "../project-contact-editor/project-contact-editor.component";
@@ -96,17 +116,26 @@ import { ProjectMapExtentEditorComponent, ProjectMapExtentEditorData } from "../
 import { GeographicAssignmentStep } from "src/app/shared/generated/model/geographic-assignment-step";
 import { GeographicOverrideRequest } from "src/app/shared/generated/model/geographic-override-request";
 import { DropdownToggleDirective } from "src/app/shared/directives/dropdown-toggle.directive";
+import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
 import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
 import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
 import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
 import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
+import { environment } from "src/environments/environment";
+
+interface FlattenedTreatmentRow {
+    TreatmentAreaName: string;
+    TreatmentStartDate: string | null;
+    TreatmentEndDate: string | null;
+    [activityName: string]: number | string | null;
+}
 
 @Component({
     selector: "project-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, DatePipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ImageGalleryComponent, ScrollSpyStickyDirective, DropdownToggleDirective, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent],
+    imports: [PageHeaderComponent, AsyncPipe, DatePipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ImageGalleryComponent, ScrollSpyStickyDirective, DropdownToggleDirective, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent, FieldDefinitionComponent, LoadingDirective, FormsModule],
     templateUrl: "./project-detail.component.html",
     styleUrls: ["./project-detail.component.scss"],
 })
@@ -121,11 +150,16 @@ export class ProjectDetailComponent implements OnDestroy {
     ProjectApprovalStatusEnum = ProjectApprovalStatusEnum;
     OverlayMode = OverlayMode;
 
+    // Cost Share
+    blankCostShareUrl = `${environment.mainAppApiUrl}/cost-share/generate-pdf`;
+
     public projectID$: Observable<number>;
     public project$: Observable<ProjectDetail>;
+    public permissions$: Observable<ProjectPermissions>;
     public treatments$: Observable<TreatmentGridRow[]>;
     public interactionEvents$: Observable<InteractionEventGridRow[]>;
-    public classifications$: Observable<ClassificationLookupItem[]>;
+    public classifications$: Observable<ProjectClassificationDetailItem[]>;
+    public classificationsBySystem$: Observable<{ classificationSystemID: number; classificationSystemName: string; items: ProjectClassificationDetailItem[] }[]>;
     public images$: Observable<ProjectImageGridRow[]>;
     public documents$: Observable<ProjectDocumentGridRow[]>;
     public notes$: Observable<ProjectNoteGridRow[]>;
@@ -139,6 +173,10 @@ export class ProjectDetailComponent implements OnDestroy {
     public auditLogs$: Observable<ProjectAuditLogGridRow[]>;
 
     public treatmentColumnDefs: ColDef<TreatmentGridRow>[] = [];
+    public showFlattenedTreatments = false;
+    public flattenedTreatments$: Observable<FlattenedTreatmentRow[]>;
+    public flattenedTreatmentColumnDefs: ColDef<FlattenedTreatmentRow>[] = [];
+    public flattenedTreatmentTotalsConfig: { fields: string[]; label: string; labelField: string };
     public interactionEventColumnDefs: ColDef<InteractionEventGridRow>[] = [];
     public imageColumnDefs: ColDef<ProjectImageGridRow>[] = [];
     public documentColumnDefs: ColDef<ProjectDocumentGridRow>[] = [];
@@ -152,9 +190,19 @@ export class ProjectDetailComponent implements OnDestroy {
     // Map-related properties
     public projectBoundingBox$: Observable<BoundingBoxDto | undefined>;
     public locationLayers$: Observable<GenericLayer[]>;
+    public locationLayersIsLoading$: Observable<boolean>;
     public map: LeafletMap;
     public layerControl: L.Control.Layers;
-    public mapIsReady: boolean = false;
+    public mapIsReady = signal(false);
+
+    // Treatment CRUD properties
+    private refreshTreatments$ = new Subject<void>();
+
+    // Interaction Event CRUD properties
+    private refreshInteractionEvents$ = new Subject<void>();
+
+    // Classification CRUD properties
+    private refreshClassifications$ = new Subject<void>();
 
     // Document CRUD properties
     public documentTypes$: Observable<ProjectDocumentTypeLookupItem[]>;
@@ -238,6 +286,8 @@ export class ProjectDetailComponent implements OnDestroy {
 
     constructor(
         private projectService: ProjectService,
+        private treatmentService: TreatmentService,
+        private interactionEventService: InteractionEventService,
         private projectDocumentService: ProjectDocumentService,
         private projectNoteService: ProjectNoteService,
         private projectInternalNoteService: ProjectInternalNoteService,
@@ -249,6 +299,8 @@ export class ProjectDetailComponent implements OnDestroy {
         private programIndexService: ProgramIndexService,
         private projectCodeService: ProjectCodeService,
         private reportTemplateService: ReportTemplateService,
+        private costShareService: CostShareService,
+        private authService: AuthenticationService,
         private utilityFunctions: UtilityFunctionsService,
         private leafletHelperService: LeafletHelperService,
         private dialogService: DialogService,
@@ -269,6 +321,12 @@ export class ProjectDetailComponent implements OnDestroy {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        const currentUser$ = this.authService.currentUserSetObservable.pipe(startWith(null as PersonDetail | null));
+        this.permissions$ = combineLatest([this.project$, currentUser$]).pipe(
+            map(([project, user]) => this.computePermissions(project, user)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
         this.projectBoundingBox$ = this.project$.pipe(
             map(project => {
                 const bb = project?.DefaultBoundingBox;
@@ -277,18 +335,37 @@ export class ProjectDetailComponent implements OnDestroy {
             })
         );
 
-        this.treatments$ = this.projectID$.pipe(
-            switchMap((projectID) => this.projectService.listTreatmentsProject(projectID)),
+        this.treatments$ = combineLatest([this.projectID$, this.refreshTreatments$.pipe(startWith(undefined))]).pipe(
+            switchMap(([projectID]) => this.projectService.listTreatmentsProject(projectID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.interactionEvents$ = this.projectID$.pipe(
-            switchMap((projectID) => this.projectService.listInteractionEventsProject(projectID)),
+        this.interactionEvents$ = combineLatest([this.projectID$, this.refreshInteractionEvents$.pipe(startWith(undefined))]).pipe(
+            switchMap(([projectID]) => this.projectService.listInteractionEventsProject(projectID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.classifications$ = this.projectID$.pipe(
-            switchMap((projectID) => this.projectService.listClassificationsProject(projectID)),
+        this.classifications$ = combineLatest([this.projectID$, this.refreshClassifications$.pipe(startWith(undefined))]).pipe(
+            switchMap(([projectID]) => this.projectService.listClassificationsProject(projectID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.classificationsBySystem$ = this.classifications$.pipe(
+            map((items) => {
+                const systemMap = new Map<number, { classificationSystemID: number; classificationSystemName: string; items: ProjectClassificationDetailItem[] }>();
+                for (const item of items) {
+                    const sysID = item.ClassificationSystemID!;
+                    if (!systemMap.has(sysID)) {
+                        systemMap.set(sysID, {
+                            classificationSystemID: sysID,
+                            classificationSystemName: item.ClassificationSystemName ?? "",
+                            items: [],
+                        });
+                    }
+                    systemMap.get(sysID)!.items.push(item);
+                }
+                return Array.from(systemMap.values());
+            }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -365,6 +442,12 @@ export class ProjectDetailComponent implements OnDestroy {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.locationLayersIsLoading$ = this.locationLayers$.pipe(
+            map(() => false),
+            startWith(true),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
         // Invoice/PaymentRequest lookup data - filter to active WADNR people (OrganizationID 4704)
         const WADNR_ORGANIZATION_ID = 4704;
         this.people$ = this.personService.listPerson().pipe(
@@ -421,6 +504,16 @@ export class ProjectDetailComponent implements OnDestroy {
         );
 
         this.treatmentColumnDefs = this.createTreatmentColumnDefs();
+        this.flattenedTreatmentColumnDefs = this.createFlattenedTreatmentColumnDefs();
+        this.flattenedTreatments$ = this.treatments$.pipe(
+            map(treatments => this.pivotTreatmentsByArea(treatments))
+        );
+        const activityFields = TreatmentDetailedActivityTypes.map(t => t.Name);
+        this.flattenedTreatmentTotalsConfig = {
+            fields: activityFields,
+            label: "Total",
+            labelField: "TreatmentAreaName",
+        };
         this.interactionEventColumnDefs = this.createInteractionEventColumnDefs();
         this.imageColumnDefs = this.createImageColumnDefs();
         this.documentColumnDefs = this.createDocumentColumnDefs();
@@ -445,17 +538,16 @@ export class ProjectDetailComponent implements OnDestroy {
     }
 
     // Scrollspy methods
-    getVisibleSections(project: ProjectDetail): TocSection[] {
+    getVisibleSections(perms: ProjectPermissions): TocSection[] {
         const filtered: TocSection[] = [];
 
         for (const section of this.sectionsTree) {
             // Skip admin-only sections for non-admins
-            if (section.adminOnly && !project.UserIsAdmin) continue;
+            if (section.adminOnly && !perms.userIsAdmin) continue;
 
             if (section.children) {
                 const visibleChildren = section.children.filter((child) => {
-                    if (child.id === "card-invoices" && !project.UserCanEdit) return false;
-                    if (child.id === "card-cost-share" && !project.IsInLandownerAssistanceProgram) return false;
+                    if (child.id === "card-invoices" && !perms.userCanEdit) return false;
                     return true;
                 });
                 if (visibleChildren.length > 0) {
@@ -529,6 +621,7 @@ export class ProjectDetailComponent implements OnDestroy {
                 InRouterLink: "/treatments/",
                 CustomDropdownFilterField: "TreatmentAreaName",
             }),
+            this.utilityFunctions.createBasicColumnDef("Treatment ID", "TreatmentID"),
             this.utilityFunctions.createBasicColumnDef("Treatment Type", "TreatmentTypeName", {
                 FieldDefinitionType: "TreatmentType",
                 CustomDropdownFilterField: "TreatmentTypeName",
@@ -549,9 +642,13 @@ export class ProjectDetailComponent implements OnDestroy {
             }),
             this.utilityFunctions.createCurrencyColumnDef("Cost/Acre", "CostPerAcre", {
                 FieldDefinitionType: "TreatmentCostPerAcre",
+                MinDecimalPlacesToDisplay: 2,
+                MaxDecimalPlacesToDisplay: 2,
             }),
             this.utilityFunctions.createCurrencyColumnDef("Total Cost", "TotalCost", {
                 FieldDefinitionType: "TreatmentTotalCost",
+                MinDecimalPlacesToDisplay: 2,
+                MaxDecimalPlacesToDisplay: 2,
             }),
             this.utilityFunctions.createDateColumnDef("Start Date", "TreatmentStartDate", "M/d/yyyy", {
                 FieldDefinitionType: "TreatmentStartDate",
@@ -560,24 +657,102 @@ export class ProjectDetailComponent implements OnDestroy {
                 FieldDefinitionType: "TreatmentEndDate",
             }),
             this.utilityFunctions.createBasicColumnDef("Notes", "TreatmentNotes"),
-            this.utilityFunctions.createBasicColumnDef("Program", "ProgramName", {
-                CustomDropdownFilterField: "ProgramName",
-            }),
             this.utilityFunctions.createBooleanColumnDef("Imported", "ImportedFromGis", {
                 CustomDropdownFilterField: "ImportedFromGis",
             }),
+            this.utilityFunctions.createActionsColumnDef((params) => {
+                const treatment = params.data as TreatmentGridRow;
+                if (treatment.ImportedFromGis) return null;
+                return [
+                    { ActionName: "Edit", ActionHandler: () => this.openEditTreatmentModal(treatment), ActionIcon: "fa fa-pencil" },
+                    { ActionName: "Delete", ActionHandler: () => this.deleteTreatment(treatment), ActionIcon: "fa fa-trash" },
+                ];
+            }),
         ];
+    }
+
+    private pivotTreatmentsByArea(treatments: TreatmentGridRow[]): FlattenedTreatmentRow[] {
+        const areaMap = new Map<string, FlattenedTreatmentRow>();
+
+        for (const t of treatments) {
+            const areaName = t.TreatmentAreaName ?? "Unknown";
+            if (!areaMap.has(areaName)) {
+                const row: FlattenedTreatmentRow = {
+                    TreatmentAreaName: areaName,
+                    TreatmentStartDate: t.TreatmentStartDate ?? null,
+                    TreatmentEndDate: t.TreatmentEndDate ?? null,
+                };
+                for (const actType of TreatmentDetailedActivityTypes) {
+                    row[actType.Name] = 0;
+                }
+                areaMap.set(areaName, row);
+            }
+
+            const row = areaMap.get(areaName)!;
+
+            // Update date range
+            if (t.TreatmentStartDate && (!row.TreatmentStartDate || t.TreatmentStartDate < row.TreatmentStartDate)) {
+                row.TreatmentStartDate = t.TreatmentStartDate;
+            }
+            if (t.TreatmentEndDate && (!row.TreatmentEndDate || t.TreatmentEndDate > row.TreatmentEndDate)) {
+                row.TreatmentEndDate = t.TreatmentEndDate;
+            }
+
+            // Sum treated acres into the matching activity type column
+            const activityName = t.TreatmentDetailedActivityTypeName;
+            if (activityName) {
+                const matchingType = TreatmentDetailedActivityTypes.find(at => at.DisplayName === activityName);
+                if (matchingType) {
+                    row[matchingType.Name] = ((row[matchingType.Name] as number) || 0) + (t.TreatmentTreatedAcres ?? 0);
+                }
+            }
+        }
+
+        return Array.from(areaMap.values());
+    }
+
+    private createFlattenedTreatmentColumnDefs(): ColDef<FlattenedTreatmentRow>[] {
+        const fixedCols: ColDef<FlattenedTreatmentRow>[] = [
+            this.utilityFunctions.createBasicColumnDef("Treatment Area", "TreatmentAreaName", {
+                CustomDropdownFilterField: "TreatmentAreaName",
+            }),
+            this.utilityFunctions.createDateColumnDef("Start Date", "TreatmentStartDate", "M/d/yyyy"),
+            this.utilityFunctions.createDateColumnDef("End Date", "TreatmentEndDate", "M/d/yyyy"),
+        ];
+
+        const activityCols: ColDef<FlattenedTreatmentRow>[] = TreatmentDetailedActivityTypes.map(actType =>
+            this.utilityFunctions.createDecimalColumnDef(`${actType.DisplayName} Acres`, actType.Name, {
+                ZeroFillNullValues: true,
+                MaxDecimalPlacesToDisplay: 3,
+                MinDecimalPlacesToDisplay: 3,
+            })
+        );
+
+        return [...fixedCols, ...activityCols];
     }
 
     private createInteractionEventColumnDefs(): ColDef<InteractionEventGridRow>[] {
         return [
             this.utilityFunctions.createLinkColumnDef("Event Title", "InteractionEventTitle", "InteractionEventID", {
-                InRouterLink: "/interaction-events/",
+                InRouterLink: "/interactions-events/",
             }),
-            this.utilityFunctions.createBasicColumnDef("Event Type", "InteractionEventType.InteractionEventTypeDisplayName"),
-            this.utilityFunctions.createDateColumnDef("Date", "InteractionEventDate", "short"),
-            this.utilityFunctions.createBasicColumnDef("Staff Person", "StaffPerson.FullName"),
             this.utilityFunctions.createBasicColumnDef("Description", "InteractionEventDescription"),
+            this.utilityFunctions.createDateColumnDef("Date", "InteractionEventDate", "short"),
+            this.utilityFunctions.createBasicColumnDef("Event Type", "InteractionEventType.InteractionEventTypeDisplayName", {
+                FieldDefinitionType: "InteractionEventType",
+                CustomDropdownFilterField: "InteractionEventType.InteractionEventTypeDisplayName",
+            }),
+            this.utilityFunctions.createBasicColumnDef("DNR Staff Person", "StaffPerson.FullName", {
+                FieldDefinitionType: "DNRStaffPerson",
+                CustomDropdownFilterField: "StaffPerson.FullName",
+            }),
+            this.utilityFunctions.createActionsColumnDef((params) => {
+                const event = params.data as InteractionEventGridRow;
+                return [
+                    { ActionName: "Edit", ActionHandler: () => this.openEditInteractionEventModal(event), ActionIcon: "fa fa-pencil" },
+                    { ActionName: "Delete", ActionHandler: () => this.deleteInteractionEvent(event), ActionIcon: "fa fa-trash" },
+                ];
+            }),
         ];
     }
 
@@ -594,7 +769,10 @@ export class ProjectDetailComponent implements OnDestroy {
         return [
             {
                 headerName: "Document",
-                field: "DisplayName",
+                valueGetter: (params) => {
+                    const doc = params.data as ProjectDocumentGridRow;
+                    return { LinkDisplay: doc.DisplayName, LinkValue: doc.FileResourceGuid };
+                },
                 cellRenderer: (params: any) => {
                     const doc = params.data as ProjectDocumentGridRow;
                     return `<a href="/api/file-resources/${doc.FileResourceGuid}" target="_blank">${doc.DisplayName}</a>`;
@@ -648,30 +826,57 @@ export class ProjectDetailComponent implements OnDestroy {
 
     private createInvoiceColumnDefs(): ColDef<InvoiceGridRow>[] {
         return [
-            this.utilityFunctions.createLinkColumnDef("Fund Source", "FundSourceNumber", "FundSourceID", {
+            this.utilityFunctions.createLinkColumnDef("Fund Source Number", "FundSourceNumber", "FundSourceID", {
                 InRouterLink: "/fund-sources/",
+                FieldDefinitionType: "FundSource",
+                FieldDefinitionLabelOverride: "Fund Source Number",
             }),
-            this.utilityFunctions.createBasicColumnDef("Invoice Number", "InvoiceNumber"),
-            this.utilityFunctions.createDateColumnDef("Invoice Date", "InvoiceDate", "short"),
-            this.utilityFunctions.createBasicColumnDef("Fund", "Fund"),
-            this.utilityFunctions.createBasicColumnDef("Appn", "Appn"),
+            this.utilityFunctions.createBasicColumnDef("Invoice Number", "InvoiceNumber", {
+                FieldDefinitionType: "InvoiceNumber",
+            }),
+            this.utilityFunctions.createDateColumnDef("Invoice Date", "InvoiceDate", "short", {
+                FieldDefinitionType: "InvoiceDate",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Fund", "Fund", {
+                FieldDefinitionType: "Fund",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Appn", "Appn", {
+                FieldDefinitionType: "Appn",
+            }),
             this.utilityFunctions.createBasicColumnDef("Program Index", "ProgramIndexCode", {
                 CustomDropdownFilterField: "ProgramIndexCode",
+                FieldDefinitionType: "ProgramIndex",
             }),
             this.utilityFunctions.createBasicColumnDef("Project Code", "ProjectCodeName", {
                 CustomDropdownFilterField: "ProjectCodeName",
+                FieldDefinitionType: "ProjectCode",
             }),
-            this.utilityFunctions.createBasicColumnDef("Sub Object", "SubObject"),
-            this.utilityFunctions.createBasicColumnDef("Organization Code", "OrganizationCodeName"),
-            this.utilityFunctions.createCurrencyColumnDef("Match Amount", "MatchAmount"),
-            this.utilityFunctions.createCurrencyColumnDef("Payment Amount", "PaymentAmount"),
+            this.utilityFunctions.createBasicColumnDef("Sub Object", "SubObject", {
+                FieldDefinitionType: "SubObject",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Organization Code", "OrganizationCodeName", {
+                FieldDefinitionType: "OrganizationCode",
+            }),
+            this.utilityFunctions.createCurrencyColumnDef("Match Amount", "MatchAmount", {
+                FieldDefinitionType: "MatchAmount",
+            }),
+            this.utilityFunctions.createCurrencyColumnDef("Payment Amount", "PaymentAmount", {
+                FieldDefinitionType: "PaymentAmount",
+            }),
             this.utilityFunctions.createBasicColumnDef("Status", "InvoiceStatusDisplayName", {
                 CustomDropdownFilterField: "InvoiceStatusDisplayName",
+                FieldDefinitionType: "InvoiceStatus",
+                FieldDefinitionLabelOverride: "Status",
             }),
             this.utilityFunctions.createBasicColumnDef("Approval Status", "InvoiceApprovalStatusName", {
                 CustomDropdownFilterField: "InvoiceApprovalStatusName",
+                FieldDefinitionType: "InvoiceApprovalStatus",
+                FieldDefinitionLabelOverride: "Approval Status",
             }),
-            this.utilityFunctions.createBasicColumnDef("Nickname", "InvoiceIdentifyingName"),
+            this.utilityFunctions.createBasicColumnDef("Nickname", "InvoiceIdentifyingName", {
+                FieldDefinitionType: "InvoiceIdentifyingName",
+                FieldDefinitionLabelOverride: "Nickname",
+            }),
             this.utilityFunctions.createActionsColumnDef((params) => {
                 const invoice = params.data as InvoiceGridRow;
                 const actions: any[] = [
@@ -818,28 +1023,189 @@ export class ProjectDetailComponent implements OnDestroy {
     }
 
     // Calculate totals for fund source allocation requests
-    getFundingTotals(requests: FundSourceAllocationRequestItem[] | null | undefined): { matchTotal: number; payTotal: number; total: number } {
+    getFundingTotals(requests: FundSourceAllocationRequestItem[] | null | undefined): { total: number } {
         if (!requests || requests.length === 0) {
-            return { matchTotal: 0, payTotal: 0, total: 0 };
+            return { total: 0 };
         }
         return {
-            matchTotal: requests.reduce((sum, r) => sum + (r.MatchAmount ?? 0), 0),
-            payTotal: requests.reduce((sum, r) => sum + (r.PayAmount ?? 0), 0),
             total: requests.reduce((sum, r) => sum + (r.TotalAmount ?? 0), 0),
         };
-    }
-
-    // Check if match/pay amounts are relevant (any non-zero values)
-    hasMatchPayAmounts(requests: FundSourceAllocationRequestItem[] | null | undefined): boolean {
-        if (!requests || requests.length === 0) return false;
-        return requests.some((r) => (r.MatchAmount ?? 0) !== 0 || (r.PayAmount ?? 0) !== 0);
     }
 
     // Map event handler
     handleMapReady(event: any): void {
         this.map = event.map;
         this.layerControl = event.layerControl;
-        this.mapIsReady = true;
+        this.mapIsReady.set(true);
+    }
+
+    // Treatment CRUD methods
+    openAddTreatmentModal(projectID: number): void {
+        this.projectService.listTreatmentAreasProject(projectID).subscribe((treatmentAreas) => {
+            const data: TreatmentModalData = {
+                mode: "create",
+                projectID: projectID,
+                treatmentAreas: treatmentAreas,
+            };
+
+            this.dialogService
+                .open(TreatmentModalComponent, { data, width: "700px" })
+                .afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refreshTreatments$.next();
+                    }
+                });
+        });
+    }
+
+    openEditTreatmentModal(treatment: TreatmentGridRow): void {
+        this.projectID$.pipe(take(1)).subscribe((projectID) => {
+            combineLatest([
+                this.treatmentService.getByIDTreatment(treatment.TreatmentID),
+                this.projectService.listTreatmentAreasProject(projectID),
+            ]).subscribe(([treatmentDetail, treatmentAreas]) => {
+                const data: TreatmentModalData = {
+                    mode: "edit",
+                    projectID: projectID,
+                    treatment: treatmentDetail,
+                    treatmentAreas: treatmentAreas,
+                };
+
+                this.dialogService
+                    .open(TreatmentModalComponent, { data, width: "700px" })
+                    .afterClosed$.subscribe((result) => {
+                        if (result) {
+                            this.refreshTreatments$.next();
+                        }
+                    });
+            });
+        });
+    }
+
+    deleteTreatment(treatment: TreatmentGridRow): void {
+        this.confirmService
+            .confirm({
+                title: "Delete Treatment",
+                message: "Are you sure you want to delete this treatment? This action cannot be undone.",
+                buttonTextYes: "Delete",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-danger",
+            })
+            .then((confirmed) => {
+                if (confirmed) {
+                    this.treatmentService.deleteTreatment(treatment.TreatmentID).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Treatment deleted successfully.", AlertContext.Success, true));
+                            this.refreshTreatments$.next();
+                        },
+                        error: (err) => {
+                            const message = err?.error ?? err?.message ?? "An error occurred while deleting the treatment.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                }
+            });
+    }
+
+    // Interaction Event CRUD methods
+    openAddInteractionEventModal(projectID: number): void {
+        forkJoin({
+            people: this.personService.listLookupPerson(),
+            projects: this.projectService.listLookupProject(),
+        }).subscribe(({ people, projects }) => {
+            const personOptions: SelectDropdownOption[] = people.map(p => ({
+                Value: p.PersonID,
+                Label: p.FullName,
+                disabled: false,
+            } as SelectDropdownOption));
+
+            const projectOptions: SelectDropdownOption[] = projects.map(p => ({
+                Value: p.ProjectID,
+                Label: p.ProjectName,
+                disabled: false,
+            } as SelectDropdownOption));
+
+            const data: InteractionEventModalData = {
+                mode: "create",
+                projectID: projectID,
+                staffPersonOptions: personOptions,
+                contactOptions: personOptions,
+                projectOptions: projectOptions,
+            };
+
+            this.dialogService
+                .open(InteractionEventModalComponent, { data, width: "600px" })
+                .afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refreshInteractionEvents$.next();
+                    }
+                });
+        });
+    }
+
+    openEditInteractionEventModal(event: InteractionEventGridRow): void {
+        forkJoin({
+            people: this.personService.listLookupPerson(),
+            projects: this.projectService.listLookupProject(),
+            existingProjects: this.interactionEventService.listProjectsForInteractionEventIDInteractionEvent(event.InteractionEventID),
+            existingContacts: this.interactionEventService.listContactsForInteractionEventIDInteractionEvent(event.InteractionEventID),
+        }).subscribe(({ people, projects, existingProjects, existingContacts }) => {
+            const personOptions: SelectDropdownOption[] = people.map(p => ({
+                Value: p.PersonID,
+                Label: p.FullName,
+                disabled: false,
+            } as SelectDropdownOption));
+
+            const projectOptions: SelectDropdownOption[] = projects.map(p => ({
+                Value: p.ProjectID,
+                Label: p.ProjectName,
+                disabled: false,
+            } as SelectDropdownOption));
+
+            const data: InteractionEventModalData = {
+                mode: "edit",
+                projectID: 0,
+                staffPersonOptions: personOptions,
+                contactOptions: personOptions,
+                projectOptions: projectOptions,
+                interactionEvent: event,
+                existingProjectIDs: existingProjects.map(p => p.ProjectID),
+                existingContactIDs: existingContacts.map(c => c.PersonID),
+            };
+
+            this.dialogService
+                .open(InteractionEventModalComponent, { data, width: "600px" })
+                .afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.refreshInteractionEvents$.next();
+                    }
+                });
+        });
+    }
+
+    deleteInteractionEvent(event: InteractionEventGridRow): void {
+        this.confirmService
+            .confirm({
+                title: "Delete Interaction/Event",
+                message: `Are you sure you want to delete "${event.InteractionEventTitle}"? This action cannot be undone.`,
+                buttonTextYes: "Delete",
+                buttonTextNo: "Cancel",
+                buttonClassYes: "btn-danger",
+            })
+            .then((confirmed) => {
+                if (confirmed) {
+                    this.interactionEventService.deleteInteractionEvent(event.InteractionEventID).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Interaction event deleted successfully.", AlertContext.Success, true));
+                            this.refreshInteractionEvents$.next();
+                        },
+                        error: (err) => {
+                            const message = err?.error ?? err?.message ?? "An error occurred while deleting the interaction event.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                        },
+                    });
+                }
+            });
     }
 
     // Document CRUD methods
@@ -1239,9 +1605,9 @@ export class ProjectDetailComponent implements OnDestroy {
         return "Continue Project Update";
     }
 
-    canShowUpdateProjectButton(project: ProjectDetail): boolean {
+    canShowUpdateProjectButton(project: ProjectDetail, perms: ProjectPermissions): boolean {
         // User must be able to edit and project must be approved
-        return project.UserCanEdit && project.ProjectApprovalStatusID === ProjectApprovalStatusEnum.Approved;
+        return perms.userCanEdit && project.ProjectApprovalStatusID === ProjectApprovalStatusEnum.Approved;
     }
 
     navigateToUpdateWorkflow(project: ProjectDetail): void {
@@ -1268,9 +1634,9 @@ export class ProjectDetailComponent implements OnDestroy {
     }
 
     // Block List button helpers
-    canShowBlockListButton(project: ProjectDetail): boolean {
+    canShowBlockListButton(project: ProjectDetail, perms: ProjectPermissions): boolean {
         // Admin only, when project has programs
-        return project.UserIsAdmin && (project.Programs?.length ?? 0) > 0;
+        return perms.userIsAdmin && (project.Programs?.length ?? 0) > 0;
     }
 
     addToBlockList(project: ProjectDetail): void {
@@ -1315,8 +1681,8 @@ export class ProjectDetailComponent implements OnDestroy {
     }
 
     // Financial Assistance Approval Letter helpers
-    canShowApprovalLetter(project: ProjectDetail): boolean {
-        return project.UserCanEdit && project.IsInLandownerAssistanceProgram;
+    canShowApprovalLetter(project: ProjectDetail, perms: ProjectPermissions): boolean {
+        return perms.userCanEdit && project.IsInLandownerAssistanceProgram;
     }
 
     downloadApprovalLetter(project: ProjectDetail): void {
@@ -1338,6 +1704,22 @@ export class ProjectDetailComponent implements OnDestroy {
             },
             error: () => {
                 this.alertService.pushAlert(new Alert("An error occurred while generating the invoice payment request.", AlertContext.Danger, true));
+            },
+        });
+    }
+
+    // Cost Share helpers
+    getLandowners(project: ProjectDetail): ProjectPersonItem[] {
+        return (project.People || []).filter((p) => p.RelationshipTypeID === 2);
+    }
+
+    downloadCostSharePdf(landowner: ProjectPersonItem): void {
+        this.costShareService.filledCostShareAgreementPdfCostShare(landowner.ProjectPersonID, "body", false, { httpHeaderAccept: "application/pdf" as any }).subscribe({
+            next: (blob) => {
+                this.downloadBlob(blob, `CostShareAgreement-${landowner.PersonFullName.replace(/\s+/g, "")}.pdf`);
+            },
+            error: () => {
+                this.alertService.pushAlert(new Alert("An error occurred while generating the cost share agreement.", AlertContext.Danger, true));
             },
         });
     }
@@ -1513,10 +1895,7 @@ export class ProjectDetailComponent implements OnDestroy {
             .afterClosed$.subscribe((result) => {
                 if (result) {
                     this.refreshProject$.next();
-                    this.classifications$ = this.projectID$.pipe(
-                        switchMap((projectID) => this.projectService.listClassificationsProject(projectID)),
-                        shareReplay({ bufferSize: 1, refCount: true })
-                    );
+                    this.refreshClassifications$.next();
                 }
             });
     }
@@ -1654,5 +2033,42 @@ export class ProjectDetailComponent implements OnDestroy {
                     this.refreshProjectAndMapBounds();
                 }
             });
+    }
+
+    // Permission computation
+    private computePermissions(project: ProjectDetail, user: PersonDetail | null): ProjectPermissions {
+        const userCanEdit = this.computeCanEdit(user, project);
+        const userCanDirectEdit = this.computeCanDirectEdit(user);
+        const isApproved = project.ProjectApprovalStatusID === ProjectApprovalStatusEnum.Approved;
+
+        return {
+            userCanEdit,
+            userCanDirectEdit,
+            userCanDelete: user ? this.authService.isUserAnAdministrator(user) : false,
+            userCanApprove: this.authService.canApproveProjects(user),
+            userIsAdmin: this.authService.hasElevatedProjectAccess(user),
+            userCanViewCostSharePDFs: this.authService.canViewLandownerInfo(user),
+            canStartUpdate: userCanEdit && isApproved && !project.HasExistingUpdateBatch,
+        };
+    }
+
+    private computeCanEdit(user: PersonDetail | null, project: ProjectDetail): boolean {
+        if (!user || this.authService.isUserUnassigned(user)) return false;
+        if (this.authService.hasElevatedProjectAccess(user)) return true;
+        return user.OrganizationID != null &&
+            (project.Organizations?.some(o => o.OrganizationID === user.OrganizationID) ?? false);
+    }
+
+    private computeCanDirectEdit(user: PersonDetail | null): boolean {
+        if (!user || this.authService.isUserUnassigned(user)) return false;
+        return this.authService.canApproveProjects(user);
+    }
+
+    batchItems<T>(items: T[], size: number): T[][] {
+        const batches: T[][] = [];
+        for (let i = 0; i < items.length; i += size) {
+            batches.push(items.slice(i, i + size));
+        }
+        return batches;
     }
 }

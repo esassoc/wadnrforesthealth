@@ -10,9 +10,9 @@
             <div class="g-col-6">
                 <form-field
                     [formControl]="$any(form.controls.estimatedTotalCost)"
-                    fieldLabel="Estimated Total Cost"
-                    [type]="FormFieldType.Number"
-                    placeholder="Enter amount..."
+                    fieldDefinitionName="EstimatedTotalCost"
+                    [type]="FormFieldType.Currency"
+                    placeholder="$0.00"
                     [readOnly]="isSubmitting">
                 </form-field>
             </div>
@@ -20,7 +20,7 @@
 
             <!-- Funding Sources checkboxes -->
             <div class="g-col-12">
-                <label class="field-label">Funding Sources</label>
+                <field-definition fieldDefinition="FundingSource"></field-definition>
                 <div class="grid-12">
                     @for (fs of fundingSourceOptions; track fs.FundingSourceID) {
                         <div class="g-col-6">
@@ -44,7 +44,7 @@
             <div class="g-col-12">
                 <form-field
                     [formControl]="$any(form.controls.fundingSourceNotes)"
-                    fieldLabel="Funding Source Notes"
+                    fieldDefinitionName="FundingSourceNote"
                     [type]="FormFieldType.Textarea"
                     placeholder="Enter notes..."
                     [readOnly]="isSubmitting">
@@ -56,7 +56,7 @@
     <hr />
 
     <!-- Fund Source Allocation Requests -->
-    <label class="field-label">Fund Source Allocations</label>
+    <field-definition fieldDefinition="FundSourceAllocation"></field-definition>
 
     <div class="mb-3">
         <form-field
@@ -73,17 +73,13 @@
             <colgroup>
                 <col style="width: 30px;" />
                 <col />
-                <col style="width: 110px;" />
-                <col style="width: 110px;" />
-                <col style="width: 110px;" />
+                <col style="width: 130px;" />
             </colgroup>
             <thead>
                 <tr>
                     <th></th>
-                    <th>Fund Source Allocation</th>
-                    <th style="text-align: right">Match Amount</th>
-                    <th style="text-align: right">Pay Amount</th>
-                    <th style="text-align: right">Total Amount</th>
+                    <th><field-definition fieldDefinition="FundSourceAllocation"></field-definition></th>
+                    <th style="text-align: right"><field-definition fieldDefinition="ProjectFundSourceAllocationRequestTotalAmount"></field-definition></th>
                 </tr>
             </thead>
             <tbody>
@@ -105,39 +101,18 @@
                             {{ row.fundSourceAllocationName }}
                         </td>
                         <td>
-                            <input
-                                type="number"
-                                class="form-control form-control-sm"
-                                [(ngModel)]="row.matchAmount"
-                                [disabled]="isSubmitting"
-                                placeholder="0"
-                                style="width: 100%; text-align: right;" />
-                        </td>
-                        <td>
-                            <input
-                                type="number"
-                                class="form-control form-control-sm"
-                                [(ngModel)]="row.payAmount"
-                                [disabled]="isSubmitting"
-                                placeholder="0"
-                                style="width: 100%; text-align: right;" />
-                        </td>
-                        <td>
-                            <input
-                                type="number"
-                                class="form-control form-control-sm"
-                                [(ngModel)]="row.totalAmount"
-                                [disabled]="isSubmitting"
-                                placeholder="0"
-                                style="width: 100%; text-align: right;" />
+                            <form-field
+                                [formControl]="row.totalAmountControl"
+                                [type]="FormFieldType.Currency"
+                                placeholder="$0.00"
+                                [readOnly]="isSubmitting">
+                            </form-field>
                         </td>
                     </tr>
                 }
                 <tr class="totals-row">
                     <th></th>
                     <th style="text-align: right">Total</th>
-                    <th style="text-align: right">{{ formatCurrency(matchTotal) }}</th>
-                    <th style="text-align: right">{{ formatCurrency(payTotal) }}</th>
                     <th style="text-align: right">{{ formatCurrency(allocationTotal) }}</th>
                 </tr>
             </tbody>
@@ -152,8 +127,9 @@
     <button
         class="btn btn-primary"
         (click)="save()"
-        [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Saving...' : 'Save' }}
+        [disabled]="isSubmitting"
+        [buttonLoading]="isSubmitting">
+        Save
     </button>
     <button
         class="btn btn-secondary"

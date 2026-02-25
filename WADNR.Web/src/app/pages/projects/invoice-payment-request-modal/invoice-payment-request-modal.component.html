@@ -10,13 +10,14 @@
     <form [formGroup]="form">
         <form-field
             [formControl]="form.controls.InvoicePaymentRequestDate"
-            fieldLabel="Date"
+            fieldDefinitionName="InvoiceDate"
+            fieldDefinitionLabelOverride="Date"
             [type]="FormFieldType.Date">
         </form-field>
 
         <form-field
             [formControl]="form.controls.PurchaseAuthorityIsLandownerCostShareAgreement"
-            fieldLabel="Purchase Authority"
+            fieldDefinitionName="PurchaseAuthority"
             [type]="FormFieldType.Select"
             [formInputOptions]="purchaseAuthorityOptions"
             placeholder="Choose one">
@@ -33,13 +34,13 @@
 
         <form-field
             [formControl]="form.controls.Duns"
-            fieldLabel="DUNS"
+            fieldDefinitionName="DUNS"
             [type]="FormFieldType.Text"
             placeholder="">
         </form-field>
 
         <div class="field">
-            <label class="field-label">Vendor</label>
+            <field-definition fieldDefinition="Vendor"></field-definition>
             <ng-select
                 class="custom"
                 [items]="vendorSearchResults$ | async"
@@ -58,7 +59,8 @@
 
         <form-field
             [formControl]="form.controls.PreparedByPersonID"
-            fieldLabel="Prepared By"
+            fieldDefinitionName="PreparedByPerson"
+            fieldDefinitionLabelOverride="Prepared By"
             [type]="FormFieldType.Select"
             [formInputOptions]="people"
             placeholder="Choose one">
@@ -76,8 +78,9 @@
     <button
         class="btn btn-primary"
         (click)="save()"
-        [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Saving...' : 'Save' }}
+        [disabled]="isSubmitting"
+        [buttonLoading]="isSubmitting">
+        Save
     </button>
     <button
         class="btn btn-secondary"

@@ -149,7 +149,7 @@ public static class ProjectUpdateWorkflowProgress
         WADNRDbContext dbContext)
     {
         // Default all to false for anonymous/unassigned users
-        if (callingUser == null || callingUser.IsAnonymousOrUnassigned)
+        if (callingUser == null || callingUser.IsAnonymousOrUnassigned())
         {
             dto.CanEdit = false;
             dto.CanApprove = false;
@@ -163,12 +163,12 @@ public static class ProjectUpdateWorkflowProgress
         var isSubmitted = ctx.ProjectUpdateStateID == (int)ProjectUpdateStateEnum.Submitted;
 
         // Approve/Return: only available to approvers when batch is Submitted
-        var canApproveProjects = callingUser.HasElevatedProjectAccess || callingUser.HasCanEditProgramRole;
+        var canApproveProjects = callingUser.HasElevatedProjectAccess() || callingUser.HasCanEditProgramRole();
         dto.CanApprove = canApproveProjects && isSubmitted;
         dto.CanReturn = canApproveProjects && isSubmitted;
 
         // Edit/Delete: only when in Created or Returned state
-        if (callingUser.HasElevatedProjectAccess)
+        if (callingUser.HasElevatedProjectAccess())
         {
             dto.CanEdit = isCreatedOrReturned;
             dto.CanDelete = isCreatedOrReturned;

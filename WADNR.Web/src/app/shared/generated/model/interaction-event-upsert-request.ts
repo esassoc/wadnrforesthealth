@@ -16,6 +16,8 @@ export class InteractionEventUpsertRequest {
     InteractionEventTitle?: string | null;
     InteractionEventDescription?: string | null;
     InteractionEventDate?: string;
+    ProjectIDs?: Array<number> | null;
+    ContactIDs?: Array<number> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -27,6 +29,8 @@ export interface InteractionEventUpsertRequestForm {
     InteractionEventTitle?: FormControl<string>;
     InteractionEventDescription?: FormControl<string>;
     InteractionEventDate?: FormControl<string>;
+    ProjectIDs?: FormControl<Array<number>>;
+    ContactIDs?: FormControl<Array<number>>;
 }
 
 export class InteractionEventUpsertRequestFormControls { 
@@ -71,6 +75,26 @@ export class InteractionEventUpsertRequestFormControls {
         }
     );
     public static InteractionEventDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectIDs = (value: FormControlState<Array<number>> | Array<number> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<number>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ContactIDs = (value: FormControlState<Array<number>> | Array<number> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<number>>(
         value,
         formControlOptions ?? 
         {

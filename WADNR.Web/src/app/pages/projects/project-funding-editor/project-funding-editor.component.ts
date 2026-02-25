@@ -9,9 +9,11 @@ import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
 import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
+import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { FundingSourceService } from "src/app/shared/generated/api/funding-source.service";
@@ -29,15 +31,13 @@ interface AllocationRow {
     fundSourceAllocationID: number;
     fundSourceAllocationName: string;
     fundSourceName: string;
-    matchAmount: number | null;
-    payAmount: number | null;
-    totalAmount: number | null;
+    totalAmountControl: FormControl<number | null>;
 }
 
 @Component({
     selector: "project-funding-editor",
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormsModule, FormFieldComponent, IconComponent, ModalAlertsComponent, LoadingDirective],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, FormFieldComponent, IconComponent, FieldDefinitionComponent, ModalAlertsComponent, LoadingDirective, ButtonLoadingDirective],
     templateUrl: "./project-funding-editor.component.html",
 })
 export class ProjectFundingEditorComponent extends BaseModal implements OnInit {
@@ -118,9 +118,7 @@ export class ProjectFundingEditorComponent extends BaseModal implements OnInit {
                 fundSourceAllocationID: r.FundSourceAllocationID!,
                 fundSourceAllocationName: r.FundSourceAllocationName ?? "",
                 fundSourceName: r.FundSourceName ?? "",
-                matchAmount: r.MatchAmount ?? null,
-                payAmount: r.PayAmount ?? null,
-                totalAmount: r.TotalAmount ?? null,
+                totalAmountControl: new FormControl<number | null>(r.TotalAmount ?? null),
             }));
 
             this.updateAvailableAllocations();
@@ -133,16 +131,8 @@ export class ProjectFundingEditorComponent extends BaseModal implements OnInit {
         this.availableAllocationOptions = this.allocationOptions.filter((o) => !usedIDs.has(o.Value as number));
     }
 
-    get matchTotal(): number {
-        return this.allocationRows.reduce((sum, r) => sum + (r.matchAmount ?? 0), 0);
-    }
-
-    get payTotal(): number {
-        return this.allocationRows.reduce((sum, r) => sum + (r.payAmount ?? 0), 0);
-    }
-
     get allocationTotal(): number {
-        return this.allocationRows.reduce((sum, r) => sum + (r.totalAmount ?? 0), 0);
+        return this.allocationRows.reduce((sum, r) => sum + (r.totalAmountControl.value ?? 0), 0);
     }
 
     addAllocation(allocID: number): void {
@@ -161,9 +151,7 @@ export class ProjectFundingEditorComponent extends BaseModal implements OnInit {
                 fundSourceAllocationID: allocID,
                 fundSourceAllocationName: lookup?.name ?? (option?.Label as string) ?? "",
                 fundSourceName: lookup?.fundSourceName ?? "",
-                matchAmount: null,
-                payAmount: null,
-                totalAmount: null,
+                totalAmountControl: new FormControl<number | null>(null),
             },
         ];
         this.updateAvailableAllocations();
@@ -187,15 +175,13 @@ export class ProjectFundingEditorComponent extends BaseModal implements OnInit {
         const raw = this.form.getRawValue();
 
         const request = new ProjectFundingSaveRequest({
-            EstimatedTotalCost: raw.estimatedTotalCost != null ? Number(raw.estimatedTotalCost) : null,
+            EstimatedTotalCost: raw.estimatedTotalCost != null && raw.estimatedTotalCost !== "" ? Number(raw.estimatedTotalCost) : null,
             FundingSourceNotes: raw.fundingSourceNotes || null,
             FundingSourceIDs: this.fundingSourceOptions.filter((fs) => fs.checked).map((fs) => fs.FundingSourceID),
             AllocationRequests: this.allocationRows.map((r) => ({
                 ProjectFundSourceAllocationRequestID: r.projectFundSourceAllocationRequestID,
                 FundSourceAllocationID: r.fundSourceAllocationID,
-                MatchAmount: r.matchAmount != null ? Number(r.matchAmount) : null,
-                PayAmount: r.payAmount != null ? Number(r.payAmount) : null,
-                TotalAmount: r.totalAmount != null ? Number(r.totalAmount) : null,
+                TotalAmount: r.totalAmountControl.value != null ? Number(r.totalAmountControl.value) : null,
             })),
         });
 

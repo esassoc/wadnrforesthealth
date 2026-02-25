@@ -10,6 +10,7 @@ import { GdbApproveRequest } from "src/app/shared/generated/model/gdb-approve-re
 import { GdbLayerApproval } from "src/app/shared/generated/model/gdb-layer-approval";
 import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 
 /**
  * Data passed into the modal when opened.
@@ -35,7 +36,7 @@ interface LayerRow {
 @Component({
     selector: "import-gdb-modal",
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, WADNRMapComponent],
+    imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, WADNRMapComponent, ButtonLoadingDirective],
     templateUrl: "./import-gdb-modal.component.html",
     styleUrls: ["./import-gdb-modal.component.scss"]
 })

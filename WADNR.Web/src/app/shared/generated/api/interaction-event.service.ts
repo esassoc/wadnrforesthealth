@@ -46,6 +46,93 @@ export class InteractionEventService extends BaseService {
     }
 
     /**
+     * @param interactionEventID 
+     * @param displayName 
+     * @param description 
+     * @param file 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public createFileResourceInteractionEvent(interactionEventID: number, displayName?: string, description?: string, file?: Blob, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<FileResourceInteractionEventDetail>;
+    public createFileResourceInteractionEvent(interactionEventID: number, displayName?: string, description?: string, file?: Blob, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<FileResourceInteractionEventDetail>>;
+    public createFileResourceInteractionEvent(interactionEventID: number, displayName?: string, description?: string, file?: Blob, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<FileResourceInteractionEventDetail>>;
+    public createFileResourceInteractionEvent(interactionEventID: number, displayName?: string, description?: string, file?: Blob, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (interactionEventID === null || interactionEventID === undefined) {
+            throw new Error('Required parameter interactionEventID was null or undefined when calling createFileResourceInteractionEvent.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'multipart/form-data'
+        ];
+
+        const canConsumeForm = this.canConsumeForm(consumes);
+
+        let localVarFormParams: { append(param: string, value: any): any; };
+        let localVarUseForm = false;
+        let localVarConvertFormParamsToString = false;
+        // use FormData to transmit files using content-type "multipart/form-data"
+        // see https://stackoverflow.com/questions/4007969/application-x-www-form-urlencoded-or-multipart-form-data
+        localVarUseForm = canConsumeForm;
+        if (localVarUseForm) {
+            localVarFormParams = new FormData();
+        } else {
+            localVarFormParams = new HttpParams({encoder: this.encoder});
+        }
+
+        if (displayName !== undefined) {
+            localVarFormParams = localVarFormParams.append('displayName', <any>displayName) as any || localVarFormParams;
+        }
+        if (description !== undefined) {
+            localVarFormParams = localVarFormParams.append('description', <any>description) as any || localVarFormParams;
+        }
+        if (file !== undefined) {
+            localVarFormParams = localVarFormParams.append('file', <any>file) as any || localVarFormParams;
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/interactions-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/file-resources`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<FileResourceInteractionEventDetail>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: localVarConvertFormParamsToString ? localVarFormParams.toString() : localVarFormParams,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * @param interactionEventUpsertRequest 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -93,7 +180,7 @@ export class InteractionEventService extends BaseService {
             }
         }
 
-        let localVarPath = `/interaction-events`;
+        let localVarPath = `/interactions-events`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<InteractionEventDetail>('post', `${basePath}${localVarPath}`,
             {
@@ -146,7 +233,7 @@ export class InteractionEventService extends BaseService {
             }
         }
 
-        let localVarPath = `/interaction-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        let localVarPath = `/interactions-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<any>('delete', `${basePath}${localVarPath}`,
             {
@@ -201,7 +288,7 @@ export class InteractionEventService extends BaseService {
             }
         }
 
-        let localVarPath = `/interaction-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        let localVarPath = `/interactions-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<InteractionEventDetail>('get', `${basePath}${localVarPath}`,
             {
@@ -256,7 +343,7 @@ export class InteractionEventService extends BaseService {
             }
         }
 
-        let localVarPath = `/interaction-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/simple-location/feature-collection`;
+        let localVarPath = `/interactions-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/simple-location/feature-collection`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Array<IFeature>>('get', `${basePath}${localVarPath}`,
             {
@@ -311,7 +398,7 @@ export class InteractionEventService extends BaseService {
             }
         }
 
-        let localVarPath = `/interaction-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/contacts`;
+        let localVarPath = `/interactions-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/contacts`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Array<PersonLookupItem>>('get', `${basePath}${localVarPath}`,
             {
@@ -366,7 +453,7 @@ export class InteractionEventService extends BaseService {
             }
         }
 
-        let localVarPath = `/interaction-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/file-resources`;
+        let localVarPath = `/interactions-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/file-resources`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Array<FileResourceInteractionEventDetail>>('get', `${basePath}${localVarPath}`,
             {
@@ -417,7 +504,7 @@ export class InteractionEventService extends BaseService {
             }
         }
 
-        let localVarPath = `/interaction-events`;
+        let localVarPath = `/interactions-events`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Array<InteractionEventGridRow>>('get', `${basePath}${localVarPath}`,
             {
@@ -472,7 +559,7 @@ export class InteractionEventService extends BaseService {
             }
         }
 
-        let localVarPath = `/interaction-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/projects`;
+        let localVarPath = `/interactions-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/projects`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Array<ProjectLookupItem>>('get', `${basePath}${localVarPath}`,
             {
@@ -539,7 +626,7 @@ export class InteractionEventService extends BaseService {
             }
         }
 
-        let localVarPath = `/interaction-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        let localVarPath = `/interactions-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<InteractionEventDetail>('put', `${basePath}${localVarPath}`,
             {

@@ -35,7 +35,7 @@ public static class ProjectVisibility
         PersonDetail? user)
     {
         // Anonymous or Unassigned: only approved, non-admin-limited projects
-        if (user == null || user.IsAnonymousOrUnassigned)
+        if (user == null || user.IsAnonymousOrUnassigned())
         {
             return query.Where(p =>
                 p.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Approved &&
@@ -43,13 +43,13 @@ public static class ProjectVisibility
         }
 
         // Users with elevated access see everything (admin-limited and all pending)
-        if (user.HasElevatedProjectAccess)
+        if (user.HasElevatedProjectAccess())
         {
             return query; // No filtering needed
         }
 
         // Users with CanEditProgram can see admin-limited projects
-        if (user.CanViewAdminLimitedProjects)
+        if (user.CanViewAdminLimitedProjects())
         {
             // Can see all approved projects (including admin-limited)
             // Plus pending projects from their organization only
@@ -89,7 +89,7 @@ public static class ProjectVisibility
         int organizationID)
     {
         // Anonymous or Unassigned cannot see pending projects
-        if (user == null || user.IsAnonymousOrUnassigned)
+        if (user == null || user.IsAnonymousOrUnassigned())
         {
             return query.Where(p => false); // Return empty
         }
@@ -100,7 +100,7 @@ public static class ProjectVisibility
             p.ProjectOrganizations.Any(po => po.OrganizationID == organizationID));
 
         // Elevated users can see all pending for this organization
-        if (user.HasElevatedProjectAccess)
+        if (user.HasElevatedProjectAccess())
         {
             return pendingQuery;
         }
@@ -124,7 +124,7 @@ public static class ProjectVisibility
         PersonDetail? user)
     {
         // Anonymous or Unassigned cannot see pending projects
-        if (user == null || user.IsAnonymousOrUnassigned)
+        if (user == null || user.IsAnonymousOrUnassigned())
         {
             return query.Where(p => false);
         }
@@ -134,7 +134,7 @@ public static class ProjectVisibility
             !p.ProjectType.LimitVisibilityToAdmin);
 
         // Elevated users see all pending projects
-        if (user.HasElevatedProjectAccess)
+        if (user.HasElevatedProjectAccess())
         {
             return pendingBase;
         }
@@ -168,13 +168,13 @@ public static class ProjectVisibility
         var isPending = PendingStatusIds.Contains(projectApprovalStatusID);
 
         // Anonymous or Unassigned: only approved, non-admin-limited
-        if (user == null || user.IsAnonymousOrUnassigned)
+        if (user == null || user.IsAnonymousOrUnassigned())
         {
             return isApproved && !limitVisibilityToAdmin;
         }
 
         // Elevated users see everything
-        if (user.HasElevatedProjectAccess)
+        if (user.HasElevatedProjectAccess())
         {
             return true;
         }
@@ -182,7 +182,7 @@ public static class ProjectVisibility
         // Approved projects
         if (isApproved)
         {
-            return !limitVisibilityToAdmin || user.CanViewAdminLimitedProjects;
+            return !limitVisibilityToAdmin || user.CanViewAdminLimitedProjects();
         }
 
         // Pending projects: must not be admin-limited and user must be in one of the project's orgs

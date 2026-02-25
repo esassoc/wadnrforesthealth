@@ -23,7 +23,7 @@ public static class ProjectTypes
 
     public static async Task<List<ProjectTypeTaxonomy>> ListTaxonomyAsync(WADNRDbContext dbContext, PersonDetail? callingUser)
     {
-        var canViewAdminLimited = callingUser?.CanViewAdminLimitedProjects ?? false;
+        var canViewAdminLimited = callingUser.CanViewAdminLimitedProjects();
         return await ProjectTypeProjections.AsTaxonomy(dbContext.ProjectTypes.AsNoTracking(), canViewAdminLimited)
             .OrderBy(x => x.ProjectTypeName)
             .ToListAsync();

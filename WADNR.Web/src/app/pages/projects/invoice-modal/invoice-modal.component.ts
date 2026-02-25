@@ -7,6 +7,7 @@ import { BehaviorSubject } from "rxjs";
 import { FormFieldComponent, FormFieldType, SelectDropdownOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
@@ -34,7 +35,7 @@ export interface InvoiceModalData {
 @Component({
     selector: "invoice-modal",
     standalone: true,
-    imports: [AsyncPipe, ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, LoadingDirective],
+    imports: [AsyncPipe, ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, ButtonLoadingDirective, LoadingDirective],
     templateUrl: "./invoice-modal.component.html",
     styleUrls: ["./invoice-modal.component.scss"]
 })

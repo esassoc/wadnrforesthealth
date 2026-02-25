@@ -12,7 +12,6 @@ import { TreatmentService } from "src/app/shared/generated/api/treatment.service
 import { TreatmentGridRow } from "src/app/shared/generated/model/treatment-grid-row";
 import { TreatmentAreaLookupItem } from "src/app/shared/generated/model/treatment-area-lookup-item";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
-import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
@@ -27,7 +26,7 @@ interface TreatmentsViewModel {
 @Component({
     selector: "treatments-step",
     standalone: true,
-    imports: [CommonModule, AsyncPipe, WADNRGridComponent, IconComponent, WorkflowStepActionsComponent],
+    imports: [CommonModule, AsyncPipe, WADNRGridComponent, WorkflowStepActionsComponent],
     templateUrl: "./treatments-step.component.html",
     styleUrls: ["./treatments-step.component.scss"],
 })

@@ -7,17 +7,20 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { ProjectTypeLookupItem } from './project-type-lookup-item';
 import { OrganizationLookupItem } from './organization-lookup-item';
 import { ProjectOrganizationItem } from './project-organization-item';
-import { FundSourceAllocationRequestItem } from './fund-source-allocation-request-item';
-import { BoundingBox } from './bounding-box';
+import { PriorityLandscapeLookupItem } from './priority-landscape-lookup-item';
 import { ProjectPersonItem } from './project-person-item';
 import { ClassificationLookupItem } from './classification-lookup-item';
-import { TagLookupItem } from './tag-lookup-item';
+import { CountyLookupItem } from './county-lookup-item';
 import { ProgramLookupItem } from './program-lookup-item';
 import { ProjectStageLookupItem } from './project-stage-lookup-item';
 import { AgreementLookupItem } from './agreement-lookup-item';
+import { ProjectTypeLookupItem } from './project-type-lookup-item';
+import { DNRUplandRegionLookupItem } from './dnr-upland-region-lookup-item';
+import { FundSourceAllocationRequestItem } from './fund-source-allocation-request-item';
+import { BoundingBox } from './bounding-box';
+import { TagLookupItem } from './tag-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
@@ -51,17 +54,13 @@ export class ProjectDetail {
     Agreements?: Array<AgreementLookupItem> | null;
     DefaultBoundingBox?: BoundingBox;
     HasLocationData?: boolean;
+    Latitude?: number | null;
+    Longitude?: number | null;
     ProjectLocationNotes?: string | null;
-    Counties?: Array<string> | null;
-    Regions?: Array<string> | null;
-    PriorityLandscapes?: Array<string> | null;
-    UserCanEdit?: boolean;
-    UserCanDirectEdit?: boolean;
-    UserCanDelete?: boolean;
-    UserCanApprove?: boolean;
-    UserIsAdmin?: boolean;
+    Counties?: Array<CountyLookupItem> | null;
+    Regions?: Array<DNRUplandRegionLookupItem> | null;
+    PriorityLandscapes?: Array<PriorityLandscapeLookupItem> | null;
     CanViewFactSheet?: boolean;
-    CanStartUpdate?: boolean;
     HasExistingUpdateBatch?: boolean;
     LatestUpdateBatchStateID?: number | null;
     LatestUpdateBatchStateName?: string | null;
@@ -102,17 +101,13 @@ export interface ProjectDetailForm {
     Agreements?: FormControl<Array<AgreementLookupItem>>;
     DefaultBoundingBox?: FormControl<BoundingBox>;
     HasLocationData?: FormControl<boolean>;
+    Latitude?: FormControl<number>;
+    Longitude?: FormControl<number>;
     ProjectLocationNotes?: FormControl<string>;
-    Counties?: FormControl<Array<string>>;
-    Regions?: FormControl<Array<string>>;
-    PriorityLandscapes?: FormControl<Array<string>>;
-    UserCanEdit?: FormControl<boolean>;
-    UserCanDirectEdit?: FormControl<boolean>;
-    UserCanDelete?: FormControl<boolean>;
-    UserCanApprove?: FormControl<boolean>;
-    UserIsAdmin?: FormControl<boolean>;
+    Counties?: FormControl<Array<CountyLookupItem>>;
+    Regions?: FormControl<Array<DNRUplandRegionLookupItem>>;
+    PriorityLandscapes?: FormControl<Array<PriorityLandscapeLookupItem>>;
     CanViewFactSheet?: FormControl<boolean>;
-    CanStartUpdate?: FormControl<boolean>;
     HasExistingUpdateBatch?: FormControl<boolean>;
     LatestUpdateBatchStateID?: FormControl<number>;
     LatestUpdateBatchStateName?: FormControl<string>;
@@ -411,6 +406,26 @@ export class ProjectDetailFormControls {
             ],
         }
     );
+    public static Latitude = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Longitude = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
     public static ProjectLocationNotes = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
@@ -421,7 +436,7 @@ export class ProjectDetailFormControls {
             ],
         }
     );
-    public static Counties = (value: FormControlState<Array<string>> | Array<string> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<string>>(
+    public static Counties = (value: FormControlState<Array<CountyLookupItem>> | Array<CountyLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<CountyLookupItem>>(
         value,
         formControlOptions ?? 
         {
@@ -431,7 +446,7 @@ export class ProjectDetailFormControls {
             ],
         }
     );
-    public static Regions = (value: FormControlState<Array<string>> | Array<string> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<string>>(
+    public static Regions = (value: FormControlState<Array<DNRUplandRegionLookupItem>> | Array<DNRUplandRegionLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<DNRUplandRegionLookupItem>>(
         value,
         formControlOptions ?? 
         {
@@ -441,57 +456,7 @@ export class ProjectDetailFormControls {
             ],
         }
     );
-    public static PriorityLandscapes = (value: FormControlState<Array<string>> | Array<string> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<string>>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static UserCanEdit = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static UserCanDirectEdit = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static UserCanDelete = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static UserCanApprove = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static UserIsAdmin = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+    public static PriorityLandscapes = (value: FormControlState<Array<PriorityLandscapeLookupItem>> | Array<PriorityLandscapeLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<PriorityLandscapeLookupItem>>(
         value,
         formControlOptions ?? 
         {
@@ -502,16 +467,6 @@ export class ProjectDetailFormControls {
         }
     );
     public static CanViewFactSheet = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static CanStartUpdate = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

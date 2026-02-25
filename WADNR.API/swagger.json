@@ -881,6 +881,44 @@
         "x-anonymous": true
       }
     },
+    "/cost-share/generate-pdf": {
+      "get": {
+        "tags": [
+          "CostShare"
+        ],
+        "operationId": "BlankCostShareAgreementPdf_CostShare",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/cost-share/generate-pdf/{projectPersonID}": {
+      "get": {
+        "tags": [
+          "CostShare"
+        ],
+        "operationId": "FilledCostShareAgreementPdf_CostShare",
+        "parameters": [
+          {
+            "name": "projectPersonID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/counties": {
       "get": {
         "tags": [
@@ -5177,7 +5215,7 @@
         }
       }
     },
-    "/interaction-events": {
+    "/interactions-events": {
       "get": {
         "tags": [
           "InteractionEvent"
@@ -5264,7 +5302,7 @@
         }
       }
     },
-    "/interaction-events/{interactionEventID}": {
+    "/interactions-events/{interactionEventID}": {
       "get": {
         "tags": [
           "InteractionEvent"
@@ -5386,7 +5424,7 @@
         }
       }
     },
-    "/interaction-events/{interactionEventID}/projects": {
+    "/interactions-events/{interactionEventID}/projects": {
       "get": {
         "tags": [
           "InteractionEvent"
@@ -5437,7 +5475,7 @@
         "x-anonymous": true
       }
     },
-    "/interaction-events/{interactionEventID}/contacts": {
+    "/interactions-events/{interactionEventID}/contacts": {
       "get": {
         "tags": [
           "InteractionEvent"
@@ -5488,7 +5526,7 @@
         "x-anonymous": true
       }
     },
-    "/interaction-events/{interactionEventID}/simple-location/feature-collection": {
+    "/interactions-events/{interactionEventID}/simple-location/feature-collection": {
       "get": {
         "tags": [
           "InteractionEvent"
@@ -5539,7 +5577,7 @@
         "x-anonymous": true
       }
     },
-    "/interaction-events/{interactionEventID}/file-resources": {
+    "/interactions-events/{interactionEventID}/file-resources": {
       "get": {
         "tags": [
           "InteractionEvent"
@@ -5588,6 +5626,77 @@
           }
         },
         "x-anonymous": true
+      },
+      "post": {
+        "tags": [
+          "InteractionEvent"
+        ],
+        "operationId": "CreateFileResource_InteractionEvent",
+        "parameters": [
+          {
+            "name": "interactionEventID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "displayName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "displayName": {
+                  "style": "form"
+                },
+                "description": {
+                  "style": "form"
+                },
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileResourceInteractionEventDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileResourceInteractionEventDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileResourceInteractionEventDetail"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/invoices": {
@@ -8647,6 +8756,45 @@
         }
       }
     },
+    "/projects/lookup": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListLookup_Project",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects/{projectID}": {
       "get": {
         "tags": [
@@ -9009,7 +9157,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ClassificationLookupItem"
+                    "$ref": "#/components/schemas/ProjectClassificationDetailItem"
                   }
                 }
               },
@@ -9017,7 +9165,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ClassificationLookupItem"
+                    "$ref": "#/components/schemas/ProjectClassificationDetailItem"
                   }
                 }
               },
@@ -9025,7 +9173,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ClassificationLookupItem"
+                    "$ref": "#/components/schemas/ProjectClassificationDetailItem"
                   }
                 }
               }
@@ -23315,6 +23463,22 @@
           "InteractionEventDate": {
             "type": "string",
             "format": "date-time"
+          },
+          "ProjectIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "ContactIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -24599,26 +24763,6 @@
           },
           "IsFullUser": {
             "type": "boolean"
-          },
-          "IsAnonymousOrUnassigned": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "CanViewPendingProjects": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "HasElevatedProjectAccess": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "HasCanEditProgramRole": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "CanViewAdminLimitedProjects": {
-            "type": "boolean",
-            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -26281,6 +26425,16 @@
           "HasLocationData": {
             "type": "boolean"
           },
+          "Latitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Longitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "ProjectLocationNotes": {
             "type": "string",
             "nullable": true
@@ -26288,43 +26442,25 @@
           "Counties": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/CountyLookupItem"
             },
             "nullable": true
           },
           "Regions": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/DNRUplandRegionLookupItem"
             },
             "nullable": true
           },
           "PriorityLandscapes": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/PriorityLandscapeLookupItem"
             },
             "nullable": true
           },
-          "UserCanEdit": {
-            "type": "boolean"
-          },
-          "UserCanDirectEdit": {
-            "type": "boolean"
-          },
-          "UserCanDelete": {
-            "type": "boolean"
-          },
-          "UserCanApprove": {
-            "type": "boolean"
-          },
-          "UserIsAdmin": {
-            "type": "boolean"
-          },
           "CanViewFactSheet": {
-            "type": "boolean"
-          },
-          "CanStartUpdate": {
             "type": "boolean"
           },
           "HasExistingUpdateBatch": {
@@ -30825,6 +30961,9 @@
     },
     {
       "name": "ClassificationSystem"
+    },
+    {
+      "name": "CostShare"
     },
     {
       "name": "County"

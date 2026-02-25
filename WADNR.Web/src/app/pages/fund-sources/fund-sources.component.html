@@ -8,11 +8,13 @@
         [gridTitle]="'Fund Sources'"
         [defaultRowSelection]="'singleRow'"
         (selectionChanged)="onFundSourceSelected($event)">
+        @if (canManage$ | async) {
         <div customGridActionsRight>
             <button class="btn btn-sm btn-primary" (click)="createNewFundSource()">
                 <span class="fas fa-plus"></span> Create New
             </button>
         </div>
+        }
     </wadnr-grid>
 
     <div class="mt-3">
@@ -27,11 +29,13 @@
             downloadFileName="fund-source-allocations"
             [gridTitle]="allocationGridTitle"
             (gridReady)="onAllocationGridReady($event)">
+            @if (canManage$ | async) {
             <div customGridActionsRight>
                 <button class="btn btn-sm btn-primary" (click)="createNewAllocation()">
                     <span class="fas fa-plus"></span> Create New
                 </button>
             </div>
+            }
         </wadnr-grid>
     </div>
 </div>

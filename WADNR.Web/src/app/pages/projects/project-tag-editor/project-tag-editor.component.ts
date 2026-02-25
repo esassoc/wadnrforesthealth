@@ -1,21 +1,22 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
-import { BehaviorSubject, forkJoin, of } from "rxjs";
-import { catchError, filter } from "rxjs/operators";
+import { BehaviorSubject, of } from "rxjs";
+import { catchError } from "rxjs/operators";
 
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
-import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { TagService } from "src/app/shared/generated/api/tag.service";
 import { TagLookupItem } from "src/app/shared/generated/model/tag-lookup-item";
+import { TagUpsertRequest } from "src/app/shared/generated/model/tag-upsert-request";
 import { ProjectTagSaveRequest } from "src/app/shared/generated/model/project-tag-save-request";
 
 export interface ProjectTagEditorData {
@@ -26,20 +27,25 @@ export interface ProjectTagEditorData {
 @Component({
     selector: "project-tag-editor",
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, IconComponent, ModalAlertsComponent, LoadingDirective],
+    imports: [CommonModule, ReactiveFormsModule, IconComponent, ModalAlertsComponent, LoadingDirective, ButtonLoadingDirective],
     templateUrl: "./project-tag-editor.component.html",
+    styleUrls: ["./project-tag-editor.component.scss"],
 })
 export class ProjectTagEditorComponent extends BaseModal implements OnInit {
     public ref: DialogRef<ProjectTagEditorData, TagLookupItem[] | null> = inject(DialogRef);
 
-    public FormFieldType = FormFieldType;
     public isLoading$ = new BehaviorSubject<boolean>(true);
     public isSubmitting = false;
+    public isCreating = false;
+    public creatingTagName = "";
 
-    public allTagOptions: FormInputOption[] = [];
-    public availableTagOptions: FormInputOption[] = [];
+    public allTags: TagLookupItem[] = [];
     public selectedTags: TagLookupItem[] = [];
-    public tagToAdd = new FormControl<number | null>(null);
+    public searchControl = new FormControl<string>("", { nonNullable: true });
+    public filteredTags: TagLookupItem[] = [];
+    public showDropdown = false;
+
+    private cdr = inject(ChangeDetectorRef);
 
     constructor(
         private projectService: ProjectService,
@@ -53,46 +59,92 @@ export class ProjectTagEditorComponent extends BaseModal implements OnInit {
         const data = this.ref.data;
         this.selectedTags = [...(data.existingTags ?? [])];
 
-        // Auto-add tag on dropdown selection
-        this.tagToAdd.valueChanges
-            .pipe(filter((v) => v != null))
-            .subscribe((tagID) => this.addTag(tagID));
-
         this.tagService.listTag().pipe(
             catchError(() => of([] as any[]))
         ).subscribe((tags) => {
-            this.allTagOptions = tags.map((t: any) => ({
-                Value: t.TagID,
-                Label: t.TagName,
-                disabled: false,
-            }));
-            this.updateAvailableTagOptions();
+            this.allTags = tags.map((t: any) => ({ TagID: t.TagID, TagName: t.TagName }));
             this.isLoading$.next(false);
         });
     }
 
-    private updateAvailableTagOptions(): void {
-        const selectedIDs = new Set(this.selectedTags.map((t) => t.TagID));
-        this.availableTagOptions = this.allTagOptions.filter((o) => !selectedIDs.has(o.Value as number));
-    }
-
-    addTag(tagID: number): void {
-        const option = this.allTagOptions.find((o) => o.Value === tagID);
-        if (!option) return;
-
-        if (this.selectedTags.some((t) => t.TagID === tagID)) {
-            setTimeout(() => this.tagToAdd.setValue(null, { emitEvent: false }));
+    onSearchInput(): void {
+        const text = this.searchControl.value.trim();
+        if (text.length === 0) {
+            this.filteredTags = [];
+            this.showDropdown = false;
             return;
         }
 
-        this.selectedTags = [...this.selectedTags, { TagID: tagID, TagName: option.Label as string }];
-        this.updateAvailableTagOptions();
-        setTimeout(() => this.tagToAdd.setValue(null, { emitEvent: false }));
+        const selectedIDs = new Set(this.selectedTags.map((t) => t.TagID));
+        const lower = text.toLowerCase();
+        this.filteredTags = this.allTags
+            .filter((t) => !selectedIDs.has(t.TagID) && t.TagName?.toLowerCase().includes(lower))
+            .slice(0, 10);
+        this.showDropdown = true;
+    }
+
+    get searchText(): string {
+        return this.searchControl.value.trim();
+    }
+
+    get hasExactMatch(): boolean {
+        const lower = this.searchText.toLowerCase();
+        return this.allTags.some((t) => t.TagName?.toLowerCase() === lower);
+    }
+
+    get canCreateTag(): boolean {
+        return this.searchText.length > 0 && !this.hasExactMatch && !this.isCreating;
+    }
+
+    addExistingTag(tag: TagLookupItem): void {
+        if (this.selectedTags.some((t) => t.TagID === tag.TagID)) return;
+        this.selectedTags = [...this.selectedTags, tag];
+        this.searchControl.setValue("");
+        this.filteredTags = [];
+        this.showDropdown = false;
+    }
+
+    createAndAddTag(): void {
+        const name = this.searchText;
+        if (!name || this.isCreating) return;
+
+        this.isCreating = true;
+        this.creatingTagName = name;
+        const request = new TagUpsertRequest({ TagName: name });
+
+        this.tagService.createTag(request).subscribe({
+            next: (created) => {
+                const newTag: TagLookupItem = { TagID: created.TagID, TagName: created.TagName };
+                this.allTags = [...this.allTags, newTag];
+                this.selectedTags = [...this.selectedTags, newTag];
+                this.searchControl.setValue("");
+                this.filteredTags = [];
+                this.showDropdown = false;
+                this.isCreating = false;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                this.isCreating = false;
+                const message = err?.error?.ErrorMessage ?? err?.error ?? "Failed to create tag.";
+                this.addLocalAlert(message, AlertContext.Danger, true);
+                this.cdr.detectChanges();
+            },
+        });
     }
 
     removeTag(tagID: number): void {
         this.selectedTags = this.selectedTags.filter((t) => t.TagID !== tagID);
-        this.updateAvailableTagOptions();
+    }
+
+    onSearchFocus(): void {
+        if (this.searchText.length > 0) {
+            this.onSearchInput();
+        }
+    }
+
+    onSearchBlur(): void {
+        // Delay so click events on dropdown items register first
+        setTimeout(() => (this.showDropdown = false), 150);
     }
 
     save(): void {

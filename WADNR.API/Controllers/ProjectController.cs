@@ -66,6 +66,14 @@ public class ProjectController(
         return Ok(rows);
     }
 
+    [HttpGet("lookup")]
+    [NormalUserFeature]
+    public async Task<ActionResult<List<ProjectLookupItem>>> ListLookup()
+    {
+        var projects = await Projects.ListAsLookupItemAsync(DbContext);
+        return Ok(projects);
+    }
+
     [HttpGet("{projectID}")]
     [AllowAnonymous]
     [ProjectViewFeature]
@@ -183,9 +191,9 @@ public class ProjectController(
     [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
-    public async Task<ActionResult<IEnumerable<ClassificationLookupItem>>> ListClassifications([FromRoute] int projectID)
+    public async Task<ActionResult<IEnumerable<ProjectClassificationDetailItem>>> ListClassifications([FromRoute] int projectID)
     {
-        var classifications = await Projects.ListClassificationsAsLookupItemByProjectIDForUserAsync(DbContext, projectID, CallingUser);
+        var classifications = await Projects.ListClassificationsAsDetailItemByProjectIDForUserAsync(DbContext, projectID, CallingUser);
         return Ok(classifications);
     }
 
@@ -240,7 +248,7 @@ public class ProjectController(
 
         if (project.ProjectLocations == null || project.ProjectLocations.Count == 0)
         {
-            return Ok();
+            return Ok(genericLayers);
         }
 
         var projectLocationTypes = project.ProjectLocations.Select(x => x.ProjectLocationType).Distinct().ToList();

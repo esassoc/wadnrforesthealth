@@ -9,7 +9,9 @@ import { Subscription } from "rxjs";
 export class DropdownToggleDirective implements OnDestroy {
     private routerNavigationEndSubscription = Subscription.EMPTY;
     private classString: string = "active";
+    private scrollListener: (() => void) | null = null;
     @Input() dropdownToggle: any;
+    @Input() dropdownToggleFixed: boolean = false;
 
     @HostBinding("class.active") showMenu: boolean = false;
 
@@ -36,6 +38,7 @@ export class DropdownToggleDirective implements OnDestroy {
 
     ngOnDestroy(): void {
         this.routerNavigationEndSubscription.unsubscribe();
+        this.removeScrollListener();
     }
 
     toggleMenu(show: boolean = null) {
@@ -44,10 +47,41 @@ export class DropdownToggleDirective implements OnDestroy {
         }
         if (this.showMenu) {
             this.renderer.addClass(this.dropdownToggle, this.classString);
+            if (this.dropdownToggleFixed) {
+                this.positionFixedMenu();
+                this.addScrollListener();
+            }
         } else {
             if (this.dropdownToggle) {
                 this.renderer.removeClass(this.dropdownToggle, this.classString);
             }
+            this.removeScrollListener();
+        }
+    }
+
+    private positionFixedMenu(): void {
+        const triggerRect = this.el.nativeElement.getBoundingClientRect();
+        const top = triggerRect.bottom + 4;
+        const left = triggerRect.left;
+
+        this.renderer.setStyle(this.dropdownToggle, "top", `${top}px`);
+        this.renderer.setStyle(this.dropdownToggle, "left", `${left}px`);
+    }
+
+    private addScrollListener(): void {
+        this.removeScrollListener();
+        const handler = () => {
+            this.showMenu = false;
+            this.toggleMenu();
+        };
+        window.addEventListener("scroll", handler, true);
+        this.scrollListener = () => window.removeEventListener("scroll", handler, true);
+    }
+
+    private removeScrollListener(): void {
+        if (this.scrollListener) {
+            this.scrollListener();
+            this.scrollListener = null;
         }
     }
 }

@@ -237,3 +237,23 @@ public static class People
     }
 
 }
+
+public static class PersonDetailExtensions
+{
+    public static bool IsAnonymousOrUnassigned(this PersonDetail? user) =>
+        user == null ||
+        user.PersonID == PersonDetail.AnonymousPersonID ||
+        (user.BaseRole != null && user.BaseRole.RoleID == (int)RoleEnum.Unassigned);
+
+    public static bool HasElevatedProjectAccess(this PersonDetail? user) =>
+        user?.BaseRole != null &&
+        (user.BaseRole.RoleID == (int)RoleEnum.Admin ||
+         user.BaseRole.RoleID == (int)RoleEnum.EsaAdmin ||
+         user.BaseRole.RoleID == (int)RoleEnum.ProjectSteward);
+
+    public static bool HasCanEditProgramRole(this PersonDetail? user) =>
+        user?.SupplementalRoleList?.Any(r => r.RoleID == (int)RoleEnum.CanEditProgram) ?? false;
+
+    public static bool CanViewAdminLimitedProjects(this PersonDetail? user) =>
+        user.HasElevatedProjectAccess() || user.HasCanEditProgramRole();
+}

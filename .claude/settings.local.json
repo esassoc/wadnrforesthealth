@@ -49,7 +49,9 @@
       "Bash(Select-String -Pattern \"\\(error|Build succeeded\\)\")",
       "Bash(Select-Object -Last 5)",
       "Bash(npx:*)",
-      "Bash(sort:*)"
+      "Bash(sort:*)",
+      "Bash(echo === $dir ===:*)",
+      "Bash(echo === $page_dir ===:*)"
     ]
   }
 }

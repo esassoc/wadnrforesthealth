@@ -43,7 +43,7 @@
                     <div class="g-col-4 field-label">Total Award Amount</div>
                     <div class="g-col-8">{{ formatCurrency(fundSource.TotalAwardAmount) }}</div>
 
-                    @if (isUserLoggedIn) {
+                    @if (isUserLoggedIn$ | async) {
                     <div class="g-col-4 field-label">Current Balance</div>
                     <div class="g-col-8">{{ formatCurrency(fundSource.CurrentBalance) }}</div>
                     }
@@ -82,7 +82,7 @@
     </div>
 
     <!-- Budget Line Items Grid (logged-in users only) -->
-    @if (isUserLoggedIn) {
+    @if (isUserLoggedIn$ | async) {
     <div class="g-col-12">
         <div class="card">
             <div class="card-header">
@@ -130,7 +130,7 @@
     </div>
 
     <!-- Agreements Grid (logged-in users only) -->
-    @if (isUserLoggedIn) {
+    @if (isUserLoggedIn$ | async) {
     <div class="g-col-12">
         <div class="card">
             <div class="card-header">
@@ -177,7 +177,7 @@
                 }
 
                 <!-- Internal Notes (with permission check) -->
-                @if (canViewInternalNotes) {
+                @if (canManageFundSources$ | async) {
                 <div class="internal-notes-section">
                     <h4>Internal Notes ({{ fundSource.InternalNoteCount }})</h4>
                     @if (internalNotes$ | async; as internalNotes) {

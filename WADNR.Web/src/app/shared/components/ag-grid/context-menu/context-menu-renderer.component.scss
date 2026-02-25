@@ -7,14 +7,13 @@
 
 .context-menu {
     display: none;
-    position: absolute;
-    top: 0.65rem;
-    left: 0.25rem;
+    position: fixed;
     background: white;
     padding: 0.75rem;
     box-shadow: var(--shadow-100);
     border-radius: 0.25rem;
     border: 1px solid rgba(var(--primary-rgb), 1);
+    z-index: 9999;
 
     &.active {
         display: grid;

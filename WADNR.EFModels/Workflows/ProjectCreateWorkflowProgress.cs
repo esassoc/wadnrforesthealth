@@ -126,7 +126,7 @@ public static class ProjectCreateWorkflowProgress
         WADNRDbContext dbContext)
     {
         // Default all to false for anonymous/unassigned users
-        if (callingUser == null || callingUser.IsAnonymousOrUnassigned)
+        if (callingUser == null || callingUser.IsAnonymousOrUnassigned())
         {
             dto.CanApprove = false;
             dto.CanReject = false;
@@ -142,7 +142,7 @@ public static class ProjectCreateWorkflowProgress
 
         // Approve/Reject/Return: only available to approvers (Admin, EsaAdmin, ProjectSteward, CanEditProgram)
         // and only when project is PendingApproval
-        var canApproveProjects = callingUser.HasElevatedProjectAccess || callingUser.HasCanEditProgramRole;
+        var canApproveProjects = callingUser.HasElevatedProjectAccess() || callingUser.HasCanEditProgramRole();
         dto.CanApprove = canApproveProjects && isPendingApproval;
         dto.CanReject = canApproveProjects && isPendingApproval;
         dto.CanReturn = canApproveProjects && isPendingApproval;
@@ -151,7 +151,7 @@ public static class ProjectCreateWorkflowProgress
         dto.CanWithdraw = isPendingApproval;
 
         // Edit: based on role and project organizations
-        if (callingUser.HasElevatedProjectAccess)
+        if (callingUser.HasElevatedProjectAccess())
         {
             dto.CanEdit = true;
         }

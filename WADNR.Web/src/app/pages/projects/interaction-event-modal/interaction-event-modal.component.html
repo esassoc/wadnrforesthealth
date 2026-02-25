@@ -1,0 +1,128 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>{{ mode === 'create' ? 'Add' : 'Edit' }} Interaction/Event</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.InteractionEventTitle"
+            fieldLabel="Title"
+            [type]="FormFieldType.Text"
+            placeholder="Enter event title">
+        </form-field>
+
+        <div class="grid-12">
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="form.controls.InteractionEventTypeID"
+                    fieldLabel="Event Type"
+                    [type]="FormFieldType.Select"
+                    [formInputOptions]="interactionEventTypeOptions"
+                    placeholder="Select event type">
+                </form-field>
+            </div>
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="form.controls.InteractionEventDate"
+                    fieldLabel="Date"
+                    [type]="FormFieldType.Date">
+                </form-field>
+            </div>
+        </div>
+
+        <form-field
+            [formControl]="form.controls.StaffPersonID"
+            fieldLabel="Staff Person"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="staffPersonOptions"
+            placeholder="Select staff person (optional)">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.InteractionEventDescription"
+            fieldLabel="Description"
+            [type]="FormFieldType.Textarea"
+            placeholder="Enter description (optional)">
+        </form-field>
+
+        <form-field
+            [formControl]="projectSelectControl"
+            fieldLabel="Projects"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="availableProjectOptions"
+            placeholder="Add a project..."
+            [readOnly]="isSubmitting"
+            (change)="onAddProject($event)">
+        </form-field>
+        @if (selectedProjects.length > 0) {
+            <ul class="selected-items-list mt-2">
+                @for (project of selectedProjects; track project.Value) {
+                    <li class="selected-item">
+                        <a href="#"
+                            class="text-danger"
+                            (click)="removeProject(project.Value); $event.preventDefault()"
+                            [class.disabled]="isSubmitting"
+                            title="Remove">
+                            <icon icon="Delete"></icon>
+                        </a>
+                        <span>{{ project.Label }}</span>
+                    </li>
+                }
+            </ul>
+        }
+
+        <form-field
+            [formControl]="contactSelectControl"
+            fieldLabel="Contacts"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="availableContactOptions"
+            placeholder="Add a contact..."
+            [readOnly]="isSubmitting"
+            (change)="onAddContact($event)">
+        </form-field>
+        @if (selectedContacts.length > 0) {
+            <ul class="selected-items-list mt-2">
+                @for (contact of selectedContacts; track contact.Value) {
+                    <li class="selected-item">
+                        <a href="#"
+                            class="text-danger"
+                            (click)="removeContact(contact.Value); $event.preventDefault()"
+                            [class.disabled]="isSubmitting"
+                            title="Remove">
+                            <icon icon="Delete"></icon>
+                        </a>
+                        <span>{{ contact.Label }}</span>
+                    </li>
+                }
+            </ul>
+        }
+
+        @if (mode === 'create') {
+            <form-field
+                [formControl]="fileControl"
+                fieldLabel="Attachments"
+                [type]="FormFieldType.File"
+                [multiple]="true"
+                [uploadFileAccepts]="allowedFileExtensions">
+            </form-field>
+        }
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting"
+        [buttonLoading]="isSubmitting">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

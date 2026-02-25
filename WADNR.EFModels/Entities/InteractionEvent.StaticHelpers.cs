@@ -37,6 +37,33 @@ public static class InteractionEvents
         };
         dbContext.InteractionEvents.Add(entity);
         await dbContext.SaveChangesAsync();
+
+        if (dto.ProjectIDs is { Count: > 0 })
+        {
+            foreach (var projectID in dto.ProjectIDs)
+            {
+                dbContext.InteractionEventProjects.Add(new InteractionEventProject
+                {
+                    InteractionEventID = entity.InteractionEventID,
+                    ProjectID = projectID
+                });
+            }
+            await dbContext.SaveChangesAsync();
+        }
+
+        if (dto.ContactIDs is { Count: > 0 })
+        {
+            foreach (var personID in dto.ContactIDs)
+            {
+                dbContext.InteractionEventContacts.Add(new InteractionEventContact
+                {
+                    InteractionEventID = entity.InteractionEventID,
+                    PersonID = personID
+                });
+            }
+            await dbContext.SaveChangesAsync();
+        }
+
         return await GetByIDAsDetailAsync(dbContext, entity.InteractionEventID);
     }
 
@@ -51,12 +78,58 @@ public static class InteractionEvents
         entity.InteractionEventDescription = dto.InteractionEventDescription;
         entity.InteractionEventDate = dto.InteractionEventDate;
 
+        // Sync project associations
+        await dbContext.InteractionEventProjects
+            .Where(x => x.InteractionEventID == interactionEventID)
+            .ExecuteDeleteAsync();
+
+        if (dto.ProjectIDs is { Count: > 0 })
+        {
+            foreach (var projectID in dto.ProjectIDs)
+            {
+                dbContext.InteractionEventProjects.Add(new InteractionEventProject
+                {
+                    InteractionEventID = interactionEventID,
+                    ProjectID = projectID
+                });
+            }
+        }
+
+        // Sync contact associations
+        await dbContext.InteractionEventContacts
+            .Where(x => x.InteractionEventID == interactionEventID)
+            .ExecuteDeleteAsync();
+
+        if (dto.ContactIDs is { Count: > 0 })
+        {
+            foreach (var personID in dto.ContactIDs)
+            {
+                dbContext.InteractionEventContacts.Add(new InteractionEventContact
+                {
+                    InteractionEventID = interactionEventID,
+                    PersonID = personID
+                });
+            }
+        }
+
         await dbContext.SaveChangesAsync();
         return await GetByIDAsDetailAsync(dbContext, entity.InteractionEventID);
     }
 
     public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int interactionEventID)
     {
+        await dbContext.InteractionEventContacts
+            .Where(x => x.InteractionEventID == interactionEventID)
+            .ExecuteDeleteAsync();
+
+        await dbContext.InteractionEventProjects
+            .Where(x => x.InteractionEventID == interactionEventID)
+            .ExecuteDeleteAsync();
+
+        await dbContext.InteractionEventFileResources
+            .Where(x => x.InteractionEventID == interactionEventID)
+            .ExecuteDeleteAsync();
+
         var deletedCount = await dbContext.InteractionEvents
             .Where(x => x.InteractionEventID == interactionEventID)
             .ExecuteDeleteAsync();

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy } from "@angular/core";
+import { Component, inject, signal, OnInit, OnDestroy } from "@angular/core";
 import { AsyncPipe, CommonModule, LowerCasePipe } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
@@ -24,6 +24,8 @@ import { ProjectLocationItem } from "src/app/shared/generated/model/project-loca
 import { ProjectLocationTypeEnum, ProjectLocationTypesAsSelectDropdownOptions } from "src/app/shared/generated/enum/project-location-type-enum";
 import { ImportGdbModalComponent, ImportGdbModalData } from "src/app/pages/projects/project-create-workflow/steps/location-detailed/import-gdb-modal/import-gdb-modal.component";
 import { BoundingBoxDto } from "src/app/shared/models/bounding-box-dto";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
 import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
 import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
@@ -65,7 +67,7 @@ interface FeatureFormControls {
 @Component({
     selector: "project-location-detailed-editor",
     standalone: true,
-    imports: [CommonModule, AsyncPipe, LowerCasePipe, ReactiveFormsModule, FormFieldComponent, WADNRMapComponent, ModalAlertsComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent],
+    imports: [CommonModule, AsyncPipe, LowerCasePipe, ReactiveFormsModule, FormFieldComponent, WADNRMapComponent, ModalAlertsComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent, LoadingDirective, ButtonLoadingDirective],
     templateUrl: "./project-location-detailed-editor.component.html",
     styleUrls: ["./project-location-detailed-editor.component.scss"],
 })
@@ -83,7 +85,7 @@ export class ProjectLocationDetailedEditorComponent extends BaseModal implements
     public featureGroup: L.FeatureGroup;
     public simpleLocationLayer: L.LayerGroup | null = null;
     public simpleLocationLatLng: L.LatLng | null = null;
-    public mapIsReady = false;
+    public mapIsReady = signal(false);
 
     // Feature state
     public features$ = new BehaviorSubject<LocationFeature[]>([]);
@@ -137,6 +139,16 @@ export class ProjectLocationDetailedEditorComponent extends BaseModal implements
             }
 
             this.isLoading$.next(false);
+
+            // With [loadingSpinner] the map DOM exists before data arrives,
+            // so handleMapLoad() may have already fired on an empty feature list.
+            // If the map is ready, add features + simple location now.
+            if (this.mapIsReady()) {
+                if (this._pendingSimpleLocation) {
+                    this.addSimpleLocationLayer(this._pendingSimpleLocation.lat, this._pendingSimpleLocation.lng);
+                }
+                this.addFeaturesToMap();
+            }
         });
     }
 
@@ -204,7 +216,7 @@ export class ProjectLocationDetailedEditorComponent extends BaseModal implements
         this.map = event.map;
         this.layerControl = event.layerControl;
         this.featureGroup = L.featureGroup().addTo(this.map);
-        this.mapIsReady = true;
+        this.mapIsReady.set(true);
 
         this.setupGeomanControls();
 
@@ -364,6 +376,8 @@ export class ProjectLocationDetailedEditorComponent extends BaseModal implements
             });
             if (!polygonLayer) continue;
 
+            (polygonLayer as any).options.pmIgnore = true;
+
             const leafletId = L.Util.stamp(polygonLayer);
 
             const locationFeature: LocationFeature = {
@@ -406,11 +420,6 @@ export class ProjectLocationDetailedEditorComponent extends BaseModal implements
             this.featureGroup.addLayer(feature.layer);
             this.applyDefaultStyle(feature);
             this.bindLayerEvents(feature.layer, feature);
-
-            if (!feature.isFromArcGis) {
-                (feature.layer as any).pm?.enable();
-                (feature.layer as any).pm?.disable();
-            }
         }
 
         if (this.featureGroup.getLayers().length > 0) {
@@ -522,16 +531,25 @@ export class ProjectLocationDetailedEditorComponent extends BaseModal implements
     selectFeature(feature: LocationFeature): void {
         if (feature.isDeleted) return;
 
+        // Deregister previous feature from Geoman
         if (this.selectedFeatureId$.value !== null) {
             const prevFeature = this.features$.value.find((f) => f.leafletId === this.selectedFeatureId$.value);
-            if (prevFeature && prevFeature.layer) {
-                this.applyDefaultStyle(prevFeature);
+            if (prevFeature?.layer && !prevFeature.isFromArcGis) {
+                (prevFeature.layer as any).pm?.disable();
+                (prevFeature.layer as any).options.pmIgnore = true;
             }
+            if (prevFeature) this.applyDefaultStyle(prevFeature);
         }
 
         this.selectedFeatureId$.next(feature.leafletId);
         this.applySelectedStyle(feature);
 
+        // Register new feature with Geoman (on-demand)
+        if (!feature.isFromArcGis) {
+            (feature.layer as any).options.pmIgnore = false;
+        }
+
+        // Pan to feature
         if (this.map && feature.layer) {
             const center = this.getFeatureCenter(feature);
             if (center) {

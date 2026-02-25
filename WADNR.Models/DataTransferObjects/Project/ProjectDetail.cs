@@ -62,21 +62,15 @@ public class ProjectDetail
     // Location
     public BoundingBox? DefaultBoundingBox { get; set; }
     public bool HasLocationData { get; set; }
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
     public string? ProjectLocationNotes { get; set; }
-    public List<string> Counties { get; set; } = new();
-    public List<string> Regions { get; set; } = new();
-    public List<string> PriorityLandscapes { get; set; } = new();
-
-    // User permission flags (populated based on calling user's role)
-    public bool UserCanEdit { get; set; }
-    public bool UserCanDirectEdit { get; set; }
-    public bool UserCanDelete { get; set; }
-    public bool UserCanApprove { get; set; }
-    public bool UserIsAdmin { get; set; }
+    public List<CountyLookupItem> Counties { get; set; } = new();
+    public List<DNRUplandRegionLookupItem> Regions { get; set; } = new();
+    public List<PriorityLandscapeLookupItem> PriorityLandscapes { get; set; } = new();
 
     // Button visibility flags
     public bool CanViewFactSheet { get; set; }
-    public bool CanStartUpdate { get; set; }
     public bool HasExistingUpdateBatch { get; set; }
     public int? LatestUpdateBatchStateID { get; set; }
     public string? LatestUpdateBatchStateName { get; set; }

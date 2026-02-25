@@ -543,11 +543,8 @@ public static class Projects
             .OrderBy(name => name)
             .ToList();
 
-        // Populate user permission flags
-        PopulateUserPermissionFlags(entity, callingUser, dbContext, projectID);
-
         // Populate button visibility flags
-        await PopulateButtonVisibilityFlagsAsync(entity, callingUser, dbContext, projectID);
+        await PopulateButtonVisibilityFlagsAsync(entity, dbContext, projectID);
 
         // Populate bounding box using fallback chain
         entity.DefaultBoundingBox = await GetProjectBoundingBoxAsync(dbContext, projectID);
@@ -556,69 +553,10 @@ public static class Projects
     }
 
     /// <summary>
-    /// Populates the user permission flags on a ProjectDetail based on the calling user's role.
-    /// </summary>
-    private static void PopulateUserPermissionFlags(
-        ProjectDetail entity,
-        PersonDetail? callingUser,
-        WADNRDbContext dbContext,
-        int projectID)
-    {
-        // Default all to false for anonymous/unassigned users
-        if (callingUser == null || callingUser.IsAnonymousOrUnassigned)
-        {
-            entity.UserCanEdit = false;
-            entity.UserCanDirectEdit = false;
-            entity.UserCanDelete = false;
-            entity.UserCanApprove = false;
-            entity.UserIsAdmin = false;
-            return;
-        }
-
-        // Check if user is admin-level
-        var isAdmin = callingUser.BaseRole?.RoleID == (int)RoleEnum.Admin ||
-                      callingUser.BaseRole?.RoleID == (int)RoleEnum.EsaAdmin;
-
-        entity.UserIsAdmin = isAdmin || callingUser.HasElevatedProjectAccess;
-
-        // Delete permission: only Admin/EsaAdmin
-        entity.UserCanDelete = isAdmin;
-
-        // Approve permission: Admin, EsaAdmin, ProjectSteward, or CanEditProgram
-        entity.UserCanApprove = callingUser.HasElevatedProjectAccess || callingUser.HasCanEditProgramRole;
-
-        // Direct edit permission: can bypass the update workflow for notes, photos, documents
-        // Matches ProjectEditAsAdminFeature roles (excludes Normal users)
-        entity.UserCanDirectEdit = callingUser.HasElevatedProjectAccess || callingUser.HasCanEditProgramRole;
-
-        // Edit permission: depends on project organizations
-        // Admin/EsaAdmin/ProjectSteward can edit any project
-        if (callingUser.HasElevatedProjectAccess)
-        {
-            entity.UserCanEdit = true;
-        }
-        else
-        {
-            // Normal users can only edit if their org is associated with the project
-            var userOrgID = callingUser.OrganizationID;
-            if (userOrgID.HasValue)
-            {
-                var projectOrgIds = entity.Organizations.Select(o => o.OrganizationID).ToList();
-                entity.UserCanEdit = projectOrgIds.Contains(userOrgID.Value);
-            }
-            else
-            {
-                entity.UserCanEdit = false;
-            }
-        }
-    }
-
-    /// <summary>
     /// Populates button visibility flags on a ProjectDetail.
     /// </summary>
     private static async Task PopulateButtonVisibilityFlagsAsync(
         ProjectDetail entity,
-        PersonDetail? callingUser,
         WADNRDbContext dbContext,
         int projectID)
     {
@@ -626,15 +564,14 @@ public static class Projects
         var projectStageID = entity.ProjectStage?.ProjectStageID;
         entity.CanViewFactSheet = projectStageID != (int)ProjectStageEnum.Cancelled;
 
-        // IsInLandownerAssistanceProgram: Check if project is in Landowner Assistance Program
-        entity.IsInLandownerAssistanceProgram = entity.Programs?.Any(p => p.ProgramID == Program.LandownerAssistanceProgramID) ?? false;
+        // IsInLandownerAssistanceProgram: Query DB directly because the projection filters out
+        // IsDefaultProgramForImportOnly programs, which may include Landowner Assistance
+        entity.IsInLandownerAssistanceProgram = await dbContext.ProjectPrograms
+            .AnyAsync(pp => pp.ProjectID == projectID && pp.ProgramID == Program.LandownerAssistanceProgramID);
 
         // ExistsInImportBlockList: Check ProjectImportBlockLists table
         entity.ExistsInImportBlockList = await dbContext.ProjectImportBlockLists
             .AnyAsync(x => x.ProjectID == projectID);
-
-        // Check if project is approved (not pending)
-        var isApproved = entity.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Approved;
 
         // Get latest update batch info for this project
         var latestBatch = await dbContext.ProjectUpdateBatches
@@ -662,8 +599,6 @@ public static class Projects
             entity.HasExistingUpdateBatch = false;
         }
 
-        // CanStartUpdate: User can edit + project is approved + no existing open batch
-        entity.CanStartUpdate = entity.UserCanEdit && isApproved && !entity.HasExistingUpdateBatch;
     }
 
     /// <summary>
@@ -945,9 +880,10 @@ public static class Projects
     }
 
     /// <summary>
-    /// Gets classifications for a specific project, if visible to the calling user.
+    /// Gets classifications for a specific project as detail items (with system info and notes),
+    /// if visible to the calling user.
     /// </summary>
-    public static async Task<List<ClassificationLookupItem>> ListClassificationsAsLookupItemByProjectIDForUserAsync(
+    public static async Task<List<ProjectClassificationDetailItem>> ListClassificationsAsDetailItemByProjectIDForUserAsync(
         WADNRDbContext dbContext,
         int projectID,
         PersonDetail? callingUser)
@@ -957,14 +893,18 @@ public static class Projects
         return await query
             .AsNoTracking()
             .Where(x => x.ProjectID == projectID)
-            .SelectMany(x => x.ProjectClassifications.Select(pc => pc.Classification))
-            .Select(c => new ClassificationLookupItem
+            .SelectMany(x => x.ProjectClassifications)
+            .Select(pc => new ProjectClassificationDetailItem
             {
-                ClassificationID = c.ClassificationID,
-                DisplayName = c.DisplayName
+                ProjectClassificationID = pc.ProjectClassificationID,
+                ClassificationID = pc.ClassificationID,
+                ClassificationName = pc.Classification.DisplayName,
+                ClassificationSystemID = pc.Classification.ClassificationSystemID,
+                ClassificationSystemName = pc.Classification.ClassificationSystem.ClassificationSystemName,
+                ProjectClassificationNotes = pc.ProjectClassificationNotes,
             })
-            .Distinct()
-            .OrderBy(x => x.DisplayName)
+            .OrderBy(x => x.ClassificationSystemName)
+            .ThenBy(x => x.ClassificationName)
             .ToListAsync();
     }
 
@@ -1002,6 +942,16 @@ public static class Projects
     }
 
     #endregion
+
+    public static async Task<List<ProjectLookupItem>> ListAsLookupItemAsync(WADNRDbContext dbContext)
+    {
+        return await dbContext.Projects
+            .AsNoTracking()
+            .Where(IsActiveProjectExpr)
+            .OrderBy(p => p.ProjectName)
+            .Select(ProjectProjections.AsLookupItem)
+            .ToListAsync();
+    }
 
     #region Direct Edit - Save Basics
 
@@ -1440,7 +1390,7 @@ public static class Projects
         WADNRDbContext dbContext,
         PersonDetail callingUser)
     {
-        var isAdmin = callingUser.HasElevatedProjectAccess;
+        var isAdmin = callingUser.HasElevatedProjectAccess();
 
         // Compute "my" org IDs
         var stewardOrgIds = await dbContext.PersonStewardOrganizations

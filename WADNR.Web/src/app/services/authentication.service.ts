@@ -204,6 +204,22 @@ export class AuthenticationService {
         return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.ProjectSteward, RoleEnum.CanEditProgram]);
     }
 
+    /**
+     * Checks if user can view landowner info (cost share PDFs, etc.).
+     */
+    public canViewLandownerInfo(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanViewLandownerInfo]);
+    }
+
+    /**
+     * Checks if user can manage fund sources and agreements.
+     */
+    public canManageFundSources(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanManageFundSourcesAndAgreements]);
+    }
+
     ngOnDestroy(): void {
         this._destroying$.next(undefined);
         this._destroying$.complete();
