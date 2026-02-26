@@ -39,7 +39,7 @@
     </div>
 
     <!-- Links List -->
-    @if (externalLinks.length > 0) {
+    @if (externalLinks().length > 0) {
         <div class="links-list">
             <table class="table table-sm">
                 <thead>
@@ -50,7 +50,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for (link of externalLinks; track $index; let i = $index) {
+                    @for (link of externalLinks(); track $index; let i = $index) {
                         <tr>
                             <td>
                                 <a href="#"

@@ -87,6 +87,12 @@ namespace WADNR.Common.EMail
                 sendGridMessage.AddBccs(mailMessage.Bcc.Select(x => new EmailAddress(x.Address, x.DisplayName)).ToList());
             }
 
+            if (mailMessage.ReplyToList != null && mailMessage.ReplyToList.Any())
+            {
+                var replyTo = mailMessage.ReplyToList.First();
+                sendGridMessage.ReplyTo = new EmailAddress(replyTo.Address, replyTo.DisplayName);
+            }
+
             var response = await _sendGridClient.SendEmailAsync(sendGridMessage).ConfigureAwait(false);
             // Optionally, handle non-success status or logging
         }

@@ -37,6 +37,8 @@ public class ProjectNotificationService
     {
         var batch = await _dbContext.ProjectUpdateBatches
             .Include(b => b.Project)
+                .ThenInclude(p => p.ProjectPeople)
+                    .ThenInclude(pp => pp.Person)
             .FirstOrDefaultAsync(b => b.ProjectUpdateBatchID == projectUpdateBatchID);
 
         if (batch == null) return;
@@ -44,13 +46,16 @@ public class ProjectNotificationService
         var submitter = await _dbContext.People.FindAsync(submitterPersonID);
         if (submitter == null) return;
 
-        var approvers = await GetProjectApproversAsync();
-        if (!approvers.Any()) return;
+        var stewardPeople = await GetNotificationRecipientsAsync(batch.ProjectID);
+        if (!stewardPeople.Any()) return;
+
+        var projectContacts = GetProjectContactRecipients(batch.Project, submitter);
+        await PersistNotificationsAsync(batch.ProjectID, NotificationTypeEnum.ProjectUpdateSubmitted, projectContacts);
 
         var subject = $"Project Update Submitted: {batch.Project.ProjectName}";
         var body = BuildUpdateSubmittedEmailBody(batch.Project, submitter);
 
-        await SendToRecipientsAsync(approvers, subject, body);
+        await SendNotificationEmailAsync(subject, body, toRecipients: stewardPeople, replyToRecipients: projectContacts);
     }
 
     public async Task SendUpdateApprovedNotificationAsync(int projectUpdateBatchID, int approverPersonID)
@@ -67,14 +72,18 @@ public class ProjectNotificationService
         if (approver == null) return;
 
         var submitter = await _dbContext.People.FindAsync(batch.LastUpdatePersonID);
-        var recipients = GetProjectContactRecipients(batch.Project, submitter);
+        var projectContacts = GetProjectContactRecipients(batch.Project, submitter);
 
-        if (!recipients.Any()) return;
+        if (!projectContacts.Any()) return;
+
+        await PersistNotificationsAsync(batch.ProjectID, NotificationTypeEnum.ProjectUpdateApproved, projectContacts);
+
+        var stewardPeople = await GetNotificationRecipientsAsync(batch.ProjectID);
 
         var subject = $"Project Update Approved: {batch.Project.ProjectName}";
         var body = BuildUpdateApprovedEmailBody(batch.Project, approver);
 
-        await SendToRecipientsAsync(recipients, subject, body);
+        await SendNotificationEmailAsync(subject, body, toRecipients: projectContacts, ccRecipients: stewardPeople, replyToRecipients: new List<Person> { approver });
     }
 
     public async Task SendUpdateReturnedNotificationAsync(int projectUpdateBatchID, int returnerPersonID, string? comment)
@@ -91,14 +100,18 @@ public class ProjectNotificationService
         if (returner == null) return;
 
         var submitter = await _dbContext.People.FindAsync(batch.LastUpdatePersonID);
-        var recipients = GetProjectContactRecipients(batch.Project, submitter);
+        var projectContacts = GetProjectContactRecipients(batch.Project, submitter);
 
-        if (!recipients.Any()) return;
+        if (!projectContacts.Any()) return;
+
+        await PersistNotificationsAsync(batch.ProjectID, NotificationTypeEnum.ProjectUpdateReturned, projectContacts);
+
+        var stewardPeople = await GetNotificationRecipientsAsync(batch.ProjectID);
 
         var subject = $"Project Update Returned: {batch.Project.ProjectName}";
         var body = BuildUpdateReturnedEmailBody(batch.Project, returner, comment);
 
-        await SendToRecipientsAsync(recipients, subject, body);
+        await SendNotificationEmailAsync(subject, body, toRecipients: projectContacts, ccRecipients: stewardPeople, replyToRecipients: new List<Person> { returner });
     }
 
     #endregion
@@ -107,19 +120,25 @@ public class ProjectNotificationService
 
     public async Task SendCreateSubmittedNotificationAsync(int projectID, int submitterPersonID)
     {
-        var project = await _dbContext.Projects.FindAsync(projectID);
+        var project = await _dbContext.Projects
+            .Include(p => p.ProjectPeople)
+                .ThenInclude(pp => pp.Person)
+            .FirstOrDefaultAsync(p => p.ProjectID == projectID);
         if (project == null) return;
 
         var submitter = await _dbContext.People.FindAsync(submitterPersonID);
         if (submitter == null) return;
 
-        var approvers = await GetProjectApproversAsync();
-        if (!approvers.Any()) return;
+        var stewardPeople = await GetNotificationRecipientsAsync(projectID);
+        if (!stewardPeople.Any()) return;
+
+        var projectContacts = GetProjectContactRecipients(project, submitter);
+        await PersistNotificationsAsync(projectID, NotificationTypeEnum.ProjectSubmitted, projectContacts);
 
         var subject = $"New Project Submitted: {project.ProjectName}";
         var body = BuildCreateSubmittedEmailBody(project, submitter);
 
-        await SendToRecipientsAsync(approvers, subject, body);
+        await SendNotificationEmailAsync(subject, body, toRecipients: stewardPeople, replyToRecipients: projectContacts);
     }
 
     public async Task SendCreateApprovedNotificationAsync(int projectID, int approverPersonID)
@@ -137,14 +156,18 @@ public class ProjectNotificationService
         var proposer = project.ProposingPersonID.HasValue
             ? await _dbContext.People.FindAsync(project.ProposingPersonID.Value)
             : null;
-        var recipients = GetProjectContactRecipients(project, proposer);
+        var projectContacts = GetProjectContactRecipients(project, proposer);
 
-        if (!recipients.Any()) return;
+        if (!projectContacts.Any()) return;
+
+        await PersistNotificationsAsync(projectID, NotificationTypeEnum.ProjectApproved, projectContacts);
+
+        var stewardPeople = await GetNotificationRecipientsAsync(projectID);
 
         var subject = $"New Project Approved: {project.ProjectName}";
         var body = BuildCreateApprovedEmailBody(project, approver);
 
-        await SendToRecipientsAsync(recipients, subject, body);
+        await SendNotificationEmailAsync(subject, body, toRecipients: projectContacts, ccRecipients: stewardPeople, replyToRecipients: new List<Person> { approver });
     }
 
     public async Task SendCreateReturnedNotificationAsync(int projectID, int returnerPersonID, string? comment)
@@ -162,14 +185,18 @@ public class ProjectNotificationService
         var proposer = project.ProposingPersonID.HasValue
             ? await _dbContext.People.FindAsync(project.ProposingPersonID.Value)
             : null;
-        var recipients = GetProjectContactRecipients(project, proposer);
+        var projectContacts = GetProjectContactRecipients(project, proposer);
 
-        if (!recipients.Any()) return;
+        if (!projectContacts.Any()) return;
+
+        await PersistNotificationsAsync(projectID, NotificationTypeEnum.ProjectReturned, projectContacts);
+
+        var stewardPeople = await GetNotificationRecipientsAsync(projectID);
 
         var subject = $"New Project Returned: {project.ProjectName}";
         var body = BuildCreateReturnedEmailBody(project, returner, comment);
 
-        await SendToRecipientsAsync(recipients, subject, body);
+        await SendNotificationEmailAsync(subject, body, toRecipients: projectContacts, ccRecipients: stewardPeople, replyToRecipients: new List<Person> { returner });
     }
 
     public async Task SendCreateRejectedNotificationAsync(int projectID, int rejecterPersonID, string? comment)
@@ -187,58 +214,119 @@ public class ProjectNotificationService
         var proposer = project.ProposingPersonID.HasValue
             ? await _dbContext.People.FindAsync(project.ProposingPersonID.Value)
             : null;
-        var recipients = GetProjectContactRecipients(project, proposer);
+        var projectContacts = GetProjectContactRecipients(project, proposer);
 
-        if (!recipients.Any()) return;
+        if (!projectContacts.Any()) return;
 
         var subject = $"New Project Rejected: {project.ProjectName}";
         var body = BuildCreateRejectedEmailBody(project, rejecter, comment);
 
-        await SendToRecipientsAsync(recipients, subject, body);
+        await SendNotificationEmailAsync(subject, body, toRecipients: projectContacts, replyToRecipients: new List<Person> { rejecter });
     }
 
     #endregion
 
     #region Helpers
 
-    private async Task SendToRecipientsAsync(List<Person> recipients, string subject, string body)
+    private async Task PersistNotificationsAsync(int projectID, NotificationTypeEnum notificationType, List<Person> recipients)
     {
+        var notificationDate = DateTime.Now;
+
         foreach (var recipient in recipients)
         {
-            if (string.IsNullOrEmpty(recipient.Email)) continue;
-
-            var message = new MailMessage
+            var notification = new Notification
             {
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true
+                NotificationTypeID = (int)notificationType,
+                PersonID = recipient.PersonID,
+                NotificationDate = notificationDate,
+                NotificationProjects = new List<NotificationProject>
+                {
+                    new NotificationProject { ProjectID = projectID }
+                }
             };
-            message.To.Add(new MailAddress(recipient.Email, GetFullName(recipient)));
+            _dbContext.Notifications.Add(notification);
+        }
 
-            try
+        await _dbContext.SaveChangesAsync();
+    }
+
+    private async Task SendNotificationEmailAsync(
+        string subject,
+        string body,
+        List<Person> toRecipients,
+        List<Person>? ccRecipients = null,
+        List<Person>? replyToRecipients = null)
+    {
+        var message = new MailMessage
+        {
+            Subject = subject,
+            Body = body,
+            IsBodyHtml = true
+        };
+
+        foreach (var person in toRecipients.Where(p => !string.IsNullOrEmpty(p.Email)))
+        {
+            message.To.Add(new MailAddress(person.Email, GetFullName(person)));
+        }
+
+        if (ccRecipients != null)
+        {
+            foreach (var person in ccRecipients.Where(p => !string.IsNullOrEmpty(p.Email)))
             {
-                await _emailService.Send(message);
+                message.CC.Add(new MailAddress(person.Email, GetFullName(person)));
             }
-            catch (Exception ex)
+        }
+
+        if (replyToRecipients != null)
+        {
+            foreach (var person in replyToRecipients.Where(p => !string.IsNullOrEmpty(p.Email)))
             {
-                Console.WriteLine($"Failed to send notification to {recipient.Email}: {ex.Message}");
+                message.ReplyToList.Add(new MailAddress(person.Email, GetFullName(person)));
             }
+        }
+
+        if (!message.To.Any()) return;
+
+        try
+        {
+            await _emailService.Send(message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to send notification: {ex.Message}");
         }
     }
 
-    private async Task<List<Person>> GetProjectApproversAsync()
+    /// <summary>
+    /// Matches legacy GetProjectStewardPeople: people who opted in to receive notifications
+    /// (ReceiveSupportEmails) UNION people in the project's stewardship org with ProjectSteward role.
+    /// </summary>
+    private async Task<List<Person>> GetNotificationRecipientsAsync(int projectID)
     {
-        var adminRoleIDs = new[]
-        {
-            (int)RoleEnum.Admin,
-            (int)RoleEnum.EsaAdmin
-        };
-
-        return await _dbContext.People
-            .Where(p => p.PersonRoles.Any(pr => adminRoleIDs.Contains(pr.RoleID)))
-            .Where(p => p.IsActive)
-            .Where(p => !string.IsNullOrEmpty(p.Email))
+        var notificationPeople = await _dbContext.People
+            .Where(p => p.ReceiveSupportEmails && p.IsActive && !string.IsNullOrEmpty(p.Email))
             .ToListAsync();
+
+        var stewardOrgIDs = await _dbContext.ProjectOrganizations
+            .Where(po => po.ProjectID == projectID && po.RelationshipType.CanStewardProjects)
+            .Select(po => po.OrganizationID)
+            .ToListAsync();
+
+        if (stewardOrgIDs.Any())
+        {
+            var projectStewards = await _dbContext.People
+                .Where(p => p.OrganizationID.HasValue && stewardOrgIDs.Contains(p.OrganizationID.Value))
+                .Where(p => p.PersonRoles.Any(pr => pr.RoleID == (int)RoleEnum.ProjectSteward))
+                .Where(p => p.IsActive && !string.IsNullOrEmpty(p.Email))
+                .ToListAsync();
+
+            notificationPeople = notificationPeople
+                .Union(projectStewards)
+                .DistinctBy(p => p.PersonID)
+                .ToList();
+        }
+
+        return notificationPeople;
     }
 
     private static List<Person> GetProjectContactRecipients(Project project, Person? primaryRecipient)

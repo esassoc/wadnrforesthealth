@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
@@ -31,7 +31,7 @@ export class ProjectExternalLinkEditorComponent extends BaseModal implements OnI
     public ref: DialogRef<ProjectExternalLinkEditorData, ProjectExternalLinkGridRow[] | null> = inject(DialogRef);
 
     public FormFieldType = FormFieldType;
-    public externalLinks: ProjectExternalLinkGridRow[] = [];
+    public externalLinks = signal<ProjectExternalLinkGridRow[]>([]);
     public isSubmitting = false;
 
     public addLinkForm = new FormGroup({
@@ -49,7 +49,7 @@ export class ProjectExternalLinkEditorComponent extends BaseModal implements OnI
 
     ngOnInit(): void {
         const data = this.ref.data;
-        this.externalLinks = [...(data?.existingLinks ?? [])];
+        this.externalLinks.set([...(data?.existingLinks ?? [])]);
     }
 
     addLink(): void {
@@ -69,12 +69,12 @@ export class ProjectExternalLinkEditorComponent extends BaseModal implements OnI
             ExternalLinkUrl: url ?? "",
         };
 
-        this.externalLinks = [...this.externalLinks, newLink];
+        this.externalLinks.update(links => [...links, newLink]);
         this.addLinkForm.reset();
     }
 
     async removeLink(index: number): Promise<void> {
-        const link = this.externalLinks[index];
+        const link = this.externalLinks()[index];
 
         const confirmed = await this.confirmService.confirm({
             title: "Remove External Link",
@@ -85,7 +85,7 @@ export class ProjectExternalLinkEditorComponent extends BaseModal implements OnI
         });
 
         if (confirmed) {
-            this.externalLinks = this.externalLinks.filter((_, i) => i !== index);
+            this.externalLinks.update(links => links.filter((_, i) => i !== index));
         }
     }
 
@@ -93,7 +93,7 @@ export class ProjectExternalLinkEditorComponent extends BaseModal implements OnI
         this.isSubmitting = true;
         this.localAlerts = [];
 
-        const requestItems: ProjectExternalLinkItemRequest[] = this.externalLinks.map((link) => ({
+        const requestItems: ProjectExternalLinkItemRequest[] = this.externalLinks().map((link) => ({
             ProjectExternalLinkID: link.ProjectExternalLinkID || null,
             ExternalLinkLabel: link.ExternalLinkLabel,
             ExternalLinkUrl: link.ExternalLinkUrl,
