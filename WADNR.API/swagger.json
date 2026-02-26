@@ -25510,6 +25510,10 @@
             "type": "integer",
             "format": "int32"
           },
+          "AuditLogEventTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "AuditLogDate": {
             "type": "string",
             "format": "date-time"

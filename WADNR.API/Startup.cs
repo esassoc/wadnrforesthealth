@@ -138,6 +138,7 @@ namespace WADNR.API
             services.AddScoped<AzureBlobStorageService>();
             services.AddScoped<IAzureStorage, AzureStorage>();
             services.AddScoped<ProjectNotificationService>();
+            services.AddScoped<IAuditUserProvider, HttpContextAuditUserProvider>();
 
             #region GDAL API
             if (!string.IsNullOrEmpty(configuration.GDALAPIBaseUrl))

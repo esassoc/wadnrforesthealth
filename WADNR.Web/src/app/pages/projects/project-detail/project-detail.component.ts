@@ -2,7 +2,7 @@ import { AsyncPipe, DatePipe } from "@angular/common";
 import { Component, Input, OnDestroy, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, fromEvent, Observable, of, shareReplay, skip, startWith, Subject, Subscription, switchMap, take } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, fromEvent, merge, Observable, of, shareReplay, skip, startWith, Subject, Subscription, switchMap, take } from "rxjs";
 import { debounceTime, map } from "rxjs/operators";
 import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap } from "leaflet";
@@ -229,6 +229,7 @@ export class ProjectDetailComponent implements OnDestroy {
     private refreshExternalLinks$ = new Subject<void>();
     private refreshProject$ = new Subject<void>();
     private refreshLocationLayers$ = new Subject<void>();
+    private refreshAuditLogs$ = new Subject<void>();
 
     // Scrollspy — hierarchical TOC
     sectionsTree: TocSection[] = [
@@ -432,8 +433,25 @@ export class ProjectDetailComponent implements OnDestroy {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.auditLogs$ = this.projectID$.pipe(
-            switchMap((projectID) => this.projectService.listAuditLogsProject(projectID)),
+        this.auditLogs$ = combineLatest([
+            this.projectID$,
+            merge(
+                this.refreshAuditLogs$,
+                this.refreshProject$,
+                this.refreshTreatments$,
+                this.refreshInteractionEvents$,
+                this.refreshClassifications$,
+                this.refreshDocuments$,
+                this.refreshNotes$,
+                this.refreshInternalNotes$,
+                this.refreshImages$,
+                this.refreshInvoices$,
+                this.refreshPaymentRequests$,
+                this.refreshExternalLinks$,
+                this.refreshLocationLayers$,
+            ).pipe(startWith(undefined)),
+        ]).pipe(
+            switchMap(([projectID]) => this.projectService.listAuditLogsProject(projectID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
