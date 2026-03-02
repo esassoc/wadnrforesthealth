@@ -6126,6 +6126,126 @@
         }
       }
     },
+    "/loa-upload/dashboard": {
+      "get": {
+        "tags": [
+          "LoaUpload"
+        ],
+        "operationId": "GetDashboard_LoaUpload",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoaUploadDashboard"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoaUploadDashboard"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoaUploadDashboard"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/loa-upload/import/{region}": {
+      "post": {
+        "tags": [
+          "LoaUpload"
+        ],
+        "operationId": "ImportFile_LoaUpload",
+        "parameters": [
+          {
+            "name": "region",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoaUploadResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoaUploadResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoaUploadResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/loa-upload/publish": {
+      "post": {
+        "tags": [
+          "LoaUpload"
+        ],
+        "operationId": "Publish_LoaUpload",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoaPublishingResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoaPublishingResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoaPublishingResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/organizations": {
       "get": {
         "tags": [
@@ -6411,6 +6531,106 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/organizations/{organizationID}/logo": {
+      "post": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "UploadLogo_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "DeleteLogo_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetail"
+                }
+              }
+            }
           }
         }
       }
@@ -8152,6 +8372,112 @@
           }
         },
         "x-anonymous": true
+      }
+    },
+    "/programs/upload-program-file": {
+      "post": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "UploadProgramFile_Program",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/programs/upload-example-geospatial-file": {
+      "post": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "UploadExampleGeospatialFile_Program",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/programs/{programID}/gis-import-config/basics": {
@@ -23992,6 +24318,59 @@
         },
         "additionalProperties": false
       },
+      "LoaPublishingResult": {
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "ElapsedSeconds": {
+            "type": "number",
+            "format": "double"
+          },
+          "ErrorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoaUploadDashboard": {
+        "type": "object",
+        "properties": {
+          "LatestNortheastImport": {
+            "$ref": "#/components/schemas/TabularDataImportGridRow"
+          },
+          "LatestSoutheastImport": {
+            "$ref": "#/components/schemas/TabularDataImportGridRow"
+          },
+          "PublishingProcessingIsNeeded": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoaUploadResult": {
+        "type": "object",
+        "properties": {
+          "RecordsImported": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ElapsedSeconds": {
+            "type": "number",
+            "format": "double"
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "LocationDetailedItemRequest": {
         "type": "object",
         "properties": {
@@ -29656,6 +30035,38 @@
         },
         "additionalProperties": false
       },
+      "TabularDataImportGridRow": {
+        "type": "object",
+        "properties": {
+          "TabularDataImportID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TabularDataImportTableTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "UploadDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "UploadPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "LastProcessedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastProcessedPersonName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TagDetail": {
         "type": "object",
         "properties": {
@@ -31031,6 +31442,9 @@
     },
     {
       "name": "InvoicePaymentRequest"
+    },
+    {
+      "name": "LoaUpload"
     },
     {
       "name": "Organization"

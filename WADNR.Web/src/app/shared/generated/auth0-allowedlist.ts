@@ -28,8 +28,8 @@ const ANON_EXACT: ExactMap = {
 
 const SECURED_EXACT: ExactMap = {
   'DELETE': [],
-  'GET': ["/focus-areas","/gis-bulk-import/source-organizations","/people","/people/lookup","/project-types/taxonomy","/projects/lookup","/projects/pending","/projects/update-status","/report-templates","/report-templates/models","/roles","/vendors","/vendors/search"],
-  'POST': ["/agreements","/classifications","/classifications/upload-key-image","/counties","/dnr-upland-regions","/fund-source-allocation-notes","/fund-source-allocation-notes-internal","/fund-source-allocations","/fund-sources","/gis-bulk-import/attempts","/interactions-events","/invoice-payment-requests","/invoices","/organization-types","/organizations","/priority-landscapes","/programs","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/relationship-types","/report-templates","/report-templates/generate-reports","/sitkacapture/generate-pdf","/support-requests","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
+  'GET': ["/focus-areas","/gis-bulk-import/source-organizations","/loa-upload/dashboard","/people","/people/lookup","/project-types/taxonomy","/projects/lookup","/projects/pending","/projects/update-status","/report-templates","/report-templates/models","/roles","/vendors","/vendors/search"],
+  'POST': ["/agreements","/classifications","/classifications/upload-key-image","/counties","/dnr-upland-regions","/fund-source-allocation-notes","/fund-source-allocation-notes-internal","/fund-source-allocations","/fund-sources","/gis-bulk-import/attempts","/interactions-events","/invoice-payment-requests","/invoices","/loa-upload/publish","/organization-types","/organizations","/priority-landscapes","/programs","/programs/upload-example-geospatial-file","/programs/upload-program-file","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/relationship-types","/report-templates","/report-templates/generate-reports","/sitkacapture/generate-pdf","/support-requests","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
   'PUT': [],
 };
 
@@ -143,6 +143,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/organization-types/[^/]+$"),
     new RegExp("^/organizations/[^/]+$"),
     new RegExp("^/organizations/[^/]+/boundary$"),
+    new RegExp("^/organizations/[^/]+/logo$"),
     new RegExp("^/priority-landscapes/[^/]+$"),
     new RegExp("^/programs/[^/]+$"),
     new RegExp("^/project-documents/[^/]+$"),
@@ -259,8 +260,10 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/gis-bulk-import/attempts/[^/]+/upload$"),
     new RegExp("^/interactions-events/[^/]+/file-resources$"),
     new RegExp("^/invoices/[^/]+/voucher$"),
+    new RegExp("^/loa-upload/import/[^/]+$"),
     new RegExp("^/organizations/[^/]+/boundary/approve-gdb$"),
     new RegExp("^/organizations/[^/]+/boundary/upload-gdb$"),
+    new RegExp("^/organizations/[^/]+/logo$"),
     new RegExp("^/project-images/[^/]+/set-key-photo$"),
     new RegExp("^/projects/[^/]+/block-list$"),
     new RegExp("^/projects/[^/]+/create-workflow/approve$"),

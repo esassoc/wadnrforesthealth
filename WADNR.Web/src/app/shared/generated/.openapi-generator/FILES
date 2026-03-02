@@ -26,6 +26,7 @@ api/gis-bulk-import.service.ts
 api/interaction-event.service.ts
 api/invoice-payment-request.service.ts
 api/invoice.service.ts
+api/loa-upload.service.ts
 api/organization-type.service.ts
 api/organization.service.ts
 api/person.service.ts
@@ -194,6 +195,9 @@ model/invoice-grid-row.ts
 model/invoice-payment-request-grid-row.ts
 model/invoice-payment-request-upsert-request.ts
 model/invoice-upsert-request.ts
+model/loa-publishing-result.ts
+model/loa-upload-dashboard.ts
+model/loa-upload-result.ts
 model/location-detailed-item-request.ts
 model/location-detailed-step-request.ts
 model/location-detailed-step.ts
@@ -371,6 +375,7 @@ model/staged-feature-layer.ts
 model/step-diff-response.ts
 model/support-request-create.ts
 model/system-info-detail.ts
+model/tabular-data-import-grid-row.ts
 model/tag-detail.ts
 model/tag-grid-row.ts
 model/tag-lookup-item.ts

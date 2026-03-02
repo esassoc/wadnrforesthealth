@@ -1,4 +1,5 @@
 import { Routes } from "@angular/router";
+import { adminGuard } from "./shared/guards/admin.guard";
 import { authGuard } from "./shared/guards/auth.guard";
 import { projectEditGuard } from "./shared/guards/project-edit.guard";
 import { UnsavedChangesGuard } from "./shared/guards/unsaved-changes.guard";
@@ -318,7 +319,7 @@ export const routes: Routes = [
     { path: "manage-custom-pages", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "internal-setup-notes", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "style-guide", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
-    { path: "upload-excel-files", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    { path: "upload-excel-files", title: "Upload Excel Files / ETL", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/loa-upload/loa-upload.component").then((m) => m.LoaUploadComponent) },
     { path: "manage-find-your-forester", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "map-layers", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "jobs", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
