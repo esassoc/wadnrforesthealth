@@ -1,5 +1,11 @@
 <page-header pageTitle="Tags" [customRichTextTypeID]="customRichTextTypeID"></page-header>
 
 <div class="page-body">
+    <div class="flex-between no-wrap mb-2">
+        <div></div>
+        @if (isAdmin) {
+            <button class="btn btn-sm btn-primary" (click)="openCreateTag()">Create New Tag</button>
+        }
+    </div>
     <wadnr-grid [rowData]="tags$ | async" [columnDefs]="columnDefs" downloadFileName="tags" [sizeColumnsToFitGrid]="true"></wadnr-grid>
 </div>

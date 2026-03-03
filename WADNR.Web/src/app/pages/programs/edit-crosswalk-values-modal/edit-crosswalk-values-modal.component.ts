@@ -38,12 +38,12 @@ export class EditCrosswalkValuesModalComponent extends BaseModal implements OnIn
     public isSubmitting = false;
     public isFlattened = false;
 
-    // FieldDefinitionIDs: 370=ProjectStage, 292=LeadImplementerOrg, 305=TreatmentType, 392=DetailedActivityType
+    // FieldDefinitionIDs from WADNR database (dbo.FieldDefinition)
     public fieldGroups: CrosswalkFieldGroup[] = [
-        { fieldDefinitionID: 370, label: "Project Stage", showWhen: "always", rows: [] },
-        { fieldDefinitionID: 292, label: "Lead Implementer Organization", showWhen: "always", rows: [] },
-        { fieldDefinitionID: 305, label: "Treatment Type", showWhen: "notFlattened", rows: [] },
-        { fieldDefinitionID: 392, label: "Treatment Detailed Activity Type", showWhen: "notFlattened", rows: [] },
+        { fieldDefinitionID: 36, label: "Project Stage", showWhen: "always", rows: [] },
+        { fieldDefinitionID: 535, label: "Lead Implementer Organization", showWhen: "always", rows: [] },
+        { fieldDefinitionID: 468, label: "Treatment Type", showWhen: "notFlattened", rows: [] },
+        { fieldDefinitionID: 469, label: "Treatment Detailed Activity Type", showWhen: "notFlattened", rows: [] },
     ];
 
     constructor(private programService: ProgramService) {

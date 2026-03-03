@@ -197,6 +197,35 @@ public class FundSourceAllocationController(
         return Ok(files.FirstOrDefault(f => f.FileResourceID == fileResource.FileResourceID));
     }
 
+    [HttpPut("{fundSourceAllocationID}/files/{fundSourceAllocationFileResourceID}")]
+    [FundSourceManageFeature]
+    public async Task<ActionResult<FundSourceAllocationFileGridRow>> UpdateFile(
+        [FromRoute] int fundSourceAllocationID,
+        [FromRoute] int fundSourceAllocationFileResourceID,
+        [FromBody] FundSourceAllocationFileUpdateRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.DisplayName) || request.DisplayName.Length > 200)
+        {
+            return BadRequest("Display name is required and must be 200 characters or less.");
+        }
+
+        if (request.Description?.Length > 1000)
+        {
+            return BadRequest("Description must be 1000 characters or less.");
+        }
+
+        var entity = await DbContext.FundSourceAllocationFileResources.FindAsync(fundSourceAllocationFileResourceID);
+        if (entity == null || entity.FundSourceAllocationID != fundSourceAllocationID)
+        {
+            return NotFound();
+        }
+
+        await FundSourceAllocations.UpdateFileAsync(DbContext, entity, request.DisplayName, request.Description);
+
+        var files = await FundSourceAllocations.ListFilesAsync(DbContext, fundSourceAllocationID);
+        return Ok(files.FirstOrDefault(f => f.FundSourceAllocationFileResourceID == fundSourceAllocationFileResourceID));
+    }
+
     [HttpDelete("{fundSourceAllocationID}/files/{fundSourceAllocationFileResourceID}")]
     [FundSourceManageFeature]
     public async Task<IActionResult> DeleteFile(

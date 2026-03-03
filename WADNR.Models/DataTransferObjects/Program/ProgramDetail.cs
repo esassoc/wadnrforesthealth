@@ -29,7 +29,7 @@ public class ProgramDetail
     public string? ProgramExampleGeospatialUploadFileName { get; set; }
 
     // Program Editors (People)
-    public List<PersonLookupItem> ProgramEditors { get; set; } = new();
+    public List<PersonWithOrganizationLookupItem> ProgramEditors { get; set; } = new();
 
     // Counts
     public int ProjectCount { get; set; }

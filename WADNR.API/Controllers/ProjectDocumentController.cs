@@ -42,7 +42,7 @@ public class ProjectDocumentController(
     }
 
     [HttpPost]
-    [ProjectEditFeature]
+    [ProjectEditAsAdminFeature]
     [Consumes("multipart/form-data")]
     public async Task<ActionResult<ProjectDocumentDetail>> Create(
         [FromForm] int projectID,

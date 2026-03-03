@@ -12,6 +12,7 @@
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class ProjectAuditLogGridRow { 
     AuditLogID?: number;
+    AuditLogEventTypeID?: number;
     AuditLogDate?: string;
     PersonName?: string | null;
     AuditLogEventTypeName?: string | null;
@@ -27,6 +28,7 @@ export class ProjectAuditLogGridRow {
 
 export interface ProjectAuditLogGridRowForm { 
     AuditLogID?: FormControl<number>;
+    AuditLogEventTypeID?: FormControl<number>;
     AuditLogDate?: FormControl<string>;
     PersonName?: FormControl<string>;
     AuditLogEventTypeName?: FormControl<string>;
@@ -39,6 +41,16 @@ export interface ProjectAuditLogGridRowForm {
 
 export class ProjectAuditLogGridRowFormControls { 
     public static AuditLogID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static AuditLogEventTypeID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

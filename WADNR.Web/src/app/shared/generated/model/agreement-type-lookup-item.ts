@@ -13,6 +13,7 @@ import { FormControl, FormControlOptions, FormControlState, Validators } from "@
 export class AgreementTypeLookupItem { 
     AgreementTypeID?: number;
     AgreementTypeName?: string | null;
+    AgreementTypeAbbrev?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -21,6 +22,7 @@ export class AgreementTypeLookupItem {
 export interface AgreementTypeLookupItemForm { 
     AgreementTypeID?: FormControl<number>;
     AgreementTypeName?: FormControl<string>;
+    AgreementTypeAbbrev?: FormControl<string>;
 }
 
 export class AgreementTypeLookupItemFormControls { 
@@ -35,6 +37,16 @@ export class AgreementTypeLookupItemFormControls {
         }
     );
     public static AgreementTypeName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static AgreementTypeAbbrev = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

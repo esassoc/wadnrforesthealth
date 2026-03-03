@@ -179,4 +179,186 @@ public class FundSourceController(
         var notes = await FundSources.ListInternalNotesAsync(DbContext, fundSourceID);
         return Ok(notes);
     }
+
+    // File update/delete
+    [HttpPut("{fundSourceID}/files/{fundSourceFileResourceID}")]
+    [FundSourceManageFeature]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<ActionResult<FundSourceFileResourceGridRow>> UpdateFile(
+        [FromRoute] int fundSourceID,
+        [FromRoute] int fundSourceFileResourceID,
+        [FromBody] FundSourceFileUpdateRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.DisplayName) || request.DisplayName.Length > 200)
+        {
+            return BadRequest("Display name is required and must be 200 characters or less.");
+        }
+
+        if (request.Description?.Length > 1000)
+        {
+            return BadRequest("Description must be 1000 characters or less.");
+        }
+
+        var entity = await DbContext.FundSourceFileResources.FindAsync(fundSourceFileResourceID);
+        if (entity == null || entity.FundSourceID != fundSourceID)
+        {
+            return NotFound();
+        }
+
+        await FundSources.UpdateFileAsync(DbContext, entity, request.DisplayName, request.Description);
+
+        var files = await FundSources.ListFilesAsync(DbContext, fundSourceID);
+        return Ok(files.FirstOrDefault(f => f.FundSourceFileResourceID == fundSourceFileResourceID));
+    }
+
+    [HttpDelete("{fundSourceID}/files/{fundSourceFileResourceID}")]
+    [FundSourceManageFeature]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<IActionResult> DeleteFile(
+        [FromRoute] int fundSourceID,
+        [FromRoute] int fundSourceFileResourceID)
+    {
+        var entity = await DbContext.FundSourceFileResources.FindAsync(fundSourceFileResourceID);
+        if (entity == null || entity.FundSourceID != fundSourceID)
+        {
+            return NotFound();
+        }
+
+        await FundSources.DeleteFileAsync(DbContext, entity);
+        return NoContent();
+    }
+
+    // Note CRUD
+    [HttpPost("{fundSourceID}/notes")]
+    [FundSourceManageFeature]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<IActionResult> CreateNote(
+        [FromRoute] int fundSourceID,
+        [FromBody] FundSourceNoteUpsertRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Note))
+        {
+            return BadRequest("Note is required.");
+        }
+
+        if (request.Note.Length > 8000)
+        {
+            return BadRequest("Note must be 8000 characters or less.");
+        }
+
+        await FundSources.CreateNoteAsync(DbContext, fundSourceID, request.Note, CallingUser.PersonID);
+        return Ok();
+    }
+
+    [HttpPut("{fundSourceID}/notes/{fundSourceNoteID}")]
+    [FundSourceManageFeature]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<IActionResult> UpdateNote(
+        [FromRoute] int fundSourceID,
+        [FromRoute] int fundSourceNoteID,
+        [FromBody] FundSourceNoteUpsertRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Note))
+        {
+            return BadRequest("Note is required.");
+        }
+
+        if (request.Note.Length > 8000)
+        {
+            return BadRequest("Note must be 8000 characters or less.");
+        }
+
+        var entity = await DbContext.FundSourceNotes.FindAsync(fundSourceNoteID);
+        if (entity == null || entity.FundSourceID != fundSourceID)
+        {
+            return NotFound();
+        }
+
+        await FundSources.UpdateNoteAsync(DbContext, entity, request.Note, CallingUser.PersonID);
+        return Ok();
+    }
+
+    [HttpDelete("{fundSourceID}/notes/{fundSourceNoteID}")]
+    [FundSourceManageFeature]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<IActionResult> DeleteNote(
+        [FromRoute] int fundSourceID,
+        [FromRoute] int fundSourceNoteID)
+    {
+        var entity = await DbContext.FundSourceNotes.FindAsync(fundSourceNoteID);
+        if (entity == null || entity.FundSourceID != fundSourceID)
+        {
+            return NotFound();
+        }
+
+        await FundSources.DeleteNoteAsync(DbContext, entity);
+        return NoContent();
+    }
+
+    // Internal Note CRUD
+    [HttpPost("{fundSourceID}/notes-internal")]
+    [FundSourceManageFeature]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<IActionResult> CreateNoteInternal(
+        [FromRoute] int fundSourceID,
+        [FromBody] FundSourceNoteUpsertRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Note))
+        {
+            return BadRequest("Note is required.");
+        }
+
+        if (request.Note.Length > 8000)
+        {
+            return BadRequest("Note must be 8000 characters or less.");
+        }
+
+        await FundSources.CreateNoteInternalAsync(DbContext, fundSourceID, request.Note, CallingUser.PersonID);
+        return Ok();
+    }
+
+    [HttpPut("{fundSourceID}/notes-internal/{fundSourceNoteInternalID}")]
+    [FundSourceManageFeature]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<IActionResult> UpdateNoteInternal(
+        [FromRoute] int fundSourceID,
+        [FromRoute] int fundSourceNoteInternalID,
+        [FromBody] FundSourceNoteUpsertRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Note))
+        {
+            return BadRequest("Note is required.");
+        }
+
+        if (request.Note.Length > 8000)
+        {
+            return BadRequest("Note must be 8000 characters or less.");
+        }
+
+        var entity = await DbContext.FundSourceNoteInternals.FindAsync(fundSourceNoteInternalID);
+        if (entity == null || entity.FundSourceID != fundSourceID)
+        {
+            return NotFound();
+        }
+
+        await FundSources.UpdateNoteInternalAsync(DbContext, entity, request.Note, CallingUser.PersonID);
+        return Ok();
+    }
+
+    [HttpDelete("{fundSourceID}/notes-internal/{fundSourceNoteInternalID}")]
+    [FundSourceManageFeature]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<IActionResult> DeleteNoteInternal(
+        [FromRoute] int fundSourceID,
+        [FromRoute] int fundSourceNoteInternalID)
+    {
+        var entity = await DbContext.FundSourceNoteInternals.FindAsync(fundSourceNoteInternalID);
+        if (entity == null || entity.FundSourceID != fundSourceID)
+        {
+            return NotFound();
+        }
+
+        await FundSources.DeleteNoteInternalAsync(DbContext, entity);
+        return NoContent();
+    }
 }

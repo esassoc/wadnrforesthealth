@@ -637,6 +637,13 @@ public static class ProjectProjections
         EstimatedTotalCost = x.EstimatedTotalCost,
         TotalAmount = null,
         ProjectDescription = x.ProjectDescription,
-        PhotoCount = x.ProjectImages.Count
+        PhotoCount = x.ProjectImages.Count,
+        Tags = x.ProjectTags
+            .Select(pt => new TagLookupItem
+            {
+                TagID = pt.Tag.TagID,
+                TagName = pt.Tag.TagName
+            })
+            .ToList()
     };
 }

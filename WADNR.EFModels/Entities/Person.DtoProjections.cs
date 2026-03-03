@@ -48,7 +48,16 @@ public static class PersonProjections
     public static readonly Expression<Func<Person, PersonLookupItem>> AsLookupItem = x => new PersonLookupItem
     {
         PersonID = x.PersonID,
-        FullName = x.FirstName + " " + x.LastName
+        FullName = x.FirstName + " " + x.LastName,
+        OrganizationName = x.Organization != null ? x.Organization.OrganizationName : null
+    };
+
+    public static readonly Expression<Func<Person, PersonWithOrganizationLookupItem>> AsLookupItemWithOrganization = x => new PersonWithOrganizationLookupItem
+    {
+        PersonID = x.PersonID,
+        FullName = x.FirstName + " " + x.LastName,
+        OrganizationName = x.Organization != null ? x.Organization.OrganizationName : null,
+        OrganizationShortName = x.Organization != null ? x.Organization.OrganizationShortName : null
     };
 
     public static readonly Expression<Func<Person, PersonGridRow>> AsGridRow = x => new PersonGridRow

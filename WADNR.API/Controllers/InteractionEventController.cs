@@ -49,7 +49,7 @@ public class InteractionEventController(
     }
 
     [HttpPost]
-    [ProjectEditFeature]
+    [InteractionEventEditFeature]
     public async Task<ActionResult<InteractionEventDetail>> Create([FromBody] InteractionEventUpsertRequest dto)
     {
         var created = await InteractionEvents.CreateAsync(DbContext, dto);
@@ -61,7 +61,7 @@ public class InteractionEventController(
     }
 
     [HttpPut("{interactionEventID}")]
-    [ProjectEditFeature]
+    [InteractionEventEditFeature]
     [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
     public async Task<ActionResult<InteractionEventDetail>> Update([FromRoute] int interactionEventID, [FromBody] InteractionEventUpsertRequest dto)
     {
@@ -74,7 +74,7 @@ public class InteractionEventController(
     }
 
     [HttpDelete("{interactionEventID}")]
-    [ProjectEditFeature]
+    [InteractionEventEditFeature]
     [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
     public async Task<IActionResult> Delete([FromRoute] int interactionEventID)
     {
@@ -128,7 +128,7 @@ public class InteractionEventController(
     };
 
     [HttpPost("{interactionEventID}/file-resources")]
-    [ProjectEditFeature]
+    [InteractionEventEditFeature]
     [Consumes("multipart/form-data")]
     [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
     public async Task<ActionResult<FileResourceInteractionEventDetail>> CreateFileResource(
@@ -173,5 +173,73 @@ public class InteractionEventController(
         var detail = await FileResources.ListForInteractionEventIDAsync(DbContext, interactionEventID);
         var created = detail.FirstOrDefault(x => x.FileResourceID == fileResource.FileResourceID);
         return Ok(created);
+    }
+
+    [HttpPut("{interactionEventID}/simple-location")]
+    [InteractionEventEditFeature]
+    [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
+    public async Task<IActionResult> UpdateSimpleLocation(
+        [FromRoute] int interactionEventID,
+        [FromBody] InteractionEventLocationUpsertRequest request)
+    {
+        if (request.Latitude < -90 || request.Latitude > 90)
+        {
+            return BadRequest("Latitude must be between -90 and 90.");
+        }
+
+        if (request.Longitude < -180 || request.Longitude > 180)
+        {
+            return BadRequest("Longitude must be between -180 and 180.");
+        }
+
+        await InteractionEvents.UpdateLocationAsync(DbContext, interactionEventID, request.Latitude, request.Longitude);
+        return NoContent();
+    }
+
+    [HttpPut("{interactionEventID}/file-resources/{interactionEventFileResourceID}")]
+    [InteractionEventEditFeature]
+    [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
+    public async Task<ActionResult<FileResourceInteractionEventDetail>> UpdateFileResource(
+        [FromRoute] int interactionEventID,
+        [FromRoute] int interactionEventFileResourceID,
+        [FromBody] InteractionEventFileUpdateRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.DisplayName) || request.DisplayName.Length > 200)
+        {
+            return BadRequest("Display name is required and must be 200 characters or less.");
+        }
+
+        if (request.Description?.Length > 1000)
+        {
+            return BadRequest("Description must be 1000 characters or less.");
+        }
+
+        var entity = await DbContext.InteractionEventFileResources.FindAsync(interactionEventFileResourceID);
+        if (entity == null || entity.InteractionEventID != interactionEventID)
+        {
+            return NotFound();
+        }
+
+        await InteractionEvents.UpdateFileAsync(DbContext, entity, request.DisplayName, request.Description);
+
+        var files = await FileResources.ListForInteractionEventIDAsync(DbContext, interactionEventID);
+        return Ok(files.FirstOrDefault(f => f.InteractionEventFileResourceID == interactionEventFileResourceID));
+    }
+
+    [HttpDelete("{interactionEventID}/file-resources/{interactionEventFileResourceID}")]
+    [InteractionEventEditFeature]
+    [EntityNotFound(typeof(InteractionEvent), "interactionEventID")]
+    public async Task<IActionResult> DeleteFileResource(
+        [FromRoute] int interactionEventID,
+        [FromRoute] int interactionEventFileResourceID)
+    {
+        var entity = await DbContext.InteractionEventFileResources.FindAsync(interactionEventFileResourceID);
+        if (entity == null || entity.InteractionEventID != interactionEventID)
+        {
+            return NotFound();
+        }
+
+        await InteractionEvents.DeleteFileAsync(DbContext, entity);
+        return NoContent();
     }
 }

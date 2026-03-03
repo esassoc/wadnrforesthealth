@@ -230,7 +230,7 @@ public static class People
             person.Email = email;
         }
 
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesWithNoAuditingAsync();
         await dbContext.Entry(person).ReloadAsync();
 
         return await GetByIDAsDetailAsync(dbContext, person.PersonID);

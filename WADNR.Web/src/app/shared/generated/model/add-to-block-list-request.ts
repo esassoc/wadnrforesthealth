@@ -13,6 +13,7 @@ import { FormControl, FormControlOptions, FormControlState, Validators } from "@
 export class AddToBlockListRequest { 
     ProjectGisIdentifier?: string | null;
     ProjectName?: string | null;
+    ProjectID?: number | null;
     Notes?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -22,6 +23,7 @@ export class AddToBlockListRequest {
 export interface AddToBlockListRequestForm { 
     ProjectGisIdentifier?: FormControl<string>;
     ProjectName?: FormControl<string>;
+    ProjectID?: FormControl<number>;
     Notes?: FormControl<string>;
 }
 
@@ -47,6 +49,16 @@ export class AddToBlockListRequestFormControls {
             [
                 Validators.minLength(0),
                 Validators.maxLength(140),
+            ],
+        }
+    );
+    public static ProjectID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
             ],
         }
     );

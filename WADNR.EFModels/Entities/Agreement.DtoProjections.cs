@@ -22,7 +22,8 @@ public static class AgreementProjections
         AgreementType = new AgreementTypeLookupItem
         {
             AgreementTypeID = x.AgreementType.AgreementTypeID,
-            AgreementTypeName = x.AgreementType.AgreementTypeName
+            AgreementTypeName = x.AgreementType.AgreementTypeName,
+            AgreementTypeAbbrev = x.AgreementType.AgreementTypeAbbrev
         },
 
         ContributingOrganization = new OrganizationLookupItem
@@ -108,6 +109,7 @@ public static class AgreementProjections
 
     public static readonly Expression<Func<AgreementPerson, AgreementContactGridRowRaw>> AsContactGridRowRaw = x => new AgreementContactGridRowRaw
     {
+        AgreementPersonID = x.AgreementPersonID,
         AgreementPersonRoleID = x.AgreementPersonRoleID,
         PersonID = x.Person.PersonID,
         FirstName = x.Person.FirstName,
@@ -121,6 +123,7 @@ public static class AgreementProjections
 
     public static AgreementContactGridRow ToContactGridRow(AgreementContactGridRowRaw x) => new()
     {
+        AgreementPersonID = x.AgreementPersonID,
         Person = new PersonFirstNameLastName
         {
             PersonID = x.PersonID,

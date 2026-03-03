@@ -150,10 +150,11 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<IActionResult> Delete([FromRoute] int projectID)
     {
-        var deleted = await Projects.DeleteAsync(DbContext, projectID);
-        if (!deleted)
+        var fileResourceGuids = await Projects.DeleteAsync(DbContext, projectID);
+
+        foreach (var guid in fileResourceGuids)
         {
-            return NotFound();
+            await fileService.DeleteFileStreamFromBlobStorageAsync(guid.ToString());
         }
 
         return NoContent();
@@ -235,6 +236,10 @@ public class ProjectController(
     {
         var project = await DbContext.Projects.AsNoTracking().Include(x => x.ProjectLocations)
             .FirstOrDefaultAsync(x => x.ProjectID == projectID);
+        if (project == null)
+        {
+            return NotFound();
+        }
         var genericLayers = new List<GenericLayer>();
         if (project.ProjectLocationPoint != null)
         {

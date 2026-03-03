@@ -51,6 +51,10 @@ public static class Tags
 
     public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int tagID)
     {
+        await dbContext.ProjectTags
+            .Where(x => x.TagID == tagID)
+            .ExecuteDeleteAsync();
+
         var deletedCount = await dbContext.Tags
             .Where(x => x.TagID == tagID)
             .ExecuteDeleteAsync();

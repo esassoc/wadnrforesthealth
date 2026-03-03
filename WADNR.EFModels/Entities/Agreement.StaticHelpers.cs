@@ -136,6 +136,100 @@ public static class Agreements
         return items;
     }
 
+    public static async Task<List<FundSourceAllocationLookupItem>> UpdateFundSourceAllocationsAsync(
+        WADNRDbContext dbContext,
+        int agreementID,
+        AgreementFundSourceAllocationsUpdateRequest request)
+    {
+        await dbContext.AgreementFundSourceAllocations
+            .Where(x => x.AgreementID == agreementID)
+            .ExecuteDeleteAsync();
+
+        var newRows = request.FundSourceAllocationIDs.Select(id => new AgreementFundSourceAllocation
+        {
+            AgreementID = agreementID,
+            FundSourceAllocationID = id
+        }).ToList();
+
+        dbContext.AgreementFundSourceAllocations.AddRange(newRows);
+        await dbContext.SaveChangesAsync();
+
+        return await ListFundSourceAllocationsAsLookupItemByAgreementIDAsync(dbContext, agreementID);
+    }
+
+    public static async Task<List<ProjectLookupItem>> UpdateProjectsAsync(
+        WADNRDbContext dbContext,
+        int agreementID,
+        AgreementProjectsUpdateRequest request)
+    {
+        await dbContext.AgreementProjects
+            .Where(x => x.AgreementID == agreementID)
+            .ExecuteDeleteAsync();
+
+        var newRows = request.ProjectIDs.Select(id => new AgreementProject
+        {
+            AgreementID = agreementID,
+            ProjectID = id
+        }).ToList();
+
+        dbContext.AgreementProjects.AddRange(newRows);
+        await dbContext.SaveChangesAsync();
+
+        return await ListProjectsAsLookupItemByAgreementIDAsync(dbContext, agreementID);
+    }
+
+    public static async Task<AgreementContactGridRow> CreateContactAsync(
+        WADNRDbContext dbContext,
+        int agreementID,
+        AgreementContactUpsertRequest request)
+    {
+        var entity = new AgreementPerson
+        {
+            AgreementID = agreementID,
+            PersonID = request.PersonID,
+            AgreementPersonRoleID = request.AgreementPersonRoleID
+        };
+        dbContext.AgreementPeople.Add(entity);
+        await dbContext.SaveChangesAsync();
+
+        var raw = await dbContext.AgreementPeople
+            .AsNoTracking()
+            .Where(x => x.AgreementPersonID == entity.AgreementPersonID)
+            .Select(AgreementProjections.AsContactGridRowRaw)
+            .SingleAsync();
+
+        return AgreementProjections.ToContactGridRow(raw);
+    }
+
+    public static async Task<AgreementContactGridRow> UpdateContactAsync(
+        WADNRDbContext dbContext,
+        int agreementPersonID,
+        AgreementContactUpsertRequest request)
+    {
+        var entity = await dbContext.AgreementPeople
+            .FirstAsync(x => x.AgreementPersonID == agreementPersonID);
+
+        entity.PersonID = request.PersonID;
+        entity.AgreementPersonRoleID = request.AgreementPersonRoleID;
+        await dbContext.SaveChangesAsync();
+
+        var raw = await dbContext.AgreementPeople
+            .AsNoTracking()
+            .Where(x => x.AgreementPersonID == agreementPersonID)
+            .Select(AgreementProjections.AsContactGridRowRaw)
+            .SingleAsync();
+
+        return AgreementProjections.ToContactGridRow(raw);
+    }
+
+    public static async Task<bool> DeleteContactAsync(WADNRDbContext dbContext, int agreementPersonID)
+    {
+        var deletedCount = await dbContext.AgreementPeople
+            .Where(x => x.AgreementPersonID == agreementPersonID)
+            .ExecuteDeleteAsync();
+        return deletedCount > 0;
+    }
+
     public static async Task<List<AgreementGridRow>> ListAsGridRowByOrganizationIDAsync(WADNRDbContext dbContext, int organizationID)
     {
         var entities = await dbContext.Agreements

@@ -49,10 +49,12 @@ public static class ProgramProjections
         ProgramEditors = x.ProgramPeople
             .OrderBy(pp => pp.Person.LastName)
             .ThenBy(pp => pp.Person.FirstName)
-            .Select(pp => new PersonLookupItem
+            .Select(pp => new PersonWithOrganizationLookupItem
             {
                 PersonID = pp.Person.PersonID,
-                FullName = pp.Person.FirstName + " " + pp.Person.LastName
+                FullName = pp.Person.FirstName + " " + pp.Person.LastName,
+                OrganizationName = pp.Person.Organization != null ? pp.Person.Organization.OrganizationName : null,
+                OrganizationShortName = pp.Person.Organization != null ? pp.Person.Organization.OrganizationShortName : null
             }).ToList(),
 
         // Counts
@@ -71,9 +73,11 @@ public static class ProgramProjections
             ProjectStageDefaultID = x.GisUploadSourceOrganization.ProjectStageDefaultID,
             ProjectStageDefaultName = null, // Populated in static helper
             DataDeriveProjectStage = x.GisUploadSourceOrganization.DataDeriveProjectStage,
+            DefaultLeadImplementerOrganizationID = x.GisUploadSourceOrganization.DefaultLeadImplementerOrganizationID,
             DefaultLeadImplementerOrganizationName = x.GisUploadSourceOrganization.DefaultLeadImplementerOrganization != null
                 ? x.GisUploadSourceOrganization.DefaultLeadImplementerOrganization.OrganizationName
                 : null,
+            RelationshipTypeForDefaultOrganizationID = x.GisUploadSourceOrganization.RelationshipTypeForDefaultOrganizationID,
             ImportAsDetailedLocationInsteadOfTreatments = x.GisUploadSourceOrganization.ImportAsDetailedLocationInsteadOfTreatments,
             ImportAsDetailedLocationInAdditionToTreatments = x.GisUploadSourceOrganization.ImportAsDetailedLocationInAdditionToTreatments,
             ProjectDescriptionDefaultText = x.GisUploadSourceOrganization.ProjectDescriptionDefaultText,

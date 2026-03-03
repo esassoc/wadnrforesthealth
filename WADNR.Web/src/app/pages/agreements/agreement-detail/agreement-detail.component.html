@@ -1,12 +1,18 @@
 @if (agreement$ | async; as agreement) {
 <breadcrumb [items]="[{ label: 'Agreements', url: '/agreements' }, { label: agreement.AgreementTitle || 'Agreement' }]" [linkLast]="false"></breadcrumb>
 
-<page-header pageTitle="{{ agreement.AgreementTitle || 'Agreement' }}"></page-header>
+<page-header pageTitle="{{ agreement.AgreementTitle || 'Agreement' }}">
+</page-header>
 
 <div class="grid-12">
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header"><span class="card-title">Agreement Basics</span></div>
+            <div class="card-header">
+                <span class="card-title">Agreement Basics</span>
+                @if (canManageAgreements$ | async) {
+                    <button class="btn btn-sm btn-primary" (click)="openEditModal(agreement)">Edit</button>
+                }
+            </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: agreementIsLoading$ | async, loadingHeight: 260 }">
                 <div class="grid-12 mb-2">
                     <div class="g-col-4">
@@ -68,6 +74,26 @@
                     <div class="g-col-8">{{ agreement.AgreementAmount | currency }}</div>
 
                     <div class="g-col-4">
+                        <strong>Expended Amount</strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.ExpendedAmount != null ? (agreement.ExpendedAmount | currency) : "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong>Balance Amount</strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.BalanceAmount != null ? (agreement.BalanceAmount | currency) : "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong>DNR Upland Region</strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.DNRUplandRegion?.DNRUplandRegionName || "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong>First Bill Due On</strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.FirstBillDueOn ? (agreement.FirstBillDueOn | date : "M/d/yyyy") : "—" }}</div>
+
+                    <div class="g-col-4">
                         <strong><field-definition fieldDefinition="AgreementNotes"></field-definition></strong>
                     </div>
                     <div class="g-col-8 copy" [innerHTML]="sanitizeHtml(agreement.Notes)"></div>
@@ -89,7 +115,14 @@
 
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header"><span class="card-title">WA DNR Fund Source Allocations Associated to This Agreement</span></div>
+            <div class="card-header">
+                <span class="card-title">WA DNR Fund Source Allocations Associated to This Agreement</span>
+                @if (canManageAgreements$ | async) {
+                    @if (fundSourceAllocations$ | async; as fsAllocations) {
+                        <button class="btn btn-sm btn-primary" (click)="openFundSourceAllocationsModal(agreement.AgreementID, fsAllocations)">Edit</button>
+                    }
+                }
+            </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: fundSourceAllocationsIsLoading$ | async, loadingHeight: 120 }">
                 <div class="grid-12">
                     <div class="g-col-12"><strong>WA DNR Fund Source Allocations</strong></div>
@@ -110,7 +143,14 @@
 
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header"><span class="card-title">Projects Associated to This Agreement</span></div>
+            <div class="card-header">
+                <span class="card-title">Projects Associated to This Agreement</span>
+                @if (canManageAgreements$ | async) {
+                    @if (projects$ | async; as projectsList) {
+                        <button class="btn btn-sm btn-primary" (click)="openProjectsModal(agreement.AgreementID, projectsList)">Edit</button>
+                    }
+                }
+            </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 120 }">
                 <div class="grid-12">
                     <div class="g-col-12"><strong>Projects</strong></div>
@@ -130,9 +170,14 @@
 
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header"><span class="card-title">Agreement Contacts</span></div>
+            <div class="card-header">
+                <span class="card-title">Agreement Contacts</span>
+                @if (canManageAgreements$ | async) {
+                    <button class="btn btn-sm btn-primary" (click)="openContactModal(agreement.AgreementID, 'create')">Add Contact</button>
+                }
+            </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: contactsIsLoading$ | async, loadingHeight: 300 }">
-                <wadnr-grid [rowData]="contacts$ | async" [columnDefs]="contactColumnDefs" downloadFileName="agreement-contacts" [sizeColumnsToFitGrid]="true"></wadnr-grid>
+                <wadnr-grid [rowData]="contacts$ | async" [columnDefs]="contactColumnDefs$ | async" downloadFileName="agreement-contacts" [sizeColumnsToFitGrid]="true"></wadnr-grid>
             </div>
         </div>
     </div>

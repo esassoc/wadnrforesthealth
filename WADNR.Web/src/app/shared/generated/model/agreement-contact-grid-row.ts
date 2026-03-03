@@ -14,6 +14,7 @@ import { OrganizationLookupItem } from './organization-lookup-item';
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class AgreementContactGridRow { 
+    AgreementPersonID?: number;
     Person?: PersonFirstNameLastName;
     AgreementRole?: AgreementPersonRoleLookupItem;
     ContributingOrganization?: OrganizationLookupItem;
@@ -23,12 +24,23 @@ export class AgreementContactGridRow {
 }
 
 export interface AgreementContactGridRowForm { 
+    AgreementPersonID?: FormControl<number>;
     Person?: FormControl<PersonFirstNameLastName>;
     AgreementRole?: FormControl<AgreementPersonRoleLookupItem>;
     ContributingOrganization?: FormControl<OrganizationLookupItem>;
 }
 
 export class AgreementContactGridRowFormControls { 
+    public static AgreementPersonID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
     public static Person = (value: FormControlState<PersonFirstNameLastName> | PersonFirstNameLastName = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<PersonFirstNameLastName>(
         value,
         formControlOptions ?? 

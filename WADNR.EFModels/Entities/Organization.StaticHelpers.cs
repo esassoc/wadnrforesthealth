@@ -102,6 +102,14 @@ public static class Organizations
         return await GetByIDAsDetailAsync(dbContext, entity.OrganizationID);
     }
 
+    public static async Task SetLogoAsync(WADNRDbContext dbContext, int organizationID, int? logoFileResourceID)
+    {
+        var entity = await dbContext.Organizations
+            .FirstAsync(x => x.OrganizationID == organizationID);
+        entity.LogoFileResourceID = logoFileResourceID;
+        await dbContext.SaveChangesAsync();
+    }
+
     public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int organizationID)
     {
         var deletedCount = await dbContext.Organizations

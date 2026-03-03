@@ -18,7 +18,7 @@ public class ProjectInternalNoteController(
     : SitkaController<ProjectInternalNoteController>(dbContext, logger, configuration)
 {
     [HttpGet("{projectInternalNoteID}")]
-    [AdminFeature]
+    [ProjectEditAsAdminFeature]
     public async Task<ActionResult<ProjectInternalNoteDetail>> GetByID([FromRoute] int projectInternalNoteID)
     {
         var detail = await ProjectInternalNotes.GetByIDAsDetailAsync(DbContext, projectInternalNoteID);
@@ -30,7 +30,7 @@ public class ProjectInternalNoteController(
     }
 
     [HttpPost]
-    [AdminFeature]
+    [ProjectEditAsAdminFeature]
     public async Task<ActionResult<ProjectInternalNoteDetail>> Create([FromBody] ProjectInternalNoteUpsertRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Note))
@@ -60,7 +60,7 @@ public class ProjectInternalNoteController(
     }
 
     [HttpPut("{projectInternalNoteID}")]
-    [AdminFeature]
+    [ProjectEditAsAdminFeature]
     public async Task<ActionResult<ProjectInternalNoteDetail>> Update(
         [FromRoute] int projectInternalNoteID,
         [FromBody] ProjectInternalNoteUpsertRequest request)
@@ -88,7 +88,7 @@ public class ProjectInternalNoteController(
     }
 
     [HttpDelete("{projectInternalNoteID}")]
-    [AdminFeature]
+    [ProjectEditAsAdminFeature]
     public async Task<IActionResult> Delete([FromRoute] int projectInternalNoteID)
     {
         var projectInternalNote = await DbContext.ProjectInternalNotes.FindAsync(projectInternalNoteID);

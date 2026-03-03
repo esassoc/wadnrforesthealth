@@ -31,6 +31,8 @@ import { FundSourceAllocationExpenditureSummary } from '../model/fund-source-all
 // @ts-ignore
 import { FundSourceAllocationFileGridRow } from '../model/fund-source-allocation-file-grid-row';
 // @ts-ignore
+import { FundSourceAllocationFileUpdateRequest } from '../model/fund-source-allocation-file-update-request';
+// @ts-ignore
 import { FundSourceAllocationGridRow } from '../model/fund-source-allocation-grid-row';
 // @ts-ignore
 import { FundSourceAllocationLookupItem } from '../model/fund-source-allocation-lookup-item';
@@ -1068,6 +1070,78 @@ export class FundSourceAllocationService extends BaseService {
             {
                 context: localVarHttpContext,
                 body: fundSourceAllocationProgramIndexProjectCodeSaveRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param fundSourceAllocationID 
+     * @param fundSourceAllocationFileResourceID 
+     * @param fundSourceAllocationFileUpdateRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateFileFundSourceAllocation(fundSourceAllocationID: number, fundSourceAllocationFileResourceID: number, fundSourceAllocationFileUpdateRequest?: FundSourceAllocationFileUpdateRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<FundSourceAllocationFileGridRow>;
+    public updateFileFundSourceAllocation(fundSourceAllocationID: number, fundSourceAllocationFileResourceID: number, fundSourceAllocationFileUpdateRequest?: FundSourceAllocationFileUpdateRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<FundSourceAllocationFileGridRow>>;
+    public updateFileFundSourceAllocation(fundSourceAllocationID: number, fundSourceAllocationFileResourceID: number, fundSourceAllocationFileUpdateRequest?: FundSourceAllocationFileUpdateRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<FundSourceAllocationFileGridRow>>;
+    public updateFileFundSourceAllocation(fundSourceAllocationID: number, fundSourceAllocationFileResourceID: number, fundSourceAllocationFileUpdateRequest?: FundSourceAllocationFileUpdateRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (fundSourceAllocationID === null || fundSourceAllocationID === undefined) {
+            throw new Error('Required parameter fundSourceAllocationID was null or undefined when calling updateFileFundSourceAllocation.');
+        }
+        if (fundSourceAllocationFileResourceID === null || fundSourceAllocationFileResourceID === undefined) {
+            throw new Error('Required parameter fundSourceAllocationFileResourceID was null or undefined when calling updateFileFundSourceAllocation.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/fund-source-allocations/${this.configuration.encodeParam({name: "fundSourceAllocationID", value: fundSourceAllocationID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/files/${this.configuration.encodeParam({name: "fundSourceAllocationFileResourceID", value: fundSourceAllocationFileResourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<FundSourceAllocationFileGridRow>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: fundSourceAllocationFileUpdateRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

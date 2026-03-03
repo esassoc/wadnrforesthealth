@@ -70,6 +70,8 @@ export class EditImportBasicsModalComponent extends BaseModal implements OnInit 
         this.applyStartDateToProject.setValue(b.ApplyStartDateToProject ?? false);
         this.applyCompletedDateToProject.setValue(b.ApplyCompletedDateToProject ?? false);
         this.applyStartDateToTreatments.setValue(b.ApplyStartDateToTreatments ?? false);
+        this.defaultLeadImplementerOrganizationID.setValue(b.DefaultLeadImplementerOrganizationID);
+        this.relationshipTypeForDefaultOrganizationID.setValue(b.RelationshipTypeForDefaultOrganizationID);
         this.applyEndDateToTreatments.setValue(b.ApplyEndDateToTreatments ?? false);
     }
 

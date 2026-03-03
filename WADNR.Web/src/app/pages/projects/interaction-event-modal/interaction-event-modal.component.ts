@@ -226,7 +226,7 @@ export class InteractionEventModalComponent extends BaseModal implements OnInit 
                     }
                     // Upload each file sequentially, return the original result at the end
                     const uploads$ = files.map(file =>
-                        this.interactionEventService.createFileResourceInteractionEvent(result.InteractionEventID, file.name, null, file)
+                        this.interactionEventService.createFileResourceInteractionEvent(result.InteractionEventID, file.name, undefined, file)
                     );
                     return concat(...uploads$).pipe(
                         last(),

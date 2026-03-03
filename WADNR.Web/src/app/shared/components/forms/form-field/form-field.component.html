@@ -125,7 +125,7 @@
                         [bindLabel]="formInputOptionLabel"
                         [bindValue]="formInputOptionValue"
                         [placeholder]="placeholder"
-                        appendTo="#dropdown-host"
+                        [appendTo]="appendTo"
                         (change)="onNgSelectChange($event)">
                         <ng-template ng-label-tmp let-item="item">
                             <span [title]="item[formInputOptionLabel]">{{ item[formInputOptionLabel] }}</span>

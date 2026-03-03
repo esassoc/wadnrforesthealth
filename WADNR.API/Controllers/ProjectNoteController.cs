@@ -31,7 +31,7 @@ public class ProjectNoteController(
     }
 
     [HttpPost]
-    [ProjectEditFeature]
+    [ProjectEditAsAdminFeature]
     public async Task<ActionResult<ProjectNoteDetail>> Create([FromBody] ProjectNoteUpsertRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Note))

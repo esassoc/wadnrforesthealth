@@ -153,6 +153,11 @@ public static class Programs
 
     public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int programID)
     {
+        // Clean up junction table
+        await dbContext.ProgramPeople
+            .Where(x => x.ProgramID == programID)
+            .ExecuteDeleteAsync();
+
         var deletedCount = await dbContext.Programs
             .Where(x => x.ProgramID == programID)
             .ExecuteDeleteAsync();
@@ -164,6 +169,144 @@ public static class Programs
         var program =
             programs.SingleOrDefault(x => x.ProgramID != currentProgramID && string.Equals(x.ProgramName, programName, StringComparison.InvariantCultureIgnoreCase));
         return program == null;
+    }
+
+    public static async Task<List<PersonLookupItem>> ListEligibleProgramEditorsAsync(WADNRDbContext dbContext)
+    {
+        var canEditProgramRoleID = (int)RoleEnum.CanEditProgram;
+
+        var eligiblePersonIDs = await dbContext.PersonRoles
+            .AsNoTracking()
+            .Where(pr => pr.RoleID == canEditProgramRoleID
+                         && pr.Person.IsActive
+                         && pr.Person.PersonAllowedAuthenticators.Any())
+            .Select(pr => pr.PersonID)
+            .Distinct()
+            .ToListAsync();
+
+        var people = await dbContext.People
+            .AsNoTracking()
+            .Where(p => eligiblePersonIDs.Contains(p.PersonID))
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
+            .Select(PersonProjections.AsLookupItem)
+            .ToListAsync();
+
+        return people;
+    }
+
+    public static async Task<string?> ValidateEditorsHaveRequiredRoleAsync(WADNRDbContext dbContext, List<int> personIDList)
+    {
+        var canEditProgramRoleID = (int)RoleEnum.CanEditProgram;
+
+        var personsWithRole = await dbContext.PersonRoles
+            .AsNoTracking()
+            .Where(pr => personIDList.Contains(pr.PersonID) && pr.RoleID == canEditProgramRoleID)
+            .Select(pr => pr.PersonID)
+            .Distinct()
+            .ToListAsync();
+
+        var peopleWithoutRole = personIDList.Except(personsWithRole).ToList();
+
+        if (peopleWithoutRole.Count > 0)
+        {
+            var names = await dbContext.People
+                .AsNoTracking()
+                .Where(p => peopleWithoutRole.Contains(p.PersonID))
+                .OrderBy(p => p.LastName).ThenBy(p => p.FirstName)
+                .Select(p => p.FirstName + " " + p.LastName)
+                .ToListAsync();
+
+            return $"The following user(s) do not have the Program Editor role and cannot be assigned as program editors: {string.Join(", ", names)}.";
+        }
+
+        return null;
+    }
+
+    public static async Task<List<PersonWithOrganizationLookupItem>> UpdateEditorsAsync(WADNRDbContext dbContext, int programID, ProgramEditorsUpsertRequest request)
+    {
+        var desiredPersonIDs = request.PersonIDList.Distinct().ToHashSet();
+
+        // Load existing junction records (tracked, so changes are audited)
+        var existing = await dbContext.ProgramPeople
+            .Where(pp => pp.ProgramID == programID)
+            .ToListAsync();
+
+        // Remove editors no longer in the list
+        var toRemove = existing.Where(pp => !desiredPersonIDs.Contains(pp.PersonID)).ToList();
+        dbContext.ProgramPeople.RemoveRange(toRemove);
+
+        // Add editors not yet in the list
+        var existingPersonIDs = existing.Select(pp => pp.PersonID).ToHashSet();
+        var toAdd = desiredPersonIDs.Where(id => !existingPersonIDs.Contains(id)).ToList();
+        foreach (var personID in toAdd)
+        {
+            dbContext.ProgramPeople.Add(new ProgramPerson
+            {
+                ProgramID = programID,
+                PersonID = personID
+            });
+        }
+
+        if (toRemove.Count > 0 || toAdd.Count > 0)
+        {
+            await dbContext.SaveChangesAsync();
+        }
+
+        // Return updated list using PersonProjections
+        var editorPersonIDs = await dbContext.ProgramPeople
+            .AsNoTracking()
+            .Where(pp => pp.ProgramID == programID)
+            .Select(pp => pp.PersonID)
+            .ToListAsync();
+
+        return await dbContext.People
+            .AsNoTracking()
+            .Where(p => editorPersonIDs.Contains(p.PersonID))
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
+            .Select(PersonProjections.AsLookupItemWithOrganization)
+            .ToListAsync();
+    }
+
+    public static async Task<List<ProjectImportBlockListGridRow>> ListBlockListEntriesAsync(WADNRDbContext dbContext, int programID)
+    {
+        return await dbContext.ProjectImportBlockLists
+            .AsNoTracking()
+            .Where(x => x.ProgramID == programID)
+            .Select(x => new ProjectImportBlockListGridRow
+            {
+                ProjectImportBlockListID = x.ProjectImportBlockListID,
+                ProgramID = x.ProgramID,
+                ProjectID = x.ProjectID,
+                ProjectName = x.ProjectName,
+                ProjectGisIdentifier = x.ProjectGisIdentifier,
+                Notes = x.Notes,
+            })
+            .OrderBy(x => x.ProjectName)
+            .ToListAsync();
+    }
+
+    public static async Task AddToBlockListAsync(WADNRDbContext dbContext, int programID, AddToBlockListRequest request)
+    {
+        var entry = new ProjectImportBlockList
+        {
+            ProgramID = programID,
+            ProjectGisIdentifier = request.ProjectGisIdentifier,
+            ProjectName = request.ProjectName,
+            ProjectID = request.ProjectID,
+            Notes = request.Notes,
+        };
+        dbContext.ProjectImportBlockLists.Add(entry);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public static async Task<bool> DeleteBlockListEntryAsync(WADNRDbContext dbContext, int projectImportBlockListID)
+    {
+        var deletedCount = await dbContext.ProjectImportBlockLists
+            .Where(x => x.ProjectImportBlockListID == projectImportBlockListID)
+            .ExecuteDeleteAsync();
+        return deletedCount > 0;
     }
 
     public static async Task<List<ProgramGridRow>> ListAsGridRowByOrganizationIDAsync(WADNRDbContext dbContext, int organizationID)
@@ -223,7 +366,9 @@ public static class Programs
             .Select(pnc => new ProgramNotificationGridRow
             {
                 ProgramNotificationConfigurationID = pnc.ProgramNotificationConfigurationID,
+                ProgramNotificationTypeID = pnc.ProgramNotificationTypeID,
                 ProgramNotificationTypeDisplayName = ProgramNotificationType.AllLookupDictionary[pnc.ProgramNotificationTypeID].ProgramNotificationTypeDisplayName,
+                RecurrenceIntervalID = pnc.RecurrenceIntervalID,
                 RecurrenceIntervalInYears = RecurrenceInterval.AllLookupDictionary[pnc.RecurrenceIntervalID].RecurrenceIntervalInYears,
                 NotificationEmailText = pnc.NotificationEmailText
             })
@@ -231,6 +376,78 @@ public static class Programs
             .ToList();
 
         return notifications;
+    }
+
+    public static async Task<ProgramNotificationGridRow> CreateNotificationAsync(WADNRDbContext dbContext, int programID, ProgramNotificationUpsertRequest request)
+    {
+        var entity = new ProgramNotificationConfiguration
+        {
+            ProgramID = programID,
+            ProgramNotificationTypeID = request.ProgramNotificationTypeID,
+            RecurrenceIntervalID = request.RecurrenceIntervalID,
+            NotificationEmailText = request.NotificationEmailText
+        };
+        dbContext.ProgramNotificationConfigurations.Add(entity);
+        await dbContext.SaveChangesAsync();
+
+        return new ProgramNotificationGridRow
+        {
+            ProgramNotificationConfigurationID = entity.ProgramNotificationConfigurationID,
+            ProgramNotificationTypeID = entity.ProgramNotificationTypeID,
+            ProgramNotificationTypeDisplayName = ProgramNotificationType.AllLookupDictionary[entity.ProgramNotificationTypeID].ProgramNotificationTypeDisplayName,
+            RecurrenceIntervalID = entity.RecurrenceIntervalID,
+            RecurrenceIntervalInYears = RecurrenceInterval.AllLookupDictionary[entity.RecurrenceIntervalID].RecurrenceIntervalInYears,
+            NotificationEmailText = entity.NotificationEmailText
+        };
+    }
+
+    public static async Task<ProgramNotificationGridRow?> UpdateNotificationAsync(WADNRDbContext dbContext, int notificationConfigID, ProgramNotificationUpsertRequest request)
+    {
+        var entity = await dbContext.ProgramNotificationConfigurations
+            .FirstOrDefaultAsync(x => x.ProgramNotificationConfigurationID == notificationConfigID);
+
+        if (entity == null) return null;
+
+        entity.ProgramNotificationTypeID = request.ProgramNotificationTypeID;
+        entity.RecurrenceIntervalID = request.RecurrenceIntervalID;
+        entity.NotificationEmailText = request.NotificationEmailText;
+
+        await dbContext.SaveChangesAsync();
+
+        return new ProgramNotificationGridRow
+        {
+            ProgramNotificationConfigurationID = entity.ProgramNotificationConfigurationID,
+            ProgramNotificationTypeID = entity.ProgramNotificationTypeID,
+            ProgramNotificationTypeDisplayName = ProgramNotificationType.AllLookupDictionary[entity.ProgramNotificationTypeID].ProgramNotificationTypeDisplayName,
+            RecurrenceIntervalID = entity.RecurrenceIntervalID,
+            RecurrenceIntervalInYears = RecurrenceInterval.AllLookupDictionary[entity.RecurrenceIntervalID].RecurrenceIntervalInYears,
+            NotificationEmailText = entity.NotificationEmailText
+        };
+    }
+
+    public static async Task<bool> DeleteNotificationAsync(WADNRDbContext dbContext, int notificationConfigID)
+    {
+        var sentIDs = await dbContext.ProgramNotificationSents
+            .Where(s => s.ProgramNotificationConfigurationID == notificationConfigID)
+            .Select(s => s.ProgramNotificationSentID)
+            .ToListAsync();
+
+        if (sentIDs.Count > 0)
+        {
+            await dbContext.ProgramNotificationSentProjects
+                .Where(p => sentIDs.Contains(p.ProgramNotificationSentID))
+                .ExecuteDeleteAsync();
+
+            await dbContext.ProgramNotificationSents
+                .Where(s => s.ProgramNotificationConfigurationID == notificationConfigID)
+                .ExecuteDeleteAsync();
+        }
+
+        var deletedCount = await dbContext.ProgramNotificationConfigurations
+            .Where(x => x.ProgramNotificationConfigurationID == notificationConfigID)
+            .ExecuteDeleteAsync();
+
+        return deletedCount > 0;
     }
 
     public static async Task<GdbImportBasics?> UpdateGdbImportBasicsAsync(WADNRDbContext dbContext, int programID, GdbImportBasicsUpsertRequest request)
@@ -284,7 +501,9 @@ public static class Programs
             ProjectStageDefaultID = sourceOrg.ProjectStageDefaultID,
             ProjectStageDefaultName = stageName,
             DataDeriveProjectStage = sourceOrg.DataDeriveProjectStage,
+            DefaultLeadImplementerOrganizationID = sourceOrg.DefaultLeadImplementerOrganizationID,
             DefaultLeadImplementerOrganizationName = orgName,
+            RelationshipTypeForDefaultOrganizationID = sourceOrg.RelationshipTypeForDefaultOrganizationID,
             ImportAsDetailedLocationInsteadOfTreatments = sourceOrg.ImportAsDetailedLocationInsteadOfTreatments,
             ImportAsDetailedLocationInAdditionToTreatments = sourceOrg.ImportAsDetailedLocationInAdditionToTreatments,
             ProjectDescriptionDefaultText = sourceOrg.ProjectDescriptionDefaultText,

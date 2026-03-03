@@ -1,14 +1,19 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, shareReplay, switchMap } from "rxjs";
+import { DialogService } from "@ngneat/dialog";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, of, shareReplay, startWith, Subject, switchMap } from "rxjs";
 import { ColDef } from "ag-grid-community";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
+import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
+import { IconComponent } from "src/app/shared/components/icon/icon.component";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
+import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 
 import { FundSourceService } from "src/app/shared/generated/api/fund-source.service";
 import { FundSourceDetail } from "src/app/shared/generated/model/fund-source-detail";
@@ -22,7 +27,7 @@ import { FundSourceNoteInternalGridRow } from "src/app/shared/generated/model/fu
 @Component({
     selector: "fund-source-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, WADNRGridComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, FieldDefinitionComponent, IconComponent, LoadingDirective],
     templateUrl: "./fund-source-detail.component.html",
     styleUrls: ["./fund-source-detail.component.scss"],
 })
@@ -32,6 +37,7 @@ export class FundSourceDetailComponent {
     }
 
     private _fundSourceID$ = new BehaviorSubject<number | null>(null);
+    private refreshData$ = new Subject<void>();
 
     public fundSourceID$: Observable<number>;
     public fundSource$: Observable<FundSourceDetail>;
@@ -45,17 +51,16 @@ export class FundSourceDetailComponent {
     public projectColumnDefs: ColDef<FundSourceProjectGridRow>[] = [];
     public agreementColumnDefs: ColDef<FundSourceAgreementGridRow>[] = [];
     public budgetLineItemColumnDefs: ColDef<FundSourceBudgetLineItemGridRow>[] = [];
-    public fileColumnDefs: ColDef<FundSourceFileResourceGridRow>[] = [];
-    public noteColumnDefs: ColDef<FundSourceNoteGridRow>[] = [];
-    public internalNoteColumnDefs: ColDef<FundSourceNoteInternalGridRow>[] = [];
 
     public isUserLoggedIn$: Observable<boolean>;
     public canManageFundSources$: Observable<boolean>;
 
     constructor(
         private fundSourceService: FundSourceService,
+        private dialogService: DialogService,
         private utilityFunctions: UtilityFunctionsService,
         private authService: AuthenticationService,
+        private confirmService: ConfirmService,
     ) {}
 
     ngOnInit(): void {
@@ -72,8 +77,10 @@ export class FundSourceDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.fundSource$ = this.fundSourceID$.pipe(
-            switchMap((fundSourceID) => this.fundSourceService.getFundSource(fundSourceID)),
+        const refresh$ = this.refreshData$.pipe(startWith(undefined));
+
+        this.fundSource$ = combineLatest([this.fundSourceID$, refresh$]).pipe(
+            switchMap(([id]) => this.fundSourceService.getFundSource(id)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -92,27 +99,27 @@ export class FundSourceDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.files$ = this.fundSourceID$.pipe(
-            switchMap((fundSourceID) => this.fundSourceService.listFilesFundSource(fundSourceID)),
+        this.files$ = combineLatest([this.fundSourceID$, refresh$]).pipe(
+            switchMap(([id]) => this.fundSourceService.listFilesFundSource(id)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.notes$ = this.fundSourceID$.pipe(
-            switchMap((fundSourceID) => this.fundSourceService.listNotesFundSource(fundSourceID)),
+        this.notes$ = combineLatest([this.fundSourceID$, refresh$]).pipe(
+            switchMap(([id]) => this.fundSourceService.listNotesFundSource(id)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.internalNotes$ = this.fundSourceID$.pipe(
-            switchMap((fundSourceID) => this.fundSourceService.listInternalNotesFundSource(fundSourceID)),
+        this.internalNotes$ = combineLatest([this.fundSourceID$, refresh$, this.canManageFundSources$]).pipe(
+            switchMap(([id, , canManage]) => canManage
+                ? this.fundSourceService.listInternalNotesFundSource(id)
+                : of([] as FundSourceNoteInternalGridRow[])
+            ),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
         this.projectColumnDefs = this.createProjectColumnDefs();
         this.agreementColumnDefs = this.createAgreementColumnDefs();
         this.budgetLineItemColumnDefs = this.createBudgetLineItemColumnDefs();
-        this.fileColumnDefs = this.createFileColumnDefs();
-        this.noteColumnDefs = this.createNoteColumnDefs();
-        this.internalNoteColumnDefs = this.createInternalNoteColumnDefs();
     }
 
     private createProjectColumnDefs(): ColDef<FundSourceProjectGridRow>[] {
@@ -194,43 +201,117 @@ export class FundSourceDetailComponent {
         ];
     }
 
-    private createFileColumnDefs(): ColDef<FundSourceFileResourceGridRow>[] {
-        return [
-            this.utilityFunctions.createBasicColumnDef("File Name", "DisplayName"),
-            this.utilityFunctions.createBasicColumnDef("Description", "Description"),
-            this.utilityFunctions.createBasicColumnDef("Type", "FileResourceMimeTypeName"),
-            this.utilityFunctions.createDateColumnDef("Uploaded", "CreateDate", "M/d/yyyy"),
-        ];
+    // Modal & action methods
+    openEditModal(fundSource: FundSourceDetail): void {
+        import("../fund-source-edit-modal.component").then(({ FundSourceEditModalComponent }) => {
+            const dialogRef = this.dialogService.open(FundSourceEditModalComponent, {
+                data: {
+                    mode: "edit" as const,
+                    fundSourceID: fundSource.FundSourceID,
+                    fundSourceName: fundSource.FundSourceName,
+                    shortName: fundSource.ShortName,
+                    organizationID: fundSource.Organization?.OrganizationID,
+                    fundSourceStatusID: fundSource.FundSourceStatus?.FundSourceStatusID,
+                    fundSourceTypeID: fundSource.FundSourceTypeID,
+                    fundSourceNumber: fundSource.FundSourceNumber,
+                    cfdaNumber: fundSource.CFDANumber,
+                    startDate: fundSource.StartDate,
+                    endDate: fundSource.EndDate,
+                    totalAwardAmount: fundSource.TotalAwardAmount,
+                },
+                size: "lg",
+            });
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (result) this.refreshData$.next();
+            });
+        });
     }
 
-    private createNoteColumnDefs(): ColDef<FundSourceNoteGridRow>[] {
-        return [
-            this.utilityFunctions.createBasicColumnDef("Note", "Note"),
-            this.utilityFunctions.createBasicColumnDef("Created By", "CreatedByPersonName"),
-            this.utilityFunctions.createDateColumnDef("Created", "CreateDate", "M/d/yyyy"),
-            this.utilityFunctions.createBasicColumnDef("Updated By", "UpdatedByPersonName"),
-            this.utilityFunctions.createDateColumnDef("Updated", "UpdateDate", "M/d/yyyy"),
-        ];
+    openFileModal(fundSourceID: number): void {
+        import("./fund-source-file-modal.component").then(({ FundSourceFileModalComponent }) => {
+            const dialogRef = this.dialogService.open(FundSourceFileModalComponent, {
+                data: { fundSourceID },
+                size: "md",
+            });
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (result) this.refreshData$.next();
+            });
+        });
     }
 
-    private createInternalNoteColumnDefs(): ColDef<FundSourceNoteInternalGridRow>[] {
-        return [
-            this.utilityFunctions.createBasicColumnDef("Note", "Note"),
-            this.utilityFunctions.createBasicColumnDef("Created By", "CreatedByPersonName"),
-            this.utilityFunctions.createDateColumnDef("Created", "CreateDate", "M/d/yyyy"),
-            this.utilityFunctions.createBasicColumnDef("Updated By", "UpdatedByPersonName"),
-            this.utilityFunctions.createDateColumnDef("Updated", "UpdateDate", "M/d/yyyy"),
-        ];
+    openEditFileModal(fundSourceID: number, file: FundSourceFileResourceGridRow): void {
+        import("./fund-source-file-edit-modal.component").then(({ FundSourceFileEditModalComponent }) => {
+            const dialogRef = this.dialogService.open(FundSourceFileEditModalComponent, {
+                data: { fundSourceID, file },
+                size: "md",
+            });
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (result) this.refreshData$.next();
+            });
+        });
+    }
+
+    async deleteFile(fundSourceID: number, fundSourceFileResourceID: number): Promise<void> {
+        const confirmed = await this.confirmService.confirm({
+            title: "Confirm Delete",
+            message: "Are you sure you want to delete this file?",
+            buttonTextYes: "Delete",
+            buttonClassYes: "btn-danger",
+            buttonTextNo: "Cancel",
+        });
+        if (!confirmed) return;
+        this.fundSourceService.deleteFileFundSource(fundSourceID, fundSourceFileResourceID).subscribe(() => this.refreshData$.next());
+    }
+
+    openNoteModal(fundSourceID: number, isInternal: boolean, mode: "create" | "edit" = "create", noteID?: number, existingNote?: string): void {
+        import("./fund-source-note-modal.component").then(({ FundSourceNoteModalComponent }) => {
+            const dialogRef = this.dialogService.open(FundSourceNoteModalComponent, {
+                data: { mode, fundSourceID, isInternal, noteID, existingNote },
+                size: "md",
+            });
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (result) this.refreshData$.next();
+            });
+        });
+    }
+
+    async deleteNote(fundSourceID: number, noteID: number, isInternal: boolean): Promise<void> {
+        const confirmed = await this.confirmService.confirm({
+            title: "Confirm Delete",
+            message: "Are you sure you want to delete this note?",
+            buttonTextYes: "Delete",
+            buttonClassYes: "btn-danger",
+            buttonTextNo: "Cancel",
+        });
+        if (!confirmed) return;
+        if (isInternal) {
+            this.fundSourceService.deleteNoteInternalFundSource(fundSourceID, noteID).subscribe(() => this.refreshData$.next());
+        } else {
+            this.fundSourceService.deleteNoteFundSource(fundSourceID, noteID).subscribe(() => this.refreshData$.next());
+        }
     }
 
     formatCurrency(value: number | null | undefined): string {
-        if (value == null) return "—";
-        return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+        if (value == null) return "\u2014";
+        return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
     }
 
     formatDate(value: string | null | undefined): string {
-        if (!value) return "—";
+        if (!value) return "\u2014";
         const date = new Date(value);
-        return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+    }
+
+    formatDateTime(value: string | null | undefined): string {
+        if (!value) return "\u2014";
+        const date = new Date(value);
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const year = date.getFullYear();
+        let hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, "0");
+        const ampm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12 || 12;
+        return `${month}/${day}/${year} ${hours}:${minutes} ${ampm}`;
     }
 }

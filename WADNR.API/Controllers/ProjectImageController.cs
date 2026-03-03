@@ -50,7 +50,7 @@ public class ProjectImageController(
     }
 
     [HttpPost]
-    [ProjectEditFeature]
+    [ProjectEditAsAdminFeature]
     [Consumes("multipart/form-data")]
     public async Task<ActionResult<ProjectImageDetail>> Create(
         [FromForm] int projectID,

@@ -162,12 +162,147 @@ public static class Projects
         return await GetByIDAsDetailAsync(dbContext, entity.ProjectID);
     }
 
-    public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int projectID)
+    public static async Task<List<Guid>> DeleteAsync(WADNRDbContext dbContext, int projectID)
     {
-        var deletedCount = await dbContext.Projects
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
+        // Phase A: Collect FileResource IDs and GUIDs before deleting anything
+        var imageFileResources = await dbContext.ProjectImages
+            .Where(x => x.ProjectID == projectID)
+            .Select(x => new { x.FileResourceID, x.FileResource.FileResourceGUID })
+            .ToListAsync();
+
+        var documentFileResources = await dbContext.ProjectDocuments
+            .Where(x => x.ProjectID == projectID)
+            .Select(x => new { x.FileResourceID, x.FileResource.FileResourceGUID })
+            .ToListAsync();
+
+        var batchIDs = await dbContext.ProjectUpdateBatches
+            .Where(x => x.ProjectID == projectID)
+            .Select(x => x.ProjectUpdateBatchID)
+            .ToListAsync();
+
+        var imageUpdateFileResources = batchIDs.Count > 0
+            ? await dbContext.ProjectImageUpdates
+                .Where(x => batchIDs.Contains(x.ProjectUpdateBatchID) && x.FileResourceID != null)
+                .Select(x => new { FileResourceID = x.FileResourceID!.Value, x.FileResource!.FileResourceGUID })
+                .ToListAsync()
+            : [];
+
+        var documentUpdateFileResources = batchIDs.Count > 0
+            ? await dbContext.ProjectDocumentUpdates
+                .Where(x => batchIDs.Contains(x.ProjectUpdateBatchID))
+                .Select(x => new { x.FileResourceID, x.FileResource.FileResourceGUID })
+                .ToListAsync()
+            : [];
+
+        var invoicePaymentRequestIDs = await dbContext.InvoicePaymentRequests
+            .Where(x => x.ProjectID == projectID)
+            .Select(x => x.InvoicePaymentRequestID)
+            .ToListAsync();
+
+        var invoiceFileResources = invoicePaymentRequestIDs.Count > 0
+            ? await dbContext.Invoices
+                .Where(x => invoicePaymentRequestIDs.Contains(x.InvoicePaymentRequestID) && x.InvoiceFileResourceID != null)
+                .Select(x => new { FileResourceID = x.InvoiceFileResourceID!.Value, x.InvoiceFileResource!.FileResourceGUID })
+                .ToListAsync()
+            : [];
+
+        var allFileResourceIDs = imageFileResources.Select(x => x.FileResourceID)
+            .Concat(documentFileResources.Select(x => x.FileResourceID))
+            .Concat(imageUpdateFileResources.Select(x => x.FileResourceID))
+            .Concat(documentUpdateFileResources.Select(x => x.FileResourceID))
+            .Concat(invoiceFileResources.Select(x => x.FileResourceID))
+            .Distinct()
+            .ToList();
+
+        var allFileResourceGUIDs = imageFileResources.Select(x => x.FileResourceGUID)
+            .Concat(documentFileResources.Select(x => x.FileResourceGUID))
+            .Concat(imageUpdateFileResources.Select(x => x.FileResourceGUID))
+            .Concat(documentUpdateFileResources.Select(x => x.FileResourceGUID))
+            .Concat(invoiceFileResources.Select(x => x.FileResourceGUID))
+            .Distinct()
+            .ToList();
+
+        // Phase B: Delete child records in dependency order using ExecuteDeleteAsync
+        // No cascading deletes in DB — all child records must be explicitly deleted
+
+        // Layer 1: Deepest children (FK → InvoicePaymentRequest, FK → ProjectUpdateBatch)
+        if (invoicePaymentRequestIDs.Count > 0)
+        {
+            await dbContext.Invoices
+                .Where(x => invoicePaymentRequestIDs.Contains(x.InvoicePaymentRequestID))
+                .ExecuteDeleteAsync();
+        }
+
+        if (batchIDs.Count > 0)
+        {
+            // TreatmentUpdates before LocationUpdates (FK: TreatmentUpdate → ProjectLocationUpdate)
+            await dbContext.TreatmentUpdates.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectUpdates.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectUpdatePrograms.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectCountyUpdates.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectRegionUpdates.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectPriorityLandscapeUpdates.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectLocationStagingUpdates.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectLocationUpdates.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectPersonUpdates.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectOrganizationUpdates.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectFundingSourceUpdates.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectFundSourceAllocationRequestUpdates.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectImageUpdates.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectExternalLinkUpdates.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectDocumentUpdates.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectNoteUpdates.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+            await dbContext.ProjectUpdateHistories.Where(x => batchIDs.Contains(x.ProjectUpdateBatchID)).ExecuteDeleteAsync();
+        }
+
+        // Layer 2: Parents of layer 1
+        await dbContext.InvoicePaymentRequests.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        // Treatments before ProjectLocations (Treatment has FK to ProjectLocation)
+        await dbContext.Treatments.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectUpdateBatches.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+
+        // Layer 3: Direct Project children (no dependents among themselves)
+        await dbContext.AgreementProjects.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.InteractionEventProjects.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.NotificationProjects.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProgramNotificationSentProjects.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectClassifications.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectCounties.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectDocuments.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectExternalLinks.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectFundSourceAllocationRequests.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectFundingSources.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectImages.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectImportBlockLists.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectInternalNotes.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectLocations.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectLocationStagings.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectNotes.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectOrganizations.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectPeople.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectPriorityLandscapes.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectPrograms.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectRegions.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+        await dbContext.ProjectTags.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
+
+        // Layer 4: FileResources (now safe — all referencing rows are deleted)
+        if (allFileResourceIDs.Count > 0)
+        {
+            await dbContext.FileResources
+                .Where(x => allFileResourceIDs.Contains(x.FileResourceID))
+                .ExecuteDeleteAsync();
+        }
+
+        // Layer 5: The Project itself
+        await dbContext.Projects
             .Where(x => x.ProjectID == projectID)
             .ExecuteDeleteAsync();
-        return deletedCount > 0;
+
+        await transaction.CommitAsync();
+
+        return allFileResourceGUIDs;
     }
 
     public static async Task<List<ProjectGridRow>> ListAsGridRowAsync(
@@ -722,7 +857,8 @@ public static class Projects
         var query = ProjectVisibility.ApplyVisibilityFilter(dbContext.Projects, callingUser);
 
         var rows = await query
-            .Where(p => p.ProjectOrganizations.Any(po => po.OrganizationID == organizationID))
+            .Where(p => p.ProjectOrganizations.Any(po => po.OrganizationID == organizationID)
+                     || p.ProjectFundSourceAllocationRequests.Any(r => r.FundSourceAllocation.OrganizationID == organizationID))
             .AsNoTracking()
             .OrderBy(x => x.ProjectName)
             .Select(ProjectProjections.AsProjectOrganizationDetailGridRow(organizationID))
@@ -750,7 +886,8 @@ public static class Projects
         var query = ProjectVisibility.ApplyPendingVisibilityFilter(dbContext.Projects, callingUser, organizationID);
 
         var rows = await query
-            .Where(p => p.ProjectOrganizations.Any(po => po.OrganizationID == organizationID))
+            .Where(p => p.ProjectOrganizations.Any(po => po.OrganizationID == organizationID)
+                     || p.ProjectFundSourceAllocationRequests.Any(r => r.FundSourceAllocation.OrganizationID == organizationID))
             .AsNoTracking()
             .OrderBy(x => x.ProjectName)
             .Select(ProjectProjections.AsProjectOrganizationDetailGridRow(organizationID))

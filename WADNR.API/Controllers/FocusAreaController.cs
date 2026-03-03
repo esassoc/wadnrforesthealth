@@ -56,7 +56,7 @@ public class FocusAreaController(
     }
 
     [HttpPost("{focusAreaID}/location/upload-gdb")]
-    [AdminFeature]
+    [FocusAreaManageFeature]
     [EntityNotFound(typeof(FocusArea), "focusAreaID")]
     [RequestSizeLimit(500_000_000)]
     [RequestFormLimits(MultipartBodyLengthLimit = 500_000_000)]
@@ -86,7 +86,7 @@ public class FocusAreaController(
     }
 
     [HttpGet("{focusAreaID}/location/staged-features")]
-    [AdminFeature]
+    [FocusAreaManageFeature]
     [EntityNotFound(typeof(FocusArea), "focusAreaID")]
     public async Task<ActionResult<List<StagedFeatureLayer>>> GetStagedFeatures([FromRoute] int focusAreaID)
     {
@@ -95,7 +95,7 @@ public class FocusAreaController(
     }
 
     [HttpPost("{focusAreaID}/location/approve-gdb")]
-    [AdminFeature]
+    [FocusAreaManageFeature]
     [EntityNotFound(typeof(FocusArea), "focusAreaID")]
     public async Task<IActionResult> ApproveGdbForLocation([FromRoute] int focusAreaID, [FromBody] SinglePolygonApproveRequest request)
     {
@@ -114,7 +114,7 @@ public class FocusAreaController(
     }
 
     [HttpDelete("{focusAreaID}/location")]
-    [AdminFeature]
+    [FocusAreaManageFeature]
     [EntityNotFound(typeof(FocusArea), "focusAreaID")]
     public async Task<IActionResult> DeleteLocation([FromRoute] int focusAreaID)
     {

@@ -19,7 +19,9 @@ export class GdbImportBasics {
     ProjectStageDefaultID?: number;
     ProjectStageDefaultName?: string | null;
     DataDeriveProjectStage?: boolean;
+    DefaultLeadImplementerOrganizationID?: number | null;
     DefaultLeadImplementerOrganizationName?: string | null;
+    RelationshipTypeForDefaultOrganizationID?: number | null;
     ImportAsDetailedLocationInsteadOfTreatments?: boolean;
     ImportAsDetailedLocationInAdditionToTreatments?: boolean;
     ProjectDescriptionDefaultText?: string | null;
@@ -41,7 +43,9 @@ export interface GdbImportBasicsForm {
     ProjectStageDefaultID?: FormControl<number>;
     ProjectStageDefaultName?: FormControl<string>;
     DataDeriveProjectStage?: FormControl<boolean>;
+    DefaultLeadImplementerOrganizationID?: FormControl<number>;
     DefaultLeadImplementerOrganizationName?: FormControl<string>;
+    RelationshipTypeForDefaultOrganizationID?: FormControl<number>;
     ImportAsDetailedLocationInsteadOfTreatments?: FormControl<boolean>;
     ImportAsDetailedLocationInAdditionToTreatments?: FormControl<boolean>;
     ProjectDescriptionDefaultText?: FormControl<string>;
@@ -132,7 +136,27 @@ export class GdbImportBasicsFormControls {
             ],
         }
     );
+    public static DefaultLeadImplementerOrganizationID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
     public static DefaultLeadImplementerOrganizationName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static RelationshipTypeForDefaultOrganizationID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

@@ -219,8 +219,8 @@ export class UtilityFunctionsService {
             return 1;
         }
 
-        const id1Cleaned = typeof id1 === "string" ? id1.replace(/,/g, "") : id1;
-        const id2Cleaned = typeof id2 === "string" ? id2.replace(/,/g, "") : id2;
+        const id1Cleaned = typeof id1 === "string" ? id1.replace(/[^0-9.\-]/g, "") : id1;
+        const id2Cleaned = typeof id2 === "string" ? id2.replace(/[^0-9.\-]/g, "") : id2;
 
         const value1 = parseFloat(id1Cleaned);
         const value2 = parseFloat(id2Cleaned);

@@ -21,7 +21,11 @@ import { IFeature } from '../model/i-feature';
 // @ts-ignore
 import { InteractionEventDetail } from '../model/interaction-event-detail';
 // @ts-ignore
+import { InteractionEventFileUpdateRequest } from '../model/interaction-event-file-update-request';
+// @ts-ignore
 import { InteractionEventGridRow } from '../model/interaction-event-grid-row';
+// @ts-ignore
+import { InteractionEventLocationUpsertRequest } from '../model/interaction-event-location-upsert-request';
 // @ts-ignore
 import { InteractionEventUpsertRequest } from '../model/interaction-event-upsert-request';
 // @ts-ignore
@@ -186,6 +190,62 @@ export class InteractionEventService extends BaseService {
             {
                 context: localVarHttpContext,
                 body: interactionEventUpsertRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param interactionEventID 
+     * @param interactionEventFileResourceID 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public deleteFileResourceInteractionEvent(interactionEventID: number, interactionEventFileResourceID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public deleteFileResourceInteractionEvent(interactionEventID: number, interactionEventFileResourceID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public deleteFileResourceInteractionEvent(interactionEventID: number, interactionEventFileResourceID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public deleteFileResourceInteractionEvent(interactionEventID: number, interactionEventFileResourceID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (interactionEventID === null || interactionEventID === undefined) {
+            throw new Error('Required parameter interactionEventID was null or undefined when calling deleteFileResourceInteractionEvent.');
+        }
+        if (interactionEventFileResourceID === null || interactionEventFileResourceID === undefined) {
+            throw new Error('Required parameter interactionEventFileResourceID was null or undefined when calling deleteFileResourceInteractionEvent.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/interactions-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/file-resources/${this.configuration.encodeParam({name: "interactionEventFileResourceID", value: interactionEventFileResourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('delete', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -576,6 +636,78 @@ export class InteractionEventService extends BaseService {
 
     /**
      * @param interactionEventID 
+     * @param interactionEventFileResourceID 
+     * @param interactionEventFileUpdateRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateFileResourceInteractionEvent(interactionEventID: number, interactionEventFileResourceID: number, interactionEventFileUpdateRequest?: InteractionEventFileUpdateRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<FileResourceInteractionEventDetail>;
+    public updateFileResourceInteractionEvent(interactionEventID: number, interactionEventFileResourceID: number, interactionEventFileUpdateRequest?: InteractionEventFileUpdateRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<FileResourceInteractionEventDetail>>;
+    public updateFileResourceInteractionEvent(interactionEventID: number, interactionEventFileResourceID: number, interactionEventFileUpdateRequest?: InteractionEventFileUpdateRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<FileResourceInteractionEventDetail>>;
+    public updateFileResourceInteractionEvent(interactionEventID: number, interactionEventFileResourceID: number, interactionEventFileUpdateRequest?: InteractionEventFileUpdateRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (interactionEventID === null || interactionEventID === undefined) {
+            throw new Error('Required parameter interactionEventID was null or undefined when calling updateFileResourceInteractionEvent.');
+        }
+        if (interactionEventFileResourceID === null || interactionEventFileResourceID === undefined) {
+            throw new Error('Required parameter interactionEventFileResourceID was null or undefined when calling updateFileResourceInteractionEvent.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/interactions-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/file-resources/${this.configuration.encodeParam({name: "interactionEventFileResourceID", value: interactionEventFileResourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<FileResourceInteractionEventDetail>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: interactionEventFileUpdateRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param interactionEventID 
      * @param interactionEventUpsertRequest 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -632,6 +764,71 @@ export class InteractionEventService extends BaseService {
             {
                 context: localVarHttpContext,
                 body: interactionEventUpsertRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param interactionEventID 
+     * @param interactionEventLocationUpsertRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateSimpleLocationInteractionEvent(interactionEventID: number, interactionEventLocationUpsertRequest?: InteractionEventLocationUpsertRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public updateSimpleLocationInteractionEvent(interactionEventID: number, interactionEventLocationUpsertRequest?: InteractionEventLocationUpsertRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public updateSimpleLocationInteractionEvent(interactionEventID: number, interactionEventLocationUpsertRequest?: InteractionEventLocationUpsertRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public updateSimpleLocationInteractionEvent(interactionEventID: number, interactionEventLocationUpsertRequest?: InteractionEventLocationUpsertRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (interactionEventID === null || interactionEventID === undefined) {
+            throw new Error('Required parameter interactionEventID was null or undefined when calling updateSimpleLocationInteractionEvent.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/interactions-events/${this.configuration.encodeParam({name: "interactionEventID", value: interactionEventID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/simple-location`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: interactionEventLocationUpsertRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

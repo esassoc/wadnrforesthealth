@@ -7,6 +7,7 @@ public class FundSourceFileResourceGridRow
     public Guid FileResourceGUID { get; set; }
     public string DisplayName { get; set; } = string.Empty;
     public string? Description { get; set; }
+    public string? OriginalBaseFilename { get; set; }
     public string? FileResourceMimeTypeName { get; set; }
     public DateTime CreateDate { get; set; }
 }

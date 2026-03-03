@@ -1,6 +1,8 @@
 .gitignore
 api.base.service.ts
 api.module.ts
+api/agreement-status.service.ts
+api/agreement-type.service.ts
 api/agreement.service.ts
 api/classification-system.service.ts
 api/classification.service.ts
@@ -58,10 +60,13 @@ configuration.ts
 encoder.ts
 model/add-to-block-list-request.ts
 model/agreement-contact-grid-row.ts
+model/agreement-contact-upsert-request.ts
 model/agreement-detail.ts
+model/agreement-fund-source-allocations-update-request.ts
 model/agreement-grid-row.ts
 model/agreement-lookup-item.ts
 model/agreement-person-role-lookup-item.ts
+model/agreement-projects-update-request.ts
 model/agreement-status-lookup-item.ts
 model/agreement-type-lookup-item.ts
 model/agreement-upsert-request.ts
@@ -124,6 +129,7 @@ model/fund-source-allocation-dnr-upland-region-detail-grid-row.ts
 model/fund-source-allocation-expenditure-grid-row.ts
 model/fund-source-allocation-expenditure-summary.ts
 model/fund-source-allocation-file-grid-row.ts
+model/fund-source-allocation-file-update-request.ts
 model/fund-source-allocation-grid-row.ts
 model/fund-source-allocation-lookup-item.ts
 model/fund-source-allocation-note-detail.ts
@@ -148,10 +154,12 @@ model/fund-source-allocation-upsert-request.ts
 model/fund-source-budget-line-item-grid-row.ts
 model/fund-source-detail.ts
 model/fund-source-file-resource-grid-row.ts
+model/fund-source-file-update-request.ts
 model/fund-source-grid-row.ts
 model/fund-source-lookup-item.ts
 model/fund-source-note-grid-row.ts
 model/fund-source-note-internal-grid-row.ts
+model/fund-source-note-upsert-request.ts
 model/fund-source-project-grid-row.ts
 model/fund-source-status-lookup-item.ts
 model/fund-source-type-lookup-item.ts
@@ -186,7 +194,9 @@ model/gis-upload-source-organization-summary.ts
 model/i-attributes-table.ts
 model/i-feature.ts
 model/interaction-event-detail.ts
+model/interaction-event-file-update-request.ts
 model/interaction-event-grid-row.ts
+model/interaction-event-location-upsert-request.ts
 model/interaction-event-type-lookup-item.ts
 model/interaction-event-upsert-request.ts
 model/invoice-approval-status-lookup-item.ts
@@ -224,6 +234,7 @@ model/person-lookup-item-with-email.ts
 model/person-lookup-item.ts
 model/person-primary-contact-organizations-update-request.ts
 model/person-relationship-type-lookup-item.ts
+model/person-with-organization-lookup-item.ts
 model/person-with-status.ts
 model/point.ts
 model/precision-model.ts
@@ -234,12 +245,14 @@ model/priority-landscape-grid-row.ts
 model/priority-landscape-lookup-item.ts
 model/priority-landscape-upsert-request.ts
 model/program-detail.ts
+model/program-editors-upsert-request.ts
 model/program-grid-row.ts
 model/program-index-detail.ts
 model/program-index-grid-row.ts
 model/program-index-lookup-item.ts
 model/program-lookup-item.ts
 model/program-notification-grid-row.ts
+model/program-notification-upsert-request.ts
 model/program-upsert-request.ts
 model/project-audit-log-grid-row.ts
 model/project-basics-edit-data.ts
@@ -289,6 +302,7 @@ model/project-image-timing-lookup-item.ts
 model/project-image-update-item-request.ts
 model/project-image-update-item.ts
 model/project-image-upsert-request.ts
+model/project-import-block-list-grid-row.ts
 model/project-internal-note-detail.ts
 model/project-internal-note-grid-row.ts
 model/project-internal-note-upsert-request.ts

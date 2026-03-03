@@ -55,7 +55,26 @@ public static class OrganizationProjections
             .Count(po => po.RelationshipType.CanStewardProjects),
         NumberOfLeadImplementedProjects = x.ProjectOrganizations
             .Count(po => po.RelationshipType.IsPrimaryContact),
-        NumberOfProjectsContributedTo = x.ProjectOrganizations.Count
+        NumberOfProjectsContributedTo = x.ProjectOrganizations
+            .Select(po => new
+            {
+                po.Project.ProjectID,
+                po.Project.ProjectApprovalStatusID,
+                po.Project.ProjectType.LimitVisibilityToAdmin
+            })
+            .Union(
+                x.FundSourceAllocations
+                    .SelectMany(fsa => fsa.ProjectFundSourceAllocationRequests)
+                    .Select(r => new
+                    {
+                        r.Project.ProjectID,
+                        r.Project.ProjectApprovalStatusID,
+                        r.Project.ProjectType.LimitVisibilityToAdmin
+                    }))
+            .Where(p => p.ProjectApprovalStatusID == Projects.ApprovedStatusId && !p.LimitVisibilityToAdmin)
+            .Select(p => p.ProjectID)
+            .Distinct()
+            .Count()
     };
 
     public static readonly Expression<Func<Organization, OrganizationGridRow>> AsGridRow = x => new OrganizationGridRow

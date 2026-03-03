@@ -15,6 +15,7 @@ public class FundSourceDetail
     public FundSourceStatusLookupItem? FundSourceStatus { get; set; }
 
     // Type
+    public int? FundSourceTypeID { get; set; }
     public string? FundSourceTypeName { get; set; }
 
     // Financial

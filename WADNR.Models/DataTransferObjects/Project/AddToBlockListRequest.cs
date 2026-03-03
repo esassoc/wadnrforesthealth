@@ -10,6 +10,8 @@ public class AddToBlockListRequest : IValidatableObject
     [StringLength(140)]
     public string? ProjectName { get; set; }
 
+    public int? ProjectID { get; set; }
+
     [StringLength(500)]
     public string? Notes { get; set; }
 

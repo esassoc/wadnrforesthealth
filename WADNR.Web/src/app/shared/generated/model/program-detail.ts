@@ -10,7 +10,7 @@
 import { GdbCrosswalkItem } from './gdb-crosswalk-item';
 import { GdbDefaultMappingItem } from './gdb-default-mapping-item';
 import { GdbImportBasics } from './gdb-import-basics';
-import { PersonLookupItem } from './person-lookup-item';
+import { PersonWithOrganizationLookupItem } from './person-with-organization-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
@@ -32,7 +32,7 @@ export class ProgramDetail {
     ProgramExampleGeospatialUploadFileResourceID?: number | null;
     ProgramExampleGeospatialUploadFileResourceUrl?: string | null;
     ProgramExampleGeospatialUploadFileName?: string | null;
-    ProgramEditors?: Array<PersonLookupItem> | null;
+    ProgramEditors?: Array<PersonWithOrganizationLookupItem> | null;
     ProjectCount?: number;
     GdbImportBasics?: GdbImportBasics;
     GdbDefaultMappings?: Array<GdbDefaultMappingItem> | null;
@@ -60,7 +60,7 @@ export interface ProgramDetailForm {
     ProgramExampleGeospatialUploadFileResourceID?: FormControl<number>;
     ProgramExampleGeospatialUploadFileResourceUrl?: FormControl<string>;
     ProgramExampleGeospatialUploadFileName?: FormControl<string>;
-    ProgramEditors?: FormControl<Array<PersonLookupItem>>;
+    ProgramEditors?: FormControl<Array<PersonWithOrganizationLookupItem>>;
     ProjectCount?: FormControl<number>;
     GdbImportBasics?: FormControl<GdbImportBasics>;
     GdbDefaultMappings?: FormControl<Array<GdbDefaultMappingItem>>;
@@ -238,7 +238,7 @@ export class ProgramDetailFormControls {
             ],
         }
     );
-    public static ProgramEditors = (value: FormControlState<Array<PersonLookupItem>> | Array<PersonLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<PersonLookupItem>>(
+    public static ProgramEditors = (value: FormControlState<Array<PersonWithOrganizationLookupItem>> | Array<PersonWithOrganizationLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<PersonWithOrganizationLookupItem>>(
         value,
         formControlOptions ?? 
         {

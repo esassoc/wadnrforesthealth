@@ -25,6 +25,8 @@ import { FundSourceDetail } from '../model/fund-source-detail';
 // @ts-ignore
 import { FundSourceFileResourceGridRow } from '../model/fund-source-file-resource-grid-row';
 // @ts-ignore
+import { FundSourceFileUpdateRequest } from '../model/fund-source-file-update-request';
+// @ts-ignore
 import { FundSourceGridRow } from '../model/fund-source-grid-row';
 // @ts-ignore
 import { FundSourceLookupItem } from '../model/fund-source-lookup-item';
@@ -32,6 +34,8 @@ import { FundSourceLookupItem } from '../model/fund-source-lookup-item';
 import { FundSourceNoteGridRow } from '../model/fund-source-note-grid-row';
 // @ts-ignore
 import { FundSourceNoteInternalGridRow } from '../model/fund-source-note-internal-grid-row';
+// @ts-ignore
+import { FundSourceNoteUpsertRequest } from '../model/fund-source-note-upsert-request';
 // @ts-ignore
 import { FundSourceProjectGridRow } from '../model/fund-source-project-grid-row';
 // @ts-ignore
@@ -119,6 +123,192 @@ export class FundSourceService extends BaseService {
 
     /**
      * @param fundSourceID 
+     * @param fundSourceNoteUpsertRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public createNoteFundSource(fundSourceID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public createNoteFundSource(fundSourceID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public createNoteFundSource(fundSourceID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public createNoteFundSource(fundSourceID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (fundSourceID === null || fundSourceID === undefined) {
+            throw new Error('Required parameter fundSourceID was null or undefined when calling createNoteFundSource.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/notes`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: fundSourceNoteUpsertRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param fundSourceID 
+     * @param fundSourceNoteUpsertRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public createNoteInternalFundSource(fundSourceID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public createNoteInternalFundSource(fundSourceID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public createNoteInternalFundSource(fundSourceID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public createNoteInternalFundSource(fundSourceID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (fundSourceID === null || fundSourceID === undefined) {
+            throw new Error('Required parameter fundSourceID was null or undefined when calling createNoteInternalFundSource.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/notes-internal`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: fundSourceNoteUpsertRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param fundSourceID 
+     * @param fundSourceFileResourceID 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public deleteFileFundSource(fundSourceID: number, fundSourceFileResourceID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public deleteFileFundSource(fundSourceID: number, fundSourceFileResourceID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public deleteFileFundSource(fundSourceID: number, fundSourceFileResourceID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public deleteFileFundSource(fundSourceID: number, fundSourceFileResourceID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (fundSourceID === null || fundSourceID === undefined) {
+            throw new Error('Required parameter fundSourceID was null or undefined when calling deleteFileFundSource.');
+        }
+        if (fundSourceFileResourceID === null || fundSourceFileResourceID === undefined) {
+            throw new Error('Required parameter fundSourceFileResourceID was null or undefined when calling deleteFileFundSource.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/files/${this.configuration.encodeParam({name: "fundSourceFileResourceID", value: fundSourceFileResourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('delete', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param fundSourceID 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
@@ -155,6 +345,118 @@ export class FundSourceService extends BaseService {
         }
 
         let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('delete', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param fundSourceID 
+     * @param fundSourceNoteID 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public deleteNoteFundSource(fundSourceID: number, fundSourceNoteID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public deleteNoteFundSource(fundSourceID: number, fundSourceNoteID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public deleteNoteFundSource(fundSourceID: number, fundSourceNoteID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public deleteNoteFundSource(fundSourceID: number, fundSourceNoteID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (fundSourceID === null || fundSourceID === undefined) {
+            throw new Error('Required parameter fundSourceID was null or undefined when calling deleteNoteFundSource.');
+        }
+        if (fundSourceNoteID === null || fundSourceNoteID === undefined) {
+            throw new Error('Required parameter fundSourceNoteID was null or undefined when calling deleteNoteFundSource.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/notes/${this.configuration.encodeParam({name: "fundSourceNoteID", value: fundSourceNoteID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('delete', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param fundSourceID 
+     * @param fundSourceNoteInternalID 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public deleteNoteInternalFundSource(fundSourceID: number, fundSourceNoteInternalID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public deleteNoteInternalFundSource(fundSourceID: number, fundSourceNoteInternalID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public deleteNoteInternalFundSource(fundSourceID: number, fundSourceNoteInternalID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public deleteNoteInternalFundSource(fundSourceID: number, fundSourceNoteInternalID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (fundSourceID === null || fundSourceID === undefined) {
+            throw new Error('Required parameter fundSourceID was null or undefined when calling deleteNoteInternalFundSource.');
+        }
+        if (fundSourceNoteInternalID === null || fundSourceNoteInternalID === undefined) {
+            throw new Error('Required parameter fundSourceNoteInternalID was null or undefined when calling deleteNoteInternalFundSource.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/notes-internal/${this.configuration.encodeParam({name: "fundSourceNoteInternalID", value: fundSourceNoteInternalID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<any>('delete', `${basePath}${localVarPath}`,
             {
@@ -713,6 +1015,78 @@ export class FundSourceService extends BaseService {
 
     /**
      * @param fundSourceID 
+     * @param fundSourceFileResourceID 
+     * @param fundSourceFileUpdateRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateFileFundSource(fundSourceID: number, fundSourceFileResourceID: number, fundSourceFileUpdateRequest?: FundSourceFileUpdateRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<FundSourceFileResourceGridRow>;
+    public updateFileFundSource(fundSourceID: number, fundSourceFileResourceID: number, fundSourceFileUpdateRequest?: FundSourceFileUpdateRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<FundSourceFileResourceGridRow>>;
+    public updateFileFundSource(fundSourceID: number, fundSourceFileResourceID: number, fundSourceFileUpdateRequest?: FundSourceFileUpdateRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<FundSourceFileResourceGridRow>>;
+    public updateFileFundSource(fundSourceID: number, fundSourceFileResourceID: number, fundSourceFileUpdateRequest?: FundSourceFileUpdateRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (fundSourceID === null || fundSourceID === undefined) {
+            throw new Error('Required parameter fundSourceID was null or undefined when calling updateFileFundSource.');
+        }
+        if (fundSourceFileResourceID === null || fundSourceFileResourceID === undefined) {
+            throw new Error('Required parameter fundSourceFileResourceID was null or undefined when calling updateFileFundSource.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/files/${this.configuration.encodeParam({name: "fundSourceFileResourceID", value: fundSourceFileResourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<FundSourceFileResourceGridRow>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: fundSourceFileUpdateRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param fundSourceID 
      * @param fundSourceUpsertRequest 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -769,6 +1143,144 @@ export class FundSourceService extends BaseService {
             {
                 context: localVarHttpContext,
                 body: fundSourceUpsertRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param fundSourceID 
+     * @param fundSourceNoteID 
+     * @param fundSourceNoteUpsertRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateNoteFundSource(fundSourceID: number, fundSourceNoteID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public updateNoteFundSource(fundSourceID: number, fundSourceNoteID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public updateNoteFundSource(fundSourceID: number, fundSourceNoteID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public updateNoteFundSource(fundSourceID: number, fundSourceNoteID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (fundSourceID === null || fundSourceID === undefined) {
+            throw new Error('Required parameter fundSourceID was null or undefined when calling updateNoteFundSource.');
+        }
+        if (fundSourceNoteID === null || fundSourceNoteID === undefined) {
+            throw new Error('Required parameter fundSourceNoteID was null or undefined when calling updateNoteFundSource.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/notes/${this.configuration.encodeParam({name: "fundSourceNoteID", value: fundSourceNoteID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: fundSourceNoteUpsertRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param fundSourceID 
+     * @param fundSourceNoteInternalID 
+     * @param fundSourceNoteUpsertRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateNoteInternalFundSource(fundSourceID: number, fundSourceNoteInternalID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public updateNoteInternalFundSource(fundSourceID: number, fundSourceNoteInternalID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public updateNoteInternalFundSource(fundSourceID: number, fundSourceNoteInternalID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public updateNoteInternalFundSource(fundSourceID: number, fundSourceNoteInternalID: number, fundSourceNoteUpsertRequest?: FundSourceNoteUpsertRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (fundSourceID === null || fundSourceID === undefined) {
+            throw new Error('Required parameter fundSourceID was null or undefined when calling updateNoteInternalFundSource.');
+        }
+        if (fundSourceNoteInternalID === null || fundSourceNoteInternalID === undefined) {
+            throw new Error('Required parameter fundSourceNoteInternalID was null or undefined when calling updateNoteInternalFundSource.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/notes-internal/${this.configuration.encodeParam({name: "fundSourceNoteInternalID", value: fundSourceNoteInternalID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: fundSourceNoteUpsertRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

@@ -22,7 +22,7 @@ public class InvoicePaymentRequestController(
     : SitkaController<InvoicePaymentRequestController>(dbContext, logger, configuration)
 {
     [HttpGet("{invoicePaymentRequestID}/invoices")]
-    [AllowAnonymous]
+    [NormalUserFeature]
     public async Task<ActionResult<List<InvoiceGridRow>>> ListInvoices([FromRoute] int invoicePaymentRequestID)
     {
         var invoices = await Invoices.ListForPaymentRequestAsGridRowAsync(DbContext, invoicePaymentRequestID);
@@ -30,7 +30,7 @@ public class InvoicePaymentRequestController(
     }
 
     [HttpPost]
-    [ProjectEditAsAdminFeature]
+    [InvoiceManageFeature]
     public async Task<ActionResult<InvoicePaymentRequestGridRow>> Create([FromBody] InvoicePaymentRequestUpsertRequest request)
     {
         if (request.PreparedByPersonID == null)

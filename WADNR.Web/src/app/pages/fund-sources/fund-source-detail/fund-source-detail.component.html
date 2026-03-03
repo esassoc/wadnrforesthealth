@@ -8,51 +8,85 @@
         <div class="card">
             <div class="card-header">
                 <span class="card-title">Basics</span>
+                @if (canManageFundSources$ | async) {
+                    <button class="btn btn-sm btn-primary" (click)="openEditModal(fundSource)">Edit</button>
+                }
             </div>
             <div class="card-body">
-                <div class="grid-12">
-                    <div class="g-col-4 field-label">Fund Source Name</div>
-                    <div class="g-col-8">{{ fundSource.FundSourceName }}</div>
+                <!-- 1. Fund Source Name -->
+                <div class="basics-field-row">
+                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceName"></field-definition></div>
+                    <div class="basics-field-value">{{ fundSource.FundSourceName }}</div>
+                </div>
 
-                    <div class="g-col-4 field-label">Short Name</div>
-                    <div class="g-col-8">{{ fundSource.ShortName || '—' }}</div>
+                <!-- 2. Short Name -->
+                <div class="basics-field-row">
+                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceShortName"></field-definition></div>
+                    <div class="basics-field-value">{{ fundSource.ShortName || "\u2014" }}</div>
+                </div>
 
-                    <div class="g-col-4 field-label">Organization</div>
-                    <div class="g-col-8">
+                <!-- 3. Organization -->
+                <div class="basics-field-row">
+                    <div class="basics-field-label"><field-definition fieldDefinition="Organization" labelOverride="Contributing Organization"></field-definition></div>
+                    <div class="basics-field-value">
                         @if (fundSource.Organization) {
                             <a [routerLink]="['/organizations', fundSource.Organization.OrganizationID]">
                                 {{ fundSource.Organization.OrganizationName }}
                             </a>
                         } @else {
-                            —
+                            &mdash;
                         }
                     </div>
+                </div>
 
-                    <div class="g-col-4 field-label">Status</div>
-                    <div class="g-col-8">{{ fundSource.FundSourceStatus?.FundSourceStatusName || '—' }}</div>
+                <!-- 4. Status -->
+                <div class="basics-field-row">
+                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceStatus"></field-definition></div>
+                    <div class="basics-field-value">{{ fundSource.FundSourceStatus?.FundSourceStatusName || "\u2014" }}</div>
+                </div>
 
-                    <div class="g-col-4 field-label">Type</div>
-                    <div class="g-col-8">{{ fundSource.FundSourceTypeName || '—' }}</div>
+                <!-- 5. Type -->
+                <div class="basics-field-row">
+                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceType"></field-definition></div>
+                    <div class="basics-field-value">{{ fundSource.FundSourceTypeName || "\u2014" }}</div>
+                </div>
 
-                    <div class="g-col-4 field-label">CFDA Number</div>
-                    <div class="g-col-8">{{ fundSource.CFDANumber || '—' }}</div>
+                <!-- 6. CFDA -->
+                <div class="basics-field-row">
+                    <div class="basics-field-label"><field-definition fieldDefinition="CFDA" labelOverride="Federal Assistance Listing"></field-definition></div>
+                    <div class="basics-field-value">{{ fundSource.CFDANumber || "\u2014" }}</div>
+                </div>
 
-                    <div class="g-col-4 field-label">Fund Source Number</div>
-                    <div class="g-col-8">{{ fundSource.FundSourceNumber || '—' }}</div>
+                <!-- 7. Fund Source Number -->
+                <div class="basics-field-row">
+                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceNumber"></field-definition></div>
+                    <div class="basics-field-value">{{ fundSource.FundSourceNumber || "\u2014" }}</div>
+                </div>
 
-                    <div class="g-col-4 field-label">Total Award Amount</div>
-                    <div class="g-col-8">{{ formatCurrency(fundSource.TotalAwardAmount) }}</div>
+                <!-- 8. Total Award Amount -->
+                <div class="basics-field-row">
+                    <div class="basics-field-label"><field-definition fieldDefinition="TotalAwardAmount"></field-definition></div>
+                    <div class="basics-field-value">{{ formatCurrency(fundSource.TotalAwardAmount) }}</div>
+                </div>
 
-                    @if (isUserLoggedIn$ | async) {
-                    <div class="g-col-4 field-label">Current Balance</div>
-                    <div class="g-col-8">{{ formatCurrency(fundSource.CurrentBalance) }}</div>
-                    }
+                <!-- 9. Current Balance (logged-in only) -->
+                @if (isUserLoggedIn$ | async) {
+                <div class="basics-field-row">
+                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceCurrentBalance" labelOverride="Estimated current fund source balance"></field-definition></div>
+                    <div class="basics-field-value">{{ formatCurrency(fundSource.CurrentBalance) }}</div>
+                </div>
+                }
 
-                    <div class="g-col-4 field-label">Start Date</div>
-                    <div class="g-col-8">{{ formatDate(fundSource.StartDate) }}</div>
+                <!-- 10. Start Date -->
+                <div class="basics-field-row">
+                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceStartDate"></field-definition></div>
+                    <div class="basics-field-value">{{ formatDate(fundSource.StartDate) }}</div>
+                </div>
 
-                    <div class="g-col-4 field-label">End Date</div>
-                    <div class="g-col-8">{{ formatDate(fundSource.EndDate) }}</div>
+                <!-- 11. End Date -->
+                <div class="basics-field-row">
+                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceEndDate"></field-definition></div>
+                    <div class="basics-field-value">{{ formatDate(fundSource.EndDate) }}</div>
                 </div>
             </div>
         </div>
@@ -60,25 +94,51 @@
 
     <!-- Files Card (right column) -->
     <div class="g-col-6">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Files ({{ fundSource.FileCount }})</span>
-            </div>
-            <div class="card-body">
-                @if (files$ | async; as files) {
-                    @if (files.length > 0) {
-                        <wadnr-grid
-                            [columnDefs]="fileColumnDefs"
-                            [rowData]="files"
-                            height="250px"
-                            downloadFileName="fund-source-files">
-                        </wadnr-grid>
+        @if (files$ | async; as files) {
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Files</span>
+                    @if (canManageFundSources$ | async) {
+                        <button class="btn btn-sm btn-primary" (click)="openFileModal(fundSource.FundSourceID)">Add File(s)</button>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (files.length) {
+                        @for (file of files; track file.FundSourceFileResourceID) {
+                            <div class="file-entry">
+                                <div class="file-entry__main">
+                                    <a [href]="'/api/file-resources/' + file.FileResourceGUID" target="_blank">{{ file.DisplayName || file.OriginalBaseFilename }}</a>
+                                    <span class="file-entry__meta">({{ file.FileResourceMimeTypeName }}) &mdash; {{ formatDate(file.CreateDate) }}</span>
+                                    @if (canManageFundSources$ | async) {
+                                        <span class="file-entry__actions">
+                                            <a
+                                                href="#"
+                                                class="ml-2"
+                                                (click)="openEditFileModal(fundSource.FundSourceID, file); $event.preventDefault()"
+                                                title="Edit file">
+                                                <icon [icon]="'Edit'"></icon>
+                                            </a>
+                                            <a
+                                                href="#"
+                                                class="text-danger ml-1"
+                                                (click)="deleteFile(fundSource.FundSourceID, file.FundSourceFileResourceID!); $event.preventDefault()"
+                                                title="Delete file">
+                                                <icon [icon]="'Delete'"></icon>
+                                            </a>
+                                        </span>
+                                    }
+                                </div>
+                                @if (file.Description) {
+                                    <div class="file-entry__description">{{ file.Description }}</div>
+                                }
+                            </div>
+                        }
                     } @else {
                         <p class="text-muted">No files uploaded for this fund source.</p>
                     }
-                }
+                </div>
             </div>
-        </div>
+        }
     </div>
 
     <!-- Budget Line Items Grid (logged-in users only) -->
@@ -86,7 +146,7 @@
     <div class="g-col-12">
         <div class="card">
             <div class="card-header">
-                <span class="card-title">Allocation Budget Line Items</span>
+                <span class="card-title">Fund Source Allocation Budget Line Items for this Fund Source ({{ fundSource.FundSourceTitle }})</span>
             </div>
             <div class="card-body">
                 @if (budgetLineItems$ | async; as budgetLineItems) {
@@ -110,7 +170,7 @@
     <div class="g-col-12">
         <div class="card">
             <div class="card-header">
-                <span class="card-title">Funding by Project ({{ fundSource.ProjectCount }})</span>
+                <span class="card-title">Funding by Project for this Fund Source ({{ fundSource.FundSourceTitle }})</span>
             </div>
             <div class="card-body">
                 @if (projects$ | async; as projects) {
@@ -134,7 +194,7 @@
     <div class="g-col-12">
         <div class="card">
             <div class="card-header">
-                <span class="card-title">Agreements ({{ fundSource.AgreementCount }})</span>
+                <span class="card-title">Agreements for this Fund Source ({{ fundSource.FundSourceTitle }})</span>
             </div>
             <div class="card-body">
                 @if (agreements$ | async; as agreements) {
@@ -162,72 +222,89 @@
             </div>
             <div class="card-body">
                 <!-- Public Notes -->
-                <h4>Public Notes ({{ fundSource.NoteCount }})</h4>
-                @if (notes$ | async; as notes) {
-                    @if (notes.length > 0) {
-                        <wadnr-grid
-                            [columnDefs]="noteColumnDefs"
-                            [rowData]="notes"
-                            height="250px"
-                            downloadFileName="fund-source-notes">
-                        </wadnr-grid>
-                    } @else {
-                        <p class="text-muted">No public notes for this fund source.</p>
-                    }
-                }
-
-                <!-- Internal Notes (with permission check) -->
-                @if (canManageFundSources$ | async) {
-                <div class="internal-notes-section">
-                    <h4>Internal Notes ({{ fundSource.InternalNoteCount }})</h4>
-                    @if (internalNotes$ | async; as internalNotes) {
-                        @if (internalNotes.length > 0) {
-                            <wadnr-grid
-                                [columnDefs]="internalNoteColumnDefs"
-                                [rowData]="internalNotes"
-                                height="250px"
-                                downloadFileName="fund-source-internal-notes">
-                            </wadnr-grid>
-                        } @else {
-                            <p class="text-muted">No internal notes for this fund source.</p>
-                        }
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h4 class="mb-0">Public Notes</h4>
+                    @if (canManageFundSources$ | async) {
+                        <button class="btn btn-sm btn-primary" (click)="openNoteModal(fundSource.FundSourceID, false)">Add Note</button>
                     }
                 </div>
+                @if (notes$ | async; as notes) {
+                    @if (notes.length) {
+                        @for (note of notes; track note.FundSourceNoteID) {
+                            <div class="note-entry">
+                                <div class="note-entry__header">
+                                    @if (canManageFundSources$ | async) {
+                                        <a
+                                            href="#"
+                                            (click)="
+                                                openNoteModal(fundSource.FundSourceID, false, 'edit', note.FundSourceNoteID, note.Note);
+                                                $event.preventDefault()
+                                            "
+                                            title="Edit"
+                                            ><i class="fa fa-pencil-square-o"></i
+                                        ></a>
+                                        <a
+                                            href="#"
+                                            class="text-danger ml-1"
+                                            (click)="deleteNote(fundSource.FundSourceID, note.FundSourceNoteID!, false); $event.preventDefault()"
+                                            title="Delete"
+                                            ><i class="fa fa-trash"></i
+                                        ></a>
+                                    }
+                                    <span class="ml-2">Created: {{ formatDateTime(note.CreateDate) }} {{ note.CreatedByPersonName }}</span>
+                                </div>
+                                <div class="note-entry__body">Note: {{ note.Note }}</div>
+                            </div>
+                        }
+                    } @else {
+                        <p class="text-muted">No Notes entered.</p>
+                    }
+                }
+
+                @if (canManageFundSources$ | async) {
+                    <hr />
+
+                    <!-- Internal Notes -->
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h4 class="mb-0">Internal Notes</h4>
+                        <button class="btn btn-sm btn-primary" (click)="openNoteModal(fundSource.FundSourceID, true)">Add Note</button>
+                    </div>
+                    @if (internalNotes$ | async; as internalNotes) {
+                        @if (internalNotes.length) {
+                            @for (note of internalNotes; track note.FundSourceNoteInternalID) {
+                                <div class="note-entry">
+                                    <div class="note-entry__header">
+                                        <a
+                                            href="#"
+                                            (click)="
+                                                openNoteModal(fundSource.FundSourceID, true, 'edit', note.FundSourceNoteInternalID, note.Note);
+                                                $event.preventDefault()
+                                            "
+                                            title="Edit"
+                                            ><i class="fa fa-pencil-square-o"></i
+                                        ></a>
+                                        <a
+                                            href="#"
+                                            class="text-danger ml-1"
+                                            (click)="deleteNote(fundSource.FundSourceID, note.FundSourceNoteInternalID!, true); $event.preventDefault()"
+                                            title="Delete"
+                                            ><i class="fa fa-trash"></i
+                                        ></a>
+                                        <span class="ml-2">Created: {{ formatDateTime(note.CreateDate) }} {{ note.CreatedByPersonName }}</span>
+                                    </div>
+                                    <div class="note-entry__body">Note: {{ note.Note }}</div>
+                                </div>
+                            }
+                        } @else {
+                            <p class="text-muted">No Notes entered.</p>
+                        }
+                    }
                 }
             </div>
         </div>
     </div>
-
-    <!-- Conditions and Requirements (if present) -->
-    @if (fundSource.ConditionsAndRequirements) {
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Conditions and Requirements</span>
-            </div>
-            <div class="card-body">
-                <div [innerHTML]="fundSource.ConditionsAndRequirements"></div>
-            </div>
-        </div>
-    </div>
-    }
-
-    <!-- Compliance Notes (if present) -->
-    @if (fundSource.ComplianceNotes) {
-    <div class="g-col-12">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Compliance Notes</span>
-            </div>
-            <div class="card-body">
-                <div [innerHTML]="fundSource.ComplianceNotes"></div>
-            </div>
-        </div>
-    </div>
-    }
 </div>
 } @else {
-<div class="page-body">
-    <p>Loading fund source details...</p>
+<div class="page-body" [loadingSpinner]="{ isLoading: true, loadingHeight: 200 }">
 </div>
 }

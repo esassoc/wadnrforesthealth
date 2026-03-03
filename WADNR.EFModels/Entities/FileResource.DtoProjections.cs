@@ -18,6 +18,7 @@ public static class FileResourceProjections
 
     public static readonly Expression<Func<InteractionEventFileResource, FileResourceInteractionEventDetail>> AsInteractionEventDetail = x => new FileResourceInteractionEventDetail
     {
+        InteractionEventFileResourceID = x.InteractionEventFileResourceID,
         FileResourceID = x.FileResource.FileResourceID,
         FileResourceGUID = x.FileResource.FileResourceGUID,
         DisplayName = x.DisplayName,

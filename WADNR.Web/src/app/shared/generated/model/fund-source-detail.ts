@@ -20,6 +20,7 @@ export class FundSourceDetail {
     FundSourceTitle?: string | null;
     Organization?: OrganizationLookupItem;
     FundSourceStatus?: FundSourceStatusLookupItem;
+    FundSourceTypeID?: number | null;
     FundSourceTypeName?: string | null;
     TotalAwardAmount?: number;
     CurrentBalance?: number | null;
@@ -47,6 +48,7 @@ export interface FundSourceDetailForm {
     FundSourceTitle?: FormControl<string>;
     Organization?: FormControl<OrganizationLookupItem>;
     FundSourceStatus?: FormControl<FundSourceStatusLookupItem>;
+    FundSourceTypeID?: FormControl<number>;
     FundSourceTypeName?: FormControl<string>;
     TotalAwardAmount?: FormControl<number>;
     CurrentBalance?: FormControl<number>;
@@ -125,6 +127,16 @@ export class FundSourceDetailFormControls {
         }
     );
     public static FundSourceStatus = (value: FormControlState<FundSourceStatusLookupItem> | FundSourceStatusLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<FundSourceStatusLookupItem>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FundSourceTypeID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

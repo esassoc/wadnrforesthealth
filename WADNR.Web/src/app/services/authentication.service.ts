@@ -221,6 +221,14 @@ export class AuthenticationService {
     }
 
     /**
+     * Checks if user can edit interaction events.
+     */
+    public canEditInteractionEvents(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.ProjectSteward]);
+    }
+
+    /**
      * Checks if user can manage fund sources and agreements.
      */
     public canManageFundSources(user: PersonDetail | null): boolean {

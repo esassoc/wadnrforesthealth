@@ -21,10 +21,15 @@ public static class ProcessUtility
 
     public static ProcessUtilityResult ShellAndWaitImpl(string? workingDirectory, string exeFileName, List<string> commandLineArguments, bool redirectStdErrAndStdOut, int? maxTimeoutMs, Dictionary<string, string> environmentVariables, ILogger logger)
     {
-        var argumentsAsString = ConjoinCommandLineArguments(commandLineArguments);
         var stdErrAndStdOut = string.Empty;
 
-        var processStartInfo = new ProcessStartInfo(exeFileName, argumentsAsString);
+        var processStartInfo = new ProcessStartInfo(exeFileName);
+        foreach (var arg in commandLineArguments)
+        {
+            processStartInfo.ArgumentList.Add(arg);
+        }
+        processStartInfo.UseShellExecute = false;
+
         if (environmentVariables != null && environmentVariables.Any())
         {
             foreach (var environmentVariable in environmentVariables)
@@ -41,7 +46,6 @@ public static class ProcessUtility
         var streamReader = new ProcessStreamReader();
         if (redirectStdErrAndStdOut)
         {
-            objProc.StartInfo.UseShellExecute = false;
             objProc.StartInfo.RedirectStandardOutput = true;
             objProc.StartInfo.RedirectStandardError = true;
             objProc.StartInfo.CreateNoWindow = true;

@@ -5,7 +5,16 @@
 <div class="grid-12">
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header"><span class="card-title">Basics</span></div>
+            <div class="card-header">
+                <span class="card-title">
+                    @if (isAdmin) {
+                    <a href="javascript:void(0)" (click)="openEditTag(tag)" title="Edit Tag" style="color: inherit">
+                        <i class="fa fa-edit" style="transform: none"></i>
+                    </a>
+                    }
+                    Basics
+                </span>
+            </div>
             <div class="card-body">
                 <div class="grid-12">
                     <div class="g-col-4">

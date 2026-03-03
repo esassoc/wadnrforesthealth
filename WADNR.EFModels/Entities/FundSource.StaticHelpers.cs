@@ -137,7 +137,8 @@ public static class FundSources
                     .Distinct()),
                 ProjectCodes = string.Join(", ", x.AgreementFundSourceAllocations
                     .SelectMany(a => a.FundSourceAllocation.FundSourceAllocationProgramIndexProjectCodes)
-                    .Select(p => p.ProjectCode.ProjectCodeName)
+                    .Where(p => p.ProjectCode != null)
+                    .Select(p => p.ProjectCode!.ProjectCodeName)
                     .Distinct())
             })
             .ToListAsync();
@@ -185,6 +186,7 @@ public static class FundSources
                 FileResourceGUID = x.FileResource.FileResourceGUID,
                 DisplayName = x.DisplayName,
                 Description = x.Description,
+                OriginalBaseFilename = x.FileResource.OriginalBaseFilename,
                 FileResourceMimeTypeName = x.FileResource.FileResourceMimeType.FileResourceMimeTypeDisplayName,
                 CreateDate = x.FileResource.CreateDate
             })
@@ -249,5 +251,78 @@ public static class FundSources
                 UpdateDate = x.LastUpdatedDate
             })
             .ToListAsync();
+    }
+
+    // File CRUD
+    public static async Task UpdateFileAsync(WADNRDbContext dbContext,
+        FundSourceFileResource entity, string displayName, string? description)
+    {
+        entity.DisplayName = displayName;
+        entity.Description = description;
+        await dbContext.SaveChangesAsync();
+    }
+
+    public static async Task DeleteFileAsync(WADNRDbContext dbContext, FundSourceFileResource entity)
+    {
+        dbContext.FundSourceFileResources.Remove(entity);
+        await dbContext.SaveChangesAsync();
+    }
+
+    // Note CRUD
+    public static async Task<FundSourceNote> CreateNoteAsync(WADNRDbContext dbContext, int fundSourceID, string note, int personID)
+    {
+        var entity = new FundSourceNote
+        {
+            FundSourceID = fundSourceID,
+            FundSourceNoteText = note,
+            CreatedByPersonID = personID,
+            CreatedDate = DateTime.UtcNow
+        };
+        dbContext.FundSourceNotes.Add(entity);
+        await dbContext.SaveChangesAsync();
+        return entity;
+    }
+
+    public static async Task UpdateNoteAsync(WADNRDbContext dbContext, FundSourceNote entity, string note, int personID)
+    {
+        entity.FundSourceNoteText = note;
+        entity.LastUpdatedByPersonID = personID;
+        entity.LastUpdatedDate = DateTime.UtcNow;
+        await dbContext.SaveChangesAsync();
+    }
+
+    public static async Task DeleteNoteAsync(WADNRDbContext dbContext, FundSourceNote entity)
+    {
+        dbContext.FundSourceNotes.Remove(entity);
+        await dbContext.SaveChangesAsync();
+    }
+
+    // Internal Note CRUD
+    public static async Task<FundSourceNoteInternal> CreateNoteInternalAsync(WADNRDbContext dbContext, int fundSourceID, string note, int personID)
+    {
+        var entity = new FundSourceNoteInternal
+        {
+            FundSourceID = fundSourceID,
+            FundSourceNoteText = note,
+            CreatedByPersonID = personID,
+            CreatedDate = DateTime.UtcNow
+        };
+        dbContext.FundSourceNoteInternals.Add(entity);
+        await dbContext.SaveChangesAsync();
+        return entity;
+    }
+
+    public static async Task UpdateNoteInternalAsync(WADNRDbContext dbContext, FundSourceNoteInternal entity, string note, int personID)
+    {
+        entity.FundSourceNoteText = note;
+        entity.LastUpdatedByPersonID = personID;
+        entity.LastUpdatedDate = DateTime.UtcNow;
+        await dbContext.SaveChangesAsync();
+    }
+
+    public static async Task DeleteNoteInternalAsync(WADNRDbContext dbContext, FundSourceNoteInternal entity)
+    {
+        dbContext.FundSourceNoteInternals.Remove(entity);
+        await dbContext.SaveChangesAsync();
     }
 }

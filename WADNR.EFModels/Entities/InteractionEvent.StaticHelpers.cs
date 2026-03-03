@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Features;
+using NetTopologySuite.Geometries;
 using WADNR.Models.DataTransferObjects;
 
 namespace WADNR.EFModels.Entities;
@@ -210,6 +211,30 @@ public static class InteractionEvents
             .ToListAsync();
 
         return events;
+    }
+
+    public static async Task UpdateLocationAsync(WADNRDbContext dbContext, int interactionEventID, double latitude, double longitude)
+    {
+        var entity = await dbContext.InteractionEvents
+            .FirstAsync(x => x.InteractionEventID == interactionEventID);
+
+        var point = new Point(longitude, latitude) { SRID = 4326 };
+        entity.InteractionEventLocationSimple = point;
+        await dbContext.SaveChangesAsync();
+    }
+
+    public static async Task UpdateFileAsync(WADNRDbContext dbContext,
+        InteractionEventFileResource entity, string displayName, string? description)
+    {
+        entity.DisplayName = displayName;
+        entity.Description = description;
+        await dbContext.SaveChangesAsync();
+    }
+
+    public static async Task DeleteFileAsync(WADNRDbContext dbContext, InteractionEventFileResource entity)
+    {
+        dbContext.InteractionEventFileResources.Remove(entity);
+        await dbContext.SaveChangesAsync();
     }
 
     public static async Task<List<InteractionEventGridRow>> ListForProjectAsGridRowAsync(WADNRDbContext dbContext, int projectID)

@@ -237,6 +237,14 @@ public static class FundSourceAllocations
         return entity;
     }
 
+    public static async Task UpdateFileAsync(WADNRDbContext dbContext,
+        FundSourceAllocationFileResource entity, string displayName, string? description)
+    {
+        entity.DisplayName = displayName;
+        entity.Description = description;
+        await dbContext.SaveChangesAsync();
+    }
+
     public static async Task DeleteFileAsync(WADNRDbContext dbContext, FundSourceAllocationFileResource entity)
     {
         dbContext.FundSourceAllocationFileResources.Remove(entity);

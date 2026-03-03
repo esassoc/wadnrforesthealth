@@ -13,6 +13,7 @@ import { FormControl, FormControlOptions, FormControlState, Validators } from "@
 export class PersonLookupItemWithEmail { 
     PersonID?: number;
     FullName?: string | null;
+    OrganizationName?: string | null;
     Email?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -22,6 +23,7 @@ export class PersonLookupItemWithEmail {
 export interface PersonLookupItemWithEmailForm { 
     PersonID?: FormControl<number>;
     FullName?: FormControl<string>;
+    OrganizationName?: FormControl<string>;
     Email?: FormControl<string>;
 }
 
@@ -37,6 +39,16 @@ export class PersonLookupItemWithEmailFormControls {
         }
     );
     public static FullName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static OrganizationName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

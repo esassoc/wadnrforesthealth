@@ -1,7 +1,7 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, signal } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
-import { BehaviorSubject, Subject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, startWith, switchMap } from "rxjs";
+import { BehaviorSubject, Subject, combineLatest, distinctUntilChanged, filter, map, Observable, shareReplay, startWith, switchMap } from "rxjs";
 import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap, Control } from "leaflet";
 import { DialogService } from "@ngneat/dialog";
@@ -31,20 +31,40 @@ import { BoundingBoxDto } from "src/app/shared/models/bounding-box-dto";
 import { environment } from "src/environments/environment";
 
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
-import { OrganizationTypeService } from "src/app/shared/generated/api/organization-type.service";
-import { PersonService } from "src/app/shared/generated/api/person.service";
+import { ProgramService } from "src/app/shared/generated/api/program.service";
 import { OrganizationDetail } from "src/app/shared/generated/model/organization-detail";
 import { ProgramGridRow } from "src/app/shared/generated/model/program-grid-row";
 import { ProjectOrganizationDetailGridRow } from "src/app/shared/generated/model/project-organization-detail-grid-row";
 import { AgreementGridRow } from "src/app/shared/generated/model/agreement-grid-row";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
 import { OrganizationModalComponent, OrganizationModalData } from "../organization-modal/organization-modal.component";
-import { SelectSinglePolygonGdbModalComponent, SelectSinglePolygonGdbModalData } from "src/app/shared/components/select-single-polygon-gdb-modal/select-single-polygon-gdb-modal.component";
+import { ProgramModalComponent, ProgramModalData } from "../../programs/program-modal/program-modal.component";
+import {
+    SelectSinglePolygonGdbModalComponent,
+    SelectSinglePolygonGdbModalData,
+} from "src/app/shared/components/select-single-polygon-gdb-modal/select-single-polygon-gdb-modal.component";
 
 @Component({
     selector: "organization-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, RouterLink, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ProjectLocationsSimpleLayerComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent, IconComponent, PersonLinkComponent],
+    imports: [
+        PageHeaderComponent,
+        AsyncPipe,
+        RouterLink,
+        BreadcrumbComponent,
+        FieldDefinitionComponent,
+        WADNRGridComponent,
+        WADNRMapComponent,
+        GenericFeatureCollectionLayerComponent,
+        ProjectLocationsSimpleLayerComponent,
+        CountiesLayerComponent,
+        PriorityLandscapesLayerComponent,
+        DNRUplandRegionsLayerComponent,
+        GenericWmsWfsLayerComponent,
+        ExternalMapLayersComponent,
+        IconComponent,
+        PersonLinkComponent,
+    ],
     templateUrl: "./organization-detail.component.html",
     styleUrls: ["./organization-detail.component.scss"],
 })
@@ -68,6 +88,12 @@ export class OrganizationDetailComponent {
     public programColumnDefs: ColDef<ProgramGridRow>[] = [];
     public projectColumnDefs: ColDef<ProjectOrganizationDetailGridRow>[] = [];
     public agreementColumnDefs: ColDef<AgreementGridRow>[] = [];
+    public projectPinnedTotalsRow = {
+        fields: ["EstimatedTotalCost", "TotalAmount", "PhotoCount"],
+        label: "Totals",
+        labelField: "ProjectName",
+        filteredOnly: true,
+    };
     public legendColorsToUse: Record<string, Palette> = PROJECT_STAGE_LEGEND_COLORS;
     public OverlayMode = OverlayMode;
 
@@ -77,8 +103,7 @@ export class OrganizationDetailComponent {
         private route: ActivatedRoute,
         private router: Router,
         private organizationService: OrganizationService,
-        private organizationTypeService: OrganizationTypeService,
-        private personService: PersonService,
+        private programService: ProgramService,
         private utilityFunctions: UtilityFunctionsService,
         private dialogService: DialogService,
         private confirmService: ConfirmService,
@@ -98,8 +123,8 @@ export class OrganizationDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.programs$ = this.organizationID$.pipe(
-            switchMap((organizationID) => this.organizationService.listProgramsForOrganizationOrganization(organizationID)),
+        this.programs$ = combineLatest([this.organizationID$, this.refreshData$.pipe(startWith(undefined))]).pipe(
+            switchMap(([organizationID]) => this.organizationService.listProgramsForOrganizationOrganization(organizationID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -132,10 +157,7 @@ export class OrganizationDetailComponent {
         // Determine if map should be shown based on presence of spatial data from API calls
         // Note: API returns FeatureCollection object, but TypeScript types it as IFeature[]
         // Handle both cases: array or FeatureCollection object with features property
-        this.hasSpatialData$ = combineLatest([
-            this.boundaryFeatures$.pipe(startWith([] as IFeature[])),
-            this.projectLocationFeatures$.pipe(startWith([] as IFeature[]))
-        ]).pipe(
+        this.hasSpatialData$ = combineLatest([this.boundaryFeatures$.pipe(startWith([] as IFeature[])), this.projectLocationFeatures$.pipe(startWith([] as IFeature[]))]).pipe(
             map(([boundary, locations]) => {
                 const boundaryCount = Array.isArray(boundary) ? boundary.length : ((boundary as any)?.features?.length ?? 0);
                 const locationsCount = Array.isArray(locations) ? locations.length : ((locations as any)?.features?.length ?? 0);
@@ -161,6 +183,10 @@ export class OrganizationDetailComponent {
 
     private createProgramColumnDefs(): ColDef<ProgramGridRow>[] {
         return [
+            this.utilityFunctions.createActionsColumnDef((params) => {
+                const row = params.data as ProgramGridRow;
+                return [{ ActionName: "Delete", ActionHandler: () => this.confirmDeleteProgram(row), ActionIcon: "fa fa-trash" }];
+            }),
             this.utilityFunctions.createLinkColumnDef("Program", "ProgramName", "ProgramID", {
                 InRouterLink: "/programs/",
             }),
@@ -180,21 +206,17 @@ export class OrganizationDetailComponent {
     private createProjectColumnDefs(): ColDef<ProjectOrganizationDetailGridRow>[] {
         return [
             this.utilityFunctions.createLinkColumnDef("FHT Project Number", "FhtProjectNumber", "ProjectID", {
-                InRouterLink: "/projects/fact-sheet/",
+                InRouterLink: "/projects/",
                 FieldDefinitionType: "FhtProjectNumber",
             }),
             this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", {
-                InRouterLink: "/projects/fact-sheet/",
+                InRouterLink: "/projects/",
                 FieldDefinitionType: "Project",
-            }),
-            this.utilityFunctions.createLinkColumnDef("Project Steward", "ProjectStewardOrganization.OrganizationName", "ProjectStewardOrganization.OrganizationID", {
-                InRouterLink: "/organizations/",
-                FieldDefinitionType: "ProjectsStewardOrganizationRelationshipToProject",
-                CustomDropdownFilterField: "ProjectStewardOrganization.OrganizationName",
             }),
             this.utilityFunctions.createLinkColumnDef("Lead Implementer", "PrimaryContactOrganization.OrganizationName", "PrimaryContactOrganization.OrganizationID", {
                 InRouterLink: "/organizations/",
                 FieldDefinitionType: "PrimaryContactOrganization",
+                FieldDefinitionLabelOverride: "Primary Contact Contributing Organization",
                 CustomDropdownFilterField: "PrimaryContactOrganization.OrganizationName",
             }),
             this.utilityFunctions.createBasicColumnDef("Project Stage", "ProjectStage.ProjectStageName", {
@@ -215,12 +237,21 @@ export class OrganizationDetailComponent {
             }),
             this.utilityFunctions.createCurrencyColumnDef("Estimated Total Cost", "EstimatedTotalCost", {
                 FieldDefinitionType: "EstimatedTotalCost",
+                MaxDecimalPlacesToDisplay: 2,
             }),
             this.utilityFunctions.createCurrencyColumnDef("Reported Expenditures", "TotalAmount", {
                 FieldDefinitionType: "ProjectFundSourceAllocationRequestTotalAmount",
+                MaxDecimalPlacesToDisplay: 2,
             }),
             this.utilityFunctions.createBasicColumnDef("Project Description", "ProjectDescription", {
                 FieldDefinitionType: "ProjectDescription",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Tags", "Tags", {
+                ValueGetter: (params) => {
+                    const tags = params.data?.Tags;
+                    if (!tags || tags.length === 0) return "";
+                    return tags.map((t) => t.TagName).join(", ");
+                },
             }),
             this.utilityFunctions.createDecimalColumnDef("# of Photos", "PhotoCount", {
                 MaxDecimalPlacesToDisplay: 0,
@@ -298,7 +329,10 @@ export class OrganizationDetailComponent {
         };
         extract(features);
         if (coords.length === 0) return undefined;
-        let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
+        let minLng = Infinity,
+            minLat = Infinity,
+            maxLng = -Infinity,
+            maxLat = -Infinity;
         for (const [lng, lat] of coords) {
             if (lng < minLng) minLng = lng;
             if (lng > maxLng) maxLng = lng;
@@ -309,26 +343,64 @@ export class OrganizationDetailComponent {
     }
 
     openEditModal(organization: OrganizationDetail): void {
-        forkJoin({
-            organizationTypes: this.organizationTypeService.listLookupOrganizationType(),
-            people: this.personService.listPerson()
-        }).subscribe(({ organizationTypes, people }) => {
-            const dialogRef = this.dialogService.open(OrganizationModalComponent, {
-                data: {
-                    mode: "edit",
-                    organization: organization,
-                    organizationTypes: organizationTypes,
-                    people: people
-                } as OrganizationModalData,
-                size: "md"
-            });
-
-            dialogRef.afterClosed$.subscribe(result => {
-                if (result) {
-                    this.refreshData$.next();
-                }
-            });
+        const dialogRef = this.dialogService.open(OrganizationModalComponent, {
+            data: {
+                mode: "edit",
+                organization: organization,
+            } as OrganizationModalData,
+            size: "md",
         });
+
+        dialogRef.afterClosed$.subscribe((result) => {
+            if (result) {
+                this.refreshData$.next();
+            }
+        });
+    }
+
+    openCreateProgramModal(organization: OrganizationDetail): void {
+        const dialogRef = this.dialogService.open(ProgramModalComponent, {
+            data: {
+                mode: "create",
+                defaultOrganizationID: organization.OrganizationID,
+            } as ProgramModalData,
+            width: "55vw",
+        });
+
+        dialogRef.afterClosed$.subscribe((result) => {
+            if (result) {
+                this.refreshData$.next();
+            }
+        });
+    }
+
+    async confirmDeleteProgram(program: ProgramGridRow): Promise<void> {
+        const orgName = program.Organization?.OrganizationName ?? "Unknown Organization";
+        const projectCount = program.ProjectCount ?? 0;
+        let message = `Are you sure you want to delete Program "${program.ProgramName}" with Parent Organization ${orgName}?`;
+        if (projectCount > 0) {
+            message += `<br><br><strong>This will delete ${projectCount} Project${projectCount !== 1 ? "s" : ""} and may take several minutes to complete.</strong>`;
+        }
+
+        const confirmed = await this.confirmService.confirm({
+            title: "Confirm Delete",
+            message,
+            buttonTextYes: "Delete",
+            buttonClassYes: "btn-danger",
+            buttonTextNo: "Cancel",
+        });
+
+        if (confirmed) {
+            this.programService.deleteProgram(program.ProgramID).subscribe({
+                next: () => {
+                    this.alertService.pushAlert(new Alert("Program deleted successfully.", AlertContext.Success, true));
+                    this.refreshData$.next();
+                },
+                error: (err) => {
+                    this.alertService.pushAlert(new Alert(err?.error?.message ?? "Failed to delete program.", AlertContext.Danger, true));
+                },
+            });
+        }
     }
 
     async confirmDelete(organization: OrganizationDetail): Promise<void> {
@@ -337,26 +409,18 @@ export class OrganizationDetailComponent {
             message: `Are you sure you want to delete "${organization.OrganizationName}"? This action cannot be undone.`,
             buttonTextYes: "Delete",
             buttonClassYes: "btn-danger",
-            buttonTextNo: "Cancel"
+            buttonTextNo: "Cancel",
         });
 
         if (confirmed) {
             this.organizationService.deleteOrganization(organization.OrganizationID).subscribe({
                 next: () => {
-                    this.alertService.pushAlert(new Alert(
-                        "Contributing Organization deleted successfully.",
-                        AlertContext.Success,
-                        true
-                    ));
+                    this.alertService.pushAlert(new Alert("Contributing Organization deleted successfully.", AlertContext.Success, true));
                     this.router.navigate(["/organizations"]);
                 },
                 error: (err) => {
-                    this.alertService.pushAlert(new Alert(
-                        err?.error?.message ?? "Failed to delete Contributing Organization.",
-                        AlertContext.Danger,
-                        true
-                    ));
-                }
+                    this.alertService.pushAlert(new Alert(err?.error?.message ?? "Failed to delete Contributing Organization.", AlertContext.Danger, true));
+                },
             });
         }
     }
@@ -368,12 +432,12 @@ export class OrganizationDetailComponent {
                 entityLabel: "Organization",
                 uploadFn: (id, file) => this.organizationService.uploadGdbForBoundaryOrganization(id, file),
                 approveFn: (id, request) => this.organizationService.approveGdbForBoundaryOrganization(id, request),
-                stagedGeoJsonFn: (id) => this.organizationService.getStagedBoundaryFeaturesOrganization(id)
+                stagedGeoJsonFn: (id) => this.organizationService.getStagedBoundaryFeaturesOrganization(id),
             } as SelectSinglePolygonGdbModalData,
-            size: "lg"
+            size: "lg",
         });
 
-        dialogRef.afterClosed$.subscribe(result => {
+        dialogRef.afterClosed$.subscribe((result) => {
             if (result) {
                 this.alertService.pushAlert(new Alert("Organization boundary updated successfully.", AlertContext.Success, true));
                 this.refreshData$.next();
@@ -387,26 +451,18 @@ export class OrganizationDetailComponent {
             message: `Are you sure you want to delete the boundary for "${organization.OrganizationName}"? This action cannot be undone.`,
             buttonTextYes: "Delete",
             buttonClassYes: "btn-danger",
-            buttonTextNo: "Cancel"
+            buttonTextNo: "Cancel",
         });
 
         if (confirmed) {
             this.organizationService.deleteBoundaryOrganization(organization.OrganizationID).subscribe({
                 next: () => {
-                    this.alertService.pushAlert(new Alert(
-                        "Organization boundary deleted successfully.",
-                        AlertContext.Success,
-                        true
-                    ));
+                    this.alertService.pushAlert(new Alert("Organization boundary deleted successfully.", AlertContext.Success, true));
                     this.refreshData$.next();
                 },
                 error: (err) => {
-                    this.alertService.pushAlert(new Alert(
-                        err?.error?.message ?? "Failed to delete organization boundary.",
-                        AlertContext.Danger,
-                        true
-                    ));
-                }
+                    this.alertService.pushAlert(new Alert(err?.error?.message ?? "Failed to delete organization boundary.", AlertContext.Danger, true));
+                },
             });
         }
     }

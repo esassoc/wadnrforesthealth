@@ -30,6 +30,7 @@ public static class FundSourceProjections
             },
 
         // Type
+        FundSourceTypeID = x.FundSourceTypeID,
         FundSourceTypeName = x.FundSourceType == null ? null : x.FundSourceType.FundSourceTypeName,
 
         // Financial

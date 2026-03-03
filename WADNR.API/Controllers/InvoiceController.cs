@@ -44,7 +44,7 @@ public class InvoiceController(
     }
 
     [HttpPost]
-    [ProjectEditAsAdminFeature]
+    [InvoiceManageFeature]
     public async Task<ActionResult<InvoiceDetail>> Create([FromBody] InvoiceUpsertRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.InvoiceNumber))
@@ -64,7 +64,7 @@ public class InvoiceController(
     }
 
     [HttpPut("{invoiceID}")]
-    [ProjectEditAsAdminFeature]
+    [InvoiceManageFeature]
     public async Task<ActionResult<InvoiceDetail>> Update([FromRoute] int invoiceID, [FromBody] InvoiceUpsertRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.InvoiceNumber))
@@ -84,7 +84,7 @@ public class InvoiceController(
     }
 
     [HttpPost("{invoiceID}/voucher")]
-    [ProjectEditAsAdminFeature]
+    [InvoiceManageFeature]
     [Consumes("multipart/form-data")]
     public async Task<ActionResult<InvoiceDetail>> UploadVoucher([FromRoute] int invoiceID, IFormFile file)
     {
@@ -123,7 +123,7 @@ public class InvoiceController(
     }
 
     [HttpDelete("{invoiceID}/voucher")]
-    [ProjectEditAsAdminFeature]
+    [InvoiceManageFeature]
     public async Task<ActionResult<InvoiceDetail>> DeleteVoucher([FromRoute] int invoiceID)
     {
         var invoice = await DbContext.Invoices

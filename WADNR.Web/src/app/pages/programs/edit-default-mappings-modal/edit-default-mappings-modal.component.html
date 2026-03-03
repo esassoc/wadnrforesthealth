@@ -6,7 +6,18 @@
     <modal-alerts [alerts]="localAlerts"></modal-alerts>
     <p>Enter the GDB column names that correspond to each system field. Leave blank for fields that should not be mapped.</p>
     <div class="grid-12">
-        @for (field of visibleFields; track field.fieldDefinitionID) {
+        @for (field of alwaysFields; track field.fieldDefinitionID) {
+        <div class="g-col-6">
+            <form-field [formControl]="field.control" [fieldLabel]="field.label" [type]="FormFieldType.Text"></form-field>
+        </div>
+        }
+
+        <div class="g-col-12"><hr /></div>
+        <div class="g-col-12">
+            <strong>{{ isFlattened ? 'Import IS flattened' : 'Import is NOT flattened' }}</strong>
+        </div>
+
+        @for (field of conditionalFields; track field.fieldDefinitionID) {
         <div class="g-col-6">
             <form-field [formControl]="field.control" [fieldLabel]="field.label" [type]="FormFieldType.Text"></form-field>
         </div>

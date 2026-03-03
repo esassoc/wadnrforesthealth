@@ -16,4 +16,5 @@ public class ProjectOrganizationDetailGridRow
     public decimal? TotalAmount { get; set; }
     public string? ProjectDescription { get; set; }
     public int PhotoCount { get; set; }
+    public List<TagLookupItem> Tags { get; set; } = new();
 }

@@ -22,6 +22,7 @@ public class OrganizationController(
     WADNRDbContext dbContext,
     ILogger<OrganizationController> logger,
     IOptions<WADNRConfiguration> configuration,
+    FileService fileService,
     GDALAPIService gdalApiService = null)
     : SitkaController<OrganizationController>(dbContext, logger, configuration)
 {
@@ -89,6 +90,33 @@ public class OrganizationController(
         }
 
         return Ok(updated);
+    }
+
+    [HttpPost("{organizationID}/logo")]
+    [UserManageFeature]
+    [Consumes("multipart/form-data")]
+    [EntityNotFound(typeof(Organization), "organizationID")]
+    public async Task<ActionResult<OrganizationDetail>> UploadLogo([FromRoute] int organizationID, IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest("File is required.");
+        }
+
+        var fileResource = await fileService.CreateFileResource(DbContext, file, CallingUser.PersonID);
+        await Organizations.SetLogoAsync(DbContext, organizationID, fileResource.FileResourceID);
+        var detail = await Organizations.GetByIDAsDetailAsync(DbContext, organizationID);
+        return Ok(detail);
+    }
+
+    [HttpDelete("{organizationID}/logo")]
+    [UserManageFeature]
+    [EntityNotFound(typeof(Organization), "organizationID")]
+    public async Task<ActionResult<OrganizationDetail>> DeleteLogo([FromRoute] int organizationID)
+    {
+        await Organizations.SetLogoAsync(DbContext, organizationID, null);
+        var detail = await Organizations.GetByIDAsDetailAsync(DbContext, organizationID);
+        return Ok(detail);
     }
 
     [HttpDelete("{organizationID}")]

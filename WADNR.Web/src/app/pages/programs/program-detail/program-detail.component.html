@@ -78,13 +78,18 @@
     <div class="g-col-6">
         <div class="card">
             <div class="card-header">
-                <span class="card-title">Program Editors</span>
+                <span class="card-title">
+                    <a href="javascript:void(0)" (click)="openEditEditorsModal(program)" title="Edit Program Editors" style="color: inherit;">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    Program Editors
+                </span>
             </div>
             <div class="card-body">
                 @if (program.ProgramEditors && program.ProgramEditors.length > 0) {
                     <ul>
                         @for (editor of program.ProgramEditors; track editor.PersonID) {
-                            <li><person-link [personID]="editor.PersonID" [displayText]="editor.FullName"></person-link></li>
+                            <li><person-link [personID]="editor.PersonID" [displayText]="getEditorDisplayText(editor)"></person-link></li>
                         }
                     </ul>
                 } @else {
@@ -100,6 +105,9 @@
         <div class="card">
             <div class="card-header">
                 <span class="card-title">Projects Associated with this Program</span>
+                <button class="btn btn-sm btn-primary float-end" title="Download GDB of projects" (click)="downloadGdb()">
+                    <i class="fa fa-download"></i> Download GDB
+                </button>
             </div>
             <div class="card-body">
                 @if (projects.length > 0) {
@@ -117,12 +125,37 @@
     </div>
     }
 
+    <!-- Project Import Block List Card -->
+    @if (blockListEntries$ | async; as blockListEntries) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Project Import Block List</span>
+                <button class="btn btn-sm btn-primary float-end" (click)="openCreateBlockListEntryModal(program.ProgramID)">Create New</button>
+            </div>
+            <div class="card-body">
+                @if (blockListEntries.length > 0) {
+                    <wadnr-grid
+                        [rowData]="blockListEntries"
+                        [columnDefs]="blockListColumnDefs"
+                        height="300px"
+                        downloadFileName="Program_BlockList">
+                    </wadnr-grid>
+                } @else {
+                    <p class="system-text">No entries in the block list for this program.</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
+
     <!-- Notifications Grid Card -->
     @if (notifications$ | async; as notifications) {
     <div class="g-col-12">
         <div class="card">
             <div class="card-header">
                 <span class="card-title">Notifications</span>
+                <button class="btn btn-sm btn-primary float-end" (click)="openCreateNotificationModal(program.ProgramID)">Create New</button>
             </div>
             <div class="card-body">
                 @if (notifications.length > 0) {
@@ -228,7 +261,10 @@
                     <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Landowner') }}</div>
 
                     <div class="g-col-6 field-label">Lead Implementer Column</div>
-                    <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Lead Implementer Organization') }}</div>
+                    <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Lead Implementer') }}</div>
+
+                    <div class="g-col-6 field-label">Primary Contact Column</div>
+                    <div class="g-col-6">{{ getMappingColumnName(program.GdbDefaultMappings, 'Primary Contact') }}</div>
 
                     <!-- Conditional fields based on ImportIsFlattened -->
                     <div class="g-col-12"><hr /></div>
@@ -317,11 +353,11 @@
                     <!-- Lead Implementer Organization Crosswalks -->
                     <div class="g-col-6">
                         <strong>Lead Implementer Organization</strong>
-                        @if (getCrosswalksByField(program.GdbCrosswalkValues, 'Lead Implementer Organization').length > 0) {
+                        @if (getCrosswalksByField(program.GdbCrosswalkValues, 'Lead Implementer').length > 0) {
                             <div class="grid-12" style="margin-top: 0.5rem;">
                                 <div class="g-col-6 field-label">Source Value</div>
                                 <div class="g-col-6 field-label">Forest Health Tracker Value</div>
-                                @for (crosswalk of getCrosswalksByField(program.GdbCrosswalkValues, 'Lead Implementer Organization'); track crosswalk.GisCrossWalkDefaultID) {
+                                @for (crosswalk of getCrosswalksByField(program.GdbCrosswalkValues, 'Lead Implementer'); track crosswalk.GisCrossWalkDefaultID) {
                                     <div class="g-col-6">{{ crosswalk.GisCrossWalkSourceValue }}</div>
                                     <div class="g-col-6">{{ crosswalk.GisCrossWalkMappedValue }}</div>
                                 }

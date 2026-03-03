@@ -8,6 +8,7 @@
  * Do not edit the class manually.
  */
 import { OrganizationLookupItem } from './organization-lookup-item';
+import { TagLookupItem } from './tag-lookup-item';
 import { ProjectStageLookupItem } from './project-stage-lookup-item';
 
 
@@ -27,6 +28,7 @@ export class ProjectOrganizationDetailGridRow {
     TotalAmount?: number | null;
     ProjectDescription?: string | null;
     PhotoCount?: number;
+    Tags?: Array<TagLookupItem> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -47,6 +49,7 @@ export interface ProjectOrganizationDetailGridRowForm {
     TotalAmount?: FormControl<number>;
     ProjectDescription?: FormControl<string>;
     PhotoCount?: FormControl<number>;
+    Tags?: FormControl<Array<TagLookupItem>>;
 }
 
 export class ProjectOrganizationDetailGridRowFormControls { 
@@ -181,6 +184,16 @@ export class ProjectOrganizationDetailGridRowFormControls {
         }
     );
     public static PhotoCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Tags = (value: FormControlState<Array<TagLookupItem>> | Array<TagLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<TagLookupItem>>(
         value,
         formControlOptions ?? 
         {

@@ -10,7 +10,9 @@ public class GdbImportBasics
     public int ProjectStageDefaultID { get; set; }
     public string? ProjectStageDefaultName { get; set; }
     public bool DataDeriveProjectStage { get; set; }
+    public int? DefaultLeadImplementerOrganizationID { get; set; }
     public string? DefaultLeadImplementerOrganizationName { get; set; }
+    public int? RelationshipTypeForDefaultOrganizationID { get; set; }
     public bool ImportAsDetailedLocationInsteadOfTreatments { get; set; }
     public bool ImportAsDetailedLocationInAdditionToTreatments { get; set; }
     public string? ProjectDescriptionDefaultText { get; set; }

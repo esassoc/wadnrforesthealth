@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
+using WADNR.API.Services.Authorization;
 using WADNR.Common.EMail;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
@@ -21,6 +22,7 @@ public class SupportRequestController(
     : SitkaController<SupportRequestController>(dbContext, logger, configuration)
 {
     [HttpPost]
+    [LoggedInFeature]
     public async Task<IActionResult> Create([FromBody] SupportRequestCreate dto)
     {
         // Get the current person entity

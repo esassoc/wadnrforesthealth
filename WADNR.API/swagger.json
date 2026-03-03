@@ -263,6 +263,73 @@
           }
         },
         "x-anonymous": true
+      },
+      "put": {
+        "tags": [
+          "Agreement"
+        ],
+        "operationId": "UpdateFundSourceAllocations_Agreement",
+        "parameters": [
+          {
+            "name": "agreementID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgreementFundSourceAllocationsUpdateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgreementFundSourceAllocationsUpdateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgreementFundSourceAllocationsUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/agreements/{agreementID}/projects": {
@@ -314,6 +381,73 @@
           }
         },
         "x-anonymous": true
+      },
+      "put": {
+        "tags": [
+          "Agreement"
+        ],
+        "operationId": "UpdateProjects_Agreement",
+        "parameters": [
+          {
+            "name": "agreementID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgreementProjectsUpdateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgreementProjectsUpdateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgreementProjectsUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/agreements/{agreementID}/contacts": {
@@ -358,6 +492,297 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/AgreementContactGridRow"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      },
+      "post": {
+        "tags": [
+          "Agreement"
+        ],
+        "operationId": "CreateContact_Agreement",
+        "parameters": [
+          {
+            "name": "agreementID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgreementContactUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgreementContactUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgreementContactUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgreementContactGridRow"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgreementContactGridRow"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgreementContactGridRow"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agreements/upload-file": {
+      "post": {
+        "tags": [
+          "Agreement"
+        ],
+        "operationId": "UploadFile_Agreement",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agreements/{agreementID}/contacts/{agreementPersonID}": {
+      "put": {
+        "tags": [
+          "Agreement"
+        ],
+        "operationId": "UpdateContact_Agreement",
+        "parameters": [
+          {
+            "name": "agreementID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "agreementPersonID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgreementContactUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgreementContactUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgreementContactUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgreementContactGridRow"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgreementContactGridRow"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgreementContactGridRow"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Agreement"
+        ],
+        "operationId": "DeleteContact_Agreement",
+        "parameters": [
+          {
+            "name": "agreementID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "agreementPersonID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/agreement-statuses/lookup": {
+      "get": {
+        "tags": [
+          "AgreementStatus"
+        ],
+        "operationId": "ListLookup_AgreementStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementStatusLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementStatusLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementStatusLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/agreement-types/lookup": {
+      "get": {
+        "tags": [
+          "AgreementType"
+        ],
+        "operationId": "ListLookup_AgreementType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementTypeLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementTypeLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementTypeLookupItem"
                   }
                 }
               }
@@ -3306,6 +3731,47 @@
           }
         },
         "x-anonymous": true
+      },
+      "post": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "CreateNote_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceNoteUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceNoteUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceNoteUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/fund-sources/{fundSourceID}/notes-internal": {
@@ -3354,6 +3820,313 @@
                 }
               }
             }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "CreateNoteInternal_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceNoteUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceNoteUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceNoteUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/fund-sources/{fundSourceID}/files/{fundSourceFileResourceID}": {
+      "put": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "UpdateFile_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "fundSourceFileResourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceFileUpdateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceFileUpdateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceFileUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceFileResourceGridRow"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceFileResourceGridRow"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceFileResourceGridRow"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "DeleteFile_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "fundSourceFileResourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/fund-sources/{fundSourceID}/notes/{fundSourceNoteID}": {
+      "put": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "UpdateNote_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "fundSourceNoteID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceNoteUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceNoteUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceNoteUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "DeleteNote_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "fundSourceNoteID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/fund-sources/{fundSourceID}/notes-internal/{fundSourceNoteInternalID}": {
+      "put": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "UpdateNoteInternal_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "fundSourceNoteInternalID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceNoteUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceNoteUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceNoteUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "DeleteNoteInternal_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "fundSourceNoteInternalID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -4051,6 +4824,73 @@
       }
     },
     "/fund-source-allocations/{fundSourceAllocationID}/files/{fundSourceAllocationFileResourceID}": {
+      "put": {
+        "tags": [
+          "FundSourceAllocation"
+        ],
+        "operationId": "UpdateFile_FundSourceAllocation",
+        "parameters": [
+          {
+            "name": "fundSourceAllocationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "fundSourceAllocationFileResourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceAllocationFileUpdateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceAllocationFileUpdateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceAllocationFileUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceAllocationFileGridRow"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceAllocationFileGridRow"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceAllocationFileGridRow"
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "FundSourceAllocation"
@@ -5699,6 +6539,149 @@
         }
       }
     },
+    "/interactions-events/{interactionEventID}/simple-location": {
+      "put": {
+        "tags": [
+          "InteractionEvent"
+        ],
+        "operationId": "UpdateSimpleLocation_InteractionEvent",
+        "parameters": [
+          {
+            "name": "interactionEventID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InteractionEventLocationUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InteractionEventLocationUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InteractionEventLocationUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/interactions-events/{interactionEventID}/file-resources/{interactionEventFileResourceID}": {
+      "put": {
+        "tags": [
+          "InteractionEvent"
+        ],
+        "operationId": "UpdateFileResource_InteractionEvent",
+        "parameters": [
+          {
+            "name": "interactionEventID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "interactionEventFileResourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InteractionEventFileUpdateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InteractionEventFileUpdateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InteractionEventFileUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileResourceInteractionEventDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileResourceInteractionEventDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileResourceInteractionEventDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "InteractionEvent"
+        ],
+        "operationId": "DeleteFileResource_InteractionEvent",
+        "parameters": [
+          {
+            "name": "interactionEventID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "interactionEventFileResourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/invoices": {
       "get": {
         "tags": [
@@ -6073,8 +7056,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/invoice-payment-requests": {
@@ -8272,6 +9254,114 @@
         }
       }
     },
+    "/programs/eligible-editors": {
+      "get": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "ListEligibleEditors_Program",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/programs/{programID}/editors": {
+      "put": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "UpdateEditors_Program",
+        "parameters": [
+          {
+            "name": "programID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramEditorsUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramEditorsUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramEditorsUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonWithOrganizationLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonWithOrganizationLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonWithOrganizationLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/programs/{programID}/projects": {
       "get": {
         "tags": [
@@ -8372,6 +9462,164 @@
           }
         },
         "x-anonymous": true
+      },
+      "post": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "CreateNotification_Program",
+        "parameters": [
+          {
+            "name": "programID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramNotificationUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramNotificationUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramNotificationUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramNotificationGridRow"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramNotificationGridRow"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramNotificationGridRow"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/programs/{programID}/notifications/{notificationConfigID}": {
+      "put": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "UpdateNotification_Program",
+        "parameters": [
+          {
+            "name": "programID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "notificationConfigID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramNotificationUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramNotificationUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramNotificationUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramNotificationGridRow"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramNotificationGridRow"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramNotificationGridRow"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "DeleteNotification_Program",
+        "parameters": [
+          {
+            "name": "programID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "notificationConfigID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/programs/upload-program-file": {
@@ -8476,6 +9724,154 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/programs/{programID}/projects/download-gdb": {
+      "get": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "DownloadProjectsAsGdb_Program",
+        "parameters": [
+          {
+            "name": "programID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/programs/{programID}/block-list": {
+      "get": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "ListBlockListEntries_Program",
+        "parameters": [
+          {
+            "name": "programID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectImportBlockListGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectImportBlockListGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectImportBlockListGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "AddToBlockList_Program",
+        "parameters": [
+          {
+            "name": "programID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToBlockListRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToBlockListRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToBlockListRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/programs/{programID}/block-list/{projectImportBlockListID}": {
+      "delete": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "DeleteBlockListEntry_Program",
+        "parameters": [
+          {
+            "name": "programID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "projectImportBlockListID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -19498,6 +20894,11 @@
             "type": "string",
             "nullable": true
           },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "Notes": {
             "maxLength": 500,
             "minLength": 0,
@@ -19510,6 +20911,10 @@
       "AgreementContactGridRow": {
         "type": "object",
         "properties": {
+          "AgreementPersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "Person": {
             "$ref": "#/components/schemas/PersonFirstNameLastName"
           },
@@ -19518,6 +20923,20 @@
           },
           "ContributingOrganization": {
             "$ref": "#/components/schemas/OrganizationLookupItem"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgreementContactUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AgreementPersonRoleID": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -19592,6 +21011,20 @@
           },
           "ProjectCodes": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgreementFundSourceAllocationsUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "FundSourceAllocationIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
             "nullable": true
           }
         },
@@ -19698,6 +21131,20 @@
         },
         "additionalProperties": false
       },
+      "AgreementProjectsUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "AgreementStatusLookupItem": {
         "type": "object",
         "properties": {
@@ -19720,6 +21167,10 @@
             "format": "int32"
           },
           "AgreementTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "AgreementTypeAbbrev": {
             "type": "string",
             "nullable": true
           }
@@ -20868,6 +22319,10 @@
       "FileResourceInteractionEventDetail": {
         "type": "object",
         "properties": {
+          "InteractionEventFileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "FileResourceID": {
             "type": "integer",
             "format": "int32"
@@ -21616,6 +23071,20 @@
           "CreateDate": {
             "type": "string",
             "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceAllocationFileUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -22370,6 +23839,11 @@
           "FundSourceStatus": {
             "$ref": "#/components/schemas/FundSourceStatusLookupItem"
           },
+          "FundSourceTypeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "FundSourceTypeName": {
             "type": "string",
             "nullable": true
@@ -22455,6 +23929,10 @@
             "type": "string",
             "nullable": true
           },
+          "OriginalBaseFilename": {
+            "type": "string",
+            "nullable": true
+          },
           "FileResourceMimeTypeName": {
             "type": "string",
             "nullable": true
@@ -22462,6 +23940,20 @@
           "CreateDate": {
             "type": "string",
             "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceFileUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -22593,6 +24085,20 @@
           "UpdateDate": {
             "type": "string",
             "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceNoteUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "FundSourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Note": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -22923,8 +24429,18 @@
           "DataDeriveProjectStage": {
             "type": "boolean"
           },
+          "DefaultLeadImplementerOrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "DefaultLeadImplementerOrganizationName": {
             "type": "string",
+            "nullable": true
+          },
+          "RelationshipTypeForDefaultOrganizationID": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "ImportAsDetailedLocationInsteadOfTreatments": {
@@ -23724,6 +25240,20 @@
         },
         "additionalProperties": false
       },
+      "InteractionEventFileUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "InteractionEventGridRow": {
         "type": "object",
         "properties": {
@@ -23748,6 +25278,20 @@
           },
           "InteractionEventType": {
             "$ref": "#/components/schemas/InteractionEventTypeLookupItem"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InteractionEventLocationUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "Latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "Longitude": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false
@@ -25246,6 +26790,10 @@
           "FullName": {
             "type": "string",
             "nullable": true
+          },
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -25258,6 +26806,10 @@
             "format": "int32"
           },
           "FullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationName": {
             "type": "string",
             "nullable": true
           },
@@ -25295,6 +26847,28 @@
           },
           "IsRequired": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonWithOrganizationLookupItem": {
+        "type": "object",
+        "properties": {
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationShortName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -25646,7 +27220,7 @@
           "ProgramEditors": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PersonLookupItem"
+              "$ref": "#/components/schemas/PersonWithOrganizationLookupItem"
             },
             "nullable": true
           },
@@ -25668,6 +27242,20 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/GdbCrosswalkItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProgramEditorsUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "PersonIDList": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
             },
             "nullable": true
           }
@@ -25824,9 +27412,17 @@
             "type": "integer",
             "format": "int32"
           },
+          "ProgramNotificationTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "ProgramNotificationTypeDisplayName": {
             "type": "string",
             "nullable": true
+          },
+          "RecurrenceIntervalID": {
+            "type": "integer",
+            "format": "int32"
           },
           "RecurrenceIntervalInYears": {
             "type": "integer",
@@ -25835,6 +27431,29 @@
           "NotificationEmailText": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProgramNotificationUpsertRequest": {
+        "required": [
+          "NotificationEmailText",
+          "ProgramNotificationTypeID",
+          "RecurrenceIntervalID"
+        ],
+        "type": "object",
+        "properties": {
+          "ProgramNotificationTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RecurrenceIntervalID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NotificationEmailText": {
+            "minLength": 1,
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -27598,6 +29217,37 @@
         },
         "additionalProperties": false
       },
+      "ProjectImportBlockListGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectImportBlockListID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProgramID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectGisIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "Notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectInternalNoteDetail": {
         "type": "object",
         "properties": {
@@ -28105,6 +29755,13 @@
           "PhotoCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "Tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagLookupItem"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -31370,6 +33027,12 @@
   "tags": [
     {
       "name": "Agreement"
+    },
+    {
+      "name": "AgreementStatus"
+    },
+    {
+      "name": "AgreementType"
     },
     {
       "name": "Classification"

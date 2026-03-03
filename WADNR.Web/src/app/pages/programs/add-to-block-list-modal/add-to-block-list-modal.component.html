@@ -1,0 +1,44 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Add to Block List</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form-field
+        fieldLabel="Project Name"
+        [type]="FormFieldType.Text"
+        [formControl]="form.controls.projectName"
+        [readOnly]="true">
+    </form-field>
+
+    <form-field
+        fieldLabel="Project GIS Identifier"
+        [type]="FormFieldType.Text"
+        [formControl]="form.controls.projectGisIdentifier"
+        [readOnly]="true">
+    </form-field>
+
+    <form-field
+        fieldLabel="Notes"
+        [type]="FormFieldType.Textarea"
+        [formControl]="form.controls.notes"
+        placeholder="Enter notes about why this project should be blocked from import...">
+    </form-field>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="form.invalid || isSubmitting()"
+        [buttonLoading]="isSubmitting()">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting()">
+        Cancel
+    </button>
+</div>
+</div>

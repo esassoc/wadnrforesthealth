@@ -1,18 +1,21 @@
 import { AsyncPipe } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { distinctUntilChanged, filter, map, Observable, shareReplay, switchMap } from "rxjs";
+import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, shareReplay, switchMap } from "rxjs";
+import { DialogService } from "@ngneat/dialog";
+import { ColDef } from "ag-grid-community";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { AuthenticationService } from "src/app/services/authentication.service";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 
 import { TagService } from "src/app/shared/generated/api/tag.service";
 import { TagDetail } from "src/app/shared/generated/model/tag-detail";
 import { ProjectTagDetailGridRow } from "src/app/shared/generated/model/project-tag-detail-grid-row";
-import { ColDef } from "ag-grid-community";
+import { TagModalComponent, TagModalData } from "../tag-modal.component";
 
 @Component({
     selector: "tag-detail",
@@ -25,6 +28,7 @@ export class TagDetailComponent {
     public tagID$: Observable<number>;
     public tag$: Observable<TagDetail>;
     public projects$: Observable<ProjectTagDetailGridRow[]>;
+    public isAdmin = false;
 
     public columnDefs: ColDef<ProjectTagDetailGridRow>[] = [];
     public pinnedTotalsRow = {
@@ -32,9 +36,21 @@ export class TagDetailComponent {
         filteredOnly: true,
     };
 
-    constructor(private route: ActivatedRoute, private tagService: TagService, private utilityFunctions: UtilityFunctionsService) {}
+    private refreshTag$ = new BehaviorSubject<void>(undefined);
+
+    constructor(
+        private route: ActivatedRoute,
+        private tagService: TagService,
+        private utilityFunctions: UtilityFunctionsService,
+        private authenticationService: AuthenticationService,
+        private dialogService: DialogService
+    ) {}
 
     ngOnInit(): void {
+        this.authenticationService.getCurrentUser().subscribe(user => {
+            this.isAdmin = this.authenticationService.isUserAnAdministrator(user);
+        });
+
         this.tagID$ = this.route.paramMap.pipe(
             map((p) => (p.get("tagID") ? Number(p.get("tagID")) : null)),
             filter((tagID): tagID is number => tagID != null && !Number.isNaN(tagID)),
@@ -42,12 +58,14 @@ export class TagDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.tag$ = this.tagID$.pipe(
+        this.tag$ = this.refreshTag$.pipe(
+            switchMap(() => this.tagID$),
             switchMap((tagID) => this.tagService.getTag(tagID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.projects$ = this.tagID$.pipe(
+        this.projects$ = this.refreshTag$.pipe(
+            switchMap(() => this.tagID$),
             switchMap((tagID) => this.tagService.listProjectsForTagIDTag(tagID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
@@ -89,4 +107,17 @@ export class TagDetailComponent {
             this.utilityFunctions.createBasicColumnDef("Project Description", "ProjectDescription", { FieldDefinitionType: "ProjectDescription" }),
         ];
     }
+
+    openEditTag(tag: TagDetail): void {
+        const dialogRef = this.dialogService.open(TagModalComponent, {
+            data: { mode: "edit", tag } as TagModalData,
+            width: "600px",
+        });
+        dialogRef.afterClosed$.subscribe(result => {
+            if (result) {
+                this.refreshTag$.next();
+            }
+        });
+    }
+
 }

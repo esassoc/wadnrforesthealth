@@ -1,7 +1,12 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
@@ -17,7 +22,9 @@ namespace WADNR.API.Controllers;
 public class ProgramController(
     WADNRDbContext dbContext,
     ILogger<ProgramController> logger,
-    IOptions<WADNRConfiguration> configuration)
+    IOptions<WADNRConfiguration> configuration,
+    FileService fileService,
+    GDALAPIService gdalApiService = null)
     : SitkaController<ProgramController>(dbContext, logger, configuration)
 {
     [HttpGet]
@@ -79,6 +86,30 @@ public class ProgramController(
         return NoContent();
     }
 
+    [HttpGet("eligible-editors")]
+    [ProgramManageFeature]
+    public async Task<ActionResult<List<PersonLookupItem>>> ListEligibleEditors()
+    {
+        var editors = await Programs.ListEligibleProgramEditorsAsync(DbContext);
+        return Ok(editors);
+    }
+
+    [HttpPut("{programID}/editors")]
+    [ProgramManageFeature]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
+    public async Task<ActionResult<List<PersonWithOrganizationLookupItem>>> UpdateEditors([FromRoute] int programID, [FromBody] ProgramEditorsUpsertRequest request)
+    {
+        if (request.PersonIDList.Count > 0)
+        {
+            var validationError = await Programs.ValidateEditorsHaveRequiredRoleAsync(DbContext, request.PersonIDList);
+            if (validationError != null)
+                return BadRequest(validationError);
+        }
+
+        var updatedEditors = await Programs.UpdateEditorsAsync(DbContext, programID, request);
+        return Ok(updatedEditors);
+    }
+
     [HttpGet("{programID}/projects")]
     [AllowAnonymous]
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
@@ -97,8 +128,167 @@ public class ProgramController(
         return Ok(notifications);
     }
 
-    [HttpPut("{programID}/gis-import-config/basics")]
+    [HttpPost("{programID}/notifications")]
     [ProgramManageFeature]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
+    public async Task<ActionResult<ProgramNotificationGridRow>> CreateNotification([FromRoute] int programID, [FromBody] ProgramNotificationUpsertRequest request)
+    {
+        var created = await Programs.CreateNotificationAsync(DbContext, programID, request);
+        return Ok(created);
+    }
+
+    [HttpPut("{programID}/notifications/{notificationConfigID}")]
+    [ProgramManageFeature]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
+    public async Task<ActionResult<ProgramNotificationGridRow>> UpdateNotification([FromRoute] int programID, [FromRoute] int notificationConfigID, [FromBody] ProgramNotificationUpsertRequest request)
+    {
+        var updated = await Programs.UpdateNotificationAsync(DbContext, notificationConfigID, request);
+        if (updated == null) return NotFound();
+        return Ok(updated);
+    }
+
+    [HttpDelete("{programID}/notifications/{notificationConfigID}")]
+    [ProgramManageFeature]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
+    public async Task<IActionResult> DeleteNotification([FromRoute] int programID, [FromRoute] int notificationConfigID)
+    {
+        var deleted = await Programs.DeleteNotificationAsync(DbContext, notificationConfigID);
+        if (!deleted) return NotFound();
+        return NoContent();
+    }
+
+    [HttpPost("upload-program-file")]
+    [ProgramManageFeature]
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<int>> UploadProgramFile(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest("File is required.");
+        }
+
+        var fileResource = await fileService.CreateFileResource(DbContext, file, CallingUser.PersonID);
+        return Ok(fileResource.FileResourceID);
+    }
+
+    [HttpPost("upload-example-geospatial-file")]
+    [ProgramManageFeature]
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<int>> UploadExampleGeospatialFile(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest("File is required.");
+        }
+
+        var fileResource = await fileService.CreateFileResource(DbContext, file, CallingUser.PersonID);
+        return Ok(fileResource.FileResourceID);
+    }
+
+    #region Download GDB
+
+    [HttpGet("{programID}/projects/download-gdb")]
+    [ProgramEditMappingsFeature]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
+    public async Task<IActionResult> DownloadProjectsAsGdb([FromRoute] int programID)
+    {
+        if (gdalApiService == null)
+        {
+            return StatusCode(503, "GDAL API service is not configured.");
+        }
+
+        var program = await DbContext.Programs.AsNoTracking().FirstOrDefaultAsync(p => p.ProgramID == programID);
+        if (program == null) return NotFound();
+
+        var projects = await DbContext.ProjectPrograms
+            .AsNoTracking()
+            .Where(pp => pp.ProgramID == programID && pp.Project.ProjectLocationPoint != null)
+            .Select(pp => new
+            {
+                pp.Project.ProjectID,
+                pp.Project.ProjectName,
+                pp.Project.ProjectGisIdentifier,
+                pp.Project.FhtProjectNumber,
+                ProjectStageName = pp.Project.ProjectStage.ProjectStageName,
+                ProjectTypeName = pp.Project.ProjectType.ProjectTypeName,
+                Longitude = pp.Project.ProjectLocationPoint.Coordinate.X,
+                Latitude = pp.Project.ProjectLocationPoint.Coordinate.Y,
+            })
+            .ToListAsync();
+
+        if (projects.Count == 0)
+        {
+            return BadRequest("No projects with location data found for this program.");
+        }
+
+        var features = projects.Select(p => new
+        {
+            type = "Feature",
+            geometry = new
+            {
+                type = "Point",
+                coordinates = new[] { p.Longitude, p.Latitude }
+            },
+            properties = new Dictionary<string, object>
+            {
+                ["ProjectID"] = p.ProjectID,
+                ["ProjectName"] = p.ProjectName,
+                ["ProjectGisIdentifier"] = p.ProjectGisIdentifier,
+                ["FhtProjectNumber"] = p.FhtProjectNumber,
+                ["ProjectStage"] = p.ProjectStageName,
+                ["ProjectType"] = p.ProjectTypeName,
+                ["FeatureColor"] = "#99b3ff",
+            }
+        });
+
+        var featureCollection = new { type = "FeatureCollection", features };
+        var geoJson = JsonSerializer.Serialize(featureCollection);
+
+        var programDisplayName = program.ProgramName ?? "Default";
+        var dateStr = DateTime.Now.ToString("yyyy-MM-dd");
+        var gdbName = $"ProjectsInProgram-{programDisplayName}-{dateStr}";
+        var fileName = $"{gdbName}.gdb.zip";
+
+        var stream = await gdalApiService.Ogr2OgrGeoJsonToGdb(geoJson, "ProjectLocationSimple", gdbName);
+        return File(stream, "application/zip", fileName);
+    }
+
+    #endregion
+
+    #region Block List
+
+    [HttpGet("{programID}/block-list")]
+    [ProgramManageFeature]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
+    public async Task<ActionResult<List<ProjectImportBlockListGridRow>>> ListBlockListEntries([FromRoute] int programID)
+    {
+        var entries = await Programs.ListBlockListEntriesAsync(DbContext, programID);
+        return Ok(entries);
+    }
+
+    [HttpPost("{programID}/block-list")]
+    [ProgramManageFeature]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
+    public async Task<ActionResult> AddToBlockList([FromRoute] int programID, [FromBody] AddToBlockListRequest request)
+    {
+        await Programs.AddToBlockListAsync(DbContext, programID, request);
+        return Ok();
+    }
+
+    [HttpDelete("{programID}/block-list/{projectImportBlockListID}")]
+    [ProgramManageFeature]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
+    public async Task<ActionResult> DeleteBlockListEntry([FromRoute] int programID, [FromRoute] int projectImportBlockListID)
+    {
+        var deleted = await Programs.DeleteBlockListEntryAsync(DbContext, projectImportBlockListID);
+        if (!deleted) return NotFound();
+        return NoContent();
+    }
+
+    #endregion
+
+    [HttpPut("{programID}/gis-import-config/basics")]
+    [ProgramEditMappingsFeature]
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<ActionResult<GdbImportBasics>> UpdateGdbImportBasics([FromRoute] int programID, [FromBody] GdbImportBasicsUpsertRequest request)
     {
@@ -108,7 +298,7 @@ public class ProgramController(
     }
 
     [HttpPut("{programID}/gis-import-config/default-mappings")]
-    [ProgramManageFeature]
+    [ProgramEditMappingsFeature]
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<ActionResult<List<GdbDefaultMappingItem>>> UpdateGdbDefaultMappings([FromRoute] int programID, [FromBody] GdbDefaultMappingUpsertRequest request)
     {
@@ -118,7 +308,7 @@ public class ProgramController(
     }
 
     [HttpPut("{programID}/gis-import-config/crosswalk-values")]
-    [ProgramManageFeature]
+    [ProgramEditMappingsFeature]
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<ActionResult<List<GdbCrosswalkItem>>> UpdateGdbCrosswalkValues([FromRoute] int programID, [FromBody] GdbCrosswalkUpsertRequest request)
     {

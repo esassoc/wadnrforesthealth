@@ -2,7 +2,7 @@
 <div class="modal-header">
     <h3>{{ modalTitle }}</h3>
 </div>
-<div class="modal-body">
+<div class="modal-body" [loadingSpinner]="{ isLoading, loadingHeight: 300 }">
     <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
     <form [formGroup]="form">
@@ -23,6 +23,7 @@
         <form-field
             [formControl]="form.controls.OrganizationTypeID"
             fieldDefinitionName="OrganizationType"
+            fieldDefinitionLabelOverride="Contributing Organization Type"
             [type]="FormFieldType.Select"
             [formInputOptions]="organizationTypeOptions"
             formInputOptionLabel="Label"
@@ -33,6 +34,7 @@
         <form-field
             [formControl]="form.controls.PrimaryContactPersonID"
             fieldDefinitionName="OrganizationPrimaryContact"
+            fieldDefinitionLabelOverride="Contributing Organization Primary Contact"
             [type]="FormFieldType.Select"
             [formInputOptions]="personOptions"
             formInputOptionLabel="Label"
@@ -40,11 +42,36 @@
             placeholder="Select primary contact">
         </form-field>
 
+        <div class="form-field">
+            <label class="field-label">Vendor</label>
+            <ng-select
+                class="custom"
+                [items]="vendorResults$ | async"
+                [formControl]="form.controls.VendorID"
+                bindLabel="DisplayName"
+                bindValue="VendorID"
+                [typeahead]="vendorSearch$"
+                [loading]="vendorLoading"
+                [clearable]="true"
+                [minTermLength]="2"
+                typeToSearchText="Type to search vendors..."
+                placeholder="Search Vendor Name or Statewide Vendor Number"
+                appendTo="#dropdown-host">
+            </ng-select>
+        </div>
+
         <form-field
             [formControl]="form.controls.OrganizationUrl"
             fieldLabel="Home Page"
             [type]="FormFieldType.Text"
             placeholder="https://example.com">
+        </form-field>
+
+        <form-field
+            [formControl]="logoFileControl"
+            fieldLabel="Logo"
+            [type]="FormFieldType.File"
+            uploadFileAccepts=".jpg,.jpeg,.gif,.png">
         </form-field>
 
         <form-field
@@ -58,7 +85,7 @@
     <button
         class="btn btn-primary"
         (click)="save()"
-        [disabled]="isSubmitting">
+        [disabled]="isLoading || isSubmitting">
         {{ isSubmitting ? 'Saving...' : 'Save' }}
     </button>
     <button

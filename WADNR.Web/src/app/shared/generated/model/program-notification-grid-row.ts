@@ -12,7 +12,9 @@
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class ProgramNotificationGridRow { 
     ProgramNotificationConfigurationID?: number;
+    ProgramNotificationTypeID?: number;
     ProgramNotificationTypeDisplayName?: string | null;
+    RecurrenceIntervalID?: number;
     RecurrenceIntervalInYears?: number;
     NotificationEmailText?: string | null;
     constructor(obj?: any) {
@@ -22,7 +24,9 @@ export class ProgramNotificationGridRow {
 
 export interface ProgramNotificationGridRowForm { 
     ProgramNotificationConfigurationID?: FormControl<number>;
+    ProgramNotificationTypeID?: FormControl<number>;
     ProgramNotificationTypeDisplayName?: FormControl<string>;
+    RecurrenceIntervalID?: FormControl<number>;
     RecurrenceIntervalInYears?: FormControl<number>;
     NotificationEmailText?: FormControl<string>;
 }
@@ -38,7 +42,27 @@ export class ProgramNotificationGridRowFormControls {
             ],
         }
     );
+    public static ProgramNotificationTypeID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
     public static ProgramNotificationTypeDisplayName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static RecurrenceIntervalID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

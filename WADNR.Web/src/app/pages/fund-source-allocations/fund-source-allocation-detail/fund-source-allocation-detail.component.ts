@@ -1,9 +1,10 @@
 import { AsyncPipe } from "@angular/common";
-import { Component, Input } from "@angular/core";
+import { Component, DestroyRef, inject, Input } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterLink } from "@angular/router";
 import { DialogService } from "@ngneat/dialog";
 import { CellValueChangedEvent, ColDef } from "ag-grid-community";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, shareReplay, startWith, Subject, switchMap } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, of, shareReplay, startWith, Subject, switchMap, take } from "rxjs";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -12,6 +13,8 @@ import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-g
 import { PieChartComponent } from "src/app/shared/components/charts/pie-chart/pie-chart.component";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { AuthenticationService } from "src/app/services/authentication.service";
+import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 
 import { FundSourceAllocationService } from "src/app/shared/generated/api/fund-source-allocation.service";
 import { FundSourceAllocationNoteService } from "src/app/shared/generated/api/fund-source-allocation-note.service";
@@ -25,6 +28,7 @@ import { FundSourceAllocationNoteGridRow } from "src/app/shared/generated/model/
 import { FundSourceAllocationNoteInternalGridRow } from "src/app/shared/generated/model/fund-source-allocation-note-internal-grid-row";
 import { FundSourceAllocationFileGridRow } from "src/app/shared/generated/model/fund-source-allocation-file-grid-row";
 import { FundSourceAllocationExpenditureGridRow } from "src/app/shared/generated/model/fund-source-allocation-expenditure-grid-row";
+import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { FundSourceAllocationExpenditureSummary } from "src/app/shared/generated/model/fund-source-allocation-expenditure-summary";
 
 export interface BudgetVsActualsRow {
@@ -37,11 +41,13 @@ export interface BudgetVsActualsRow {
 @Component({
     selector: "fund-source-allocation-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, PersonLinkComponent, WADNRGridComponent, PieChartComponent, FieldDefinitionComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, PersonLinkComponent, WADNRGridComponent, PieChartComponent, FieldDefinitionComponent, IconComponent],
     templateUrl: "./fund-source-allocation-detail.component.html",
     styleUrls: ["./fund-source-allocation-detail.component.scss"],
 })
 export class FundSourceAllocationDetailComponent {
+    private destroyRef = inject(DestroyRef);
+
     @Input() set fundSourceAllocationID(value: string | number) {
         this._fundSourceAllocationID$.next(Number(value));
     }
@@ -63,6 +69,9 @@ export class FundSourceAllocationDetailComponent {
     public allocationCurrentBalance$: Observable<number | null>;
     public budgetVsActuals$: Observable<BudgetVsActualsRow[]>;
 
+    public isUserLoggedIn$: Observable<boolean>;
+    public canManageFundSources$: Observable<boolean>;
+
     public currentAllocationID: number;
 
     public budgetLineItemColumnDefs: ColDef<FundSourceAllocationBudgetLineItemGridRow>[];
@@ -75,17 +84,26 @@ export class FundSourceAllocationDetailComponent {
         private noteService: FundSourceAllocationNoteService,
         private noteInternalService: FundSourceAllocationNoteInternalService,
         private dialogService: DialogService,
-        private utilityFunctions: UtilityFunctionsService
+        private utilityFunctions: UtilityFunctionsService,
+        private authService: AuthenticationService,
+        private confirmService: ConfirmService,
     ) {}
 
     ngOnInit(): void {
+        this.isUserLoggedIn$ = this.authService.currentUserSetObservable.pipe(
+            map((user) => user != null),
+        );
+        this.canManageFundSources$ = this.authService.currentUserSetObservable.pipe(
+            map((user) => this.authService.canManageFundSources(user)),
+        );
+
         this.fundSourceAllocationID$ = this._fundSourceAllocationID$.pipe(
             filter((id): id is number => id != null && !Number.isNaN(id)),
             distinctUntilChanged(),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.fundSourceAllocationID$.subscribe((id) => (this.currentAllocationID = id));
+        this.fundSourceAllocationID$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((id) => (this.currentAllocationID = id));
 
         const refresh$ = this.refreshData$.pipe(startWith(undefined));
 
@@ -109,8 +127,11 @@ export class FundSourceAllocationDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.changeLogs$ = combineLatest([this.fundSourceAllocationID$, refresh$]).pipe(
-            switchMap(([id]) => this.fundSourceAllocationService.listChangeLogsFundSourceAllocation(id)),
+        this.changeLogs$ = combineLatest([this.fundSourceAllocationID$, refresh$, this.canManageFundSources$]).pipe(
+            switchMap(([id, , canManage]) => canManage
+                ? this.fundSourceAllocationService.listChangeLogsFundSourceAllocation(id)
+                : of([] as FundSourceAllocationChangeLogGridRow[])
+            ),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -119,8 +140,11 @@ export class FundSourceAllocationDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.internalNotes$ = combineLatest([this.fundSourceAllocationID$, refresh$]).pipe(
-            switchMap(([id]) => this.fundSourceAllocationService.listNotesInternalFundSourceAllocation(id)),
+        this.internalNotes$ = combineLatest([this.fundSourceAllocationID$, refresh$, this.canManageFundSources$]).pipe(
+            switchMap(([id, , canManage]) => canManage
+                ? this.fundSourceAllocationService.listNotesInternalFundSourceAllocation(id)
+                : of([] as FundSourceAllocationNoteInternalGridRow[])
+            ),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -169,9 +193,18 @@ export class FundSourceAllocationDetailComponent {
 
         this.budgetLineItemColumnDefs = [
             this.utilityFunctions.createBasicColumnDef("Cost Type", "CostTypeName"),
-            this.utilityFunctions.createCurrencyColumnDef("Amount", "FundSourceAllocationBudgetLineItemAmount", { MaxDecimalPlacesToDisplay: 2, Editable: true }),
-            this.utilityFunctions.createBasicColumnDef("Note", "FundSourceAllocationBudgetLineItemNote", { Editable: true }),
+            this.utilityFunctions.createCurrencyColumnDef("Amount", "FundSourceAllocationBudgetLineItemAmount", { MaxDecimalPlacesToDisplay: 2 }),
+            this.utilityFunctions.createBasicColumnDef("Note", "FundSourceAllocationBudgetLineItemNote"),
         ];
+        this.canManageFundSources$.pipe(take(1)).subscribe((canManage) => {
+            if (canManage) {
+                this.budgetLineItemColumnDefs = [
+                    this.utilityFunctions.createBasicColumnDef("Cost Type", "CostTypeName"),
+                    this.utilityFunctions.createCurrencyColumnDef("Amount", "FundSourceAllocationBudgetLineItemAmount", { MaxDecimalPlacesToDisplay: 2, Editable: true }),
+                    this.utilityFunctions.createBasicColumnDef("Note", "FundSourceAllocationBudgetLineItemNote", { Editable: true }),
+                ];
+            }
+        });
 
         this.projectColumnDefs = [
             this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", { InRouterLink: "/projects/" }),
@@ -210,21 +243,6 @@ export class FundSourceAllocationDetailComponent {
         });
     }
 
-    openEditProgramIndexProjectCodesModal(allocation: FundSourceAllocationDetail): void {
-        import("./edit-program-index-project-codes-modal.component").then(({ EditProgramIndexProjectCodesModalComponent }) => {
-            const dialogRef = this.dialogService.open(EditProgramIndexProjectCodesModalComponent, {
-                data: {
-                    fundSourceAllocationID: allocation.FundSourceAllocationID,
-                    existingPairs: allocation.ProgramIndexProjectCodes ?? [],
-                },
-                size: "md",
-            });
-            dialogRef.afterClosed$.subscribe((result) => {
-                if (result) this.refreshData$.next();
-            });
-        });
-    }
-
     openNoteModal(fundSourceAllocationID: number, isInternal: boolean, mode: "create" | "edit" = "create", noteID?: number, existingNote?: string): void {
         import("./fund-source-allocation-note-modal.component").then(({ FundSourceAllocationNoteModalComponent }) => {
             const dialogRef = this.dialogService.open(FundSourceAllocationNoteModalComponent, {
@@ -237,8 +255,15 @@ export class FundSourceAllocationDetailComponent {
         });
     }
 
-    deleteNote(noteID: number, isInternal: boolean): void {
-        if (!confirm("Are you sure you want to delete this note?")) return;
+    async deleteNote(noteID: number, isInternal: boolean): Promise<void> {
+        const confirmed = await this.confirmService.confirm({
+            title: "Confirm Delete",
+            message: "Are you sure you want to delete this note?",
+            buttonTextYes: "Delete",
+            buttonClassYes: "btn-danger",
+            buttonTextNo: "Cancel",
+        });
+        if (!confirmed) return;
         if (isInternal) {
             this.noteInternalService.deleteFundSourceAllocationNoteInternal(noteID).subscribe(() => this.refreshData$.next());
         } else {
@@ -258,23 +283,45 @@ export class FundSourceAllocationDetailComponent {
         });
     }
 
-    deleteFile(fundSourceAllocationID: number, fileResourceID: number): void {
-        if (!confirm("Are you sure you want to delete this file?")) return;
-        this.fundSourceAllocationService.deleteFileFundSourceAllocation(fundSourceAllocationID, fileResourceID).subscribe(() => this.refreshData$.next());
+    openEditFileModal(fundSourceAllocationID: number, file: FundSourceAllocationFileGridRow): void {
+        import("./fund-source-allocation-file-edit-modal.component").then(({ FundSourceAllocationFileEditModalComponent }) => {
+            const dialogRef = this.dialogService.open(FundSourceAllocationFileEditModalComponent, {
+                data: { fundSourceAllocationID, file },
+                size: "md",
+            });
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (result) this.refreshData$.next();
+            });
+        });
+    }
+
+    async deleteFile(fundSourceAllocationID: number, fundSourceAllocationFileResourceID: number): Promise<void> {
+        const confirmed = await this.confirmService.confirm({
+            title: "Confirm Delete",
+            message: "Are you sure you want to delete this file?",
+            buttonTextYes: "Delete",
+            buttonClassYes: "btn-danger",
+            buttonTextNo: "Cancel",
+        });
+        if (!confirmed) return;
+        this.fundSourceAllocationService.deleteFileFundSourceAllocation(fundSourceAllocationID, fundSourceAllocationFileResourceID).subscribe(() => this.refreshData$.next());
     }
 
     onBudgetLineItemChanged(event: CellValueChangedEvent): void {
-        const allItems: any[] = [];
-        event.api.forEachNode((node) =>
-            allItems.push({
-                CostTypeID: node.data.CostTypeID,
-                Amount: node.data.FundSourceAllocationBudgetLineItemAmount,
-                Note: node.data.FundSourceAllocationBudgetLineItemNote,
-            })
-        );
-        this.fundSourceAllocationService
-            .saveBudgetLineItemsFundSourceAllocation(this.currentAllocationID, { Items: allItems })
-            .subscribe(() => this.refreshData$.next());
+        this.canManageFundSources$.pipe(take(1)).subscribe((canManage) => {
+            if (!canManage) return;
+            const allItems: any[] = [];
+            event.api.forEachNode((node) =>
+                allItems.push({
+                    CostTypeID: node.data.CostTypeID,
+                    Amount: node.data.FundSourceAllocationBudgetLineItemAmount,
+                    Note: node.data.FundSourceAllocationBudgetLineItemNote,
+                })
+            );
+            this.fundSourceAllocationService
+                .saveBudgetLineItemsFundSourceAllocation(this.currentAllocationID, { Items: allItems })
+                .subscribe(() => this.refreshData$.next());
+        });
     }
 
     getChartData(summary: FundSourceAllocationExpenditureSummary[]): Array<{ label: string; value: number }> {

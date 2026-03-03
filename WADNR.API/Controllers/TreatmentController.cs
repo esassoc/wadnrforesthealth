@@ -31,7 +31,7 @@ public class TreatmentController(
     }
 
     [HttpPost]
-    [ProjectEditFeature]
+    [TreatmentManageFeature]
     public async Task<ActionResult<TreatmentDetail>> Create([FromBody] TreatmentUpsertRequest dto)
     {
         var treatment = await Treatments.CreateAsync(DbContext, dto);
@@ -39,7 +39,7 @@ public class TreatmentController(
     }
 
     [HttpPut("{treatmentID}")]
-    [ProjectEditFeature]
+    [TreatmentManageFeature]
     public async Task<ActionResult<TreatmentDetail>> Update([FromRoute] int treatmentID, [FromBody] TreatmentUpsertRequest dto)
     {
         var treatment = await Treatments.UpdateAsync(DbContext, treatmentID, dto);
@@ -51,7 +51,7 @@ public class TreatmentController(
     }
 
     [HttpDelete("{treatmentID}")]
-    [ProjectEditFeature]
+    [TreatmentManageFeature]
     public async Task<ActionResult> Delete([FromRoute] int treatmentID)
     {
         var deleted = await Treatments.DeleteAsync(DbContext, treatmentID);

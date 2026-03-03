@@ -16,6 +16,7 @@ export class FundSourceFileResourceGridRow {
     FileResourceGUID?: string;
     DisplayName?: string | null;
     Description?: string | null;
+    OriginalBaseFilename?: string | null;
     FileResourceMimeTypeName?: string | null;
     CreateDate?: string;
     constructor(obj?: any) {
@@ -29,6 +30,7 @@ export interface FundSourceFileResourceGridRowForm {
     FileResourceGUID?: FormControl<string>;
     DisplayName?: FormControl<string>;
     Description?: FormControl<string>;
+    OriginalBaseFilename?: FormControl<string>;
     FileResourceMimeTypeName?: FormControl<string>;
     CreateDate?: FormControl<string>;
 }
@@ -75,6 +77,16 @@ export class FundSourceFileResourceGridRowFormControls {
         }
     );
     public static Description = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static OriginalBaseFilename = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

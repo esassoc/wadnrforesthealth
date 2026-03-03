@@ -2,7 +2,7 @@
 <div class="modal-header">
     <h3>{{ modalTitle }}</h3>
 </div>
-<div class="modal-body">
+<div class="modal-body" [loadingSpinner]="{ isLoading, loadingHeight: 300 }">
     <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
     <form [formGroup]="form">
@@ -20,15 +20,22 @@
             placeholder="Enter short name">
         </form-field>
 
-        <form-field
-            [formControl]="form.controls.OrganizationID"
-            fieldLabel="Parent Organization"
-            [type]="FormFieldType.Select"
-            [formInputOptions]="organizationOptions"
-            formInputOptionLabel="Label"
-            formInputOptionValue="Value"
-            placeholder="Select organization">
-        </form-field>
+        @if (lockedOrganizationName) {
+            <div class="form-field">
+                <label class="field-label">Parent Organization</label>
+                <div>{{ lockedOrganizationName }}</div>
+            </div>
+        } @else {
+            <form-field
+                [formControl]="form.controls.OrganizationID"
+                fieldLabel="Parent Organization"
+                [type]="FormFieldType.Select"
+                [formInputOptions]="organizationOptions"
+                formInputOptionLabel="Label"
+                formInputOptionValue="Value"
+                placeholder="Select organization">
+            </form-field>
+        }
 
         <form-field
             [formControl]="form.controls.ProgramPrimaryContactPersonID"
@@ -58,14 +65,41 @@
             [type]="FormFieldType.Textarea"
             placeholder="Enter program notes">
         </form-field>
+
+        @if (existingProgramFileName && !programFileControl.value) {
+            <div class="existing-file">
+                <label class="field-label">Current Program File</label>
+                <div><a [href]="getFileUrl(existingProgramFileUrl)" target="_blank">{{ existingProgramFileName }}</a></div>
+            </div>
+        }
+
+        <form-field
+            [formControl]="programFileControl"
+            fieldLabel="Program File Upload"
+            [type]="FormFieldType.File">
+        </form-field>
+
+        @if (existingGeospatialFileName && !geospatialFileControl.value) {
+            <div class="existing-file">
+                <label class="field-label">Current Example Geospatial Data File</label>
+                <div><a [href]="getFileUrl(existingGeospatialFileUrl)" target="_blank">{{ existingGeospatialFileName }}</a></div>
+            </div>
+        }
+
+        <form-field
+            [formControl]="geospatialFileControl"
+            fieldLabel="Program Example Geospatial Data File Upload"
+            [type]="FormFieldType.File">
+        </form-field>
     </form>
 </div>
 <div class="modal-footer">
     <button
         class="btn btn-primary"
         (click)="save()"
-        [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Saving...' : 'Save' }}
+        [disabled]="isLoading || isSubmitting"
+        [buttonLoading]="isSubmitting">
+        Save
     </button>
     <button
         class="btn btn-secondary"

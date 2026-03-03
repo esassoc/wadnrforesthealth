@@ -8,7 +8,14 @@
 <div class="grid-12">
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header"><span class="card-title">Details</span></div>
+            <div class="card-header">
+                <span class="card-title">Details</span>
+                @if (detailsVm$ | async; as vm) {
+                    @if (canEditInteractionEvents$ | async) {
+                        <button class="btn btn-sm btn-primary" (click)="openEditModal(vm)">Edit</button>
+                    }
+                }
+            </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: detailsIsLoading$ | async, loadingHeight: 220 }">
                 @if (detailsVm$ | async; as vm) {
                 <div class="grid-12 mb-2">
@@ -54,12 +61,25 @@
 
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header"><span class="card-title">Files</span></div>
+            <div class="card-header">
+                <span class="card-title">Files</span>
+                @if (canEditInteractionEvents$ | async) {
+                    <button class="btn btn-sm btn-primary" (click)="openFileModal(interactionEvent.InteractionEventID)">Add File(s)</button>
+                }
+            </div>
             <div class="card-body file-resources" [loadingSpinner]="{ isLoading: fileResourcesIsLoading$ | async, loadingHeight: 140 }">
                 @if (fileResources$ | async; as fileResources) { @if (fileResources.length) { @for (file of fileResources; track file.FileResourceID) {
                 <div class="grid-12 file-resources__display">
                     <div class="g-col-12">
                         <a [href]="documentUrl(file.FileResourceGUID)" target="_blank" rel="noopener noreferrer"> {{ file.DisplayName }} <icon [icon]="'Download'"></icon> </a>
+                        @if (canEditInteractionEvents$ | async) {
+                            <a href="#" class="ml-2" (click)="openEditFileModal(interactionEvent.InteractionEventID, file); $event.preventDefault()" title="Edit file">
+                                <icon [icon]="'Edit'"></icon>
+                            </a>
+                            <a href="#" class="text-danger ml-1" (click)="deleteFile(interactionEvent.InteractionEventID, file.InteractionEventFileResourceID!); $event.preventDefault()" title="Delete file">
+                                <icon [icon]="'Delete'"></icon>
+                            </a>
+                        }
                     </div>
                     <div class="g-col-2"><strong>Uploaded On</strong></div>
                     <div class="g-col-10">
@@ -71,7 +91,7 @@
                     </div>
                     <div class="g-col-2"><strong>Description</strong></div>
                     <div class="g-col-10">
-                        {{ file.Description }}
+                        {{ file.Description || "" }}
                     </div>
                 </div>
                 } } @else { <em>No files associated with this Interaction/Event.</em> } }
@@ -81,7 +101,12 @@
 
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header"><span class="card-title">Map</span></div>
+            <div class="card-header">
+                <span class="card-title">Map</span>
+                @if (canEditInteractionEvents$ | async) {
+                    <button class="btn btn-sm btn-primary" (click)="openLocationModal(interactionEvent)">Edit</button>
+                }
+            </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: locationIsLoading$ | async, loadingHeight: 400 }">
                 @if (!interactionEvent.HasSimpleLocation) {
                 <em>No location associated with this Interaction/Event.</em>

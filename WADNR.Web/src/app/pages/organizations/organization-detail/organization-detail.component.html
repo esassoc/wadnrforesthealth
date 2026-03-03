@@ -29,12 +29,12 @@
                         <div class="g-col-6">{{ organization.OrganizationShortName || "—" }}</div>
 
                         <div class="g-col-6 field-label">
-                            <field-definition fieldDefinition="OrganizationType"></field-definition>
+                            <field-definition fieldDefinition="OrganizationType" labelOverride="Contributing Organization Type"></field-definition>
                         </div>
                         <div class="g-col-6">{{ organization.OrganizationTypeName || "—" }}</div>
 
                         <div class="g-col-6 field-label">
-                            <field-definition fieldDefinition="OrganizationPrimaryContact"></field-definition>
+                            <field-definition fieldDefinition="OrganizationPrimaryContact" labelOverride="Contributing Organization Primary Contact"></field-definition>
                         </div>
                         <div class="g-col-6">
                             @if (organization.PrimaryContactPersonID) {
@@ -76,7 +76,7 @@
         <div class="g-col-6">
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">Fund Source Allocations</span>
+                    <span class="card-title"><field-definition fieldDefinition="FundSourceAllocation" labelOverride="WA DNR Fund Source Allocations"></field-definition></span>
                 </div>
                 <div class="card-body">
                     @if (organization.FundSourceAllocations && organization.FundSourceAllocations.length > 0) {
@@ -98,8 +98,9 @@
         @if (programs$ | async; as programs) {
             <div class="g-col-12">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header flex-between">
                         <span class="card-title">Programs</span>
+                        <button class="btn btn-primary btn-sm" (click)="openCreateProgramModal(organization)">Create Program</button>
                     </div>
                     <div class="card-body">
                         @if (programs.length > 0) {
@@ -220,11 +221,6 @@
                             {{ organization.NumberOfLeadImplementedProjects === 1 ? "Project" : "Projects" }}
                         </li>
                         <li>
-                            the <strong>Project Steward</strong> for
-                            <strong>{{ organization.NumberOfStewardedProjects }}</strong>
-                            {{ organization.NumberOfStewardedProjects === 1 ? "Project" : "Projects" }}
-                        </li>
-                        <li>
                             a contributor to
                             <strong>{{ organization.NumberOfProjectsContributedTo }}</strong>
                             {{ organization.NumberOfProjectsContributedTo === 1 ? "Project" : "Projects" }}
@@ -232,7 +228,7 @@
                     </ul>
                     @if (projects$ | async; as projects) {
                         @if (projects.length > 0) {
-                            <wadnr-grid [rowData]="projects" [columnDefs]="projectColumnDefs" height="300px" downloadFileName="Organization_Projects"> </wadnr-grid>
+                            <wadnr-grid [rowData]="projects" [columnDefs]="projectColumnDefs" [pinnedTotalsRow]="projectPinnedTotalsRow" height="300px" downloadFileName="Organization_Projects"> </wadnr-grid>
                         } @else {
                             <p class="system-text">No Projects associated with this Contributing Organization.</p>
                         }
@@ -269,7 +265,7 @@
                             <span class="card-title">Pending Projects (Not Visible to the Public)</span>
                         </div>
                         <div class="card-body">
-                            <wadnr-grid [rowData]="pendingProjects" [columnDefs]="projectColumnDefs" height="300px" downloadFileName="Organization_PendingProjects"> </wadnr-grid>
+                            <wadnr-grid [rowData]="pendingProjects" [columnDefs]="projectColumnDefs" [pinnedTotalsRow]="projectPinnedTotalsRow" height="300px" downloadFileName="Organization_PendingProjects"> </wadnr-grid>
                         </div>
                     </div>
                 </div>

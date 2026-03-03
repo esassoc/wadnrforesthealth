@@ -1,18 +1,80 @@
-// Fund Source Detail styles
-.kv-pair {
-    margin-bottom: 0.75rem;
+.basics-field-row {
+    display: flex;
+    padding: 4px 0;
+    border-bottom: 1px solid #eee;
 
-    dt {
-        font-weight: 600;
-        color: var(--gray-700);
-        font-size: 0.875rem;
-        margin-bottom: 0.25rem;
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.basics-field-label {
+    flex: 0 0 200px;
+    font-weight: 600;
+    padding-right: 12px;
+}
+
+.basics-field-value {
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
+}
+
+.file-entry {
+    padding: 6px 0;
+
+    & + .file-entry {
+        border-top: 1px solid #eee;
     }
 
-    dd {
-        margin-left: 0;
-        color: var(--gray-900);
+    &__main {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 4px;
     }
+
+    &__meta {
+        color: #888;
+        font-size: 0.9em;
+    }
+
+    &__actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+    }
+
+    &__description {
+        margin-top: 2px;
+        color: #666;
+        font-size: 0.9em;
+        padding-left: 4px;
+    }
+}
+
+.note-entry {
+    padding: 8px 0;
+
+    & + .note-entry {
+        border-top: 1px solid #eee;
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    &__body {
+        margin-top: 4px;
+    }
+}
+
+h4 {
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 .text-muted {

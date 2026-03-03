@@ -51,7 +51,9 @@
       "Bash(npx:*)",
       "Bash(sort:*)",
       "Bash(echo === $dir ===:*)",
-      "Bash(echo === $page_dir ===:*)"
+      "Bash(echo === $page_dir ===:*)",
+      "Bash(read f:*)",
+      "Bash(echo === $f ===:*)"
     ]
   }
 }

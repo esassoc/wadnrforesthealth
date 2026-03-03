@@ -77,6 +77,32 @@ public class GDALAPIService
         throw new Exception($"GDAL API ogr2ogr request failed: {content}");
     }
 
+    public async Task<Stream> Ogr2OgrGeoJsonToGdb(string geoJson, string layerName, string gdbName = null)
+    {
+        var geoJsonBytes = System.Text.Encoding.UTF8.GetBytes(geoJson);
+        var byteContent = new ByteArrayContent(geoJsonBytes);
+        byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+        var form = new MultipartFormDataContent();
+        form.Add(byteContent, "file", "input.geojson");
+        form.Add(new StringContent(layerName), "layerName");
+        if (!string.IsNullOrWhiteSpace(gdbName))
+        {
+            form.Add(new StringContent(gdbName), "gdbName");
+        }
+
+        _logger.LogInformation("Sending ogr2ogr GeoJSON-to-GDB request to GDAL API");
+
+        var response = await _httpClient.PostAsync("/ogr2ogr/geojson-to-gdb", form);
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadAsStreamAsync();
+        }
+
+        var content = await response.Content.ReadAsStringAsync();
+        throw new Exception($"GDAL API ogr2ogr GeoJSON-to-GDB request failed: {content}");
+    }
+
     public async Task<List<GdbFeatureClassPreview>> OgrInfoShpToFeatureClassInfo(IFormFile formFile)
     {
         using var ms = new MemoryStream();

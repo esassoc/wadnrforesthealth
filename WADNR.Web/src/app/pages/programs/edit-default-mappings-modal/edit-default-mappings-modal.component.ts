@@ -33,32 +33,32 @@ export class EditDefaultMappingsModalComponent extends BaseModal implements OnIn
     public isSubmitting = false;
     public isFlattened = false;
 
-    // FieldDefinitionIDs from legacy code
+    // FieldDefinitionIDs from WADNR database (dbo.FieldDefinition)
     public mappingFields: MappingField[] = [
-        { fieldDefinitionID: 44, label: "Project Identifier Column", control: new FormControl(""), showWhen: "always" },
-        { fieldDefinitionID: 22, label: "Project Name Column", control: new FormControl(""), showWhen: "always" },
-        { fieldDefinitionID: 259, label: "Completion Date Column", control: new FormControl(""), showWhen: "always" },
-        { fieldDefinitionID: 391, label: "Start Date Column", control: new FormControl(""), showWhen: "always" },
-        { fieldDefinitionID: 370, label: "Project Stage Column", control: new FormControl(""), showWhen: "always" },
-        { fieldDefinitionID: 280, label: "Footprint Acres Column", control: new FormControl(""), showWhen: "always" },
-        { fieldDefinitionID: 413, label: "Private Landowner Column", control: new FormControl(""), showWhen: "always" },
-        { fieldDefinitionID: 292, label: "Lead Implementer Column", control: new FormControl(""), showWhen: "always" },
-        { fieldDefinitionID: 414, label: "Primary Contact Column", control: new FormControl(""), showWhen: "always" },
-        { fieldDefinitionID: 305, label: "Treatment Type Column", control: new FormControl(""), showWhen: "notFlattened" },
-        { fieldDefinitionID: 392, label: "Detailed Activity Type Column", control: new FormControl(""), showWhen: "notFlattened" },
-        { fieldDefinitionID: 393, label: "Treated Acres Column", control: new FormControl(""), showWhen: "notFlattened" },
-        { fieldDefinitionID: 394, label: "Pruning Acres Column", control: new FormControl(""), showWhen: "flattened" },
-        { fieldDefinitionID: 395, label: "Thinning Acres Column", control: new FormControl(""), showWhen: "flattened" },
-        { fieldDefinitionID: 396, label: "Chipping Acres Column", control: new FormControl(""), showWhen: "flattened" },
-        { fieldDefinitionID: 397, label: "Mastication Acres Column", control: new FormControl(""), showWhen: "flattened" },
-        { fieldDefinitionID: 398, label: "Grazing Acres Column", control: new FormControl(""), showWhen: "flattened" },
-        { fieldDefinitionID: 399, label: "Lop & Scatter Acres Column", control: new FormControl(""), showWhen: "flattened" },
-        { fieldDefinitionID: 400, label: "Biomass Removal Acres Column", control: new FormControl(""), showWhen: "flattened" },
-        { fieldDefinitionID: 401, label: "Hand Pile Acres Column", control: new FormControl(""), showWhen: "flattened" },
-        { fieldDefinitionID: 402, label: "Hand Pile Burn Acres Column", control: new FormControl(""), showWhen: "flattened" },
-        { fieldDefinitionID: 403, label: "Machine Pile Burn Acres Column", control: new FormControl(""), showWhen: "flattened" },
-        { fieldDefinitionID: 404, label: "Broadcast Burn Acres Column", control: new FormControl(""), showWhen: "flattened" },
-        { fieldDefinitionID: 405, label: "Other Acres Column", control: new FormControl(""), showWhen: "flattened" },
+        { fieldDefinitionID: 465, label: "Project Identifier Column", control: new FormControl(""), showWhen: "always" },
+        { fieldDefinitionID: 30, label: "Project Name Column", control: new FormControl(""), showWhen: "always" },
+        { fieldDefinitionID: 28, label: "Completion Date Column", control: new FormControl(""), showWhen: "always" },
+        { fieldDefinitionID: 466, label: "Start Date Column", control: new FormControl(""), showWhen: "always" },
+        { fieldDefinitionID: 36, label: "Project Stage Column", control: new FormControl(""), showWhen: "always" },
+        { fieldDefinitionID: 470, label: "Footprint Acres Column", control: new FormControl(""), showWhen: "always" },
+        { fieldDefinitionID: 273, label: "Private Landowner Column", control: new FormControl(""), showWhen: "always" },
+        { fieldDefinitionID: 535, label: "Lead Implementer Column", control: new FormControl(""), showWhen: "always" },
+        { fieldDefinitionID: 275, label: "Primary Contact Column", control: new FormControl(""), showWhen: "always" },
+        { fieldDefinitionID: 468, label: "Treatment Type Column", control: new FormControl(""), showWhen: "notFlattened" },
+        { fieldDefinitionID: 469, label: "Detailed Activity Type Column", control: new FormControl(""), showWhen: "notFlattened" },
+        { fieldDefinitionID: 467, label: "Treated Acres Column", control: new FormControl(""), showWhen: "notFlattened" },
+        { fieldDefinitionID: 420, label: "Pruning Acres Column", control: new FormControl(""), showWhen: "flattened" },
+        { fieldDefinitionID: 421, label: "Thinning Acres Column", control: new FormControl(""), showWhen: "flattened" },
+        { fieldDefinitionID: 419, label: "Chipping Acres Column", control: new FormControl(""), showWhen: "flattened" },
+        { fieldDefinitionID: 422, label: "Mastication Acres Column", control: new FormControl(""), showWhen: "flattened" },
+        { fieldDefinitionID: 423, label: "Grazing Acres Column", control: new FormControl(""), showWhen: "flattened" },
+        { fieldDefinitionID: 424, label: "Lop & Scatter Acres Column", control: new FormControl(""), showWhen: "flattened" },
+        { fieldDefinitionID: 425, label: "Biomass Removal Acres Column", control: new FormControl(""), showWhen: "flattened" },
+        { fieldDefinitionID: 426, label: "Hand Pile Acres Column", control: new FormControl(""), showWhen: "flattened" },
+        { fieldDefinitionID: 428, label: "Hand Pile Burn Acres Column", control: new FormControl(""), showWhen: "flattened" },
+        { fieldDefinitionID: 429, label: "Machine Pile Burn Acres Column", control: new FormControl(""), showWhen: "flattened" },
+        { fieldDefinitionID: 427, label: "Broadcast Burn Acres Column", control: new FormControl(""), showWhen: "flattened" },
+        { fieldDefinitionID: 430, label: "Other Acres Column", control: new FormControl(""), showWhen: "flattened" },
     ];
 
     constructor(private programService: ProgramService) {
@@ -81,6 +81,18 @@ export class EditDefaultMappingsModalComponent extends BaseModal implements OnIn
     get visibleFields(): MappingField[] {
         return this.mappingFields.filter((f) => {
             if (f.showWhen === "always") return true;
+            if (f.showWhen === "flattened") return this.isFlattened;
+            if (f.showWhen === "notFlattened") return !this.isFlattened;
+            return false;
+        });
+    }
+
+    get alwaysFields(): MappingField[] {
+        return this.mappingFields.filter((f) => f.showWhen === "always");
+    }
+
+    get conditionalFields(): MappingField[] {
+        return this.mappingFields.filter((f) => {
             if (f.showWhen === "flattened") return this.isFlattened;
             if (f.showWhen === "notFlattened") return !this.isFlattened;
             return false;
