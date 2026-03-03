@@ -53,7 +53,7 @@ services:
     ports:
       - 127.0.0.1:3280:8080
     volumes:
-      - c:/git/sitkatech/wadnrforesthealth/WADNR.GeoServer/data_dir:/opt/geoserver/data_dir
+      - c:/git/esassoc/wadnrforesthealth/WADNR.GeoServer/data_dir:/opt/geoserver/data_dir
       - c:/sitka/WADNRForestHealth/GeoServer:/app/config
 
   sitkacapture:
