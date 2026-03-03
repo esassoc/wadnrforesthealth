@@ -31,7 +31,7 @@ resources:
   - repository: BuildTemplates
     type: github
     name: esassoc/BuildTemplates
-    endpoint: "esassoc"
+    endpoint: "esassoc-WADNR"
    
 stages:
 - stage: BuildDB
