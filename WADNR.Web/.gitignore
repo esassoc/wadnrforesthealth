@@ -54,3 +54,8 @@ src/assets/config.json
 /playwright/.auth/
 /test-results/
 /playwright-report/
+/comparison-reports/
+/e2e-tests/comparison/.legacy-auth.json
+
+# Environment
+.env
