@@ -1,0 +1,46 @@
+<div class="manage-find-your-forester" [loadingSpinner]="{ isLoading: !(roles$ | async), loadingHeight: 400 }">
+    @if (roles$ | async) {
+        <div>
+            <page-header pageTitle="Manage Find Your Forester" [customRichTextTypeID]="customRichTextTypeID"></page-header>
+
+            <wadnr-map [mapHeight]="'500px'" [exclusiveGroups]="['Forester Role']" (onMapLoad)="onMapInit($event)" (onOverlayToggle)="onOverlayToggle($event)"> </wadnr-map>
+            @for (role of activeRoles; track role.ForesterRoleID) {
+                <generic-wms-wfs-layer
+                    [map]="map"
+                    [layerControl]="layerControl"
+                    [wmsLayerName]="'WADNRForestHealth:FindYourForester'"
+                    [wfsFeatureType]="'WADNRForestHealth:FindYourForester'"
+                    [identifierProperty]="'PrimaryKey'"
+                    [cqlFilter]="'ForesterRoleID=' + role.ForesterRoleID"
+                    [overlayLabel]="role.ForesterRoleDisplayName"
+                    [overlayGroup]="'Forester Role'"
+                    [interactive]="false"
+                    [displayOnLoad]="role === activeRoles[0]"
+                    [addToLayerControl]="true"
+                    [fitBoundsOnWmsAddToControl]="false">
+                </generic-wms-wfs-layer>
+            }
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <span class="card-title">Forester Work Units</span>
+                </div>
+                <div class="card-body" [loadingSpinner]="{ isLoading: isLoadingGrid, loadingHeight: 200 }">
+                    <div class="flex-end mb-2">
+                        <button class="btn btn-sm btn-primary" [disabled]="selectedWorkUnits.length === 0" (click)="openBulkAssignModal()">Manage Forester Assignments</button>
+                    </div>
+                    <wadnr-grid
+                        [rowData]="(workUnits$ | async) ?? []"
+                        [columnDefs]="columnDefs"
+                        [defaultRowSelection]="'multiRow'"
+                        [height]="'400px'"
+                        [downloadFileName]="'forester-work-units'"
+                        [getRowId]="getRowId"
+                        (gridReady)="onGridReady($event)"
+                        (selectionChanged)="onSelectionChanged($event)">
+                    </wadnr-grid>
+                </div>
+            </div>
+        </div>
+    }
+</div>

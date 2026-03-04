@@ -71,7 +71,7 @@ export const routes: Routes = [
         title: "DNR Upland Region Detail",
         loadComponent: () => import("./pages/dnr-upland-regions/dnr-upland-region-detail.component").then((m) => m.DNRUplandRegionDetailComponent),
     },
-    { path: "find-your-forester", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    { path: "find-your-forester", title: "Find Your Forester", loadComponent: () => import("./pages/find-your-forester/find-your-forester.component").then((m) => m.FindYourForesterComponent) },
     { path: "focus-areas", title: "Focus Areas", canActivate: [authGuard], loadComponent: () => import("./pages/focus-areas/focus-areas.component").then((m) => m.FocusAreasComponent) },
     {
         path: `focus-areas/:${routeParams.focusAreaID}`,
@@ -320,7 +320,7 @@ export const routes: Routes = [
     { path: "internal-setup-notes", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "style-guide", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "upload-excel-files", title: "Upload Excel Files / ETL", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/loa-upload/loa-upload.component").then((m) => m.LoaUploadComponent) },
-    { path: "manage-find-your-forester", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    { path: "manage-find-your-forester", title: "Manage Find Your Forester", canActivate: [authGuard], loadComponent: () => import("./pages/find-your-forester/manage-find-your-forester/manage-find-your-forester.component").then((m) => m.ManageFindYourForesterComponent) },
     { path: "map-layers", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "jobs", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "json-apis", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },

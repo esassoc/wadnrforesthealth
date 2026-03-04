@@ -37,6 +37,9 @@ export class MapSearchComponent implements OnDestroy {
     /** Button text. */
     @Input() buttonText: string = "Zoom to Address";
 
+    /** When true, skip placing a marker on geocode success (parent handles its own marker). */
+    @Input() suppressMarker: boolean = false;
+
     /** Emits when a location is found. */
     @Output() locationFound = new EventEmitter<{ lat: number; lng: number; rawResponse: any }>();
 
@@ -99,7 +102,11 @@ export class MapSearchComponent implements OnDestroy {
             )
             .subscribe({
                 next: ({ lat, lng, rawResponse }) => {
-                    this.placeMarkerAndFlyTo(lat, lng);
+                    if (!this.suppressMarker) {
+                        this.placeMarkerAndFlyTo(lat, lng);
+                    } else {
+                        this.map.flyTo(L.latLng(lat, lng), Number(this.zoom) || 12);
+                    }
                     this.locationFound.emit({ lat, lng, rawResponse });
                 },
                 error: (e: any) => {

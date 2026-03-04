@@ -15,6 +15,7 @@ api/external-map-layer.service.ts
 api/federal-fund-code.service.ts
 api/field-definition.service.ts
 api/file-resource.service.ts
+api/find-your-forester.service.ts
 api/firma-home-page-image.service.ts
 api/focus-area.service.ts
 api/fund-source-allocation-note-internal.service.ts
@@ -71,6 +72,7 @@ model/agreement-status-lookup-item.ts
 model/agreement-type-lookup-item.ts
 model/agreement-upsert-request.ts
 model/bounding-box.ts
+model/bulk-assign-foresters-request.ts
 model/capture-post-data.ts
 model/classification-detail.ts
 model/classification-grid-row.ts
@@ -112,12 +114,15 @@ model/field-definition-detail.ts
 model/file-resource-interaction-event-detail.ts
 model/file-resource-lookup-item.ts
 model/file-resource-priority-landscape-detail.ts
+model/find-your-forester-question-tree-node.ts
 model/firma-home-page-image-detail.ts
 model/firma-page-detail.ts
 model/firma-page-type-detail.ts
 model/firma-page-upsert-request.ts
 model/focus-area-detail.ts
 model/focus-area-grid-row.ts
+model/forester-role-lookup-item.ts
+model/forester-work-unit-grid-row.ts
 model/fund-source-agreement-grid-row.ts
 model/fund-source-allocation-agreement-grid-row.ts
 model/fund-source-allocation-budget-line-item-grid-row.ts

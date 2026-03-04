@@ -2712,6 +2712,207 @@
         "x-anonymous": true
       }
     },
+    "/find-your-forester/questions": {
+      "get": {
+        "tags": [
+          "FindYourForester"
+        ],
+        "operationId": "ListQuestions_FindYourForester",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FindYourForesterQuestionTreeNode"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FindYourForesterQuestionTreeNode"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FindYourForesterQuestionTreeNode"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/find-your-forester/roles": {
+      "get": {
+        "tags": [
+          "FindYourForester"
+        ],
+        "operationId": "ListActiveRoles_FindYourForester",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ForesterRoleLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ForesterRoleLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ForesterRoleLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/find-your-forester/work-units/{foresterRoleID}": {
+      "get": {
+        "tags": [
+          "FindYourForester"
+        ],
+        "operationId": "ListWorkUnitsForRole_FindYourForester",
+        "parameters": [
+          {
+            "name": "foresterRoleID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ForesterWorkUnitGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ForesterWorkUnitGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ForesterWorkUnitGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/find-your-forester/assignable-people": {
+      "get": {
+        "tags": [
+          "FindYourForester"
+        ],
+        "operationId": "ListAssignablePeople_FindYourForester",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/find-your-forester/work-units/bulk-assign": {
+      "post": {
+        "tags": [
+          "FindYourForester"
+        ],
+        "operationId": "BulkAssignForesters_FindYourForester",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkAssignForestersRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkAssignForestersRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkAssignForestersRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/firma-home-page-images": {
       "get": {
         "tags": [
@@ -21270,6 +21471,27 @@
         },
         "additionalProperties": false
       },
+      "BulkAssignForestersRequest": {
+        "required": [
+          "ForesterWorkUnitIDList"
+        ],
+        "type": "object",
+        "properties": {
+          "ForesterWorkUnitIDList": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "SelectedForesterPersonID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CapturePostData": {
         "type": "object",
         "properties": {
@@ -22407,6 +22629,44 @@
         },
         "additionalProperties": false
       },
+      "FindYourForesterQuestionTreeNode": {
+        "type": "object",
+        "properties": {
+          "FindYourForesterQuestionID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "QuestionText": {
+            "type": "string",
+            "nullable": true
+          },
+          "ForesterRoleID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ForesterRoleDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ForesterRoleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ResultsBonusContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "Children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FindYourForesterQuestionTreeNode"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FirmaHomePageImageDetail": {
         "type": "object",
         "properties": {
@@ -22558,6 +22818,63 @@
           },
           "HasLocation": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ForesterRoleLookupItem": {
+        "type": "object",
+        "properties": {
+          "ForesterRoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ForesterRoleDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ForesterRoleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "SortOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ForesterWorkUnitGridRow": {
+        "type": "object",
+        "properties": {
+          "ForesterWorkUnitID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ForesterRoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ForesterRoleDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ForesterWorkUnitName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RegionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "PersonID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "AssignedPersonName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -33066,6 +33383,9 @@
     },
     {
       "name": "FileResource"
+    },
+    {
+      "name": "FindYourForester"
     },
     {
       "name": "FirmaHomePageImage"

@@ -22,10 +22,11 @@ export class GenericWmsWfsLayerComponent extends MapLayerBase implements OnChang
     @Input() interactive: boolean = false;
     @Input() displayOnLoad: boolean = false;
     @Input() wmsLayerName: string;
-    @Input() wmsStyle: string;
+    @Input() wmsStyle: string = '';
     @Input() wfsFeatureType: string;
     @Input() identifierProperty: string;
     @Input() overlayLabel: string;
+    @Input() overlayGroup: string;
     /**
      * When true, the component will auto-zoom (fitBounds) to the WMS layer's bounding box
      * when the overlay is first added to the layer control.
@@ -78,7 +79,7 @@ export class GenericWmsWfsLayerComponent extends MapLayerBase implements OnChang
                     }
                 });
             }
-            this.layerControl.addOverlay(this.layer, this.overlayLabel);
+            (this.layerControl as any).addOverlay(this.layer, this.overlayLabel, this.overlayGroup);
             this.overlayAddedToControl = true;
         }
     }

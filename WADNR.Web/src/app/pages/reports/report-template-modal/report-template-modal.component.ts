@@ -4,10 +4,15 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angula
 import { DialogRef } from "@ngneat/dialog";
 
 import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
+
+import { AlertComponent } from "src/app/shared/components/alert/alert.component";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
+import { Alert } from "src/app/shared/models/alert";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
+import { environment } from "src/environments/environment";
 
 import { ReportTemplateService } from "src/app/shared/generated/api/report-template.service";
 import { ReportTemplateDetail } from "src/app/shared/generated/model/report-template-detail";
@@ -22,7 +27,7 @@ export interface ReportTemplateModalData {
 @Component({
     selector: "report-template-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent],
+    imports: [ReactiveFormsModule, FormFieldComponent, AlertComponent, ButtonLoadingDirective, ModalAlertsComponent],
     templateUrl: "./report-template-modal.component.html",
 })
 export class ReportTemplateModalComponent extends BaseModal implements OnInit {
@@ -42,6 +47,8 @@ export class ReportTemplateModalComponent extends BaseModal implements OnInit {
     public fileControl = new FormControl<File | null>(null);
 
     public modelOptions: FormInputOption[] = [];
+    public existingFileAlert = new Alert("", AlertContext.Info, false);
+    public existingFileUrl: string = "";
 
     constructor(
         private reportTemplateService: ReportTemplateService,
@@ -67,6 +74,10 @@ export class ReportTemplateModalComponent extends BaseModal implements OnInit {
                 description: this.reportTemplate.Description,
                 reportTemplateModelID: this.reportTemplate.ReportTemplateModelID,
             });
+            this.form.controls.displayName.disable();
+            if (this.reportTemplate.FileResourceGuid) {
+                this.existingFileUrl = `${environment.mainAppApiUrl}/file-resources/${this.reportTemplate.FileResourceGuid}`;
+            }
         }
     }
 
@@ -88,7 +99,7 @@ export class ReportTemplateModalComponent extends BaseModal implements OnInit {
         this.isSubmitting = true;
         this.localAlerts = [];
 
-        const { displayName, description, reportTemplateModelID } = this.form.value;
+        const { displayName, description, reportTemplateModelID } = this.form.getRawValue();
         const file = this.fileControl.value;
 
         const request$ =

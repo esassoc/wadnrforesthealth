@@ -42,6 +42,8 @@ export class WADNRMapComponent implements OnInit, AfterViewInit, OnChanges, OnDe
     @Input() disableMapInteraction: boolean = false; // disables all interaction when true
     /** When true, the layers control starts closed (collapsed). Default false preserves current behavior (open). */
     @Input() collapseLayerControlOnLoad: boolean = false;
+    /** Overlay group names that should use radio buttons (mutually exclusive selection). */
+    @Input() exclusiveGroups: string[] = [];
     @Output() onMapLoad: EventEmitter<WADNRMapInitEvent> = new EventEmitter();
     @Output() onOverlayToggle: EventEmitter<L.LayersControlEvent> = new EventEmitter();
     @Output() onLegendControlReady: EventEmitter<Control> = new EventEmitter();
@@ -119,6 +121,7 @@ export class WADNRMapComponent implements OnInit, AfterViewInit, OnChanges, OnDe
         if (!this.disableMapInteraction) {
             this.layerControl = new GroupedLayers(this.tileLayers, LeafletHelperService.GetDefaultOverlayTileLayers(), {
                 collapsed: this.collapseLayerControlOnLoad,
+                exclusiveGroups: this.exclusiveGroups,
             }).addTo(this.map);
         }
 

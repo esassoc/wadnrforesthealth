@@ -1,0 +1,148 @@
+<div class="find-your-forester" [loadingSpinner]="{ isLoading, loadingHeight: 400 }">
+    @if (data$ | async; as data) {
+        <div>
+            <page-header pageTitle="Find Your Forester" [customRichTextTypeID]="richTextTypeID"></page-header>
+
+            <div class="grid-12 mt-3">
+                <div class="g-col-8">
+                    <map-search
+                        #mapSearch
+                        [map]="map"
+                        [legendText]="'Find Your Forester by Address or Zip Code'"
+                        [labelText]="'Mailing Address or Zip Code'"
+                        [placeholder]="'123 Main St. SE, Olympia, WA or 98501'"
+                        [buttonText]="'Zoom to Address'"
+                        [suppressMarker]="true"
+                        (locationFound)="onLocationFound($event)"
+                        (geocodeError)="onGeocodeError($event)">
+                    </map-search>
+                </div>
+            </div>
+            <div class="grid-12 map-row">
+                <div class="g-col-8" style="position: relative">
+                    @if (mapSearch.isSearching$ | async) {
+                        <div class="map-loading-overlay">
+                            <div class="circle"><div class="wave"></div></div>
+                        </div>
+                    }
+                    <wadnr-map [mapHeight]="'425px'" (onMapLoad)="onMapInit($event)"> </wadnr-map>
+                    @for (role of data.roles; track role.ForesterRoleID) {
+                        <generic-wms-wfs-layer
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [wmsLayerName]="'WADNRForestHealth:FindYourForester'"
+                            [wfsFeatureType]="'WADNRForestHealth:FindYourForester'"
+                            [identifierProperty]="'PrimaryKey'"
+                            [cqlFilter]="'ForesterRoleID=' + role.ForesterRoleID"
+                            [overlayLabel]="role.ForesterRoleDisplayName"
+                            [interactive]="false"
+                            [displayOnLoad]="false"
+                            [addToLayerControl]="true"
+                            [fitBoundsOnWmsAddToControl]="false">
+                        </generic-wms-wfs-layer>
+                    }
+                </div>
+                <div class="g-col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Forester Contact Information</span>
+                        </div>
+                        <div class="card-body forester-sidebar" style="position: relative">
+                            @if (isQuerying()) {
+                                <div class="forester-sidebar-loading-overlay">
+                                    <div class="circle"><div class="wave"></div></div>
+                                </div>
+                            }
+                            @if (!hasQueried()) {
+                                <p class="text-muted">Click on the map or enter an address above to find your local foresters.</p>
+                            } @else if (totalContacts() === 0) {
+                                <p class="text-muted">No foresters found for this location.</p>
+                            } @else {
+                                @for (contact of visibleContacts(); track contact.foresterRoleID) {
+                                    <div class="forester-contact">
+                                        @if (roleNameByID.get(contact.foresterRoleID); as roleName) {
+                                            <field-definition [fieldDefinition]="roleName"></field-definition>
+                                        } @else {
+                                            <strong>{{ contact.foresterRoleDisplayName }}</strong>
+                                        }
+                                        @if (contact.firstName || contact.lastName) {
+                                            <div>{{ contact.firstName }} {{ contact.lastName }}</div>
+                                            @if (contact.email) {
+                                                <div>
+                                                    <a [href]="'mailto:' + contact.email">{{ contact.email }}</a>
+                                                </div>
+                                            }
+                                            @if (contact.phone) {
+                                                <div>{{ contact.phone }}</div>
+                                            }
+                                        } @else {
+                                            <div class="text-muted"><em>Unassigned</em></div>
+                                        }
+                                    </div>
+                                }
+                                @if (totalContacts() > 6) {
+                                    <button class="btn btn-sm btn-link p-0 mt-2" (click)="toggleShowAll()">
+                                        {{ showAllContacts() ? "see less" : "see more (" + (totalContacts() - 6) + " more)" }}
+                                    </button>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (data.questions.length > 0) {
+                <h2 class="mt-3" style="margin-bottom: 0.75rem">I have a question about...</h2>
+                @for (question of data.questions; track question.FindYourForesterQuestionID) {
+                    <ng-container *ngTemplateOutlet="questionTpl; context: { $implicit: question }"></ng-container>
+                }
+            }
+        </div>
+    }
+
+    <ng-template #questionTpl let-question>
+        <details class="question-node">
+            <summary class="question-summary">{{ question.QuestionText }}</summary>
+            <div class="question-content">
+                @if (hasChildren(question)) {
+                    @for (child of question.Children; track child.FindYourForesterQuestionID) {
+                        <ng-container *ngTemplateOutlet="questionTpl; context: { $implicit: child }"></ng-container>
+                    }
+                } @else {
+                    @if (question.ForesterRoleID) {
+                        @let contact = getContactForRole(question.ForesterRoleID);
+                        <div class="forester-result">
+                            @if (question.ForesterRoleName) {
+                                <field-definition [fieldDefinition]="question.ForesterRoleName"></field-definition>
+                            } @else {
+                                <strong>{{ question.ForesterRoleDisplayName }}</strong>
+                            }
+                            @if (contact) {
+                                @if (contact.firstName || contact.lastName) {
+                                    <div>{{ contact.firstName }} {{ contact.lastName }}</div>
+                                    @if (contact.email) {
+                                        <div>
+                                            <a [href]="'mailto:' + contact.email">{{ contact.email }}</a>
+                                        </div>
+                                    }
+                                    @if (contact.phone) {
+                                        <div>{{ contact.phone }}</div>
+                                    }
+                                } @else {
+                                    <div class="text-muted"><em>Unassigned</em></div>
+                                }
+                            } @else if (hasQueried()) {
+                                <div class="text-muted"><em>No forester found for this location. Please enter your address or click the map above.</em></div>
+                            } @else {
+                                <div class="text-muted"><em>Please enter your address or click the map above to find your forester.</em></div>
+                            }
+                        </div>
+                    }
+                    @if (question.ResultsBonusContent) {
+                        <div class="bonus-content" [innerHTML]="question.ResultsBonusContent"></div>
+                    }
+                }
+            </div>
+        </details>
+    </ng-template>
+</div>

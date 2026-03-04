@@ -1,0 +1,72 @@
+.find-your-forester {
+    .page-title {
+        margin-bottom: 1rem;
+    }
+
+    .map-row {
+        margin-top: 1rem;
+    }
+
+    .forester-sidebar {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .map-loading-overlay {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(255, 255, 255, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .forester-sidebar-loading-overlay {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(255, 255, 255, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+    }
+
+    .forester-contact {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #eee;
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    .question-node {
+        margin-bottom: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+
+        .question-summary {
+            cursor: pointer;
+            padding: 0.625rem 0.75rem;
+            font-weight: 500;
+            background-color: #f8f8f8;
+
+            &:hover {
+                background-color: #f0f0f0;
+            }
+        }
+
+        .question-content {
+            padding: 0.5rem 0.75rem 0.5rem 1.5rem;
+        }
+    }
+
+    .forester-result {
+        padding: 0.5rem 0;
+    }
+
+    .bonus-content {
+        padding: 0.5rem 0;
+    }
+}
