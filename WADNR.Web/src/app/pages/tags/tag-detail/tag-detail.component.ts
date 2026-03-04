@@ -2,6 +2,7 @@ import { AsyncPipe } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, shareReplay, switchMap } from "rxjs";
+import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { DialogService } from "@ngneat/dialog";
 import { ColDef } from "ag-grid-community";
 
@@ -11,6 +12,7 @@ import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-g
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 import { TagService } from "src/app/shared/generated/api/tag.service";
 import { TagDetail } from "src/app/shared/generated/model/tag-detail";
@@ -20,7 +22,7 @@ import { TagModalComponent, TagModalData } from "../tag-modal.component";
 @Component({
     selector: "tag-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent, LoadingDirective],
     templateUrl: "./tag-detail.component.html",
     styleUrls: ["./tag-detail.component.scss"],
 })
@@ -28,6 +30,7 @@ export class TagDetailComponent {
     public tagID$: Observable<number>;
     public tag$: Observable<TagDetail>;
     public projects$: Observable<ProjectTagDetailGridRow[]>;
+    public projectsIsLoading$: Observable<boolean>;
     public isAdmin = false;
 
     public columnDefs: ColDef<ProjectTagDetailGridRow>[] = [];
@@ -69,6 +72,8 @@ export class TagDetailComponent {
             switchMap((tagID) => this.tagService.listProjectsForTagIDTag(tagID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        this.projectsIsLoading$ = toLoadingState(this.projects$);
 
         this.columnDefs = [
             this.utilityFunctions.createLinkColumnDef("FHT Project Number", "FhtProjectNumber", "ProjectID", {

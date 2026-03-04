@@ -20,6 +20,7 @@ import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { WorkflowProgressService } from "src/app/shared/services/workflow-progress.service";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 export interface WorkflowStep {
     key: string;
@@ -49,6 +50,7 @@ export interface WorkflowStepGroup {
         WorkflowNavGroupComponent,
         IconComponent,
         DropdownToggleDirective,
+        LoadingDirective,
     ],
     templateUrl: "./project-create-workflow-outlet.component.html",
     styleUrls: ["./project-create-workflow-outlet.component.scss"],

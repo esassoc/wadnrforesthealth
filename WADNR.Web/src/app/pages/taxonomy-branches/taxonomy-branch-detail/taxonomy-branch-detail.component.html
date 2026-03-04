@@ -81,10 +81,12 @@
     <div class="g-col-12">
         <div class="card">
             <div class="card-header"><span class="card-title">Projects ({{ taxonomyBranch.ProjectCount }})</span></div>
-            <div class="card-body">
+            <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
                 <wadnr-grid [rowData]="projects$ | async" [columnDefs]="columnDefs" [downloadFileName]="'projects'"></wadnr-grid>
             </div>
         </div>
     </div>
 </div>
+} @else {
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
 }

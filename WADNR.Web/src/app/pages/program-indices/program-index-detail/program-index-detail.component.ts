@@ -8,11 +8,12 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 
 import { ProgramIndexService } from "src/app/shared/generated/api/program-index.service";
 import { ProgramIndexDetail } from "src/app/shared/generated/model/program-index-detail";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 @Component({
     selector: "program-index-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent],
+    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, LoadingDirective],
     templateUrl: "./program-index-detail.component.html",
     styleUrls: ["./program-index-detail.component.scss"],
 })

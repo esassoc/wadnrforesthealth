@@ -211,7 +211,7 @@
                             <button class="btn btn-sm btn-primary" (click)="openFileModal(allocation.FundSourceAllocationID)">Add File(s)</button>
                         }
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" [loadingSpinner]="{ isLoading: filesIsLoading$ | async, loadingHeight: 300 }">
                         @if (files.length) {
                             @for (file of files; track file.FundSourceAllocationFileResourceID) {
                                 <div class="file-entry">
@@ -255,7 +255,7 @@
                     <div class="card-header">
                         <span class="card-title">WA DNR Fund Source Allocation Expenditures by Year</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" [loadingSpinner]="{ isLoading: expenditureSummaryIsLoading$ | async, loadingHeight: 300 }">
                         @if (summary.length) {
                             <pie-chart [chartData]="getChartData(summary)"></pie-chart>
                         } @else {
@@ -273,7 +273,7 @@
                     <div class="card-header">
                         <span class="card-title">Allocation Budget Line Items</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" [loadingSpinner]="{ isLoading: budgetLineItemsIsLoading$ | async, loadingHeight: 300 }">
                         @if (budgetLineItems.length) {
                             @if (canManageFundSources$ | async) {
                                 <p class="text-muted mb-2"><em>Double-click a cell to edit its value.</em></p>
@@ -300,7 +300,7 @@
                     <div class="card-header">
                         <span class="card-title">Budget vs Actuals</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" [loadingSpinner]="{ isLoading: budgetVsActualsIsLoading$ | async, loadingHeight: 300 }">
                         @if (budgetVsActuals.length) {
                             <wadnr-grid
                                 [columnDefs]="budgetVsActualsColumnDefs"
@@ -324,7 +324,7 @@
                     <div class="card-header">
                         <span class="card-title">Funding by Project</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
                         @if (projects.length) {
                             <wadnr-grid [columnDefs]="projectColumnDefs" [rowData]="projects" height="300px" downloadFileName="fund-source-allocation-projects"> </wadnr-grid>
                         } @else {
@@ -342,7 +342,7 @@
                     <div class="card-header">
                         <span class="card-title">Agreements Associated to this WA DNR Fund Source Allocation</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" [loadingSpinner]="{ isLoading: agreementsIsLoading$ | async, loadingHeight: 300 }">
                         @if (agreements.length) {
                             @for (agreement of agreements; track agreement.AgreementID) {
                                 <a [routerLink]="['/agreements', agreement.AgreementID]">{{ agreement.AgreementTitle }}</a
@@ -363,7 +363,7 @@
                     <div class="card-header">
                         <span class="card-title">Reported Expenditures</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" [loadingSpinner]="{ isLoading: expendituresIsLoading$ | async, loadingHeight: 300 }">
                         <p class="text-muted mb-2">
                             The source of record for the Expenditures listed below is the WA DNR financial system. The feed below is updated every 15 minutes.
                         </p>
@@ -496,7 +496,5 @@
         }
     </div>
 } @else {
-    <div class="page-body">
-        <p>Loading fund source allocation details...</p>
-    </div>
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
 }

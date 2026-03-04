@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { AsyncPipe, CommonModule } from "@angular/common";
 import { RouterOutlet } from "@angular/router";
-import { BehaviorSubject, filter, map, Observable, shareReplay, startWith, switchMap } from "rxjs";
+import { BehaviorSubject, filter, Observable, shareReplay, startWith, switchMap } from "rxjs";
 
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WorkflowNavComponent } from "src/app/shared/components/workflow-nav/workflow-nav.component";
@@ -10,6 +10,7 @@ import { WorkflowNavGroupComponent } from "src/app/shared/components/workflow-na
 import { GisBulkImportService } from "src/app/shared/generated/api/gis-bulk-import.service";
 import { GisUploadAttemptDetail } from "src/app/shared/generated/model/gis-upload-attempt-detail";
 import { WorkflowProgressService } from "src/app/shared/services/workflow-progress.service";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 export interface GisWorkflowStep {
     key: string;
@@ -34,6 +35,7 @@ export interface GisWorkflowStepGroup {
         WorkflowNavComponent,
         WorkflowNavItemComponent,
         WorkflowNavGroupComponent,
+        LoadingDirective,
     ],
     templateUrl: "./gis-bulk-import-outlet.component.html",
     styleUrls: ["./gis-bulk-import-outlet.component.scss"],

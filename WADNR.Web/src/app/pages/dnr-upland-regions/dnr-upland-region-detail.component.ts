@@ -2,6 +2,7 @@ import { AsyncPipe } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, switchMap } from "rxjs";
+import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { Map } from "leaflet";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -16,6 +17,7 @@ import { IFeature } from "src/app/shared/generated/model/i-feature";
 import { DNRUplandRegionService } from "src/app/shared/generated/api/dnr-upland-region.service";
 import { DNRUplandRegionDetail } from "src/app/shared/generated/model/dnr-upland-region-detail";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { ColDef } from "ag-grid-community";
 import { ProjectDNRUplandRegionDetailGridRow } from "src/app/shared/generated/model/project-dnr-upland-region-detail-grid-row";
@@ -24,7 +26,7 @@ import { FundSourceAllocationDNRUplandRegionDetailGridRow } from "src/app/shared
 @Component({
     selector: "dnr-upland-region-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRMapComponent, DNRUplandRegionsLayerComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, ExternalMapLayersComponent, GenericFeatureCollectionLayerComponent, WADNRGridComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRMapComponent, DNRUplandRegionsLayerComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, ExternalMapLayersComponent, GenericFeatureCollectionLayerComponent, WADNRGridComponent, LoadingDirective],
     templateUrl: "./dnr-upland-region-detail.component.html",
     styleUrls: ["./dnr-upland-region-detail.component.scss"],
 })
@@ -65,7 +67,9 @@ export class DNRUplandRegionDetailComponent {
         dnrUplandRegion: DNRUplandRegionDetail;
     }>;
     public projects$: Observable<ProjectDNRUplandRegionDetailGridRow[]>;
+    public projectsIsLoading$: Observable<boolean>;
     public fundSourceAllocations$: Observable<FundSourceAllocationDNRUplandRegionDetailGridRow[]>;
+    public fundSourceAllocationsIsLoading$: Observable<boolean>;
     public dnrUplandRegionID$: Observable<number>;
 
     public map: Map;
@@ -120,6 +124,9 @@ export class DNRUplandRegionDetailComponent {
             switchMap((dnrUplandRegionID) => this.dnrUplandRegionService.listFundSourceAllocationsForDNRUplandRegionIDDNRUplandRegion(dnrUplandRegionID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        this.projectsIsLoading$ = toLoadingState(this.projects$);
+        this.fundSourceAllocationsIsLoading$ = toLoadingState(this.fundSourceAllocations$);
 
         this.projectColumnDefs = this.createProjectColumnDefs();
         this.fundSourceAllocationColumnDefs = this.createFundSourceAllocationColumnDefs();

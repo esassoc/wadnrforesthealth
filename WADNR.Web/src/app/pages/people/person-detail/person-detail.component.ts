@@ -2,12 +2,14 @@ import { AsyncPipe, DatePipe } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, Observable, shareReplay, switchMap } from "rxjs";
+import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 import { DialogService } from "@ngneat/dialog";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 
 import { PersonService } from "src/app/shared/generated/api/person.service";
@@ -21,7 +23,7 @@ import { PersonPrimaryContactOrgsModalComponent, PersonPrimaryContactOrgsModalDa
 @Component({
     selector: "person-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, DatePipe, RouterLink, BreadcrumbComponent, WADNRGridComponent],
+    imports: [PageHeaderComponent, AsyncPipe, DatePipe, RouterLink, BreadcrumbComponent, WADNRGridComponent, LoadingDirective],
     templateUrl: "./person-detail.component.html",
     styleUrls: ["./person-detail.component.scss"],
 })
@@ -38,6 +40,10 @@ export class PersonDetailComponent {
     public projects$: Observable<ProjectGridRow[]>;
     public agreements$: Observable<AgreementGridRow[]>;
     public interactionEvents$: Observable<InteractionEventGridRow[]>;
+
+    public projectsIsLoading$: Observable<boolean>;
+    public agreementsIsLoading$: Observable<boolean>;
+    public interactionEventsIsLoading$: Observable<boolean>;
 
     public projectColumnDefs: ColDef<ProjectGridRow>[] = [];
     public agreementColumnDefs: ColDef<AgreementGridRow>[] = [];
@@ -76,6 +82,10 @@ export class PersonDetailComponent {
             switchMap((personID) => this.personService.listInteractionEventsPerson(personID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        this.projectsIsLoading$ = toLoadingState(this.projects$);
+        this.agreementsIsLoading$ = toLoadingState(this.agreements$);
+        this.interactionEventsIsLoading$ = toLoadingState(this.interactionEvents$);
 
         this.projectColumnDefs = this.createProjectColumnDefs();
         this.agreementColumnDefs = this.createAgreementColumnDefs();

@@ -8,11 +8,12 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 
 import { RoleService } from "src/app/shared/generated/api/role.service";
 import { RoleDetail } from "src/app/shared/generated/model/role-detail";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 @Component({
     selector: "role-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent],
+    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, LoadingDirective],
     templateUrl: "./role-detail.component.html",
     styleUrls: ["./role-detail.component.scss"],
 })

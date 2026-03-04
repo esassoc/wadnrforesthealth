@@ -16,7 +16,7 @@
                     }
                 }
             </div>
-            <div class="card-body" [loadingSpinner]="{ isLoading: detailsIsLoading$ | async, loadingHeight: 220 }">
+            <div class="card-body">
                 @if (detailsVm$ | async; as vm) {
                 <div class="grid-12 mb-2">
                     <div class="g-col-4"><strong>Title</strong></div>
@@ -126,4 +126,6 @@
         </div>
     </div>
 </div>
+} @else {
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
 }

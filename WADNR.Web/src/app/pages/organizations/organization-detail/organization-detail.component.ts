@@ -2,6 +2,7 @@ import { AsyncPipe } from "@angular/common";
 import { Component, signal } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { BehaviorSubject, Subject, combineLatest, distinctUntilChanged, filter, map, Observable, shareReplay, startWith, switchMap } from "rxjs";
+import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap, Control } from "leaflet";
 import { DialogService } from "@ngneat/dialog";
@@ -21,6 +22,7 @@ import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/la
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { PersonLinkComponent } from "src/app/shared/components/person-link/person-link.component";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { Palette, PROJECT_STAGE_LEGEND_COLORS } from "src/app/shared/models/legend-colors";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
@@ -64,6 +66,7 @@ import {
         ExternalMapLayersComponent,
         IconComponent,
         PersonLinkComponent,
+        LoadingDirective,
     ],
     templateUrl: "./organization-detail.component.html",
     styleUrls: ["./organization-detail.component.scss"],
@@ -75,6 +78,10 @@ export class OrganizationDetailComponent {
     public projects$: Observable<ProjectOrganizationDetailGridRow[]>;
     public pendingProjects$: Observable<ProjectOrganizationDetailGridRow[]>;
     public agreements$: Observable<AgreementGridRow[]>;
+
+    public programsIsLoading$: Observable<boolean>;
+    public projectsIsLoading$: Observable<boolean>;
+    public agreementsIsLoading$: Observable<boolean>;
 
     // Map properties
     public boundaryFeatures$: Observable<IFeature[]>;
@@ -170,6 +177,10 @@ export class OrganizationDetailComponent {
             map((features) => this.computeBoundingBox(features)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        this.programsIsLoading$ = toLoadingState(this.programs$);
+        this.projectsIsLoading$ = toLoadingState(this.projects$);
+        this.agreementsIsLoading$ = toLoadingState(this.agreements$);
 
         this.programColumnDefs = this.createProgramColumnDefs();
         this.projectColumnDefs = this.createProjectColumnDefs();

@@ -2,11 +2,13 @@ import { AsyncPipe } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { BehaviorSubject, filter, Observable, shareReplay, switchMap } from "rxjs";
+import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 
 import { TaxonomyTrunkService } from "src/app/shared/generated/api/taxonomy-trunk.service";
@@ -16,7 +18,7 @@ import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row"
 @Component({
     selector: "taxonomy-trunk-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, WADNRGridComponent],
+    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, WADNRGridComponent, LoadingDirective],
     templateUrl: "./taxonomy-trunk-detail.component.html",
     styleUrls: ["./taxonomy-trunk-detail.component.scss"],
 })
@@ -29,6 +31,7 @@ export class TaxonomyTrunkDetailComponent {
 
     public taxonomyTrunk$: Observable<TaxonomyTrunkDetail>;
     public projects$: Observable<ProjectGridRow[]>;
+    public projectsIsLoading$: Observable<boolean>;
 
     public columnDefs: ColDef<ProjectGridRow>[] = [];
 
@@ -49,6 +52,8 @@ export class TaxonomyTrunkDetailComponent {
             switchMap((id) => this.taxonomyTrunkService.listProjectsTaxonomyTrunk(id)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        this.projectsIsLoading$ = toLoadingState(this.projects$);
 
         this.columnDefs = [
             this.utilityFunctions.createLinkColumnDef("FHT Project Number", "FhtProjectNumber", "ProjectID", {

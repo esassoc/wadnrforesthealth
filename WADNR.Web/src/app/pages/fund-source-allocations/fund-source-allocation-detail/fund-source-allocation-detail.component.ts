@@ -5,6 +5,7 @@ import { RouterLink } from "@angular/router";
 import { DialogService } from "@ngneat/dialog";
 import { CellValueChangedEvent, ColDef } from "ag-grid-community";
 import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, of, shareReplay, startWith, Subject, switchMap, take } from "rxjs";
+import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -29,6 +30,7 @@ import { FundSourceAllocationNoteInternalGridRow } from "src/app/shared/generate
 import { FundSourceAllocationFileGridRow } from "src/app/shared/generated/model/fund-source-allocation-file-grid-row";
 import { FundSourceAllocationExpenditureGridRow } from "src/app/shared/generated/model/fund-source-allocation-expenditure-grid-row";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { FundSourceAllocationExpenditureSummary } from "src/app/shared/generated/model/fund-source-allocation-expenditure-summary";
 
 export interface BudgetVsActualsRow {
@@ -41,7 +43,7 @@ export interface BudgetVsActualsRow {
 @Component({
     selector: "fund-source-allocation-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, PersonLinkComponent, WADNRGridComponent, PieChartComponent, FieldDefinitionComponent, IconComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, PersonLinkComponent, WADNRGridComponent, PieChartComponent, FieldDefinitionComponent, IconComponent, LoadingDirective],
     templateUrl: "./fund-source-allocation-detail.component.html",
     styleUrls: ["./fund-source-allocation-detail.component.scss"],
 })
@@ -68,6 +70,14 @@ export class FundSourceAllocationDetailComponent {
     public expenditureSummary$: Observable<FundSourceAllocationExpenditureSummary[]>;
     public allocationCurrentBalance$: Observable<number | null>;
     public budgetVsActuals$: Observable<BudgetVsActualsRow[]>;
+
+    public budgetLineItemsIsLoading$: Observable<boolean>;
+    public projectsIsLoading$: Observable<boolean>;
+    public agreementsIsLoading$: Observable<boolean>;
+    public expendituresIsLoading$: Observable<boolean>;
+    public filesIsLoading$: Observable<boolean>;
+    public expenditureSummaryIsLoading$: Observable<boolean>;
+    public budgetVsActualsIsLoading$: Observable<boolean>;
 
     public isUserLoggedIn$: Observable<boolean>;
     public canManageFundSources$: Observable<boolean>;
@@ -190,6 +200,14 @@ export class FundSourceAllocationDetailComponent {
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        this.budgetLineItemsIsLoading$ = toLoadingState(this.budgetLineItems$);
+        this.projectsIsLoading$ = toLoadingState(this.projects$);
+        this.agreementsIsLoading$ = toLoadingState(this.agreements$);
+        this.expendituresIsLoading$ = toLoadingState(this.expenditures$);
+        this.filesIsLoading$ = toLoadingState(this.files$);
+        this.expenditureSummaryIsLoading$ = toLoadingState(this.expenditureSummary$);
+        this.budgetVsActualsIsLoading$ = toLoadingState(this.budgetVsActuals$);
 
         this.budgetLineItemColumnDefs = [
             this.utilityFunctions.createBasicColumnDef("Cost Type", "CostTypeName"),

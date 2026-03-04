@@ -2,6 +2,7 @@ import { AsyncPipe } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, switchMap, take } from "rxjs";
+import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 import { DialogService } from "@ngneat/dialog";
 
@@ -9,6 +10,7 @@ import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadc
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { PersonLinkComponent } from "src/app/shared/components/person-link/person-link.component";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { AlertService } from "src/app/shared/services/alert.service";
@@ -43,7 +45,7 @@ import { GdbImportBasics } from "src/app/shared/generated/model/gdb-import-basic
 @Component({
     selector: "program-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRGridComponent, RouterLink, PersonLinkComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRGridComponent, RouterLink, PersonLinkComponent, LoadingDirective],
     templateUrl: "./program-detail.component.html",
     styleUrls: ["./program-detail.component.scss"],
 })
@@ -53,6 +55,10 @@ export class ProgramDetailComponent {
     public projects$: Observable<ProjectProgramDetailGridRow[]>;
     public notifications$: Observable<ProgramNotificationGridRow[]>;
     public blockListEntries$: Observable<ProjectImportBlockListGridRow[]>;
+
+    public projectsIsLoading$: Observable<boolean>;
+    public notificationsIsLoading$: Observable<boolean>;
+    public blockListEntriesIsLoading$: Observable<boolean>;
 
     public projectColumnDefs: ColDef<ProjectProgramDetailGridRow>[] = [];
     public notificationColumnDefs: ColDef<ProgramNotificationGridRow>[] = [];
@@ -101,6 +107,10 @@ export class ProgramDetailComponent {
             switchMap(([programID]) => this.programService.listBlockListEntriesProgram(programID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        this.projectsIsLoading$ = toLoadingState(this.projects$);
+        this.notificationsIsLoading$ = toLoadingState(this.notifications$);
+        this.blockListEntriesIsLoading$ = toLoadingState(this.blockListEntries$);
 
         this.projectColumnDefs = this.createProjectColumnDefs();
         this.notificationColumnDefs = this.createNotificationColumnDefs();

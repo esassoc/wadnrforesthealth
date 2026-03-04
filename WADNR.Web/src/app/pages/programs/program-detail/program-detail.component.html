@@ -109,7 +109,7 @@
                     <i class="fa fa-download"></i> Download GDB
                 </button>
             </div>
-            <div class="card-body">
+            <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
                 @if (projects.length > 0) {
                     <wadnr-grid
                         [rowData]="projects"
@@ -133,7 +133,7 @@
                 <span class="card-title">Project Import Block List</span>
                 <button class="btn btn-sm btn-primary float-end" (click)="openCreateBlockListEntryModal(program.ProgramID)">Create New</button>
             </div>
-            <div class="card-body">
+            <div class="card-body" [loadingSpinner]="{ isLoading: blockListEntriesIsLoading$ | async, loadingHeight: 300 }">
                 @if (blockListEntries.length > 0) {
                     <wadnr-grid
                         [rowData]="blockListEntries"
@@ -157,7 +157,7 @@
                 <span class="card-title">Notifications</span>
                 <button class="btn btn-sm btn-primary float-end" (click)="openCreateNotificationModal(program.ProgramID)">Create New</button>
             </div>
-            <div class="card-body">
+            <div class="card-body" [loadingSpinner]="{ isLoading: notificationsIsLoading$ | async, loadingHeight: 300 }">
                 @if (notifications.length > 0) {
                     <wadnr-grid
                         [rowData]="notifications"
@@ -410,4 +410,6 @@
     </div>
     }
 </div>
+} @else {
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
 }

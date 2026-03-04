@@ -5,6 +5,7 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
 import { DialogService } from "@ngneat/dialog";
 import { Map } from "leaflet";
 import { combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, of, shareReplay, startWith, Subject, switchMap } from "rxjs";
+import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { SelectDropdownOption } from "src/app/shared/components/forms/form-field/form-field.component";
@@ -60,7 +61,6 @@ export class InteractionEventDetailComponent {
     public simpleLocationFeatureCollection$: Observable<IFeature[] | null>;
 
     public detailsVm$: Observable<{ interactionEvent: InteractionEventDetail; contacts: PersonLookupItem[]; projects: ProjectLookupItem[] }>;
-    public detailsIsLoading$: Observable<boolean>;
     public fileResourcesIsLoading$: Observable<boolean>;
     public locationIsLoading$: Observable<boolean>;
 
@@ -146,17 +146,7 @@ export class InteractionEventDetailComponent {
             projects: this.projects$,
         }).pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
-        this.detailsIsLoading$ = this.detailsVm$.pipe(
-            map(() => false),
-            startWith(true),
-            shareReplay({ bufferSize: 1, refCount: true })
-        );
-
-        this.fileResourcesIsLoading$ = this.fileResources$.pipe(
-            map(() => false),
-            startWith(true),
-            shareReplay({ bufferSize: 1, refCount: true })
-        );
+        this.fileResourcesIsLoading$ = toLoadingState(this.fileResources$);
 
         // Only show the map spinner if the detail says there is a location to fetch.
         this.locationIsLoading$ = combineLatest([hasSimpleLocation$, this.simpleLocationFeatureCollection$.pipe(startWith(undefined))]).pipe(

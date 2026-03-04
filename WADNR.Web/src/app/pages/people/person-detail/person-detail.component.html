@@ -142,7 +142,7 @@
                 <div class="card-header">
                     <span class="card-title">Projects ({{ person.ProjectCount }})</span>
                 </div>
-                <div class="card-body">
+                <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
                     <wadnr-grid [rowData]="projects$ | async" [columnDefs]="projectColumnDefs" downloadFileName="person-projects" [hideGlobalFilter]="true"></wadnr-grid>
                 </div>
             </div>
@@ -154,7 +154,7 @@
                 <div class="card-header">
                     <span class="card-title">Agreements ({{ person.AgreementCount }})</span>
                 </div>
-                <div class="card-body">
+                <div class="card-body" [loadingSpinner]="{ isLoading: agreementsIsLoading$ | async, loadingHeight: 300 }">
                     <wadnr-grid [rowData]="agreements$ | async" [columnDefs]="agreementColumnDefs" downloadFileName="person-agreements" [hideGlobalFilter]="true"></wadnr-grid>
                 </div>
             </div>
@@ -166,7 +166,7 @@
                 <div class="card-header">
                     <span class="card-title">Interactions/Events ({{ person.InteractionEventCount }})</span>
                 </div>
-                <div class="card-body">
+                <div class="card-body" [loadingSpinner]="{ isLoading: interactionEventsIsLoading$ | async, loadingHeight: 300 }">
                     <wadnr-grid
                         [rowData]="interactionEvents$ | async"
                         [columnDefs]="interactionEventColumnDefs"
@@ -177,9 +177,5 @@
         }
     </div>
 } @else {
-    <div class="page-body">
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
 }

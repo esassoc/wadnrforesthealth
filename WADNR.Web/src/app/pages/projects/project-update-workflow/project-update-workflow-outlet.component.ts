@@ -23,6 +23,7 @@ import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { WorkflowProgressService } from "src/app/shared/services/workflow-progress.service";
 import { AsyncConfirmModalComponent, AsyncConfirmModalData } from "src/app/shared/components/async-confirm-modal/async-confirm-modal.component";
 import { ReturnWithCommentsModalComponent, ReturnWithCommentsModalData } from "./return-with-comments-modal/return-with-comments-modal.component";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 export interface WorkflowStep {
     key: string;
@@ -53,6 +54,7 @@ export interface WorkflowStepGroup {
         IconComponent,
         DropdownToggleDirective,
         ButtonLoadingDirective,
+        LoadingDirective,
     ],
     templateUrl: "./project-update-workflow-outlet.component.html",
     styleUrls: ["./project-update-workflow-outlet.component.scss"],

@@ -1,11 +1,13 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { BehaviorSubject, distinctUntilChanged, filter, Observable, shareReplay, switchMap } from "rxjs";
+import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 
 import { VendorService } from "src/app/shared/generated/api/vendor.service";
@@ -16,7 +18,7 @@ import { VendorOrganizationGridRow } from "src/app/shared/generated/model/vendor
 @Component({
     selector: "vendor-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRGridComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRGridComponent, LoadingDirective],
     templateUrl: "./vendor-detail.component.html",
     styleUrls: ["./vendor-detail.component.scss"],
 })
@@ -30,7 +32,9 @@ export class VendorDetailComponent {
     public vendorID$: Observable<number>;
     public vendor$: Observable<VendorDetail>;
     public people$: Observable<VendorPersonGridRow[]>;
+    public peopleIsLoading$: Observable<boolean>;
     public organizations$: Observable<VendorOrganizationGridRow[]>;
+    public organizationsIsLoading$: Observable<boolean>;
 
     public personColumnDefs: ColDef<VendorPersonGridRow>[] = [];
     public organizationColumnDefs: ColDef<VendorOrganizationGridRow>[] = [];
@@ -61,6 +65,9 @@ export class VendorDetailComponent {
             switchMap((vendorID) => this.vendorService.listOrganizationsVendor(vendorID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        this.peopleIsLoading$ = toLoadingState(this.people$);
+        this.organizationsIsLoading$ = toLoadingState(this.organizations$);
 
         this.personColumnDefs = this.createPersonColumnDefs();
         this.organizationColumnDefs = this.createOrganizationColumnDefs();

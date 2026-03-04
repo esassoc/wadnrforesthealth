@@ -5,14 +5,14 @@ import { BehaviorSubject, filter, Observable, shareReplay, switchMap } from "rxj
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
-
 import { ClassificationSystemService } from "src/app/shared/generated/api/classification-system.service";
 import { ClassificationSystemDetail } from "src/app/shared/generated/model/classification-system-detail";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 @Component({
     selector: "classification-system-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent],
+    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, LoadingDirective],
     templateUrl: "./classification-system-detail.component.html",
     styleUrls: ["./classification-system-detail.component.scss"],
 })

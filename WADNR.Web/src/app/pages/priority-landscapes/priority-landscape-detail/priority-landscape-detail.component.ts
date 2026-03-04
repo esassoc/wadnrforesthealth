@@ -14,6 +14,7 @@ import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers
 import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
 import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
+
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
 import { PriorityLandscapeService } from "src/app/shared/generated/api/priority-landscape.service";
@@ -22,23 +23,38 @@ import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row"
 import { ProjectGridComponent } from "src/app/shared/components/project-grid/project-grid.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { getFileResourceUrlFromBase } from "src/app/shared/utils/file-resource-utils";
+
 import { environment } from "src/environments/environment";
 import { FileResourcePriorityLandscapeDetail } from "src/app/shared/generated/model/file-resource-priority-landscape-detail";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 @Component({
     selector: "priority-landscape-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRMapComponent, PriorityLandscapesLayerComponent, CountiesLayerComponent, DNRUplandRegionsLayerComponent, ExternalMapLayersComponent, GenericFeatureCollectionLayerComponent, ProjectGridComponent, IconComponent, DatePipe],
+    imports: [
+        PageHeaderComponent,
+        AsyncPipe,
+        BreadcrumbComponent,
+        WADNRMapComponent,
+        PriorityLandscapesLayerComponent,
+        CountiesLayerComponent,
+        DNRUplandRegionsLayerComponent,
+        ExternalMapLayersComponent,
+        GenericFeatureCollectionLayerComponent,
+        ProjectGridComponent,
+        IconComponent,
+        DatePipe,
+        LoadingDirective,
+    ],
     templateUrl: "./priority-landscape-detail.component.html",
     styleUrls: ["./priority-landscape-detail.component.scss"],
 })
 export class PriorityLandscapeDetailComponent {
-    /** Loads the priority landscape (and a placeholder projects list) together so the page can render once. */
     public priorityLandscapeDetailPageData$: Observable<{
         priorityLandscape: PriorityLandscapeDetail;
-        projects: ProjectGridRow[];
         fileResources: FileResourcePriorityLandscapeDetail[];
     }>;
+    public projects$: Observable<ProjectGridRow[]>;
     public priorityLandscapeID$: Observable<number>;
 
     public map: Map;
@@ -50,7 +66,11 @@ export class PriorityLandscapeDetailComponent {
     public OverlayMode = OverlayMode;
     public projectFeatures$: Observable<IFeature[]>;
 
-    constructor(private route: ActivatedRoute, private priorityLandscapeService: PriorityLandscapeService, private sanitizer: DomSanitizer) {}
+    constructor(
+        private route: ActivatedRoute,
+        private priorityLandscapeService: PriorityLandscapeService,
+        private sanitizer: DomSanitizer
+    ) {}
 
     public sanitizeHtml(html: string | null | undefined): SafeHtml {
         return html ? this.sanitizer.bypassSecurityTrustHtml(html) : "";
@@ -72,12 +92,17 @@ export class PriorityLandscapeDetailComponent {
             switchMap((priorityLandscapeID) =>
                 forkJoin({
                     priorityLandscape: this.priorityLandscapeService.getPriorityLandscape(priorityLandscapeID),
-                    projects: this.priorityLandscapeService.listProjectsForPriorityLandscapeIDPriorityLandscape(priorityLandscapeID),
                     fileResources: this.priorityLandscapeService.listFileResourcesForPriorityLandscapeIDPriorityLandscape(priorityLandscapeID),
                 })
             ),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        this.projects$ = this.priorityLandscapeID$.pipe(
+            switchMap((id) => this.priorityLandscapeService.listProjectsForPriorityLandscapeIDPriorityLandscape(id)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
     }
 
     handleMapReady(event: any) {

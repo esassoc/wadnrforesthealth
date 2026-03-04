@@ -6,6 +6,7 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
 import { DialogService } from "@ngneat/dialog";
 import { ColDef } from "ag-grid-community";
 import { combineLatest, distinctUntilChanged, filter, map, Observable, shareReplay, startWith, Subject, switchMap } from "rxjs";
+import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
@@ -40,7 +41,6 @@ export class AgreementDetailComponent {
     private refreshData$ = new Subject<void>();
 
     public agreement$: Observable<AgreementDetail>;
-    public agreementIsLoading$: Observable<boolean>;
 
     public fundSourceAllocations$: Observable<FundSourceAllocationLookupItem[]>;
     public fundSourceAllocationsIsLoading$: Observable<boolean>;
@@ -109,29 +109,9 @@ export class AgreementDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.agreementIsLoading$ = this.agreement$.pipe(
-            map(() => false),
-            startWith(true),
-            shareReplay({ bufferSize: 1, refCount: true })
-        );
-
-        this.fundSourceAllocationsIsLoading$ = this.fundSourceAllocations$.pipe(
-            map(() => false),
-            startWith(true),
-            shareReplay({ bufferSize: 1, refCount: true })
-        );
-
-        this.projectsIsLoading$ = this.projects$.pipe(
-            map(() => false),
-            startWith(true),
-            shareReplay({ bufferSize: 1, refCount: true })
-        );
-
-        this.contactsIsLoading$ = this.contacts$.pipe(
-            map(() => false),
-            startWith(true),
-            shareReplay({ bufferSize: 1, refCount: true })
-        );
+        this.fundSourceAllocationsIsLoading$ = toLoadingState(this.fundSourceAllocations$);
+        this.projectsIsLoading$ = toLoadingState(this.projects$);
+        this.contactsIsLoading$ = toLoadingState(this.contacts$);
     }
 
     private buildContactColumnDefs(canManage: boolean): ColDef[] {

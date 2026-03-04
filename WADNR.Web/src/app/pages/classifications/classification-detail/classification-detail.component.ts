@@ -15,11 +15,12 @@ import { ClassificationDetail } from "src/app/shared/generated/model/classificat
 import { ProjectClassificationDetailGridRow } from "src/app/shared/generated/model/project-classification-detail-grid-row";
 import { ColDef } from "ag-grid-community";
 import { ClassificationModalComponent, ClassificationModalData } from "../classification-modal/classification-modal.component";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 @Component({
     selector: "classification-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent, LoadingDirective],
     templateUrl: "./classification-detail.component.html",
     styleUrls: ["./classification-detail.component.scss"],
 })

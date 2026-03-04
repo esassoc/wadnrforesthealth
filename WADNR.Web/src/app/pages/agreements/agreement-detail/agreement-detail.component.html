@@ -13,7 +13,7 @@
                     <button class="btn btn-sm btn-primary" (click)="openEditModal(agreement)">Edit</button>
                 }
             </div>
-            <div class="card-body" [loadingSpinner]="{ isLoading: agreementIsLoading$ | async, loadingHeight: 260 }">
+            <div class="card-body">
                 <div class="grid-12 mb-2">
                     <div class="g-col-4">
                         <strong><field-definition fieldDefinition="AgreementTitle"></field-definition></strong>
@@ -182,4 +182,6 @@
         </div>
     </div>
 </div>
+} @else {
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
 }

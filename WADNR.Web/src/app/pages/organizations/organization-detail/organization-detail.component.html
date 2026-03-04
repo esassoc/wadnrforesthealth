@@ -102,7 +102,7 @@
                         <span class="card-title">Programs</span>
                         <button class="btn btn-primary btn-sm" (click)="openCreateProgramModal(organization)">Create Program</button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" [loadingSpinner]="{ isLoading: programsIsLoading$ | async, loadingHeight: 300 }">
                         @if (programs.length > 0) {
                             <wadnr-grid [rowData]="programs" [columnDefs]="programColumnDefs" height="300px" downloadFileName="Organization_Programs"> </wadnr-grid>
                         } @else {
@@ -212,7 +212,7 @@
                 <div class="card-header">
                     <span class="card-title">Projects</span>
                 </div>
-                <div class="card-body">
+                <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
                     <p>{{ organization.OrganizationName }} is:</p>
                     <ul>
                         <li>
@@ -244,7 +244,7 @@
                     <div class="card-header">
                         <span class="card-title">Agreements</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" [loadingSpinner]="{ isLoading: agreementsIsLoading$ | async, loadingHeight: 300 }">
                         <p>{{ organization.OrganizationName }} is associated with the following Agreements:</p>
                         @if (agreements.length > 0) {
                             <wadnr-grid [rowData]="agreements" [columnDefs]="agreementColumnDefs" height="300px" downloadFileName="Organization_Agreements"> </wadnr-grid>
@@ -290,4 +290,6 @@
             </div>
         </div>
     </div>
+} @else {
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
 }

@@ -8,6 +8,7 @@ import { DialogService } from "@ngneat/dialog";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
+
 import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
@@ -24,11 +25,12 @@ import { BoundingBoxDto } from "src/app/shared/models/bounding-box-dto";
 import { FocusAreaService } from "src/app/shared/generated/api/focus-area.service";
 import { FocusAreaDetail } from "src/app/shared/generated/model/focus-area-detail";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 @Component({
     selector: "focus-area-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, DecimalPipe, WADNRMapComponent, GenericFeatureCollectionLayerComponent, IconComponent],
+    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, DecimalPipe, WADNRMapComponent, GenericFeatureCollectionLayerComponent, IconComponent, LoadingDirective],
     templateUrl: "./focus-area-detail.component.html",
     styleUrls: ["./focus-area-detail.component.scss"],
 })

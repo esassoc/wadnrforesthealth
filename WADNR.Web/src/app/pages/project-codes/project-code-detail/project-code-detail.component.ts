@@ -8,11 +8,12 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 
 import { ProjectCodeService } from "src/app/shared/generated/api/project-code.service";
 import { ProjectCodeDetail } from "src/app/shared/generated/model/project-code-detail";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 @Component({
     selector: "project-code-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, DatePipe],
+    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, DatePipe, LoadingDirective],
     templateUrl: "./project-code-detail.component.html",
     styleUrls: ["./project-code-detail.component.scss"],
 })

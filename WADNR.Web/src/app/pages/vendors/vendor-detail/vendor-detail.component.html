@@ -96,7 +96,7 @@
             <div class="card-header">
                 <span class="card-title">Users ({{ vendor.PersonCount }})</span>
             </div>
-            <div class="card-body">
+            <div class="card-body" [loadingSpinner]="{ isLoading: peopleIsLoading$ | async, loadingHeight: 300 }">
                 @if (people$ | async; as people) {
                     @if (people.length > 0) {
                         <wadnr-grid
@@ -119,7 +119,7 @@
             <div class="card-header">
                 <span class="card-title">Organizations ({{ vendor.OrganizationCount }})</span>
             </div>
-            <div class="card-body">
+            <div class="card-body" [loadingSpinner]="{ isLoading: organizationsIsLoading$ | async, loadingHeight: 300 }">
                 @if (organizations$ | async; as organizations) {
                     @if (organizations.length > 0) {
                         <wadnr-grid
@@ -137,7 +137,5 @@
     </div>
 </div>
 } @else {
-<div class="page-body">
-    <p>Loading vendor details...</p>
-</div>
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
 }

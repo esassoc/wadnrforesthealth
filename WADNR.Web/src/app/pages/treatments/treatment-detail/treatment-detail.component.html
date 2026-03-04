@@ -117,7 +117,5 @@
     }
 </div>
 } @else {
-<div class="page-body">
-    <p>Loading treatment details...</p>
-</div>
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
 }

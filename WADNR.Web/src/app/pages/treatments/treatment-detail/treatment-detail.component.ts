@@ -5,14 +5,14 @@ import { BehaviorSubject, distinctUntilChanged, filter, Observable, shareReplay,
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
-
 import { TreatmentService } from "src/app/shared/generated/api/treatment.service";
 import { TreatmentDetail } from "src/app/shared/generated/model/treatment-detail";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 @Component({
     selector: "treatment-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, LoadingDirective],
     templateUrl: "./treatment-detail.component.html",
     styleUrls: ["./treatment-detail.component.scss"],
 })

@@ -4,6 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, fromEvent, merge, Observable, of, shareReplay, skip, startWith, Subject, Subscription, switchMap, take } from "rxjs";
 import { debounceTime, map } from "rxjs/operators";
+import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap } from "leaflet";
 import { DialogService } from "@ngneat/dialog";
@@ -460,11 +461,7 @@ export class ProjectDetailComponent implements OnDestroy {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.locationLayersIsLoading$ = this.locationLayers$.pipe(
-            map(() => false),
-            startWith(true),
-            shareReplay({ bufferSize: 1, refCount: true })
-        );
+        this.locationLayersIsLoading$ = toLoadingState(this.locationLayers$);
 
         // Invoice/PaymentRequest lookup data - filter to active WADNR people (OrganizationID 4704)
         const WADNR_ORGANIZATION_ID = 4704;
