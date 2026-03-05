@@ -6,7 +6,14 @@
     <div class="grid-12">
         <div class="g-col-6">
             <div class="card">
-                <div class="card-header"><span class="card-title">Basics</span></div>
+                <div class="card-header flex-between">
+                    <span class="card-title">Basics</span>
+                    @if (isAdmin$ | async) {
+                        <button class="card-header-edit-link" (click)="openEditBasicsModal(vm.priorityLandscape)" title="Edit Basics">
+                            <icon icon="Edit"></icon>
+                        </button>
+                    }
+                </div>
                 <div class="card-body">
                     <div class="grid-12 mb-2">
                         <div class="g-col-4"><strong>Name</strong></div>
@@ -23,7 +30,14 @@
         </div>
         <div class="g-col-6">
             <div class="card">
-                <div class="card-header"><span class="card-title">Map</span></div>
+                <div class="card-header flex-between">
+                    <span class="card-title">Map</span>
+                    @if (isAdmin$ | async) {
+                        <button class="card-header-edit-link" (click)="openEditMapTextModal(vm.priorityLandscape)" title="Edit Map">
+                            <icon icon="Edit"></icon>
+                        </button>
+                    }
+                </div>
                 <div class="card-body">
                     <p>{{ vm.priorityLandscape.PriorityLandscapeAboveMapText }}</p>
                     <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
@@ -35,7 +49,8 @@
                                 [featureCollection]="projectFeatures"
                                 [layerName]="'Project Locations'"
                                 [layerColor]="'#ffff00'"
-                                [displayOnLoad]="true"></generic-feature-collection-layer>
+                                [displayOnLoad]="true"
+                                [popupContentFn]="buildProjectPopupContent(vm.priorityLandscape)"></generic-feature-collection-layer>
                         }
                         <priority-landscapes-layer
                             [map]="map"
@@ -47,7 +62,44 @@
                             [map]="map"
                             [layerControl]="layerControl"
                             [mode]="allPriorityLandscapesLayerMode"
+                            [categoryFilter]="'East'"
+                            [overlayLabelOverride]="'20-Year Forest Health Strategic Plan: Eastern WA Priority Landscapes'"
+                            [showPopupOnClick]="true"
                             [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                        <priority-landscapes-layer
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [mode]="allPriorityLandscapesLayerMode"
+                            [categoryFilter]="'West'"
+                            [overlayLabelOverride]="'Western WA Forest Health Priority Landscapes'"
+                            [showPopupOnClick]="true"
+                            [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                        @if (projectIDsCqlFilter$ | async; as projectCqlFilter) {
+                            <generic-wms-wfs-layer
+                                [map]="map"
+                                [layerControl]="layerControl"
+                                [wmsLayerName]="'WADNRForestHealth:ProjectLocationDetailed'"
+                                [wfsFeatureType]="'WADNRForestHealth:ProjectLocationDetailed'"
+                                [identifierProperty]="'PrimaryKey'"
+                                [overlayLabel]="'Project Locations - Detail'"
+                                [wmsStyle]="''"
+                                [cqlFilter]="projectCqlFilter"
+                                [displayOnLoad]="false"
+                                [fitBoundsOnWmsAddToControl]="false">
+                            </generic-wms-wfs-layer>
+                            <generic-wms-wfs-layer
+                                [map]="map"
+                                [layerControl]="layerControl"
+                                [wmsLayerName]="'WADNRForestHealth:ProjectTreatmentArea'"
+                                [wfsFeatureType]="'WADNRForestHealth:ProjectTreatmentArea'"
+                                [identifierProperty]="'TreatmentID'"
+                                [overlayLabel]="'Project Treatment Areas'"
+                                [wmsStyle]="''"
+                                [cqlFilter]="projectCqlFilter"
+                                [displayOnLoad]="false"
+                                [fitBoundsOnWmsAddToControl]="false">
+                            </generic-wms-wfs-layer>
+                        }
                         <dnr-upland-regions-layer
                             [map]="map"
                             [layerControl]="layerControl"
@@ -79,28 +131,47 @@
         </div>
         <div class="g-col-12">
             <div class="card">
-                <div class="card-header"><span class="card-title">Files</span></div>
+                <div class="card-header">
+                    <span class="card-title">Files</span>
+                </div>
                 <div class="card-body file-resources">
-                    @for (file of vm.fileResources; track file.FileResourceID) {
-                        <div class="grid-12 file-resources__display">
-                            <div class="g-col-12">
-                                <a [href]="documentUrl(file.FileResourceGUID)" target="_blank" rel="noopener noreferrer">
-                                    {{ file.DisplayName }} <icon [icon]="'Download'"></icon>
-                                </a>
-                            </div>
-                            <div class="g-col-2"><strong>Uploaded On</strong></div>
-                            <div class="g-col-10">
-                                {{ file.CreateDate | date: "longDate" }}
-                            </div>
-                            <div class="g-col-2"><strong>File Type</strong></div>
-                            <div class="g-col-10">
-                                {{ file.FileResourceMIMETypeDisplayName }}
-                            </div>
-                            <div class="g-col-2"><strong>Description</strong></div>
-                            <div class="g-col-10">
-                                {{ file.Description }}
-                            </div>
+                    @if (isAdmin$ | async) {
+                        <div class="flex-end mb-2">
+                            <button class="btn btn-sm btn-primary" (click)="openFileModal(vm.priorityLandscape.PriorityLandscapeID)">Add File(s)</button>
                         </div>
+                    }
+                    @if (vm.fileResources.length) {
+                        @for (file of vm.fileResources; track file.FileResourceID) {
+                            <div class="grid-12 file-resources__display">
+                                <div class="g-col-12">
+                                    <a [href]="documentUrl(file.FileResourceGUID)" target="_blank" rel="noopener noreferrer">
+                                        {{ file.DisplayName }} <icon [icon]="'Download'"></icon>
+                                    </a>
+                                    @if (isAdmin$ | async) {
+                                        <a href="#" class="ml-2" (click)="openEditFileModal(vm.priorityLandscape.PriorityLandscapeID, file); $event.preventDefault()" title="Edit file">
+                                            <icon [icon]="'Edit'"></icon>
+                                        </a>
+                                        <a href="#" class="text-danger ml-1" (click)="deleteFile(vm.priorityLandscape.PriorityLandscapeID, file.PriorityLandscapeFileResourceID!); $event.preventDefault()" title="Delete file">
+                                            <icon [icon]="'Delete'"></icon>
+                                        </a>
+                                    }
+                                </div>
+                                <div class="g-col-2"><strong>Uploaded On</strong></div>
+                                <div class="g-col-10">
+                                    {{ file.CreateDate | date: "longDate" }}
+                                </div>
+                                <div class="g-col-2"><strong>File Type</strong></div>
+                                <div class="g-col-10">
+                                    {{ file.FileResourceMIMETypeDisplayName }}
+                                </div>
+                                <div class="g-col-2"><strong>Description</strong></div>
+                                <div class="g-col-10">
+                                    {{ file.Description || "" }}
+                                </div>
+                            </div>
+                        }
+                    } @else {
+                        <em>No files associated with this Priority Landscape.</em>
                     }
                 </div>
             </div>

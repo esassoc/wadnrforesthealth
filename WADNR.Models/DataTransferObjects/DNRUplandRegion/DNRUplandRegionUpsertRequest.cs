@@ -10,4 +10,6 @@ public class DNRUplandRegionUpsertRequest
     public string? RegionZip { get; set; }
     public string? RegionPhone { get; set; }
     public string? RegionEmail { get; set; }
+    public string? RegionContent { get; set; }
+    public int? DNRUplandRegionCoordinatorPersonID { get; set; }
 }

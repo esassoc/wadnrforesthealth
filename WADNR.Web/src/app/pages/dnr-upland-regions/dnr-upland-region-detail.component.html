@@ -6,15 +6,16 @@
 <div class="grid-12">
     <div class="g-col-6">
         <div class="card">
-            <div class="card-header"><span class="card-title">Contact</span></div>
+            <div class="card-header flex-between">
+                <span class="card-title">Contact</span>
+                @if (isAdmin$ | async) {
+                    <button class="card-header-edit-link" (click)="openEditContactModal(vm.dnrUplandRegion)" title="Edit Contact">
+                        <icon icon="Edit"></icon>
+                    </button>
+                }
+            </div>
             <div class="card-body">
                 <div class="grid-12 mb-2">
-                    <div class="g-col-4"><strong>Name</strong></div>
-                    <div class="g-col-8">{{ vm.dnrUplandRegion.DNRUplandRegionName || "—" }}</div>
-
-                    <div class="g-col-4"><strong>Abbreviation</strong></div>
-                    <div class="g-col-8">{{ vm.dnrUplandRegion.DNRUplandRegionAbbrev || "—" }}</div>
-
                     <div class="g-col-4"><strong>Address</strong></div>
                     <div class="g-col-8">{{ vm.dnrUplandRegion.RegionAddress || "—" }}</div>
 
@@ -33,6 +34,16 @@
                     <div class="g-col-4"><strong>Email</strong></div>
                     <div class="g-col-8">{{ vm.dnrUplandRegion.RegionEmail || "—" }}</div>
                 </div>
+
+                @if (isAdmin$ | async) {
+                    <hr>
+                    <div class="grid-12">
+                        <div class="g-col-4">
+                            <field-definition fieldDefinition="ServiceForestryRegionalCoordinator"></field-definition>
+                        </div>
+                        <div class="g-col-8">{{ vm.dnrUplandRegion.DNRUplandRegionCoordinatorFullName || "—" }}</div>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -57,8 +68,6 @@
                         [layerControl]="layerControl"
                         [mode]="allDNRUplandRegionsLayerMode"
                         [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
-                    <priority-landscapes-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
-                    <counties-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></counties-layer>
                 </wadnr-map>
             </div>
         </div>

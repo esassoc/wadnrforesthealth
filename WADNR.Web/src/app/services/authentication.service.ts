@@ -236,6 +236,15 @@ export class AuthenticationService {
         return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanManageFundSourcesAndAgreements]);
     }
 
+    /**
+     * Checks if user can manage focus areas (create/edit/delete).
+     * Matches [FocusAreaManageFeature]: Admin, EsaAdmin, ProjectSteward.
+     */
+    public canManageFocusAreas(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.ProjectSteward]);
+    }
+
     ngOnDestroy(): void {
         this._destroying$.next(undefined);
         this._destroying$.complete();

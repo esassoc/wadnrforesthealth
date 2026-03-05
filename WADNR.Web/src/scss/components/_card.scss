@@ -25,6 +25,24 @@
         text-transform: uppercase;
     }
 
+    &-header-edit-link {
+        background: none;
+        border: none;
+        padding: 0;
+        color: white;
+        cursor: pointer;
+        font-size: 0.75em;
+        line-height: 1;
+        opacity: 1;
+        &:hover {
+            opacity: 0.7;
+        }
+
+        svg path {
+            fill-opacity: 1;
+        }
+    }
+
     &-actions {
         & > * + * {
             margin-left: 1rem;

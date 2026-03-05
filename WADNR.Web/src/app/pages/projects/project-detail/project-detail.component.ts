@@ -9,6 +9,7 @@ import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap } from "leaflet";
 import { DialogService } from "@ngneat/dialog";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { IconComponent } from "src/app/shared/components/icon/icon.component";
 
 interface TocSection {
     id: string;
@@ -114,6 +115,8 @@ import { ProjectLocationSimpleEditorComponent, ProjectLocationSimpleEditorData }
 import { ProjectLocationDetailedEditorComponent, ProjectLocationDetailedEditorData } from "../project-location-detailed-editor/project-location-detailed-editor.component";
 import { ProjectGeographicAreaEditorComponent, ProjectGeographicAreaEditorData } from "../project-geographic-area-editor/project-geographic-area-editor.component";
 import { ProjectMapExtentEditorComponent, ProjectMapExtentEditorData } from "../project-map-extent-editor/project-map-extent-editor.component";
+import { FeedbackModalComponent, FeedbackModalData } from "src/app/shared/components/feedback-modal/feedback-modal.component";
+import { SupportRequestTypeEnum } from "src/app/shared/generated/enum/support-request-type-enum";
 import { GeographicAssignmentStep } from "src/app/shared/generated/model/geographic-assignment-step";
 import { GeographicOverrideRequest } from "src/app/shared/generated/model/geographic-override-request";
 import { DropdownToggleDirective } from "src/app/shared/directives/dropdown-toggle.directive";
@@ -136,7 +139,7 @@ interface FlattenedTreatmentRow {
 @Component({
     selector: "project-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, DatePipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ImageGalleryComponent, ScrollSpyStickyDirective, DropdownToggleDirective, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent, FieldDefinitionComponent, LoadingDirective, FormsModule],
+    imports: [PageHeaderComponent, AsyncPipe, DatePipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ImageGalleryComponent, ScrollSpyStickyDirective, DropdownToggleDirective, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent, FieldDefinitionComponent, LoadingDirective, FormsModule, IconComponent],
     templateUrl: "./project-detail.component.html",
     styleUrls: ["./project-detail.component.scss"],
 })
@@ -2085,5 +2088,13 @@ export class ProjectDetailComponent implements OnDestroy {
             batches.push(items.slice(i, i + size));
         }
         return batches;
+    }
+
+    requestPrimaryContactChange(): void {
+        const data: FeedbackModalData = {
+            currentPageUrl: window.location.href,
+            defaultSupportRequestType: SupportRequestTypeEnum.RequestProjectPrimaryContactChange,
+        };
+        this.dialogService.open(FeedbackModalComponent, { data, width: "600px" });
     }
 }

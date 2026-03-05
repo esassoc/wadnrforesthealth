@@ -19,7 +19,11 @@ import { FileResourcePriorityLandscapeDetail } from '../model/file-resource-prio
 // @ts-ignore
 import { IFeature } from '../model/i-feature';
 // @ts-ignore
+import { PriorityLandscapeCategoryLookupItem } from '../model/priority-landscape-category-lookup-item';
+// @ts-ignore
 import { PriorityLandscapeDetail } from '../model/priority-landscape-detail';
+// @ts-ignore
+import { PriorityLandscapeFileUpdateRequest } from '../model/priority-landscape-file-update-request';
 // @ts-ignore
 import { PriorityLandscapeGridRow } from '../model/priority-landscape-grid-row';
 // @ts-ignore
@@ -41,6 +45,93 @@ export class PriorityLandscapeService extends BaseService {
 
     constructor(protected httpClient: HttpClient, @Optional() @Inject(BASE_PATH) basePath: string|string[], @Optional() configuration?: Configuration) {
         super(basePath, configuration);
+    }
+
+    /**
+     * @param priorityLandscapeID 
+     * @param displayName 
+     * @param description 
+     * @param file 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public createFileResourcePriorityLandscape(priorityLandscapeID: number, displayName?: string, description?: string, file?: Blob, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<FileResourcePriorityLandscapeDetail>;
+    public createFileResourcePriorityLandscape(priorityLandscapeID: number, displayName?: string, description?: string, file?: Blob, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<FileResourcePriorityLandscapeDetail>>;
+    public createFileResourcePriorityLandscape(priorityLandscapeID: number, displayName?: string, description?: string, file?: Blob, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<FileResourcePriorityLandscapeDetail>>;
+    public createFileResourcePriorityLandscape(priorityLandscapeID: number, displayName?: string, description?: string, file?: Blob, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (priorityLandscapeID === null || priorityLandscapeID === undefined) {
+            throw new Error('Required parameter priorityLandscapeID was null or undefined when calling createFileResourcePriorityLandscape.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'multipart/form-data'
+        ];
+
+        const canConsumeForm = this.canConsumeForm(consumes);
+
+        let localVarFormParams: { append(param: string, value: any): any; };
+        let localVarUseForm = false;
+        let localVarConvertFormParamsToString = false;
+        // use FormData to transmit files using content-type "multipart/form-data"
+        // see https://stackoverflow.com/questions/4007969/application-x-www-form-urlencoded-or-multipart-form-data
+        localVarUseForm = canConsumeForm;
+        if (localVarUseForm) {
+            localVarFormParams = new FormData();
+        } else {
+            localVarFormParams = new HttpParams({encoder: this.encoder});
+        }
+
+        if (displayName !== undefined) {
+            localVarFormParams = localVarFormParams.append('displayName', <any>displayName) as any || localVarFormParams;
+        }
+        if (description !== undefined) {
+            localVarFormParams = localVarFormParams.append('description', <any>description) as any || localVarFormParams;
+        }
+        if (file !== undefined) {
+            localVarFormParams = localVarFormParams.append('file', <any>file) as any || localVarFormParams;
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/priority-landscapes/${this.configuration.encodeParam({name: "priorityLandscapeID", value: priorityLandscapeID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/file-resources`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<FileResourcePriorityLandscapeDetail>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: localVarConvertFormParamsToString ? localVarFormParams.toString() : localVarFormParams,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -97,6 +188,62 @@ export class PriorityLandscapeService extends BaseService {
             {
                 context: localVarHttpContext,
                 body: priorityLandscapeUpsertRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param priorityLandscapeID 
+     * @param priorityLandscapeFileResourceID 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public deleteFileResourcePriorityLandscape(priorityLandscapeID: number, priorityLandscapeFileResourceID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public deleteFileResourcePriorityLandscape(priorityLandscapeID: number, priorityLandscapeFileResourceID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public deleteFileResourcePriorityLandscape(priorityLandscapeID: number, priorityLandscapeFileResourceID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public deleteFileResourcePriorityLandscape(priorityLandscapeID: number, priorityLandscapeFileResourceID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (priorityLandscapeID === null || priorityLandscapeID === undefined) {
+            throw new Error('Required parameter priorityLandscapeID was null or undefined when calling deleteFileResourcePriorityLandscape.');
+        }
+        if (priorityLandscapeFileResourceID === null || priorityLandscapeFileResourceID === undefined) {
+            throw new Error('Required parameter priorityLandscapeFileResourceID was null or undefined when calling deleteFileResourcePriorityLandscape.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/priority-landscapes/${this.configuration.encodeParam({name: "priorityLandscapeID", value: priorityLandscapeID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/file-resources/${this.configuration.encodeParam({name: "priorityLandscapeFileResourceID", value: priorityLandscapeFileResourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('delete', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -202,6 +349,57 @@ export class PriorityLandscapeService extends BaseService {
         let localVarPath = `/priority-landscapes/${this.configuration.encodeParam({name: "priorityLandscapeID", value: priorityLandscapeID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<PriorityLandscapeDetail>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public listCategoriesPriorityLandscape(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<PriorityLandscapeCategoryLookupItem>>;
+    public listCategoriesPriorityLandscape(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<PriorityLandscapeCategoryLookupItem>>>;
+    public listCategoriesPriorityLandscape(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<PriorityLandscapeCategoryLookupItem>>>;
+    public listCategoriesPriorityLandscape(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/priority-landscapes/categories`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<PriorityLandscapeCategoryLookupItem>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -420,6 +618,78 @@ export class PriorityLandscapeService extends BaseService {
         return this.httpClient.request<Array<ProjectGridRow>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param priorityLandscapeID 
+     * @param priorityLandscapeFileResourceID 
+     * @param priorityLandscapeFileUpdateRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateFileResourcePriorityLandscape(priorityLandscapeID: number, priorityLandscapeFileResourceID: number, priorityLandscapeFileUpdateRequest?: PriorityLandscapeFileUpdateRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<FileResourcePriorityLandscapeDetail>;
+    public updateFileResourcePriorityLandscape(priorityLandscapeID: number, priorityLandscapeFileResourceID: number, priorityLandscapeFileUpdateRequest?: PriorityLandscapeFileUpdateRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<FileResourcePriorityLandscapeDetail>>;
+    public updateFileResourcePriorityLandscape(priorityLandscapeID: number, priorityLandscapeFileResourceID: number, priorityLandscapeFileUpdateRequest?: PriorityLandscapeFileUpdateRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<FileResourcePriorityLandscapeDetail>>;
+    public updateFileResourcePriorityLandscape(priorityLandscapeID: number, priorityLandscapeFileResourceID: number, priorityLandscapeFileUpdateRequest?: PriorityLandscapeFileUpdateRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (priorityLandscapeID === null || priorityLandscapeID === undefined) {
+            throw new Error('Required parameter priorityLandscapeID was null or undefined when calling updateFileResourcePriorityLandscape.');
+        }
+        if (priorityLandscapeFileResourceID === null || priorityLandscapeFileResourceID === undefined) {
+            throw new Error('Required parameter priorityLandscapeFileResourceID was null or undefined when calling updateFileResourcePriorityLandscape.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/priority-landscapes/${this.configuration.encodeParam({name: "priorityLandscapeID", value: priorityLandscapeID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/file-resources/${this.configuration.encodeParam({name: "priorityLandscapeFileResourceID", value: priorityLandscapeFileResourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<FileResourcePriorityLandscapeDetail>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: priorityLandscapeFileUpdateRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

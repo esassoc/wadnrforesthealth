@@ -69,6 +69,18 @@ These legacy controllers have been merged into a parent controller in the new AP
 | `ProjectPersonController` | `ProjectController` |
 | `ProjectPriorityLandscapeController` | `ProjectController` |
 | `ProjectStewardOrganizationController` | `ProjectController` |
+| `ProjectFundSourceAllocationRequestController` | `ProjectController` + `FundSourceAllocationController` |
+| `ProjectImportBlockListController` | `ProjectController` + `ProgramController` |
+
+#### Known Renamed Migrations
+
+These legacy controllers were migrated to the new stack under a different name. Mark them as **Migrated**, not "Not Started":
+
+| Legacy Controller | New API Controller | Notes |
+|-------------------|-------------------|-------|
+| `ExcelUploadController` | `LoaUploadController` | Legacy name was misleading — it only handled LOA Excel uploads. Fully replaced by LoaUploadController + Angular `loa-upload` page. |
+| `GisProjectBulkUpdateController` | `GisBulkImportController` | Renamed and restructured for the new stack. |
+| `UserController` | `PersonController` | User management migrated under Person entity. |
 
 #### Known Sub-Component APIs
 

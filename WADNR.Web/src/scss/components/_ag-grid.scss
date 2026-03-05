@@ -33,6 +33,10 @@ ag-grid-angular {
             }
         }
 
+        &-cell-comp-wrapper {
+            overflow: visible;
+        }
+
         &-icon {
             color: var(--ag-header-text-color);
         }

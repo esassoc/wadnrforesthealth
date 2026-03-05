@@ -11,6 +11,7 @@ import { ProjectTypeLookupItem } from './project-type-lookup-item';
 import { OrganizationLookupItem } from './organization-lookup-item';
 import { FundSourceAllocationLookupItem } from './fund-source-allocation-lookup-item';
 import { CountyLookupItem } from './county-lookup-item';
+import { TagLookupItem } from './tag-lookup-item';
 import { ProgramLookupItem } from './program-lookup-item';
 import { ProjectStageLookupItem } from './project-stage-lookup-item';
 import { PersonLookupItem } from './person-lookup-item';
@@ -35,6 +36,8 @@ export class ProjectDNRUplandRegionDetailGridRow {
     TotalMatchAmount?: number;
     PercentageMatch?: number | null;
     ExpectedFundingFundSourceAllocations?: Array<FundSourceAllocationLookupItem> | null;
+    PrivateLandowners?: string | null;
+    Tags?: Array<TagLookupItem> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -58,6 +61,8 @@ export interface ProjectDNRUplandRegionDetailGridRowForm {
     TotalMatchAmount?: FormControl<number>;
     PercentageMatch?: FormControl<number>;
     ExpectedFundingFundSourceAllocations?: FormControl<Array<FundSourceAllocationLookupItem>>;
+    PrivateLandowners?: FormControl<string>;
+    Tags?: FormControl<Array<TagLookupItem>>;
 }
 
 export class ProjectDNRUplandRegionDetailGridRowFormControls { 
@@ -222,6 +227,26 @@ export class ProjectDNRUplandRegionDetailGridRowFormControls {
         }
     );
     public static ExpectedFundingFundSourceAllocations = (value: FormControlState<Array<FundSourceAllocationLookupItem>> | Array<FundSourceAllocationLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<FundSourceAllocationLookupItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PrivateLandowners = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Tags = (value: FormControlState<Array<TagLookupItem>> | Array<TagLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<TagLookupItem>>(
         value,
         formControlOptions ?? 
         {

@@ -41,11 +41,12 @@ import { ProgramNotificationModalComponent, ProgramNotificationModalData } from 
 import { AsyncConfirmModalComponent, AsyncConfirmModalData } from "src/app/shared/components/async-confirm-modal/async-confirm-modal.component";
 import { FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { GdbImportBasics } from "src/app/shared/generated/model/gdb-import-basics";
+import { IconComponent } from "src/app/shared/components/icon/icon.component";
 
 @Component({
     selector: "program-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRGridComponent, RouterLink, PersonLinkComponent, LoadingDirective],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRGridComponent, RouterLink, PersonLinkComponent, LoadingDirective, IconComponent],
     templateUrl: "./program-detail.component.html",
     styleUrls: ["./program-detail.component.scss"],
 })

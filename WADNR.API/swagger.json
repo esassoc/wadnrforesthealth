@@ -2990,6 +2990,92 @@
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "FocusArea"
+        ],
+        "operationId": "Create_FocusArea",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FocusAreaUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FocusAreaUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FocusAreaUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FocusAreaDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FocusAreaDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FocusAreaDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/focus-areas/locations": {
+      "get": {
+        "tags": [
+          "FocusArea"
+        ],
+        "operationId": "ListLocations_FocusArea",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/focus-areas/{focusAreaID}": {
@@ -3029,6 +3115,86 @@
                 }
               }
             }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "FocusArea"
+        ],
+        "operationId": "Update_FocusArea",
+        "parameters": [
+          {
+            "name": "focusAreaID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FocusAreaUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FocusAreaUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FocusAreaUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FocusAreaDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FocusAreaDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FocusAreaDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FocusArea"
+        ],
+        "operationId": "Delete_FocusArea",
+        "parameters": [
+          {
+            "name": "focusAreaID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -8633,6 +8799,45 @@
         }
       }
     },
+    "/people/lookup/wadnr": {
+      "get": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "ListWadnrLookup_Person",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonWithOrganizationLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonWithOrganizationLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonWithOrganizationLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/people/{personID}": {
       "get": {
         "tags": [
@@ -9093,6 +9298,46 @@
         }
       }
     },
+    "/priority-landscapes/categories": {
+      "get": {
+        "tags": [
+          "PriorityLandscape"
+        ],
+        "operationId": "ListCategories_PriorityLandscape",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PriorityLandscapeCategoryLookupItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PriorityLandscapeCategoryLookupItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PriorityLandscapeCategoryLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
     "/priority-landscapes/{priorityLandscapeID}/projects": {
       "get": {
         "tags": [
@@ -9244,6 +9489,177 @@
           }
         },
         "x-anonymous": true
+      },
+      "post": {
+        "tags": [
+          "PriorityLandscape"
+        ],
+        "operationId": "CreateFileResource_PriorityLandscape",
+        "parameters": [
+          {
+            "name": "priorityLandscapeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "displayName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "displayName": {
+                  "style": "form"
+                },
+                "description": {
+                  "style": "form"
+                },
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileResourcePriorityLandscapeDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileResourcePriorityLandscapeDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileResourcePriorityLandscapeDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/priority-landscapes/{priorityLandscapeID}/file-resources/{priorityLandscapeFileResourceID}": {
+      "put": {
+        "tags": [
+          "PriorityLandscape"
+        ],
+        "operationId": "UpdateFileResource_PriorityLandscape",
+        "parameters": [
+          {
+            "name": "priorityLandscapeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "priorityLandscapeFileResourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriorityLandscapeFileUpdateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriorityLandscapeFileUpdateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriorityLandscapeFileUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileResourcePriorityLandscapeDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileResourcePriorityLandscapeDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileResourcePriorityLandscapeDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "PriorityLandscape"
+        ],
+        "operationId": "DeleteFileResource_PriorityLandscape",
+        "parameters": [
+          {
+            "name": "priorityLandscapeID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "priorityLandscapeFileResourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/programs": {
@@ -21472,9 +21888,6 @@
         "additionalProperties": false
       },
       "BulkAssignForestersRequest": {
-        "required": [
-          "ForesterWorkUnitIDList"
-        ],
         "type": "object",
         "properties": {
           "ForesterWorkUnitIDList": {
@@ -21482,7 +21895,8 @@
             "items": {
               "type": "integer",
               "format": "int32"
-            }
+            },
+            "nullable": true
           },
           "SelectedForesterPersonID": {
             "type": "integer",
@@ -22129,6 +22543,19 @@
           "RegionEmail": {
             "type": "string",
             "nullable": true
+          },
+          "DNRUplandRegionCoordinatorID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "DNRUplandRegionCoordinatorFullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RegionContent": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -22198,6 +22625,15 @@
           },
           "RegionEmail": {
             "type": "string",
+            "nullable": true
+          },
+          "RegionContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "DNRUplandRegionCoordinatorPersonID": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },
@@ -22602,6 +23038,10 @@
       "FileResourcePriorityLandscapeDetail": {
         "type": "object",
         "properties": {
+          "PriorityLandscapeFileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "FileResourceID": {
             "type": "integer",
             "format": "int32"
@@ -22818,6 +23258,29 @@
           },
           "HasLocation": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FocusAreaUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "FocusAreaName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FocusAreaStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DNRUplandRegionID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PlannedFootprintAcres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -27402,6 +27865,20 @@
         },
         "additionalProperties": false
       },
+      "PriorityLandscapeFileUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PriorityLandscapeGridRow": {
         "type": "object",
         "properties": {
@@ -27457,6 +27934,19 @@
           "PlanYear": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "PriorityLandscapeCategoryID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PriorityLandscapeExternalResources": {
+            "type": "string",
+            "nullable": true
+          },
+          "PriorityLandscapeAboveMapText": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -28594,6 +29084,17 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+            },
+            "nullable": true
+          },
+          "PrivateLandowners": {
+            "type": "string",
+            "nullable": true
+          },
+          "Tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagLookupItem"
             },
             "nullable": true
           }

@@ -33,6 +33,14 @@ public class FocusAreaController(
         return Ok(focusAreas);
     }
 
+    [HttpGet("locations")]
+    [NormalUserFeature]
+    public async Task<ActionResult<FeatureCollection>> ListLocations()
+    {
+        var features = await FocusAreas.ListLocationsAsFeatureCollectionAsync(DbContext);
+        return Ok(features);
+    }
+
     [HttpGet("{focusAreaID}")]
     [NormalUserFeature]
     [EntityNotFound(typeof(FocusArea), "focusAreaID")]
@@ -44,6 +52,44 @@ public class FocusAreaController(
             return NotFound();
         }
         return Ok(focusArea);
+    }
+
+    [HttpPost]
+    [FocusAreaManageFeature]
+    public async Task<ActionResult<FocusAreaDetail>> Create([FromBody] FocusAreaUpsertRequest dto)
+    {
+        var created = await FocusAreas.CreateAsync(DbContext, dto);
+        if (created == null)
+        {
+            return BadRequest();
+        }
+        return CreatedAtAction(nameof(GetByID), new { focusAreaID = created.FocusAreaID }, created);
+    }
+
+    [HttpPut("{focusAreaID}")]
+    [FocusAreaManageFeature]
+    [EntityNotFound(typeof(FocusArea), "focusAreaID")]
+    public async Task<ActionResult<FocusAreaDetail>> Update([FromRoute] int focusAreaID, [FromBody] FocusAreaUpsertRequest dto)
+    {
+        var updated = await FocusAreas.UpdateAsync(DbContext, focusAreaID, dto);
+        if (updated == null)
+        {
+            return NotFound();
+        }
+        return Ok(updated);
+    }
+
+    [HttpDelete("{focusAreaID}")]
+    [FocusAreaManageFeature]
+    [EntityNotFound(typeof(FocusArea), "focusAreaID")]
+    public async Task<IActionResult> Delete([FromRoute] int focusAreaID)
+    {
+        var (success, errorMessage) = await FocusAreas.DeleteAsync(DbContext, focusAreaID);
+        if (!success)
+        {
+            return BadRequest(new { ErrorMessage = errorMessage });
+        }
+        return NoContent();
     }
 
     [HttpGet("{focusAreaID}/location")]

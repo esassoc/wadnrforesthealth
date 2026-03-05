@@ -15,6 +15,7 @@ import { PersonDetail } from "src/app/shared/generated/model/person-detail";
 
 export interface FeedbackModalData {
     currentPageUrl?: string;
+    defaultSupportRequestType?: SupportRequestTypeEnum;
 }
 
 @Component({
@@ -51,6 +52,10 @@ export class FeedbackModalComponent extends BaseModal implements OnInit {
     }
 
     ngOnInit(): void {
+        if (this.ref.data?.defaultSupportRequestType != null) {
+            this.form.patchValue({ SupportRequestTypeID: this.ref.data.defaultSupportRequestType });
+        }
+
         this.authenticationService.getCurrentUser().subscribe(user => {
             this.currentUser = user;
             // Pre-populate organization if available

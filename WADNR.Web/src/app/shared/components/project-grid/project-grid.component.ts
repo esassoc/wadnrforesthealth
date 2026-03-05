@@ -35,7 +35,7 @@ export class ProjectGridComponent implements OnInit {
                 InRouterLink: "/projects/",
                 FieldDefinitionType: "FhtProjectNumber",
             }),
-            this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", { InRouterLink: "/projects/", FieldDefinitionType: "ProjectName" }),
+            this.utilityFunctions.createLinkColumnDef("Project Name", "ProjectName", "ProjectID", { InRouterLink: "/projects/", FieldDefinitionType: "ProjectName" }),
             this.utilityFunctions.createBasicColumnDef("Project Type", "ProjectType.ProjectTypeName", {
                 FieldDefinitionType: "ProjectType",
                 CustomDropdownFilterField: "ProjectType.ProjectTypeName",
@@ -44,21 +44,22 @@ export class ProjectGridComponent implements OnInit {
                 FieldDefinitionType: "ProjectStage",
                 CustomDropdownFilterField: "ProjectStage.ProjectStageName",
             }),
-            this.utilityFunctions.createDecimalColumnDef("Total Treated Acres", "TotalTreatedAcres", {
+            this.utilityFunctions.createDecimalColumnDef("Completed Treatment Acres (not footprint acres)", "TotalTreatedAcres", {
                 MaxDecimalPlacesToDisplay: 2,
                 Width: 160,
                 FieldDefinitionType: "ProjectTotalCompletedTreatmentAcres",
+                FieldDefinitionLabelOverride: "Completed Treatment Acres (not footprint acres)",
             }),
             this.utilityFunctions.createBasicColumnDef("Lead Implementer Organization", "LeadImplementerOrganization.OrganizationName", {
                 CustomDropdownFilterField: "LeadImplementerOrganization.OrganizationName",
             }),
             this.utilityFunctions.createMultiLinkColumnDef("Programs", "Programs", "ProgramID", "ProgramName", { InRouterLink: "/programs/", FieldDefinitionType: "Program" }),
-            this.utilityFunctions.createBasicColumnDef("Priority Landscape", "PriorityLandscape.PriorityLandscapeName", {
+            this.utilityFunctions.createBasicColumnDef("Associated Priority Landscape", "PriorityLandscape.PriorityLandscapeName", {
                 FieldDefinitionType: "PriorityLandscape",
                 FieldDefinitionLabelOverride: "Associated Priority Landscape",
                 CustomDropdownFilterField: "PriorityLandscape.PriorityLandscapeName",
             }),
-            this.utilityFunctions.createBasicColumnDef("County", "County.CountyName", {
+            this.utilityFunctions.createBasicColumnDef("Associated County", "County.CountyName", {
                 FieldDefinitionType: "County",
                 FieldDefinitionLabelOverride: "Associated County",
                 CustomDropdownFilterField: "County.CountyName",

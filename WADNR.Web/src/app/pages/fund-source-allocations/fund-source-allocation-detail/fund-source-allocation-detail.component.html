@@ -8,10 +8,12 @@
         <!-- LEFT COLUMN: Basics -->
         <div class="g-col-5">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header flex-between">
                     <span class="card-title">Basics</span>
                     @if (canManageFundSources$ | async) {
-                        <button class="btn btn-sm btn-primary" (click)="openEditModal(allocation)">Edit</button>
+                        <button class="card-header-edit-link" (click)="openEditModal(allocation)" title="Edit Basics">
+                            <icon icon="Edit"></icon>
+                        </button>
                     }
                 </div>
                 <div class="card-body">
@@ -207,11 +209,13 @@
                 <div class="card">
                     <div class="card-header">
                         <span class="card-title">Files</span>
-                        @if (canManageFundSources$ | async) {
-                            <button class="btn btn-sm btn-primary" (click)="openFileModal(allocation.FundSourceAllocationID)">Add File(s)</button>
-                        }
                     </div>
                     <div class="card-body" [loadingSpinner]="{ isLoading: filesIsLoading$ | async, loadingHeight: 300 }">
+                        @if (canManageFundSources$ | async) {
+                            <div class="flex-end mb-2">
+                                <button class="btn btn-sm btn-primary" (click)="openFileModal(allocation.FundSourceAllocationID)">Add File(s)</button>
+                            </div>
+                        }
                         @if (files.length) {
                             @for (file of files; track file.FundSourceAllocationFileResourceID) {
                                 <div class="file-entry">

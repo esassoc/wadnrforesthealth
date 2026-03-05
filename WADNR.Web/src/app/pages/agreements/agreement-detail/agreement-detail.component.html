@@ -7,10 +7,12 @@
 <div class="grid-12">
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header flex-between">
                 <span class="card-title">Agreement Basics</span>
                 @if (canManageAgreements$ | async) {
-                    <button class="btn btn-sm btn-primary" (click)="openEditModal(agreement)">Edit</button>
+                    <button class="card-header-edit-link" (click)="openEditModal(agreement)" title="Edit Agreement Basics">
+                        <icon icon="Edit"></icon>
+                    </button>
                 }
             </div>
             <div class="card-body">
@@ -115,11 +117,13 @@
 
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header flex-between">
                 <span class="card-title">WA DNR Fund Source Allocations Associated to This Agreement</span>
                 @if (canManageAgreements$ | async) {
                     @if (fundSourceAllocations$ | async; as fsAllocations) {
-                        <button class="btn btn-sm btn-primary" (click)="openFundSourceAllocationsModal(agreement.AgreementID, fsAllocations)">Edit</button>
+                        <button class="card-header-edit-link" (click)="openFundSourceAllocationsModal(agreement.AgreementID, fsAllocations)" title="Edit Fund Source Allocations">
+                            <icon icon="Edit"></icon>
+                        </button>
                     }
                 }
             </div>
@@ -143,11 +147,13 @@
 
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header flex-between">
                 <span class="card-title">Projects Associated to This Agreement</span>
                 @if (canManageAgreements$ | async) {
                     @if (projects$ | async; as projectsList) {
-                        <button class="btn btn-sm btn-primary" (click)="openProjectsModal(agreement.AgreementID, projectsList)">Edit</button>
+                        <button class="card-header-edit-link" (click)="openProjectsModal(agreement.AgreementID, projectsList)" title="Edit Projects">
+                            <icon icon="Edit"></icon>
+                        </button>
                     }
                 }
             </div>
@@ -172,11 +178,13 @@
         <div class="card">
             <div class="card-header">
                 <span class="card-title">Agreement Contacts</span>
-                @if (canManageAgreements$ | async) {
-                    <button class="btn btn-sm btn-primary" (click)="openContactModal(agreement.AgreementID, 'create')">Add Contact</button>
-                }
             </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: contactsIsLoading$ | async, loadingHeight: 300 }">
+                @if (canManageAgreements$ | async) {
+                    <div class="flex-end mb-2">
+                        <button class="btn btn-sm btn-primary" (click)="openContactModal(agreement.AgreementID, 'create')">Add Contact</button>
+                    </div>
+                }
                 <wadnr-grid [rowData]="contacts$ | async" [columnDefs]="contactColumnDefs$ | async" downloadFileName="agreement-contacts" [sizeColumnsToFitGrid]="true"></wadnr-grid>
             </div>
         </div>

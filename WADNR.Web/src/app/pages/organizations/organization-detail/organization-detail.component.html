@@ -6,15 +6,16 @@
         <!-- Basics Card -->
         <div class="g-col-6">
             <div class="card">
-                <div class="card-header">
-                    <span class="card-title">
-                        <a href="javascript:void(0)" (click)="openEditModal(organization)" title="Edit Organization" style="color: inherit">
-                            <i class="fa fa-edit"></i>
-                        </a>
-                        Basics
-                    </span>
+                <div class="card-header flex-between">
+                    <span class="card-title">Basics</span>
+                    <button class="card-header-edit-link" (click)="openEditModal(organization)" title="Edit Basics">
+                        <icon icon="Edit"></icon>
+                    </button>
                 </div>
                 <div class="card-body">
+                    <div class="flex-end mb-2">
+                        <button class="btn btn-sm btn-secondary" (click)="requestOrganizationNameChange()">Request Name Change</button>
+                    </div>
                     <div class="grid-12">
                         @if (organization.LogoFileResourceUrl) {
                             <div class="g-col-12" style="text-align: center; margin-bottom: 1rem">
@@ -98,11 +99,13 @@
         @if (programs$ | async; as programs) {
             <div class="g-col-12">
                 <div class="card">
-                    <div class="card-header flex-between">
+                    <div class="card-header">
                         <span class="card-title">Programs</span>
-                        <button class="btn btn-primary btn-sm" (click)="openCreateProgramModal(organization)">Create Program</button>
                     </div>
                     <div class="card-body" [loadingSpinner]="{ isLoading: programsIsLoading$ | async, loadingHeight: 300 }">
+                        <div class="flex-end mb-2">
+                            <button class="btn btn-primary btn-sm" (click)="openCreateProgramModal(organization)">Create Program</button>
+                        </div>
                         @if (programs.length > 0) {
                             <wadnr-grid [rowData]="programs" [columnDefs]="programColumnDefs" height="300px" downloadFileName="Organization_Programs"> </wadnr-grid>
                         } @else {
@@ -116,16 +119,16 @@
         <!-- Map Card - Project Locations and Boundary -->
         <div class="g-col-12">
             <div class="card">
-                <div class="card-header flex-between">
+                <div class="card-header">
                     <span class="card-title">Project Locations and Boundary</span>
-                    <div>
+                </div>
+                <div class="card-body">
+                    <div class="flex-end mb-2">
                         <button class="btn btn-primary btn-sm" (click)="openUploadBoundaryModal(organization)"><icon icon="Upload"></icon> Upload Boundary</button>
                         @if (organization.HasOrganizationBoundary) {
                             <button class="btn btn-danger btn-sm ms-1" (click)="confirmDeleteBoundary(organization)"><icon icon="Delete"></icon> Delete Boundary</button>
                         }
                     </div>
-                </div>
-                <div class="card-body">
                     @if (hasSpatialData$ | async) {
                         <p>The map displays the Contributing Organization boundary, and the locations of any active Projects that have spatial data.</p>
                         <wadnr-map [mapHeight]="'500px'" [selectedTileLayer]="'Terrain'" [boundingBox]="boundaryBoundingBox$ | async" (onMapLoad)="handleMapReady($event)">

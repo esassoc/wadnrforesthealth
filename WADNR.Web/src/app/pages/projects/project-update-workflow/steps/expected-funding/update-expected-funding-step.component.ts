@@ -20,6 +20,9 @@ import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
+import { DialogService } from "@ngneat/dialog";
+import { FeedbackModalComponent, FeedbackModalData } from "src/app/shared/components/feedback-modal/feedback-modal.component";
+import { SupportRequestTypeEnum } from "src/app/shared/generated/enum/support-request-type-enum";
 
 interface FundingSourceCheckbox {
     id: number;
@@ -77,7 +80,8 @@ export class UpdateExpectedFundingStepComponent extends UpdateWorkflowStepBase i
     constructor(
         private projectService: ProjectService,
         private fundingSourceService: FundingSourceService,
-        private fundSourceAllocationService: FundSourceAllocationService
+        private fundSourceAllocationService: FundSourceAllocationService,
+        private dialogService: DialogService
     ) {
         super();
     }
@@ -242,5 +246,13 @@ export class UpdateExpectedFundingStepComponent extends UpdateWorkflowStepBase i
             "Failed to save expected funding.",
             navigate
         );
+    }
+
+    openMissingAllocationModal(): void {
+        const data: FeedbackModalData = {
+            currentPageUrl: window.location.href,
+            defaultSupportRequestType: SupportRequestTypeEnum.NewOrganizationOrFundSourceAllocation,
+        };
+        this.dialogService.open(FeedbackModalComponent, { data, width: "600px" });
     }
 }

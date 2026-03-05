@@ -19,6 +19,8 @@ export class DNRUplandRegionUpsertRequest {
     RegionZip?: string | null;
     RegionPhone?: string | null;
     RegionEmail?: string | null;
+    RegionContent?: string | null;
+    DNRUplandRegionCoordinatorPersonID?: number | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -33,6 +35,8 @@ export interface DNRUplandRegionUpsertRequestForm {
     RegionZip?: FormControl<string>;
     RegionPhone?: FormControl<string>;
     RegionEmail?: FormControl<string>;
+    RegionContent?: FormControl<string>;
+    DNRUplandRegionCoordinatorPersonID?: FormControl<number>;
 }
 
 export class DNRUplandRegionUpsertRequestFormControls { 
@@ -107,6 +111,26 @@ export class DNRUplandRegionUpsertRequestFormControls {
         }
     );
     public static RegionEmail = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static RegionContent = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static DNRUplandRegionCoordinatorPersonID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

@@ -6,10 +6,12 @@
     <!-- Row 1: Basics (left) and Files (right) -->
     <div class="g-col-6">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header flex-between">
                 <span class="card-title">Basics</span>
                 @if (canManageFundSources$ | async) {
-                    <button class="btn btn-sm btn-primary" (click)="openEditModal(fundSource)">Edit</button>
+                    <button class="card-header-edit-link" (click)="openEditModal(fundSource)" title="Edit Basics">
+                        <icon icon="Edit"></icon>
+                    </button>
                 }
             </div>
             <div class="card-body">
@@ -98,11 +100,13 @@
             <div class="card">
                 <div class="card-header">
                     <span class="card-title">Files</span>
-                    @if (canManageFundSources$ | async) {
-                        <button class="btn btn-sm btn-primary" (click)="openFileModal(fundSource.FundSourceID)">Add File(s)</button>
-                    }
                 </div>
                 <div class="card-body">
+                    @if (canManageFundSources$ | async) {
+                        <div class="flex-end mb-2">
+                            <button class="btn btn-sm btn-primary" (click)="openFileModal(fundSource.FundSourceID)">Add File(s)</button>
+                        </div>
+                    }
                     @if (files.length) {
                         @for (file of files; track file.FundSourceFileResourceID) {
                             <div class="file-entry">

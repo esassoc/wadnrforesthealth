@@ -20,6 +20,10 @@ import { ConfirmService } from "src/app/shared/services/confirm/confirm.service"
 import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
+import { AuthenticationService } from "src/app/services/authentication.service";
+import { SelectDropdownOption } from "src/app/shared/components/forms/form-field/form-field.component";
+import { DNRUplandRegionService } from "src/app/shared/generated/api/dnr-upland-region.service";
+import { FocusAreaEditModalComponent, FocusAreaEditModalData } from "./focus-area-edit-modal.component";
 
 import { BoundingBoxDto } from "src/app/shared/models/bounding-box-dto";
 import { FocusAreaService } from "src/app/shared/generated/api/focus-area.service";
@@ -47,6 +51,9 @@ export class FocusAreaDetailComponent {
     public hasLocation$: Observable<boolean>;
     public locationBoundingBox$: Observable<BoundingBoxDto | undefined>;
 
+    public canManageFocusAreas$: Observable<boolean>;
+    private regionOptions: SelectDropdownOption[] = [];
+
     public map: LeafletMap;
     public layerControl: Control.Layers;
     public mapIsReady = signal(false);
@@ -55,10 +62,23 @@ export class FocusAreaDetailComponent {
         private focusAreaService: FocusAreaService,
         private dialogService: DialogService,
         private confirmService: ConfirmService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private authService: AuthenticationService,
+        private dnrUplandRegionService: DNRUplandRegionService
     ) {}
 
     ngOnInit(): void {
+        this.canManageFocusAreas$ = this.authService.currentUserSetObservable.pipe(
+            map((user) => this.authService.canManageFocusAreas(user)),
+        );
+
+        this.dnrUplandRegionService.listLookupDNRUplandRegion().subscribe((regions) => {
+            this.regionOptions = regions.map((r) => ({
+                Value: r.DNRUplandRegionID,
+                Label: r.DNRUplandRegionName,
+            } as SelectDropdownOption));
+        });
+
         const focusAreaID$ = this._focusAreaID$.pipe(filter((id): id is number => id != null && !Number.isNaN(id)));
 
         this.focusArea$ = combineLatest([focusAreaID$, this.refreshData$.pipe(startWith(undefined))]).pipe(
@@ -139,6 +159,22 @@ export class FocusAreaDetailComponent {
         dialogRef.afterClosed$.subscribe((result) => {
             if (result) {
                 this.alertService.pushAlert(new Alert("Focus Area location updated successfully.", AlertContext.Success, true));
+                this.refreshData$.next();
+            }
+        });
+    }
+
+    openEditBasicsModal(focusArea: FocusAreaDetail): void {
+        const dialogRef = this.dialogService.open(FocusAreaEditModalComponent, {
+            data: {
+                mode: "edit",
+                focusArea,
+                regionOptions: this.regionOptions,
+            } as FocusAreaEditModalData,
+        });
+
+        dialogRef.afterClosed$.subscribe((result) => {
+            if (result) {
                 this.refreshData$.next();
             }
         });

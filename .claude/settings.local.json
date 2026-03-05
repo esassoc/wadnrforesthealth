@@ -53,7 +53,8 @@
       "Bash(echo === $dir ===:*)",
       "Bash(echo === $page_dir ===:*)",
       "Bash(read f:*)",
-      "Bash(echo === $f ===:*)"
+      "Bash(echo === $f ===:*)",
+      "Bash(cat:*)"
     ]
   }
 }

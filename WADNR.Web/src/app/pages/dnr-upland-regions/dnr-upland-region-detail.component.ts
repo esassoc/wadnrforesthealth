@@ -1,15 +1,16 @@
 import { AsyncPipe } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, switchMap } from "rxjs";
+import { DialogService } from "@ngneat/dialog";
+import { distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, startWith, Subject, switchMap, take } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
+import { AuthenticationService } from "src/app/services/authentication.service";
+import { DNRUplandRegionContactModalComponent, DNRUplandRegionContactModalData } from "./dnr-upland-region-contact-modal.component";
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { Map } from "leaflet";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
-import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
-import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
 import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
@@ -18,15 +19,17 @@ import { DNRUplandRegionService } from "src/app/shared/generated/api/dnr-upland-
 import { DNRUplandRegionDetail } from "src/app/shared/generated/model/dnr-upland-region-detail";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { ColDef } from "ag-grid-community";
 import { ProjectDNRUplandRegionDetailGridRow } from "src/app/shared/generated/model/project-dnr-upland-region-detail-grid-row";
 import { FundSourceAllocationDNRUplandRegionDetailGridRow } from "src/app/shared/generated/model/fund-source-allocation-dnr-upland-region-detail-grid-row";
+import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 
 @Component({
     selector: "dnr-upland-region-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRMapComponent, DNRUplandRegionsLayerComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, ExternalMapLayersComponent, GenericFeatureCollectionLayerComponent, WADNRGridComponent, LoadingDirective],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRMapComponent, DNRUplandRegionsLayerComponent, ExternalMapLayersComponent, GenericFeatureCollectionLayerComponent, WADNRGridComponent, LoadingDirective, IconComponent, FieldDefinitionComponent],
     templateUrl: "./dnr-upland-region-detail.component.html",
     styleUrls: ["./dnr-upland-region-detail.component.scss"],
 })
@@ -77,8 +80,10 @@ export class DNRUplandRegionDetailComponent {
     public mapIsReady: boolean = false;
     public highlightedDNRUplandRegionLayerMode = OverlayMode.Single;
     public allDNRUplandRegionsLayerMode = OverlayMode.ReferenceOnly;
-    public OverlayMode = OverlayMode;
     public projectFeatures$: Observable<IFeature[]>;
+
+    public isAdmin$: Observable<boolean>;
+    private refreshData$ = new Subject<void>();
 
     public projectColumnDefs: ColDef<ProjectDNRUplandRegionDetailGridRow>[] = [];
     public projectPinnedTotalsRow = {
@@ -92,9 +97,19 @@ export class DNRUplandRegionDetailComponent {
         filteredOnly: true,
     };
 
-    constructor(private route: ActivatedRoute, private dnrUplandRegionService: DNRUplandRegionService, private utilityFunctions: UtilityFunctionsService) {}
+    constructor(
+        private route: ActivatedRoute,
+        private dnrUplandRegionService: DNRUplandRegionService,
+        private utilityFunctions: UtilityFunctionsService,
+        private authService: AuthenticationService,
+        private dialogService: DialogService,
+    ) {}
 
     ngOnInit(): void {
+        this.isAdmin$ = this.authService.currentUserSetObservable.pipe(
+            map((user) => this.authService.isUserAnAdministrator(user)),
+        );
+
         this.dnrUplandRegionID$ = this.route.paramMap.pipe(
             map((p) => (p.get("dnrUplandRegionID") ? Number(p.get("dnrUplandRegionID")) : null)),
             filter((dnrUplandRegionID): dnrUplandRegionID is number => dnrUplandRegionID != null && !Number.isNaN(dnrUplandRegionID)),
@@ -102,11 +117,12 @@ export class DNRUplandRegionDetailComponent {
         );
 
         this.dnrUplandRegionDetailPageData$ = this.dnrUplandRegionID$.pipe(
-            switchMap((dnrUplandRegionID) =>
-                forkJoin({
+            switchMap((dnrUplandRegionID) => this.refreshData$.pipe(
+                startWith(undefined),
+                switchMap(() => forkJoin({
                     dnrUplandRegion: this.dnrUplandRegionService.getDNRUplandRegion(dnrUplandRegionID),
-                })
-            ),
+                }))
+            )),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -128,12 +144,14 @@ export class DNRUplandRegionDetailComponent {
         this.projectsIsLoading$ = toLoadingState(this.projects$);
         this.fundSourceAllocationsIsLoading$ = toLoadingState(this.fundSourceAllocations$);
 
-        this.projectColumnDefs = this.createProjectColumnDefs();
+        this.isAdmin$.pipe(take(1)).subscribe((isAdmin) => {
+            this.projectColumnDefs = this.createProjectColumnDefs(isAdmin);
+        });
         this.fundSourceAllocationColumnDefs = this.createFundSourceAllocationColumnDefs();
     }
 
-    private createProjectColumnDefs(): ColDef<ProjectDNRUplandRegionDetailGridRow>[] {
-        return [
+    private createProjectColumnDefs(isAdmin: boolean): ColDef<ProjectDNRUplandRegionDetailGridRow>[] {
+        const cols: ColDef<ProjectDNRUplandRegionDetailGridRow>[] = [
             this.utilityFunctions.createLinkColumnDef("Lead Implementer", "LeadImplementer.OrganizationName", "LeadImplementer.OrganizationID", {
                 InRouterLink: "/organizations/",
                 CustomDropdownFilterField: "LeadImplementer.OrganizationName",
@@ -143,13 +161,26 @@ export class DNRUplandRegionDetailComponent {
                 FieldDefinitionType: "Program",
                 CustomDropdownFilterField: "Programs.ProgramName",
             }),
-            this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", {
+            this.utilityFunctions.createLinkColumnDef("Project Name", "ProjectName", "ProjectID", {
                 InRouterLink: "/projects/",
                 FieldDefinitionType: "ProjectName",
+                FieldDefinitionLabelOverride: "Project Name",
             }),
-            this.utilityFunctions.createMultiLinkColumnDef("Counties", "Counties", "CountyID", "CountyName", {
+        ];
+
+        if (isAdmin) {
+            cols.push(
+                this.utilityFunctions.createBasicColumnDef("Landowner", "PrivateLandowners", {
+                    FieldDefinitionType: "Landowner",
+                }),
+            );
+        }
+
+        cols.push(
+            this.utilityFunctions.createMultiLinkColumnDef("County", "Counties", "CountyID", "CountyName", {
                 InRouterLink: "/counties/",
                 FieldDefinitionType: "County",
+                FieldDefinitionLabelOverride: "County",
                 CustomDropdownFilterField: "Counties.CountyName",
             }),
             this.utilityFunctions.createLinkColumnDef("Primary Contact", "PrimaryContact.FullName", "PrimaryContact.PersonID", {
@@ -159,8 +190,6 @@ export class DNRUplandRegionDetailComponent {
             }),
             this.utilityFunctions.createDecimalColumnDef("Total Treated Acres", "TotalTreatedAcres", {
                 MaxDecimalPlacesToDisplay: 2,
-                FieldDefinitionType: "ProjectTotalCompletedTreatmentAcres",
-                FieldDefinitionLabelOverride: "Total Treated Acres",
             }),
             this.utilityFunctions.createBasicColumnDef("Project Type", "ProjectType.ProjectTypeName", {
                 FieldDefinitionType: "ProjectType",
@@ -173,7 +202,6 @@ export class DNRUplandRegionDetailComponent {
             this.utilityFunctions.createDateColumnDef("Application Date", "ProjectApplicationDate", "M/d/yyyy", {
                 FieldDefinitionType: "ProjectApplicationDate",
             }),
-
             this.utilityFunctions.createDateColumnDef("Initiation Date", "ProjectInitiationDate", "M/d/yyyy", {
                 FieldDefinitionType: "ProjectInitiationDate",
             }),
@@ -183,33 +211,43 @@ export class DNRUplandRegionDetailComponent {
             this.utilityFunctions.createDateColumnDef("Completion Date", "ProjectCompletionDate", "M/d/yyyy", {
                 FieldDefinitionType: "CompletionDate",
             }),
-            this.utilityFunctions.createCurrencyColumnDef("Total Payment", "TotalPaymentAmount", {
+            this.utilityFunctions.createCurrencyColumnDef("Total Payment Amounts", "TotalPaymentAmount", {
                 MaxDecimalPlacesToDisplay: 2,
-                FieldDefinitionType: "PaymentAmount",
-                FieldDefinitionLabelOverride: "Total Payment Amounts",
             }),
-            this.utilityFunctions.createCurrencyColumnDef("Total Match", "TotalMatchAmount", {
+            this.utilityFunctions.createCurrencyColumnDef("Total Match Amounts", "TotalMatchAmount", {
                 MaxDecimalPlacesToDisplay: 2,
-                FieldDefinitionType: "MatchAmount",
-                FieldDefinitionLabelOverride: "Total Match Amounts",
             }),
             this.utilityFunctions.createDecimalColumnDef("Percentage Match", "PercentageMatch", {
                 MaxDecimalPlacesToDisplay: 2,
                 FieldDefinitionType: "PercentageMatch",
             }),
             this.utilityFunctions.createMultiLinkColumnDef(
-                "Expected Funding Fund Source Allocations",
+                "Fund Source Allocations",
                 "ExpectedFundingFundSourceAllocations",
                 "FundSourceAllocationID",
                 "FundSourceAllocationName",
                 {
                     InRouterLink: "/fund-source-allocations/",
                     FieldDefinitionType: "FundSourceAllocation",
-                    FieldDefinitionLabelOverride: "WA DNR Fund Source Allocation",
+                    FieldDefinitionLabelOverride: "WA DNR Fund Source Allocations",
                     CustomDropdownFilterField: "ExpectedFundingFundSourceAllocations.FundSourceAllocationName",
                 }
             ),
-        ];
+        );
+
+        if (isAdmin) {
+            cols.push(
+                this.utilityFunctions.createBasicColumnDef("Tags", "Tags", {
+                    ValueGetter: (params) => {
+                        const tags = params.data?.Tags;
+                        if (!tags || tags.length === 0) return "";
+                        return tags.map((t) => t.TagName).join(", ");
+                    },
+                }),
+            );
+        }
+
+        return cols;
     }
 
     private createFundSourceAllocationColumnDefs(): ColDef<FundSourceAllocationDNRUplandRegionDetailGridRow>[] {
@@ -244,6 +282,7 @@ export class DNRUplandRegionDetailComponent {
             this.utilityFunctions.createLinkColumnDef("Fund Source Allocation", "FundSourceAllocationName", "FundSourceAllocationID", {
                 InRouterLink: "/fund-source-allocations/",
                 FieldDefinitionType: "FundSourceAllocationName",
+                FieldDefinitionLabelOverride: "Allocation Name",
             }),
             this.utilityFunctions.createBasicColumnDef("Source", "FundSourceAllocationSource.FundSourceAllocationSourceDisplayName", {
                 FieldDefinitionType: "FundSourceAllocationSource",
@@ -284,4 +323,17 @@ export class DNRUplandRegionDetailComponent {
         this.layerControl = event.layerControl;
         this.mapIsReady = true;
     }
+
+    openEditContactModal(dnrUplandRegion: DNRUplandRegionDetail): void {
+        const dialogRef = this.dialogService.open(DNRUplandRegionContactModalComponent, {
+            data: { dnrUplandRegion } as DNRUplandRegionContactModalData,
+        });
+
+        dialogRef.afterClosed$.subscribe((result) => {
+            if (result) {
+                this.refreshData$.next();
+            }
+        });
+    }
+
 }

@@ -11,4 +11,7 @@ public class DNRUplandRegionDetail
     public string? RegionZip { get; set; }
     public string? RegionPhone { get; set; }
     public string? RegionEmail { get; set; }
+    public int? DNRUplandRegionCoordinatorID { get; set; }
+    public string? DNRUplandRegionCoordinatorFullName { get; set; }
+    public string? RegionContent { get; set; }
 }

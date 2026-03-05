@@ -35,6 +35,14 @@ public class PersonController(
         return Ok(items);
     }
 
+    [HttpGet("lookup/wadnr")]
+    [NormalUserFeature]
+    public async Task<ActionResult<IEnumerable<PersonWithOrganizationLookupItem>>> ListWadnrLookup()
+    {
+        var items = await People.ListWadnrAsLookupItemAsync(DbContext);
+        return Ok(items);
+    }
+
     [HttpGet("{personID}")]
     [NormalUserFeature]
     [EntityNotFound(typeof(Person), "personID")]

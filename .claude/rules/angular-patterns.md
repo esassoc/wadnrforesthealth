@@ -314,8 +314,8 @@ Use the standard three-section structure inside the wrapper:
     <!-- form fields, content -->
   </div>
   <div class="modal-footer">
-    <button class="btn btn-secondary" (click)="close()">Cancel</button>
     <button class="btn btn-primary" (click)="save()">Save</button>
+    <button class="btn btn-secondary" (click)="close()">Cancel</button>
   </div>
 </div>
 ```
@@ -329,10 +329,12 @@ Use the standard three-section structure inside the wrapper:
   <!-- content -->
 </div>
 <div class="modal-footer">
-  <button class="btn btn-secondary" (click)="close()">Cancel</button>
   <button class="btn btn-primary" (click)="save()">Save</button>
+  <button class="btn btn-secondary" (click)="close()">Cancel</button>
 </div>
 ```
+
+**Button order**: Confirmation/action buttons (Save, Upload, Delete) go on the **left**, abandon buttons (Cancel) go on the **right**.
 
 All modals use `@ngneat/dialog` with `DialogRef<InputData, OutputData>`. Use `ViewEncapsulation.None` when the modal contains injected innerHTML (like diff HTML) that needs global styles.
 

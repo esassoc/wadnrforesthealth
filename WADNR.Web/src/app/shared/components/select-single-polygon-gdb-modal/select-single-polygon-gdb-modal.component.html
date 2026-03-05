@@ -50,8 +50,6 @@
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-outline-secondary" (click)="cancel()" [disabled]="(isUploading$ | async) || (isApproving$ | async)">Cancel</button>
-
     @if ((step$ | async) === 'upload') {
         <button type="button"
                 class="btn btn-primary"
@@ -69,5 +67,7 @@
             Approve
         </button>
     }
+
+    <button type="button" class="btn btn-outline-secondary" (click)="cancel()" [disabled]="(isUploading$ | async) || (isApproving$ | async)">Cancel</button>
 </div>
 </div>

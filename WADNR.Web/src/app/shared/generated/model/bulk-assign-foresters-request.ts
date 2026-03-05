@@ -11,7 +11,7 @@
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class BulkAssignForestersRequest { 
-    ForesterWorkUnitIDList: Array<number>;
+    ForesterWorkUnitIDList?: Array<number> | null;
     SelectedForesterPersonID?: number | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -19,7 +19,7 @@ export class BulkAssignForestersRequest {
 }
 
 export interface BulkAssignForestersRequestForm { 
-    ForesterWorkUnitIDList: FormControl<Array<number>>;
+    ForesterWorkUnitIDList?: FormControl<Array<number>>;
     SelectedForesterPersonID?: FormControl<number>;
 }
 
@@ -28,10 +28,9 @@ export class BulkAssignForestersRequestFormControls {
         value,
         formControlOptions ?? 
         {
-            nonNullable: true,
+            nonNullable: false,
             validators: 
             [
-                Validators.required,
             ],
         }
     );

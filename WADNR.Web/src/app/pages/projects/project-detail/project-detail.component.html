@@ -118,11 +118,11 @@
 
             <!-- Basics Card -->
             <div class="card" id="card-basics">
-                <div class="card-header">
+                <div class="card-header flex-between">
                     <span class="card-title">Basics</span>
                     @if (perms.userCanDirectEdit) {
-                        <button class="btn btn-sm btn-primary float-right" (click)="openEditBasicsModal(project)">
-                            <i class="fa fa-pencil"></i> Edit
+                        <button class="card-header-edit-link" (click)="openEditBasicsModal(project)" title="Edit Basics">
+                            <icon icon="Edit"></icon>
                         </button>
                     }
                 </div>
@@ -310,11 +310,11 @@
 
             <!-- Tags Card -->
             <div class="card" id="card-tags">
-                <div class="card-header">
+                <div class="card-header flex-between">
                     <span class="card-title">Tags</span>
                     @if (perms.userCanDirectEdit && perms.userIsAdmin) {
-                        <button class="btn btn-sm btn-primary float-right" (click)="openEditTagsModal(project)">
-                            <i class="fa fa-pencil"></i> Edit
+                        <button class="card-header-edit-link" (click)="openEditTagsModal(project)" title="Edit Tags">
+                            <icon icon="Edit"></icon>
                         </button>
                     }
                 </div>
@@ -333,11 +333,11 @@
 
             <!-- Organizations Card -->
             <div class="card" id="card-organizations">
-                <div class="card-header">
+                <div class="card-header flex-between">
                     <span class="card-title">Contributing Organizations</span>
                     @if (perms.userCanDirectEdit) {
-                        <button class="btn btn-sm btn-primary float-right" (click)="openEditOrganizationsModal(project)">
-                            <i class="fa fa-pencil"></i> Edit
+                        <button class="card-header-edit-link" (click)="openEditOrganizationsModal(project)" title="Edit Organizations">
+                            <icon icon="Edit"></icon>
                         </button>
                     }
                 </div>
@@ -375,15 +375,20 @@
 
             <!-- Contacts Card -->
             <div class="card" id="card-contacts">
-                <div class="card-header">
+                <div class="card-header flex-between">
                     <span class="card-title">Contacts</span>
                     @if (perms.userCanDirectEdit) {
-                        <button class="btn btn-sm btn-primary float-right" (click)="openEditContactsModal(project)">
-                            <i class="fa fa-pencil"></i> Edit
+                        <button class="card-header-edit-link" (click)="openEditContactsModal(project)" title="Edit Contacts">
+                            <icon icon="Edit"></icon>
                         </button>
                     }
                 </div>
                 <div class="card-body">
+                    <div class="flex-end mb-2">
+                        <button class="btn btn-sm btn-secondary" (click)="requestPrimaryContactChange()">
+                            Request Primary Contact Change
+                        </button>
+                    </div>
                     @if (project.People && project.People.length > 0) {
                         <table class="table">
                             <thead>
@@ -417,11 +422,11 @@
 
             <!-- Funding Card -->
             <div class="card" id="card-funding">
-                <div class="card-header">
+                <div class="card-header flex-between">
                     <span class="card-title">Project Funding</span>
                     @if (perms.userCanDirectEdit) {
-                        <button class="btn btn-sm btn-primary float-right" (click)="openEditFundingModal(project)">
-                            <i class="fa fa-pencil"></i> Edit
+                        <button class="card-header-edit-link" (click)="openEditFundingModal(project)" title="Edit Funding">
+                            <icon icon="Edit"></icon>
                         </button>
                     }
                 </div>
@@ -652,13 +657,15 @@
                 <div class="card" id="card-interaction-events">
                     <div class="card-header">
                         <span class="card-title">Project Interactions/Events</span>
-                        @if (perms.userCanDirectEdit) {
-                            <button class="btn btn-sm btn-primary float-right" (click)="openAddInteractionEventModal(project.ProjectID)">
-                                <i class="fa fa-plus"></i> Add Interaction/Event
-                            </button>
-                        }
                     </div>
                     <div class="card-body">
+                        @if (perms.userCanDirectEdit) {
+                            <div class="flex-end mb-2">
+                                <button class="btn btn-sm btn-primary" (click)="openAddInteractionEventModal(project.ProjectID)">
+                                    <i class="fa fa-plus"></i> Add Interaction/Event
+                                </button>
+                            </div>
+                        }
                         @if (interactionEvents.length > 0) {
                             <wadnr-grid [rowData]="interactionEvents" [columnDefs]="interactionEventColumnDefs" height="400px" downloadFileName="Project_InteractionEvents">
                             </wadnr-grid>
@@ -674,13 +681,15 @@
                 <div class="card" id="card-classifications">
                     <div class="card-header">
                         <span class="card-title"><field-definition fieldDefinition="Classification" labelOverride="Project Themes"></field-definition></span>
-                        @if (perms.userCanDirectEdit) {
-                            <button class="btn btn-sm btn-primary float-right" (click)="openEditClassificationsModal(project)">
-                                <i class="fa fa-pencil"></i> Edit
-                            </button>
-                        }
                     </div>
                     <div class="card-body">
+                        @if (perms.userCanDirectEdit) {
+                            <div class="flex-end mb-2">
+                                <button class="btn btn-sm btn-primary" (click)="openEditClassificationsModal(project)">
+                                    <i class="fa fa-pencil"></i> Edit
+                                </button>
+                            </div>
+                        }
                         @if (classificationsBySystem.length > 0) {
                             @for (system of classificationsBySystem; track system.classificationSystemID) {
                                 @for (batch of batchItems(system.items, 3); track $index) {
@@ -735,11 +744,13 @@
                 <div class="card" id="card-documents">
                     <div class="card-header">
                         <span class="card-title">Documents</span>
-                        @if (perms.userCanDirectEdit) {
-                            <button class="btn btn-sm btn-primary float-right" (click)="openAddDocumentModal(project.ProjectID)">Add Document</button>
-                        }
                     </div>
                     <div class="card-body">
+                        @if (perms.userCanDirectEdit) {
+                            <div class="flex-end mb-2">
+                                <button class="btn btn-sm btn-primary" (click)="openAddDocumentModal(project.ProjectID)">Add Document</button>
+                            </div>
+                        }
                         @if (documents.length > 0) {
                             <wadnr-grid [rowData]="documents" [columnDefs]="documentColumnDefs" height="300px" downloadFileName="Project_Documents"></wadnr-grid>
                         } @else {
@@ -789,11 +800,11 @@
             <!-- External Links Card -->
             @if (externalLinks$ | async; as externalLinks) {
                 <div class="card" id="card-external-links">
-                    <div class="card-header">
+                    <div class="card-header flex-between">
                         <span class="card-title">External Links</span>
                         @if (perms.userCanDirectEdit) {
-                            <button class="btn btn-sm btn-primary float-right" (click)="openEditExternalLinksModal(project)">
-                                <i class="fa fa-pencil"></i> Edit
+                            <button class="card-header-edit-link" (click)="openEditExternalLinksModal(project)" title="Edit External Links">
+                                <icon icon="Edit"></icon>
                             </button>
                         }
                     </div>
@@ -818,11 +829,13 @@
                 <div class="card" id="card-photos">
                     <div class="card-header">
                         <span class="card-title">Photos</span>
-                        @if (perms.userCanDirectEdit) {
-                            <button class="btn btn-sm btn-primary float-right" (click)="openAddImageModal(project.ProjectID)">Add Photo</button>
-                        }
                     </div>
                     <div class="card-body">
+                        @if (perms.userCanDirectEdit) {
+                            <div class="flex-end mb-2">
+                                <button class="btn btn-sm btn-primary" (click)="openAddImageModal(project.ProjectID)">Add Photo</button>
+                            </div>
+                        }
                         <image-gallery
                             [images]="mapToGalleryItems(images)"
                             [canEdit]="perms.userCanDirectEdit"

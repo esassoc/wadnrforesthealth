@@ -121,6 +121,7 @@ model/firma-page-type-detail.ts
 model/firma-page-upsert-request.ts
 model/focus-area-detail.ts
 model/focus-area-grid-row.ts
+model/focus-area-upsert-request.ts
 model/forester-role-lookup-item.ts
 model/forester-work-unit-grid-row.ts
 model/fund-source-agreement-grid-row.ts
@@ -246,6 +247,7 @@ model/precision-model.ts
 model/precision-models.ts
 model/priority-landscape-category-lookup-item.ts
 model/priority-landscape-detail.ts
+model/priority-landscape-file-update-request.ts
 model/priority-landscape-grid-row.ts
 model/priority-landscape-lookup-item.ts
 model/priority-landscape-upsert-request.ts

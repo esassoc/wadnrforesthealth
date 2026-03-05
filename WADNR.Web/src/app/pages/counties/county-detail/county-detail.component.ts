@@ -1,6 +1,7 @@
 import { AsyncPipe } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { Feature } from "geojson";
 import { distinctUntilChanged, filter, map, Observable, shareReplay, switchMap } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
@@ -12,8 +13,6 @@ import { ProjectCountyDetailGridRow } from "src/app/shared/generated/model/proje
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
-import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
-import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
 import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
@@ -25,7 +24,7 @@ import { ColDef } from "node_modules/ag-grid-community/dist/types/src/entities/c
 @Component({
     selector: "county-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRMapComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, ExternalMapLayersComponent, GenericFeatureCollectionLayerComponent, WADNRGridComponent, LoadingDirective],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRMapComponent, CountiesLayerComponent, ExternalMapLayersComponent, GenericFeatureCollectionLayerComponent, WADNRGridComponent, LoadingDirective],
     templateUrl: "./county-detail.component.html",
     styleUrls: ["./county-detail.component.scss"],
 })
@@ -41,7 +40,6 @@ export class CountyDetailComponent {
     public mapIsReady: boolean = false;
     public highlightedCountyLayerMode = OverlayMode.Single;
     public allCountiesLayerMode = OverlayMode.ReferenceOnly;
-    public OverlayMode = OverlayMode;
     public columnDefs: ColDef<ProjectCountyDetailGridRow>[] = [];
     public pinnedTotalsRow = {
         fields: ["EstimatedTotalCost", "TotalAmount"],
@@ -108,6 +106,7 @@ export class CountyDetailComponent {
             }),
             this.utilityFunctions.createCurrencyColumnDef("Total Amount", "TotalAmount", {
                 MaxDecimalPlacesToDisplay: 0,
+                FieldDefinitionType: "ProjectFundSourceAllocationRequestTotalAmount",
             }),
             this.utilityFunctions.createBasicColumnDef("Project Description", "ProjectDescription", { FieldDefinitionType: "ProjectDescription" }),
         ];
@@ -117,5 +116,19 @@ export class CountyDetailComponent {
         this.map = event.map;
         this.layerControl = event.layerControl;
         this.mapIsReady = true;
+    }
+
+    buildProjectPopupContent(county: CountyDetail): (feature: Feature, latlng: L.LatLng) => string | null {
+        return (feature: Feature, latlng: L.LatLng): string | null => {
+            const props = feature.properties;
+            if (!props) return null;
+            const projectID = props["ProjectID"];
+            const projectName = props["ProjectName"] ?? projectID;
+            return `
+                <b>County:</b> <a href="/counties/${county.CountyID}">${county.CountyName}</a><br>
+                <b>Project:</b> <a href="/projects/${projectID}">${projectName}</a><br>
+                <b>Location:</b> ${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}
+            `;
+        };
     }
 }

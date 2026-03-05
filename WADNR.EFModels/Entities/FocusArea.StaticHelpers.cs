@@ -136,6 +136,27 @@ public static class FocusAreas
         return true;
     }
 
+    public static async Task<FeatureCollection> ListLocationsAsFeatureCollectionAsync(WADNRDbContext dbContext)
+    {
+        var entities = await dbContext.FocusAreas
+            .AsNoTracking()
+            .Where(x => x.FocusAreaLocation != null)
+            .Select(x => new { x.FocusAreaID, x.FocusAreaName, x.FocusAreaLocation })
+            .ToListAsync();
+
+        var featureCollection = new FeatureCollection();
+        foreach (var entity in entities)
+        {
+            var attributes = new AttributesTable
+            {
+                { "FocusAreaID", entity.FocusAreaID },
+                { "FocusAreaName", entity.FocusAreaName }
+            };
+            featureCollection.Add(new Feature(entity.FocusAreaLocation!, attributes));
+        }
+        return featureCollection;
+    }
+
     public static async Task<FeatureCollection> GetLocationAsFeatureCollectionAsync(WADNRDbContext dbContext, int focusAreaID)
     {
         var entity = await dbContext.FocusAreas
@@ -173,5 +194,48 @@ public static class FocusAreas
         focusArea.FocusAreaLocation = null;
         await dbContext.SaveChangesAsync();
         return true;
+    }
+
+    public static async Task<FocusAreaDetail?> CreateAsync(WADNRDbContext dbContext, FocusAreaUpsertRequest dto)
+    {
+        var entity = new FocusArea
+        {
+            FocusAreaName = dto.FocusAreaName,
+            FocusAreaStatusID = dto.FocusAreaStatusID,
+            DNRUplandRegionID = dto.DNRUplandRegionID,
+            PlannedFootprintAcres = dto.PlannedFootprintAcres
+        };
+        dbContext.FocusAreas.Add(entity);
+        await dbContext.SaveChangesAsync();
+        return await GetByIDAsDetailAsync(dbContext, entity.FocusAreaID);
+    }
+
+    public static async Task<FocusAreaDetail?> UpdateAsync(WADNRDbContext dbContext, int focusAreaID, FocusAreaUpsertRequest dto)
+    {
+        var entity = await dbContext.FocusAreas
+            .FirstAsync(x => x.FocusAreaID == focusAreaID);
+
+        entity.FocusAreaName = dto.FocusAreaName;
+        entity.FocusAreaStatusID = dto.FocusAreaStatusID;
+        entity.DNRUplandRegionID = dto.DNRUplandRegionID;
+        entity.PlannedFootprintAcres = dto.PlannedFootprintAcres;
+
+        await dbContext.SaveChangesAsync();
+        return await GetByIDAsDetailAsync(dbContext, entity.FocusAreaID);
+    }
+
+    public static async Task<(bool Success, string? ErrorMessage)> DeleteAsync(WADNRDbContext dbContext, int focusAreaID)
+    {
+        var entity = await dbContext.FocusAreas.FirstOrDefaultAsync(x => x.FocusAreaID == focusAreaID);
+        if (entity == null)
+            return (false, "Focus Area not found.");
+
+        var projectCount = await dbContext.Projects.CountAsync(p => p.FocusAreaID == focusAreaID);
+        if (projectCount > 0)
+            return (false, $"Cannot delete Focus Area \"{entity.FocusAreaName}\" because it has {projectCount} associated project(s).");
+
+        dbContext.FocusAreas.Remove(entity);
+        await dbContext.SaveChangesAsync();
+        return (true, null);
     }
 }

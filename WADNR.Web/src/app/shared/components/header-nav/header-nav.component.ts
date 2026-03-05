@@ -2,9 +2,11 @@ import { Component, OnInit } from "@angular/core";
 import { environment } from "src/environments/environment";
 import { AsyncPipe, CommonModule } from "@angular/common";
 import { RouterLink, RouterLinkActive } from "@angular/router";
+import { DialogService } from "@ngneat/dialog";
 import { DropdownToggleDirective } from "src/app/shared/directives/dropdown-toggle.directive";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { ProjectSearchTypeaheadComponent } from "src/app/shared/components/project-search-typeahead/project-search-typeahead.component";
+import { FeedbackModalComponent, FeedbackModalData } from "src/app/shared/components/feedback-modal/feedback-modal.component";
 import { CustomPageNavigationSectionEnum } from "src/app/shared/generated/enum/custom-page-navigation-section-enum";
 import { CustomPageService } from "src/app/shared/generated/api/custom-page.service";
 import { CustomPageMenuItem } from "src/app/shared/generated/model/custom-page-menu-item";
@@ -35,7 +37,8 @@ export class HeaderNavComponent implements OnInit {
     constructor(
         private customPageService: CustomPageService,
         private authenticationService: AuthenticationService,
-        private relationshipTypeService: RelationshipTypeService
+        private relationshipTypeService: RelationshipTypeService,
+        private dialogService: DialogService
     ) {
         this.currentUser$ = this.authenticationService.currentUserSetObservable;
     }
@@ -123,5 +126,10 @@ export class HeaderNavComponent implements OnInit {
             roleID === RoleEnum.ProjectSteward ||
             roleID === RoleEnum.CanEditProgram
         );
+    }
+
+    public openSupportModal(): void {
+        const data: FeedbackModalData = { currentPageUrl: window.location.href };
+        this.dialogService.open(FeedbackModalComponent, { data, width: "600px" });
     }
 }

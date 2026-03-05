@@ -366,6 +366,7 @@ public static class Projects
     private sealed class ProjectTypeDetailProjectMapPointBaseRow
     {
         public int ProjectID { get; init; }
+        public string ProjectName { get; init; } = null!;
         public int ProjectStageID { get; init; }
         public int ProjectTypeID { get; init; }
         public int? OrganizationID { get; init; }
@@ -380,6 +381,7 @@ public static class Projects
             .Select(x => new ProjectTypeDetailProjectMapPointBaseRow
             {
                 ProjectID = x.ProjectID,
+                ProjectName = x.ProjectName,
                 ProjectStageID = x.ProjectStageID,
                 ProjectTypeID = x.ProjectTypeID,
                 OrganizationID = x.ProjectOrganizations
@@ -428,6 +430,7 @@ public static class Projects
             var attributes = new AttributesTable
             {
                 { "ProjectID", r.ProjectID },
+                { "ProjectName", r.ProjectName },
                 { "ProjectStageID", r.ProjectStageID },
                 { "ProjectTypeID", r.ProjectTypeID },
                 { "OrganizationID", r.OrganizationID ?? 0 },

@@ -52,4 +52,5 @@ export class AppComponent {
     setAppFavicon() {
         this._document.getElementById("appFavicon")?.setAttribute("href", "assets/main/favicons/favicon.ico");
     }
+
 }

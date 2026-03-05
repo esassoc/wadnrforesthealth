@@ -15,6 +15,6 @@
     [selectedStyle]="selectedStyle"
     (selectedIDsChange)="onFeatureSelected($event)">
     <ng-template layerName>
-        <span>Priority Landscapes</span>
+        <span>{{ overlayLabel }}</span>
     </ng-template>
 </generic-wms-wfs-layer>

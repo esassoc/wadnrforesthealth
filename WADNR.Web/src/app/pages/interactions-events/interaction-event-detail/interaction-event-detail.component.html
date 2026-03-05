@@ -8,11 +8,13 @@
 <div class="grid-12">
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header flex-between">
                 <span class="card-title">Details</span>
                 @if (detailsVm$ | async; as vm) {
                     @if (canEditInteractionEvents$ | async) {
-                        <button class="btn btn-sm btn-primary" (click)="openEditModal(vm)">Edit</button>
+                        <button class="card-header-edit-link" (click)="openEditModal(vm)" title="Edit Details">
+                            <icon icon="Edit"></icon>
+                        </button>
                     }
                 }
             </div>
@@ -63,11 +65,13 @@
         <div class="card">
             <div class="card-header">
                 <span class="card-title">Files</span>
-                @if (canEditInteractionEvents$ | async) {
-                    <button class="btn btn-sm btn-primary" (click)="openFileModal(interactionEvent.InteractionEventID)">Add File(s)</button>
-                }
             </div>
             <div class="card-body file-resources" [loadingSpinner]="{ isLoading: fileResourcesIsLoading$ | async, loadingHeight: 140 }">
+                @if (canEditInteractionEvents$ | async) {
+                    <div class="flex-end mb-2">
+                        <button class="btn btn-sm btn-primary" (click)="openFileModal(interactionEvent.InteractionEventID)">Add File(s)</button>
+                    </div>
+                }
                 @if (fileResources$ | async; as fileResources) { @if (fileResources.length) { @for (file of fileResources; track file.FileResourceID) {
                 <div class="grid-12 file-resources__display">
                     <div class="g-col-12">
@@ -101,10 +105,12 @@
 
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header flex-between">
                 <span class="card-title">Map</span>
                 @if (canEditInteractionEvents$ | async) {
-                    <button class="btn btn-sm btn-primary" (click)="openLocationModal(interactionEvent)">Edit</button>
+                    <button class="card-header-edit-link" (click)="openLocationModal(interactionEvent)" title="Edit Map">
+                        <icon icon="Edit"></icon>
+                    </button>
                 }
             </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: locationIsLoading$ | async, loadingHeight: 400 }">

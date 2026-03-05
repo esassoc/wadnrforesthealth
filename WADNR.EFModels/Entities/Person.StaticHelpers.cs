@@ -20,6 +20,19 @@ public static class People
         return items;
     }
 
+    public static async Task<List<PersonWithOrganizationLookupItem>> ListWadnrAsLookupItemAsync(WADNRDbContext dbContext)
+    {
+        const int wadnrOrganizationID = 4704;
+        var items = await dbContext.People
+            .AsNoTracking()
+            .Where(x => x.IsActive && x.OrganizationID == wadnrOrganizationID)
+            .OrderBy(x => x.LastName)
+            .ThenBy(x => x.FirstName)
+            .Select(PersonProjections.AsLookupItemWithOrganization)
+            .ToListAsync();
+        return items;
+    }
+
     public static async Task<List<PersonGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
     {
         // First, get the base data

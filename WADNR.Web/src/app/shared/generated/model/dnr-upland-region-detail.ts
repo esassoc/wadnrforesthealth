@@ -20,6 +20,9 @@ export class DNRUplandRegionDetail {
     RegionZip?: string | null;
     RegionPhone?: string | null;
     RegionEmail?: string | null;
+    DNRUplandRegionCoordinatorID?: number | null;
+    DNRUplandRegionCoordinatorFullName?: string | null;
+    RegionContent?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -35,6 +38,9 @@ export interface DNRUplandRegionDetailForm {
     RegionZip?: FormControl<string>;
     RegionPhone?: FormControl<string>;
     RegionEmail?: FormControl<string>;
+    DNRUplandRegionCoordinatorID?: FormControl<number>;
+    DNRUplandRegionCoordinatorFullName?: FormControl<string>;
+    RegionContent?: FormControl<string>;
 }
 
 export class DNRUplandRegionDetailFormControls { 
@@ -119,6 +125,36 @@ export class DNRUplandRegionDetailFormControls {
         }
     );
     public static RegionEmail = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static DNRUplandRegionCoordinatorID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static DNRUplandRegionCoordinatorFullName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static RegionContent = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

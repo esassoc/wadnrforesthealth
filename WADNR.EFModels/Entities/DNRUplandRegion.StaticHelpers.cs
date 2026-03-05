@@ -44,7 +44,9 @@ public static class DNRUplandRegions
             RegionState = dto.RegionState,
             RegionZip = dto.RegionZip,
             RegionPhone = dto.RegionPhone,
-            RegionEmail = dto.RegionEmail
+            RegionEmail = dto.RegionEmail,
+            RegionContent = dto.RegionContent,
+            DNRUplandRegionCoordinatorID = dto.DNRUplandRegionCoordinatorPersonID
         };
         dbContext.DNRUplandRegions.Add(entity);
         await dbContext.SaveChangesAsync();
@@ -64,6 +66,8 @@ public static class DNRUplandRegions
         entity.RegionZip = dto.RegionZip;
         entity.RegionPhone = dto.RegionPhone;
         entity.RegionEmail = dto.RegionEmail;
+        entity.RegionContent = dto.RegionContent;
+        entity.DNRUplandRegionCoordinatorID = dto.DNRUplandRegionCoordinatorPersonID;
 
         await dbContext.SaveChangesAsync();
         return await GetByIDAsDetailAsync(dbContext, entity.DNRUplandRegionID);

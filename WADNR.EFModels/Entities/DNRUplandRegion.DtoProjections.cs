@@ -15,7 +15,12 @@ public static class DNRUplandRegionProjections
         RegionState = x.RegionState,
         RegionZip = x.RegionZip,
         RegionPhone = x.RegionPhone,
-        RegionEmail = x.RegionEmail
+        RegionEmail = x.RegionEmail,
+        DNRUplandRegionCoordinatorID = x.DNRUplandRegionCoordinatorID,
+        DNRUplandRegionCoordinatorFullName = x.DNRUplandRegionCoordinator != null
+            ? x.DNRUplandRegionCoordinator.FirstName + " " + x.DNRUplandRegionCoordinator.LastName
+            : null,
+        RegionContent = x.RegionContent
     };
 
     public static readonly Expression<Func<DNRUplandRegion, DNRUplandRegionGridRow>> AsGridRow = x => new DNRUplandRegionGridRow

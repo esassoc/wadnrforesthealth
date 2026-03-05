@@ -8,6 +8,7 @@ public static class FileResourceProjections
 {
     public static readonly Expression<Func<PriorityLandscapeFileResource, FileResourcePriorityLandscapeDetail>> AsPriorityLandscapeDetail = x => new FileResourcePriorityLandscapeDetail
     {
+        PriorityLandscapeFileResourceID = x.PriorityLandscapeFileResourceID,
         FileResourceID = x.FileResource.FileResourceID,
         FileResourceGUID = x.FileResource.FileResourceGUID,
         DisplayName = x.DisplayName,

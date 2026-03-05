@@ -4,15 +4,13 @@
 <div class="grid-12">
     <div class="g-col-12">
         <div class="card">
-            <div class="card-header">
-                <span class="card-title">
-                    @if (isAdmin$ | async) {
-                    <a href="javascript:void(0)" (click)="openEditModal(vm.classification)" title="Edit Theme" style="color: inherit">
-                        <i class="fa fa-edit" style="transform: none"></i>
-                    </a>
-                    }
-                    Basics
-                </span>
+            <div class="card-header flex-between">
+                <span class="card-title">Basics</span>
+                @if (isAdmin$ | async) {
+                    <button class="card-header-edit-link" (click)="openEditModal(vm.classification)" title="Edit Basics">
+                        <icon icon="Edit"></icon>
+                    </button>
+                }
             </div>
             <div class="card-body">
                 <div class="grid-12">

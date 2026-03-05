@@ -18,4 +18,6 @@ public class ProjectDNRUplandRegionDetailGridRow
     public decimal TotalMatchAmount { get; set; }
     public int? PercentageMatch { get; set; }
     public List<FundSourceAllocationLookupItem> ExpectedFundingFundSourceAllocations { get; set; } = new();
+    public string? PrivateLandowners { get; set; }
+    public List<TagLookupItem> Tags { get; set; } = new();
 }

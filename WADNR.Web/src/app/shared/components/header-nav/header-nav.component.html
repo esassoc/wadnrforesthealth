@@ -119,7 +119,7 @@
                         <li class="divider"></li>
                         <li><a routerLink="/priority-landscapes" class="dropdown-item">Priority Landscapes</a></li>
                         <li><a routerLink="/dnr-upland-regions" class="dropdown-item">DNR Upland Regions</a></li>
-                        <li><a routerLink="/focus-areas" class="dropdown-item">Focus Areas</a></li>
+                        <li><a routerLink="/focus-areas" class="dropdown-item">DNR LOA Focus Areas</a></li>
                         <li><a routerLink="/counties" class="dropdown-item">Counties</a></li>
                         <li class="divider"></li>
                         @if (hasCanStewardProjectsRelationship$ | async) {
@@ -204,7 +204,7 @@
                             {{ currentUser.FirstName }} {{ currentUser.LastName }} <icon icon="AngleDown"></icon>
                         </a>
                         <ul #userMenu class="dropdown-menu dropdown-menu-right">
-                            <li><a routerLink="/request-support" class="dropdown-item">Request Support</a></li>
+                            <li><a href="javascript:void(0);" (click)="openSupportModal()" class="dropdown-item">Request Support</a></li>
                             <li class="divider"></li>
                             <li><a href="javascript:void(0);" (click)="logout()" class="dropdown-item">Log Out</a></li>
                         </ul>
@@ -217,7 +217,7 @@
                 <li class="nav-item dropdown">
                     <a href="javascript:void(0);" [dropdownToggle]="helpMenu" class="nav-link dropdown-toggle">Help <icon icon="AngleDown"></icon></a>
                     <ul #helpMenu class="dropdown-menu dropdown-menu-right">
-                        <li><a routerLink="/fund-sources" class="dropdown-item">Request Support</a></li>
+                        <li><a href="javascript:void(0);" (click)="openSupportModal()" class="dropdown-item">Request Support</a></li>
                         <li class="divider"></li>
                         <li>
                             <a href="https://esassoc.com/services/technology/esa-software-platforms/projectfirma/" class="dropdown-item" target="_blank"

@@ -441,6 +441,15 @@ public static class ProjectProjections
             {
                 FundSourceAllocationID = r.FundSourceAllocation.FundSourceAllocationID,
                 FundSourceAllocationName = r.FundSourceAllocation.FundSourceAllocationName
+            }).ToList(),
+        PrivateLandowners = string.Join(", ", x.ProjectPeople
+            .Where(pp => pp.ProjectPersonRelationshipTypeID == ProjectPersonRelationshipType.PrivateLandowner.ProjectPersonRelationshipTypeID)
+            .Select(pp => pp.Person.FirstName + " " + pp.Person.LastName)),
+        Tags = x.ProjectTags
+            .Select(pt => new TagLookupItem
+            {
+                TagID = pt.Tag.TagID,
+                TagName = pt.Tag.TagName
             }).ToList()
     };
 

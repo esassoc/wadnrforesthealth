@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output } from "@angular/core";
 import * as L from "leaflet";
 import { GenericWmsWfsLayerComponent } from "../generic-wms-wfs-layer/generic-wms-wfs-layer.component";
 import { OverlayMode } from "../generic-wms-wfs-layer/overlay-mode.enum";
 import { MAP_SELECTED_COLOR } from "src/app/shared/models/map-colors";
+import { environment } from "src/environments/environment";
 
 @Component({
     selector: "priority-landscapes-layer",
@@ -10,7 +11,7 @@ import { MAP_SELECTED_COLOR } from "src/app/shared/models/map-colors";
     styleUrls: ["./priority-landscapes-layer.component.scss"],
     imports: [GenericWmsWfsLayerComponent],
 })
-export class PriorityLandscapesLayerComponent {
+export class PriorityLandscapesLayerComponent implements OnChanges, OnDestroy {
     /**
      * Overlay modes:
      * - 'Single': Show a single feature (WFS only, not in layer control)
@@ -40,9 +41,14 @@ export class PriorityLandscapesLayerComponent {
     @Input() filterToIDs: number[];
     @Input() displayOnLoad: boolean = true;
     @Input() allowMultipleSelect: boolean = false;
+    @Input() categoryFilter?: string;
+    @Input() overlayLabelOverride?: string;
+    @Input() showPopupOnClick: boolean = false;
 
     // Internal multi-select state (exposed for template binding)
     public selectedIDsState: number[] = [];
+    private popupClickHandler: ((e: L.LeafletMouseEvent) => void) | null = null;
+    private popupClickHandlerWired = false;
 
     // Derived configuration for generic layer
     wfsFeatureType: string = this.WFS_FEATURE_TYPE;
@@ -95,12 +101,31 @@ export class PriorityLandscapesLayerComponent {
                 break;
         }
 
+        // Apply category filter to CQL
+        if (this.categoryFilter) {
+            const safeCategoryFilter = this.categoryFilter.replace(/'/g, "''");
+            const categoryClause = `PriorityLandscapeCategoryName='${safeCategoryFilter}'`;
+            if (this.cqlFilter && this.cqlFilter !== "1=1") {
+                this.cqlFilter = `${this.cqlFilter} AND ${categoryClause}`;
+            } else {
+                this.cqlFilter = categoryClause;
+            }
+        }
+
+        // Apply overlay label override
+        if (this.overlayLabelOverride) {
+            this.overlayLabel = this.overlayLabelOverride;
+        }
+
         // Sync external canonical selection into internal multi-select state so
         // the template binding [selectedIDs] => selectedIDsState works when
         // allowMultipleSelect is true. Accept updates on initial set and changes.
         if (this.allowMultipleSelect) {
             this.selectedIDsState = this.selectedIDs && this.selectedIDs.length ? [...this.selectedIDs] : [];
         }
+
+        // Wire popup click handler
+        this.wirePopupClickHandler();
     }
 
     // Ensure external selectedIDs input is reflected in the internal multi-select state
@@ -131,5 +156,68 @@ export class PriorityLandscapesLayerComponent {
         // Emit the updated array
         this.selectedIDs = [...this.selectedIDsState];
         this.selectedIDsChange.emit([...this.selectedIDsState]);
+    }
+
+    private wirePopupClickHandler(): void {
+        if (this.showPopupOnClick && this.map && !this.popupClickHandlerWired &&
+            (this.mode === OverlayMode.ReferenceOnly || this.mode === OverlayMode.ReferenceWithInteractivity)) {
+            this.popupClickHandler = this.onPopupMapClick.bind(this);
+            this.map.on("click", this.popupClickHandler);
+            this.popupClickHandlerWired = true;
+        }
+    }
+
+    private async onPopupMapClick(e: L.LeafletMouseEvent): Promise<void> {
+        // Only query if the WMS layer is currently visible on the map
+        // We need to check via the generic-wms-wfs-layer's internal layer reference
+        // For now, always query when popup is enabled
+        const wmsUrl = environment.geoserverMapServiceUrl + "/wms";
+        const params = {
+            service: "WMS",
+            version: "1.1.1",
+            request: "GetFeatureInfo",
+            layers: this.WMS_LAYER_NAME,
+            query_layers: this.WMS_LAYER_NAME,
+            styles: this.WMS_STYLE,
+            bbox: this.map.getBounds().toBBoxString(),
+            width: this.map.getSize().x,
+            height: this.map.getSize().y,
+            srs: "EPSG:4326",
+            format: "image/png",
+            info_format: "application/json",
+            x: Math.round(this.map.layerPointToContainerPoint(e.layerPoint).x),
+            y: Math.round(this.map.layerPointToContainerPoint(e.layerPoint).y),
+        };
+        if (this.cqlFilter) {
+            (params as any).cql_filter = this.cqlFilter;
+        }
+        const urlParams = new URLSearchParams(params as any).toString();
+        const url = `${wmsUrl}?${urlParams}`;
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data.features && data.features.length > 0) {
+                const props = data.features[0].properties;
+                const id = props.PriorityLandscapeID;
+                const name = props.PriorityLandscapeName;
+                if (id && name) {
+                    const popupContent = `<b>Priority Landscape:</b> <a href="/priority-landscapes/${id}">${name}</a><br><b>Location:</b> ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`;
+                    L.popup()
+                        .setLatLng(e.latlng)
+                        .setContent(popupContent)
+                        .openOn(this.map);
+                }
+            }
+        } catch {
+            // WMS popup failures are non-critical; swallow silently
+        }
+    }
+
+    ngOnDestroy(): void {
+        if (this.popupClickHandler && this.map) {
+            this.map.off("click", this.popupClickHandler);
+            this.popupClickHandler = null;
+            this.popupClickHandlerWired = false;
+        }
     }
 }

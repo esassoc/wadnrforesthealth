@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output } from "@angular/core";
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output } from "@angular/core";
 import * as L from "leaflet";
 import { Feature, FeatureCollection, GeoJsonProperties, Geometry as GeoJsonGeometry } from "geojson";
 import { MapLayerBase } from "../map-layer-base.component";
@@ -13,12 +13,13 @@ import { IFeature } from "src/app/shared/generated/model/i-feature";
     styleUrls: ["./generic-feature-collection-layer.component.scss"],
     imports: [],
 })
-export class GenericFeatureCollectionLayerComponent extends MapLayerBase implements OnChanges, AfterViewInit {
+export class GenericFeatureCollectionLayerComponent extends MapLayerBase implements OnChanges, AfterViewInit, OnDestroy {
     @Input() layerName: string;
     @Input() layerColor: string;
     @Input() featureCollection: IFeature[] | null = null;
     @Input() identifierProperty: string;
     @Input() selectedIDs: number[] | null = null;
+    @Input() popupContentFn: ((feature: Feature, latlng: L.LatLng) => string | null) | null = null;
 
     /** Emits the current bounds of rendered features (null if empty/unknown). */
     @Output() dataBounds = new EventEmitter<L.LatLngBounds | null>();
@@ -28,6 +29,7 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
 
     private geoJsonLayer: L.GeoJSON | null = null;
     private highlightLayer: L.FeatureGroup | null = null;
+    private activePopup: L.Popup | null = null;
     private overlayInitialized = false;
     private selectionFromMapClick = false;
     private lastLegendGeometry: GenericFeatureCollectionLayerComponent["legendGeometry"] | null = null;
@@ -425,8 +427,36 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
         return L.marker(latlng, { icon: MarkerHelper.svgMarkerIcon(c) });
     }
 
+    ngOnDestroy(): void {
+        this.closeActivePopup();
+    }
+
+    private closeActivePopup(): void {
+        if (this.activePopup && this.map) {
+            this.map.closePopup(this.activePopup);
+            this.activePopup = null;
+        }
+    }
+
     private wireFeatureEvents(layer: L.Layer): void {
         layer.on("click", (e: any) => {
+            // Show popup if popupContentFn is configured
+            if (this.popupContentFn) {
+                const feature = (layer as any).feature as Feature | undefined;
+                const latlng = this.getPanTargetLatLng(layer, e);
+                if (feature && latlng && this.map) {
+                    const html = this.popupContentFn(feature, latlng);
+                    if (html) {
+                        this.closeActivePopup();
+                        this.activePopup = L.popup({ offset: [0, -12] })
+                            .setLatLng(latlng)
+                            .setContent(html)
+                            .openOn(this.map);
+                        return;
+                    }
+                }
+            }
+
             // Emit selection if identifierProperty is configured
             if (this.identifierProperty) {
                 const props = (layer as any).feature?.properties;

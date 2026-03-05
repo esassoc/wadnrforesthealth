@@ -13,6 +13,7 @@ import { FieldDefinitionComponent } from "src/app/shared/components/field-defini
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { AlertService } from "src/app/shared/services/alert.service";
@@ -30,7 +31,7 @@ import { environment } from "src/environments/environment";
 @Component({
     selector: "agreement-detail",
     standalone: true,
-    imports: [AsyncPipe, RouterLink, DatePipe, CurrencyPipe, BreadcrumbComponent, FieldDefinitionComponent, PageHeaderComponent, WADNRGridComponent, LoadingDirective],
+    imports: [AsyncPipe, RouterLink, DatePipe, CurrencyPipe, BreadcrumbComponent, FieldDefinitionComponent, PageHeaderComponent, WADNRGridComponent, LoadingDirective, IconComponent],
     templateUrl: "./agreement-detail.component.html",
     styleUrls: ["./agreement-detail.component.scss"],
 })

@@ -14,6 +14,9 @@ export class PriorityLandscapeUpsertRequest {
     PriorityLandscapeName?: string | null;
     PriorityLandscapeDescription?: string | null;
     PlanYear?: number | null;
+    PriorityLandscapeCategoryID?: number | null;
+    PriorityLandscapeExternalResources?: string | null;
+    PriorityLandscapeAboveMapText?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -23,6 +26,9 @@ export interface PriorityLandscapeUpsertRequestForm {
     PriorityLandscapeName?: FormControl<string>;
     PriorityLandscapeDescription?: FormControl<string>;
     PlanYear?: FormControl<number>;
+    PriorityLandscapeCategoryID?: FormControl<number>;
+    PriorityLandscapeExternalResources?: FormControl<string>;
+    PriorityLandscapeAboveMapText?: FormControl<string>;
 }
 
 export class PriorityLandscapeUpsertRequestFormControls { 
@@ -47,6 +53,36 @@ export class PriorityLandscapeUpsertRequestFormControls {
         }
     );
     public static PlanYear = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PriorityLandscapeCategoryID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PriorityLandscapeExternalResources = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PriorityLandscapeAboveMapText = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

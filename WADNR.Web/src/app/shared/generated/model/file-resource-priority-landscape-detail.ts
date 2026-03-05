@@ -11,6 +11,7 @@
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class FileResourcePriorityLandscapeDetail { 
+    PriorityLandscapeFileResourceID?: number;
     FileResourceID?: number;
     FileResourceGUID?: string;
     DisplayName?: string | null;
@@ -23,6 +24,7 @@ export class FileResourcePriorityLandscapeDetail {
 }
 
 export interface FileResourcePriorityLandscapeDetailForm { 
+    PriorityLandscapeFileResourceID?: FormControl<number>;
     FileResourceID?: FormControl<number>;
     FileResourceGUID?: FormControl<string>;
     DisplayName?: FormControl<string>;
@@ -32,6 +34,16 @@ export interface FileResourcePriorityLandscapeDetailForm {
 }
 
 export class FileResourcePriorityLandscapeDetailFormControls { 
+    public static PriorityLandscapeFileResourceID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
     public static FileResourceID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 

@@ -1,5 +1,35 @@
-<page-header pageTitle="Focus Areas"></page-header>
+<page-header pageTitle="DNR LOA Focus Areas">
+    @if (canManageFocusAreas) {
+        <button class="btn btn-primary" (click)="openCreateModal()"><i class="fa fa-plus"></i> Create New Focus Area</button>
+    }
+</page-header>
 
-<div class="page-body">
-    <wadnr-grid [rowData]="focusAreas$ | async" [columnDefs]="columnDefs" downloadFileName="focus-areas"></wadnr-grid>
+<div class="page-body mt-3">
+    <div [loadingSpinner]="{ isLoading, loadingHeight: 400 }">
+        <hybrid-map-grid
+            [rowData]="focusAreas$ | async"
+            [columnDefs]="columnDefs"
+            downloadFileName="focus-areas"
+            entityIDField="FocusAreaID"
+            (gridReady)="onGridReady($event)"
+            (onMapLoad)="handleMapReady($event)"
+            [selectedValue]="selectedFocusAreaID"
+            (selectedValueChange)="onSelectedFocusAreaIDChanged($event)">
+            <generic-feature-collection-layer
+                [map]="map"
+                [layerControl]="layerControl"
+                layerName="Focus Areas"
+                layerColor="#3388ff"
+                identifierProperty="FocusAreaID"
+                [selectedIDs]="selectedFocusAreaID ? [selectedFocusAreaID] : null"
+                (selectedIDsChange)="onSelectedFocusAreaIDChanged($event)"
+                [featureCollection]="focusAreaLocations$ | async">
+            </generic-feature-collection-layer>
+            <external-map-layers
+                [map]="map"
+                [layerControl]="layerControl"
+                context="other">
+            </external-map-layers>
+        </hybrid-map-grid>
+    </div>
 </div>

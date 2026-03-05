@@ -72,7 +72,7 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/dnr-upland-regions/dnr-upland-region-detail.component").then((m) => m.DNRUplandRegionDetailComponent),
     },
     { path: "find-your-forester", title: "Find Your Forester", loadComponent: () => import("./pages/find-your-forester/find-your-forester.component").then((m) => m.FindYourForesterComponent) },
-    { path: "focus-areas", title: "Focus Areas", canActivate: [authGuard], loadComponent: () => import("./pages/focus-areas/focus-areas.component").then((m) => m.FocusAreasComponent) },
+    { path: "focus-areas", title: "DNR LOA Focus Areas", canActivate: [authGuard], loadComponent: () => import("./pages/focus-areas/focus-areas.component").then((m) => m.FocusAreasComponent) },
     {
         path: `focus-areas/:${routeParams.focusAreaID}`,
         title: "Focus Area Detail",

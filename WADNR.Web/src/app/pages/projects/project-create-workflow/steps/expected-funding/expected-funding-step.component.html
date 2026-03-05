@@ -67,7 +67,7 @@
                             [readOnly]="state.saving"
                             (change)="onAllocationSelect($event)">
                         </form-field>
-                        <p class="help-text">WA DNR Fund Source Allocation not listed? <a href="mailto:support@sitkatech.com">Contact support</a></p>
+                        <p class="help-text">WA DNR Fund Source Allocation not listed? <a href="javascript:void(0);" (click)="openMissingAllocationModal()">Contact support</a></p>
                     </div>
 
                     <!-- Allocations Table -->
