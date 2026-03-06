@@ -39,6 +39,28 @@ public static class Projects
             .ToListAsync();
     }
 
+    public static async Task<List<ProjectFocusAreaDetailGridRow>> ListForFocusAreaAsGridRowAsync(
+        WADNRDbContext dbContext, int focusAreaID)
+    {
+        var rows = await dbContext.Projects
+            .AsNoTracking()
+            .Where(IsActiveProjectExpr)
+            .Where(p => p.FocusAreaID == focusAreaID)
+            .OrderBy(p => p.ProjectName)
+            .Select(ProjectProjections.AsFocusAreaDetailGridRow)
+            .ToListAsync();
+
+        foreach (var row in rows)
+        {
+            if (ProjectStage.AllLookupDictionary.TryGetValue(row.ProjectStage.ProjectStageID, out var stage))
+            {
+                row.ProjectStage.ProjectStageName = stage.ProjectStageDisplayName;
+            }
+        }
+
+        return rows;
+    }
+
     public static async Task<List<ProjectProjectTypeDetailGridRow>> ListAsProjectTypeDetailGridRowAsync(WADNRDbContext dbContext, int projectTypeID)
     {
         var rows = await dbContext.Projects

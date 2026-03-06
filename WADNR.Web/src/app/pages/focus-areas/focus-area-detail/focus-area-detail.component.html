@@ -32,17 +32,10 @@
                             <a [routerLink]="['/dnr-upland-regions', focusArea.DNRUplandRegionID]">{{ focusArea.DNRUplandRegionName }}</a>
                         </div>
 
-                        @if (focusArea.PlannedFootprintAcres != null) {
-                            <div class="g-col-4">
-                                <strong>Planned Footprint</strong>
-                            </div>
-                            <div class="g-col-8">{{ focusArea.PlannedFootprintAcres | number: "1.0-0" }} acres</div>
-                        }
-
                         <div class="g-col-4">
-                            <strong># of Projects</strong>
+                            <strong>Planned Footprint Acres</strong>
                         </div>
-                        <div class="g-col-8">{{ focusArea.ProjectCount }}</div>
+                        <div class="g-col-8">{{ focusArea.PlannedFootprintAcres != null ? (focusArea.PlannedFootprintAcres | number: "1.0-0") : "None" }}</div>
                     </div>
                 </div>
             </div>
@@ -51,25 +44,33 @@
         <div class="g-col-6">
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">Location</span>
+                    <span class="card-title">DNR LOA Focus Area and Project Locations</span>
                 </div>
                 <div class="card-body">
-                    @if (canManageFocusAreas$ | async) {
-                        <div class="flex-end mb-2">
-                            <button class="btn btn-primary btn-sm" (click)="openUploadGdbModal(focusArea)"><icon icon="Upload"></icon> Upload GDB</button>
-                            @if (hasLocation$ | async) {
-                                <button class="btn btn-danger btn-sm ms-1" (click)="confirmDeleteLocation(focusArea)"><icon icon="Delete"></icon> Delete Location</button>
+                    <div class="grid-12 mb-2" style="align-items: start;">
+                        <div class="g-col-10">
+                            <p class="mb-1">The map displays the DNR LOA Focus Area location, and the locations of any active Projects that have spatial data.</p>
+                            @if (!(hasLocation$ | async)) {
+                                <p class="mb-0"><strong>The DNR LOA Focus Area, {{ focusArea.FocusAreaName }}, does not have a location set.</strong></p>
                             }
                         </div>
-                    }
-                    @if (hasLocation$ | async) {
-                        <wadnr-map
-                            [mapHeight]="'350px'"
-                            [selectedTileLayer]="'Terrain'"
-                            [showLegend]="false"
-                            [boundingBox]="locationBoundingBox$ | async"
-                            (onMapLoad)="handleMapReady($event)">
-                            @if (mapIsReady()) {
+                        @if (canManageFocusAreas$ | async) {
+                            <div class="g-col-2 flex-end">
+                                <button class="btn btn-primary btn-sm" (click)="openUploadGdbModal(focusArea)"><icon icon="Upload"></icon> Upload GDB</button>
+                                @if (hasLocation$ | async) {
+                                    <button class="btn btn-danger btn-sm ms-1" (click)="confirmDeleteLocation(focusArea)"><icon icon="Delete"></icon> Delete Location</button>
+                                }
+                            </div>
+                        }
+                    </div>
+                    <wadnr-map
+                        [mapHeight]="'350px'"
+                        [selectedTileLayer]="'Terrain'"
+                        [showLegend]="false"
+                        [boundingBox]="mapBoundingBox$ | async"
+                        (onMapLoad)="handleMapReady($event)">
+                        @if (mapIsReady()) {
+                            @if (hasLocation$ | async) {
                                 <generic-feature-collection-layer
                                     [map]="map"
                                     [layerControl]="layerControl"
@@ -79,13 +80,55 @@
                                     [displayOnLoad]="true">
                                 </generic-feature-collection-layer>
                             }
-                        </wadnr-map>
-                        <small class="text-muted">To zoom, hold down Shift and drag a rectangle.</small>
-                    } @else {
-                        <p class="text-muted mb-0">No location data available for this focus area.</p>
-                    }
+                            <generic-feature-collection-layer
+                                [map]="map"
+                                [layerControl]="layerControl"
+                                [featureCollection]="projectLocationFeatures$ | async"
+                                [layerName]="'Project Locations'"
+                                [layerColor]="'#99b3ff'"
+                                [displayOnLoad]="true"
+                                [popupContentFn]="buildProjectPopupContent()">
+                            </generic-feature-collection-layer>
+                        }
+                    </wadnr-map>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header">
+            <span class="card-title">Projects</span>
+        </div>
+        <div class="card-body">
+            <wadnr-grid
+                [rowData]="projects$ | async"
+                [columnDefs]="projectColumnDefs"
+                [pinnedTotalsRow]="projectPinnedTotalsRow"
+                downloadFileName="focus-area-projects">
+            </wadnr-grid>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header">
+            <span class="card-title">Closeout Report</span>
+        </div>
+        <div class="card-body">
+            <h3>{{ focusArea.FocusAreaName }}</h3>
+            <div class="grid-12 mb-3">
+                <div class="g-col-3 field-label"><field-definition fieldDefinition="FocusAreaTotalPlannedFootprintAcres"></field-definition></div>
+                <div class="g-col-9">{{ focusArea.PlannedFootprintAcres != null ? (focusArea.PlannedFootprintAcres | number:'1.0-0') : 'None' }}</div>
+                <div class="g-col-3 field-label"><field-definition fieldDefinition="FocusAreaTotalProjectEstimatedTotalCosts"></field-definition></div>
+                <div class="g-col-9">{{ focusArea.SumOfEstimatedTotalCost != null ? (focusArea.SumOfEstimatedTotalCost | currency) : 'None' }}</div>
+            </div>
+            <hr>
+            <h3 class="closeout-heading"><field-definition fieldDefinition="FocusAreaCloseoutReportProjectList"></field-definition></h3>
+            <wadnr-grid
+                [rowData]="focusArea.CloseoutProjects"
+                [columnDefs]="closeoutColumnDefs"
+                downloadFileName="focus-area-closeout-projects">
+            </wadnr-grid>
         </div>
     </div>
 } @else {

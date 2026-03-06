@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using WADNR.Models.DataTransferObjects;
 using WADNR.Models.DataTransferObjects.FocusArea;
 
 namespace WADNR.EFModels.Entities;
@@ -30,6 +31,20 @@ public static class FocusAreaProjections
         DNRUplandRegionName = x.DNRUplandRegion.DNRUplandRegionName,
         PlannedFootprintAcres = x.PlannedFootprintAcres,
         ProjectCount = x.Projects.Count,
-        HasLocation = x.FocusAreaLocation != null
+        HasLocation = x.FocusAreaLocation != null,
+        CloseoutProjects = x.Projects
+            .Where(p => p.ProjectStageID == (int)ProjectStageEnum.Implementation || p.ProjectStageID == (int)ProjectStageEnum.Completed)
+            .OrderBy(p => p.ProjectName)
+            .Select(p => new FocusAreaCloseoutProjectItem
+            {
+                ProjectID = p.ProjectID,
+                ProjectName = p.ProjectName,
+                ProjectStageID = p.ProjectStageID,
+                ProjectStageDisplayName = string.Empty, // resolved client-side
+                EstimatedTotalCost = p.EstimatedTotalCost
+            }).ToList(),
+        SumOfEstimatedTotalCost = x.Projects
+            .Where(p => p.ProjectStageID == (int)ProjectStageEnum.Implementation || p.ProjectStageID == (int)ProjectStageEnum.Completed)
+            .Sum(p => p.EstimatedTotalCost)
     };
 }

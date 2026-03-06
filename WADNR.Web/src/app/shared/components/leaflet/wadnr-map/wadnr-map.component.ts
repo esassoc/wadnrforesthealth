@@ -78,7 +78,7 @@ export class WADNRMapComponent implements OnInit, AfterViewInit, OnChanges, OnDe
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes["boundingBox"] && !changes["boundingBox"].firstChange && this.map && this.boundingBox) {
+        if (changes["boundingBox"] && this.map && this.boundingBox) {
             this.map.fitBounds([
                 [this.boundingBox.Bottom, this.boundingBox.Left],
                 [this.boundingBox.Top, this.boundingBox.Right],

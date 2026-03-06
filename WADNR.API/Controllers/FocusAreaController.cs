@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -157,6 +158,25 @@ public class FocusAreaController(
         }
 
         return Ok();
+    }
+
+    [HttpGet("{focusAreaID}/projects")]
+    [NormalUserFeature]
+    [EntityNotFound(typeof(FocusArea), "focusAreaID")]
+    public async Task<ActionResult<List<ProjectFocusAreaDetailGridRow>>> ListProjects([FromRoute] int focusAreaID)
+    {
+        var projects = await Projects.ListForFocusAreaAsGridRowAsync(DbContext, focusAreaID);
+        return Ok(projects);
+    }
+
+    [HttpGet("{focusAreaID}/projects/feature-collection")]
+    [NormalUserFeature]
+    [EntityNotFound(typeof(FocusArea), "focusAreaID")]
+    public async Task<ActionResult<FeatureCollection>> ListProjectsFeatureCollection([FromRoute] int focusAreaID)
+    {
+        var projectQuery = DbContext.Projects.Where(p => p.FocusAreaID == focusAreaID);
+        var featureCollection = await Projects.MapProjectFeatureCollection(projectQuery);
+        return Ok(featureCollection);
     }
 
     [HttpDelete("{focusAreaID}/location")]

@@ -29,6 +29,7 @@ api/gis-bulk-import.service.ts
 api/interaction-event.service.ts
 api/invoice-payment-request.service.ts
 api/invoice.service.ts
+api/job.service.ts
 api/loa-upload.service.ts
 api/organization-type.service.ts
 api/organization.service.ts
@@ -119,6 +120,7 @@ model/firma-home-page-image-detail.ts
 model/firma-page-detail.ts
 model/firma-page-type-detail.ts
 model/firma-page-upsert-request.ts
+model/focus-area-closeout-project-item.ts
 model/focus-area-detail.ts
 model/focus-area-grid-row.ts
 model/focus-area-upsert-request.ts
@@ -199,6 +201,7 @@ model/gis-upload-attempt-detail.ts
 model/gis-upload-source-organization-summary.ts
 model/i-attributes-table.ts
 model/i-feature.ts
+model/import-history-dto.ts
 model/interaction-event-detail.ts
 model/interaction-event-file-update-request.ts
 model/interaction-event-grid-row.ts
@@ -299,6 +302,7 @@ model/project-external-link-update-item-request.ts
 model/project-external-link-update-item.ts
 model/project-fact-sheet.ts
 model/project-featured.ts
+model/project-focus-area-detail-grid-row.ts
 model/project-fund-source-allocation-request-item-request.ts
 model/project-funding-detail.ts
 model/project-funding-save-request.ts

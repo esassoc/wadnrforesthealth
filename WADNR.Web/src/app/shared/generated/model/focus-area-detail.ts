@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { FocusAreaCloseoutProjectItem } from './focus-area-closeout-project-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
@@ -20,6 +21,8 @@ export class FocusAreaDetail {
     PlannedFootprintAcres?: number | null;
     ProjectCount?: number;
     HasLocation?: boolean;
+    SumOfEstimatedTotalCost?: number | null;
+    CloseoutProjects?: Array<FocusAreaCloseoutProjectItem> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -35,6 +38,8 @@ export interface FocusAreaDetailForm {
     PlannedFootprintAcres?: FormControl<number>;
     ProjectCount?: FormControl<number>;
     HasLocation?: FormControl<boolean>;
+    SumOfEstimatedTotalCost?: FormControl<number>;
+    CloseoutProjects?: FormControl<Array<FocusAreaCloseoutProjectItem>>;
 }
 
 export class FocusAreaDetailFormControls { 
@@ -119,6 +124,26 @@ export class FocusAreaDetailFormControls {
         }
     );
     public static HasLocation = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static SumOfEstimatedTotalCost = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CloseoutProjects = (value: FormControlState<Array<FocusAreaCloseoutProjectItem>> | Array<FocusAreaCloseoutProjectItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<FocusAreaCloseoutProjectItem>>(
         value,
         formControlOptions ?? 
         {

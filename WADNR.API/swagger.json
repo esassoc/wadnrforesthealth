@@ -3434,6 +3434,106 @@
         }
       }
     },
+    "/focus-areas/{focusAreaID}/projects": {
+      "get": {
+        "tags": [
+          "FocusArea"
+        ],
+        "operationId": "ListProjects_FocusArea",
+        "parameters": [
+          {
+            "name": "focusAreaID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectFocusAreaDetailGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectFocusAreaDetailGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectFocusAreaDetailGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/focus-areas/{focusAreaID}/projects/feature-collection": {
+      "get": {
+        "tags": [
+          "FocusArea"
+        ],
+        "operationId": "ListProjectsFeatureCollection_FocusArea",
+        "parameters": [
+          {
+            "name": "focusAreaID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/funding-sources": {
       "get": {
         "tags": [
@@ -7471,6 +7571,92 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/Job/{jobName}/trigger": {
+      "post": {
+        "tags": [
+          "Job"
+        ],
+        "operationId": "TriggerJob_Job",
+        "parameters": [
+          {
+            "name": "jobName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Job/import-history": {
+      "get": {
+        "tags": [
+          "Job"
+        ],
+        "operationId": "GetImportHistory_Job",
+        "parameters": [
+          {
+            "name": "count",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ImportHistoryDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ImportHistoryDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ImportHistoryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Job/clear-outdated-imports": {
+      "post": {
+        "tags": [
+          "Job"
+        ],
+        "operationId": "ClearOutdatedImports_Job",
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -23178,6 +23364,33 @@
         },
         "additionalProperties": false
       },
+      "FocusAreaCloseoutProjectItem": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectStageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectStageDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FocusAreaDetail": {
         "type": "object",
         "properties": {
@@ -23216,6 +23429,18 @@
           },
           "HasLocation": {
             "type": "boolean"
+          },
+          "SumOfEstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "CloseoutProjects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FocusAreaCloseoutProjectItem"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -25985,6 +26210,43 @@
           },
           "Attributes": {
             "$ref": "#/components/schemas/IAttributesTable"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ImportHistoryDto": {
+        "type": "object",
+        "properties": {
+          "ArcOnlineFinanceApiRawJsonImportID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ArcOnlineFinanceApiRawJsonImportTableTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "BienniumFiscalYear": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FinanceApiLastLoadDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "JsonImportDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "JsonImportStatusTypeID": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -29657,6 +29919,67 @@
           },
           "KeyPhotoCaption": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectFocusAreaDetailGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectStage": {
+            "$ref": "#/components/schemas/ProjectStageLookupItem"
+          },
+          "ProjectInitiationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalFunding": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "PhotoCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagLookupItem"
+            },
             "nullable": true
           }
         },
@@ -33926,6 +34249,9 @@
     },
     {
       "name": "InvoicePaymentRequest"
+    },
+    {
+      "name": "Job"
     },
     {
       "name": "LoaUpload"

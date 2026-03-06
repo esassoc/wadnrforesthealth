@@ -74,6 +74,14 @@ public static class FocusAreas
         {
             focusArea.FocusAreaStatusDisplayName = status.FocusAreaStatusDisplayName;
         }
+
+        foreach (var cp in focusArea.CloseoutProjects)
+        {
+            if (ProjectStage.AllLookupDictionary.TryGetValue(cp.ProjectStageID, out var stage))
+            {
+                cp.ProjectStageDisplayName = stage.ProjectStageDisplayName;
+            }
+        }
     }
 
     public static async Task ClearAndSaveStagingAsync(WADNRDbContext dbContext, int focusAreaID, List<GdbFeatureClassPreview> featureClasses, Func<string, Task<string>> getGeoJsonForLayer)

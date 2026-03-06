@@ -11,4 +11,6 @@ public class FocusAreaDetail
     public decimal? PlannedFootprintAcres { get; set; }
     public int ProjectCount { get; set; }
     public bool HasLocation { get; set; }
+    public decimal? SumOfEstimatedTotalCost { get; set; }
+    public List<FocusAreaCloseoutProjectItem> CloseoutProjects { get; set; } = new();
 }
