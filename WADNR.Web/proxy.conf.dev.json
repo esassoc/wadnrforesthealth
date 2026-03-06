@@ -6,5 +6,10 @@
         "pathRewrite": {
             "^/api": ""
         }
+    },
+    "/hangfire": {
+        "target": "https://localhost:3212",
+        "secure": false,
+        "changeOrigin": true
     }
 }

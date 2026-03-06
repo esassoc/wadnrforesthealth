@@ -156,4 +156,17 @@ public partial class WADNRDbContext
             _suppressAuditLogging = false;
         }
     }
+
+    public int SaveChangesWithNoAuditing()
+    {
+        _suppressAuditLogging = true;
+        try
+        {
+            return base.SaveChanges();
+        }
+        finally
+        {
+            _suppressAuditLogging = false;
+        }
+    }
 }

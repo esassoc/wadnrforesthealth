@@ -46,7 +46,7 @@ public class BlobFileTransferJob(
             fileResource.InBlobStorage = created;
         }
 
-        DbContext.SaveChanges();
+        DbContext.SaveChangesWithNoAuditing();
         stopwatch.Stop();
 
         Logger.LogInformation($"Finished transferring {FileResourcesPerJob} FileResources. Job took {stopwatch.Elapsed.TotalSeconds} seconds.");

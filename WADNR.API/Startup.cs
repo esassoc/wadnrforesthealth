@@ -140,6 +140,20 @@ namespace WADNR.API
             services.AddScoped<ProjectNotificationService>();
             services.AddScoped<IAuditUserProvider, HttpContextAuditUserProvider>();
 
+            #region Hangfire Job Services
+            services.AddHttpClient("FinanceApi", c =>
+            {
+                c.Timeout = TimeSpan.FromMinutes(10);
+            });
+            services.AddHttpClient("GisApi", c =>
+            {
+                c.Timeout = TimeSpan.FromMinutes(30);
+            });
+            services.AddScoped<ArcGisAuthService>();
+            services.AddScoped<FinanceApiDownloadService>();
+            services.AddScoped<GisDataImportService>();
+            #endregion
+
             #region GDAL API
             if (!string.IsNullOrEmpty(configuration.GDALAPIBaseUrl))
             {
@@ -219,12 +233,10 @@ namespace WADNR.API
                 policy.WithExposedHeaders("WWW-Authenticate");
             });
 
-            app.UseAuthentication();
-            app.UseAuthorization();
-            app.UseMiddleware<EntityNotFoundMiddleware>();
-            app.UseMiddleware<LogHelper>();
-
             #region Hangfire
+            // Hangfire dashboard must be registered BEFORE UseAuthentication/UseAuthorization
+            // so the fallback JWT auth policy doesn't intercept /hangfire requests and override
+            // the Basic auth WWW-Authenticate header that triggers the browser login prompt.
             app.UseHangfireDashboard("/hangfire", new DashboardOptions()
             {
                 Authorization = new[] { new HangfireAuthorizationFilter(Configuration) }
@@ -234,6 +246,11 @@ namespace WADNR.API
 
             HangfireJobScheduler.ScheduleRecurringJobs();
             #endregion
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseMiddleware<EntityNotFoundMiddleware>();
+            app.UseMiddleware<LogHelper>();
 
             #region Swagger
             // Register swagger middleware and enable the swagger UI which will be 

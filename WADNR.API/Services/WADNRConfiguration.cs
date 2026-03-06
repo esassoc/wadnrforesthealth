@@ -19,6 +19,28 @@
         public string GDALAPIBaseUrl { get; set; }
         public bool EnableE2ETestAuth { get; set; }
 
+        // Finance API (ArcGIS Online)
+        public string ProjectCodeJsonApiBaseUrl { get; set; }
+        public string ProgramIndexJsonApiBaseUrl { get; set; }
+        public string VendorJsonApiBaseUrl { get; set; }
+        public string FundSourceExpendituresJsonApiBaseUrl { get; set; }
+        public string DataImportAuthUrl { get; set; }
+        public string DataImportAuthUsername { get; set; }
+        public string DataImportAuthPassword { get; set; }
+        public string LastLoadDateUrl { get; set; }
+
+        // GIS Data Import (ArcGIS Online)
+        public string ArcGisAuthUrl { get; set; }
+        public string ArcGisClientId { get; set; }
+        public string ArcGisClientSecret { get; set; }
+        public string ArcGisLoaDataEasternUrl { get; set; }
+        public string ArcGisLoaDataWesternUrl { get; set; }
+        public string ArcGisUsfsDataUrl { get; set; }
+        public string ArcGisUsfsNepaBoundaryDataUrl { get; set; }
+
+        // Notifications
+        public string WebsiteDisplayName { get; set; } = "WA DNR Forest Health Tracker";
+
         public int Pre2007ProjectCount => 266; // todo: keeping this as a constant here since I doubt it changes now
     }
 }

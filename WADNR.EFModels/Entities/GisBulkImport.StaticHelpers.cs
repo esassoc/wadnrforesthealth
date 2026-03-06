@@ -37,7 +37,7 @@ public static class GisBulkImports
         };
 
         dbContext.GisUploadAttempts.Add(attempt);
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesWithNoAuditingAsync();
 
         return await GetAttemptDetailAsync(dbContext, attempt.GisUploadAttemptID);
     }
@@ -91,7 +91,7 @@ public static class GisBulkImports
             dbContext.GisUploadAttemptGisMetadataAttributes.RemoveRange(existingAttemptAttrs);
         }
 
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesWithNoAuditingAsync();
 
         var jsonOptions = new JsonSerializerOptions();
         jsonOptions.Converters.Add(new GeoJsonConverterFactory());
@@ -100,7 +100,7 @@ public static class GisBulkImports
         if (featureCollection == null || featureCollection.Count == 0)
         {
             attempt.FileUploadSuccessful = false;
-            await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesWithNoAuditingAsync();
             return;
         }
 
@@ -135,7 +135,7 @@ public static class GisBulkImports
                 attributeDictionary[attrName.ToLowerInvariant()] = newAttr;
             }
         }
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesWithNoAuditingAsync();
 
         // Create GisUploadAttemptGisMetadataAttribute records (column headers for this upload)
         var sortOrder = 0;
@@ -175,7 +175,7 @@ public static class GisBulkImports
             }
 
             dbContext.GisFeatures.Add(gisFeature);
-            await dbContext.SaveChangesAsync(); // Need ID for metadata attributes
+            await dbContext.SaveChangesWithNoAuditingAsync(); // Need ID for metadata attributes
 
             if (feature.Attributes != null)
             {
@@ -197,7 +197,7 @@ public static class GisBulkImports
         attempt.AttributesSaved = true;
         attempt.AreaCalculationComplete = true;
         attempt.ImportedToGeoJson = true;
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesWithNoAuditingAsync();
     }
 
     public static async Task<List<GisFeatureGridRow>> GetFeaturesAsGridRowAsync(WADNRDbContext dbContext, int gisUploadAttemptID)
@@ -489,7 +489,7 @@ public static class GisBulkImports
                 }
 
                 dbContext.Projects.Add(newProject);
-                await dbContext.SaveChangesAsync();
+                await dbContext.SaveChangesWithNoAuditingAsync();
 
                 // Link project to program
                 dbContext.ProjectPrograms.Add(new ProjectProgram
@@ -527,7 +527,7 @@ public static class GisBulkImports
                 result.LocationsCreated++;
             }
 
-            await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesWithNoAuditingAsync();
         }
 
         // Call stored proc for treatment imports if applicable

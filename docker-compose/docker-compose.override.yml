@@ -19,7 +19,23 @@ services:
       - SitkaCaptureServiceUrl=${SitkaCaptureServiceUrl}
       - WebUrl=${WebUrl}
       - GDALAPIBaseUrl=${GDALAPIBaseUrl}
-      - EnableE2ETestAuth=${EnableE2ETestAuth}  
+      - EnableE2ETestAuth=${EnableE2ETestAuth}
+      - ProjectCodeJsonApiBaseUrl=${ProjectCodeJsonApiBaseUrl}
+      - ProgramIndexJsonApiBaseUrl=${ProgramIndexJsonApiBaseUrl}
+      - VendorJsonApiBaseUrl=${VendorJsonApiBaseUrl}
+      - FundSourceExpendituresJsonApiBaseUrl=${FundSourceExpendituresJsonApiBaseUrl}
+      - DataImportAuthUrl=${DataImportAuthUrl}
+      - DataImportAuthUsername=${DataImportAuthUsername}
+      - DataImportAuthPassword=${DataImportAuthPassword}
+      - LastLoadDateUrl=${LastLoadDateUrl}
+      - ArcGisAuthUrl=${ArcGisAuthUrl}
+      - ArcGisClientId=${ArcGisClientId}
+      - ArcGisClientSecret=${ArcGisClientSecret}
+      - ArcGisLoaDataEasternUrl=${ArcGisLoaDataEasternUrl}
+      - ArcGisLoaDataWesternUrl=${ArcGisLoaDataWesternUrl}
+      - ArcGisUsfsDataUrl=${ArcGisUsfsDataUrl}
+      - ArcGisUsfsNepaBoundaryDataUrl=${ArcGisUsfsNepaBoundaryDataUrl}
+      - WebsiteDisplayName=${WebsiteDisplayName}
     ports:
       - "3211:8080"
       - "3212:8081"
