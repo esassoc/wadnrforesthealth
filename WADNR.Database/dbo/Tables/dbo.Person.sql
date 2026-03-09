@@ -19,6 +19,7 @@ CREATE TABLE [dbo].[Person](
     [IsProgramManager] [bit] NULL,
     [CreatedAsPartOfBulkImport] [bit] NULL,
     [GlobalID] VARCHAR(100) NULL,
+    [ImpersonatedPersonID] [int] NULL CONSTRAINT [FK_Person_Person_ImpersonatedPersonID_PersonID] FOREIGN KEY REFERENCES [dbo].[Person]([PersonID]),
 )
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [IX_Person_Email_UniqueWhenNotNull] ON [dbo].[Person]([Email]) WHERE ([Email] IS NOT NULL)

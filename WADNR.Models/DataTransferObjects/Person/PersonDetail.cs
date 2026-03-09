@@ -59,6 +59,10 @@ public class PersonDetail
     // Login authenticators
     public List<string> Authenticators { get; set; } = new();
 
+    // Auth identity
+    public string? GlobalID { get; set; }
+    public int? ImpersonatedPersonID { get; set; }
+
     // Indicates if this person is a "full user" (has a non-Unassigned base role) vs a "contact"
     public bool IsFullUser { get; set; }
 }

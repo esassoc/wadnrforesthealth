@@ -69,6 +69,8 @@ public partial class Person
     [Unicode(false)]
     public string? GlobalID { get; set; }
 
+    public int? ImpersonatedPersonID { get; set; }
+
     [ForeignKey("AddedByPersonID")]
     [InverseProperty("InverseAddedByPerson")]
     public virtual Person? AddedByPerson { get; set; }
@@ -127,6 +129,10 @@ public partial class Person
     [InverseProperty("GisUploadAttemptCreatePerson")]
     public virtual ICollection<GisUploadAttempt> GisUploadAttempts { get; set; } = new List<GisUploadAttempt>();
 
+    [ForeignKey("ImpersonatedPersonID")]
+    [InverseProperty("InverseImpersonatedPerson")]
+    public virtual Person? ImpersonatedPerson { get; set; }
+
     [InverseProperty("Person")]
     public virtual ICollection<InteractionEventContact> InteractionEventContacts { get; set; } = new List<InteractionEventContact>();
 
@@ -135,6 +141,9 @@ public partial class Person
 
     [InverseProperty("AddedByPerson")]
     public virtual ICollection<Person> InverseAddedByPerson { get; set; } = new List<Person>();
+
+    [InverseProperty("ImpersonatedPerson")]
+    public virtual ICollection<Person> InverseImpersonatedPerson { get; set; } = new List<Person>();
 
     [InverseProperty("PreparedByPerson")]
     public virtual ICollection<InvoicePaymentRequest> InvoicePaymentRequests { get; set; } = new List<InvoicePaymentRequest>();

@@ -124,6 +124,30 @@ public static class People
         person.IsFullUser = baseRole != null && baseRole != Role.Unassigned;
     }
 
+    public static PersonDetail? GetByIDAsDetail(WADNRDbContext dbContext, int personID)
+    {
+        var person = dbContext.People
+            .AsNoTracking()
+            .Where(x => x.PersonID == personID)
+            .Select(PersonProjections.AsDetail)
+            .SingleOrDefault();
+
+        if (person == null)
+        {
+            return null;
+        }
+
+        var personRoleIDs = dbContext.PersonRoles
+            .AsNoTracking()
+            .Where(pr => pr.PersonID == personID)
+            .Select(pr => pr.RoleID)
+            .ToList();
+
+        PopulateRoles(person, personRoleIDs);
+
+        return person;
+    }
+
     public static async Task<PersonDetail?> GetByGlobalIDAsDetailAsync(WADNRDbContext dbContext, string globalID)
     {
         var person = await dbContext.People

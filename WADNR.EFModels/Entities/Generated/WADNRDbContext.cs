@@ -901,6 +901,8 @@ public partial class WADNRDbContext : DbContext
                 .HasFilter("([Email] IS NOT NULL)");
 
             entity.HasOne(d => d.AddedByPerson).WithMany(p => p.InverseAddedByPerson).HasConstraintName("FK_Person_Person_AddedByPersonID_PersonID");
+
+            entity.HasOne(d => d.ImpersonatedPerson).WithMany(p => p.InverseImpersonatedPerson).HasConstraintName("FK_Person_Person_ImpersonatedPersonID_PersonID");
         });
 
         modelBuilder.Entity<PersonAllowedAuthenticator>(entity =>
