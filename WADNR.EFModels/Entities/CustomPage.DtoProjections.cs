@@ -21,4 +21,17 @@ public static class CustomPageProjections
         CustomPageDisplayName = x.CustomPageDisplayName,
         CustomPageVanityUrl = x.CustomPageVanityUrl
     };
+
+    public static readonly Expression<Func<CustomPage, CustomPageGridRow>> AsGridRow = x => new CustomPageGridRow
+    {
+        CustomPageID = x.CustomPageID,
+        CustomPageDisplayName = x.CustomPageDisplayName,
+        CustomPageVanityUrl = x.CustomPageVanityUrl,
+        CustomPageDisplayTypeID = x.CustomPageDisplayTypeID,
+        CustomPageDisplayTypeName = null,
+        CustomPageNavigationSectionID = x.CustomPageNavigationSectionID,
+        CustomPageNavigationSectionName = null,
+        HasContent = x.CustomPageContent != null && x.CustomPageContent.Length > 0,
+        CustomPageContent = x.CustomPageContent
+    };
 }

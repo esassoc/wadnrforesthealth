@@ -1,0 +1,34 @@
+<page-header pageTitle="Manage Custom Pages"></page-header>
+
+<div class="page-body">
+    <p>Use this page to add, remove, and control the visibility of pages in the main navigation. Select a page to view its current page content. You can edit the content on the page using the Edit button that appears when you hover over content that is customizable.</p>
+
+    <div class="grid-12">
+        <div class="g-col-7">
+            <div class="button-row">
+                <button class="btn btn-sm btn-primary" (click)="openCreate()">New Custom Page</button>
+            </div>
+            <wadnr-grid
+                [rowData]="customPages$ | async"
+                [columnDefs]="columnDefs"
+                [gridOptions]="gridOptions"
+                downloadFileName="custom-pages"
+                [sizeColumnsToFitGrid]="true">
+            </wadnr-grid>
+        </div>
+        <div class="g-col-5">
+            <h3 class="preview-heading">{{ selectedPage?.CustomPageDisplayName ?? 'Page Content' }}</h3>
+            @if (previewContent$ | async; as preview) {
+                @if (preview.loading) {
+                    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 200 }"></div>
+                } @else if (preview.html) {
+                    <div [innerHtml]="preview.html"></div>
+                } @else if (selectedPage) {
+                    <p class="text-muted">No content yet.</p>
+                }
+            } @else {
+                <p class="text-muted">Select a page to preview its content.</p>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,52 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>{{ modalTitle }}</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.CustomPageDisplayName"
+            fieldLabel="Display Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter display name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.CustomPageVanityUrl"
+            fieldLabel="Vanity URL"
+            [type]="FormFieldType.Text"
+            placeholder="Enter vanity URL (e.g. my-page)">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.CustomPageDisplayTypeID"
+            fieldLabel="Display Type"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="displayTypeOptions">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.CustomPageNavigationSectionID"
+            fieldLabel="Navigation Section"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="navSectionOptions">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Save' }}
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

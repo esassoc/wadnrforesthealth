@@ -11,7 +11,8 @@ import { CustomPageNavigationSectionEnum } from "src/app/shared/generated/enum/c
 import { CustomPageService } from "src/app/shared/generated/api/custom-page.service";
 import { CustomPageMenuItem } from "src/app/shared/generated/model/custom-page-menu-item";
 import { forkJoin, Observable, of } from "rxjs";
-import { catchError, map, shareReplay } from "rxjs/operators";
+import { catchError, map, shareReplay, switchMap } from "rxjs/operators";
+import { CustomPageNavService } from "src/app/shared/services/custom-page-nav.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { PersonDetail } from "src/app/shared/generated/model/person-detail";
 import { RoleEnum } from "src/app/shared/generated/enum/role-enum";
@@ -38,7 +39,8 @@ export class HeaderNavComponent implements OnInit {
         private customPageService: CustomPageService,
         private authenticationService: AuthenticationService,
         private relationshipTypeService: RelationshipTypeService,
-        private dialogService: DialogService
+        private dialogService: DialogService,
+        private customPageNavService: CustomPageNavService
     ) {
         this.currentUser$ = this.authenticationService.currentUserSetObservable;
     }
@@ -48,16 +50,18 @@ export class HeaderNavComponent implements OnInit {
     }
 
     ngOnInit() {
-        // Local helper because it's only used to initialize `navigationMenus$` once.
         const getSectionMenuItems = (section: CustomPageNavigationSectionEnum) =>
             this.customPageService.getByCustomPageNavigationSectionIDCustomPage(section).pipe(catchError(() => of([])));
 
-        this.navigationMenus$ = forkJoin({
-            about: getSectionMenuItems(CustomPageNavigationSectionEnum.About),
-            projects: getSectionMenuItems(CustomPageNavigationSectionEnum.Projects),
-            financials: getSectionMenuItems(CustomPageNavigationSectionEnum.Financials),
-            programInfo: getSectionMenuItems(CustomPageNavigationSectionEnum.ProgramInfo),
-        }).pipe(shareReplay(1));
+        this.navigationMenus$ = this.customPageNavService.refreshSignal$.pipe(
+            switchMap(() => forkJoin({
+                about: getSectionMenuItems(CustomPageNavigationSectionEnum.About),
+                projects: getSectionMenuItems(CustomPageNavigationSectionEnum.Projects),
+                financials: getSectionMenuItems(CustomPageNavigationSectionEnum.Financials),
+                programInfo: getSectionMenuItems(CustomPageNavigationSectionEnum.ProgramInfo),
+            })),
+            shareReplay(1)
+        );
 
         this.hasCanStewardProjectsRelationship$ = this.relationshipTypeService.listSummaryRelationshipType().pipe(
             map((types) => types.some((t) => t.CanStewardProjects)),
