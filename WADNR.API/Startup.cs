@@ -134,6 +134,7 @@ namespace WADNR.API
 
             services.AddScoped(s => s.GetService<IHttpContextAccessor>().HttpContext);
             services.AddScoped(s => UserContext.GetUserAsDetailFromHttpContext(s.GetService<WADNRDbContext>(), s.GetService<IHttpContextAccessor>().HttpContext));
+            services.AddScoped<ImpersonationService>();
             services.AddScoped<FileService>();
             services.AddScoped<AzureBlobStorageService>();
             services.AddScoped<IAzureStorage, AzureStorage>();

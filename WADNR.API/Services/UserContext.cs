@@ -31,7 +31,7 @@ namespace WADNR.API.Services
                 user = user1;
             }
 
-            return user ?? new PersonDetail
+            var authenticatedUser = user ?? new PersonDetail
             {
                 PersonID = Person.AnonymousPersonID,
                 FirstName = "Anonymous",
@@ -42,6 +42,14 @@ namespace WADNR.API.Services
                 OrganizationID = -1,
                 ReceiveSupportEmails = false,
             };
+
+            var impersonationService = httpContext.RequestServices.GetService(typeof(ImpersonationService)) as ImpersonationService;
+            if (impersonationService != null)
+            {
+                return impersonationService.GetEffectiveUser(dbContext, authenticatedUser);
+            }
+
+            return authenticatedUser;
         }
     }
 }
