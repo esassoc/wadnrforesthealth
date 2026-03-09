@@ -29,7 +29,7 @@ public class UsfsDataImportJob(
     public override List<RunEnvironment> RunEnvironments => new()
     {
         RunEnvironment.Production,
-        //RunEnvironment.Staging,
+        RunEnvironment.Staging,
         //RunEnvironment.Development
     };
 
