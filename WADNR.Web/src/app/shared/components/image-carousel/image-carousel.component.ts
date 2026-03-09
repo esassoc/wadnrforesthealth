@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges, signal } from "@angular/core";
 import { DomSanitizer, SafeStyle } from "@angular/platform-browser";
 import { environment } from "src/environments/environment";
 
@@ -23,7 +23,8 @@ export class ImageCarouselComponent implements OnInit, OnChanges, OnDestroy {
     /** Height of the carousel viewport */
     @Input() height: string = "450px";
 
-    currentSlide = 0;
+    currentSlide = signal(0);
+    hasMultiple = false;
 
     private timer: any;
 
@@ -35,17 +36,14 @@ export class ImageCarouselComponent implements OnInit, OnChanges, OnDestroy {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes["images"]) {
-            this.currentSlide = 0;
+            this.currentSlide.set(0);
+            this.hasMultiple = this.images?.length > 1;
             this.restartTimer();
         }
     }
 
     ngOnDestroy(): void {
         this.stopTimer();
-    }
-
-    get hasMultiple(): boolean {
-        return this.images?.length > 1;
     }
 
     getSlideBackgroundUrl(image: ImageCarouselItem): SafeStyle {
@@ -55,19 +53,19 @@ export class ImageCarouselComponent implements OnInit, OnChanges, OnDestroy {
 
     goToSlide(index: number): void {
         if (!this.images?.length) return;
-        this.currentSlide = index;
+        this.currentSlide.set(index);
         this.restartTimer();
     }
 
     prevSlide(): void {
         if (!this.images?.length) return;
-        this.currentSlide = (this.currentSlide - 1 + this.images.length) % this.images.length;
+        this.currentSlide.update(i => (i - 1 + this.images.length) % this.images.length);
         this.restartTimer();
     }
 
     nextSlide(): void {
         if (!this.images?.length) return;
-        this.currentSlide = (this.currentSlide + 1) % this.images.length;
+        this.currentSlide.update(i => (i + 1) % this.images.length);
         this.restartTimer();
     }
 
