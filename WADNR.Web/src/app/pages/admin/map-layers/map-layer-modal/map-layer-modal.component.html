@@ -66,17 +66,7 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button
-        class="btn btn-primary"
-        (click)="save()"
-        [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Saving...' : 'Save' }}
-    </button>
-    <button
-        class="btn btn-secondary"
-        (click)="cancel()"
-        [disabled]="isSubmitting">
-        Cancel
-    </button>
+    <button class="btn btn-primary" (click)="save()" [disabled]="isSubmitting$ | async" [buttonLoading]="isSubmitting$ | async">Save</button>
+    <button class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting$ | async">Cancel</button>
 </div>
 </div>

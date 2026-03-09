@@ -1,10 +1,14 @@
+import { AsyncPipe } from "@angular/common";
 import { Component, inject, OnInit } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
+import { BehaviorSubject, EMPTY } from "rxjs";
+import { catchError } from "rxjs/operators";
 
 import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 
@@ -20,7 +24,7 @@ export interface MapLayerModalData {
 @Component({
     selector: "map-layer-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent],
+    imports: [AsyncPipe, ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, ButtonLoadingDirective],
     templateUrl: "./map-layer-modal.component.html",
 })
 export class MapLayerModalComponent extends BaseModal implements OnInit {
@@ -29,7 +33,7 @@ export class MapLayerModalComponent extends BaseModal implements OnInit {
     public FormFieldType = FormFieldType;
     public mode: "create" | "edit" = "create";
     public mapLayer?: ExternalMapLayerDetail;
-    public isSubmitting = false;
+    public isSubmitting$ = new BehaviorSubject<boolean>(false);
 
     public form = new FormGroup({
         DisplayName: new FormControl("", [Validators.required, Validators.maxLength(75)]),
@@ -95,7 +99,7 @@ export class MapLayerModalComponent extends BaseModal implements OnInit {
             return;
         }
 
-        this.isSubmitting = true;
+        this.isSubmitting$.next(true);
         this.localAlerts = [];
 
         const dto: ExternalMapLayerUpsertRequest = {
@@ -114,19 +118,23 @@ export class MapLayerModalComponent extends BaseModal implements OnInit {
             ? this.externalMapLayerService.createExternalMapLayer(dto)
             : this.externalMapLayerService.updateExternalMapLayer(this.mapLayer!.ExternalMapLayerID, dto);
 
-        request$.subscribe({
-            next: (result) => {
-                const message = this.mode === "create"
-                    ? "Map layer created successfully."
-                    : "Map layer updated successfully.";
-                this.pushGlobalSuccess(message);
-                this.ref.close(result);
-            },
-            error: (err) => {
-                this.isSubmitting = false;
-                const message = err?.error?.message ?? err?.message ?? "An error occurred.";
+        request$.pipe(
+            catchError((err) => {
+                const body = err?.error;
+                const message = typeof body === "string"
+                    ? body
+                    : body?.detail ?? body?.title ?? body?.message ?? err?.message ?? "An error occurred.";
                 this.addLocalAlert(message, AlertContext.Danger, true);
-            },
+                this.isSubmitting$.next(false);
+                return EMPTY;
+            }),
+        ).subscribe((result) => {
+            this.isSubmitting$.next(false);
+            const message = this.mode === "create"
+                ? "Map layer created successfully."
+                : "Map layer updated successfully.";
+            this.pushGlobalSuccess(message);
+            this.ref.close(result);
         });
     }
 
