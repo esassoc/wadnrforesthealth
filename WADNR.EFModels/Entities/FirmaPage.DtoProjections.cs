@@ -17,4 +17,15 @@ public static class FirmaPageProjections
         },
         FirmaPageContent = x.FirmaPageContent,
     };
+
+    public static readonly Expression<Func<FirmaPage, FirmaPageGridRow>> AsGridRow = x => new FirmaPageGridRow
+    {
+        FirmaPageID = x.FirmaPageID,
+        FirmaPageTypeID = x.FirmaPageTypeID,
+        FirmaPageTypeName = null,
+        FirmaPageTypeDisplayName = null,
+        HasContent = x.FirmaPageContent != null && x.FirmaPageContent.Length > 0,
+        FirmaPageRenderTypeID = 0,
+        FirmaPageRenderTypeDisplayName = null
+    };
 }

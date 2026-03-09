@@ -26,4 +26,28 @@ public static class FirmaPages
 
         return await GetByFirmaPageTypeAsDetailAsync(dbContext, firmaPageTypeID);
     }
+
+    public static async Task<List<FirmaPageGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
+    {
+        var items = await dbContext.FirmaPages
+            .AsNoTracking()
+            .Select(FirmaPageProjections.AsGridRow)
+            .ToListAsync();
+
+        foreach (var item in items)
+        {
+            if (FirmaPageType.AllLookupDictionary.TryGetValue(item.FirmaPageTypeID, out var firmaPageType))
+            {
+                item.FirmaPageTypeName = firmaPageType.FirmaPageTypeName;
+                item.FirmaPageTypeDisplayName = firmaPageType.FirmaPageTypeDisplayName;
+                item.FirmaPageRenderTypeID = firmaPageType.FirmaPageRenderTypeID;
+                if (FirmaPageRenderType.AllLookupDictionary.TryGetValue(firmaPageType.FirmaPageRenderTypeID, out var renderType))
+                {
+                    item.FirmaPageRenderTypeDisplayName = renderType.FirmaPageRenderTypeDisplayName;
+                }
+            }
+        }
+
+        return items.OrderBy(x => x.FirmaPageTypeDisplayName).ToList();
+    }
 }

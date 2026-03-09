@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -18,6 +19,14 @@ public class CustomRichTextController(
     IOptions<WADNRConfiguration> ltInfoConfiguration)
     : SitkaController<CustomRichTextController>(dbContext, logger, ltInfoConfiguration)
 {
+    [HttpGet]
+    [PageContentManageFeature]
+    public async Task<ActionResult<List<FirmaPageGridRow>>> List()
+    {
+        var items = await FirmaPages.ListAsGridRowAsync(DbContext);
+        return Ok(items);
+    }
+
     [HttpGet("{customRichTextTypeID}")]
     [AllowAnonymous]
     public async Task<ActionResult<FirmaPageDetail>> Get([FromRoute] int customRichTextTypeID)
