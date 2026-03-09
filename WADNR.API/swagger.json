@@ -7018,6 +7018,77 @@
         }
       }
     },
+    "/impersonation/{personID}": {
+      "post": {
+        "tags": [
+          "Impersonation"
+        ],
+        "operationId": "ImpersonateUser_Impersonation",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/impersonation/stop": {
+      "post": {
+        "tags": [
+          "Impersonation"
+        ],
+        "operationId": "StopImpersonation_Impersonation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/interactions-events": {
       "get": {
         "tags": [
@@ -28367,6 +28438,15 @@
             },
             "nullable": true
           },
+          "GlobalID": {
+            "type": "string",
+            "nullable": true
+          },
+          "ImpersonatedPersonID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "IsFullUser": {
             "type": "boolean"
           }
@@ -34881,6 +34961,9 @@
     },
     {
       "name": "GisBulkImport"
+    },
+    {
+      "name": "Impersonation"
     },
     {
       "name": "InteractionEvent"

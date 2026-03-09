@@ -26,6 +26,7 @@ api/fund-source-type.service.ts
 api/fund-source.service.ts
 api/funding-source.service.ts
 api/gis-bulk-import.service.ts
+api/impersonation.service.ts
 api/interaction-event.service.ts
 api/invoice-payment-request.service.ts
 api/invoice.service.ts

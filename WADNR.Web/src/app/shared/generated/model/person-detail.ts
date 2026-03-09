@@ -45,6 +45,8 @@ export class PersonDetail {
     PrimaryContactOrganizations?: Array<OrganizationLookupItem> | null;
     AssignedPrograms?: Array<ProgramLookupItem> | null;
     Authenticators?: Array<string> | null;
+    GlobalID?: string | null;
+    ImpersonatedPersonID?: number | null;
     IsFullUser?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -83,6 +85,8 @@ export interface PersonDetailForm {
     PrimaryContactOrganizations?: FormControl<Array<OrganizationLookupItem>>;
     AssignedPrograms?: FormControl<Array<ProgramLookupItem>>;
     Authenticators?: FormControl<Array<string>>;
+    GlobalID?: FormControl<string>;
+    ImpersonatedPersonID?: FormControl<number>;
     IsFullUser?: FormControl<boolean>;
 }
 
@@ -388,6 +392,26 @@ export class PersonDetailFormControls {
         }
     );
     public static Authenticators = (value: FormControlState<Array<string>> | Array<string> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<string>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static GlobalID = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ImpersonatedPersonID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
