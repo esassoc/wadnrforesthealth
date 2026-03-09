@@ -14,6 +14,7 @@ import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 
 import { ExternalMapLayerService } from "src/app/shared/generated/api/external-map-layer.service";
 import { ExternalMapLayerDetail } from "src/app/shared/generated/model/external-map-layer-detail";
+import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
 import { MapLayerModalComponent, MapLayerModalData } from "./map-layer-modal/map-layer-modal.component";
 
 @Component({
@@ -23,6 +24,7 @@ import { MapLayerModalComponent, MapLayerModalData } from "./map-layer-modal/map
     templateUrl: "./map-layers.component.html",
 })
 export class MapLayersComponent implements OnInit {
+    public customRichTextTypeID = FirmaPageTypeEnum.ExternalMapLayers;
     public mapLayers$: Observable<ExternalMapLayerDetail[]>;
     public columnDefs: ColDef<ExternalMapLayerDetail>[] = [];
 
@@ -52,15 +54,15 @@ export class MapLayersComponent implements OnInit {
                     { ActionName: "Delete", ActionHandler: () => this.confirmDelete(layer), ActionIcon: "fa fa-trash" },
                 ];
             }),
-            this.utilityFunctions.createBasicColumnDef("Display Name", "DisplayName", { Width: 200 }),
-            this.utilityFunctions.createBasicColumnDef("Layer URL", "LayerUrl", { Width: 250 }),
-            this.utilityFunctions.createBasicColumnDef("Description", "LayerDescription", { Width: 200 }),
-            this.utilityFunctions.createBasicColumnDef("Feature Name Field", "FeatureNameField", { Width: 150 }),
-            this.utilityFunctions.createBooleanColumnDef("On Project Map", "DisplayOnProjectMap", { Width: 80, CustomDropdownFilterField: "DisplayOnProjectMap" }),
-            this.utilityFunctions.createBooleanColumnDef("On Priority Landscape", "DisplayOnPriorityLandscape", { Width: 80, CustomDropdownFilterField: "DisplayOnPriorityLandscape" }),
-            this.utilityFunctions.createBooleanColumnDef("On All Others", "DisplayOnAllOthers", { Width: 80, CustomDropdownFilterField: "DisplayOnAllOthers" }),
-            this.utilityFunctions.createBooleanColumnDef("Active", "IsActive", { Width: 80, CustomDropdownFilterField: "IsActive" }),
-            this.utilityFunctions.createBooleanColumnDef("Tiled Map Service", "IsTiledMapService", { Width: 80, CustomDropdownFilterField: "IsTiledMapService" }),
+            this.utilityFunctions.createBasicColumnDef("Display Name", "DisplayName", { Width: 200, FieldDefinitionType: "ExternalMapLayerDisplayName", FieldDefinitionLabelOverride: "Display Name" }),
+            this.utilityFunctions.createBasicColumnDef("Layer URL", "LayerUrl", { Width: 250, FieldDefinitionType: "ExternalMapLayerUrl", FieldDefinitionLabelOverride: "Layer URL" }),
+            this.utilityFunctions.createBasicColumnDef("Description", "LayerDescription", { Width: 200, FieldDefinitionType: "ExternalMapLayerDescription", FieldDefinitionLabelOverride: "Description" }),
+            this.utilityFunctions.createBasicColumnDef("Feature Name Field", "FeatureNameField", { Width: 150, FieldDefinitionType: "ExternalMapLayerFeatureNameField", FieldDefinitionLabelOverride: "Feature Name Field" }),
+            this.utilityFunctions.createBooleanColumnDef("On Project Map", "DisplayOnProjectMap", { Width: 80, CustomDropdownFilterField: "DisplayOnProjectMap", FieldDefinitionType: "ExternalMapLayerDisplayOnProjectMap", FieldDefinitionLabelOverride: "On Project Map" }),
+            this.utilityFunctions.createBooleanColumnDef("On Priority Landscape", "DisplayOnPriorityLandscape", { Width: 80, CustomDropdownFilterField: "DisplayOnPriorityLandscape", FieldDefinitionType: "ExternalMapLayerDisplayOnPriorityLandscape", FieldDefinitionLabelOverride: "On Priority Landscape" }),
+            this.utilityFunctions.createBooleanColumnDef("On All Others", "DisplayOnAllOthers", { Width: 80, CustomDropdownFilterField: "DisplayOnAllOthers", FieldDefinitionType: "ExternalMapLayerDisplayOnAllOthers", FieldDefinitionLabelOverride: "On All Others" }),
+            this.utilityFunctions.createBooleanColumnDef("Active", "IsActive", { Width: 80, CustomDropdownFilterField: "IsActive", FieldDefinitionType: "ExternalMapLayerIsActive", FieldDefinitionLabelOverride: "Active" }),
+            this.utilityFunctions.createBooleanColumnDef("Tiled Map Service", "IsTiledMapService", { Width: 80, CustomDropdownFilterField: "IsTiledMapService", FieldDefinitionType: "ExternalMapLayerIsATiledMapService", FieldDefinitionLabelOverride: "Tiled Map Service" }),
         ];
     }
 
