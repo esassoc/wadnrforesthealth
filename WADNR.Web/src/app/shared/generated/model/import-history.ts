@@ -10,30 +10,36 @@
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
-export class ImportHistoryDto { 
+export class ImportHistory { 
     ArcOnlineFinanceApiRawJsonImportID?: number;
     CreateDate?: string;
     ArcOnlineFinanceApiRawJsonImportTableTypeID?: number;
+    ArcOnlineFinanceApiRawJsonImportTableTypeName?: string | null;
     BienniumFiscalYear?: number | null;
     FinanceApiLastLoadDate?: string | null;
     JsonImportDate?: string | null;
     JsonImportStatusTypeID?: number;
+    JsonImportStatusTypeName?: string | null;
+    RawJsonStringLength?: number | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
 }
 
-export interface ImportHistoryDtoForm { 
+export interface ImportHistoryForm { 
     ArcOnlineFinanceApiRawJsonImportID?: FormControl<number>;
     CreateDate?: FormControl<string>;
     ArcOnlineFinanceApiRawJsonImportTableTypeID?: FormControl<number>;
+    ArcOnlineFinanceApiRawJsonImportTableTypeName?: FormControl<string>;
     BienniumFiscalYear?: FormControl<number>;
     FinanceApiLastLoadDate?: FormControl<string>;
     JsonImportDate?: FormControl<string>;
     JsonImportStatusTypeID?: FormControl<number>;
+    JsonImportStatusTypeName?: FormControl<string>;
+    RawJsonStringLength?: FormControl<number>;
 }
 
-export class ImportHistoryDtoFormControls { 
+export class ImportHistoryFormControls { 
     public static ArcOnlineFinanceApiRawJsonImportID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
@@ -55,6 +61,16 @@ export class ImportHistoryDtoFormControls {
         }
     );
     public static ArcOnlineFinanceApiRawJsonImportTableTypeID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ArcOnlineFinanceApiRawJsonImportTableTypeName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -95,6 +111,26 @@ export class ImportHistoryDtoFormControls {
         }
     );
     public static JsonImportStatusTypeID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static JsonImportStatusTypeName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static RawJsonStringLength = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

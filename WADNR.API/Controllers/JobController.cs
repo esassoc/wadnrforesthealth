@@ -42,17 +42,16 @@ public class JobController(
     }
 
     /// <summary>
-    /// Returns recent ArcOnlineFinanceApiRawJsonImport records for monitoring.
+    /// Returns ArcOnlineFinanceApiRawJsonImport records for monitoring.
     /// </summary>
     [HttpGet("import-history")]
     [AdminFeature]
-    public async Task<ActionResult<List<ImportHistoryDto>>> GetImportHistory([FromQuery] int count = 50)
+    public async Task<ActionResult<List<ImportHistory>>> GetImportHistory()
     {
         var history = await DbContext.ArcOnlineFinanceApiRawJsonImports
             .AsNoTracking()
             .OrderByDescending(x => x.CreateDate)
-            .Take(count)
-            .Select(x => new ImportHistoryDto
+            .Select(x => new ImportHistory
             {
                 ArcOnlineFinanceApiRawJsonImportID = x.ArcOnlineFinanceApiRawJsonImportID,
                 CreateDate = x.CreateDate,
@@ -60,9 +59,23 @@ public class JobController(
                 BienniumFiscalYear = x.BienniumFiscalYear,
                 FinanceApiLastLoadDate = x.FinanceApiLastLoadDate,
                 JsonImportDate = x.JsonImportDate,
-                JsonImportStatusTypeID = x.JsonImportStatusTypeID
+                JsonImportStatusTypeID = x.JsonImportStatusTypeID,
+                RawJsonStringLength = (long?)EF.Functions.DataLength(x.RawJsonString)
             })
             .ToListAsync();
+
+        foreach (var item in history)
+        {
+            if (ArcOnlineFinanceApiRawJsonImportTableType.AllLookupDictionary.TryGetValue(item.ArcOnlineFinanceApiRawJsonImportTableTypeID, out var tableType))
+            {
+                item.ArcOnlineFinanceApiRawJsonImportTableTypeName = tableType.ArcOnlineFinanceApiRawJsonImportTableTypeName;
+            }
+
+            if (JsonImportStatusType.AllLookupDictionary.TryGetValue(item.JsonImportStatusTypeID, out var statusType))
+            {
+                item.JsonImportStatusTypeName = statusType.JsonImportStatusTypeName;
+            }
+        }
 
         return Ok(history);
     }
