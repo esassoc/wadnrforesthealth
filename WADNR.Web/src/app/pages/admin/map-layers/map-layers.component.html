@@ -1,0 +1,16 @@
+<page-header pageTitle="Manage External Map Layers"></page-header>
+
+<div class="page-body">
+    <div class="flex-between no-wrap">
+        <h4>External Map Layers</h4>
+        <button class="btn btn-sm btn-primary" (click)="openCreate()">Add External Map Layer</button>
+    </div>
+    <div>
+        <wadnr-grid
+            [rowData]="mapLayers$ | async"
+            [columnDefs]="columnDefs"
+            downloadFileName="external-map-layers"
+            [sizeColumnsToFitGrid]="true">
+        </wadnr-grid>
+    </div>
+</div>
