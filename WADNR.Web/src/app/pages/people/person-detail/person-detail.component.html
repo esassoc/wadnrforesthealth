@@ -1,6 +1,12 @@
 @if (person$ | async; as person) {
     <breadcrumb [items]="[{ label: 'Users and Contacts', url: '/people' }, { label: person.FullName || 'User' }]" [linkLast]="false"></breadcrumb>
-    <page-header [pageTitle]="person.FullName + (person.IsActive ? '' : ' (inactive)')"></page-header>
+    <page-header [pageTitle]="person.FullName + (person.IsActive ? '' : ' (inactive)')">
+        @if (canImpersonate$ | async) {
+            <button class="btn btn-sm btn-secondary" (click)="impersonate(person.PersonID)">
+                <icon icon="User"></icon> Impersonate
+            </button>
+        }
+    </page-header>
 
     <div class="page-body">
         <div class="grid-12">

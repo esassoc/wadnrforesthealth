@@ -1,7 +1,7 @@
 import { AsyncPipe, DatePipe } from "@angular/common";
 import { Component, Input } from "@angular/core";
-import { RouterLink } from "@angular/router";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, Observable, shareReplay, switchMap } from "rxjs";
+import { Router, RouterLink } from "@angular/router";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, switchMap } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 import { DialogService } from "@ngneat/dialog";
@@ -9,12 +9,15 @@ import { DialogService } from "@ngneat/dialog";
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
+import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 
+import { AuthenticationService } from "src/app/services/authentication.service";
 import { PersonService } from "src/app/shared/generated/api/person.service";
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
 import { PersonDetail } from "src/app/shared/generated/model/person-detail";
+import { environment } from "src/environments/environment";
 import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row";
 import { AgreementGridRow } from "src/app/shared/generated/model/agreement-grid-row";
 import { InteractionEventGridRow } from "src/app/shared/generated/model/interaction-event-grid-row";
@@ -23,7 +26,7 @@ import { PersonPrimaryContactOrgsModalComponent, PersonPrimaryContactOrgsModalDa
 @Component({
     selector: "person-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, DatePipe, RouterLink, BreadcrumbComponent, WADNRGridComponent, LoadingDirective],
+    imports: [PageHeaderComponent, AsyncPipe, DatePipe, RouterLink, BreadcrumbComponent, WADNRGridComponent, LoadingDirective, IconComponent],
     templateUrl: "./person-detail.component.html",
     styleUrls: ["./person-detail.component.scss"],
 })
@@ -45,6 +48,8 @@ export class PersonDetailComponent {
     public agreementsIsLoading$: Observable<boolean>;
     public interactionEventsIsLoading$: Observable<boolean>;
 
+    public canImpersonate$: Observable<boolean>;
+
     public projectColumnDefs: ColDef<ProjectGridRow>[] = [];
     public agreementColumnDefs: ColDef<AgreementGridRow>[] = [];
     public interactionEventColumnDefs: ColDef<InteractionEventGridRow>[] = [];
@@ -52,6 +57,7 @@ export class PersonDetailComponent {
     constructor(
         private personService: PersonService,
         private organizationService: OrganizationService,
+        private authenticationService: AuthenticationService,
         private dialogService: DialogService,
         private utilityFunctions: UtilityFunctionsService
     ) {}
@@ -86,6 +92,19 @@ export class PersonDetailComponent {
         this.projectsIsLoading$ = toLoadingState(this.projects$);
         this.agreementsIsLoading$ = toLoadingState(this.agreements$);
         this.interactionEventsIsLoading$ = toLoadingState(this.interactionEvents$);
+
+        this.canImpersonate$ = combineLatest([
+            this.person$,
+            this.authenticationService.currentUserSetObservable,
+        ]).pipe(
+            map(([person, currentUser]) => {
+                if (!currentUser || !person || environment.production) return false;
+                const isAdmin = this.authenticationService.isUserAnAdministrator(currentUser);
+                const isNotSelf = person.PersonID !== currentUser.PersonID;
+                return isAdmin && isNotSelf;
+            }),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
 
         this.projectColumnDefs = this.createProjectColumnDefs();
         this.agreementColumnDefs = this.createAgreementColumnDefs();
@@ -133,6 +152,10 @@ export class PersonDetailComponent {
                 InRouterLink: "/people/",
             }),
         ];
+    }
+
+    impersonate(personID: number): void {
+        this.authenticationService.impersonate(personID);
     }
 
     openEditPrimaryContactOrgs(person: PersonDetail): void {

@@ -432,6 +432,26 @@
     }
 }
 
+.impersonation-banner {
+    background-color: #f0ad4e;
+    color: #333;
+    text-align: center;
+    padding: var(--spacing-200) var(--spacing-400);
+    font-weight: 600;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-400);
+
+    .btn-warning {
+        background-color: #d58512;
+        border-color: #985e0d;
+        color: #fff;
+        font-weight: 600;
+    }
+}
+
 .secondary-nav {
     background: #dbdbdb;
     a {

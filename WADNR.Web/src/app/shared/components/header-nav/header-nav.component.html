@@ -57,6 +57,15 @@
     </div>
 </nav>
 
+@if (currentUser$ | async; as impUser) {
+    @if (isBeingImpersonated(impUser)) {
+        <div class="impersonation-banner">
+            <span>Impersonating <strong>{{ impUser.FirstName }} {{ impUser.LastName }}</strong></span>
+            <button class="btn btn-sm btn-warning" (click)="stopImpersonation()">Stop Impersonating</button>
+        </div>
+    }
+}
+
 <header class="site-header">
     @if (navigationMenus$ | async; as navigationMenus) {
     <nav class="secondary-nav">
@@ -81,10 +90,8 @@
                         <li><a routerLink="/projects-by-type" class="dropdown-item">Projects By Type</a></li>
                         <li><a routerLink="/projects-by-theme" class="dropdown-item">Projects By Theme</a></li>
                         <li><a routerLink="/tags" class="dropdown-item">Project Tags</a></li>
-                        @if (currentUser$ | async; as currentUserForPending) {
-                            @if (canViewManageMenu(currentUserForPending)) {
-                            <li><a routerLink="/pending-projects" class="dropdown-item">Pending Projects</a></li>
-                            }
+                        @if (currentUser$ | async) {
+                        <li><a routerLink="/pending-projects" class="dropdown-item">Pending Projects</a></li>
                         }
                         <li class="divider"></li>
                         <li><a routerLink="/interactions-events" class="dropdown-item">Full Interactions/Events List</a></li>
@@ -119,7 +126,9 @@
                         <li class="divider"></li>
                         <li><a routerLink="/priority-landscapes" class="dropdown-item">Priority Landscapes</a></li>
                         <li><a routerLink="/dnr-upland-regions" class="dropdown-item">DNR Upland Regions</a></li>
+                        @if (currentUser$ | async) {
                         <li><a routerLink="/focus-areas" class="dropdown-item">DNR LOA Focus Areas</a></li>
+                        }
                         <li><a routerLink="/counties" class="dropdown-item">Counties</a></li>
                         <li class="divider"></li>
                         @if (hasCanStewardProjectsRelationship$ | async) {
@@ -127,7 +136,7 @@
                         }
                         <li><a routerLink="/organizations" class="dropdown-item">Contributing Organizations</a></li>
                         @if (currentUser$ | async; as currentUserForVendors) {
-                            @if (canViewVendors(currentUserForVendors)) {
+                            @if (isStewardOrAbove(currentUserForVendors)) {
                             <li><a routerLink="/vendors" class="dropdown-item">Vendors</a></li>
                             }
                         }
@@ -166,7 +175,7 @@
                             <li class="divider"></li>
                             <!-- Group 5: Organizations -->
                             <li><a routerLink="/organization-and-relationship-types" class="dropdown-item">Organization Types</a></li>
-                            @if (canViewVendors(currentUserForManage)) {
+                            @if (isStewardOrAbove(currentUserForManage)) {
                             <li><a routerLink="/manage-find-your-forester" class="dropdown-item">Manage Find Your Forester</a></li>
                             }
                             <li><a routerLink="/map-layers" class="dropdown-item">Map Layers</a></li>
@@ -186,27 +195,29 @@
                     }
                 }
                 @if (currentUser$ | async; as currentUserForReports) {
-                <li class="nav-item dropdown">
-                    <a href="javascript:void(0);" [dropdownToggle]="reportsMenu" class="nav-link dropdown-toggle">Reports <icon icon="AngleDown"></icon></a>
-                    <ul #reportsMenu class="dropdown-menu">
-                        <li><a routerLink="/reports/projects" class="dropdown-item">Projects</a></li>
-                        @if (isAdmin(currentUserForReports)) {
-                        <li class="divider"></li>
-                        <li><a routerLink="/reports" class="dropdown-item">Manage Report Templates</a></li>
-                        }
-                    </ul>
-                </li>
+                  @if (isStewardOrAbove(currentUserForReports)) {
+                    <li class="nav-item dropdown">
+                        <a href="javascript:void(0);" [dropdownToggle]="reportsMenu" class="nav-link dropdown-toggle">Reports <icon icon="AngleDown"></icon></a>
+                        <ul #reportsMenu class="dropdown-menu">
+                            <li><a routerLink="/reports/projects" class="dropdown-item">Projects</a></li>
+                            @if (isAdmin(currentUserForReports)) {
+                            <li class="divider"></li>
+                            <li><a routerLink="/reports" class="dropdown-item">Manage Report Templates</a></li>
+                            }
+                        </ul>
+                    </li>
+                  }
                 }
                 <!-- first right-aligned item -->
                 @if (currentUser$ | async; as currentUser) {
                     <li class="nav-item dropdown secondary-nav__right-start" [dropdownToggle]="userMenu">
                         <a href="javascript:void(0);" class="nav-link dropdown-toggle">
-                            {{ currentUser.FirstName }} {{ currentUser.LastName }} <icon icon="AngleDown"></icon>
+                            {{ isBeingImpersonated(currentUser) ? "Impersonating: " : "" }}{{ currentUser.FirstName }} {{ currentUser.LastName }} <icon icon="AngleDown"></icon>
                         </a>
                         <ul #userMenu class="dropdown-menu dropdown-menu-right">
                             <li><a href="javascript:void(0);" (click)="openSupportModal()" class="dropdown-item">Request Support</a></li>
                             <li class="divider"></li>
-                            <li><a href="javascript:void(0);" (click)="logout()" class="dropdown-item">Log Out</a></li>
+                            <li><a href="javascript:void(0);" (click)="logout()" class="dropdown-item">{{ isBeingImpersonated(currentUser) ? "Stop Impersonating" : "Log Out" }}</a></li>
                         </ul>
                     </li>
                 } @else {

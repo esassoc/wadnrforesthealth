@@ -113,10 +113,8 @@ export class HeaderNavComponent implements OnInit {
         return roleID === RoleEnum.Admin || roleID === RoleEnum.EsaAdmin;
     }
 
-    public canViewVendors(user: PersonDetail | null): boolean {
-        if (!user) return false;
-        const roleID = user.BaseRole?.RoleID;
-        return roleID === RoleEnum.Admin || roleID === RoleEnum.EsaAdmin || roleID === RoleEnum.ProjectSteward;
+    public isStewardOrAbove(user: PersonDetail | null): boolean {
+        return this.authenticationService.hasElevatedProjectAccess(user);
     }
 
     public canCreateProject(user: PersonDetail | null): boolean {
@@ -130,6 +128,14 @@ export class HeaderNavComponent implements OnInit {
             roleID === RoleEnum.ProjectSteward ||
             roleID === RoleEnum.CanEditProgram
         );
+    }
+
+    public isBeingImpersonated(user: PersonDetail | null): boolean {
+        return this.authenticationService.isCurrentUserBeingImpersonated(user);
+    }
+
+    public stopImpersonation(): void {
+        this.authenticationService.logout();
     }
 
     public openSupportModal(): void {

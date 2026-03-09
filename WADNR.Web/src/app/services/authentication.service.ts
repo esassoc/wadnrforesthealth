@@ -7,6 +7,7 @@ import { environment } from "src/environments/environment";
 import { PersonDetail } from "../shared/generated/model/person-detail";
 import { AuthService as Auth0Service } from "@auth0/auth0-angular";
 import { UserClaimsService } from "../shared/generated/api/user-claims.service";
+import { ImpersonationService } from "../shared/generated/api/impersonation.service";
 import { Alert } from "../shared/models/alert";
 import { AlertContext } from "../shared/models/enums/alert-context.enum";
 import { RoleEnum } from "../shared/generated/enum/role-enum";
@@ -26,6 +27,7 @@ export class AuthenticationService {
         private router: Router,
         private auth0: Auth0Service,
         private userClaimsService: UserClaimsService,
+        private impersonationService: ImpersonationService,
         private alertService: AlertService
     ) {
         // Subscribe to Auth0 user stream to update claims and current user
@@ -108,7 +110,32 @@ export class AuthenticationService {
     }
 
     public logout() {
-        this.auth0.logout({ logoutParams: { returnTo: window.location.origin } } as any);
+        if (this.isCurrentUserBeingImpersonated()) {
+            this.impersonationService.stopImpersonationImpersonation().subscribe((response) => {
+                this.refreshUserInfo(response);
+                this.router.navigateByUrl("/").then(() => {
+                    this.alertService.pushAlert(new Alert("Finished impersonating", AlertContext.Success));
+                });
+            });
+        } else {
+            this.auth0.logout({ logoutParams: { returnTo: window.location.origin } } as any);
+        }
+    }
+
+    public isCurrentUserBeingImpersonated(user: PersonDetail | null = this.currentUser): boolean {
+        if (user && this.claimsUser) {
+            return this.claimsUser.sub !== user.GlobalID;
+        }
+        return false;
+    }
+
+    public impersonate(personID: number): void {
+        this.impersonationService.impersonateUserImpersonation(personID).subscribe((response) => {
+            this.refreshUserInfo(response);
+            this.router.navigateByUrl("/").then(() => {
+                this.alertService.pushAlert(new Alert("Successfully impersonating user", AlertContext.Success));
+            });
+        });
     }
 
     resetPassword() {
