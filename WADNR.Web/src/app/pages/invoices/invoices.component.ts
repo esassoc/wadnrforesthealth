@@ -1,11 +1,14 @@
 import { Component } from "@angular/core";
-import { AsyncPipe, CurrencyPipe } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
+import { Router } from "@angular/router";
 import { ColDef } from "ag-grid-community";
-import { Observable } from "rxjs";
+import { map, Observable } from "rxjs";
+import { DialogService } from "@ngneat/dialog";
 
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { AuthenticationService } from "src/app/services/authentication.service";
 
 import { InvoiceService } from "src/app/shared/generated/api/invoice.service";
 import { InvoiceGridRow } from "src/app/shared/generated/model/invoice-grid-row";
@@ -19,13 +22,21 @@ import { InvoiceGridRow } from "src/app/shared/generated/model/invoice-grid-row"
 export class InvoicesComponent {
     public invoices$: Observable<InvoiceGridRow[]>;
     public columnDefs: ColDef[];
+    public canManage$: Observable<boolean>;
 
     constructor(
         private invoiceService: InvoiceService,
-        private utilityFunctions: UtilityFunctionsService
+        private utilityFunctions: UtilityFunctionsService,
+        private dialogService: DialogService,
+        private authService: AuthenticationService,
+        private router: Router,
     ) {}
 
     ngOnInit(): void {
+        this.canManage$ = this.authService.currentUserSetObservable.pipe(
+            map((user) => this.authService.canManageInvoices(user)),
+        );
+
         this.columnDefs = [
             this.utilityFunctions.createLinkColumnDef("Invoice #", "InvoiceNumber", "InvoiceID", {
                 InRouterLink: "/invoices/",
@@ -49,5 +60,19 @@ export class InvoicesComponent {
         ];
 
         this.invoices$ = this.invoiceService.listInvoice();
+    }
+
+    createNewInvoice(): void {
+        import("./invoice-edit-modal.component").then(({ InvoiceEditModalComponent }) => {
+            const dialogRef = this.dialogService.open(InvoiceEditModalComponent, {
+                data: { mode: "create" as const },
+                size: "lg",
+            });
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (result?.InvoiceID) {
+                    this.router.navigate(["/invoices", result.InvoiceID]);
+                }
+            });
+        });
     }
 }

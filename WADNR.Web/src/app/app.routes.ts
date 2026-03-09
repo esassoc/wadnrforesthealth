@@ -38,7 +38,6 @@ export const routes: Routes = [
 
     { path: "", loadComponent: () => import("./pages/home/home-index/home-index.component").then((m) => m.HomeIndexComponent) },
     { path: "about", loadComponent: () => import("./pages/about/about.component").then((m) => m.AboutComponent) },
-    { path: "additional-resources", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     {
         path: `agreements/:${routeParams.agreementID}`,
         title: "Agreement Detail",
@@ -79,7 +78,6 @@ export const routes: Routes = [
         canActivate: [authGuard],
         loadComponent: () => import("./pages/focus-areas/focus-area-detail/focus-area-detail.component").then((m) => m.FocusAreaDetailComponent),
     },
-    { path: "forest-health-monitoring", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "fund-sources", title: "Fund Sources", loadComponent: () => import("./pages/fund-sources/fund-sources.component").then((m) => m.FundSourcesComponent) },
     {
         path: `fund-sources/:${routeParams.fundSourceID}`,
@@ -127,7 +125,6 @@ export const routes: Routes = [
         title: "Contributing Organization Detail",
         loadComponent: () => import("./pages/organizations/organization-detail/organization-detail.component").then((m) => m.OrganizationDetailComponent),
     },
-    { path: "prescribed-fire-seasonal-plans", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     {
         path: "project-steward-organizations",
         title: "Project Steward Organizations",
@@ -195,13 +192,13 @@ export const routes: Routes = [
     {
         path: "roles",
         title: "Roles",
-        canActivate: [authGuard],
+        canActivate: [adminGuard],
         loadComponent: () => import("./pages/roles/roles.component").then((m) => m.RolesComponent),
     },
     {
         path: `roles/:${routeParams.roleID}`,
         title: "Role Detail",
-        canActivate: [authGuard],
+        canActivate: [adminGuard],
         loadComponent: () => import("./pages/roles/role-detail/role-detail.component").then((m) => m.RoleDetailComponent),
     },
     { path: "vendors", title: "Vendors", canActivate: [authGuard], loadComponent: () => import("./pages/vendors/vendors.component").then((m) => m.VendorsComponent) },
@@ -312,17 +309,19 @@ export const routes: Routes = [
     },
     { path: "my-projects", title: "My Projects", canActivate: [authGuard], loadComponent: () => import("./pages/my-projects/my-projects.component").then((m) => m.MyProjectsComponent) },
     { path: "pending-projects", title: "Pending Projects", canActivate: [authGuard], loadComponent: () => import("./pages/pending-projects/pending-projects.component").then((m) => m.PendingProjectsComponent) },
+    // TODO: Migrate from legacy - carousel of featured projects (public). API has ListFeatured endpoint.
     { path: "featured-projects", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
-    { path: "project-updates", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
-    { path: "homepage-configuration", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "manage-page-content", title: "Manage Page Content", canActivate: [authGuard], loadComponent: () => import("./pages/admin/manage-page-content/manage-page-content.component").then((m) => m.ManagePageContentComponent) },
     { path: "manage-custom-pages", title: "Manage Custom Pages", canActivate: [authGuard], loadComponent: () => import("./pages/admin/manage-custom-pages/manage-custom-pages.component").then((m) => m.ManageCustomPagesComponent) },
+    // TODO: Migrate from legacy - CMS content page (admin). May be redundant with manage-page-content.
     { path: "internal-setup-notes", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    // TODO: Migrate from legacy - component showcase (admin). Consider Storybook instead.
     { path: "style-guide", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "upload-excel-files", title: "Upload Excel Files / ETL", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/loa-upload/loa-upload.component").then((m) => m.LoaUploadComponent) },
     { path: "manage-find-your-forester", title: "Manage Find Your Forester", canActivate: [authGuard], loadComponent: () => import("./pages/find-your-forester/manage-find-your-forester/manage-find-your-forester.component").then((m) => m.ManageFindYourForesterComponent) },
-    { path: "map-layers", title: "Manage External Map Layers", canActivate: [authGuard], loadComponent: () => import("./pages/admin/map-layers/map-layers.component").then((m) => m.MapLayersComponent) },
+    { path: "map-layers", title: "Manage External Map Layers", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/map-layers/map-layers.component").then((m) => m.MapLayersComponent) },
     { path: "jobs", title: "Finance API Import Jobs", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/jobs/jobs.component").then((m) => m.JobsComponent) },
+    // TODO: Migrate from legacy - developer reference page. Swagger/OpenAPI may replace this.
     { path: "json-apis", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "reports/projects", title: "Project Reports", canActivate: [authGuard], loadComponent: () => import("./pages/reports/project-reports/project-reports.component").then((m) => m.ProjectReportsComponent) },
     { path: "reports/ipr", title: "IPR Reports", canActivate: [authGuard], loadComponent: () => import("./pages/reports/ipr-reports/ipr-reports.component").then((m) => m.IprReportsComponent) },
@@ -330,7 +329,7 @@ export const routes: Routes = [
     {
         path: "gis-bulk-import/:attemptID",
         title: "GIS Bulk Import",
-        canActivate: [authGuard],
+        canActivate: [adminGuard],
         loadComponent: () => import("./pages/admin/gis-bulk-import/gis-bulk-import-outlet.component").then((m) => m.GisBulkImportOutletComponent),
         children: [
             { path: "", redirectTo: "instructions", pathMatch: "full" },
@@ -339,7 +338,6 @@ export const routes: Routes = [
             { path: "validate-metadata", loadComponent: () => import("./pages/admin/gis-bulk-import/steps/validate-metadata/validate-metadata-step.component").then((m) => m.ValidateMetadataStepComponent) },
         ],
     },
-    { path: "shared-stewardship", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "not-found", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "**", loadComponent: () => import("./shared/components/custom-page/custom-page.component").then((m) => m.CustomPageComponent) },
 ];

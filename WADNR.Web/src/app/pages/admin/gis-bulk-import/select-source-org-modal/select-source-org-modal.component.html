@@ -22,7 +22,6 @@
     }
 </div>
 <div class="modal-footer">
-    <button class="btn btn-secondary" (click)="ref.close()">Cancel</button>
     <button class="btn btn-primary" (click)="continue()" [disabled]="isCreating || !sourceOrgControl.value">
         @if (isCreating) {
             <span class="fa fa-spinner fa-spin"></span> Creating...
@@ -30,5 +29,6 @@
             Continue
         }
     </button>
+    <button class="btn btn-secondary" (click)="ref.close()">Cancel</button>
 </div>
 </div>

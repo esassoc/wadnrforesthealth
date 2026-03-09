@@ -5,7 +5,14 @@
 <div class="grid-12">
     <div class="g-col-6">
         <div class="card">
-            <div class="card-header"><span class="card-title">Invoice Information</span></div>
+            <div class="card-header flex-between">
+                <span class="card-title">Invoice Information</span>
+                @if (canManage$ | async) {
+                    <button class="card-header-edit-link" (click)="openEditModal(invoice)" title="Edit Invoice">
+                        <icon icon="Edit"></icon>
+                    </button>
+                }
+            </div>
             <div class="card-body">
                 <div class="grid-12">
                     <div class="g-col-4">
@@ -200,6 +207,43 @@
                     <div class="g-col-8">{{ invoice.PaymentRequestNotes }}</div>
                     }
                 </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header"><span class="card-title">Voucher</span></div>
+            <div class="card-body">
+                @if (invoice.InvoiceFileResourceGuid) {
+                    <div class="grid-12">
+                        <div class="g-col-4"><strong>File</strong></div>
+                        <div class="g-col-8">
+                            <a [href]="voucherUrl(invoice.InvoiceFileResourceGuid)" target="_blank" rel="noopener noreferrer">
+                                {{ invoice.InvoiceFileOriginalFileName || 'Download' }}
+                            </a>
+                        </div>
+                    </div>
+                    @if (canManage$ | async) {
+                        <div class="flex-end mt-2">
+                            <button class="btn btn-sm btn-danger" [buttonLoading]="isDeletingVoucher" (click)="confirmDeleteVoucher(invoice)">
+                                <icon icon="Delete"></icon> Delete Voucher
+                            </button>
+                        </div>
+                    }
+                } @else {
+                    <p class="system-text">No voucher file uploaded.</p>
+                    @if (canManage$ | async) {
+                        <div class="flex-end mt-2">
+                            <label class="btn btn-sm btn-primary mb-0" [class.disabled]="isUploadingVoucher">
+                                @if (isUploadingVoucher) {
+                                    <span class="fas fa-spinner fa-spin"></span>
+                                }
+                                <icon icon="Upload"></icon> Upload Voucher
+                                <input type="file" class="d-none" accept=".pdf,.xlsx,.xls,.doc,.docx,.jpg,.jpeg,.png"
+                                    (change)="onVoucherFileSelected($event, invoice)" [disabled]="isUploadingVoucher" />
+                            </label>
+                        </div>
+                    }
+                }
             </div>
         </div>
     </div>

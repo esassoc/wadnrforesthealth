@@ -264,6 +264,24 @@ export class AuthenticationService {
     }
 
     /**
+     * Checks if user can manage organizations (create/edit/delete).
+     * Matches [UserManageFeature]: Admin, EsaAdmin, CanAddEditUsersContactsOrganizations.
+     */
+    public canManageOrganizations(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanAddEditUsersContactsOrganizations]);
+    }
+
+    /**
+     * Checks if user can manage invoices (create/edit/delete).
+     * Matches [InvoiceManageFeature]: ProjectSteward, Admin, EsaAdmin.
+     */
+    public canManageInvoices(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.ProjectSteward]);
+    }
+
+    /**
      * Checks if user can manage focus areas (create/edit/delete).
      * Matches [FocusAreaManageFeature]: Admin, EsaAdmin, ProjectSteward.
      */

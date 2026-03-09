@@ -98,8 +98,8 @@ export interface EditFundSourceModalInput {
                 }
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" (click)="ref.close(null)">Cancel</button>
                 <button class="btn btn-primary" [disabled]="isSubmitting || (isLoadingLookups$ | async)" [buttonLoading]="isSubmitting" (click)="save()">Save</button>
+                <button class="btn btn-secondary" (click)="ref.close(null)">Cancel</button>
             </div>
         </div>
     `,

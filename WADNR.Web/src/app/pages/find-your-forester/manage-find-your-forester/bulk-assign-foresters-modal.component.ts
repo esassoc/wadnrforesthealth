@@ -60,10 +60,10 @@ export interface BulkAssignModalData {
                 }
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" (click)="cancel()">Cancel</button>
                 <button class="btn btn-primary" (click)="save()" [buttonLoading]="isSubmitting" [disabled]="!(people$ | async)">
                     Save
                 </button>
+                <button class="btn btn-secondary" (click)="cancel()">Cancel</button>
             </div>
         </div>
     `,

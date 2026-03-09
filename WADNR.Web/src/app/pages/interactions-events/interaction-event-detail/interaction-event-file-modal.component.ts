@@ -67,8 +67,8 @@ interface FileEntry {
                 }
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" (click)="ref.close(null)">Cancel</button>
                 <button class="btn btn-primary" [disabled]="isSubmitting || !canSave()" [buttonLoading]="isSubmitting" (click)="save()">Upload</button>
+                <button class="btn btn-secondary" (click)="ref.close(null)">Cancel</button>
             </div>
         </div>
     `,

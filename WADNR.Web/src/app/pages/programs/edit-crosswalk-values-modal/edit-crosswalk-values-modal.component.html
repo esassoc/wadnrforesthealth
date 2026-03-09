@@ -40,9 +40,9 @@
     }
 </div>
 <div class="modal-footer">
-    <button class="btn btn-secondary" (click)="ref.close(null)">Cancel</button>
     <button class="btn btn-primary" (click)="save()" [disabled]="isSubmitting">
         @if (isSubmitting) { <span class="fa fa-spinner fa-spin"></span> } Save
     </button>
+    <button class="btn btn-secondary" (click)="ref.close(null)">Cancel</button>
 </div>
 </div>

@@ -1,11 +1,14 @@
 import { Component } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
+import { Router } from "@angular/router";
 import { ColDef } from "ag-grid-community";
-import { Observable } from "rxjs";
+import { map, Observable } from "rxjs";
+import { DialogService } from "@ngneat/dialog";
 
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { AuthenticationService } from "src/app/services/authentication.service";
 
 import { AgreementService } from "src/app/shared/generated/api/agreement.service";
 import { AgreementGridRow } from "src/app/shared/generated/model/agreement-grid-row";
@@ -24,10 +27,21 @@ export class AgreementsComponent {
         filteredOnly: true,
     };
     public customRichTextTypeID = FirmaPageTypeEnum.FullAgreementList;
+    public canManage$: Observable<boolean>;
 
-    constructor(private agreementService: AgreementService, private utilityFunctions: UtilityFunctionsService) {}
+    constructor(
+        private agreementService: AgreementService,
+        private utilityFunctions: UtilityFunctionsService,
+        private dialogService: DialogService,
+        private authService: AuthenticationService,
+        private router: Router,
+    ) {}
 
     ngOnInit(): void {
+        this.canManage$ = this.authService.currentUserSetObservable.pipe(
+            map((user) => this.authService.canManageFundSources(user)),
+        );
+
         this.columnDefs = [
             this.utilityFunctions.createBasicColumnDef("Type", "AgreementTypeAbbrev", {
                 FieldDefinitionType: "AgreementType",
@@ -95,5 +109,19 @@ export class AgreementsComponent {
         ];
 
         this.agreements$ = this.agreementService.listAgreement();
+    }
+
+    createNewAgreement(): void {
+        import("./agreement-detail/agreement-edit-modal.component").then(({ AgreementEditModalComponent }) => {
+            const dialogRef = this.dialogService.open(AgreementEditModalComponent, {
+                data: { mode: "create" as const },
+                size: "lg",
+            });
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (typeof result === "number") {
+                    this.router.navigate(["/agreements", result]);
+                }
+            });
+        });
     }
 }

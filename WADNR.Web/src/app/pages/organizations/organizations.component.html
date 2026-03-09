@@ -1,5 +1,13 @@
 <page-header pageTitle="Contributing Organizations" [customRichTextTypeID]="customRichTextTypeID"></page-header>
 
 <div class="page-body">
-    <wadnr-grid [rowData]="organizations$ | async" [columnDefs]="columnDefs" downloadFileName="organizations"></wadnr-grid>
+    <wadnr-grid [rowData]="organizations$ | async" [columnDefs]="columnDefs" downloadFileName="organizations">
+        @if (canManage$ | async) {
+        <div customGridActionsRight>
+            <button class="btn btn-sm btn-primary" (click)="createNewOrganization()">
+                <span class="fas fa-plus"></span> Create New
+            </button>
+        </div>
+        }
+    </wadnr-grid>
 </div>

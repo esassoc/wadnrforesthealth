@@ -1,5 +1,13 @@
 <page-header pageTitle="Full Agreement List" [customRichTextTypeID]="customRichTextTypeID"></page-header>
 
 <div class="page-body">
-    <wadnr-grid [rowData]="agreements$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" downloadFileName="agreements" [gridTitle]="'Agreements'"></wadnr-grid>
+    <wadnr-grid [rowData]="agreements$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" downloadFileName="agreements" [gridTitle]="'Agreements'">
+        @if (canManage$ | async) {
+        <div customGridActionsRight>
+            <button class="btn btn-sm btn-primary" (click)="createNewAgreement()">
+                <span class="fas fa-plus"></span> Create New
+            </button>
+        </div>
+        }
+    </wadnr-grid>
 </div>

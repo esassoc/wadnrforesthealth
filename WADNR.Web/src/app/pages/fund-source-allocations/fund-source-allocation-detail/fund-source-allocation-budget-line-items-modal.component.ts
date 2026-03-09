@@ -5,6 +5,7 @@ import { DialogRef } from "@ngneat/dialog";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
 import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 
 import { FundSourceAllocationService } from "src/app/shared/generated/api/fund-source-allocation.service";
 import { FundSourceAllocationBudgetLineItemGridRow } from "src/app/shared/generated/model/fund-source-allocation-budget-line-item-grid-row";
@@ -19,7 +20,7 @@ interface BudgetLineItemsModalInput {
 @Component({
     selector: "fund-source-allocation-budget-line-items-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent],
+    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, ButtonLoadingDirective],
     template: `
         <div class="modal">
             <div class="modal-header">
@@ -58,10 +59,8 @@ interface BudgetLineItemsModalInput {
                 </table>
             </div>
             <div class="modal-footer">
+                <button class="btn btn-primary" [disabled]="isSubmitting" [buttonLoading]="isSubmitting" (click)="save()">Save</button>
                 <button class="btn btn-secondary" (click)="ref.close(null)">Cancel</button>
-                <button class="btn btn-primary" [disabled]="isSubmitting" (click)="save()">
-                    {{ isSubmitting ? "Saving..." : "Save" }}
-                </button>
             </div>
         </div>
     `,

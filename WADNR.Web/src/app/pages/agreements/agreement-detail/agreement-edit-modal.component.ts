@@ -15,15 +15,17 @@ import { AgreementService } from "src/app/shared/generated/api/agreement.service
 import { AgreementTypeService } from "src/app/shared/generated/api/agreement-type.service";
 import { AgreementStatusService } from "src/app/shared/generated/api/agreement-status.service";
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
+import { AgreementDetail } from "src/app/shared/generated/model/agreement-detail";
 import { AgreementTypeLookupItem } from "src/app/shared/generated/model/agreement-type-lookup-item";
 
 export interface EditAgreementModalInput {
-    agreementID: number;
-    agreementTitle: string;
+    mode: "create" | "edit";
+    agreementID?: number;
+    agreementTitle?: string;
     agreementNumber?: string;
-    organizationID: number;
+    organizationID?: number;
     agreementStatusID?: number;
-    agreementTypeID: number;
+    agreementTypeID?: number;
     agreementAmount?: number;
     startDate?: string;
     endDate?: string;
@@ -38,7 +40,7 @@ export interface EditAgreementModalInput {
     template: `
         <div class="modal">
             <div class="modal-header">
-                <h3>Edit Agreement</h3>
+                <h3>{{ data.mode === 'create' ? 'New Agreement' : 'Edit Agreement' }}</h3>
             </div>
             <div class="modal-body" [loadingSpinner]="{ isLoading: !!(isLoadingLookups$ | async), loadingHeight: 300 }">
                 <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
@@ -90,8 +92,8 @@ export interface EditAgreementModalInput {
                 }
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" (click)="ref.close(null)">Cancel</button>
                 <button class="btn btn-primary" [disabled]="isSubmitting || (isLoadingLookups$ | async)" [buttonLoading]="isSubmitting" (click)="save()">Save</button>
+                <button class="btn btn-secondary" (click)="ref.close(null)">Cancel</button>
             </div>
         </div>
     `,
@@ -124,7 +126,7 @@ export class AgreementEditModalComponent extends BaseModal implements OnInit {
     fileControl = new FormControl<File | null>(null);
 
     constructor(
-        public ref: DialogRef<EditAgreementModalInput, boolean>,
+        public ref: DialogRef<EditAgreementModalInput, boolean | number>,
         private agreementService: AgreementService,
         private agreementTypeService: AgreementTypeService,
         private agreementStatusService: AgreementStatusService,
@@ -135,17 +137,19 @@ export class AgreementEditModalComponent extends BaseModal implements OnInit {
     }
 
     ngOnInit(): void {
-        this.form.patchValue({
-            agreementTitle: this.data.agreementTitle ?? null,
-            agreementNumber: this.data.agreementNumber ?? null,
-            organizationID: this.data.organizationID ?? null,
-            agreementStatusID: this.data.agreementStatusID ?? null,
-            agreementTypeID: this.data.agreementTypeID ?? null,
-            agreementAmount: this.data.agreementAmount ?? null,
-            startDate: this.data.startDate ? new Date(this.data.startDate).toISOString().split("T")[0] : null,
-            endDate: this.data.endDate ? new Date(this.data.endDate).toISOString().split("T")[0] : null,
-            notes: this.data.notes ?? null,
-        });
+        if (this.data.mode === "edit") {
+            this.form.patchValue({
+                agreementTitle: this.data.agreementTitle ?? null,
+                agreementNumber: this.data.agreementNumber ?? null,
+                organizationID: this.data.organizationID ?? null,
+                agreementStatusID: this.data.agreementStatusID ?? null,
+                agreementTypeID: this.data.agreementTypeID ?? null,
+                agreementAmount: this.data.agreementAmount ?? null,
+                startDate: this.data.startDate ? new Date(this.data.startDate).toISOString().split("T")[0] : null,
+                endDate: this.data.endDate ? new Date(this.data.endDate).toISOString().split("T")[0] : null,
+                notes: this.data.notes ?? null,
+            });
+        }
 
         // Watch for file changes
         this.fileControl.valueChanges.subscribe((file) => {
@@ -213,8 +217,18 @@ export class AgreementEditModalComponent extends BaseModal implements OnInit {
                 AgreementFileResourceID: fileResourceID,
             };
 
-            this.agreementService.updateAgreement(this.data.agreementID, dto).subscribe({
-                next: () => this.ref.close(true),
+            const request$ = this.data.mode === "create"
+                ? this.agreementService.createAgreement(dto)
+                : this.agreementService.updateAgreement(this.data.agreementID!, dto);
+
+            request$.subscribe({
+                next: (result) => {
+                    if (this.data.mode === "create") {
+                        this.ref.close(result.AgreementID);
+                    } else {
+                        this.ref.close(true);
+                    }
+                },
                 error: (err) => {
                     this.isSubmitting = false;
                     this.addLocalAlert(err?.error || "An error occurred.", AlertContext.Danger, true);
