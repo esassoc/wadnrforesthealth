@@ -5,6 +5,9 @@ import { DialogRef } from "@ngneat/dialog";
 
 import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
 
+import { BehaviorSubject, EMPTY } from "rxjs";
+import { catchError } from "rxjs/operators";
+import { AsyncPipe } from "@angular/common";
 import { AlertComponent } from "src/app/shared/components/alert/alert.component";
 import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
@@ -27,7 +30,7 @@ export interface ReportTemplateModalData {
 @Component({
     selector: "report-template-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, AlertComponent, ButtonLoadingDirective, ModalAlertsComponent],
+    imports: [ReactiveFormsModule, FormFieldComponent, AlertComponent, ButtonLoadingDirective, ModalAlertsComponent, AsyncPipe],
     templateUrl: "./report-template-modal.component.html",
 })
 export class ReportTemplateModalComponent extends BaseModal implements OnInit {
@@ -36,7 +39,7 @@ export class ReportTemplateModalComponent extends BaseModal implements OnInit {
     public FormFieldType = FormFieldType;
     public mode: "create" | "edit" = "create";
     public reportTemplate?: ReportTemplateDetail;
-    public isSubmitting = false;
+    public isSubmitting$ = new BehaviorSubject<boolean>(false);
 
     public form = new FormGroup({
         displayName: new FormControl<string>("", [Validators.required, Validators.maxLength(50)]),
@@ -96,7 +99,7 @@ export class ReportTemplateModalComponent extends BaseModal implements OnInit {
             return;
         }
 
-        this.isSubmitting = true;
+        this.isSubmitting$.next(true);
         this.localAlerts = [];
 
         const { displayName, description, reportTemplateModelID } = this.form.getRawValue();
@@ -107,17 +110,21 @@ export class ReportTemplateModalComponent extends BaseModal implements OnInit {
                 ? this.reportTemplateService.createReportTemplate(displayName, description, reportTemplateModelID, file as Blob)
                 : this.reportTemplateService.updateReportTemplate(this.reportTemplate!.ReportTemplateID, displayName, description, reportTemplateModelID, file as Blob);
 
-        request$.subscribe({
-            next: (result) => {
-                const message = this.mode === "create" ? "Report template created successfully." : "Report template updated successfully.";
-                this.pushGlobalSuccess(message);
-                this.ref.close(result);
-            },
-            error: (err) => {
-                this.isSubmitting = false;
-                const message = err?.error?.message ?? err?.error ?? err?.message ?? "An error occurred.";
+        request$.pipe(
+            catchError((err) => {
+                const body = err?.error;
+                const message = typeof body === "string"
+                    ? body
+                    : body?.detail ?? body?.title ?? body?.message ?? err?.message ?? "An error occurred while saving the template.";
                 this.addLocalAlert(message, AlertContext.Danger, true);
-            },
+                this.isSubmitting$.next(false);
+                return EMPTY;
+            }),
+        ).subscribe((result) => {
+            this.isSubmitting$.next(false);
+            const message = this.mode === "create" ? "Report template created successfully." : "Report template updated successfully.";
+            this.pushGlobalSuccess(message);
+            this.ref.close(result);
         });
     }
 

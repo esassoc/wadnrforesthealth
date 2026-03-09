@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -73,7 +74,16 @@ public class ReportTemplateController(
             return BadRequest($"Report Template with Name '{displayName}' already exists.");
         }
 
-        var newFileResource = await fileService.CreateFileResource(DbContext, fileResource, CallingUser.PersonID);
+        FileResource newFileResource;
+        try
+        {
+            newFileResource = await fileService.CreateFileResource(DbContext, fileResource, CallingUser.PersonID);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error processing uploaded file for new report template");
+            return BadRequest("There was an error processing the uploaded file. Please ensure it is a valid .docx template.");
+        }
 
         var reportTemplate = new ReportTemplate
         {
@@ -86,10 +96,20 @@ public class ReportTemplateController(
             IsSystemTemplate = false
         };
 
-        var validationResult = await ReportTemplateGenerator.ValidateReportTemplateAsync(reportTemplate, DbContext, Logger, fileService);
-        if (!validationResult.IsValid)
+        try
         {
-            return BadRequest($"{validationResult.ErrorMessage} \n <pre style='max-height: 300px; overflow: scroll;'>{validationResult.SourceCode}</pre>");
+            var validationResult = await ReportTemplateGenerator.ValidateReportTemplateAsync(reportTemplate, DbContext, Logger, fileService);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(!string.IsNullOrEmpty(validationResult.SourceCode)
+                        ? $"{validationResult.ErrorMessage} \n <pre style='max-height: 300px; overflow: scroll;'>{validationResult.SourceCode}</pre>"
+                        : validationResult.ErrorMessage);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error validating report template");
+            return BadRequest("There was an error validating the uploaded template. Please ensure it is a valid .docx template.");
         }
 
         DbContext.ReportTemplates.Add(reportTemplate);
@@ -134,15 +154,33 @@ public class ReportTemplateController(
 
         if (fileResource != null)
         {
-            var newFileResource = await fileService.CreateFileResource(DbContext, fileResource, CallingUser.PersonID);
-            reportTemplate.FileResource = newFileResource;
-            reportTemplate.FileResourceID = newFileResource.FileResourceID;
+            try
+            {
+                var newFileResource = await fileService.CreateFileResource(DbContext, fileResource, CallingUser.PersonID);
+                reportTemplate.FileResource = newFileResource;
+                reportTemplate.FileResourceID = newFileResource.FileResourceID;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error processing uploaded file for report template {ReportTemplateID}", reportTemplateID);
+                return BadRequest("There was an error processing the uploaded file. Please ensure it is a valid .docx template.");
+            }
         }
 
-        var validationResult = await ReportTemplateGenerator.ValidateReportTemplateAsync(reportTemplate, DbContext, Logger, fileService);
-        if (!validationResult.IsValid)
+        try
         {
-            return BadRequest($"{validationResult.ErrorMessage} \n <pre style='max-height: 300px; overflow: scroll;'>{validationResult.SourceCode}</pre>");
+            var validationResult = await ReportTemplateGenerator.ValidateReportTemplateAsync(reportTemplate, DbContext, Logger, fileService);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(!string.IsNullOrEmpty(validationResult.SourceCode)
+                        ? $"{validationResult.ErrorMessage} \n <pre style='max-height: 300px; overflow: scroll;'>{validationResult.SourceCode}</pre>"
+                        : validationResult.ErrorMessage);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error validating report template {ReportTemplateID}", reportTemplateID);
+            return BadRequest("There was an error validating the uploaded template. Please ensure it is a valid .docx template.");
         }
 
         await DbContext.SaveChangesAsync();

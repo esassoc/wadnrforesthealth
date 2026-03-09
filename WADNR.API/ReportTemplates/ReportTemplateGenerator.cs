@@ -373,11 +373,9 @@ namespace WADNR.API.ReportTemplates
                         validationResult.ErrorMessage = $"CodeBlockBuilder exception: \"{exception.Message}\".";
                         break;
                     default:
-                        validationResult.ErrorMessage = exception.Message;
+                        validationResult.ErrorMessage = "There was an error processing the template. Please ensure it is a valid .docx template file.";
                         break;
                 }
-
-                validationResult.SourceCode = exception.StackTrace;
                 logger.LogError(exception,
                     "There was an exception validating a report template. Temporary template file location:\"{TempDirectory}\". Error Message: \"{ErrorMessage}\".",
                     tempDirectory, validationResult.ErrorMessage);
