@@ -1654,6 +1654,213 @@
         "x-anonymous": true
       }
     },
+    "/custom-pages": {
+      "get": {
+        "tags": [
+          "CustomPage"
+        ],
+        "operationId": "List_CustomPage",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomPageGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomPageGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomPageGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "CustomPage"
+        ],
+        "operationId": "Create_CustomPage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomPageUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomPageUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomPageUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomPageGridRow"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomPageGridRow"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomPageGridRow"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/custom-pages/{customPageID}": {
+      "get": {
+        "tags": [
+          "CustomPage"
+        ],
+        "operationId": "GetByID_CustomPage",
+        "parameters": [
+          {
+            "name": "customPageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomPageGridRow"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomPageGridRow"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomPageGridRow"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "CustomPage"
+        ],
+        "operationId": "Update_CustomPage",
+        "parameters": [
+          {
+            "name": "customPageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomPageUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomPageUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomPageUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomPageGridRow"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomPageGridRow"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomPageGridRow"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "CustomPage"
+        ],
+        "operationId": "Delete_CustomPage",
+        "parameters": [
+          {
+            "name": "customPageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/custom-pages/{vanityUrl}": {
       "get": {
         "tags": [
@@ -1784,6 +1991,88 @@
           }
         },
         "x-anonymous": true
+      }
+    },
+    "/custom-pages/{customPageID}/content": {
+      "put": {
+        "tags": [
+          "CustomPage"
+        ],
+        "operationId": "UpdateContent_CustomPage",
+        "parameters": [
+          {
+            "name": "customPageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomPageContentUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomPageContentUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomPageContentUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/custom-rich-texts": {
+      "get": {
+        "tags": [
+          "CustomRichText"
+        ],
+        "operationId": "List_CustomRichText",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FirmaPageGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FirmaPageGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FirmaPageGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/custom-rich-texts/{customRichTextTypeID}": {
@@ -2455,6 +2744,213 @@
           }
         },
         "x-anonymous": true
+      }
+    },
+    "/external-map-layers": {
+      "get": {
+        "tags": [
+          "ExternalMapLayer"
+        ],
+        "operationId": "List_ExternalMapLayer",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ExternalMapLayer"
+        ],
+        "operationId": "Create_ExternalMapLayer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalMapLayerUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalMapLayerUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalMapLayerUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/external-map-layers/{externalMapLayerID}": {
+      "get": {
+        "tags": [
+          "ExternalMapLayer"
+        ],
+        "operationId": "GetByID_ExternalMapLayer",
+        "parameters": [
+          {
+            "name": "externalMapLayerID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ExternalMapLayer"
+        ],
+        "operationId": "Update_ExternalMapLayer",
+        "parameters": [
+          {
+            "name": "externalMapLayerID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalMapLayerUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalMapLayerUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalMapLayerUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalMapLayerDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ExternalMapLayer"
+        ],
+        "operationId": "Delete_ExternalMapLayer",
+        "parameters": [
+          {
+            "name": "externalMapLayerID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/federal-fund-codes/lookup": {
@@ -7604,17 +8100,6 @@
           "Job"
         ],
         "operationId": "GetImportHistory_Job",
-        "parameters": [
-          {
-            "name": "count",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 50
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -7623,7 +8108,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ImportHistoryDto"
+                    "$ref": "#/components/schemas/ImportHistory"
                   }
                 }
               },
@@ -7631,7 +8116,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ImportHistoryDto"
+                    "$ref": "#/components/schemas/ImportHistory"
                   }
                 }
               },
@@ -7639,7 +8124,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ImportHistoryDto"
+                    "$ref": "#/components/schemas/ImportHistory"
                   }
                 }
               }
@@ -22643,6 +23128,16 @@
         },
         "additionalProperties": false
       },
+      "CustomPageContentUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "CustomPageContent": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CustomPageDetail": {
         "type": "object",
         "properties": {
@@ -22673,6 +23168,47 @@
         },
         "additionalProperties": false
       },
+      "CustomPageGridRow": {
+        "type": "object",
+        "properties": {
+          "CustomPageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CustomPageDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CustomPageVanityUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "CustomPageDisplayTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CustomPageDisplayTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CustomPageNavigationSectionID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CustomPageNavigationSectionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "HasContent": {
+            "type": "boolean"
+          },
+          "CustomPageContent": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CustomPageMenuItem": {
         "type": "object",
         "properties": {
@@ -22687,6 +23223,28 @@
           "CustomPageVanityUrl": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomPageUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "CustomPageDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CustomPageVanityUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "CustomPageDisplayTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CustomPageNavigationSectionID": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -23094,6 +23652,43 @@
         },
         "additionalProperties": false
       },
+      "ExternalMapLayerUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "LayerUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "LayerDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "FeatureNameField": {
+            "type": "string",
+            "nullable": true
+          },
+          "DisplayOnProjectMap": {
+            "type": "boolean"
+          },
+          "DisplayOnPriorityLandscape": {
+            "type": "boolean"
+          },
+          "DisplayOnAllOthers": {
+            "type": "boolean"
+          },
+          "IsActive": {
+            "type": "boolean"
+          },
+          "IsTiledMapService": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "FederalFundCodeLookupItem": {
         "type": "object",
         "properties": {
@@ -23326,6 +23921,39 @@
             "$ref": "#/components/schemas/FirmaPageTypeDetail"
           },
           "FirmaPageContent": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FirmaPageGridRow": {
+        "type": "object",
+        "properties": {
+          "FirmaPageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FirmaPageTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FirmaPageTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FirmaPageTypeDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "HasContent": {
+            "type": "boolean"
+          },
+          "FirmaPageRenderTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FirmaPageRenderTypeDisplayName": {
             "type": "string",
             "nullable": true
           }
@@ -26214,7 +26842,7 @@
         },
         "additionalProperties": false
       },
-      "ImportHistoryDto": {
+      "ImportHistory": {
         "type": "object",
         "properties": {
           "ArcOnlineFinanceApiRawJsonImportID": {
@@ -26228,6 +26856,10 @@
           "ArcOnlineFinanceApiRawJsonImportTableTypeID": {
             "type": "integer",
             "format": "int32"
+          },
+          "ArcOnlineFinanceApiRawJsonImportTableTypeName": {
+            "type": "string",
+            "nullable": true
           },
           "BienniumFiscalYear": {
             "type": "integer",
@@ -26247,6 +26879,15 @@
           "JsonImportStatusTypeID": {
             "type": "integer",
             "format": "int32"
+          },
+          "JsonImportStatusTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RawJsonStringLength": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
           }
         },
         "additionalProperties": false

@@ -94,8 +94,11 @@ model/county-lookup-item.ts
 model/county-upsert-request.ts
 model/create-workflow-progress-response-steps.ts
 model/create-workflow-progress-response.ts
+model/custom-page-content-upsert-request.ts
 model/custom-page-detail.ts
+model/custom-page-grid-row.ts
 model/custom-page-menu-item.ts
+model/custom-page-upsert-request.ts
 model/diff-field.ts
 model/diff-section.ts
 model/dimension.ts
@@ -108,6 +111,7 @@ model/envelope.ts
 model/expected-funding-step-request.ts
 model/expected-funding-step.ts
 model/external-map-layer-detail.ts
+model/external-map-layer-upsert-request.ts
 model/federal-fund-code-lookup-item.ts
 model/field-definition-datum-detail.ts
 model/field-definition-datum-upsert-request.ts
@@ -118,6 +122,7 @@ model/file-resource-priority-landscape-detail.ts
 model/find-your-forester-question-tree-node.ts
 model/firma-home-page-image-detail.ts
 model/firma-page-detail.ts
+model/firma-page-grid-row.ts
 model/firma-page-type-detail.ts
 model/firma-page-upsert-request.ts
 model/focus-area-closeout-project-item.ts
@@ -201,7 +206,7 @@ model/gis-upload-attempt-detail.ts
 model/gis-upload-source-organization-summary.ts
 model/i-attributes-table.ts
 model/i-feature.ts
-model/import-history-dto.ts
+model/import-history.ts
 model/interaction-event-detail.ts
 model/interaction-event-file-update-request.ts
 model/interaction-event-grid-row.ts

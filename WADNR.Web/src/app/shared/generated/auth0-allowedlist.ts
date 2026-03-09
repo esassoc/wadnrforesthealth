@@ -28,8 +28,8 @@ const ANON_EXACT: ExactMap = {
 
 const SECURED_EXACT: ExactMap = {
   'DELETE': [],
-  'GET': ["/api/Job/import-history","/find-your-forester/assignable-people","/focus-areas","/focus-areas/locations","/gis-bulk-import/source-organizations","/loa-upload/dashboard","/people","/people/lookup","/people/lookup/wadnr","/programs/eligible-editors","/project-types/taxonomy","/projects/lookup","/projects/pending","/projects/update-status","/report-templates","/report-templates/models","/roles","/vendors","/vendors/search"],
-  'POST': ["/agreements","/agreements/upload-file","/api/Job/clear-outdated-imports","/classifications","/classifications/upload-key-image","/counties","/dnr-upland-regions","/find-your-forester/work-units/bulk-assign","/focus-areas","/fund-source-allocation-notes","/fund-source-allocation-notes-internal","/fund-source-allocations","/fund-sources","/gis-bulk-import/attempts","/interactions-events","/invoice-payment-requests","/invoices","/loa-upload/publish","/organization-types","/organizations","/priority-landscapes","/programs","/programs/upload-example-geospatial-file","/programs/upload-program-file","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/relationship-types","/report-templates","/report-templates/generate-reports","/sitkacapture/generate-pdf","/support-requests","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
+  'GET': ["/api/Job/import-history","/custom-pages","/custom-rich-texts","/external-map-layers","/find-your-forester/assignable-people","/focus-areas","/focus-areas/locations","/gis-bulk-import/source-organizations","/loa-upload/dashboard","/people","/people/lookup","/people/lookup/wadnr","/programs/eligible-editors","/project-types/taxonomy","/projects/lookup","/projects/pending","/projects/update-status","/report-templates","/report-templates/models","/roles","/vendors","/vendors/search"],
+  'POST': ["/agreements","/agreements/upload-file","/api/Job/clear-outdated-imports","/classifications","/classifications/upload-key-image","/counties","/custom-pages","/dnr-upland-regions","/external-map-layers","/find-your-forester/work-units/bulk-assign","/focus-areas","/fund-source-allocation-notes","/fund-source-allocation-notes-internal","/fund-source-allocations","/fund-sources","/gis-bulk-import/attempts","/interactions-events","/invoice-payment-requests","/invoices","/loa-upload/publish","/organization-types","/organizations","/priority-landscapes","/programs","/programs/upload-example-geospatial-file","/programs/upload-program-file","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/relationship-types","/report-templates","/report-templates/generate-reports","/sitkacapture/generate-pdf","/support-requests","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
   'PUT': [],
 };
 
@@ -131,7 +131,9 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/agreements/[^/]+/contacts/[^/]+$"),
     new RegExp("^/classifications/[^/]+$"),
     new RegExp("^/counties/[^/]+$"),
+    new RegExp("^/custom-pages/[^/]+$"),
     new RegExp("^/dnr-upland-regions/[^/]+$"),
+    new RegExp("^/external-map-layers/[^/]+$"),
     new RegExp("^/focus-areas/[^/]+$"),
     new RegExp("^/focus-areas/[^/]+/location$"),
     new RegExp("^/fund-source-allocation-notes-internal/[^/]+$"),
@@ -176,8 +178,10 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/classifications/[^/]+/projects$"),
     new RegExp("^/cost-share/generate-pdf/[^/]+$"),
     new RegExp("^/counties/[^/]+/projects$"),
+    new RegExp("^/custom-pages/[^/]+$"),
     new RegExp("^/dnr-upland-regions/[^/]+/focus-areas$"),
     new RegExp("^/dnr-upland-regions/[^/]+/projects$"),
+    new RegExp("^/external-map-layers/[^/]+$"),
     new RegExp("^/find-your-forester/work-units/[^/]+$"),
     new RegExp("^/focus-areas/[^/]+$"),
     new RegExp("^/focus-areas/[^/]+/location$"),
@@ -318,8 +322,11 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/agreements/[^/]+/projects$"),
     new RegExp("^/classifications/[^/]+$"),
     new RegExp("^/counties/[^/]+$"),
+    new RegExp("^/custom-pages/[^/]+$"),
+    new RegExp("^/custom-pages/[^/]+/content$"),
     new RegExp("^/custom-rich-texts/[^/]+$"),
     new RegExp("^/dnr-upland-regions/[^/]+$"),
+    new RegExp("^/external-map-layers/[^/]+$"),
     new RegExp("^/field-definitions/[^/]+$"),
     new RegExp("^/focus-areas/[^/]+$"),
     new RegExp("^/fund-source-allocation-notes-internal/[^/]+$"),

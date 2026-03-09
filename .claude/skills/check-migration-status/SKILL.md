@@ -71,6 +71,8 @@ These legacy controllers have been merged into a parent controller in the new AP
 | `ProjectStewardOrganizationController` | `ProjectController` |
 | `ProjectFundSourceAllocationRequestController` | `ProjectController` + `FundSourceAllocationController` |
 | `ProjectImportBlockListController` | `ProjectController` + `ProgramController` |
+| `GisFeatureController` | `GisBulkImportController` |
+| `ProgramInfoController` | `ClassificationSystemController` + `TaxonomyBranchController` + `TaxonomyTrunkController` |
 
 #### Known Renamed Migrations
 
