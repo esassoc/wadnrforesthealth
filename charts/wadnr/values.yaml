@@ -22,6 +22,10 @@ global:
     keystoneOpenIDClientSecret: "secrethere"
     recaptchaV3SiteKey: "recaptchaV3SiteKeyHere"
     recaptchaV3SecretKey: "recaptchaV3SecretKeyHere"
+    dataImportAuthUsername: "usernamehere"
+    dataImportAuthPassword: "passwordhere"
+    arcGisClientId: "clientidhere"
+    arcGisClientSecret: "clientsecrethere"
 
 api:
   replicaCount: 1

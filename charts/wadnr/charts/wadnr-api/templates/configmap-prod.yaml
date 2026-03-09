@@ -14,4 +14,19 @@ data:
   GDALAPIBaseUrl: "http://wadnr-gdalapi"
   SitkaCaptureServiceUrl: "http://{{ .Values.global.domains.sitkacapture }}"
   WebUrl: "https://{{ .Values.global.domains.web }}"
+  # Finance API (DNR GIS)
+  ProjectCodeJsonApiBaseUrl: "https://gis.dnr.wa.gov/site2/rest/services/Token_API_Services/Financial_Service/MapServer/2/query"
+  ProgramIndexJsonApiBaseUrl: "https://gis.dnr.wa.gov/site2/rest/services/Token_API_Services/Financial_Service/MapServer/1/query"
+  VendorJsonApiBaseUrl: "https://gis.dnr.wa.gov/site2/rest/services/Token_API_Services/Financial_Service/MapServer/3/query"
+  FundSourceExpendituresJsonApiBaseUrl: "https://gis.dnr.wa.gov/site2/rest/services/Token_API_Services/FHT_Service/MapServer/0/query"
+  DataImportAuthUrl: "https://gis.dnr.wa.gov/portal/sharing/rest/generateToken"
+  LastLoadDateUrl: "https://gis.dnr.wa.gov/site2/rest/services/Token_API_Services/Financial_Service/MapServer/0/query"
+  # ArcGIS
+  ArcGisAuthUrl: "https://www.arcgis.com/sharing/rest/oauth2/token"
+  ArcGisLoaDataEasternUrl: "https://services.arcgis.com/4x406oNViizbGo13/arcgis/rest/services/loa_fh_treatments/FeatureServer/0/query"
+  ArcGisLoaDataWesternUrl: "https://services.arcgis.com/4x406oNViizbGo13/arcgis/rest/services/western_wa_service_foresters_treatments/FeatureServer/0/query"
+  ArcGisUsfsDataUrl: "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_ActivityFactsCommonAttributes_01/MapServer/0/query"
+  ArcGisUsfsNepaBoundaryDataUrl: "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_ActivityProjectAreas_01/MapServer/0/query"
+  # Notifications
+  WebsiteDisplayName: "WA DNR Forest Health Tracker"
 {{ end }}
