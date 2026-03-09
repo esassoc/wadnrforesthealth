@@ -11,6 +11,7 @@ import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadc
 import { SelectDropdownOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { PersonLinkComponent } from "src/app/shared/components/person-link/person-link.component";
@@ -40,6 +41,7 @@ import { MAP_SELECTED_COLOR } from "src/app/shared/models/map-colors";
         AsyncPipe,
         BreadcrumbComponent,
         WADNRMapComponent,
+        ExternalMapLayersComponent,
         GenericFeatureCollectionLayerComponent,
         IconComponent,
         DatePipe,

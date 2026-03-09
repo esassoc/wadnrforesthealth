@@ -62,6 +62,7 @@
             <div class="card-header"><span class="card-title">Project Locations</span></div>
             <div class="card-body">
                 <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" (onMapLoad)="handleMapReady($event)">
+                    <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
                     @if (mapIsReady && (projectFeatures$ | async); as features) {
                     <generic-feature-collection-layer
                         [map]="map"

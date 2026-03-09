@@ -10,6 +10,7 @@ import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadc
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
@@ -22,7 +23,7 @@ import { IFeature } from "src/app/shared/generated/model/i-feature";
 @Component({
     selector: "taxonomy-branch-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, LoadingDirective],
+    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, WADNRGridComponent, WADNRMapComponent, ExternalMapLayersComponent, GenericFeatureCollectionLayerComponent, LoadingDirective],
     templateUrl: "./taxonomy-branch-detail.component.html",
     styleUrls: ["./taxonomy-branch-detail.component.scss"],
 })

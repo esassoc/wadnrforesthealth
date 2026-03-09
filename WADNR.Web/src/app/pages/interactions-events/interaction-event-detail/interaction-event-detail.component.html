@@ -118,6 +118,7 @@
                 <em>No location associated with this Interaction/Event.</em>
                 } @else {
                 <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
+                    <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
                     <generic-feature-collection-layer
                         [map]="map"
                         [layerControl]="layerControl"
