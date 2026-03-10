@@ -172,6 +172,9 @@ export class PriorityLandscapesLayerComponent implements OnChanges, OnDestroy {
         // We need to check via the generic-wms-wfs-layer's internal layer reference
         // For now, always query when popup is enabled
         const wmsUrl = environment.geoserverMapServiceUrl + "/wms";
+        const crs = this.map.options.crs!;
+        const sw = crs.project!(this.map.getBounds().getSouthWest());
+        const ne = crs.project!(this.map.getBounds().getNorthEast());
         const params = {
             service: "WMS",
             version: "1.1.1",
@@ -179,10 +182,10 @@ export class PriorityLandscapesLayerComponent implements OnChanges, OnDestroy {
             layers: this.WMS_LAYER_NAME,
             query_layers: this.WMS_LAYER_NAME,
             styles: this.WMS_STYLE,
-            bbox: this.map.getBounds().toBBoxString(),
+            bbox: `${sw.x},${sw.y},${ne.x},${ne.y}`,
             width: this.map.getSize().x,
             height: this.map.getSize().y,
-            srs: "EPSG:4326",
+            srs: crs.code!,
             format: "image/png",
             info_format: "application/json",
             x: Math.round(this.map.layerPointToContainerPoint(e.layerPoint).x),

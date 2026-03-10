@@ -152,6 +152,9 @@ export class GenericWmsWfsLayerComponent extends MapLayerBase implements OnChang
     private async onMapClick(e: L.LeafletMouseEvent) {
         // Build WMS GetFeatureInfo request
         const wmsUrl = environment.geoserverMapServiceUrl + "/wms";
+        const crs = this.map.options.crs!;
+        const sw = crs.project!(this.map.getBounds().getSouthWest());
+        const ne = crs.project!(this.map.getBounds().getNorthEast());
         const params = {
             service: "WMS",
             version: "1.1.1",
@@ -159,10 +162,10 @@ export class GenericWmsWfsLayerComponent extends MapLayerBase implements OnChang
             layers: this.wmsLayerName,
             query_layers: this.wmsLayerName,
             styles: this.wmsStyle,
-            bbox: this.map.getBounds().toBBoxString(),
+            bbox: `${sw.x},${sw.y},${ne.x},${ne.y}`,
             width: this.map.getSize().x,
             height: this.map.getSize().y,
-            srs: "EPSG:4326",
+            srs: crs.code!,
             format: "image/png",
             info_format: "application/json",
             x: Math.round(this.map.layerPointToContainerPoint(e.layerPoint).x),

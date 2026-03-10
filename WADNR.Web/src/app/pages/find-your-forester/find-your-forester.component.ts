@@ -117,8 +117,11 @@ export class FindYourForesterComponent {
 
         // Build GetFeatureInfo params common to all requests
         const wmsUrl = environment.geoserverMapServiceUrl + "/wms";
-        const bounds = this.map.getBounds();
         const size = this.map.getSize();
+        const crs = this.map.options.crs!;
+        const sw = crs.project!(this.map.getBounds().getSouthWest());
+        const ne = crs.project!(this.map.getBounds().getNorthEast());
+        const bbox = `${sw.x},${sw.y},${ne.x},${ne.y}`;
 
         // Convert latlng to container point for GetFeatureInfo
         const containerPoint = this.map.latLngToContainerPoint(point);
@@ -132,10 +135,10 @@ export class FindYourForesterComponent {
             layers: "WADNRForestHealth:FindYourForester",
             query_layers: "WADNRForestHealth:FindYourForester",
             styles: "",
-            bbox: bounds.toBBoxString(),
+            bbox: bbox,
             width: String(size.x),
             height: String(size.y),
-            srs: "EPSG:4326",
+            srs: crs.code!,
             format: "image/png",
             info_format: "application/json",
             x: String(x),
