@@ -15,13 +15,15 @@
 
         <form-field
             [formControl]="form.controls.ClassificationDescription"
-            fieldLabel="Description"
+            fieldDefinitionName="ClassificationDescription"
+            fieldDefinitionLabelOverride="Description"
             [type]="FormFieldType.RTE">
         </form-field>
 
         <form-field
             [formControl]="form.controls.GoalStatement"
-            fieldLabel="Goal Statement"
+            fieldDefinitionName="ClassificationGoalStatement"
+            fieldDefinitionLabelOverride="Goal Statement"
             [type]="FormFieldType.Textarea"
             placeholder="Enter goal statement">
         </form-field>
@@ -33,19 +35,11 @@
                 [type]="FormFieldType.Text"
                 placeholder="#RRGGBB">
             </form-field>
-            <div class="color-swatch"
-                [style.background-color]="form.controls.ThemeColor.value || 'transparent'">
-            </div>
+            <input type="color"
+                class="color-picker"
+                [value]="form.controls.ThemeColor.value || '#000000'"
+                (input)="form.controls.ThemeColor.setValue($any($event.target).value)">
         </div>
-
-        @if (mode === 'create') {
-        <form-field
-            [formControl]="form.controls.ClassificationSystemID"
-            fieldLabel="Classification System"
-            [type]="FormFieldType.Select"
-            [formInputOptions]="classificationSystemOptions">
-        </form-field>
-        }
 
         @if (existingImageGUID && !keyImageControl.value) {
         <div class="existing-image">

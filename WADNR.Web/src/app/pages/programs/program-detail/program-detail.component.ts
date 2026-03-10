@@ -177,11 +177,7 @@ export class ProgramDetailComponent {
 
     private createNotificationColumnDefs(): ColDef<ProgramNotificationGridRow>[] {
         const emailTextCol = this.utilityFunctions.createBasicColumnDef("Notification Email Text", "NotificationEmailText");
-        emailTextCol.valueFormatter = (params) => {
-            if (!params.value) return "";
-            const doc = new DOMParser().parseFromString(params.value, "text/html");
-            return doc.body.textContent || "";
-        };
+        emailTextCol.valueFormatter = (params) => this.utilityFunctions.stripHtml(params.value);
 
         return [
             this.utilityFunctions.createActionsColumnDef((params) => {

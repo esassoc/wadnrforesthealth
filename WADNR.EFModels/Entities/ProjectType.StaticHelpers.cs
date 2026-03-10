@@ -31,9 +31,12 @@ public static class ProjectTypes
 
     public static async Task<ProjectTypeDetail?> CreateAsync(WADNRDbContext dbContext, ProjectTypeUpsertRequest dto)
     {
+        var taxonomyBranchID = dto.TaxonomyBranchID
+            ?? (await dbContext.TaxonomyBranches.OrderBy(x => x.TaxonomyBranchID).Select(x => x.TaxonomyBranchID).FirstOrDefaultAsync());
+
         var entity = new ProjectType
         {
-            TaxonomyBranchID = dto.TaxonomyBranchID,
+            TaxonomyBranchID = taxonomyBranchID,
             ProjectTypeName = dto.ProjectTypeName,
             ProjectTypeDescription = dto.ProjectTypeDescription,
             ProjectTypeCode = dto.ProjectTypeCode,
@@ -49,7 +52,10 @@ public static class ProjectTypes
     public static async Task<ProjectTypeDetail?> UpdateAsync(WADNRDbContext dbContext, int id, ProjectTypeUpsertRequest dto)
     {
         var entity = await dbContext.ProjectTypes.FirstAsync(x => x.ProjectTypeID == id);
-        entity.TaxonomyBranchID = dto.TaxonomyBranchID;
+        if (dto.TaxonomyBranchID.HasValue)
+        {
+            entity.TaxonomyBranchID = dto.TaxonomyBranchID.Value;
+        }
         entity.ProjectTypeName = dto.ProjectTypeName;
         entity.ProjectTypeDescription = dto.ProjectTypeDescription;
         entity.ProjectTypeCode = dto.ProjectTypeCode;

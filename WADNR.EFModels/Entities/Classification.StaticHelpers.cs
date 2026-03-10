@@ -52,6 +52,19 @@ public static class Classifications
         return await GetByIDAsDetailAsync(dbContext, entity.ClassificationID);
     }
 
+    public static async Task<List<ClassificationGridRow>> UpdateSortOrderAsync(WADNRDbContext dbContext, List<SortOrderUpdateItem> updates)
+    {
+        var ids = updates.Select(u => u.ID).ToList();
+        var entities = await dbContext.Classifications.Where(x => ids.Contains(x.ClassificationID)).ToListAsync();
+        foreach (var entity in entities)
+        {
+            var update = updates.First(u => u.ID == entity.ClassificationID);
+            entity.ClassificationSortOrder = update.SortOrder;
+        }
+        await dbContext.SaveChangesAsync();
+        return await ListAsGridRowAsync(dbContext);
+    }
+
     public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int id)
     {
         var deleted = await dbContext.Classifications.Where(x => x.ClassificationID == id).ExecuteDeleteAsync();

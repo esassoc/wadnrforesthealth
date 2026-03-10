@@ -86,6 +86,7 @@ model/classification-system-lookup-item.ts
 model/classification-system-with-classifications.ts
 model/classification-upsert-request.ts
 model/classification-with-project-count.ts
+model/contact-upsert-request.ts
 model/coordinate-sequence-factory.ts
 model/coordinate-sequence.ts
 model/coordinate.ts
@@ -249,6 +250,8 @@ model/person-lookup-item-with-email.ts
 model/person-lookup-item.ts
 model/person-primary-contact-organizations-update-request.ts
 model/person-relationship-type-lookup-item.ts
+model/person-roles-upsert-request-dto.ts
+model/person-upsert-request-dto.ts
 model/person-with-organization-lookup-item.ts
 model/person-with-status.ts
 model/point.ts
@@ -402,6 +405,7 @@ model/role-detail.ts
 model/role-grid-row.ts
 model/role-lookup-item.ts
 model/single-polygon-approve-request.ts
+model/sort-order-update-item.ts
 model/staged-feature-layer.ts
 model/step-diff-response.ts
 model/support-request-create.ts

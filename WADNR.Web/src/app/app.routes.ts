@@ -295,7 +295,8 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/classifications/classification-detail/classification-detail.component").then((m) => m.ClassificationDetailComponent),
     },
     { path: "projects-by-type", loadComponent: () => import("./pages/taxonomy/taxonomy.component").then((m) => m.TaxonomyComponent) },
-    { path: "project-types", title: "Project Types", loadComponent: () => import("./pages/project-types/project-types.component").then((m) => m.ProjectTypesComponent) },
+    { path: "project-types", title: "Project Types", canActivate: [adminGuard], loadComponent: () => import("./pages/project-types/project-types.component").then((m) => m.ProjectTypesComponent) },
+    { path: "project-themes", title: "Project Themes", canActivate: [adminGuard], loadComponent: () => import("./pages/project-themes/project-themes.component").then((m) => m.ProjectThemesComponent) },
     {
         path: `project-types/:${routeParams.projectTypeID}`,
         title: "Project Type Detail",

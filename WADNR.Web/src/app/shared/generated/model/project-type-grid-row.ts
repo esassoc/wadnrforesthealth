@@ -13,9 +13,11 @@ import { FormControl, FormControlOptions, FormControlState, Validators } from "@
 export class ProjectTypeGridRow { 
     ProjectTypeID?: number;
     ProjectTypeName?: string | null;
+    ProjectTypeDescription?: string | null;
     ProjectTypeCode?: string | null;
     ProjectTypeSortOrder?: number | null;
     LimitVisibilityToAdmin?: boolean;
+    ProjectCount?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -24,9 +26,11 @@ export class ProjectTypeGridRow {
 export interface ProjectTypeGridRowForm { 
     ProjectTypeID?: FormControl<number>;
     ProjectTypeName?: FormControl<string>;
+    ProjectTypeDescription?: FormControl<string>;
     ProjectTypeCode?: FormControl<string>;
     ProjectTypeSortOrder?: FormControl<number>;
     LimitVisibilityToAdmin?: FormControl<boolean>;
+    ProjectCount?: FormControl<number>;
 }
 
 export class ProjectTypeGridRowFormControls { 
@@ -41,6 +45,16 @@ export class ProjectTypeGridRowFormControls {
         }
     );
     public static ProjectTypeName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectTypeDescription = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
@@ -71,6 +85,16 @@ export class ProjectTypeGridRowFormControls {
         }
     );
     public static LimitVisibilityToAdmin = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

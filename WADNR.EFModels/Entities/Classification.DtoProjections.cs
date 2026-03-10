@@ -11,8 +11,11 @@ public static class ClassificationProjections
         {
             ClassificationID = c.ClassificationID,
             DisplayName = c.DisplayName,
+            ClassificationDescription = c.ClassificationDescription,
+            GoalStatement = c.GoalStatement,
             ThemeColor = c.ThemeColor,
-            ClassificationSortOrder = c.ClassificationSortOrder
+            ClassificationSortOrder = c.ClassificationSortOrder,
+            ProjectCount = c.ProjectClassifications.Select(pc => pc.ProjectID).Distinct().Count()
         });
 
     public static IQueryable<ClassificationDetail> AsDetail(IQueryable<Classification> query)

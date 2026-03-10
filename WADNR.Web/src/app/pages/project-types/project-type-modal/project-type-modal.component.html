@@ -1,6 +1,6 @@
 <div class="modal">
 <div class="modal-header">
-    <h3>Edit Project Type</h3>
+    <h3>{{ title }}</h3>
 </div>
 <div class="modal-body">
     <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
@@ -15,7 +15,7 @@
 
         <form-field
             [formControl]="form.controls.ProjectTypeDescription"
-            fieldLabel="Description"
+            fieldDefinitionName="ProjectTypeDescription"
             [type]="FormFieldType.RTE">
         </form-field>
 
@@ -26,14 +26,15 @@
                 [type]="FormFieldType.Text"
                 placeholder="#RRGGBB">
             </form-field>
-            <div class="color-swatch"
-                [style.background-color]="form.controls.ThemeColor.value || 'transparent'">
-            </div>
+            <input type="color"
+                class="color-picker"
+                [value]="form.controls.ThemeColor.value || '#000000'"
+                (input)="form.controls.ThemeColor.setValue($any($event.target).value)">
         </div>
 
         <form-field
             [formControl]="form.controls.LimitVisibilityToAdmin"
-            fieldLabel="Limit Visibility to Admin"
+            fieldDefinitionName="LimitVisibilityToAdmin"
             [type]="FormFieldType.Toggle">
         </form-field>
     </form>

@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -76,6 +78,14 @@ public class ClassificationController(
         return Ok(updated);
     }
 
+    [HttpPut("sort-order")]
+    [AdminFeature]
+    public async Task<ActionResult<List<ClassificationGridRow>>> UpdateSortOrder([FromBody] List<SortOrderUpdateItem> sortOrderUpdates)
+    {
+        var rows = await Classifications.UpdateSortOrderAsync(DbContext, sortOrderUpdates);
+        return Ok(rows);
+    }
+
     [HttpDelete("{classificationID}")]
     [AdminFeature]
     [EntityNotFound(typeof(Classification), "classificationID")]
@@ -105,6 +115,13 @@ public class ClassificationController(
         if (file == null || file.Length == 0)
         {
             return BadRequest("File is required.");
+        }
+
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (!allowedExtensions.Contains(ext))
+        {
+            return BadRequest($"Invalid file type \"{ext}\". Accepted types: {string.Join(", ", allowedExtensions)}");
         }
 
         var fileResource = await fileService.CreateFileResource(DbContext, file, CallingUser.PersonID);

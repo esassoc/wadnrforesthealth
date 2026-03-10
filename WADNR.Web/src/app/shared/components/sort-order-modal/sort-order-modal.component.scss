@@ -1,0 +1,61 @@
+.sort-order-instructions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.sort-order-list {
+    border: 1px solid rgba(black, 0.15);
+    border-radius: 0.25rem;
+    overflow: hidden;
+}
+
+.sort-order-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border-bottom: 1px solid rgba(black, 0.1);
+    background: white;
+    cursor: move;
+    user-select: none;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    .drag-handle {
+        color: rgba(black, 0.35);
+    }
+}
+
+.cdk-drag-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    background: white;
+    border: 1px solid rgba(black, 0.15);
+    border-radius: 0.25rem;
+    box-shadow: 0 4px 12px rgba(black, 0.15);
+    font-size: inherit;
+
+    .drag-handle {
+        color: rgba(black, 0.35);
+    }
+}
+
+.cdk-drag-placeholder {
+    background: rgba(black, 0.05);
+    border-bottom: 1px solid rgba(black, 0.1);
+}
+
+.cdk-drag-animating {
+    transition: transform 200ms ease;
+}
+
+.sort-order-list.cdk-drop-list-dragging .sort-order-item:not(.cdk-drag-placeholder) {
+    transition: transform 200ms ease;
+}

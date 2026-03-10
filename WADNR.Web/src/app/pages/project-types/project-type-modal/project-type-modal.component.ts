@@ -18,8 +18,8 @@ import {
 } from "src/app/shared/generated/model/project-type-upsert-request";
 
 export interface ProjectTypeModalData {
-    mode: "edit";
-    projectType: ProjectTypeDetail;
+    mode: "create" | "edit";
+    projectType?: ProjectTypeDetail;
 }
 
 @Component({
@@ -33,7 +33,8 @@ export class ProjectTypeModalComponent extends BaseModal implements OnInit {
     public ref: DialogRef<ProjectTypeModalData, ProjectTypeDetail | null> = inject(DialogRef);
 
     public FormFieldType = FormFieldType;
-    public projectType: ProjectTypeDetail;
+    public mode: "create" | "edit" = "create";
+    public projectType: ProjectTypeDetail | null = null;
     public isSubmitting = false;
 
     public form = new FormGroup<ProjectTypeUpsertRequestForm>({
@@ -56,9 +57,10 @@ export class ProjectTypeModalComponent extends BaseModal implements OnInit {
 
     ngOnInit(): void {
         const data = this.ref.data;
-        this.projectType = data?.projectType;
+        this.mode = data?.mode ?? "create";
+        this.projectType = data?.projectType ?? null;
 
-        if (this.projectType) {
+        if (this.projectType && this.mode === "edit") {
             this.form.patchValue({
                 ProjectTypeName: this.projectType.ProjectTypeName,
                 ProjectTypeDescription: this.projectType.ProjectTypeDescription,
@@ -66,6 +68,10 @@ export class ProjectTypeModalComponent extends BaseModal implements OnInit {
                 LimitVisibilityToAdmin: this.projectType.LimitVisibilityToAdmin ?? false,
             });
         }
+    }
+
+    get title(): string {
+        return this.mode === "edit" ? "Edit Project Type" : "Create Project Type";
     }
 
     save(): void {
@@ -77,22 +83,34 @@ export class ProjectTypeModalComponent extends BaseModal implements OnInit {
         this.isSubmitting = true;
         this.localAlerts = [];
 
-        const dto = new ProjectTypeUpsertRequest({
-            ...this.form.value,
-            TaxonomyBranchID: this.projectType.TaxonomyBranchID,
-        });
+        const formValue = this.form.getRawValue();
+        const dto = new ProjectTypeUpsertRequest(formValue);
 
-        this.projectTypeService.updateProjectType(this.projectType.ProjectTypeID, dto).subscribe({
-            next: (result) => {
-                this.pushGlobalSuccess("Project Type updated successfully.");
-                this.ref.close(result);
-            },
-            error: (err) => {
-                this.isSubmitting = false;
-                const message = err?.error?.message ?? err?.message ?? "An error occurred.";
-                this.addLocalAlert(message, AlertContext.Danger, true);
-            }
-        });
+        if (this.mode === "edit" && this.projectType) {
+            this.projectTypeService.updateProjectType(this.projectType.ProjectTypeID, dto).subscribe({
+                next: (result) => {
+                    this.pushGlobalSuccess("Project Type updated successfully.");
+                    this.ref.close(result);
+                },
+                error: (err) => {
+                    this.isSubmitting = false;
+                    const message = err?.error?.message ?? err?.message ?? "An error occurred.";
+                    this.addLocalAlert(message, AlertContext.Danger, true);
+                }
+            });
+        } else {
+            this.projectTypeService.createProjectType(dto).subscribe({
+                next: (result) => {
+                    this.pushGlobalSuccess("Project Type created successfully.");
+                    this.ref.close(result);
+                },
+                error: (err) => {
+                    this.isSubmitting = false;
+                    const message = err?.error?.message ?? err?.message ?? "An error occurred.";
+                    this.addLocalAlert(message, AlertContext.Danger, true);
+                }
+            });
+        }
     }
 
     cancel(): void {

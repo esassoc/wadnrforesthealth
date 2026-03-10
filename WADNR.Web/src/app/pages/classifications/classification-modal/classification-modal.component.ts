@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
 
-import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
+import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
@@ -10,8 +10,8 @@ import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 
 import { ClassificationService } from "src/app/shared/generated/api/classification.service";
+import { ClassificationSystemService } from "src/app/shared/generated/api/classification-system.service";
 import { ClassificationDetail } from "src/app/shared/generated/model/classification-detail";
-import { ClassificationSystemLookupItem } from "src/app/shared/generated/model/classification-system-lookup-item";
 import {
     ClassificationUpsertRequest,
     ClassificationUpsertRequestForm,
@@ -22,7 +22,6 @@ import { switchMap } from "rxjs";
 export interface ClassificationModalData {
     mode: "create" | "edit";
     classification?: ClassificationDetail;
-    classificationSystems?: ClassificationSystemLookupItem[];
 }
 
 @Component({
@@ -41,8 +40,6 @@ export class ClassificationModalComponent extends BaseModal implements OnInit {
     public classification: ClassificationDetail | null = null;
     public existingImageGUID: string | null = null;
     public keyImageControl = new FormControl<File>(null);
-
-    public classificationSystemOptions: FormInputOption[] = [];
 
     public form = new FormGroup<ClassificationUpsertRequestForm>({
         DisplayName: ClassificationUpsertRequestFormControls.DisplayName("", {
@@ -65,6 +62,7 @@ export class ClassificationModalComponent extends BaseModal implements OnInit {
 
     constructor(
         private classificationService: ClassificationService,
+        private classificationSystemService: ClassificationSystemService,
         alertService: AlertService
     ) {
         super(alertService);
@@ -75,12 +73,12 @@ export class ClassificationModalComponent extends BaseModal implements OnInit {
         this.mode = data?.mode ?? "create";
         this.classification = data?.classification ?? null;
 
-        if (data?.classificationSystems) {
-            this.classificationSystemOptions = data.classificationSystems.map((cs) => ({
-                Value: cs.ClassificationSystemID,
-                Label: cs.ClassificationSystemName,
-                disabled: false,
-            }));
+        if (this.mode === "create") {
+            this.classificationSystemService.listLookupClassificationSystem().subscribe(systems => {
+                if (systems.length > 0) {
+                    this.form.controls.ClassificationSystemID.setValue(systems[0].ClassificationSystemID);
+                }
+            });
         }
 
         if (this.classification && this.mode === "edit") {

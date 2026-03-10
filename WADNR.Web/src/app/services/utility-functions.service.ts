@@ -738,6 +738,12 @@ export class UtilityFunctionsService {
         grid.api.exportDataAsCsv(params);
     }
 
+    public stripHtml(value: string | null | undefined): string {
+        if (!value) return "";
+        const doc = new DOMParser().parseFromString(value, "text/html");
+        return doc.body.textContent || "";
+    }
+
     public deepEqual(obj1: any, obj2: any): boolean {
         if (obj1 === obj2) {
             return true;

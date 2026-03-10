@@ -13,8 +13,11 @@ import { FormControl, FormControlOptions, FormControlState, Validators } from "@
 export class ClassificationGridRow { 
     ClassificationID?: number;
     DisplayName?: string | null;
+    ClassificationDescription?: string | null;
+    GoalStatement?: string | null;
     ThemeColor?: string | null;
     ClassificationSortOrder?: number | null;
+    ProjectCount?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -23,8 +26,11 @@ export class ClassificationGridRow {
 export interface ClassificationGridRowForm { 
     ClassificationID?: FormControl<number>;
     DisplayName?: FormControl<string>;
+    ClassificationDescription?: FormControl<string>;
+    GoalStatement?: FormControl<string>;
     ThemeColor?: FormControl<string>;
     ClassificationSortOrder?: FormControl<number>;
+    ProjectCount?: FormControl<number>;
 }
 
 export class ClassificationGridRowFormControls { 
@@ -48,6 +54,26 @@ export class ClassificationGridRowFormControls {
             ],
         }
     );
+    public static ClassificationDescription = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static GoalStatement = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
     public static ThemeColor = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
@@ -59,6 +85,16 @@ export class ClassificationGridRowFormControls {
         }
     );
     public static ClassificationSortOrder = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

@@ -1041,6 +1041,47 @@
         }
       }
     },
+    "/classifications/sort-order": {
+      "put": {
+        "tags": [
+          "Classification"
+        ],
+        "operationId": "UpdateSortOrder_Classification",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SortOrderUpdateItem"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SortOrderUpdateItem"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SortOrderUpdateItem"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/classifications/{classificationID}/projects": {
       "get": {
         "tags": [
@@ -9619,6 +9660,86 @@
             }
           }
         }
+      },
+      "put": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "UpdateContact_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonUpsertRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonUpsertRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonUpsertRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "DeleteContact_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/people/{personID}/projects": {
@@ -9807,6 +9928,156 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/people/contacts": {
+      "post": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "CreateContact_Person",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/people/{personID}/roles": {
+      "put": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "UpdateRoles_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonRolesUpsertRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonRolesUpsertRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonRolesUpsertRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/people/{personID}/toggle-active": {
+      "put": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "ToggleActive_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -22746,6 +23017,14 @@
             "type": "string",
             "nullable": true
           },
+          "ClassificationDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "GoalStatement": {
+            "type": "string",
+            "nullable": true
+          },
           "ThemeColor": {
             "type": "string",
             "nullable": true
@@ -22754,6 +23033,10 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
+          },
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -22937,6 +23220,43 @@
           "ProjectCount": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContactUpsertRequest": {
+        "required": [
+          "FirstName"
+        ],
+        "type": "object",
+        "properties": {
+          "FirstName": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "LastName": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "Email": {
+            "maxLength": 255,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "Phone": {
+            "maxLength": 30,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -28523,6 +28843,9 @@
           "IsActive": {
             "type": "boolean"
           },
+          "IsFullUser": {
+            "type": "boolean"
+          },
           "PrimaryContactOrganizationCount": {
             "type": "integer",
             "format": "int32"
@@ -28610,6 +28933,87 @@
           },
           "IsRequired": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonRolesUpsertRequestDto": {
+        "type": "object",
+        "properties": {
+          "BaseRoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "SupplementalRoleIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "ReceiveSupportEmails": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonUpsertRequestDto": {
+        "required": [
+          "FirstName"
+        ],
+        "type": "object",
+        "properties": {
+          "FirstName": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "MiddleName": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "LastName": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "Email": {
+            "maxLength": 255,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "Phone": {
+            "maxLength": 30,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "PersonAddress": {
+            "maxLength": 255,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "VendorID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "Notes": {
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -32152,6 +32556,10 @@
             "type": "string",
             "nullable": true
           },
+          "ProjectTypeDescription": {
+            "type": "string",
+            "nullable": true
+          },
           "ProjectTypeCode": {
             "type": "string",
             "nullable": true
@@ -32163,6 +32571,10 @@
           },
           "LimitVisibilityToAdmin": {
             "type": "boolean"
+          },
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -32229,7 +32641,8 @@
         "properties": {
           "TaxonomyBranchID": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "ProjectTypeName": {
             "type": "string",
@@ -33448,6 +33861,20 @@
           "SelectedGeometryWkt": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SortOrderUpdateItem": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "SortOrder": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

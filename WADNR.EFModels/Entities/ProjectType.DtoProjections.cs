@@ -11,9 +11,11 @@ public static class ProjectTypeProjections
         {
             ProjectTypeID = pt.ProjectTypeID,
             ProjectTypeName = pt.ProjectTypeName,
+            ProjectTypeDescription = pt.ProjectTypeDescription,
             ProjectTypeCode = pt.ProjectTypeCode,
             ProjectTypeSortOrder = pt.ProjectTypeSortOrder,
-            LimitVisibilityToAdmin = pt.LimitVisibilityToAdmin
+            LimitVisibilityToAdmin = pt.LimitVisibilityToAdmin,
+            ProjectCount = pt.Projects.Count()
         });
 
     public static IQueryable<ProjectTypeDetail> AsDetail(IQueryable<ProjectType> query)

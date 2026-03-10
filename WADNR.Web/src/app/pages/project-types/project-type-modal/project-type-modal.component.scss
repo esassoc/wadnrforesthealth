@@ -13,13 +13,16 @@
         }
     }
 
-    .color-swatch {
-        width: 2rem;
+    .color-picker {
+        width: 2.5rem;
         height: 2rem;
         flex-shrink: 0;
+        padding: 0.125rem;
         border: 1px solid rgba(black, 0.2);
         border-left: none;
         border-top-right-radius: 0.25rem;
         border-bottom-right-radius: 0.25rem;
+        cursor: pointer;
+        background: none;
     }
 }

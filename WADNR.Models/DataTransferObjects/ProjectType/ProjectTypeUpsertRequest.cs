@@ -2,7 +2,7 @@ namespace WADNR.Models.DataTransferObjects;
 
 public class ProjectTypeUpsertRequest
 {
-    public int TaxonomyBranchID { get; set; }
+    public int? TaxonomyBranchID { get; set; }
     public string ProjectTypeName { get; set; } = string.Empty;
     public string? ProjectTypeDescription { get; set; }
     public string? ProjectTypeCode { get; set; }

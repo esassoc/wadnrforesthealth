@@ -8,7 +8,6 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 import { TruncateWordsPipe } from "src/app/shared/pipes/truncate-words.pipe";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { ClassificationService } from "src/app/shared/generated/api/classification.service";
-import { ClassificationSystemService } from "src/app/shared/generated/api/classification-system.service";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
 import { ClassificationWithProjectCount } from "src/app/shared/generated/model/classification-with-project-count";
 import { ClassificationModalComponent, ClassificationModalData } from "./classification-modal/classification-modal.component";
@@ -30,7 +29,6 @@ export class ClassificationsComponent {
 
     constructor(
         private classificationService: ClassificationService,
-        private classificationSystemService: ClassificationSystemService,
         private authenticationService: AuthenticationService,
         private dialogService: DialogService,
         private router: Router
@@ -53,20 +51,15 @@ export class ClassificationsComponent {
     }
 
     openCreateModal(): void {
-        this.classificationSystemService.listLookupClassificationSystem().subscribe((classificationSystems) => {
-            const dialogRef = this.dialogService.open(ClassificationModalComponent, {
-                data: {
-                    mode: "create",
-                    classificationSystems: classificationSystems,
-                } as ClassificationModalData,
-                size: "md",
-            });
+        const dialogRef = this.dialogService.open(ClassificationModalComponent, {
+            data: { mode: "create" } as ClassificationModalData,
+            size: "md",
+        });
 
-            dialogRef.afterClosed$.subscribe((result) => {
-                if (result) {
-                    this.router.navigate(["/classifications", result.ClassificationID]);
-                }
-            });
+        dialogRef.afterClosed$.subscribe((result) => {
+            if (result) {
+                this.router.navigate(["/classifications", result.ClassificationID]);
+            }
         });
     }
 }
