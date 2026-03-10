@@ -267,7 +267,7 @@ namespace ProjectFirma.Web.Controllers
         public JsonNetJObjectResult GeocodeAddress(string address)
         {
 
-            var url = "https://wamas.watech.wa.gov/resources/web/api/Wamas/v1/Singleline?address=" + address;
+            var url = "https://wamaspublic.watech.wa.gov/resources/web/api/Wamas/v1/Singleline?address=" + address;
 
             try
             {

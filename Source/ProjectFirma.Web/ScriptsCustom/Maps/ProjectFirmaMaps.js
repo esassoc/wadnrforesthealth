@@ -526,9 +526,20 @@ ProjectFirmaMaps.Map.prototype.htmlPopupContents = function (allLayers) {
 
     ProjectFirmaMaps.Map.prototype.popupForWMSAndVectorLayers = function(wmsLayers, vecLayers, latlng) {
         var self = this;
+
+        var mapBounds = this.map.getBounds();
+        var crs = this.map.options.crs; // or L.CRS.EPSG3857, or your custom CRS
+
+        // these are the SouthWest and NorthEast points 
+        // projected from LatLng into used crs
+        var sw = crs.project(this.map.getBounds().getSouthWest());
+        var ne = crs.project(this.map.getBounds().getNorthEast());
+        var bbox_in_crs = sw.x + ',' + sw.y + ',' + ne.x + ',' + ne.y;
+
         
         var point = this.map.latLngToContainerPoint(latlng, this.map.getZoom()),
             size = this.map.getSize(),
+            projection = this.map.options.crs.code,
 
             geospatialAreaWMSParams = {
                 service: 'WMS',
@@ -536,17 +547,17 @@ ProjectFirmaMaps.Map.prototype.htmlPopupContents = function (allLayers) {
                 request: 'GetFeatureInfo',
                 layers: null,
                 styles: "",
-                srs: 'EPSG:4326',
-                bbox: this.map.getBounds().toBBoxString(),
+                srs: projection,
+                bbox: bbox_in_crs, 
                 height: size.y,
                 width: size.x,
                 query_layers: null,
                 info_format: 'application/json'
             };
 
-        geospatialAreaWMSParams['x'] = point.x; //lat: 47.53442142660092, lng: -120.49188936129215
+        geospatialAreaWMSParams['x'] = point.x; 
         geospatialAreaWMSParams['y'] = point.y;
-
+        
         var ajaxCalls = [];
 
         for (var j = 0; j < wmsLayers.length; ++j) {

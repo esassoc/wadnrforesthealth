@@ -211,18 +211,21 @@
         jQuery('#btnZoomToAddress').on("click", function() {
 
             var dataAddress = jQuery('#txtZoomAddress').val();
-
+            
             $.ajax({
                     method: "POST",
                     url: "@ViewDataTyped.GeocodeAddressUrl",
                     data: { address: dataAddress }
             })
             .done(function (msg) {
+                
                 if (!msg.GeocodedAddress.Error) {
                     var lat = msg.GeocodedAddress.Location.GcYCoord;
                     var long = msg.GeocodedAddress.Location.GcXCoord;
-                    findYourForesterFirmaMap.map.flyTo([lat, long], 12, {duration: 1});
-                    window.setTimeout(populateForesterInformationAndDropMarker({ lng: long, lat: lat }, true), 1250);
+                    
+                    
+                    populateForesterInformationAndDropMarker({ lng: long, lat: lat }, true)
+                    findYourForesterFirmaMap.map.flyTo([lat, long], 12, { duration: 1 });
 
                 } else {
                     console.log(msg.GeocodedAddress.Error);
