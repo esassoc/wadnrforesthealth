@@ -1,20 +1,43 @@
 @if (person$ | async; as person) {
     <breadcrumb [items]="[{ label: 'Users and Contacts', url: '/people' }, { label: person.FullName || 'User' }]" [linkLast]="false"></breadcrumb>
-    <page-header [pageTitle]="person.FullName + (person.IsActive ? '' : ' (inactive)')">
-        @if (canImpersonate$ | async) {
-            <button class="btn btn-sm btn-secondary" (click)="impersonate(person.PersonID)">
-                <icon icon="User"></icon> Impersonate
-            </button>
+    <page-header [pageTitle]="person.FullName + (person.IsActive ? '' : ' (inactive)')" [templateRight]="headerButtons"></page-header>
+
+    <ng-template #headerButtons>
+        <div class="flex">
+        @if (canToggleActive$ | async) {
+            @if (person.IsActive) {
+                <button class="btn btn-sm btn-warning" (click)="toggleActive(person)"><icon icon="CircleX"></icon> Inactivate</button>
+            } @else {
+                <button class="btn btn-sm btn-success" (click)="toggleActive(person)"><icon icon="CircleCheckmark"></icon> Activate</button>
+            }
         }
-    </page-header>
+        @if (canImpersonate$ | async) {
+            <button class="btn btn-sm btn-secondary" (click)="impersonate(person.PersonID)"><icon icon="Key"></icon> Impersonate</button>
+        }
+        @if (canDelete$ | async) {
+            <button class="btn btn-sm btn-danger" (click)="deletePerson(person)"><icon icon="Delete"></icon> Delete</button>
+        }
+        </div>
+    </ng-template>
+
+    @if (!person.IsFullUser) {
+        <div class="alert alert-info">
+            {{ person.FullName }} is a contact and does not have a user account in the system.
+        </div>
+    }
 
     <div class="page-body">
         <div class="grid-12">
             <!-- Left Column: Basic Info -->
             <div class="g-col-6">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header flex-between">
                         <span class="card-title">Basics</span>
+                        @if (canEditBasics$ | async) {
+                            <button class="card-header-edit-link" (click)="openEditContact(person)" title="Edit Basics">
+                                <icon icon="Edit"></icon>
+                            </button>
+                        }
                     </div>
                     <div class="card-body">
                         <dl class="kv-pair-list">
@@ -81,17 +104,22 @@
                 </div>
             </div>
 
-            <!-- Right Column: Roles & Programs -->
+            <!-- Right Column: Roles, Stewardship, Programs, Orgs -->
             <div class="g-col-6">
                 @if (person.IsFullUser) {
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header flex-between">
                             <span class="card-title">Roles</span>
+                            @if (canEditRoles$ | async) {
+                                <button class="card-header-edit-link" (click)="openEditRoles(person)" title="Edit Roles">
+                                    <icon icon="Edit"></icon>
+                                </button>
+                            }
                         </div>
                         <div class="card-body">
                             <dl class="kv-pair-list">
                                 <dt>Base Role</dt>
-                                <dd>{{ person.BaseRole.RoleName || "None" }}</dd>
+                                <dd>{{ person.BaseRole?.RoleName || "None" }}</dd>
 
                                 <dt>Supplemental Roles</dt>
                                 <dd>{{ person.SupplementalRoles || "None" }}</dd>
@@ -101,82 +129,148 @@
                             </dl>
                         </div>
                     </div>
-                }
 
-                @if (person.AssignedPrograms && person.AssignedPrograms.length > 0) {
+                    <!-- Stewardship Areas -->
+                    <div class="card mt-3">
+                        <div class="card-header flex-between">
+                            <span class="card-title">Assigned Project Stewardship Areas</span>
+                            @if (hasRole(person, RoleEnum.ProjectSteward) && (canEditRoles$ | async)) {
+                                <button class="card-header-edit-link" (click)="openEditStewardshipAreas(person)" title="Edit Stewardship Areas">
+                                    <icon icon="Edit"></icon>
+                                </button>
+                            }
+                        </div>
+                        <div class="card-body">
+                            @if (hasRole(person, RoleEnum.Admin) || hasRole(person, RoleEnum.EsaAdmin)) {
+                                <p class="mb-0">{{ person.FullName }} is an Administrator and can manage all Project Stewardship Areas.</p>
+                            } @else if (hasRole(person, RoleEnum.Unassigned)) {
+                                <p class="mb-0">{{ person.FullName }} is not assigned a role and cannot manage any Project Stewardship Areas.</p>
+                            } @else if (hasRole(person, RoleEnum.Normal)) {
+                                <p class="mb-0">{{ person.FullName }} is a Normal User and can add Projects to any Project Stewardship Area, but cannot edit/manage Projects that are not their own.</p>
+                            } @else if (hasRole(person, RoleEnum.ProjectSteward)) {
+                                @if (person.StewardRegions && person.StewardRegions.length > 0) {
+                                    <p>{{ person.FullName }} is a Project Steward for the following regions:</p>
+                                    <ul class="mb-0">
+                                        @for (region of person.StewardRegions; track region.ID) {
+                                            <li>{{ region.Name }}</li>
+                                        }
+                                    </ul>
+                                } @else {
+                                    <p class="mb-0">{{ person.FullName }} is a Project Steward but is not assigned to any regions.</p>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Assigned Programs -->
                     <div class="card mt-3">
                         <div class="card-header">
                             <span class="card-title">Assigned Programs</span>
                         </div>
                         <div class="card-body">
-                            <ul class="list-unstyled mb-0">
-                                @for (program of person.AssignedPrograms; track program.ProgramID) {
-                                    <li>
-                                        <a [routerLink]="['/programs', program.ProgramID]">{{ program.ProgramName }}</a>
-                                    </li>
+                            @if (hasSupplementalRole(person, RoleEnum.CanEditProgram)) {
+                                @if (person.AssignedPrograms && person.AssignedPrograms.length > 0) {
+                                    <ul class="list-unstyled mb-0">
+                                        @for (program of person.AssignedPrograms; track program.ProgramID) {
+                                            <li>
+                                                <a [routerLink]="['/programs', program.ProgramID]">{{ program.ProgramName }}</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                } @else {
+                                    <p class="text-muted mb-0">{{ person.FullName }} is not assigned to manage Projects in any Program.</p>
                                 }
-                            </ul>
+                            } @else {
+                                <p class="text-muted mb-0">{{ person.FullName }} is not assigned to the Program Editor role.</p>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Primary Contact For Organizations -->
+                    <div class="card mt-3">
+                        <div class="card-header flex-between">
+                            <span class="card-title">Organizations for which {{ person.FullName }} is a Primary Contact</span>
+                            @if (canEditBasics$ | async) {
+                                <button class="card-header-edit-link" (click)="openEditPrimaryContactOrgs(person)" title="Edit Primary Contact Organizations">
+                                    <icon icon="Edit"></icon>
+                                </button>
+                            }
+                        </div>
+                        <div class="card-body">
+                            @if (person.PrimaryContactOrganizations && person.PrimaryContactOrganizations.length > 0) {
+                                <ul class="list-unstyled mb-0">
+                                    @for (org of person.PrimaryContactOrganizations; track org.OrganizationID) {
+                                        <li>
+                                            <a [routerLink]="['/organizations', org.OrganizationID]">{{ org.OrganizationName }}</a>
+                                        </li>
+                                    }
+                                </ul>
+                            } @else {
+                                <p class="text-muted mb-0">No organizations assigned.</p>
+                            }
                         </div>
                     </div>
                 }
-
-                <div class="card mt-3">
-                    <div class="card-header">
-                        <span class="card-title">Primary Contact For Organizations</span>
-                        <button class="btn btn-sm btn-primary float-end" (click)="openEditPrimaryContactOrgs(person)">Edit</button>
-                    </div>
-                    <div class="card-body">
-                        @if (person.PrimaryContactOrganizations && person.PrimaryContactOrganizations.length > 0) {
-                            <ul class="list-unstyled mb-0">
-                                @for (org of person.PrimaryContactOrganizations; track org.OrganizationID) {
-                                    <li>
-                                        <a [routerLink]="['/organizations', org.OrganizationID]">{{ org.OrganizationName }}</a>
-                                    </li>
-                                }
-                            </ul>
-                        } @else {
-                            <p class="text-muted mb-0">No organizations assigned.</p>
-                        }
-                    </div>
-                </div>
             </div>
         </div>
 
         <!-- Projects Grid -->
-        @if (person.ProjectCount && person.ProjectCount > 0) {
-            <div class="card mt-3">
-                <div class="card-header">
-                    <span class="card-title">Projects ({{ person.ProjectCount }})</span>
-                </div>
-                <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
-                    <wadnr-grid [rowData]="projects$ | async" [columnDefs]="projectColumnDefs" downloadFileName="person-projects" [hideGlobalFilter]="true"></wadnr-grid>
-                </div>
+        <div class="card mt-3">
+            <div class="card-header">
+                <span class="card-title">
+                    @if (person.IsFullUser) {
+                        Projects for which {{ person.FullName }} is an Organization Primary Contact
+                    } @else {
+                        Projects for which {{ person.FullName }} is a Contact
+                    }
+                </span>
             </div>
-        }
+            <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
+                <wadnr-grid [rowData]="projects$ | async" [columnDefs]="projectColumnDefs" downloadFileName="person-projects" [hideGlobalFilter]="true"></wadnr-grid>
+            </div>
+        </div>
 
         <!-- Agreements Grid -->
-        @if (person.AgreementCount && person.AgreementCount > 0) {
-            <div class="card mt-3">
-                <div class="card-header">
-                    <span class="card-title">Agreements ({{ person.AgreementCount }})</span>
-                </div>
-                <div class="card-body" [loadingSpinner]="{ isLoading: agreementsIsLoading$ | async, loadingHeight: 300 }">
-                    <wadnr-grid [rowData]="agreements$ | async" [columnDefs]="agreementColumnDefs" downloadFileName="person-agreements" [hideGlobalFilter]="true"></wadnr-grid>
-                </div>
+        <div class="card mt-3">
+            <div class="card-header">
+                <span class="card-title">
+                    @if (person.IsFullUser) {
+                        Agreements for which {{ person.FullName }} is an Organization Primary Contact
+                    } @else {
+                        Agreements for which {{ person.FullName }} is a Contact
+                    }
+                </span>
             </div>
-        }
+            <div class="card-body" [loadingSpinner]="{ isLoading: agreementsIsLoading$ | async, loadingHeight: 300 }">
+                <wadnr-grid [rowData]="agreements$ | async" [columnDefs]="agreementColumnDefs" downloadFileName="person-agreements" [hideGlobalFilter]="true"></wadnr-grid>
+            </div>
+        </div>
 
         <!-- Interaction Events Grid -->
-        @if (person.InteractionEventCount && person.InteractionEventCount > 0) {
+        <div class="card mt-3">
+            <div class="card-header">
+                <span class="card-title">Interaction Events for which {{ person.FullName }} is a Contact</span>
+            </div>
+            <div class="card-body" [loadingSpinner]="{ isLoading: interactionEventsIsLoading$ | async, loadingHeight: 300 }">
+                <wadnr-grid
+                    [rowData]="interactionEvents$ | async"
+                    [columnDefs]="interactionEventColumnDefs"
+                    downloadFileName="person-interaction-events"
+                    [hideGlobalFilter]="true"></wadnr-grid>
+            </div>
+        </div>
+
+        <!-- System Communications Grid -->
+        @if (person.IsFullUser) {
             <div class="card mt-3">
                 <div class="card-header">
-                    <span class="card-title">Interactions/Events ({{ person.InteractionEventCount }})</span>
+                    <span class="card-title">System Communications ({{ person.NotificationCount }})</span>
                 </div>
-                <div class="card-body" [loadingSpinner]="{ isLoading: interactionEventsIsLoading$ | async, loadingHeight: 300 }">
+                <div class="card-body" [loadingSpinner]="{ isLoading: notificationsIsLoading$ | async, loadingHeight: 300 }">
                     <wadnr-grid
-                        [rowData]="interactionEvents$ | async"
-                        [columnDefs]="interactionEventColumnDefs"
-                        downloadFileName="person-interaction-events"
+                        [rowData]="notifications$ | async"
+                        [columnDefs]="notificationColumnDefs"
+                        downloadFileName="person-notifications"
                         [hideGlobalFilter]="true"></wadnr-grid>
                 </div>
             </div>

@@ -1,0 +1,99 @@
+<div class="modal">
+    <div class="modal-header">
+        <h4>Edit Contact</h4>
+    </div>
+    <div class="modal-body">
+        <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+        @if (isFullUser) {
+            <div class="alert alert-info">
+                Some fields are sourced from SAW/ADFS, cannot be edited, and are shown for reference only.
+            </div>
+        }
+
+        <form-field
+            [formControl]="form.controls.FirstName"
+            fieldLabel="First Name"
+            [type]="FormFieldType.Text"
+            placeholder="First name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.MiddleName"
+            fieldLabel="Middle Name"
+            [type]="FormFieldType.Text"
+            placeholder="Middle name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.LastName"
+            fieldLabel="Last Name"
+            [type]="FormFieldType.Text"
+            placeholder="Last name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.Email"
+            fieldLabel="Email"
+            [type]="FormFieldType.Text"
+            placeholder="Email address">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.OrganizationID"
+            fieldLabel="Organization"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="organizationOptions"
+            formInputOptionLabel="Label"
+            formInputOptionValue="Value"
+            placeholder="Select an organization">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.Phone"
+            fieldLabel="Phone"
+            [type]="FormFieldType.Text"
+            placeholder="Phone number">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.PersonAddress"
+            fieldLabel="Mailing Address"
+            [type]="FormFieldType.Text"
+            placeholder="Mailing address">
+        </form-field>
+
+        <div class="form-field">
+            <label class="field-label">Vendor</label>
+            <ng-select
+                class="custom"
+                [items]="vendorResults$ | async"
+                [formControl]="form.controls.VendorID"
+                bindLabel="DisplayName"
+                bindValue="VendorID"
+                [typeahead]="vendorSearch$"
+                [loading]="vendorLoading"
+                [clearable]="true"
+                [minTermLength]="2"
+                dropdownPosition="top"
+                typeToSearchText="Type to search vendors..."
+                placeholder="Search Vendor Name or Statewide Vendor Number">
+            </ng-select>
+        </div>
+
+        <form-field
+            [formControl]="form.controls.Notes"
+            fieldLabel="Notes"
+            [type]="FormFieldType.Textarea"
+            placeholder="Notes">
+        </form-field>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="save()" [buttonLoading]="isSubmitting" [disabled]="isSubmitting">
+            Save
+        </button>
+        <button class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">
+            Cancel
+        </button>
+    </div>
+</div>

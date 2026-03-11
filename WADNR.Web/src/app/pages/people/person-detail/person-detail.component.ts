@@ -1,7 +1,7 @@
 import { AsyncPipe, DatePipe } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, switchMap } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, shareReplay, switchMap } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 import { DialogService } from "@ngneat/dialog";
@@ -12,16 +12,22 @@ import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-g
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { AsyncConfirmModalComponent, AsyncConfirmModalData } from "src/app/shared/components/async-confirm-modal/async-confirm-modal.component";
 
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { PersonService } from "src/app/shared/generated/api/person.service";
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
 import { PersonDetail } from "src/app/shared/generated/model/person-detail";
-import { environment } from "src/environments/environment";
 import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row";
 import { AgreementGridRow } from "src/app/shared/generated/model/agreement-grid-row";
 import { InteractionEventGridRow } from "src/app/shared/generated/model/interaction-event-grid-row";
+import { NotificationGridRow } from "src/app/shared/generated/model/notification-grid-row";
+import { RoleEnum } from "src/app/shared/generated/enum/role-enum";
+
 import { PersonPrimaryContactOrgsModalComponent, PersonPrimaryContactOrgsModalData } from "../person-primary-contact-orgs-modal/person-primary-contact-orgs-modal.component";
+import { PersonEditContactModalComponent, PersonEditContactModalData } from "../person-edit-contact-modal/person-edit-contact-modal.component";
+import { PersonEditRolesModalComponent, PersonEditRolesModalData } from "../person-edit-roles-modal/person-edit-roles-modal.component";
+import { PersonEditStewardshipAreasModalComponent, PersonEditStewardshipAreasModalData } from "../person-edit-stewardship-areas-modal/person-edit-stewardship-areas-modal.component";
 
 @Component({
     selector: "person-detail",
@@ -43,23 +49,31 @@ export class PersonDetailComponent {
     public projects$: Observable<ProjectGridRow[]>;
     public agreements$: Observable<AgreementGridRow[]>;
     public interactionEvents$: Observable<InteractionEventGridRow[]>;
+    public notifications$: Observable<NotificationGridRow[]>;
 
     public projectsIsLoading$: Observable<boolean>;
     public agreementsIsLoading$: Observable<boolean>;
     public interactionEventsIsLoading$: Observable<boolean>;
+    public notificationsIsLoading$: Observable<boolean>;
 
     public canImpersonate$: Observable<boolean>;
+    public canEditBasics$: Observable<boolean>;
+    public canEditRoles$: Observable<boolean>;
+    public canToggleActive$: Observable<boolean>;
+    public canDelete$: Observable<boolean>;
 
     public projectColumnDefs: ColDef<ProjectGridRow>[] = [];
     public agreementColumnDefs: ColDef<AgreementGridRow>[] = [];
     public interactionEventColumnDefs: ColDef<InteractionEventGridRow>[] = [];
+    public notificationColumnDefs: ColDef<NotificationGridRow>[] = [];
 
     constructor(
         private personService: PersonService,
         private organizationService: OrganizationService,
         private authenticationService: AuthenticationService,
         private dialogService: DialogService,
-        private utilityFunctions: UtilityFunctionsService
+        private utilityFunctions: UtilityFunctionsService,
+        private router: Router
     ) {}
 
     ngOnInit(): void {
@@ -89,16 +103,24 @@ export class PersonDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.notifications$ = this.personID$.pipe(
+            switchMap((personID) => this.personService.listNotificationsPerson(personID)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
         this.projectsIsLoading$ = toLoadingState(this.projects$);
         this.agreementsIsLoading$ = toLoadingState(this.agreements$);
         this.interactionEventsIsLoading$ = toLoadingState(this.interactionEvents$);
+        this.notificationsIsLoading$ = toLoadingState(this.notifications$);
 
-        this.canImpersonate$ = combineLatest([
+        const userAndPerson$ = combineLatest([
             this.person$,
             this.authenticationService.currentUserSetObservable,
-        ]).pipe(
+        ]).pipe(shareReplay({ bufferSize: 1, refCount: true }));
+
+        this.canImpersonate$ = userAndPerson$.pipe(
             map(([person, currentUser]) => {
-                if (!currentUser || !person || environment.production) return false;
+                if (!currentUser || !person) return false;
                 const isAdmin = this.authenticationService.isUserAnAdministrator(currentUser);
                 const isNotSelf = person.PersonID !== currentUser.PersonID;
                 return isAdmin && isNotSelf;
@@ -106,9 +128,52 @@ export class PersonDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.canEditBasics$ = userAndPerson$.pipe(
+            map(([person, currentUser]) => {
+                if (!currentUser || !person) return false;
+                const isSelf = person.PersonID === currentUser.PersonID;
+                const hasManageRole = this.authenticationService.doesUserHaveOneOfTheseRoles(currentUser, [
+                    RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanAddEditUsersContactsOrganizations,
+                ]);
+                return isSelf || hasManageRole;
+            }),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.canEditRoles$ = userAndPerson$.pipe(
+            map(([_, currentUser]) => {
+                if (!currentUser) return false;
+                return this.authenticationService.isUserAnAdministrator(currentUser);
+            }),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.canToggleActive$ = userAndPerson$.pipe(
+            map(([person, currentUser]) => {
+                if (!currentUser || !person) return false;
+                const isAdmin = this.authenticationService.isUserAnAdministrator(currentUser);
+                const isNotSelf = person.PersonID !== currentUser.PersonID;
+                return isAdmin && isNotSelf;
+            }),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.canDelete$ = userAndPerson$.pipe(
+            map(([person, currentUser]) => {
+                if (!currentUser || !person) return false;
+                const hasManageRole = this.authenticationService.doesUserHaveOneOfTheseRoles(currentUser, [
+                    RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanAddEditUsersContactsOrganizations,
+                ]);
+                const isNotSelf = person.PersonID !== currentUser.PersonID;
+                return hasManageRole && !person.IsFullUser && isNotSelf;
+            }),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
         this.projectColumnDefs = this.createProjectColumnDefs();
         this.agreementColumnDefs = this.createAgreementColumnDefs();
         this.interactionEventColumnDefs = this.createInteractionEventColumnDefs();
+        this.notificationColumnDefs = this.createNotificationColumnDefs();
     }
 
     private createProjectColumnDefs(): ColDef<ProjectGridRow>[] {
@@ -154,6 +219,30 @@ export class PersonDetailComponent {
         ];
     }
 
+    private createNotificationColumnDefs(): ColDef<NotificationGridRow>[] {
+        return [
+            this.utilityFunctions.createDateColumnDef("Date", "NotificationDate", "M/d/yyyy"),
+            this.utilityFunctions.createBasicColumnDef("Notification Type", "NotificationTypeDisplayName"),
+            this.utilityFunctions.createBasicColumnDef("Notification", "Description"),
+            this.utilityFunctions.createBasicColumnDef("# of Projects", "ProjectCount"),
+            this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", {
+                InRouterLink: "/projects/",
+            }),
+        ];
+    }
+
+    hasRole(person: PersonDetail, roleID: number): boolean {
+        return person.BaseRole?.RoleID === roleID;
+    }
+
+    hasSupplementalRole(person: PersonDetail, roleID: number): boolean {
+        return person.SupplementalRoleList?.some((r) => r.RoleID === roleID) ?? false;
+    }
+
+    get RoleEnum() {
+        return RoleEnum;
+    }
+
     impersonate(personID: number): void {
         this.authenticationService.impersonate(personID);
     }
@@ -173,6 +262,91 @@ export class PersonDetailComponent {
                     this.refreshData$.next();
                 }
             });
+        });
+    }
+
+    openEditContact(person: PersonDetail): void {
+        const dialogRef = this.dialogService.open(PersonEditContactModalComponent, {
+            data: {
+                person,
+                isFullUser: person.IsFullUser,
+            } as PersonEditContactModalData,
+            width: "600px",
+        });
+
+        dialogRef.afterClosed$.subscribe((result) => {
+            if (result) {
+                this.refreshData$.next();
+            }
+        });
+    }
+
+    openEditRoles(person: PersonDetail): void {
+        const dialogRef = this.dialogService.open(PersonEditRolesModalComponent, {
+            data: { person } as PersonEditRolesModalData,
+            width: "600px",
+        });
+
+        dialogRef.afterClosed$.subscribe((result) => {
+            if (result) {
+                this.refreshData$.next();
+            }
+        });
+    }
+
+    openEditStewardshipAreas(person: PersonDetail): void {
+        this.personService.listStewardshipRegionsPerson().subscribe((allRegions) => {
+            const dialogRef = this.dialogService.open(PersonEditStewardshipAreasModalComponent, {
+                data: { person, allRegions } as PersonEditStewardshipAreasModalData,
+                width: "600px",
+            });
+
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshData$.next();
+                }
+            });
+        });
+    }
+
+    toggleActive(person: PersonDetail): void {
+        const isActivating = !person.IsActive;
+        const dialogRef = this.dialogService.open(AsyncConfirmModalComponent, {
+            data: {
+                title: isActivating ? "Activate User" : "Inactivate User",
+                message: isActivating
+                    ? `Are you sure you want to activate ${person.FullName}?`
+                    : `Are you sure you want to inactivate ${person.FullName}? They will no longer be able to log in.`,
+                buttonTextYes: isActivating ? "Activate" : "Inactivate",
+                buttonClassYes: isActivating ? "btn-primary" : "btn-danger",
+                actionFn: () => this.personService.toggleActivePerson(person.PersonID),
+            } as AsyncConfirmModalData,
+            width: "500px",
+        });
+
+        dialogRef.afterClosed$.subscribe((result) => {
+            if (result) {
+                this.refreshData$.next();
+            }
+        });
+    }
+
+    deletePerson(person: PersonDetail): void {
+        const dialogRef = this.dialogService.open(AsyncConfirmModalComponent, {
+            data: {
+                title: "Delete Contact",
+                message: `Are you sure you want to permanently delete ${person.FullName}? This action cannot be undone.`,
+                buttonTextYes: "Delete",
+                buttonClassYes: "btn-danger",
+                actionFn: () => this.personService.deleteContactPerson(person.PersonID),
+            } as AsyncConfirmModalData,
+            width: "500px",
+        });
+
+        dialogRef.afterClosed$.subscribe((result) => {
+            if (result !== undefined) {
+                this.router.navigate(["/people"]);
+            }
         });
     }
 }

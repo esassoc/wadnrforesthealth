@@ -1,0 +1,44 @@
+<div class="modal">
+    <div class="modal-header">
+        <h4>Edit Roles</h4>
+    </div>
+    <div class="modal-body">
+        <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+        <form-field
+            [formControl]="form.controls.BaseRoleID"
+            fieldLabel="Base Role"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="baseRoleOptions"
+            formInputOptionLabel="Label"
+            formInputOptionValue="Value"
+            placeholder="Select a base role">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.SupplementalRoleIDs"
+            fieldLabel="Supplemental Roles"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="supplementalRoleOptions"
+            formInputOptionLabel="Label"
+            formInputOptionValue="Value"
+            [multiple]="true"
+            placeholder="Select supplemental roles">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ReceiveSupportEmails"
+            fieldLabel="Receive Support Emails"
+            [type]="FormFieldType.Check"
+            checkLabel="Yes, receive support emails">
+        </form-field>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="save()" [buttonLoading]="isSubmitting" [disabled]="isSubmitting">
+            Save
+        </button>
+        <button class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">
+            Cancel
+        </button>
+    </div>
+</div>

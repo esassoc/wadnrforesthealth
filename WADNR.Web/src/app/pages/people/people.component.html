@@ -1,5 +1,21 @@
 <page-header pageTitle="Users and Contacts"></page-header>
 
 <div class="page-body">
-    <wadnr-grid [rowData]="people$ | async" [columnDefs]="columnDefs" downloadFileName="users-and-contacts" [gridTitle]="'Users and Contacts'"></wadnr-grid>
+    <div class="flex-between ai-fe mb-3">
+        <form-field
+            [formControl]="filterControl"
+            fieldLabel="Show"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="filterOptions"
+            formInputOptionLabel="Label"
+            formInputOptionValue="Value">
+        </form-field>
+        @if (canAddContact$ | async) {
+            <button class="btn btn-sm btn-primary" (click)="openAddContactModal()">
+                <span class="fas fa-plus"></span> Add Contact
+            </button>
+        }
+    </div>
+
+    <wadnr-grid [rowData]="people$ | async" [columnDefs]="columnDefs" downloadFileName="users-and-contacts"></wadnr-grid>
 </div>

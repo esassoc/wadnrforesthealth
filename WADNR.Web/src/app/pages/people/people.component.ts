@@ -1,26 +1,56 @@
 import { Component } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { ColDef } from "ag-grid-community";
-import { Observable } from "rxjs";
+import { BehaviorSubject, combineLatest, map, Observable, shareReplay, startWith, switchMap } from "rxjs";
+import { DialogService } from "@ngneat/dialog";
 
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
+import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { AuthenticationService } from "src/app/services/authentication.service";
 
 import { PersonService } from "src/app/shared/generated/api/person.service";
 import { PersonGridRow } from "src/app/shared/generated/model/person-grid-row";
+import { RoleEnum } from "src/app/shared/generated/enum/role-enum";
+
+import { AddContactModalComponent } from "./add-contact-modal/add-contact-modal.component";
+
+enum PeopleFilter {
+    AllActiveUsersAndContacts = "AllActiveUsersAndContacts",
+    AllActiveUsers = "AllActiveUsers",
+    AllContacts = "AllContacts",
+    AllUsersAndContacts = "AllUsersAndContacts",
+}
 
 @Component({
     selector: "people",
     standalone: true,
-    imports: [PageHeaderComponent, WADNRGridComponent, AsyncPipe],
+    imports: [PageHeaderComponent, WADNRGridComponent, FormFieldComponent, AsyncPipe, ReactiveFormsModule],
     templateUrl: "./people.component.html",
 })
 export class PeopleComponent {
+    public FormFieldType = FormFieldType;
+    public filterControl = new FormControl<string>(PeopleFilter.AllActiveUsersAndContacts);
+    public filterOptions: FormInputOption[] = [
+        { Value: PeopleFilter.AllActiveUsersAndContacts, Label: "All Active Users and Contacts", disabled: false },
+        { Value: PeopleFilter.AllActiveUsers, Label: "All Active Users", disabled: false },
+        { Value: PeopleFilter.AllContacts, Label: "All Contacts", disabled: false },
+        { Value: PeopleFilter.AllUsersAndContacts, Label: "All Users and Contacts (incl. inactive)", disabled: false },
+    ];
     public people$: Observable<PersonGridRow[]>;
     public columnDefs: ColDef<PersonGridRow>[];
+    public canAddContact$: Observable<boolean>;
 
-    constructor(private personService: PersonService, private utilityFunctions: UtilityFunctionsService) {}
+    private refreshData$ = new BehaviorSubject<void>(undefined);
+
+    constructor(
+        private personService: PersonService,
+        private utilityFunctions: UtilityFunctionsService,
+        private authenticationService: AuthenticationService,
+        private dialogService: DialogService
+    ) {}
 
     ngOnInit(): void {
         this.columnDefs = [
@@ -31,7 +61,7 @@ export class PeopleComponent {
                 InRouterLink: "/people/",
             }),
             this.utilityFunctions.createBasicColumnDef("Email", "Email"),
-            this.utilityFunctions.createLinkColumnDef("Organization", "OrganizationName", "OrganizationID", {
+            this.utilityFunctions.createLinkColumnDef("Contributing Organizations", "OrganizationName", "OrganizationID", {
                 InRouterLink: "/organizations/",
             }),
             this.utilityFunctions.createBasicColumnDef("Phone", "Phone"),
@@ -44,13 +74,57 @@ export class PeopleComponent {
                 CustomDropdownFilterField: "IsActive",
                 ValueFormatter: (params: any) => (params.value ? "Yes" : "No"),
             }),
-            this.utilityFunctions.createBasicColumnDef("Primary Contact For", "PrimaryContactOrganizationCount"),
+            this.utilityFunctions.createBasicColumnDef("Organization Primary Contact for Organizations", "PrimaryContactOrganizationCount"),
             this.utilityFunctions.createDateColumnDef("Added On", "CreateDate", "M/d/yyyy"),
             this.utilityFunctions.createLinkColumnDef("Added By", "AddedByPersonName", "AddedByPersonID", {
                 InRouterLink: "/people/",
             }),
+            this.utilityFunctions.createBasicColumnDef("Authentication Methods", "AuthenticationMethods"),
         ];
 
-        this.people$ = this.personService.listPerson();
+        const allPeople$ = this.refreshData$.pipe(
+            switchMap(() => this.personService.listPerson()),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        const filter$ = this.filterControl.valueChanges.pipe(startWith(this.filterControl.value));
+
+        this.people$ = combineLatest([allPeople$, filter$]).pipe(
+            map(([people, filter]) => {
+                switch (filter) {
+                    case PeopleFilter.AllActiveUsersAndContacts:
+                        return people.filter((p) => p.IsActive);
+                    case PeopleFilter.AllActiveUsers:
+                        return people.filter((p) => p.IsActive && p.IsFullUser);
+                    case PeopleFilter.AllContacts:
+                        return people.filter((p) => !p.IsFullUser);
+                    case PeopleFilter.AllUsersAndContacts:
+                        return people;
+                }
+            })
+        );
+
+        this.canAddContact$ = this.authenticationService.currentUserSetObservable.pipe(
+            map((user) => {
+                if (!user) return false;
+                return this.authenticationService.doesUserHaveOneOfTheseRoles(user, [
+                    RoleEnum.Admin,
+                    RoleEnum.EsaAdmin,
+                    RoleEnum.CanAddEditUsersContactsOrganizations,
+                ]);
+            })
+        );
+    }
+
+    openAddContactModal(): void {
+        const dialogRef = this.dialogService.open(AddContactModalComponent, {
+            width: "500px",
+        });
+
+        dialogRef.afterClosed$.subscribe((result) => {
+            if (result) {
+                this.refreshData$.next();
+            }
+        });
     }
 }
