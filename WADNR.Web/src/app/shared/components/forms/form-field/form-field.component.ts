@@ -107,7 +107,21 @@ export class FormFieldComponent implements OnInit, OnDestroy {
 
     onFileChange(event: any): void {
         if (this.multiple) {
-            const newFiles: File[] = Array.from(event.target.files ?? []);
+            let newFiles: File[] = Array.from(event.target.files ?? []);
+            if (newFiles.length && this.uploadFileAccepts) {
+                const allowedExts = this.uploadFileAccepts.split(",").map(e => e.trim().toLowerCase());
+                newFiles = newFiles.filter(f => {
+                    const ext = f.name.substring(f.name.lastIndexOf(".")).toLowerCase();
+                    return allowedExts.includes(ext);
+                });
+                if (!newFiles.length) {
+                    event.target.value = "";
+                    // Set errors after clearing input so Angular's re-validation doesn't clear them
+                    this.formControl.setErrors({ invalidFileType: { allowed: this.uploadFileAccepts } });
+                    this.formControl.markAsTouched();
+                    return;
+                }
+            }
             if (newFiles.length) {
                 this.selectedFiles = [...this.selectedFiles, ...newFiles];
                 this.value = [...this.selectedFiles];
@@ -116,6 +130,20 @@ export class FormFieldComponent implements OnInit, OnDestroy {
             event.target.value = "";
         } else {
             let file = event.target.files[0];
+            if (file && this.uploadFileAccepts) {
+                const allowedExts = this.uploadFileAccepts.split(",").map(e => e.trim().toLowerCase());
+                const ext = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
+                if (!allowedExts.includes(ext)) {
+                    event.target.value = "";
+                    this.value = null;
+                    this.fileName = null;
+                    this.fileExtension = null;
+                    // Set errors after value change so Angular's re-validation doesn't clear them
+                    this.formControl.setErrors({ invalidFileType: { allowed: this.uploadFileAccepts } });
+                    this.formControl.markAsTouched();
+                    return;
+                }
+            }
             this.value = file;
             if (file) {
                 const name = file.name;

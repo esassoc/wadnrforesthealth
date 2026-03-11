@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { FormControl, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
+import { merge, Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 import { NoteComponent } from "../../note/note.component";
 import { AsyncPipe } from "@angular/common";
@@ -18,8 +18,8 @@ export class InputErrorsComponent implements OnInit {
     constructor() {}
 
     ngOnInit(): void {
-        // listen in the input value changes and map any errors
-        this.errors$ = this.validateFormControl.valueChanges.pipe(
+        // listen to value and status changes and map any errors
+        this.errors$ = merge(this.validateFormControl.valueChanges, this.validateFormControl.statusChanges).pipe(
             startWith((x) => null),
             map((x) => {
                 // errors is null when there are no errors
@@ -54,6 +54,10 @@ export class InputErrorsComponent implements OnInit {
                         case Validators.pattern.name.toLowerCase(): {
                             const requiredPattern = this.validateFormControl.errors[key].requiredPattern;
                             return `This field did not match the requred pattern "${requiredPattern}".`;
+                        }
+                        case "invalidFileType": {
+                            const allowed = this.validateFormControl.errors[key].allowed;
+                            return `Invalid file type. Accepted types: ${allowed}`;
                         }
                     }
                 });
