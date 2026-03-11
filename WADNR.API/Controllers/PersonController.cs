@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
@@ -94,5 +97,130 @@ public class PersonController(
             return NotFound();
         }
         return Ok(updated);
+    }
+
+    [HttpPost("contacts")]
+    [UserManageFeature]
+    public async Task<ActionResult<PersonDetail>> CreateContact([FromBody] ContactUpsertRequest request)
+    {
+        var created = await People.CreateContactAsync(DbContext, request, CallingUser.PersonID);
+        return Ok(created);
+    }
+
+    [HttpPut("{personID}")]
+    [UserManageFeature]
+    [EntityNotFound(typeof(Person), "personID")]
+    public async Task<ActionResult<PersonDetail>> UpdateContact([FromRoute] int personID, [FromBody] PersonUpsertRequestDto request)
+    {
+        // Allow self-edit or users with manage permission (enforced by [UserManageFeature] for non-self)
+        var callingUserID = CallingUser.PersonID;
+
+        // Determine if target person is a full user
+        var personRoleIDs = await DbContext.PersonRoles
+            .Where(pr => pr.PersonID == personID)
+            .Select(pr => pr.RoleID)
+            .ToListAsync();
+
+        var roleLookup = Role.AllLookupDictionary;
+        var baseRole = personRoleIDs
+            .Select(id => roleLookup.TryGetValue(id, out var r) ? r : null)
+            .FirstOrDefault(r => r?.IsBaseRole == true);
+
+        var isFullUser = baseRole != null && baseRole != Role.Unassigned;
+
+        var updated = await People.UpdateContactAsync(DbContext, personID, request, isFullUser);
+        if (updated == null)
+        {
+            return NotFound();
+        }
+        return Ok(updated);
+    }
+
+    [HttpPut("{personID}/roles")]
+    [AdminFeature]
+    [EntityNotFound(typeof(Person), "personID")]
+    public async Task<ActionResult<PersonDetail>> UpdateRoles([FromRoute] int personID, [FromBody] PersonRolesUpsertRequestDto request)
+    {
+        try
+        {
+            var updated = await People.UpdateRolesAsync(DbContext, personID, request);
+            if (updated == null)
+            {
+                return NotFound();
+            }
+            return Ok(updated);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { ErrorMessage = ex.Message });
+        }
+    }
+
+    [HttpPut("{personID}/toggle-active")]
+    [AdminFeature]
+    [EntityNotFound(typeof(Person), "personID")]
+    public async Task<ActionResult<PersonDetail>> ToggleActive([FromRoute] int personID)
+    {
+        try
+        {
+            var updated = await People.ToggleActiveAsync(DbContext, personID);
+            if (updated == null)
+            {
+                return NotFound();
+            }
+            return Ok(updated);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { ErrorMessage = ex.Message });
+        }
+    }
+
+    [HttpGet("{personID}/notifications")]
+    [NormalUserFeature]
+    [EntityNotFound(typeof(Person), "personID")]
+    public async Task<ActionResult<IEnumerable<NotificationGridRow>>> ListNotifications([FromRoute] int personID)
+    {
+        var notifications = await People.ListNotificationsForPersonAsGridRowAsync(DbContext, personID);
+        return Ok(notifications);
+    }
+
+    [HttpGet("stewardship-areas/regions")]
+    [NormalUserFeature]
+    public async Task<ActionResult<IEnumerable<StewardshipAreaItem>>> ListStewardshipRegions()
+    {
+        var regions = await People.ListStewardshipRegionsAsync(DbContext);
+        return Ok(regions);
+    }
+
+    [HttpPut("{personID}/stewardship-areas")]
+    [AdminFeature]
+    [EntityNotFound(typeof(Person), "personID")]
+    public async Task<ActionResult<PersonDetail>> UpdateStewardshipAreas(
+        [FromRoute] int personID,
+        [FromBody] PersonStewardshipAreasUpsertRequest request)
+    {
+        var updated = await People.UpdateStewardshipAreasAsync(DbContext, personID, request);
+        if (updated == null)
+        {
+            return NotFound();
+        }
+        return Ok(updated);
+    }
+
+    [HttpDelete("{personID}")]
+    [UserManageFeature]
+    [EntityNotFound(typeof(Person), "personID")]
+    public async Task<ActionResult> DeleteContact([FromRoute] int personID)
+    {
+        try
+        {
+            await People.DeleteContactAsync(DbContext, personID);
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { ErrorMessage = ex.Message });
+        }
     }
 }

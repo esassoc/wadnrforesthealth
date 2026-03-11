@@ -23,10 +23,12 @@ export class PersonGridRow {
     RoleName?: string | null;
     SupplementalRoles?: string | null;
     IsActive?: boolean;
+    IsFullUser?: boolean;
     PrimaryContactOrganizationCount?: number;
     CreateDate?: string;
     AddedByPersonID?: number | null;
     AddedByPersonName?: string | null;
+    AuthenticationMethods?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -45,10 +47,12 @@ export interface PersonGridRowForm {
     RoleName?: FormControl<string>;
     SupplementalRoles?: FormControl<string>;
     IsActive?: FormControl<boolean>;
+    IsFullUser?: FormControl<boolean>;
     PrimaryContactOrganizationCount?: FormControl<number>;
     CreateDate?: FormControl<string>;
     AddedByPersonID?: FormControl<number>;
     AddedByPersonName?: FormControl<string>;
+    AuthenticationMethods?: FormControl<string>;
 }
 
 export class PersonGridRowFormControls { 
@@ -172,6 +176,16 @@ export class PersonGridRowFormControls {
             ],
         }
     );
+    public static IsFullUser = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
     public static PrimaryContactOrganizationCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
@@ -203,6 +217,16 @@ export class PersonGridRowFormControls {
         }
     );
     public static AddedByPersonName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static AuthenticationMethods = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

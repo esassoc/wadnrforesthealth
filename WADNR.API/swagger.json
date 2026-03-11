@@ -1077,7 +1077,33 @@
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClassificationGridRow"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -10078,6 +10104,155 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/people/{personID}/notifications": {
+      "get": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "ListNotifications_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/people/stewardship-areas/regions": {
+      "get": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "ListStewardshipRegions_Person",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StewardshipAreaItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StewardshipAreaItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StewardshipAreaItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/people/{personID}/stewardship-areas": {
+      "put": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "UpdateStewardshipAreas_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonStewardshipAreasUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonStewardshipAreasUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonStewardshipAreasUpsertRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -23253,9 +23428,32 @@
             "type": "string",
             "nullable": true
           },
+          "MiddleName": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "PersonAddress": {
+            "maxLength": 255,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
           "OrganizationID": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "VendorID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "Notes": {
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string",
             "nullable": true
           }
         },
@@ -28159,6 +28357,41 @@
         },
         "additionalProperties": false
       },
+      "NotificationGridRow": {
+        "type": "object",
+        "properties": {
+          "NotificationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NotificationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "NotificationTypeDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "NtsGeometryServices": {
         "type": "object",
         "properties": {
@@ -28769,6 +29002,31 @@
           },
           "IsFullUser": {
             "type": "boolean"
+          },
+          "StewardRegions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StewardshipAreaItem"
+            },
+            "nullable": true
+          },
+          "StewardOrganizations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StewardshipAreaItem"
+            },
+            "nullable": true
+          },
+          "StewardTaxonomyBranches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StewardshipAreaItem"
+            },
+            "nullable": true
+          },
+          "NotificationCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -28860,6 +29118,10 @@
             "nullable": true
           },
           "AddedByPersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "AuthenticationMethods": {
             "type": "string",
             "nullable": true
           }
@@ -28954,6 +29216,20 @@
           },
           "ReceiveSupportEmails": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonStewardshipAreasUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "DNRUplandRegionIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -33904,6 +34180,20 @@
             "items": {
               "$ref": "#/components/schemas/DiffSection"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StewardshipAreaItem": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Name": {
+            "type": "string",
             "nullable": true
           }
         },

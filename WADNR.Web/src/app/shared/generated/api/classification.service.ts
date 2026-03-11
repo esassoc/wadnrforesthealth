@@ -444,14 +444,17 @@ export class ClassificationService extends BaseService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateSortOrderClassification(sortOrderUpdateItem?: Array<SortOrderUpdateItem>, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public updateSortOrderClassification(sortOrderUpdateItem?: Array<SortOrderUpdateItem>, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public updateSortOrderClassification(sortOrderUpdateItem?: Array<SortOrderUpdateItem>, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public updateSortOrderClassification(sortOrderUpdateItem?: Array<SortOrderUpdateItem>, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateSortOrderClassification(sortOrderUpdateItem?: Array<SortOrderUpdateItem>, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ClassificationGridRow>>;
+    public updateSortOrderClassification(sortOrderUpdateItem?: Array<SortOrderUpdateItem>, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ClassificationGridRow>>>;
+    public updateSortOrderClassification(sortOrderUpdateItem?: Array<SortOrderUpdateItem>, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ClassificationGridRow>>>;
+    public updateSortOrderClassification(sortOrderUpdateItem?: Array<SortOrderUpdateItem>, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
         const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
         ]);
         if (localVarHttpHeaderAcceptSelected !== undefined) {
             localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
@@ -486,7 +489,7 @@ export class ClassificationService extends BaseService {
 
         let localVarPath = `/classifications/sort-order`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<any>('put', `${basePath}${localVarPath}`,
+        return this.httpClient.request<Array<ClassificationGridRow>>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: sortOrderUpdateItem,

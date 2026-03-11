@@ -45,6 +45,22 @@ public static class PersonProjections
             .ToList(),
         GlobalID = x.GlobalID,
         ImpersonatedPersonID = x.ImpersonatedPersonID,
+        StewardRegions = x.PersonStewardRegions.Select(sr => new StewardshipAreaItem
+        {
+            ID = sr.DNRUplandRegionID,
+            Name = sr.DNRUplandRegion.DNRUplandRegionName
+        }).ToList(),
+        StewardOrganizations = x.PersonStewardOrganizations.Select(so => new StewardshipAreaItem
+        {
+            ID = so.OrganizationID,
+            Name = so.Organization.OrganizationName
+        }).ToList(),
+        StewardTaxonomyBranches = x.PersonStewardTaxonomyBranches.Select(stb => new StewardshipAreaItem
+        {
+            ID = stb.TaxonomyBranchID,
+            Name = stb.TaxonomyBranch.TaxonomyBranchName
+        }).ToList(),
+        NotificationCount = x.Notifications.Count,
     };
 
     public static readonly Expression<Func<Person, PersonLookupItem>> AsLookupItem = x => new PersonLookupItem
@@ -74,9 +90,11 @@ public static class PersonProjections
         Phone = x.Phone,
         LastActivityDate = x.LastActivityDate,
         IsActive = x.IsActive,
+        // IsFullUser is resolved client-side in ListAsGridRowAsync
         PrimaryContactOrganizationCount = x.Organizations.Count,
         CreateDate = x.CreateDate,
         AddedByPersonID = x.AddedByPersonID,
-        AddedByPersonName = x.AddedByPerson != null ? x.AddedByPerson.FirstName + " " + x.AddedByPerson.LastName : null
+        AddedByPersonName = x.AddedByPerson != null ? x.AddedByPerson.FirstName + " " + x.AddedByPerson.LastName : null,
+        AuthenticationMethods = string.Join(", ", x.PersonAllowedAuthenticators.OrderBy(a => a.Authenticator.AuthenticatorName).Select(a => a.Authenticator.AuthenticatorName))
     };
 }

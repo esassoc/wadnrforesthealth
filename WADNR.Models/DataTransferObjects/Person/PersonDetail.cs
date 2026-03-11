@@ -65,4 +65,12 @@ public class PersonDetail
 
     // Indicates if this person is a "full user" (has a non-Unassigned base role) vs a "contact"
     public bool IsFullUser { get; set; }
+
+    // Stewardship areas (for ProjectSteward role)
+    public List<StewardshipAreaItem> StewardRegions { get; set; } = new();
+    public List<StewardshipAreaItem> StewardOrganizations { get; set; } = new();
+    public List<StewardshipAreaItem> StewardTaxonomyBranches { get; set; } = new();
+
+    // Related data count for notifications
+    public int NotificationCount { get; set; }
 }

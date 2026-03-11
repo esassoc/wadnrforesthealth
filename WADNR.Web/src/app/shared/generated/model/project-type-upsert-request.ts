@@ -11,7 +11,7 @@
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class ProjectTypeUpsertRequest { 
-    TaxonomyBranchID?: number;
+    TaxonomyBranchID?: number | null;
     ProjectTypeName?: string | null;
     ProjectTypeDescription?: string | null;
     ProjectTypeCode?: string | null;

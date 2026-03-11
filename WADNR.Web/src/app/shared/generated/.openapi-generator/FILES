@@ -232,6 +232,7 @@ model/location-simple-step.ts
 model/map-extent-save-request.ts
 model/map-extent-step.ts
 model/models.ts
+model/notification-grid-row.ts
 model/nts-geometry-services.ts
 model/ogc-geometry-type.ts
 model/ordinates.ts
@@ -251,6 +252,7 @@ model/person-lookup-item.ts
 model/person-primary-contact-organizations-update-request.ts
 model/person-relationship-type-lookup-item.ts
 model/person-roles-upsert-request-dto.ts
+model/person-stewardship-areas-upsert-request.ts
 model/person-upsert-request-dto.ts
 model/person-with-organization-lookup-item.ts
 model/person-with-status.ts
@@ -408,6 +410,7 @@ model/single-polygon-approve-request.ts
 model/sort-order-update-item.ts
 model/staged-feature-layer.ts
 model/step-diff-response.ts
+model/stewardship-area-item.ts
 model/support-request-create.ts
 model/system-info-detail.ts
 model/tabular-data-import-grid-row.ts

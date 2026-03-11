@@ -14,8 +14,10 @@ public class PersonGridRow
     public string? RoleName { get; set; }
     public string? SupplementalRoles { get; set; }
     public bool IsActive { get; set; }
+    public bool IsFullUser { get; set; }
     public int PrimaryContactOrganizationCount { get; set; }
     public DateTime CreateDate { get; set; }
     public int? AddedByPersonID { get; set; }
     public string? AddedByPersonName { get; set; }
+    public string? AuthenticationMethods { get; set; }
 }

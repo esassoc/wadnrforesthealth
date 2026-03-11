@@ -62,6 +62,7 @@ public static class People
             var supplementalRoles = roles.Where(r => !r!.IsBaseRole).ToList();
 
             person.RoleName = baseRole?.RoleDisplayName;
+            person.IsFullUser = baseRole != null && baseRole != Role.Unassigned;
             person.SupplementalRoles = supplementalRoles.Any()
                 ? string.Join(", ", supplementalRoles.Select(r => r!.RoleDisplayName))
                 : null;
@@ -204,6 +205,295 @@ public static class People
                 .Where(o => dto.OrganizationIDs.Contains(o.OrganizationID))
                 .ExecuteUpdateAsync(s => s.SetProperty(o => o.PrimaryContactPersonID, personID));
         }
+
+        return await GetByIDAsDetailAsync(dbContext, personID);
+    }
+
+    public static async Task<PersonDetail?> CreateContactAsync(WADNRDbContext dbContext, ContactUpsertRequest request, int addedByPersonID)
+    {
+        var person = new Person
+        {
+            FirstName = request.FirstName,
+            MiddleName = request.MiddleName,
+            LastName = request.LastName,
+            Email = request.Email,
+            Phone = request.Phone,
+            PersonAddress = request.PersonAddress,
+            OrganizationID = request.OrganizationID,
+            VendorID = request.VendorID,
+            Notes = request.Notes,
+            IsActive = true,
+            ReceiveSupportEmails = false,
+            WebServiceAccessToken = Guid.NewGuid(),
+            CreateDate = DateTime.UtcNow,
+            AddedByPersonID = addedByPersonID,
+        };
+
+        dbContext.People.Add(person);
+
+        var personRole = new PersonRole { Person = person, RoleID = (int)RoleEnum.Unassigned };
+        dbContext.PersonRoles.Add(personRole);
+
+        await dbContext.SaveChangesAsync();
+
+        return await GetByIDAsDetailAsync(dbContext, person.PersonID);
+    }
+
+    public static async Task<PersonDetail?> UpdateContactAsync(WADNRDbContext dbContext, int personID, PersonUpsertRequestDto request, bool isFullUser)
+    {
+        var person = await dbContext.People.FirstOrDefaultAsync(x => x.PersonID == personID);
+        if (person == null) return null;
+
+        // Only update name/email for contacts (non-full-users); full users manage these via SSO
+        if (!isFullUser)
+        {
+            person.FirstName = request.FirstName;
+            person.MiddleName = request.MiddleName;
+            person.LastName = request.LastName;
+            person.Email = request.Email;
+        }
+
+        person.OrganizationID = request.OrganizationID;
+        person.VendorID = request.VendorID;
+        person.PersonAddress = request.PersonAddress;
+        person.Phone = request.Phone;
+        person.Notes = request.Notes;
+        person.UpdateDate = DateTime.UtcNow;
+
+        await dbContext.SaveChangesAsync();
+
+        return await GetByIDAsDetailAsync(dbContext, person.PersonID);
+    }
+
+    public static async Task<PersonDetail?> UpdateRolesAsync(WADNRDbContext dbContext, int personID, PersonRolesUpsertRequestDto request)
+    {
+        var person = await dbContext.People.FirstOrDefaultAsync(x => x.PersonID == personID);
+        if (person == null) return null;
+
+        // Validate: if Unassigned, no supplemental roles allowed
+        if (request.BaseRoleID == (int)RoleEnum.Unassigned && request.SupplementalRoleIDs.Count > 0)
+        {
+            throw new InvalidOperationException("Contacts with Unassigned base role cannot have supplemental roles.");
+        }
+
+        // Get current roles to detect removals
+        var currentRoles = await dbContext.PersonRoles
+            .Where(pr => pr.PersonID == personID)
+            .ToListAsync();
+
+        var currentRoleIDs = currentRoles.Select(pr => pr.RoleID).ToHashSet();
+
+        // If removing ProjectSteward, clean up steward assignments
+        if (currentRoleIDs.Contains((int)RoleEnum.ProjectSteward) && request.BaseRoleID != (int)RoleEnum.ProjectSteward)
+        {
+            var stewardRegions = await dbContext.PersonStewardRegions.Where(x => x.PersonID == personID).ToListAsync();
+            dbContext.PersonStewardRegions.RemoveRange(stewardRegions);
+
+            var stewardBranches = await dbContext.PersonStewardTaxonomyBranches.Where(x => x.PersonID == personID).ToListAsync();
+            dbContext.PersonStewardTaxonomyBranches.RemoveRange(stewardBranches);
+
+            var stewardOrgs = await dbContext.PersonStewardOrganizations.Where(x => x.PersonID == personID).ToListAsync();
+            dbContext.PersonStewardOrganizations.RemoveRange(stewardOrgs);
+        }
+
+        // If removing CanEditProgram, clean up program assignments
+        if (currentRoleIDs.Contains((int)RoleEnum.CanEditProgram) && !request.SupplementalRoleIDs.Contains((int)RoleEnum.CanEditProgram))
+        {
+            var programPeople = await dbContext.ProgramPeople.Where(x => x.PersonID == personID).ToListAsync();
+            dbContext.ProgramPeople.RemoveRange(programPeople);
+        }
+
+        // Remove existing roles and add new ones
+        dbContext.PersonRoles.RemoveRange(currentRoles);
+
+        var newRoles = new List<PersonRole>
+        {
+            new PersonRole { PersonID = personID, RoleID = request.BaseRoleID }
+        };
+        foreach (var supplementalRoleID in request.SupplementalRoleIDs)
+        {
+            newRoles.Add(new PersonRole { PersonID = personID, RoleID = supplementalRoleID });
+        }
+        dbContext.PersonRoles.AddRange(newRoles);
+
+        person.ReceiveSupportEmails = request.ReceiveSupportEmails;
+
+        await dbContext.SaveChangesAsync();
+
+        return await GetByIDAsDetailAsync(dbContext, personID);
+    }
+
+    public static async Task<PersonDetail?> ToggleActiveAsync(WADNRDbContext dbContext, int personID)
+    {
+        var person = await dbContext.People
+            .Include(x => x.Organizations)
+            .FirstOrDefaultAsync(x => x.PersonID == personID);
+        if (person == null) return null;
+
+        if (person.IsActive)
+        {
+            // Deactivating — validate not a primary contact
+            if (person.Organizations.Any())
+            {
+                throw new InvalidOperationException("Cannot deactivate a person who is the primary contact for one or more organizations. Remove them as primary contact first.");
+            }
+            person.IsActive = false;
+            person.ReceiveSupportEmails = false;
+        }
+        else
+        {
+            person.IsActive = true;
+        }
+
+        person.UpdateDate = DateTime.UtcNow;
+        await dbContext.SaveChangesAsync();
+
+        return await GetByIDAsDetailAsync(dbContext, personID);
+    }
+
+    public static async Task DeleteContactAsync(WADNRDbContext dbContext, int personID)
+    {
+        // Validate not a full user
+        var personRoleIDs = await dbContext.PersonRoles
+            .Where(pr => pr.PersonID == personID)
+            .Select(pr => pr.RoleID)
+            .ToListAsync();
+
+        var roleLookup = Role.AllLookupDictionary;
+        var baseRole = personRoleIDs
+            .Select(id => roleLookup.TryGetValue(id, out var r) ? r : null)
+            .FirstOrDefault(r => r?.IsBaseRole == true);
+
+        if (baseRole != null && baseRole != Role.Unassigned)
+        {
+            throw new InvalidOperationException("Cannot delete a full user. Only contacts (Unassigned role) can be deleted.");
+        }
+
+        // Delete related records
+        var personRoles = await dbContext.PersonRoles.Where(x => x.PersonID == personID).ToListAsync();
+        dbContext.PersonRoles.RemoveRange(personRoles);
+
+        var allowedAuth = await dbContext.PersonAllowedAuthenticators.Where(x => x.PersonID == personID).ToListAsync();
+        dbContext.PersonAllowedAuthenticators.RemoveRange(allowedAuth);
+
+        var agreementPeople = await dbContext.AgreementPeople.Where(x => x.PersonID == personID).ToListAsync();
+        dbContext.AgreementPeople.RemoveRange(agreementPeople);
+
+        var interactionContacts = await dbContext.InteractionEventContacts.Where(x => x.PersonID == personID).ToListAsync();
+        dbContext.InteractionEventContacts.RemoveRange(interactionContacts);
+
+        var projectPeople = await dbContext.ProjectPeople.Where(x => x.PersonID == personID).ToListAsync();
+        dbContext.ProjectPeople.RemoveRange(projectPeople);
+
+        var notifications = await dbContext.Notifications.Where(x => x.PersonID == personID).ToListAsync();
+        dbContext.Notifications.RemoveRange(notifications);
+
+        // Clear primary contact references
+        await dbContext.Organizations
+            .Where(o => o.PrimaryContactPersonID == personID)
+            .ExecuteUpdateAsync(s => s.SetProperty(o => o.PrimaryContactPersonID, (int?)null));
+
+        var person = await dbContext.People.FirstOrDefaultAsync(x => x.PersonID == personID);
+        if (person != null)
+        {
+            dbContext.People.Remove(person);
+        }
+
+        await dbContext.SaveChangesAsync();
+    }
+
+    public static async Task<List<NotificationGridRow>> ListNotificationsForPersonAsGridRowAsync(WADNRDbContext dbContext, int personID)
+    {
+        var rawNotifications = await dbContext.Notifications
+            .AsNoTracking()
+            .Where(n => n.PersonID == personID)
+            .Select(n => new
+            {
+                n.NotificationID,
+                n.NotificationDate,
+                n.NotificationTypeID,
+                ProjectCount = n.NotificationProjects.Count,
+                FirstProject = n.NotificationProjects
+                    .OrderBy(np => np.ProjectID)
+                    .Select(np => new { np.ProjectID, np.Project.ProjectName })
+                    .FirstOrDefault()
+            })
+            .OrderByDescending(n => n.NotificationDate)
+            .ToListAsync();
+
+        var notifications = rawNotifications.Select(n =>
+        {
+            var typeName = NotificationType.AllLookupDictionary.TryGetValue(n.NotificationTypeID, out var notifType)
+                ? notifType.NotificationTypeDisplayName
+                : $"Unknown ({n.NotificationTypeID})";
+
+            var projectName = n.FirstProject?.ProjectName;
+            var description = BuildNotificationDescription(n.NotificationTypeID, projectName);
+
+            return new NotificationGridRow
+            {
+                NotificationID = n.NotificationID,
+                NotificationDate = n.NotificationDate,
+                NotificationTypeDisplayName = typeName,
+                Description = description,
+                ProjectCount = n.ProjectCount,
+                ProjectID = n.ProjectCount == 1 ? n.FirstProject?.ProjectID : null,
+                ProjectName = n.ProjectCount == 1 ? projectName : null,
+            };
+        }).ToList();
+
+        return notifications;
+    }
+
+    private static string BuildNotificationDescription(int notificationTypeID, string? projectName)
+    {
+        var projectRef = !string.IsNullOrEmpty(projectName) ? projectName : "a project";
+        return notificationTypeID switch
+        {
+            1 => "Project Update reminder sent.", // ProjectUpdateReminder
+            2 => $"The update for Project {projectRef} was submitted.", // ProjectUpdateSubmitted
+            3 => $"The update for Project {projectRef} has been returned.", // ProjectUpdateReturned
+            4 => $"The update for Project {projectRef} was approved.", // ProjectUpdateApproved
+            5 => "A customized notification was sent.", // Custom
+            6 => $"A Project proposal {projectRef} was submitted for review.", // ProjectSubmitted
+            7 => $"A Project proposal {projectRef} was approved for the 5-year list.", // ProjectApproved
+            8 => $"A Project proposal {projectRef} was returned for additional information.", // ProjectReturned
+            _ => "Notification sent."
+        };
+    }
+
+    public static async Task<List<StewardshipAreaItem>> ListStewardshipRegionsAsync(WADNRDbContext dbContext)
+    {
+        return await dbContext.DNRUplandRegions
+            .AsNoTracking()
+            .OrderBy(r => r.DNRUplandRegionName)
+            .Select(r => new StewardshipAreaItem
+            {
+                ID = r.DNRUplandRegionID,
+                Name = r.DNRUplandRegionName
+            })
+            .ToListAsync();
+    }
+
+    public static async Task<PersonDetail?> UpdateStewardshipAreasAsync(WADNRDbContext dbContext, int personID, PersonStewardshipAreasUpsertRequest request)
+    {
+        // Delete existing steward regions for this person
+        var existing = await dbContext.PersonStewardRegions
+            .Where(x => x.PersonID == personID)
+            .ToListAsync();
+        dbContext.PersonStewardRegions.RemoveRange(existing);
+
+        // Insert new ones
+        foreach (var regionID in request.DNRUplandRegionIDs)
+        {
+            dbContext.PersonStewardRegions.Add(new PersonStewardRegion
+            {
+                PersonID = personID,
+                DNRUplandRegionID = regionID
+            });
+        }
+
+        await dbContext.SaveChangesAsync();
 
         return await GetByIDAsDetailAsync(dbContext, personID);
     }

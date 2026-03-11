@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { StewardshipAreaItem } from './stewardship-area-item';
 import { RoleLookupItem } from './role-lookup-item';
 import { OrganizationLookupItem } from './organization-lookup-item';
 import { ProgramLookupItem } from './program-lookup-item';
@@ -48,6 +49,10 @@ export class PersonDetail {
     GlobalID?: string | null;
     ImpersonatedPersonID?: number | null;
     IsFullUser?: boolean;
+    StewardRegions?: Array<StewardshipAreaItem> | null;
+    StewardOrganizations?: Array<StewardshipAreaItem> | null;
+    StewardTaxonomyBranches?: Array<StewardshipAreaItem> | null;
+    NotificationCount?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -88,6 +93,10 @@ export interface PersonDetailForm {
     GlobalID?: FormControl<string>;
     ImpersonatedPersonID?: FormControl<number>;
     IsFullUser?: FormControl<boolean>;
+    StewardRegions?: FormControl<Array<StewardshipAreaItem>>;
+    StewardOrganizations?: FormControl<Array<StewardshipAreaItem>>;
+    StewardTaxonomyBranches?: FormControl<Array<StewardshipAreaItem>>;
+    NotificationCount?: FormControl<number>;
 }
 
 export class PersonDetailFormControls { 
@@ -422,6 +431,46 @@ export class PersonDetailFormControls {
         }
     );
     public static IsFullUser = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static StewardRegions = (value: FormControlState<Array<StewardshipAreaItem>> | Array<StewardshipAreaItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<StewardshipAreaItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static StewardOrganizations = (value: FormControlState<Array<StewardshipAreaItem>> | Array<StewardshipAreaItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<StewardshipAreaItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static StewardTaxonomyBranches = (value: FormControlState<Array<StewardshipAreaItem>> | Array<StewardshipAreaItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<StewardshipAreaItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static NotificationCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
