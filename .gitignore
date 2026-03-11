@@ -53,3 +53,8 @@ obj
 /package-lock.json
 /package.json
 /WADNR.GeoServer/data_dir/gwc/diskquota_page_store_hsql
+
+# Claude Code local files (not shared across machines)
+.claude/settings.local.json
+.claude/migration/
+.claude/migration-logs/
