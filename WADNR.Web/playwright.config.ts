@@ -23,7 +23,7 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         channel: "chrome", // Use system-installed Chrome (avoids Playwright CDN download behind corporate proxy)
       },
-      testIgnore: ["**/comparison/**"],
+      testIgnore: ["**/comparison/**", "**/visual-regression/**"],
     },
     {
       name: "comparison",
@@ -31,6 +31,22 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         channel: "chrome",
+      },
+    },
+    {
+      name: "visual",
+      testMatch: "visual-regression/*.vr.spec.ts",
+      use: {
+        ...devices["Desktop Chrome"],
+        channel: "chrome",
+      },
+      timeout: 60000,
+      expect: {
+        toHaveScreenshot: {
+          maxDiffPixelRatio: 0.01,
+          threshold: 0.2,
+          animations: "disabled",
+        },
       },
     },
   ],

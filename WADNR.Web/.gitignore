@@ -56,6 +56,7 @@ src/assets/config.json
 /playwright-report/
 /comparison-reports/
 /e2e-tests/comparison/.legacy-auth.json
+/e2e-tests/visual-regression/*-snapshots/
 
 # Environment
 .env

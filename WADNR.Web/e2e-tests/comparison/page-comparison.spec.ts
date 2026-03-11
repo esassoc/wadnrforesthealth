@@ -55,6 +55,9 @@ function getTokenMap(): Record<string, string | number> {
         classificationID: testData.classificationID,
         projectTypeID: testData.projectTypeID,
         fundSourceAllocationID: testData.fundSourceAllocationID,
+        programIndexID: testData.programIndexID,
+        projectCodeID: testData.projectCodeID,
+        classificationSystemID: testData.classificationSystemID,
     };
 }
 

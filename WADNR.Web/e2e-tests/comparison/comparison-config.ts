@@ -215,6 +215,11 @@ export const comparisonPages: Record<string, ComparisonPage[]> = {
 
     invoices: [
         {
+            name: "Invoices List",
+            angularPath: "/invoices",
+            legacyPath: "/Invoice/Index",
+        },
+        {
             name: "Invoice Detail",
             angularPath: "/invoices/{invoiceID}",
             legacyPath: "/Invoice/InvoiceDetail/{invoiceID}",
@@ -275,6 +280,48 @@ export const comparisonPages: Record<string, ComparisonPage[]> = {
         },
     ],
 
+    programIndices: [
+        {
+            name: "Program Indices List",
+            angularPath: "/program-indices",
+            legacyPath: "/ProgramIndex/Index",
+        },
+        {
+            name: "Program Index Detail",
+            angularPath: "/program-indices/{programIndexID}",
+            legacyPath: "/ProgramIndex/Detail/{programIndexID}",
+            tokens: ["programIndexID"],
+        },
+    ],
+
+    projectCodes: [
+        {
+            name: "Project Codes List",
+            angularPath: "/project-codes",
+            legacyPath: "/ProjectCode/Index",
+        },
+        {
+            name: "Project Code Detail",
+            angularPath: "/project-codes/{projectCodeID}",
+            legacyPath: "/ProjectCode/Detail/{projectCodeID}",
+            tokens: ["projectCodeID"],
+        },
+    ],
+
+    classificationSystems: [
+        {
+            name: "Classification Systems List",
+            angularPath: "/classification-systems",
+            legacyPath: "/ClassificationSystem/Index",
+        },
+        {
+            name: "Classification System Detail",
+            angularPath: "/classification-systems/{classificationSystemID}",
+            legacyPath: "/ClassificationSystem/Detail/{classificationSystemID}",
+            tokens: ["classificationSystemID"],
+        },
+    ],
+
     admin: [
         {
             name: "Roles List",
@@ -323,6 +370,49 @@ export const comparisonPages: Record<string, ComparisonPage[]> = {
             name: "Project Steward Organizations",
             angularPath: "/project-steward-organizations",
             legacyPath: "/ProjectStewardOrganization/Index",
+        },
+        {
+            name: "Upload Excel Files",
+            angularPath: "/upload-excel-files",
+            legacyPath: "/ExcelUpload/Index",
+        },
+        {
+            name: "Map Layers",
+            angularPath: "/map-layers",
+            legacyPath: "/MapLayer/Index",
+        },
+        {
+            name: "Jobs",
+            angularPath: "/jobs",
+            legacyPath: "/Job/Index",
+        },
+        {
+            name: "Manage Page Content",
+            angularPath: "/manage-page-content",
+            legacyPath: "/FirmaPage/Index",
+        },
+        {
+            name: "Manage Custom Pages",
+            angularPath: "/manage-custom-pages",
+            legacyPath: "/CustomPage/Index",
+        },
+        {
+            name: "Manage Find Your Forester",
+            angularPath: "/manage-find-your-forester",
+            legacyPath: "/FindYourForester/Manage",
+        },
+    ],
+
+    reports: [
+        {
+            name: "Report Templates",
+            angularPath: "/reports",
+            legacyPath: "/Reports/Index",
+        },
+        {
+            name: "Project Reports",
+            angularPath: "/reports/projects",
+            legacyPath: "/Reports/Projects",
         },
     ],
 

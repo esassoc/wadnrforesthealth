@@ -31,4 +31,7 @@ export const testData = {
     classificationID: 1075, // TODO: verify stable classification record
     projectTypeID: 2218, // TODO: verify stable project type record
     fundSourceAllocationID: 100, // TODO: verify stable fund source allocation record
+    programIndexID: 1, // TODO: verify stable program index record
+    projectCodeID: 1, // TODO: verify stable project code record
+    classificationSystemID: 1, // TODO: verify stable classification system record
 };
