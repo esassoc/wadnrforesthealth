@@ -385,3 +385,47 @@ Attribute directive that prepends a spinning FA icon to a button when true. Take
   {{ isSubmitting ? 'Saving...' : 'Save' }}
 </button>
 ```
+
+---
+
+## CSS Utility Classes
+
+**Always check `WADNR.Web/src/scss/utilities/` for available utility classes before using any CSS class for layout, spacing, or display.** This project does NOT use Bootstrap utility classes — it has its own.
+
+Key utility files and classes:
+
+### Spacing (`_margin.scss`)
+
+Uses `m/mt/mr/mb/ml/mx/my` and `p/pt/pr/pb/pl/px/py` with levels 1–6:
+
+| Class | Size |
+|-------|------|
+| `mr-1`, `ml-1`, etc. | 0.25rem |
+| `mr-2`, `ml-2`, etc. | 0.5rem |
+| `mr-3`, `ml-3`, etc. | 1rem |
+| `mr-4`, `ml-4`, etc. | 2rem |
+| `mr-5`, `ml-5`, etc. | 3rem |
+| `mr-6`, `ml-6`, etc. | 4rem |
+
+```html
+<!-- CORRECT: Project's own margin classes -->
+<button class="btn btn-secondary mr-2">First</button>
+<button class="btn btn-primary">Second</button>
+
+<!-- WRONG: Bootstrap 5 margin-end classes don't exist here -->
+<button class="btn btn-secondary me-2">First</button>
+```
+
+### Flexbox (`_flex.scss`)
+
+| Class | Effect |
+|-------|--------|
+| `flex` | Flex row, centered items, gap |
+| `flex-start` | Flex row, justify start |
+| `flex-between` | Flex row, space-between |
+| `flex-end` | Flex row, justify end |
+| `flex-center` | Flex row, centered |
+| `no-wrap` | `flex-wrap: nowrap` |
+| `fill` | `flex: 1` |
+| `ai-fs` | `align-items: flex-start` |
+| `ai-fe` | `align-items: flex-end` |
