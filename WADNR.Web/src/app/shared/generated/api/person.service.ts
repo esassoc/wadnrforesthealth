@@ -39,7 +39,7 @@ import { PersonUpsertRequestDto } from '../model/person-upsert-request-dto';
 // @ts-ignore
 import { PersonWithOrganizationLookupItem } from '../model/person-with-organization-lookup-item';
 // @ts-ignore
-import { ProjectGridRow } from '../model/project-grid-row';
+import { ProjectForPersonDetailGridRow } from '../model/project-for-person-detail-grid-row';
 // @ts-ignore
 import { StewardshipAreaItem } from '../model/stewardship-area-item';
 
@@ -502,9 +502,9 @@ export class PersonService extends BaseService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listProjectsPerson(personID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ProjectGridRow>>;
-    public listProjectsPerson(personID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ProjectGridRow>>>;
-    public listProjectsPerson(personID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ProjectGridRow>>>;
+    public listProjectsPerson(personID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ProjectForPersonDetailGridRow>>;
+    public listProjectsPerson(personID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ProjectForPersonDetailGridRow>>>;
+    public listProjectsPerson(personID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ProjectForPersonDetailGridRow>>>;
     public listProjectsPerson(personID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (personID === null || personID === undefined) {
             throw new Error('Required parameter personID was null or undefined when calling listProjectsPerson.');
@@ -539,7 +539,7 @@ export class PersonService extends BaseService {
 
         let localVarPath = `/people/${this.configuration.encodeParam({name: "personID", value: personID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/projects`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Array<ProjectGridRow>>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<Array<ProjectForPersonDetailGridRow>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

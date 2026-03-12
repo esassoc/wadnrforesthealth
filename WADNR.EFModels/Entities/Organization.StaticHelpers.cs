@@ -58,6 +58,16 @@ public static class Organizations
             .ToListAsync();
     }
 
+    public static async Task<List<OrganizationLookupItemWithShortName>> ListAsLookupItemWithShortNameAsync(WADNRDbContext dbContext)
+    {
+        return await dbContext.Organizations
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.OrganizationName)
+            .Select(OrganizationProjections.AsLookupItemWithShortName)
+            .ToListAsync();
+    }
+
     public static async Task<OrganizationDetail?> GetByIDAsDetailAsync(WADNRDbContext dbContext, int organizationID)
     {
         var entity = await dbContext.Organizations

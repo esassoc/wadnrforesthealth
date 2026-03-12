@@ -51,7 +51,7 @@ public class PersonDetail
         : $"{FirstName} {MiddleName} {LastName}";
 
     // Primary contact organizations
-    public List<OrganizationLookupItem> PrimaryContactOrganizations { get; set; } = new();
+    public List<OrganizationLookupItemWithShortName> PrimaryContactOrganizations { get; set; } = new();
 
     // Assigned programs (for users with CanEditProgram role)
     public List<ProgramLookupItem> AssignedPrograms { get; set; } = new();

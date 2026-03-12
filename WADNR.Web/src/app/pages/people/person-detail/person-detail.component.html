@@ -3,7 +3,7 @@
     <page-header [pageTitle]="person.FullName + (person.IsActive ? '' : ' (inactive)')" [templateRight]="headerButtons"></page-header>
 
     <ng-template #headerButtons>
-        <div class="flex">
+        <div class="flex header-actions">
         @if (canToggleActive$ | async) {
             @if (person.IsActive) {
                 <button class="btn btn-sm btn-warning" (click)="toggleActive(person)"><icon icon="CircleX"></icon> Inactivate</button>
@@ -186,47 +186,50 @@
                         </div>
                     </div>
 
-                    <!-- Primary Contact For Organizations -->
-                    <div class="card mt-3">
-                        <div class="card-header flex-between">
-                            <span class="card-title">Organizations for which {{ person.FullName }} is a Primary Contact</span>
-                            @if (canEditBasics$ | async) {
-                                <button class="card-header-edit-link" (click)="openEditPrimaryContactOrgs(person)" title="Edit Primary Contact Organizations">
-                                    <icon icon="Edit"></icon>
-                                </button>
-                            }
-                        </div>
-                        <div class="card-body">
-                            @if (person.PrimaryContactOrganizations && person.PrimaryContactOrganizations.length > 0) {
-                                <ul class="list-unstyled mb-0">
-                                    @for (org of person.PrimaryContactOrganizations; track org.OrganizationID) {
-                                        <li>
-                                            <a [routerLink]="['/organizations', org.OrganizationID]">{{ org.OrganizationName }}</a>
-                                        </li>
-                                    }
-                                </ul>
-                            } @else {
-                                <p class="text-muted mb-0">No organizations assigned.</p>
-                            }
-                        </div>
-                    </div>
                 }
             </div>
         </div>
+
+        <!-- Contributing Organization Primary Contact For Organizations -->
+        @if (person.IsFullUser) {
+            <div class="card mt-3">
+                <div class="card-header flex-between">
+                    <span class="card-title">Organizations for which {{ person.FullName }} is a Contributing Organization Primary Contact</span>
+                    @if (canEditBasics$ | async) {
+                        <button class="card-header-edit-link" (click)="openEditPrimaryContactOrgs(person)" title="Edit Contributing Organization Primary Contact Organizations">
+                            <icon icon="Edit"></icon>
+                        </button>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (person.PrimaryContactOrganizations && person.PrimaryContactOrganizations.length > 0) {
+                        <ul class="list-unstyled mb-0">
+                            @for (org of person.PrimaryContactOrganizations; track org.OrganizationID) {
+                                <li>
+                                    <a [routerLink]="['/organizations', org.OrganizationID]">{{ org.OrganizationName }} @if (org.OrganizationShortName) {({{ org.OrganizationShortName }})}</a>
+                                </li>
+                            }
+                        </ul>
+                    } @else {
+                        <p class="text-muted mb-0">No organizations assigned.</p>
+                    }
+                </div>
+            </div>
+        }
 
         <!-- Projects Grid -->
         <div class="card mt-3">
             <div class="card-header">
                 <span class="card-title">
                     @if (person.IsFullUser) {
-                        Projects for which {{ person.FullName }} is an Organization Primary Contact
+                        Projects for which {{ person.FullName }} is a Contributing Organization Primary Contact
                     } @else {
                         Projects for which {{ person.FullName }} is a Contact
                     }
                 </span>
             </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
-                <wadnr-grid [rowData]="projects$ | async" [columnDefs]="projectColumnDefs" downloadFileName="person-projects" [hideGlobalFilter]="true"></wadnr-grid>
+                <wadnr-grid [rowData]="projects$ | async" [columnDefs]="projectColumnDefs" [pinnedTotalsRow]="projectTotalsRow" downloadFileName="person-projects" [hideGlobalFilter]="true"></wadnr-grid>
             </div>
         </div>
 
@@ -235,14 +238,14 @@
             <div class="card-header">
                 <span class="card-title">
                     @if (person.IsFullUser) {
-                        Agreements for which {{ person.FullName }} is an Organization Primary Contact
+                        Agreements for which {{ person.FullName }} is a Contributing Organization Primary Contact
                     } @else {
                         Agreements for which {{ person.FullName }} is a Contact
                     }
                 </span>
             </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: agreementsIsLoading$ | async, loadingHeight: 300 }">
-                <wadnr-grid [rowData]="agreements$ | async" [columnDefs]="agreementColumnDefs" downloadFileName="person-agreements" [hideGlobalFilter]="true"></wadnr-grid>
+                <wadnr-grid [rowData]="agreements$ | async" [columnDefs]="agreementColumnDefs" [pinnedTotalsRow]="agreementTotalsRow" downloadFileName="person-agreements" [hideGlobalFilter]="true"></wadnr-grid>
             </div>
         </div>
 
@@ -252,6 +255,13 @@
                 <span class="card-title">Interaction Events for which {{ person.FullName }} is a Contact</span>
             </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: interactionEventsIsLoading$ | async, loadingHeight: 300 }">
+                @if (canEditInteractionEvents$ | async) {
+                    <div class="flex-end mb-2">
+                        <button class="btn btn-primary btn-sm" (click)="createNewInteractionEvent()">
+                            <span class="fas fa-plus"></span> Create New Interaction/Event
+                        </button>
+                    </div>
+                }
                 <wadnr-grid
                     [rowData]="interactionEvents$ | async"
                     [columnDefs]="interactionEventColumnDefs"

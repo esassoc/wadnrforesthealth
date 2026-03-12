@@ -77,6 +77,13 @@ public static class OrganizationProjections
             .Count()
     };
 
+    public static readonly Expression<Func<Organization, OrganizationLookupItemWithShortName>> AsLookupItemWithShortName = x => new OrganizationLookupItemWithShortName
+    {
+        OrganizationID = x.OrganizationID,
+        OrganizationName = x.OrganizationName,
+        OrganizationShortName = x.OrganizationShortName
+    };
+
     public static readonly Expression<Func<Organization, OrganizationGridRow>> AsGridRow = x => new OrganizationGridRow
     {
         OrganizationID = x.OrganizationID,

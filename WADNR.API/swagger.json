@@ -8791,6 +8791,46 @@
         "x-anonymous": true
       }
     },
+    "/organizations/lookup-with-short-name": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "ListLookupWithShortName_Organization",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationLookupItemWithShortName"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationLookupItemWithShortName"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationLookupItemWithShortName"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
     "/organizations/lead-implementers": {
       "get": {
         "tags": [
@@ -10053,7 +10093,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectGridRow"
+                    "$ref": "#/components/schemas/ProjectForPersonDetailGridRow"
                   }
                 }
               },
@@ -10061,7 +10101,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectGridRow"
+                    "$ref": "#/components/schemas/ProjectForPersonDetailGridRow"
                   }
                 }
               },
@@ -10069,7 +10109,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectGridRow"
+                    "$ref": "#/components/schemas/ProjectForPersonDetailGridRow"
                   }
                 }
               }
@@ -29390,6 +29430,24 @@
         },
         "additionalProperties": false
       },
+      "OrganizationLookupItemWithShortName": {
+        "type": "object",
+        "properties": {
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationShortName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "OrganizationTypeGridRow": {
         "type": "object",
         "properties": {
@@ -29777,7 +29835,7 @@
           "PrimaryContactOrganizations": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OrganizationLookupItem"
+              "$ref": "#/components/schemas/OrganizationLookupItemWithShortName"
             },
             "nullable": true
           },
@@ -32225,6 +32283,66 @@
             "items": {
               "$ref": "#/components/schemas/TagLookupItem"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectForPersonDetailGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectType": {
+            "$ref": "#/components/schemas/ProjectTypeLookupItem"
+          },
+          "ProjectStage": {
+            "$ref": "#/components/schemas/ProjectStageLookupItem"
+          },
+          "LeadImplementerOrganization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "PrimaryContactOrganization": {
+            "type": "string",
+            "nullable": true
+          },
+          "PlannedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalFunding": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
             "nullable": true
           }
         },

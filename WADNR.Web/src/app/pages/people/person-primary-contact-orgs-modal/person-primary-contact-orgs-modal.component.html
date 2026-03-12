@@ -1,35 +1,39 @@
 <div class="modal">
-<div class="modal-header">
-    <h3>Edit Primary Contact Organizations</h3>
-</div>
-<div class="modal-body">
-    <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+    <div class="modal-header">
+        <h3>Edit Contributing Organizations for which {{ personFullName }} is a Contributing Organization Primary Contact</h3>
+    </div>
+    <div class="modal-body">
+        <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
-    <p>Select organizations for which <strong>{{ personFullName }}</strong> is the primary contact.</p>
+        <form-field
+            fieldLabel="Contributing Organization to Add"
+            [type]="FormFieldType.Select"
+            [formControl]="orgSelectControl"
+            [formInputOptions]="availableOptions"
+            placeholder="Search for an organization..."
+            appendTo="body">
+        </form-field>
 
-    <form-field
-        [formControl]="selectedOrganizationIDs"
-        fieldLabel="Organizations"
-        [type]="FormFieldType.Select"
-        [formInputOptions]="organizationOptions"
-        formInputOptionLabel="Label"
-        formInputOptionValue="Value"
-        [multiple]="true"
-        placeholder="Select organizations">
-    </form-field>
-</div>
-<div class="modal-footer">
-    <button
-        class="btn btn-primary"
-        (click)="save()"
-        [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Saving...' : 'Save' }}
-    </button>
-    <button
-        class="btn btn-secondary"
-        (click)="cancel()"
-        [disabled]="isSubmitting">
-        Cancel
-    </button>
-</div>
+        <hr />
+
+        <label class="field-label">Contributing Organizations</label>
+        @if (selectedOrganizations.length > 0) {
+            <ul class="editor-list">
+                @for (org of sortedOrganizations; track org.OrganizationID) {
+                    <li>
+                        <a href="javascript:void(0)" (click)="removeOrganization(org.OrganizationID)" title="Remove" class="text-danger" style="text-decoration: none">
+                            <icon [icon]="'Delete'"></icon>
+                        </a>
+                        {{ getDisplayName(org) }}
+                    </li>
+                }
+            </ul>
+        } @else {
+            <p class="system-text">No contributing organizations assigned.</p>
+        }
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="save()" [disabled]="isSubmitting" [buttonLoading]="isSubmitting">Save</button>
+        <button class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
+    </div>
 </div>

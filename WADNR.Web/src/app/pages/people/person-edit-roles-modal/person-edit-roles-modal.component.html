@@ -29,8 +29,9 @@
         <form-field
             [formControl]="form.controls.ReceiveSupportEmails"
             fieldLabel="Receive Support Emails"
-            [type]="FormFieldType.Check"
-            checkLabel="Yes, receive support emails">
+            [type]="FormFieldType.Toggle"
+            [toggleTrue]="'Yes'"
+            [toggleFalse]="'No'">
         </form-field>
     </div>
     <div class="modal-footer">

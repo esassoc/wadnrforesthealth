@@ -586,7 +586,7 @@ public static class Projects
         return rows;
     }
 
-    public static async Task<List<ProjectGridRow>> ListForPersonAsGridRowAsync(WADNRDbContext dbContext, int personID)
+    public static async Task<List<ProjectForPersonDetailGridRow>> ListForPersonAsGridRowAsync(WADNRDbContext dbContext, int personID)
     {
         // Get distinct project IDs first to avoid DISTINCT on geometry columns
         var projectIDs = await dbContext.ProjectPeople
@@ -599,7 +599,7 @@ public static class Projects
         var projects = await dbContext.Projects
             .AsNoTracking()
             .Where(p => projectIDs.Contains(p.ProjectID))
-            .Select(ProjectProjections.AsGridRow)
+            .Select(ProjectProjections.AsForPersonDetailGridRow)
             .ToListAsync();
 
         return projects;

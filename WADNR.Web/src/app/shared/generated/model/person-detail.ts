@@ -9,7 +9,7 @@
  */
 import { StewardshipAreaItem } from './stewardship-area-item';
 import { RoleLookupItem } from './role-lookup-item';
-import { OrganizationLookupItem } from './organization-lookup-item';
+import { OrganizationLookupItemWithShortName } from './organization-lookup-item-with-short-name';
 import { ProgramLookupItem } from './program-lookup-item';
 
 
@@ -43,7 +43,7 @@ export class PersonDetail {
     InteractionEventCount?: number;
     readonly FullName?: string | null;
     readonly FullNameFirstLastAndMiddle?: string | null;
-    PrimaryContactOrganizations?: Array<OrganizationLookupItem> | null;
+    PrimaryContactOrganizations?: Array<OrganizationLookupItemWithShortName> | null;
     AssignedPrograms?: Array<ProgramLookupItem> | null;
     Authenticators?: Array<string> | null;
     GlobalID?: string | null;
@@ -87,7 +87,7 @@ export interface PersonDetailForm {
     InteractionEventCount?: FormControl<number>;
     FullName?: FormControl<string>;
     FullNameFirstLastAndMiddle?: FormControl<string>;
-    PrimaryContactOrganizations?: FormControl<Array<OrganizationLookupItem>>;
+    PrimaryContactOrganizations?: FormControl<Array<OrganizationLookupItemWithShortName>>;
     AssignedPrograms?: FormControl<Array<ProgramLookupItem>>;
     Authenticators?: FormControl<Array<string>>;
     GlobalID?: FormControl<string>;
@@ -380,7 +380,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static PrimaryContactOrganizations = (value: FormControlState<Array<OrganizationLookupItem>> | Array<OrganizationLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<OrganizationLookupItem>>(
+    public static PrimaryContactOrganizations = (value: FormControlState<Array<OrganizationLookupItemWithShortName>> | Array<OrganizationLookupItemWithShortName> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<OrganizationLookupItemWithShortName>>(
         value,
         formControlOptions ?? 
         {

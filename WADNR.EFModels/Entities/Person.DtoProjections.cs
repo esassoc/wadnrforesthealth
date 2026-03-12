@@ -30,10 +30,11 @@ public static class PersonProjections
         ProjectCount = x.ProjectPeople.Count,
         AgreementCount = x.AgreementPeople.Count,
         InteractionEventCount = x.InteractionEventContacts.Count,
-        PrimaryContactOrganizations = x.Organizations.Select(o => new OrganizationLookupItem
+        PrimaryContactOrganizations = x.Organizations.Select(o => new OrganizationLookupItemWithShortName
         {
             OrganizationID = o.OrganizationID,
-            OrganizationName = o.OrganizationName
+            OrganizationName = o.OrganizationName,
+            OrganizationShortName = o.OrganizationShortName
         }).ToList(),
         AssignedPrograms = x.ProgramPeople.Select(pp => new ProgramLookupItem
         {

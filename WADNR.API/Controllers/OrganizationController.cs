@@ -42,6 +42,14 @@ public class OrganizationController(
         return Ok(organizations);
     }
 
+    [HttpGet("lookup-with-short-name")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<OrganizationLookupItemWithShortName>>> ListLookupWithShortName()
+    {
+        var organizations = await Organizations.ListAsLookupItemWithShortNameAsync(DbContext);
+        return Ok(organizations);
+    }
+
     [HttpGet("lead-implementers")]
     [AllowAnonymous]
     [ProjectViewFeature]

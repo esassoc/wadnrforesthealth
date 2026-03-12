@@ -62,7 +62,7 @@ public class PersonController(
     [HttpGet("{personID}/projects")]
     [NormalUserFeature]
     [EntityNotFound(typeof(Person), "personID")]
-    public async Task<ActionResult<IEnumerable<ProjectGridRow>>> ListProjects([FromRoute] int personID)
+    public async Task<ActionResult<IEnumerable<ProjectForPersonDetailGridRow>>> ListProjects([FromRoute] int personID)
     {
         var projects = await Projects.ListForPersonAsGridRowAsync(DbContext, personID);
         return Ok(projects);
@@ -157,7 +157,7 @@ public class PersonController(
     }
 
     [HttpPut("{personID}/toggle-active")]
-    [AdminFeature]
+    [UserManageFeature]
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<PersonDetail>> ToggleActive([FromRoute] int personID)
     {

@@ -69,12 +69,12 @@ export class PeopleComponent {
             this.utilityFunctions.createBasicColumnDef("Base Role", "RoleName", {
                 CustomDropdownFilterField: "RoleName",
             }),
-            this.utilityFunctions.createBasicColumnDef("Supplemental Roles", "SupplementalRoles"),
+            this.utilityFunctions.createBasicColumnDef("Supplemental Role(s)", "SupplementalRoles"),
             this.utilityFunctions.createBasicColumnDef("Active?", "IsActive", {
                 CustomDropdownFilterField: "IsActive",
                 ValueFormatter: (params: any) => (params.value ? "Yes" : "No"),
             }),
-            this.utilityFunctions.createBasicColumnDef("Organization Primary Contact for Organizations", "PrimaryContactOrganizationCount"),
+            this.utilityFunctions.createBasicColumnDef("Contributing Organization Primary Contact for Organizations", "PrimaryContactOrganizationCount"),
             this.utilityFunctions.createDateColumnDef("Added On", "CreateDate", "M/d/yyyy"),
             this.utilityFunctions.createLinkColumnDef("Added By", "AddedByPersonName", "AddedByPersonID", {
                 InRouterLink: "/people/",

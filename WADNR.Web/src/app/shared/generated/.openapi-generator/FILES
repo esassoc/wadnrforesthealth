@@ -244,6 +244,7 @@ model/ogc-geometry-type.ts
 model/ordinates.ts
 model/organization-detail.ts
 model/organization-grid-row.ts
+model/organization-lookup-item-with-short-name.ts
 model/organization-lookup-item.ts
 model/organization-type-grid-row.ts
 model/organization-type-lookup-item.ts
@@ -321,6 +322,7 @@ model/project-external-link-update-item.ts
 model/project-fact-sheet.ts
 model/project-featured.ts
 model/project-focus-area-detail-grid-row.ts
+model/project-for-person-detail-grid-row.ts
 model/project-fund-source-allocation-request-item-request.ts
 model/project-funding-detail.ts
 model/project-funding-save-request.ts

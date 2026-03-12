@@ -1,7 +1,7 @@
 import { AsyncPipe, DatePipe } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, shareReplay, switchMap } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, switchMap } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 import { DialogService } from "@ngneat/dialog";
@@ -17,8 +17,10 @@ import { AsyncConfirmModalComponent, AsyncConfirmModalData } from "src/app/share
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { PersonService } from "src/app/shared/generated/api/person.service";
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
+import { ProjectService } from "src/app/shared/generated/api/project.service";
+import { SelectDropdownOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { PersonDetail } from "src/app/shared/generated/model/person-detail";
-import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row";
+import { ProjectForPersonDetailGridRow } from "src/app/shared/generated/model/project-for-person-detail-grid-row";
 import { AgreementGridRow } from "src/app/shared/generated/model/agreement-grid-row";
 import { InteractionEventGridRow } from "src/app/shared/generated/model/interaction-event-grid-row";
 import { NotificationGridRow } from "src/app/shared/generated/model/notification-grid-row";
@@ -46,7 +48,7 @@ export class PersonDetailComponent {
 
     public personID$: Observable<number>;
     public person$: Observable<PersonDetail>;
-    public projects$: Observable<ProjectGridRow[]>;
+    public projects$: Observable<ProjectForPersonDetailGridRow[]>;
     public agreements$: Observable<AgreementGridRow[]>;
     public interactionEvents$: Observable<InteractionEventGridRow[]>;
     public notifications$: Observable<NotificationGridRow[]>;
@@ -61,15 +63,26 @@ export class PersonDetailComponent {
     public canEditRoles$: Observable<boolean>;
     public canToggleActive$: Observable<boolean>;
     public canDelete$: Observable<boolean>;
+    public canEditInteractionEvents$: Observable<boolean>;
 
-    public projectColumnDefs: ColDef<ProjectGridRow>[] = [];
+    public projectColumnDefs: ColDef<ProjectForPersonDetailGridRow>[] = [];
     public agreementColumnDefs: ColDef<AgreementGridRow>[] = [];
     public interactionEventColumnDefs: ColDef<InteractionEventGridRow>[] = [];
     public notificationColumnDefs: ColDef<NotificationGridRow>[] = [];
 
+    public projectTotalsRow = {
+        fields: ["EstimatedTotalCost", "TotalFunding"],
+        filteredOnly: true,
+    };
+    public agreementTotalsRow = {
+        fields: ["AgreementAmount"],
+        filteredOnly: true,
+    };
+
     constructor(
         private personService: PersonService,
         private organizationService: OrganizationService,
+        private projectService: ProjectService,
         private authenticationService: AuthenticationService,
         private dialogService: DialogService,
         private utilityFunctions: UtilityFunctionsService,
@@ -151,9 +164,11 @@ export class PersonDetailComponent {
         this.canToggleActive$ = userAndPerson$.pipe(
             map(([person, currentUser]) => {
                 if (!currentUser || !person) return false;
-                const isAdmin = this.authenticationService.isUserAnAdministrator(currentUser);
+                const hasManageRole = this.authenticationService.doesUserHaveOneOfTheseRoles(currentUser, [
+                    RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanAddEditUsersContactsOrganizations,
+                ]);
                 const isNotSelf = person.PersonID !== currentUser.PersonID;
-                return isAdmin && isNotSelf;
+                return hasManageRole && person.IsFullUser && isNotSelf;
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
@@ -170,39 +185,103 @@ export class PersonDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.canEditInteractionEvents$ = this.authenticationService.currentUserSetObservable.pipe(
+            map((user) => this.authenticationService.canEditInteractionEvents(user)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
         this.projectColumnDefs = this.createProjectColumnDefs();
         this.agreementColumnDefs = this.createAgreementColumnDefs();
         this.interactionEventColumnDefs = this.createInteractionEventColumnDefs();
         this.notificationColumnDefs = this.createNotificationColumnDefs();
     }
 
-    private createProjectColumnDefs(): ColDef<ProjectGridRow>[] {
+    private createProjectColumnDefs(): ColDef<ProjectForPersonDetailGridRow>[] {
         return [
             this.utilityFunctions.createLinkColumnDef("Project Name", "ProjectName", "ProjectID", {
                 InRouterLink: "/projects/",
+                FieldDefinitionType: "ProjectName",
             }),
-            this.utilityFunctions.createBasicColumnDef("FHT #", "FhtProjectNumber"),
-            this.utilityFunctions.createBasicColumnDef("Project Type", "ProjectType.ProjectTypeName"),
-            this.utilityFunctions.createBasicColumnDef("Stage", "ProjectStage.ProjectStageName"),
-            this.utilityFunctions.createLinkColumnDef("Lead Implementer", "LeadImplementerOrganization.OrganizationName", "LeadImplementerOrganization.OrganizationID", {
+            this.utilityFunctions.createLinkColumnDef("Primary Contact Contributing Organization", "PrimaryContactOrganization", "LeadImplementerOrganization.OrganizationID", {
                 InRouterLink: "/organizations/",
+                FieldDefinitionType: "PrimaryContactOrganization",
+                FieldDefinitionLabelOverride: "Primary Contact Contributing Organization",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Project Stage", "ProjectStage.ProjectStageName", {
+                FieldDefinitionType: "ProjectStage",
+                CustomDropdownFilterField: "ProjectStage.ProjectStageName",
+            }),
+            this.utilityFunctions.createDateColumnDef("Project Initiation Date", "PlannedDate", "M/d/yyyy", {
+                FieldDefinitionType: "ProjectInitiationDate",
+            }),
+            this.utilityFunctions.createDateColumnDef("Expiration Date", "ExpirationDate", "M/d/yyyy", {
+                FieldDefinitionType: "ExpirationDate",
+            }),
+            this.utilityFunctions.createDateColumnDef("Completion Date", "CompletionDate", "M/d/yyyy", {
+                FieldDefinitionType: "CompletionDate",
+            }),
+            this.utilityFunctions.createCurrencyColumnDef("Estimated Total Cost", "EstimatedTotalCost", {
+                FieldDefinitionType: "EstimatedTotalCost",
+                MaxDecimalPlacesToDisplay: 2,
+            }),
+            this.utilityFunctions.createCurrencyColumnDef("Reported Expenditures", "TotalFunding", {
+                FieldDefinitionType: "ProjectFundSourceAllocationRequestTotalAmount",
+                MaxDecimalPlacesToDisplay: 2,
+            }),
+            this.utilityFunctions.createBasicColumnDef("Project Description", "ProjectDescription", {
+                FieldDefinitionType: "ProjectDescription",
             }),
         ];
     }
 
     private createAgreementColumnDefs(): ColDef<AgreementGridRow>[] {
         return [
-            this.utilityFunctions.createLinkColumnDef("Agreement", "AgreementTitle", "AgreementID", {
-                InRouterLink: "/agreements/",
+            this.utilityFunctions.createBasicColumnDef("Type", "AgreementTypeAbbrev", {
+                FieldDefinitionType: "AgreementType",
+                FieldDefinitionLabelOverride: "Type",
             }),
-            this.utilityFunctions.createBasicColumnDef("Number", "AgreementNumber"),
-            this.utilityFunctions.createBasicColumnDef("Type", "AgreementTypeAbbrev"),
-            this.utilityFunctions.createBasicColumnDef("Status", "AgreementStatusName"),
-            this.utilityFunctions.createLinkColumnDef("Organization", "Organization.OrganizationName", "Organization.OrganizationID", {
+            this.utilityFunctions.createBasicColumnDef("Number", "AgreementNumber", {
+                FieldDefinitionType: "AgreementNumber",
+                FieldDefinitionLabelOverride: "Number",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Fund Source", "FundSources", {
+                FieldDefinitionType: "FundSource",
+                ValueGetter: (params) => {
+                    const fundSources = params.data?.FundSources;
+                    if (!fundSources || fundSources.length === 0) return "";
+                    return fundSources.map((fs) => fs.FundSourceNumber).join(", ");
+                },
+            }),
+            this.utilityFunctions.createLinkColumnDef("Contributing Organization", "Organization.OrganizationName", "Organization.OrganizationID", {
                 InRouterLink: "/organizations/",
+                FieldDefinitionType: "Organization",
+                FieldDefinitionLabelOverride: "Contributing Organization",
             }),
-            this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy"),
-            this.utilityFunctions.createDateColumnDef("End Date", "EndDate", "M/d/yyyy"),
+            this.utilityFunctions.createLinkColumnDef("Agreement Title", "AgreementTitle", "AgreementID", {
+                InRouterLink: "/agreements/",
+                FieldDefinitionType: "AgreementTitle",
+            }),
+            this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy", {
+                FieldDefinitionType: "AgreementStartDate",
+                FieldDefinitionLabelOverride: "Start Date",
+            }),
+            this.utilityFunctions.createDateColumnDef("End Date", "EndDate", "M/d/yyyy", {
+                FieldDefinitionType: "AgreementEndDate",
+                FieldDefinitionLabelOverride: "End Date",
+            }),
+            this.utilityFunctions.createCurrencyColumnDef("Amount", "AgreementAmount", {
+                FieldDefinitionType: "AgreementAmount",
+                FieldDefinitionLabelOverride: "Amount",
+                MaxDecimalPlacesToDisplay: 2,
+            }),
+            this.utilityFunctions.createBasicColumnDef("Program Index", "ProgramIndices", {
+                FieldDefinitionType: "ProgramIndex",
+                CustomDropdownFilterField: "ProgramIndices",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Project Code", "ProjectCodes", {
+                FieldDefinitionType: "ProjectCode",
+                CustomDropdownFilterField: "ProjectCodes",
+            }),
         ];
     }
 
@@ -211,10 +290,17 @@ export class PersonDetailComponent {
             this.utilityFunctions.createLinkColumnDef("Title", "InteractionEventTitle", "InteractionEventID", {
                 InRouterLink: "/interactions-events/",
             }),
+            this.utilityFunctions.createBasicColumnDef("Description", "InteractionEventDescription"),
             this.utilityFunctions.createDateColumnDef("Date", "InteractionEventDate", "M/d/yyyy"),
-            this.utilityFunctions.createBasicColumnDef("Type", "InteractionEventType.InteractionEventTypeDisplayName"),
+            this.utilityFunctions.createBasicColumnDef("Type", "InteractionEventType.InteractionEventTypeDisplayName", {
+                FieldDefinitionType: "InteractionEventType",
+                CustomDropdownFilterField: "InteractionEventType.InteractionEventTypeDisplayName",
+            }),
             this.utilityFunctions.createLinkColumnDef("Staff Person", "StaffPerson.FullName", "StaffPerson.PersonID", {
                 InRouterLink: "/people/",
+                FieldDefinitionType: "DNRStaffPerson",
+                FieldDefinitionLabelOverride: "Staff Person",
+                CustomDropdownFilterField: "StaffPerson.FullName",
             }),
         ];
     }
@@ -248,7 +334,7 @@ export class PersonDetailComponent {
     }
 
     openEditPrimaryContactOrgs(person: PersonDetail): void {
-        this.organizationService.listLookupOrganization().subscribe(allOrgs => {
+        this.organizationService.listLookupWithShortNameOrganization().subscribe(allOrgs => {
             const dialogRef = this.dialogService.open(PersonPrimaryContactOrgsModalComponent, {
                 data: {
                     person,
@@ -305,6 +391,43 @@ export class PersonDetailComponent {
                 if (result) {
                     this.refreshData$.next();
                 }
+            });
+        });
+    }
+
+    createNewInteractionEvent(): void {
+        forkJoin({
+            people: this.personService.listLookupPerson(),
+            projects: this.projectService.listLookupProject(),
+        }).subscribe(({ people, projects }) => {
+            const personOptions: SelectDropdownOption[] = people.map((p) => ({
+                Value: p.PersonID,
+                Label: p.FullName,
+                disabled: false,
+            } as SelectDropdownOption));
+
+            const projectOptions: SelectDropdownOption[] = projects.map((p) => ({
+                Value: p.ProjectID,
+                Label: p.ProjectName,
+                disabled: false,
+            } as SelectDropdownOption));
+
+            import("../../projects/interaction-event-modal/interaction-event-modal.component").then(({ InteractionEventModalComponent }) => {
+                const dialogRef = this.dialogService.open(InteractionEventModalComponent, {
+                    data: {
+                        mode: "create" as const,
+                        projectID: 0,
+                        staffPersonOptions: personOptions,
+                        contactOptions: personOptions,
+                        projectOptions: projectOptions,
+                    },
+                    width: "600px",
+                });
+                dialogRef.afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.router.navigate(["/interactions-events", result.InteractionEventID]);
+                    }
+                });
             });
         });
     }

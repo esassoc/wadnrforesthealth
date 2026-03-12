@@ -39,7 +39,7 @@ export class AddContactModalComponent extends BaseModal implements OnInit {
     public form = new FormGroup({
         FirstName: new FormControl<string>("", { validators: [Validators.required, Validators.maxLength(100)] }),
         MiddleName: new FormControl<string>("", { validators: [Validators.maxLength(100)] }),
-        LastName: new FormControl<string>("", { validators: [Validators.maxLength(100)] }),
+        LastName: new FormControl<string>("", { validators: [Validators.required, Validators.maxLength(100)] }),
         Email: new FormControl<string>("", { validators: [Validators.maxLength(255)] }),
         Phone: new FormControl<string>("", { validators: [Validators.maxLength(30)] }),
         PersonAddress: new FormControl<string>("", { validators: [Validators.maxLength(255)] }),

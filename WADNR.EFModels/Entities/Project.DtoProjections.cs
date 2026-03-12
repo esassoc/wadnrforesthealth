@@ -218,6 +218,43 @@ public static class ProjectProjections
             }).ToList()
     };
 
+    public static readonly Expression<Func<Project, ProjectForPersonDetailGridRow>> AsForPersonDetailGridRow = x => new ProjectForPersonDetailGridRow
+    {
+        ProjectID = x.ProjectID,
+        ProjectName = x.ProjectName,
+        FhtProjectNumber = x.FhtProjectNumber,
+        ProjectType = new ProjectTypeLookupItem
+        {
+            ProjectTypeID = x.ProjectType.ProjectTypeID,
+            ProjectTypeName = x.ProjectType.ProjectTypeName
+        },
+        ProjectStage = new ProjectStageLookupItem
+        {
+            ProjectStageID = x.ProjectStageID,
+            ProjectStageName = x.ProjectStage.ProjectStageName
+        },
+        LeadImplementerOrganization = x.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => new OrganizationLookupItem
+            {
+                OrganizationID = po.Organization.OrganizationID,
+                OrganizationName = po.Organization.DisplayName
+            })
+            .SingleOrDefault(),
+        PrimaryContactOrganization = x.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => po.Organization.OrganizationShortName ?? po.Organization.DisplayName)
+            .SingleOrDefault(),
+        PlannedDate = x.PlannedDate,
+        ExpirationDate = x.ExpirationDate,
+        CompletionDate = x.CompletionDate,
+        EstimatedTotalCost = x.EstimatedTotalCost,
+        TotalFunding = x.ProjectFundSourceAllocationRequests.Any()
+            ? x.ProjectFundSourceAllocationRequests.Sum(r => (decimal?)r.TotalAmount)
+            : null,
+        ProjectDescription = x.ProjectDescription,
+    };
+
     public static readonly Expression<Func<Project, ProjectGridRow>> AsGridRow = x => new ProjectGridRow
     {
         ProjectID = x.ProjectID,

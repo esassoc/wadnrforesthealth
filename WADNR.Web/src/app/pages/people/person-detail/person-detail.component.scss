@@ -1,3 +1,12 @@
+.header-actions {
+    align-items: stretch;
+
+    .btn {
+        display: flex;
+        align-items: center;
+    }
+}
+
 .kv-pair-list {
     display: grid;
     grid-template-columns: minmax(140px, auto) 1fr;
