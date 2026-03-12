@@ -11,5 +11,6 @@ public static class FirmaHomePageImageProjections
         FileResourceGUID = x.FileResource.FileResourceGUID,
         Caption = x.Caption,
         SortOrder = x.SortOrder,
+        ContentLength = x.FileResource.ContentLength,
     };
 }

@@ -1,0 +1,42 @@
+<page-header pageTitle="Home Page Images">
+    <p class="help-text">
+        Upload images to display in the homepage carousel. Images should have centered focal points for the best display on different screen sizes. Use Sort Order to control the
+        display sequence.
+    </p>
+</page-header>
+
+<div class="page-body">
+    <div class="flex-end mb-3">
+        <button class="btn btn-sm btn-primary" (click)="openAddImageModal()"><icon [icon]="'Upload'"></icon> Add Photo</button>
+    </div>
+
+    @if (images$ | async; as images) {
+        @if (images.length > 0) {
+            <div class="photo-gallery">
+                @for (image of images; track image.FirmaHomePageImageID) {
+                    <div class="photo-item">
+                        <div class="photo-icons">
+                            <span class="edit-icon" (click)="openEditImageModal(image)" title="Edit">
+                                <icon [icon]="'Edit'"></icon>
+                            </span>
+                            <span class="delete-icon" (click)="deleteImage(image)" title="Delete">
+                                <icon [icon]="'Delete'"></icon>
+                            </span>
+                        </div>
+                        <div class="photo-thumbnail">
+                            <img [src]="getImageUrl(image)" [alt]="image.Caption" />
+                        </div>
+                        <div class="photo-caption">{{ image.Caption }}</div>
+                        @if (image.ContentLength) {
+                            <div class="photo-file-size">({{ formatFileSize(image.ContentLength) }})</div>
+                        }
+                    </div>
+                }
+            </div>
+        } @else {
+            <p class="system-text">No photos available. Click "Add Photo" to upload an image.</p>
+        }
+    } @else {
+        <div class="loading-placeholder" style="min-height: 200px"></div>
+    }
+</div>
