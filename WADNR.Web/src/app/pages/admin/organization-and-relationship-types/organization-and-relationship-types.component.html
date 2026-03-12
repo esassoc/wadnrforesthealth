@@ -1,18 +1,18 @@
-<page-header pageTitle="Manage Organization Types"></page-header>
+<page-header pageTitle="Manage Contributing Organization Types"></page-header>
 
 <div class="page-body">
     <!-- Organization Types -->
     <div class="flex-between no-wrap">
-        <h4>Organization Types</h4>
+        <h4>Contributing Organization Types</h4>
         @if (isAdmin) {
-            <button class="btn btn-sm btn-primary" (click)="openCreateOrgType()">New Organization Type</button>
+            <button class="btn btn-sm btn-primary" (click)="openCreateOrgType()">New Contributing Organization Type</button>
         }
     </div>
-    <div>
+    <div class="mt-2">
         <wadnr-grid
             [rowData]="orgTypes$ | async"
             [columnDefs]="orgTypeColumnDefs"
-            downloadFileName="organization-types"
+            downloadFileName="contributing-organization-types"
             [sizeColumnsToFitGrid]="true">
         </wadnr-grid>
     </div>
@@ -21,10 +21,10 @@
     <div class="flex-between no-wrap mt-4">
         <h4>Project Relationship Types</h4>
         @if (isAdmin) {
-            <button class="btn btn-sm btn-primary" (click)="openCreateRelType()">New Relationship Type</button>
+            <button class="btn btn-sm btn-primary" (click)="openCreateRelType()">New Project Relationship Type</button>
         }
     </div>
-    <div>
+    <div class="mt-2">
         <wadnr-grid
             [rowData]="relTypes$ | async"
             [columnDefs]="relTypeColumnDefs"

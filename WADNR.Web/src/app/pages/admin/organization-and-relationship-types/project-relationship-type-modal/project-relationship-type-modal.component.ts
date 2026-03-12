@@ -7,6 +7,7 @@ import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-aler
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 
 import { RelationshipTypeService } from "src/app/shared/generated/api/relationship-type.service";
 import { RelationshipTypeGridRow } from "src/app/shared/generated/model/relationship-type-grid-row";
@@ -17,7 +18,7 @@ import {
     RelationshipTypeUpsertRequestFormControls
 } from "src/app/shared/generated/model/relationship-type-upsert-request";
 
-export interface RelationshipTypeModalData {
+export interface ProjectRelationshipTypeModalData {
     mode: "create" | "edit";
     relationshipType?: RelationshipTypeGridRow;
     organizationTypes: OrganizationTypeLookupItem[];
@@ -26,32 +27,43 @@ export interface RelationshipTypeModalData {
 }
 
 @Component({
-    selector: "relationship-type-modal",
+    selector: "project-relationship-type-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent],
-    templateUrl: "./relationship-type-modal.component.html",
+    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, ButtonLoadingDirective],
+    templateUrl: "./project-relationship-type-modal.component.html",
 })
-export class RelationshipTypeModalComponent extends BaseModal implements OnInit {
-    public ref: DialogRef<RelationshipTypeModalData, RelationshipTypeGridRow | null> = inject(DialogRef);
+export class ProjectRelationshipTypeModalComponent extends BaseModal implements OnInit {
+    public ref: DialogRef<ProjectRelationshipTypeModalData, RelationshipTypeGridRow | null> = inject(DialogRef);
 
     public FormFieldType = FormFieldType;
     public mode: "create" | "edit" = "create";
     public relationshipType?: RelationshipTypeGridRow;
     public isSubmitting = false;
 
-    public orgTypeOptions: { Value: number; Label: string; disabled: boolean }[] = [];
-    public selectedOrgTypeIDs = new FormControl<number[]>([]);
+    public orgTypeCheckboxes: { id: number; label: string; control: FormControl<boolean> }[] = [];
 
     public form = new FormGroup<RelationshipTypeUpsertRequestForm>({
         RelationshipTypeName: RelationshipTypeUpsertRequestFormControls.RelationshipTypeName("", {
             validators: [Validators.required, Validators.maxLength(200)]
         }),
-        RelationshipTypeDescription: RelationshipTypeUpsertRequestFormControls.RelationshipTypeDescription(""),
-        CanStewardProjects: RelationshipTypeUpsertRequestFormControls.CanStewardProjects(false),
-        IsPrimaryContact: RelationshipTypeUpsertRequestFormControls.IsPrimaryContact(false),
-        CanOnlyBeRelatedOnceToAProject: RelationshipTypeUpsertRequestFormControls.CanOnlyBeRelatedOnceToAProject(false),
-        ShowOnFactSheet: RelationshipTypeUpsertRequestFormControls.ShowOnFactSheet(false),
-        ReportInAccomplishmentsDashboard: RelationshipTypeUpsertRequestFormControls.ReportInAccomplishmentsDashboard(false),
+        RelationshipTypeDescription: RelationshipTypeUpsertRequestFormControls.RelationshipTypeDescription("", {
+            validators: [Validators.required]
+        }),
+        CanStewardProjects: RelationshipTypeUpsertRequestFormControls.CanStewardProjects(false, {
+            validators: [Validators.required]
+        }),
+        IsPrimaryContact: RelationshipTypeUpsertRequestFormControls.IsPrimaryContact(false, {
+            validators: [Validators.required]
+        }),
+        CanOnlyBeRelatedOnceToAProject: RelationshipTypeUpsertRequestFormControls.CanOnlyBeRelatedOnceToAProject(false, {
+            validators: [Validators.required]
+        }),
+        ShowOnFactSheet: RelationshipTypeUpsertRequestFormControls.ShowOnFactSheet(false, {
+            validators: [Validators.required]
+        }),
+        ReportInAccomplishmentsDashboard: RelationshipTypeUpsertRequestFormControls.ReportInAccomplishmentsDashboard(false, {
+            validators: [Validators.required]
+        }),
     });
 
     constructor(
@@ -66,20 +78,24 @@ export class RelationshipTypeModalComponent extends BaseModal implements OnInit 
         this.mode = data?.mode ?? "create";
         this.relationshipType = data?.relationshipType;
 
-        this.orgTypeOptions = (data?.organizationTypes ?? []).map(ot => ({
-            Value: ot.OrganizationTypeID,
-            Label: ot.OrganizationTypeName,
-            disabled: false,
-        }));
-
-        // Pre-select org types in edit mode by mapping names back to IDs
+        // Build set of pre-selected org type IDs for edit mode
+        const selectedIDs = new Set<number>();
         if (this.mode === "edit" && this.relationshipType) {
             const nameToID = data?.orgTypeNameToID ?? new Map();
-            const selectedIDs = (this.relationshipType.AssociatedOrganizationTypeNames ?? [])
+            (this.relationshipType.AssociatedOrganizationTypeNames ?? [])
                 .map(name => nameToID.get(name))
-                .filter((id): id is number => id != null);
-            this.selectedOrgTypeIDs.setValue(selectedIDs);
+                .filter((id): id is number => id != null)
+                .forEach(id => selectedIDs.add(id));
+        }
 
+        // Build checkbox array with FormControls
+        this.orgTypeCheckboxes = (data?.organizationTypes ?? []).map(ot => ({
+            id: ot.OrganizationTypeID,
+            label: ot.OrganizationTypeName,
+            control: new FormControl<boolean>(selectedIDs.has(ot.OrganizationTypeID), { nonNullable: true }),
+        }));
+
+        if (this.mode === "edit" && this.relationshipType) {
             this.form.patchValue({
                 RelationshipTypeName: this.relationshipType.RelationshipTypeName,
                 RelationshipTypeDescription: this.relationshipType.RelationshipTypeDescription,
@@ -93,7 +109,7 @@ export class RelationshipTypeModalComponent extends BaseModal implements OnInit 
     }
 
     get modalTitle(): string {
-        return this.mode === "create" ? "New Relationship Type" : "Edit Relationship Type";
+        return this.mode === "create" ? "New Project Relationship Type" : "Edit Project Relationship Type";
     }
 
     save(): void {
@@ -107,7 +123,7 @@ export class RelationshipTypeModalComponent extends BaseModal implements OnInit 
 
         const dto = new RelationshipTypeUpsertRequest({
             ...this.form.value,
-            OrganizationTypeIDs: this.selectedOrgTypeIDs.value ?? [],
+            OrganizationTypeIDs: this.orgTypeCheckboxes.filter(c => c.control.value).map(c => c.id),
         });
 
         const request$ = this.mode === "create"
@@ -117,8 +133,8 @@ export class RelationshipTypeModalComponent extends BaseModal implements OnInit 
         request$.subscribe({
             next: (result) => {
                 const message = this.mode === "create"
-                    ? "Relationship Type created successfully."
-                    : "Relationship Type updated successfully.";
+                    ? "Project Relationship Type created successfully."
+                    : "Project Relationship Type updated successfully.";
                 this.pushGlobalSuccess(message);
                 this.ref.close(result);
             },

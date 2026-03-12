@@ -19,7 +19,7 @@ import { OrganizationTypeLookupItem } from "src/app/shared/generated/model/organ
 import { OrganizationTypeGridRow } from "src/app/shared/generated/model/organization-type-grid-row";
 import { RelationshipTypeGridRow } from "src/app/shared/generated/model/relationship-type-grid-row";
 import { OrganizationTypeModalComponent, OrganizationTypeModalData } from "./organization-type-modal/organization-type-modal.component";
-import { RelationshipTypeModalComponent, RelationshipTypeModalData } from "./relationship-type-modal/relationship-type-modal.component";
+import { ProjectRelationshipTypeModalComponent, ProjectRelationshipTypeModalData } from "./project-relationship-type-modal/project-relationship-type-modal.component";
 
 @Component({
     selector: "organization-and-relationship-types",
@@ -87,11 +87,11 @@ export class OrganizationAndRelationshipTypesComponent implements OnInit {
         }
 
         this.orgTypeColumnDefs.push(
-            this.utilityFunctions.createBasicColumnDef("Organization Type Name", "OrganizationTypeName", { Width: 240 }),
+            this.utilityFunctions.createBasicColumnDef("Contributing Organization Type Name", "OrganizationTypeName", { Width: 240 }),
             this.utilityFunctions.createBasicColumnDef("Abbreviation", "OrganizationTypeAbbreviation", { Width: 200 }),
             this.utilityFunctions.createBooleanColumnDef("Is Default?", "IsDefaultOrganizationType", { Width: 80, CustomDropdownFilterField: "IsDefaultOrganizationType" }),
             this.utilityFunctions.createBooleanColumnDef("Is Funding Type?", "IsFundingType", { Width: 80, CustomDropdownFilterField: "IsFundingType" }),
-            this.utilityFunctions.createBooleanColumnDef("Show on Project Map?", "ShowOnProjectMaps", { Width: 150, CustomDropdownFilterField: "ShowOnProjectMaps" }),
+            this.utilityFunctions.createBooleanColumnDef("Show On Maps?", "ShowOnProjectMaps", { Width: 150, CustomDropdownFilterField: "ShowOnProjectMaps" }),
             {
                 headerName: "Legend Color",
                 field: "LegendColor",
@@ -170,7 +170,7 @@ export class OrganizationAndRelationshipTypesComponent implements OnInit {
 
     async confirmDeleteOrgType(orgType: OrganizationTypeGridRow): Promise<void> {
         const confirmed = await this.confirmService.confirm({
-            title: "Delete Organization Type",
+            title: "Delete Contributing Organization Type",
             message: `Are you sure you want to delete "${orgType.OrganizationTypeName}"? This action cannot be undone.`,
             buttonTextYes: "Delete",
             buttonClassYes: "btn-danger",
@@ -180,7 +180,7 @@ export class OrganizationAndRelationshipTypesComponent implements OnInit {
         if (confirmed) {
             this.organizationTypeService.deleteOrganizationType(orgType.OrganizationTypeID).subscribe({
                 next: () => {
-                    this.alertService.pushAlert(new Alert("Organization Type deleted successfully.", AlertContext.Success));
+                    this.alertService.pushAlert(new Alert("Contributing Organization Type deleted successfully.", AlertContext.Success));
                     this.refreshOrgTypes$.next();
                 },
                 error: (err) => {
@@ -194,12 +194,12 @@ export class OrganizationAndRelationshipTypesComponent implements OnInit {
     // Relationship Type CRUD
     openCreateRelType(): void {
         this.organizationTypeService.listLookupOrganizationType().subscribe(orgTypes => {
-            const dialogRef = this.dialogService.open(RelationshipTypeModalComponent, {
+            const dialogRef = this.dialogService.open(ProjectRelationshipTypeModalComponent, {
                 data: {
                     mode: "create",
                     organizationTypes: orgTypes,
                     orgTypeNameToID: new Map(orgTypes.map(ot => [ot.OrganizationTypeName, ot.OrganizationTypeID])),
-                } as RelationshipTypeModalData,
+                } as ProjectRelationshipTypeModalData,
                 width: "600px",
             });
             dialogRef.afterClosed$.subscribe(result => {
@@ -212,13 +212,13 @@ export class OrganizationAndRelationshipTypesComponent implements OnInit {
 
     openEditRelType(relType: RelationshipTypeGridRow): void {
         this.organizationTypeService.listLookupOrganizationType().subscribe(orgTypes => {
-            const dialogRef = this.dialogService.open(RelationshipTypeModalComponent, {
+            const dialogRef = this.dialogService.open(ProjectRelationshipTypeModalComponent, {
                 data: {
                     mode: "edit",
                     relationshipType: relType,
                     organizationTypes: orgTypes,
                     orgTypeNameToID: new Map(orgTypes.map(ot => [ot.OrganizationTypeName, ot.OrganizationTypeID])),
-                } as RelationshipTypeModalData,
+                } as ProjectRelationshipTypeModalData,
                 width: "600px",
             });
             dialogRef.afterClosed$.subscribe(result => {
@@ -231,7 +231,7 @@ export class OrganizationAndRelationshipTypesComponent implements OnInit {
 
     async confirmDeleteRelType(relType: RelationshipTypeGridRow): Promise<void> {
         const confirmed = await this.confirmService.confirm({
-            title: "Delete Relationship Type",
+            title: "Delete Project Relationship Type",
             message: `Are you sure you want to delete "${relType.RelationshipTypeName}"? This action cannot be undone.`,
             buttonTextYes: "Delete",
             buttonClassYes: "btn-danger",
@@ -241,7 +241,7 @@ export class OrganizationAndRelationshipTypesComponent implements OnInit {
         if (confirmed) {
             this.relationshipTypeService.deleteRelationshipType(relType.RelationshipTypeID).subscribe({
                 next: () => {
-                    this.alertService.pushAlert(new Alert("Relationship Type deleted successfully.", AlertContext.Success));
+                    this.alertService.pushAlert(new Alert("Project Relationship Type deleted successfully.", AlertContext.Success));
                     this.refreshRelTypes$.next();
                 },
                 error: (err) => {

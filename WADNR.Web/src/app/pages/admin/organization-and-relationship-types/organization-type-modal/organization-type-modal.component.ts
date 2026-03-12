@@ -7,6 +7,7 @@ import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-aler
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 
 import { OrganizationTypeService } from "src/app/shared/generated/api/organization-type.service";
 import { OrganizationTypeGridRow } from "src/app/shared/generated/model/organization-type-grid-row";
@@ -24,8 +25,9 @@ export interface OrganizationTypeModalData {
 @Component({
     selector: "organization-type-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent],
+    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, ButtonLoadingDirective],
     templateUrl: "./organization-type-modal.component.html",
+    styleUrl: "./organization-type-modal.component.scss",
 })
 export class OrganizationTypeModalComponent extends BaseModal implements OnInit {
     public ref: DialogRef<OrganizationTypeModalData, OrganizationTypeGridRow | null> = inject(DialogRef);
@@ -45,9 +47,9 @@ export class OrganizationTypeModalComponent extends BaseModal implements OnInit 
         LegendColor: OrganizationTypeUpsertRequestFormControls.LegendColor("", {
             validators: [Validators.required, Validators.maxLength(10)]
         }),
-        ShowOnProjectMaps: OrganizationTypeUpsertRequestFormControls.ShowOnProjectMaps(false),
-        IsDefaultOrganizationType: OrganizationTypeUpsertRequestFormControls.IsDefaultOrganizationType(false),
-        IsFundingType: OrganizationTypeUpsertRequestFormControls.IsFundingType(false),
+        ShowOnProjectMaps: OrganizationTypeUpsertRequestFormControls.ShowOnProjectMaps(false, { validators: [Validators.required] }),
+        IsDefaultOrganizationType: OrganizationTypeUpsertRequestFormControls.IsDefaultOrganizationType(false, { validators: [Validators.required] }),
+        IsFundingType: OrganizationTypeUpsertRequestFormControls.IsFundingType(false, { validators: [Validators.required] }),
     });
 
     constructor(
@@ -75,7 +77,7 @@ export class OrganizationTypeModalComponent extends BaseModal implements OnInit 
     }
 
     get modalTitle(): string {
-        return this.mode === "create" ? "New Organization Type" : "Edit Organization Type";
+        return this.mode === "create" ? "New Contributing Organization Type" : "Edit Contributing Organization Type";
     }
 
     save(): void {
@@ -96,8 +98,8 @@ export class OrganizationTypeModalComponent extends BaseModal implements OnInit 
         request$.subscribe({
             next: (result) => {
                 const message = this.mode === "create"
-                    ? "Organization Type created successfully."
-                    : "Organization Type updated successfully.";
+                    ? "Contributing Organization Type created successfully."
+                    : "Contributing Organization Type updated successfully.";
                 this.pushGlobalSuccess(message);
                 this.ref.close(result);
             },
