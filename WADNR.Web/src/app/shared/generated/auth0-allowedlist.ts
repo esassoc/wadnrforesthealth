@@ -28,9 +28,9 @@ const ANON_EXACT: ExactMap = {
 
 const SECURED_EXACT: ExactMap = {
   'DELETE': [],
-  'GET': ["/api/Job/import-history","/custom-pages","/custom-rich-texts","/external-map-layers","/find-your-forester/assignable-people","/focus-areas","/focus-areas/locations","/gis-bulk-import/source-organizations","/loa-upload/dashboard","/people","/people/lookup","/people/lookup/wadnr","/people/stewardship-areas/regions","/programs/eligible-editors","/project-types/taxonomy","/projects/lookup","/projects/pending","/projects/update-status","/report-templates","/report-templates/models","/roles","/vendors","/vendors/search"],
-  'POST': ["/agreements","/agreements/upload-file","/api/Job/clear-outdated-imports","/classifications","/classifications/upload-key-image","/counties","/custom-pages","/dnr-upland-regions","/external-map-layers","/find-your-forester/work-units/bulk-assign","/focus-areas","/fund-source-allocation-notes","/fund-source-allocation-notes-internal","/fund-source-allocations","/fund-sources","/gis-bulk-import/attempts","/impersonation/stop","/interactions-events","/invoice-payment-requests","/invoices","/loa-upload/publish","/organization-types","/organizations","/people/contacts","/priority-landscapes","/programs","/programs/upload-example-geospatial-file","/programs/upload-program-file","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/relationship-types","/report-templates","/report-templates/generate-reports","/sitkacapture/generate-pdf","/support-requests","/tags","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
-  'PUT': ["/classifications/sort-order"],
+  'GET': ["/api/Job/import-history","/custom-pages","/custom-rich-texts","/external-map-layers","/find-your-forester/assignable-people","/focus-areas","/focus-areas/locations","/gis-bulk-import/source-organizations","/loa-upload/dashboard","/people","/people/lookup","/people/lookup/wadnr","/people/stewardship-areas/regions","/programs/eligible-editors","/project-types/taxonomy","/project-update-configurations","/projects/lookup","/projects/no-contact-count","/projects/pending","/projects/people-receiving-reminders","/projects/update-status","/report-templates","/report-templates/models","/roles","/vendors","/vendors/search"],
+  'POST': ["/agreements","/agreements/upload-file","/api/Job/clear-outdated-imports","/classifications","/classifications/upload-key-image","/counties","/custom-pages","/dnr-upland-regions","/external-map-layers","/find-your-forester/work-units/bulk-assign","/firma-home-page-images","/focus-areas","/fund-source-allocation-notes","/fund-source-allocation-notes-internal","/fund-source-allocations","/fund-sources","/gis-bulk-import/attempts","/impersonation/stop","/interactions-events","/invoice-payment-requests","/invoices","/loa-upload/publish","/organization-types","/organizations","/people/contacts","/priority-landscapes","/programs","/programs/upload-example-geospatial-file","/programs/upload-program-file","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/projects/send-custom-notification","/projects/send-preview-notification","/relationship-types","/report-templates","/report-templates/generate-reports","/sitkacapture/generate-pdf","/support-requests","/tags","/tags/bulk-tag-projects","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
+  'PUT': ["/classifications/sort-order","/firma-home-page-images/sort-order","/project-types/sort-order","/project-update-configurations","/projects/featured"],
 };
 
 const ANON_REGEX: RegexMap = {
@@ -134,6 +134,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/custom-pages/[^/]+$"),
     new RegExp("^/dnr-upland-regions/[^/]+$"),
     new RegExp("^/external-map-layers/[^/]+$"),
+    new RegExp("^/firma-home-page-images/[^/]+$"),
     new RegExp("^/focus-areas/[^/]+$"),
     new RegExp("^/focus-areas/[^/]+/location$"),
     new RegExp("^/fund-source-allocation-notes-internal/[^/]+$"),
@@ -213,6 +214,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/project-internal-notes/[^/]+$"),
     new RegExp("^/project-types/[^/]+/projects$"),
     new RegExp("^/project-types/[^/]+/projects/mapped-point/feature-collection$"),
+    new RegExp("^/project-update-configurations/email-preview/[^/]+$"),
     new RegExp("^/projects/[^/]+/audit-logs$"),
     new RegExp("^/projects/[^/]+/basics/edit$"),
     new RegExp("^/projects/[^/]+/classifications/edit$"),
@@ -276,6 +278,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/api/Job/[^/]+/trigger$"),
     new RegExp("^/focus-areas/[^/]+/location/approve-gdb$"),
     new RegExp("^/focus-areas/[^/]+/location/upload-gdb$"),
+    new RegExp("^/fund-source-allocations/[^/]+/duplicate$"),
     new RegExp("^/fund-source-allocations/[^/]+/files$"),
     new RegExp("^/fund-sources/[^/]+/files$"),
     new RegExp("^/fund-sources/[^/]+/notes$"),
@@ -331,6 +334,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/dnr-upland-regions/[^/]+$"),
     new RegExp("^/external-map-layers/[^/]+$"),
     new RegExp("^/field-definitions/[^/]+$"),
+    new RegExp("^/firma-home-page-images/[^/]+$"),
     new RegExp("^/focus-areas/[^/]+$"),
     new RegExp("^/fund-source-allocation-notes-internal/[^/]+$"),
     new RegExp("^/fund-source-allocation-notes/[^/]+$"),

@@ -17,11 +17,18 @@ export class ProjectUpdateStatusGridRow {
     ProjectStageName?: string | null;
     LeadImplementerOrganizationName?: string | null;
     EstimatedTotalCost?: number | null;
+    OrganizationPrimaryContactName?: string | null;
+    PlannedDate?: string | null;
+    ExpirationDate?: string | null;
+    CompletionDate?: string | null;
+    TotalFunding?: number | null;
     ProjectUpdateBatchID?: number | null;
     ProjectUpdateStateID?: number | null;
     ProjectUpdateStateName?: string | null;
     LastUpdateDate?: string | null;
     LastUpdatedByPersonName?: string | null;
+    LastSubmittedDate?: string | null;
+    LastApprovedDate?: string | null;
     IsMyProject?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -35,11 +42,18 @@ export interface ProjectUpdateStatusGridRowForm {
     ProjectStageName?: FormControl<string>;
     LeadImplementerOrganizationName?: FormControl<string>;
     EstimatedTotalCost?: FormControl<number>;
+    OrganizationPrimaryContactName?: FormControl<string>;
+    PlannedDate?: FormControl<string>;
+    ExpirationDate?: FormControl<string>;
+    CompletionDate?: FormControl<string>;
+    TotalFunding?: FormControl<number>;
     ProjectUpdateBatchID?: FormControl<number>;
     ProjectUpdateStateID?: FormControl<number>;
     ProjectUpdateStateName?: FormControl<string>;
     LastUpdateDate?: FormControl<string>;
     LastUpdatedByPersonName?: FormControl<string>;
+    LastSubmittedDate?: FormControl<string>;
+    LastApprovedDate?: FormControl<string>;
     IsMyProject?: FormControl<boolean>;
 }
 
@@ -104,6 +118,56 @@ export class ProjectUpdateStatusGridRowFormControls {
             ],
         }
     );
+    public static OrganizationPrimaryContactName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PlannedDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ExpirationDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CompletionDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static TotalFunding = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
     public static ProjectUpdateBatchID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
@@ -145,6 +209,26 @@ export class ProjectUpdateStatusGridRowFormControls {
         }
     );
     public static LastUpdatedByPersonName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static LastSubmittedDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static LastApprovedDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

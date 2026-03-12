@@ -15,6 +15,7 @@ export class FirmaHomePageImageDetail {
     FileResourceGUID?: string;
     Caption?: string | null;
     SortOrder?: number;
+    ContentLength?: number | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -25,6 +26,7 @@ export interface FirmaHomePageImageDetailForm {
     FileResourceGUID?: FormControl<string>;
     Caption?: FormControl<string>;
     SortOrder?: FormControl<number>;
+    ContentLength?: FormControl<number>;
 }
 
 export class FirmaHomePageImageDetailFormControls { 
@@ -59,6 +61,16 @@ export class FirmaHomePageImageDetailFormControls {
         }
     );
     public static SortOrder = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ContentLength = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

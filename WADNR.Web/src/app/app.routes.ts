@@ -310,12 +310,12 @@ export const routes: Routes = [
     },
     { path: "my-projects", title: "My Projects", canActivate: [authGuard], loadComponent: () => import("./pages/my-projects/my-projects.component").then((m) => m.MyProjectsComponent) },
     { path: "pending-projects", title: "Pending Projects", canActivate: [authGuard], loadComponent: () => import("./pages/pending-projects/pending-projects.component").then((m) => m.PendingProjectsComponent) },
-    // TODO: Migrate from legacy - carousel of featured projects (public). API has ListFeatured endpoint.
-    { path: "featured-projects", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    { path: "featured-projects", title: "Featured Projects", canActivate: [adminGuard], loadComponent: () => import("./pages/featured-projects/featured-projects.component").then((m) => m.FeaturedProjectsComponent) },
+    { path: "project-updates", title: "Project Updates", canActivate: [adminGuard], loadComponent: () => import("./pages/project-updates/project-updates.component").then((m) => m.ProjectUpdatesComponent) },
+    { path: "homepage-configuration", title: "Homepage Configuration", canActivate: [adminGuard], loadComponent: () => import("./pages/homepage-configuration/homepage-configuration.component").then((m) => m.HomepageConfigurationComponent) },
     { path: "manage-page-content", title: "Manage Page Content", canActivate: [authGuard], loadComponent: () => import("./pages/admin/manage-page-content/manage-page-content.component").then((m) => m.ManagePageContentComponent) },
     { path: "manage-custom-pages", title: "Manage Custom Pages", canActivate: [authGuard], loadComponent: () => import("./pages/admin/manage-custom-pages/manage-custom-pages.component").then((m) => m.ManageCustomPagesComponent) },
-    // TODO: Migrate from legacy - CMS content page (admin). May be redundant with manage-page-content.
-    { path: "internal-setup-notes", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    { path: "internal-setup-notes", title: "Internal Setup Notes", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/internal-setup-notes/internal-setup-notes.component").then((m) => m.InternalSetupNotesComponent) },
     // TODO: Migrate from legacy - component showcase (admin). Consider Storybook instead.
     { path: "style-guide", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "upload-excel-files", title: "Upload Excel Files / ETL", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/loa-upload/loa-upload.component").then((m) => m.LoaUploadComponent) },

@@ -3514,6 +3514,225 @@
           }
         },
         "x-anonymous": true
+      },
+      "post": {
+        "tags": [
+          "FirmaHomePageImage"
+        ],
+        "operationId": "Create_FirmaHomePageImage",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "caption": {
+                    "type": "string"
+                  },
+                  "sortOrder": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "caption": {
+                  "style": "form"
+                },
+                "sortOrder": {
+                  "style": "form"
+                },
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FirmaHomePageImageDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FirmaHomePageImageDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FirmaHomePageImageDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/firma-home-page-images/{firmaHomePageImageID}": {
+      "put": {
+        "tags": [
+          "FirmaHomePageImage"
+        ],
+        "operationId": "Update_FirmaHomePageImage",
+        "parameters": [
+          {
+            "name": "firmaHomePageImageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FirmaHomePageImageUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FirmaHomePageImageUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FirmaHomePageImageUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FirmaHomePageImageDetail"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FirmaHomePageImageDetail"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FirmaHomePageImageDetail"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FirmaHomePageImage"
+        ],
+        "operationId": "Delete_FirmaHomePageImage",
+        "parameters": [
+          {
+            "name": "firmaHomePageImageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/firma-home-page-images/sort-order": {
+      "put": {
+        "tags": [
+          "FirmaHomePageImage"
+        ],
+        "operationId": "UpdateSortOrder_FirmaHomePageImage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SortOrderUpdateItem"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SortOrderUpdateItem"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SortOrderUpdateItem"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FirmaHomePageImageDetail"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FirmaHomePageImageDetail"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FirmaHomePageImageDetail"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/focus-areas": {
@@ -5408,6 +5627,47 @@
           }
         },
         "x-anonymous": true
+      }
+    },
+    "/fund-source-allocations/{fundSourceAllocationID}/duplicate": {
+      "post": {
+        "tags": [
+          "FundSourceAllocation"
+        ],
+        "operationId": "Duplicate_FundSourceAllocation",
+        "parameters": [
+          {
+            "name": "fundSourceAllocationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceAllocationDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceAllocationDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceAllocationDetail"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/fund-source-allocations/{fundSourceAllocationID}/notes": {
@@ -12203,6 +12463,36 @@
           }
         },
         "x-anonymous": true
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "UpdateFeatured_Project",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeaturedProjectsUpdateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeaturedProjectsUpdateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeaturedProjectsUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/projects/pending": {
@@ -12276,6 +12566,39 @@
                   "items": {
                     "$ref": "#/components/schemas/ProjectUpdateStatusGridRow"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/no-contact-count": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetNoContactCount_Project",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
                 }
               }
             }
@@ -18836,6 +19159,109 @@
         }
       }
     },
+    "/projects/people-receiving-reminders": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ListPeopleReceivingReminders_Project",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PeopleReceivingReminderGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PeopleReceivingReminderGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PeopleReceivingReminderGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/send-custom-notification": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SendCustomNotification_Project",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomNotificationRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomNotificationRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomNotificationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/send-preview-notification": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "SendPreviewNotification_Project",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomNotificationRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomNotificationRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomNotificationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/project-codes": {
       "get": {
         "tags": [
@@ -20282,6 +20708,173 @@
         }
       }
     },
+    "/project-types/sort-order": {
+      "put": {
+        "tags": [
+          "ProjectType"
+        ],
+        "operationId": "UpdateSortOrder_ProjectType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SortOrderUpdateItem"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SortOrderUpdateItem"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SortOrderUpdateItem"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectTypeGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectTypeGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectTypeGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-update-configurations": {
+      "get": {
+        "tags": [
+          "ProjectUpdateConfiguration"
+        ],
+        "operationId": "GetConfiguration_ProjectUpdateConfiguration",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateConfigurationDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateConfigurationDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateConfigurationDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ProjectUpdateConfiguration"
+        ],
+        "operationId": "UpdateConfiguration_ProjectUpdateConfiguration",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateConfigurationUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateConfigurationUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateConfigurationUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/project-update-configurations/email-preview/{emailType}": {
+      "get": {
+        "tags": [
+          "ProjectUpdateConfiguration"
+        ],
+        "operationId": "GetEmailContentPreview_ProjectUpdateConfiguration",
+        "parameters": [
+          {
+            "name": "emailType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailContentPreview"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailContentPreview"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailContentPreview"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/relationship-types": {
       "get": {
         "tags": [
@@ -21510,6 +22103,55 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/tags/bulk-tag-projects": {
+      "post": {
+        "tags": [
+          "Tag"
+        ],
+        "operationId": "BulkTagProjects_Tag",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkTagProjectsRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkTagProjectsRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkTagProjectsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagDetail"
+                }
+              }
+            }
           }
         }
       }
@@ -23094,6 +23736,24 @@
         },
         "additionalProperties": false
       },
+      "BulkTagProjectsRequest": {
+        "type": "object",
+        "properties": {
+          "TagName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CapturePostData": {
         "type": "object",
         "properties": {
@@ -23717,6 +24377,31 @@
         },
         "additionalProperties": false
       },
+      "CustomNotificationRequest": {
+        "required": [
+          "PersonIDList",
+          "Subject"
+        ],
+        "type": "object",
+        "properties": {
+          "PersonIDList": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "Subject": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "NotificationContent": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CustomPageContentUpsertRequest": {
         "type": "object",
         "properties": {
@@ -24073,6 +24758,16 @@
         },
         "additionalProperties": false
       },
+      "EmailContentPreview": {
+        "type": "object",
+        "properties": {
+          "EmailContentHtml": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Envelope": {
         "type": "object",
         "properties": {
@@ -24274,6 +24969,20 @@
           },
           "IsTiledMapService": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FeaturedProjectsUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "ProjectIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -24488,6 +25197,25 @@
             "type": "string",
             "format": "uuid"
           },
+          "Caption": {
+            "type": "string",
+            "nullable": true
+          },
+          "SortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ContentLength": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FirmaHomePageImageUpsertRequest": {
+        "type": "object",
+        "properties": {
           "Caption": {
             "type": "string",
             "nullable": true
@@ -28848,6 +29576,70 @@
         },
         "additionalProperties": false
       },
+      "PeopleReceivingReminderGridRow": {
+        "type": "object",
+        "properties": {
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PersonName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationShortName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Email": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectsRequiringUpdate": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "UpdatesNotStarted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "UpdatesInProgress": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "UpdatesSubmitted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "UpdatesReturned": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "UpdatesApproved": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RemindersSent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "LastReminderDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PersonDetail": {
         "type": "object",
         "properties": {
@@ -31321,6 +32113,46 @@
           "KeyPhotoCaption": {
             "type": "string",
             "nullable": true
+          },
+          "PrimaryContactOrganization": {
+            "type": "string",
+            "nullable": true
+          },
+          "PlannedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalFunding": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "NumberOfPhotos": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagLookupItem"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -33159,6 +33991,101 @@
         },
         "additionalProperties": false
       },
+      "ProjectUpdateConfigurationDetail": {
+        "type": "object",
+        "properties": {
+          "ProjectUpdateConfigurationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "EnableProjectUpdateReminders": {
+            "type": "boolean"
+          },
+          "ProjectUpdateKickOffDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ProjectUpdateKickOffIntroContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "SendPeriodicReminders": {
+            "type": "boolean"
+          },
+          "ProjectUpdateReminderInterval": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectUpdateReminderIntroContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "SendCloseOutNotification": {
+            "type": "boolean"
+          },
+          "ProjectUpdateCloseOutDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ProjectUpdateCloseOutIntroContent": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectUpdateConfigurationUpsertRequest": {
+        "required": [
+          "EnableProjectUpdateReminders",
+          "SendCloseOutNotification",
+          "SendPeriodicReminders"
+        ],
+        "type": "object",
+        "properties": {
+          "EnableProjectUpdateReminders": {
+            "type": "boolean"
+          },
+          "ProjectUpdateKickOffDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ProjectUpdateKickOffIntroContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "SendPeriodicReminders": {
+            "type": "boolean"
+          },
+          "ProjectUpdateReminderInterval": {
+            "maximum": 365,
+            "minimum": 7,
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ProjectUpdateReminderIntroContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "SendCloseOutNotification": {
+            "type": "boolean"
+          },
+          "ProjectUpdateCloseOutDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ProjectUpdateCloseOutIntroContent": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProjectUpdateContactsStep": {
         "type": "object",
         "properties": {
@@ -33670,6 +34597,30 @@
             "format": "double",
             "nullable": true
           },
+          "OrganizationPrimaryContactName": {
+            "type": "string",
+            "nullable": true
+          },
+          "PlannedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "TotalFunding": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "ProjectUpdateBatchID": {
             "type": "integer",
             "format": "int32",
@@ -33691,6 +34642,16 @@
           },
           "LastUpdatedByPersonName": {
             "type": "string",
+            "nullable": true
+          },
+          "LastSubmittedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastApprovedDate": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           },
           "IsMyProject": {
@@ -35738,6 +36699,9 @@
     },
     {
       "name": "ProjectType"
+    },
+    {
+      "name": "ProjectUpdateConfiguration"
     },
     {
       "name": "RelationshipType"

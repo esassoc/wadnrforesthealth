@@ -45,6 +45,7 @@ api/project-internal-note.service.ts
 api/project-note.service.ts
 api/project-person-relationship-type.service.ts
 api/project-type.service.ts
+api/project-update-configuration.service.ts
 api/project.service.ts
 api/relationship-type.service.ts
 api/report-template.service.ts
@@ -75,6 +76,7 @@ model/agreement-type-lookup-item.ts
 model/agreement-upsert-request.ts
 model/bounding-box.ts
 model/bulk-assign-foresters-request.ts
+model/bulk-tag-projects-request.ts
 model/capture-post-data.ts
 model/classification-detail.ts
 model/classification-grid-row.ts
@@ -96,6 +98,7 @@ model/county-lookup-item.ts
 model/county-upsert-request.ts
 model/create-workflow-progress-response-steps.ts
 model/create-workflow-progress-response.ts
+model/custom-notification-request.ts
 model/custom-page-content-upsert-request.ts
 model/custom-page-detail.ts
 model/custom-page-grid-row.ts
@@ -109,11 +112,13 @@ model/dnr-upland-region-grid-row.ts
 model/dnr-upland-region-lookup-item.ts
 model/dnr-upland-region-upsert-request.ts
 model/elevation-model.ts
+model/email-content-preview.ts
 model/envelope.ts
 model/expected-funding-step-request.ts
 model/expected-funding-step.ts
 model/external-map-layer-detail.ts
 model/external-map-layer-upsert-request.ts
+model/featured-projects-update-request.ts
 model/federal-fund-code-lookup-item.ts
 model/field-definition-datum-detail.ts
 model/field-definition-datum-upsert-request.ts
@@ -123,6 +128,7 @@ model/file-resource-lookup-item.ts
 model/file-resource-priority-landscape-detail.ts
 model/find-your-forester-question-tree-node.ts
 model/firma-home-page-image-detail.ts
+model/firma-home-page-image-upsert-request.ts
 model/firma-page-detail.ts
 model/firma-page-grid-row.ts
 model/firma-page-type-detail.ts
@@ -244,6 +250,7 @@ model/organization-type-lookup-item.ts
 model/organization-type-upsert-request.ts
 model/organization-upsert-request.ts
 model/pending-project-grid-row.ts
+model/people-receiving-reminder-grid-row.ts
 model/person-detail.ts
 model/person-first-name-last-name.ts
 model/person-grid-row.ts
@@ -369,6 +376,8 @@ model/project-type-upsert-request.ts
 model/project-update-basics-step-request.ts
 model/project-update-basics-step.ts
 model/project-update-batch-detail.ts
+model/project-update-configuration-detail.ts
+model/project-update-configuration-upsert-request.ts
 model/project-update-contacts-step-request.ts
 model/project-update-contacts-step.ts
 model/project-update-diff-summary.ts

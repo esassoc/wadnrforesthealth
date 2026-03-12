@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { TagLookupItem } from './tag-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
@@ -21,6 +22,14 @@ export class ProjectFeatured {
     ProjectDescription?: string | null;
     KeyPhotoFileResourceGuid?: string | null;
     KeyPhotoCaption?: string | null;
+    PrimaryContactOrganization?: string | null;
+    PlannedDate?: string | null;
+    ExpirationDate?: string | null;
+    CompletionDate?: string | null;
+    EstimatedTotalCost?: number | null;
+    TotalFunding?: number | null;
+    NumberOfPhotos?: number;
+    Tags?: Array<TagLookupItem> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -37,6 +46,14 @@ export interface ProjectFeaturedForm {
     ProjectDescription?: FormControl<string>;
     KeyPhotoFileResourceGuid?: FormControl<string>;
     KeyPhotoCaption?: FormControl<string>;
+    PrimaryContactOrganization?: FormControl<string>;
+    PlannedDate?: FormControl<string>;
+    ExpirationDate?: FormControl<string>;
+    CompletionDate?: FormControl<string>;
+    EstimatedTotalCost?: FormControl<number>;
+    TotalFunding?: FormControl<number>;
+    NumberOfPhotos?: FormControl<number>;
+    Tags?: FormControl<Array<TagLookupItem>>;
 }
 
 export class ProjectFeaturedFormControls { 
@@ -131,6 +148,86 @@ export class ProjectFeaturedFormControls {
         }
     );
     public static KeyPhotoCaption = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PrimaryContactOrganization = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PlannedDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ExpirationDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CompletionDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static EstimatedTotalCost = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static TotalFunding = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static NumberOfPhotos = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Tags = (value: FormControlState<Array<TagLookupItem>> | Array<TagLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<TagLookupItem>>(
         value,
         formControlOptions ?? 
         {
