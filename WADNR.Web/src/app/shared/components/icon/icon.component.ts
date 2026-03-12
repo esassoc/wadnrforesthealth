@@ -66,6 +66,7 @@ export var IconInterface:
     | "Review"
     | "ReviewApprove"
     | "ReviewReturn"
+    | "Search"
     | "Satellite"
     | "Square"
     | "Statistics"
