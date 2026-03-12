@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using WADNR.API.Services;
@@ -20,7 +19,6 @@ public class FileResourceController(
     WADNRDbContext dbContext,
     ILogger<FileResourceController> logger,
     IOptions<WADNRConfiguration> configuration,
-    AzureBlobStorageService azureBlobStorageService,
     FileService fileService)
     : SitkaController<FileResourceController>(dbContext, logger, configuration)
 {
@@ -119,27 +117,4 @@ public class FileResourceController(
         return NotFound(message);
 
     }
-
-
-    //todo: uncomment when we want to sync more fileresources to blob storage
-    //[HttpPost("push-to-blob-storage")]
-    //public async Task<IActionResult> PushToBlobStorage()
-    //{
-    //    var nextFileResourcesToMove = DbContext.FileResources
-    //        .Where(x => !x.InBlobStorage)
-    //        .OrderBy(x => x.FileResourceID)
-    //        .ToList();
-
-    //    foreach (var fileResource in nextFileResourcesToMove)
-    //    {
-    //        Logger.LogInformation($"Begin: Transferring {fileResource.OriginalBaseFilename} to blob storage container.");
-    //        var created = azureBlobStorageService.UploadFileResource(fileResource);
-    //        Logger.LogInformation($"Finished: Transferring {fileResource.OriginalBaseFilename} to blob storage container.");
-
-    //        fileResource.InBlobStorage = created;
-    //    }
-
-    //    await DbContext.SaveChangesAsync();
-    //    return Ok();
-    //}
 }

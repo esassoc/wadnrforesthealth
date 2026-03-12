@@ -13,9 +13,6 @@ namespace WADNR.API.Hangfire
         {
             var recurringJobIds = new List<string>();
 
-            // Blob File Transfer - daily at 1:00 AM UTC
-            //AddRecurringJob<BlobFileTransferJob>(BlobFileTransferJob.JobName, x => x.RunJob(JobCancellationToken.Null), "0 1 * * *", recurringJobIds);
-
             // Finance API Jobs - every 15 minutes
             AddRecurringJob<VendorImportJob>(VendorImportJob.JobName, x => x.RunJob(JobCancellationToken.Null), "*/15 * * * *", recurringJobIds);
             AddRecurringJob<ProjectCodeImportJob>(ProjectCodeImportJob.JobName, x => x.RunJob(JobCancellationToken.Null), "*/15 * * * *", recurringJobIds);
