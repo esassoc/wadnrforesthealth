@@ -12,4 +12,12 @@ public class ProjectFeatured
     public string ProjectDescription { get; set; } = string.Empty;
     public Guid? KeyPhotoFileResourceGuid { get; set; }
     public string? KeyPhotoCaption { get; set; }
+    public string PrimaryContactOrganization { get; set; } = string.Empty;
+    public DateTime? PlannedDate { get; set; }
+    public DateTime? ExpirationDate { get; set; }
+    public DateTime? CompletionDate { get; set; }
+    public decimal? EstimatedTotalCost { get; set; }
+    public decimal? TotalFunding { get; set; }
+    public int NumberOfPhotos { get; set; }
+    public List<TagLookupItem> Tags { get; set; } = new();
 }

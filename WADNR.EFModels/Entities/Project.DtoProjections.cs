@@ -21,6 +21,14 @@ public class ProjectFeaturedRaw
     public string ProjectDescription { get; set; } = string.Empty;
     public Guid? KeyPhotoFileResourceGuid { get; set; }
     public string? KeyPhotoCaption { get; set; }
+    public string? PrimaryContactOrganization { get; set; }
+    public DateTime? PlannedDate { get; set; }
+    public DateTime? ExpirationDate { get; set; }
+    public DateTime? CompletionDate { get; set; }
+    public decimal? EstimatedTotalCost { get; set; }
+    public decimal? TotalFunding { get; set; }
+    public int NumberOfPhotos { get; set; }
+    public List<TagLookupItem> Tags { get; set; } = new();
 }
 
 public static class ProjectProjections
@@ -572,6 +580,24 @@ public static class ProjectProjections
             .Where(pi => pi.IsKeyPhoto)
             .Select(pi => pi.Caption)
             .FirstOrDefault(),
+        PrimaryContactOrganization = x.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => po.Organization.DisplayName)
+            .FirstOrDefault(),
+        PlannedDate = x.PlannedDate,
+        ExpirationDate = x.ExpirationDate,
+        CompletionDate = x.CompletionDate,
+        EstimatedTotalCost = x.EstimatedTotalCost,
+        TotalFunding = x.ProjectFundSourceAllocationRequests
+            .Sum(r => (decimal?)r.TotalAmount),
+        NumberOfPhotos = x.ProjectImages.Count,
+        Tags = x.ProjectTags
+            .Select(pt => new TagLookupItem
+            {
+                TagID = pt.Tag.TagID,
+                TagName = pt.Tag.TagName
+            })
+            .ToList(),
     };
 
     public static readonly Expression<Func<Project, ProjectLookupItem>> AsLookupItem = x => new ProjectLookupItem
@@ -590,7 +616,18 @@ public static class ProjectProjections
             .Where(po => po.RelationshipType.IsPrimaryContact)
             .Select(po => po.Organization.OrganizationName)
             .FirstOrDefault(),
+        OrganizationPrimaryContactName = p.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Where(po => po.Organization.PrimaryContactPerson != null)
+            .Select(po => po.Organization.PrimaryContactPerson!.FirstName + " " + po.Organization.PrimaryContactPerson!.LastName)
+            .FirstOrDefault(),
+        PlannedDate = p.PlannedDate,
+        ExpirationDate = p.ExpirationDate,
+        CompletionDate = p.CompletionDate,
         EstimatedTotalCost = p.EstimatedTotalCost,
+        TotalFunding = p.ProjectFundSourceAllocationRequests.Any()
+            ? p.ProjectFundSourceAllocationRequests.Sum(r => (decimal?)r.TotalAmount)
+            : null,
         ProjectUpdateBatchID = p.ProjectUpdateBatches
             .OrderByDescending(b => b.LastUpdateDate)
             .Select(b => (int?)b.ProjectUpdateBatchID)
@@ -607,6 +644,17 @@ public static class ProjectProjections
         LastUpdatedByPersonName = p.ProjectUpdateBatches
             .OrderByDescending(b => b.LastUpdateDate)
             .Select(b => b.LastUpdatePerson.FirstName + " " + b.LastUpdatePerson.LastName)
+            .FirstOrDefault(),
+        LastSubmittedDate = p.ProjectUpdateBatches
+            .Where(b => b.ProjectUpdateStateID == (int)ProjectUpdateStateEnum.Submitted
+                     || b.ProjectUpdateStateID == (int)ProjectUpdateStateEnum.Approved)
+            .OrderByDescending(b => b.LastUpdateDate)
+            .Select(b => (DateTime?)b.LastUpdateDate)
+            .FirstOrDefault(),
+        LastApprovedDate = p.ProjectUpdateBatches
+            .Where(b => b.ProjectUpdateStateID == (int)ProjectUpdateStateEnum.Approved)
+            .OrderByDescending(b => b.LastUpdateDate)
+            .Select(b => (DateTime?)b.LastUpdateDate)
             .FirstOrDefault(),
         IsMyProject = false, // Resolved in static helper
     };

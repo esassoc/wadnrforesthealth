@@ -1,0 +1,9 @@
+<page-header pageTitle="Featured Projects"></page-header>
+
+<div class="page-body">
+    <div class="flex-end no-wrap mb-2">
+        <tag-checked-projects-button [selectedRows]="selectedRows" (tagged)="onTagged()"></tag-checked-projects-button>
+        <button class="btn btn-sm btn-primary" (click)="openEditFeaturedProjects()">Add/Remove Featured Projects</button>
+    </div>
+    <wadnr-grid [rowData]="featuredProjects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" downloadFileName="featured-projects" defaultRowSelection="multiRow" (selectionChanged)="onSelectionChanged($event)"></wadnr-grid>
+</div>

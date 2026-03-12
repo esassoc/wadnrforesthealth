@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net.Mail;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.API.Services.Authorization;
+using WADNR.Common.EMail;
 using WADNR.EFModels.Entities;
 using WADNR.EFModels.Workflows;
 using WADNR.Models.DataTransferObjects;
@@ -30,6 +32,7 @@ public class ProjectController(
     IOptions<WADNRConfiguration> configuration,
     ProjectNotificationService notificationService,
     FileService fileService,
+    SitkaSmtpClientService emailService,
     GDALAPIService gdalApiService = null)
     : SitkaController<ProjectController>(dbContext, logger, configuration)
 {
@@ -50,6 +53,15 @@ public class ProjectController(
         return Ok(projects);
     }
 
+
+    [HttpPut("featured")]
+    [AdminFeature]
+    public async Task<ActionResult> UpdateFeatured([FromBody] FeaturedProjectsUpdateRequest request)
+    {
+        await Projects.UpdateFeaturedAsync(DbContext, request);
+        return NoContent();
+    }
+
     [HttpGet("pending")]
     [ProjectPendingViewFeature]
     public async Task<ActionResult<IEnumerable<PendingProjectGridRow>>> ListPending()
@@ -64,6 +76,14 @@ public class ProjectController(
     {
         var rows = await Projects.ListUpdateStatusForUserAsync(DbContext, CallingUser);
         return Ok(rows);
+    }
+
+    [HttpGet("no-contact-count")]
+    [AdminFeature]
+    public async Task<ActionResult<int>> GetNoContactCount()
+    {
+        var count = await Projects.GetProjectsWithNoContactCountAsync(DbContext);
+        return Ok(count);
     }
 
     [HttpGet("lookup")]
@@ -2779,6 +2799,88 @@ public class ProjectController(
         DbContext.ProjectImportBlockLists.RemoveRange(entries);
         await DbContext.SaveChangesAsync();
         return Ok();
+    }
+
+    #endregion
+
+    #region Project Update Notifications
+
+    [HttpGet("people-receiving-reminders")]
+    [AdminFeature]
+    public async Task<ActionResult<List<PeopleReceivingReminderGridRow>>> ListPeopleReceivingReminders()
+    {
+        var rows = await ProjectUpdateConfigurations.ListPeopleReceivingRemindersAsync(DbContext);
+        return Ok(rows);
+    }
+
+    [HttpPost("send-custom-notification")]
+    [AdminFeature]
+    public async Task<ActionResult> SendCustomNotification([FromBody] CustomNotificationRequest request)
+    {
+        if (request.PersonIDList == null || !request.PersonIDList.Any())
+        {
+            return BadRequest("At least one person must be selected.");
+        }
+
+        var peopleToNotify = await DbContext.People
+            .Where(p => request.PersonIDList.Contains(p.PersonID) && !string.IsNullOrEmpty(p.Email))
+            .ToListAsync();
+
+        if (!peopleToNotify.Any())
+        {
+            return BadRequest("No valid email recipients found.");
+        }
+
+        var message = new MailMessage
+        {
+            Subject = request.Subject,
+            Body = request.NotificationContent ?? string.Empty,
+            IsBodyHtml = true
+        };
+
+        foreach (var person in peopleToNotify)
+        {
+            message.To.Add(new MailAddress(person.Email, $"{person.FirstName} {person.LastName}".Trim()));
+        }
+
+        await emailService.Send(message);
+
+        var notificationDate = DateTime.Now;
+        foreach (var person in peopleToNotify)
+        {
+            DbContext.Notifications.Add(new Notification
+            {
+                NotificationTypeID = (int)NotificationTypeEnum.Custom,
+                PersonID = person.PersonID,
+                NotificationDate = notificationDate
+            });
+        }
+        await DbContext.SaveChangesAsync();
+
+        return Ok(new { recipientCount = peopleToNotify.Count });
+    }
+
+    [HttpPost("send-preview-notification")]
+    [AdminFeature]
+    public async Task<ActionResult> SendPreviewNotification([FromBody] CustomNotificationRequest request)
+    {
+        var currentUser = CallingUser;
+        if (string.IsNullOrEmpty(currentUser?.Email))
+        {
+            return BadRequest("Current user does not have an email address.");
+        }
+
+        var message = new MailMessage
+        {
+            Subject = request.Subject,
+            Body = request.NotificationContent ?? string.Empty,
+            IsBodyHtml = true
+        };
+        message.To.Add(new MailAddress(currentUser.Email, currentUser.FullName));
+
+        await emailService.Send(message);
+
+        return Ok(new { previewSentTo = currentUser.Email });
     }
 
     #endregion

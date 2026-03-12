@@ -629,6 +629,14 @@ public static class Projects
             ProjectDescription = r.ProjectDescription,
             KeyPhotoFileResourceGuid = r.KeyPhotoFileResourceGuid,
             KeyPhotoCaption = r.KeyPhotoCaption,
+            PrimaryContactOrganization = r.PrimaryContactOrganization ?? string.Empty,
+            PlannedDate = r.PlannedDate,
+            ExpirationDate = r.ExpirationDate,
+            CompletionDate = r.CompletionDate,
+            EstimatedTotalCost = r.EstimatedTotalCost,
+            TotalFunding = r.TotalFunding,
+            NumberOfPhotos = r.NumberOfPhotos,
+            Tags = r.Tags,
         }).ToList();
     }
 
@@ -1617,5 +1625,52 @@ public static class Projects
         return rows;
     }
 
+    public static async Task<int> GetProjectsWithNoContactCountAsync(WADNRDbContext dbContext)
+    {
+        var primaryContactRelationshipTypeID = ProjectPersonRelationshipType.PrimaryContact.ProjectPersonRelationshipTypeID;
+
+        return await dbContext.Projects
+            .AsNoTracking()
+            .Where(p => p.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Approved)
+            .Where(p => !p.ProjectPeople.Any(pp => pp.ProjectPersonRelationshipTypeID == primaryContactRelationshipTypeID))
+            .CountAsync();
+    }
+
     #endregion
+
+    // Featured
+
+    public static async Task UpdateFeaturedAsync(WADNRDbContext dbContext, FeaturedProjectsUpdateRequest request)
+    {
+        var newFeaturedIDs = request.ProjectIDs.ToHashSet();
+
+        var currentFeatured = await dbContext.Projects
+            .Where(p => p.IsFeatured)
+            .ToListAsync();
+
+        foreach (var project in currentFeatured)
+        {
+            if (!newFeaturedIDs.Contains(project.ProjectID))
+            {
+                project.IsFeatured = false;
+            }
+        }
+
+        var currentFeaturedIDs = currentFeatured.Select(p => p.ProjectID).ToHashSet();
+        var toAdd = newFeaturedIDs.Except(currentFeaturedIDs).ToList();
+
+        if (toAdd.Count > 0)
+        {
+            var projectsToFeature = await dbContext.Projects
+                .Where(p => toAdd.Contains(p.ProjectID))
+                .ToListAsync();
+
+            foreach (var project in projectsToFeature)
+            {
+                project.IsFeatured = true;
+            }
+        }
+
+        await dbContext.SaveChangesAsync();
+    }
 }
