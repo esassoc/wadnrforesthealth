@@ -48,19 +48,26 @@ public static class ProjectVisibility
             return query; // No filtering needed
         }
 
-        // Users with CanEditProgram can see admin-limited projects
-        if (user.CanViewAdminLimitedProjects())
+        // CanEditProgram users: can see admin-limited projects only if project's programs
+        // overlap with their assigned programs. Legacy: ProjectViewFeature checks
+        // person.CanProgramEditorManageProject() for admin-limited projects.
+        if (user.HasCanEditProgramRole())
         {
-            // Can see all approved projects (including admin-limited)
-            // Plus pending projects from their organization only
+            var programIDs = user.AssignedPrograms.Select(ap => ap.ProgramID).ToList();
             return query.Where(p =>
-                // Approved projects (all, including admin-limited)
-                p.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Approved
+                // Approved non-admin-limited: visible to all authenticated users
+                (p.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Approved
+                 && !p.ProjectType.LimitVisibilityToAdmin)
                 ||
-                // Pending projects from their organization only (excluding admin-limited)
-                (PendingStatusIds.Contains(p.ProjectApprovalStatusID) &&
-                 !p.ProjectType.LimitVisibilityToAdmin &&
-                 p.ProjectOrganizations.Any(po => po.OrganizationID == user.OrganizationID)));
+                // Approved admin-limited: only if project has overlapping programs
+                (p.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Approved
+                 && p.ProjectType.LimitVisibilityToAdmin
+                 && p.ProjectPrograms.Any(pp => programIDs.Contains(pp.ProgramID)))
+                ||
+                // Pending from their org (non-admin-limited)
+                (PendingStatusIds.Contains(p.ProjectApprovalStatusID)
+                 && !p.ProjectType.LimitVisibilityToAdmin
+                 && p.ProjectOrganizations.Any(po => po.OrganizationID == user.OrganizationID)));
         }
 
         // Normal authenticated users: approved (non-admin-limited) + own org's pending
@@ -154,15 +161,17 @@ public static class ProjectVisibility
     /// Checks if a user can view a specific project (for single-entity endpoints).
     /// </summary>
     /// <param name="user">The calling user (null for anonymous).</param>
-    /// <param name="project">The project to check.</param>
-    /// <param name="projectOrganizationIDs">List of organization IDs associated with this project.</param>
+    /// <param name="projectApprovalStatusID">The project's approval status.</param>
     /// <param name="limitVisibilityToAdmin">Whether the project type limits visibility to admin.</param>
+    /// <param name="projectOrganizationIDs">List of organization IDs associated with this project.</param>
+    /// <param name="projectProgramIDs">List of program IDs associated with this project (for CanEditProgram scoping).</param>
     /// <returns>True if the user can view this project.</returns>
     public static bool CanUserViewProject(
         PersonDetail? user,
         int projectApprovalStatusID,
         bool limitVisibilityToAdmin,
-        IEnumerable<int>? projectOrganizationIDs)
+        IEnumerable<int>? projectOrganizationIDs,
+        IEnumerable<int>? projectProgramIDs = null)
     {
         var isApproved = projectApprovalStatusID == (int)ProjectApprovalStatusEnum.Approved;
         var isPending = PendingStatusIds.Contains(projectApprovalStatusID);
@@ -182,7 +191,18 @@ public static class ProjectVisibility
         // Approved projects
         if (isApproved)
         {
-            return !limitVisibilityToAdmin || user.CanViewAdminLimitedProjects();
+            if (!limitVisibilityToAdmin)
+                return true;
+
+            // Admin-limited: CanEditProgram users need program overlap
+            if (user.HasCanEditProgramRole())
+            {
+                var personProgramIDs = user.AssignedPrograms.Select(p => p.ProgramID).ToHashSet();
+                var projProgIDs = projectProgramIDs?.ToList() ?? [];
+                return projProgIDs.Any(pid => personProgramIDs.Contains(pid));
+            }
+
+            return false;
         }
 
         // Pending projects: must not be admin-limited and user must be in one of the project's orgs

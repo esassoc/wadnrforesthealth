@@ -31805,6 +31805,27 @@
             },
             "nullable": true
           },
+          "UserCanEdit": {
+            "type": "boolean"
+          },
+          "UserCanDirectEdit": {
+            "type": "boolean"
+          },
+          "UserCanDelete": {
+            "type": "boolean"
+          },
+          "UserCanApprove": {
+            "type": "boolean"
+          },
+          "UserIsAdmin": {
+            "type": "boolean"
+          },
+          "UserCanViewCostSharePDFs": {
+            "type": "boolean"
+          },
+          "CanStartUpdate": {
+            "type": "boolean"
+          },
           "CanViewFactSheet": {
             "type": "boolean"
           },

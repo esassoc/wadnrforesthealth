@@ -714,6 +714,9 @@ public static class Projects
         // Populate button visibility flags
         await PopulateButtonVisibilityFlagsAsync(entity, dbContext, projectID);
 
+        // Populate user-specific permission flags
+        await PopulatePermissionFlagsAsync(entity, dbContext, projectID, callingUser);
+
         // Populate bounding box using fallback chain
         entity.DefaultBoundingBox = await GetProjectBoundingBoxAsync(dbContext, projectID);
 
@@ -767,6 +770,47 @@ public static class Projects
             entity.HasExistingUpdateBatch = false;
         }
 
+    }
+
+    /// <summary>
+    /// Populates user-specific permission flags on a ProjectDetail based on the calling user's roles
+    /// and their relationship to the project. These flags drive UI button visibility.
+    /// </summary>
+    private static async Task PopulatePermissionFlagsAsync(
+        ProjectDetail entity,
+        WADNRDbContext dbContext,
+        int projectID,
+        PersonDetail? callingUser)
+    {
+        if (callingUser == null || callingUser.IsAnonymousOrUnassigned())
+        {
+            // All permission flags default to false
+            return;
+        }
+
+        var authData = await ProjectAuthorizationData.LoadAsync(dbContext, projectID);
+        if (authData == null) return;
+
+        var stewardshipAreaTypeID = await dbContext.SystemAttributes
+            .Select(sa => sa.ProjectStewardshipAreaTypeID)
+            .FirstOrDefaultAsync();
+
+        var isAdmin = callingUser.BaseRole?.RoleID is (int)RoleEnum.Admin or (int)RoleEnum.EsaAdmin;
+        var isApproved = entity.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Approved;
+
+        entity.UserIsAdmin = callingUser.HasElevatedProjectAccess();
+        entity.UserCanDelete = isAdmin;
+        entity.UserCanApprove = ProjectAuthorization.CanApprove(callingUser, authData, stewardshipAreaTypeID);
+        entity.UserCanDirectEdit = entity.UserCanApprove;
+        entity.UserCanViewCostSharePDFs = callingUser.SupplementalRoleList?.Any(r => r.RoleID == (int)RoleEnum.CanViewLandownerInfo) ?? false;
+        if (isAdmin) entity.UserCanViewCostSharePDFs = true;
+
+        // UserCanEdit: admin, elevated with scoping, or "my project"
+        entity.UserCanEdit = isAdmin
+            || ProjectAuthorization.CanApprove(callingUser, authData, stewardshipAreaTypeID)
+            || ProjectAuthorization.IsMyProject(callingUser, authData);
+
+        entity.CanStartUpdate = entity.UserCanEdit && isApproved && !entity.HasExistingUpdateBatch;
     }
 
     /// <summary>

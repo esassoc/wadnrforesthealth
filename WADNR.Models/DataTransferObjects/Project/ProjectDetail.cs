@@ -69,6 +69,15 @@ public class ProjectDetail
     public List<DNRUplandRegionLookupItem> Regions { get; set; } = new();
     public List<PriorityLandscapeLookupItem> PriorityLandscapes { get; set; } = new();
 
+    // User-specific permission flags (computed server-side per calling user)
+    public bool UserCanEdit { get; set; }
+    public bool UserCanDirectEdit { get; set; }
+    public bool UserCanDelete { get; set; }
+    public bool UserCanApprove { get; set; }
+    public bool UserIsAdmin { get; set; }
+    public bool UserCanViewCostSharePDFs { get; set; }
+    public bool CanStartUpdate { get; set; }
+
     // Button visibility flags
     public bool CanViewFactSheet { get; set; }
     public bool HasExistingUpdateBatch { get; set; }

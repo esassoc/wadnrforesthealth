@@ -60,6 +60,13 @@ export class ProjectDetail {
     Counties?: Array<CountyLookupItem> | null;
     Regions?: Array<DNRUplandRegionLookupItem> | null;
     PriorityLandscapes?: Array<PriorityLandscapeLookupItem> | null;
+    UserCanEdit?: boolean;
+    UserCanDirectEdit?: boolean;
+    UserCanDelete?: boolean;
+    UserCanApprove?: boolean;
+    UserIsAdmin?: boolean;
+    UserCanViewCostSharePDFs?: boolean;
+    CanStartUpdate?: boolean;
     CanViewFactSheet?: boolean;
     HasExistingUpdateBatch?: boolean;
     LatestUpdateBatchStateID?: number | null;
@@ -107,6 +114,13 @@ export interface ProjectDetailForm {
     Counties?: FormControl<Array<CountyLookupItem>>;
     Regions?: FormControl<Array<DNRUplandRegionLookupItem>>;
     PriorityLandscapes?: FormControl<Array<PriorityLandscapeLookupItem>>;
+    UserCanEdit?: FormControl<boolean>;
+    UserCanDirectEdit?: FormControl<boolean>;
+    UserCanDelete?: FormControl<boolean>;
+    UserCanApprove?: FormControl<boolean>;
+    UserIsAdmin?: FormControl<boolean>;
+    UserCanViewCostSharePDFs?: FormControl<boolean>;
+    CanStartUpdate?: FormControl<boolean>;
     CanViewFactSheet?: FormControl<boolean>;
     HasExistingUpdateBatch?: FormControl<boolean>;
     LatestUpdateBatchStateID?: FormControl<number>;
@@ -457,6 +471,76 @@ export class ProjectDetailFormControls {
         }
     );
     public static PriorityLandscapes = (value: FormControlState<Array<PriorityLandscapeLookupItem>> | Array<PriorityLandscapeLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<PriorityLandscapeLookupItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static UserCanEdit = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static UserCanDirectEdit = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static UserCanDelete = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static UserCanApprove = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static UserIsAdmin = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static UserCanViewCostSharePDFs = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CanStartUpdate = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

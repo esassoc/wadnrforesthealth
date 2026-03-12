@@ -23,7 +23,7 @@ interface TocChild {
     label: string;
 }
 
-interface ProjectPermissions {
+type ProjectPermissions = {
     userCanEdit: boolean;
     userCanDirectEdit: boolean;
     userCanDelete: boolean;
@@ -31,7 +31,7 @@ interface ProjectPermissions {
     userIsAdmin: boolean;
     userCanViewCostSharePDFs: boolean;
     canStartUpdate: boolean;
-}
+};
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -48,8 +48,6 @@ import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { GenericLayer } from "src/app/shared/generated/model/generic-layer";
 
-import { AuthenticationService } from "src/app/services/authentication.service";
-import { PersonDetail } from "src/app/shared/generated/model/person-detail";
 import { CostShareService } from "src/app/shared/generated/api/cost-share.service";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { InteractionEventService } from "src/app/shared/generated/api/interaction-event.service";
@@ -305,7 +303,6 @@ export class ProjectDetailComponent implements OnDestroy {
         private projectCodeService: ProjectCodeService,
         private reportTemplateService: ReportTemplateService,
         private costShareService: CostShareService,
-        private authService: AuthenticationService,
         private utilityFunctions: UtilityFunctionsService,
         private leafletHelperService: LeafletHelperService,
         private dialogService: DialogService,
@@ -326,9 +323,16 @@ export class ProjectDetailComponent implements OnDestroy {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        const currentUser$ = this.authService.currentUserSetObservable.pipe(startWith(null as PersonDetail | null));
-        this.permissions$ = combineLatest([this.project$, currentUser$]).pipe(
-            map(([project, user]) => this.computePermissions(project, user)),
+        this.permissions$ = this.project$.pipe(
+            map(project => ({
+                userCanEdit: project.UserCanEdit,
+                userCanDirectEdit: project.UserCanDirectEdit,
+                userCanDelete: project.UserCanDelete,
+                userCanApprove: project.UserCanApprove,
+                userIsAdmin: project.UserIsAdmin,
+                userCanViewCostSharePDFs: project.UserCanViewCostSharePDFs,
+                canStartUpdate: project.CanStartUpdate,
+            })),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -2051,35 +2055,6 @@ export class ProjectDetailComponent implements OnDestroy {
                     this.refreshProjectAndMapBounds();
                 }
             });
-    }
-
-    // Permission computation
-    private computePermissions(project: ProjectDetail, user: PersonDetail | null): ProjectPermissions {
-        const userCanEdit = this.computeCanEdit(user, project);
-        const userCanDirectEdit = this.computeCanDirectEdit(user);
-        const isApproved = project.ProjectApprovalStatusID === ProjectApprovalStatusEnum.Approved;
-
-        return {
-            userCanEdit,
-            userCanDirectEdit,
-            userCanDelete: user ? this.authService.isUserAnAdministrator(user) : false,
-            userCanApprove: this.authService.canApproveProjects(user),
-            userIsAdmin: this.authService.hasElevatedProjectAccess(user),
-            userCanViewCostSharePDFs: this.authService.canViewLandownerInfo(user),
-            canStartUpdate: userCanEdit && isApproved && !project.HasExistingUpdateBatch,
-        };
-    }
-
-    private computeCanEdit(user: PersonDetail | null, project: ProjectDetail): boolean {
-        if (!user || this.authService.isUserUnassigned(user)) return false;
-        if (this.authService.hasElevatedProjectAccess(user)) return true;
-        return user.OrganizationID != null &&
-            (project.Organizations?.some(o => o.OrganizationID === user.OrganizationID) ?? false);
-    }
-
-    private computeCanDirectEdit(user: PersonDetail | null): boolean {
-        if (!user || this.authService.isUserUnassigned(user)) return false;
-        return this.authService.canApproveProjects(user);
     }
 
     batchItems<T>(items: T[], size: number): T[][] {

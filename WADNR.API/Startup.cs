@@ -1,5 +1,6 @@
 using WADNR.API.Logging;
 using WADNR.API.Services;
+using WADNR.API.Services.Authorization;
 using WADNR.API.Services.Filter;
 using WADNR.Common.EMail;
 using WADNR.Common.JsonConverters;
@@ -134,6 +135,8 @@ namespace WADNR.API
 
             services.AddScoped(s => s.GetService<IHttpContextAccessor>().HttpContext);
             services.AddScoped(s => UserContext.GetUserAsDetailFromHttpContext(s.GetService<WADNRDbContext>(), s.GetService<IHttpContextAccessor>().HttpContext));
+            services.AddScoped<ProjectAuthorizationContext>();
+            services.AddScoped<ProgramAuthorizationContext>();
             services.AddScoped<ImpersonationService>();
             services.AddScoped<FileService>();
             services.AddScoped<AzureBlobStorageService>();
