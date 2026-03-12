@@ -5,9 +5,11 @@
 
     <div class="grid-12">
         <div class="g-col-7">
-            <div class="button-row">
-                <button class="btn btn-sm btn-primary" (click)="openCreate()">New Custom Page</button>
-            </div>
+            @if (canManagePageContent) {
+                <div class="button-row">
+                    <button class="btn btn-sm btn-primary" (click)="openCreate()">New Custom Page</button>
+                </div>
+            }
             <wadnr-grid
                 [rowData]="customPages$ | async"
                 [columnDefs]="columnDefs"

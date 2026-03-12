@@ -1,6 +1,8 @@
 import { Routes } from "@angular/router";
 import { adminGuard } from "./shared/guards/admin.guard";
 import { authGuard } from "./shared/guards/auth.guard";
+import { elevatedAccessGuard } from "./shared/guards/elevated-access.guard";
+import { pageContentManageGuard } from "./shared/guards/page-content-manage.guard";
 import { projectEditGuard } from "./shared/guards/project-edit.guard";
 import { UnsavedChangesGuard } from "./shared/guards/unsaved-changes.guard";
 
@@ -71,7 +73,7 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/dnr-upland-regions/dnr-upland-region-detail.component").then((m) => m.DNRUplandRegionDetailComponent),
     },
     { path: "find-your-forester", title: "Find Your Forester", loadComponent: () => import("./pages/find-your-forester/find-your-forester.component").then((m) => m.FindYourForesterComponent) },
-    { path: "focus-areas", title: "DNR LOA Focus Areas", canActivate: [authGuard], loadComponent: () => import("./pages/focus-areas/focus-areas.component").then((m) => m.FocusAreasComponent) },
+    { path: "focus-areas", title: "DNR LOA Focus Areas", canActivate: [elevatedAccessGuard], loadComponent: () => import("./pages/focus-areas/focus-areas.component").then((m) => m.FocusAreasComponent) },
     {
         path: `focus-areas/:${routeParams.focusAreaID}`,
         title: "Focus Area Detail",
@@ -99,7 +101,7 @@ export const routes: Routes = [
         title: "Interaction/Event Detail",
         loadComponent: () => import("./pages/interactions-events/interaction-event-detail/interaction-event-detail.component").then((m) => m.InteractionEventDetailComponent),
     },
-    { path: "invoices", title: "Invoices", loadComponent: () => import("./pages/invoices/invoices.component").then((m) => m.InvoicesComponent) },
+    { path: "invoices", title: "Invoices", canActivate: [elevatedAccessGuard], loadComponent: () => import("./pages/invoices/invoices.component").then((m) => m.InvoicesComponent) },
     {
         path: `invoices/:${routeParams.invoiceID}`,
         title: "Invoice Detail",
@@ -108,11 +110,12 @@ export const routes: Routes = [
     {
         path: "labels-and-definitions",
         title: "Labels and Definitions",
+        canActivate: [adminGuard],
         loadComponent: () => import("./pages/field-definition-list/field-definition-list.component").then((m) => m.FieldDefinitionListComponent),
     },
     {
         path: `labels-and-definitions/:${routeParams.definitionID}`,
-        canActivate: [authGuard],
+        canActivate: [pageContentManageGuard],
         loadComponent: () => import("./pages/field-definition-edit/field-definition-edit.component").then((m) => m.FieldDefinitionEditComponent),
     },
     {
@@ -201,7 +204,7 @@ export const routes: Routes = [
         canActivate: [adminGuard],
         loadComponent: () => import("./pages/roles/role-detail/role-detail.component").then((m) => m.RoleDetailComponent),
     },
-    { path: "vendors", title: "Vendors", canActivate: [authGuard], loadComponent: () => import("./pages/vendors/vendors.component").then((m) => m.VendorsComponent) },
+    { path: "vendors", title: "Vendors", canActivate: [elevatedAccessGuard], loadComponent: () => import("./pages/vendors/vendors.component").then((m) => m.VendorsComponent) },
     { path: "people", title: "Users and Contacts", canActivate: [authGuard], loadComponent: () => import("./pages/people/people.component").then((m) => m.PeopleComponent) },
     {
         path: `people/:${routeParams.personID}`,
@@ -212,7 +215,7 @@ export const routes: Routes = [
     {
         path: `vendors/:${routeParams.vendorID}`,
         title: "Vendor Detail",
-        canActivate: [authGuard],
+        canActivate: [elevatedAccessGuard],
         loadComponent: () => import("./pages/vendors/vendor-detail/vendor-detail.component").then((m) => m.VendorDetailComponent),
     },
     { path: "projects", title: "Full Project List", loadComponent: () => import("./pages/projects/projects.component").then((m) => m.ProjectsComponent) },
@@ -305,7 +308,7 @@ export const routes: Routes = [
     {
         path: "organization-and-relationship-types",
         title: "Organization Types & Relationship Types",
-        canActivate: [authGuard],
+        canActivate: [adminGuard],
         loadComponent: () => import("./pages/admin/organization-and-relationship-types/organization-and-relationship-types.component").then((m) => m.OrganizationAndRelationshipTypesComponent),
     },
     { path: "my-projects", title: "My Projects", canActivate: [authGuard], loadComponent: () => import("./pages/my-projects/my-projects.component").then((m) => m.MyProjectsComponent) },
@@ -313,24 +316,24 @@ export const routes: Routes = [
     { path: "featured-projects", title: "Featured Projects", canActivate: [adminGuard], loadComponent: () => import("./pages/featured-projects/featured-projects.component").then((m) => m.FeaturedProjectsComponent) },
     { path: "project-updates", title: "Project Updates", canActivate: [adminGuard], loadComponent: () => import("./pages/project-updates/project-updates.component").then((m) => m.ProjectUpdatesComponent) },
     { path: "homepage-configuration", title: "Homepage Configuration", canActivate: [adminGuard], loadComponent: () => import("./pages/homepage-configuration/homepage-configuration.component").then((m) => m.HomepageConfigurationComponent) },
-    { path: "manage-page-content", title: "Manage Page Content", canActivate: [authGuard], loadComponent: () => import("./pages/admin/manage-page-content/manage-page-content.component").then((m) => m.ManagePageContentComponent) },
-    { path: "manage-custom-pages", title: "Manage Custom Pages", canActivate: [authGuard], loadComponent: () => import("./pages/admin/manage-custom-pages/manage-custom-pages.component").then((m) => m.ManageCustomPagesComponent) },
+    { path: "manage-page-content", title: "Manage Page Content", canActivate: [pageContentManageGuard], loadComponent: () => import("./pages/admin/manage-page-content/manage-page-content.component").then((m) => m.ManagePageContentComponent) },
+    { path: "manage-custom-pages", title: "Manage Custom Pages", canActivate: [pageContentManageGuard], loadComponent: () => import("./pages/admin/manage-custom-pages/manage-custom-pages.component").then((m) => m.ManageCustomPagesComponent) },
     { path: "internal-setup-notes", title: "Internal Setup Notes", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/internal-setup-notes/internal-setup-notes.component").then((m) => m.InternalSetupNotesComponent) },
     // TODO: Migrate from legacy - component showcase (admin). Consider Storybook instead.
     { path: "style-guide", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "upload-excel-files", title: "Upload Excel Files / ETL", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/loa-upload/loa-upload.component").then((m) => m.LoaUploadComponent) },
-    { path: "manage-find-your-forester", title: "Manage Find Your Forester", canActivate: [authGuard], loadComponent: () => import("./pages/find-your-forester/manage-find-your-forester/manage-find-your-forester.component").then((m) => m.ManageFindYourForesterComponent) },
+    { path: "manage-find-your-forester", title: "Manage Find Your Forester", canActivate: [elevatedAccessGuard], loadComponent: () => import("./pages/find-your-forester/manage-find-your-forester/manage-find-your-forester.component").then((m) => m.ManageFindYourForesterComponent) },
     { path: "map-layers", title: "Manage External Map Layers", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/map-layers/map-layers.component").then((m) => m.MapLayersComponent) },
     { path: "jobs", title: "Finance API Import Jobs", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/jobs/jobs.component").then((m) => m.JobsComponent) },
     // TODO: Migrate from legacy - developer reference page. Swagger/OpenAPI may replace this.
     { path: "json-apis", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "reports/projects", title: "Project Reports", canActivate: [authGuard], loadComponent: () => import("./pages/reports/project-reports/project-reports.component").then((m) => m.ProjectReportsComponent) },
     { path: "reports/ipr", title: "IPR Reports", canActivate: [authGuard], loadComponent: () => import("./pages/reports/ipr-reports/ipr-reports.component").then((m) => m.IprReportsComponent) },
-    { path: "reports", title: "Manage Report Templates", canActivate: [authGuard], loadComponent: () => import("./pages/reports/reports.component").then((m) => m.ReportsComponent) },
+    { path: "reports", title: "Manage Report Templates", canActivate: [adminGuard], loadComponent: () => import("./pages/reports/reports.component").then((m) => m.ReportsComponent) },
     {
         path: "gis-bulk-import/:attemptID",
         title: "GIS Bulk Import",
-        canActivate: [adminGuard],
+        canActivate: [elevatedAccessGuard],
         loadComponent: () => import("./pages/admin/gis-bulk-import/gis-bulk-import-outlet.component").then((m) => m.GisBulkImportOutletComponent),
         children: [
             { path: "", redirectTo: "instructions", pathMatch: "full" },

@@ -24,7 +24,7 @@ public class GisBulkImportController(
     : SitkaController<GisBulkImportController>(dbContext, logger, configuration)
 {
     [HttpGet("source-organizations")]
-    [AdminFeature]
+    [GisBulkImportFeature]
     public async Task<ActionResult<List<GisUploadSourceOrganizationSummary>>> ListSourceOrganizations()
     {
         var sourceOrgs = await GisBulkImports.ListSourceOrganizationsAsync(DbContext);
@@ -32,7 +32,7 @@ public class GisBulkImportController(
     }
 
     [HttpPost("attempts")]
-    [AdminFeature]
+    [GisBulkImportFeature]
     public async Task<ActionResult<GisUploadAttemptDetail>> CreateAttempt([FromBody] GisUploadAttemptCreateRequest request)
     {
         var detail = await GisBulkImports.CreateAttemptAsync(DbContext, request.GisUploadSourceOrganizationID, CallingUser.PersonID);
@@ -40,7 +40,7 @@ public class GisBulkImportController(
     }
 
     [HttpGet("attempts/{gisUploadAttemptID}")]
-    [AdminFeature]
+    [GisBulkImportFeature]
     public async Task<ActionResult<GisUploadAttemptDetail>> GetAttempt([FromRoute] int gisUploadAttemptID)
     {
         var detail = await GisBulkImports.GetAttemptDetailAsync(DbContext, gisUploadAttemptID);
@@ -52,7 +52,7 @@ public class GisBulkImportController(
     }
 
     [HttpPost("attempts/{gisUploadAttemptID}/upload")]
-    [AdminFeature]
+    [GisBulkImportFeature]
     [RequestSizeLimit(500_000_000)]
     [RequestFormLimits(MultipartBodyLengthLimit = 500_000_000)]
     public async Task<ActionResult<GisUploadAttemptDetail>> UploadFile([FromRoute] int gisUploadAttemptID, IFormFile file)
@@ -114,7 +114,7 @@ public class GisBulkImportController(
     }
 
     [HttpGet("attempts/{gisUploadAttemptID}/features")]
-    [AdminFeature]
+    [GisBulkImportFeature]
     public async Task<ActionResult<List<GisFeatureGridRow>>> GetFeatures([FromRoute] int gisUploadAttemptID)
     {
         var features = await GisBulkImports.GetFeaturesAsGridRowAsync(DbContext, gisUploadAttemptID);
@@ -122,7 +122,7 @@ public class GisBulkImportController(
     }
 
     [HttpGet("attempts/{gisUploadAttemptID}/features-geojson")]
-    [AdminFeature]
+    [GisBulkImportFeature]
     public async Task<ActionResult<FeatureCollection>> GetFeaturesGeoJson([FromRoute] int gisUploadAttemptID)
     {
         var featureCollection = await GisBulkImports.GetFeaturesAsFeatureCollectionAsync(DbContext, gisUploadAttemptID);
@@ -130,7 +130,7 @@ public class GisBulkImportController(
     }
 
     [HttpGet("attempts/{gisUploadAttemptID}/metadata-attributes")]
-    [AdminFeature]
+    [GisBulkImportFeature]
     public async Task<ActionResult<List<GisMetadataAttributeItem>>> GetMetadataAttributes([FromRoute] int gisUploadAttemptID)
     {
         var attributes = await GisBulkImports.GetMetadataAttributesAsync(DbContext, gisUploadAttemptID);
@@ -138,7 +138,7 @@ public class GisBulkImportController(
     }
 
     [HttpGet("attempts/{gisUploadAttemptID}/default-mappings")]
-    [AdminFeature]
+    [GisBulkImportFeature]
     public async Task<ActionResult<GisMetadataMappingDefaults>> GetDefaultMappings([FromRoute] int gisUploadAttemptID)
     {
         var defaults = await GisBulkImports.GetDefaultMappingsAsync(DbContext, gisUploadAttemptID);
@@ -146,7 +146,7 @@ public class GisBulkImportController(
     }
 
     [HttpPost("attempts/{gisUploadAttemptID}/import")]
-    [AdminFeature]
+    [GisBulkImportFeature]
     public async Task<ActionResult<GisBulkImportResult>> ImportProjects([FromRoute] int gisUploadAttemptID, [FromBody] GisBulkImportRequest request)
     {
         var result = await GisBulkImports.ImportProjectsAsync(DbContext, gisUploadAttemptID, request);

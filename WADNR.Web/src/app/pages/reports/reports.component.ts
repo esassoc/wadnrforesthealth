@@ -7,6 +7,7 @@ import { DialogService } from "@ngneat/dialog";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { AuthenticationService } from "src/app/services/authentication.service";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -28,12 +29,14 @@ export class ReportsComponent implements OnInit {
     public customRichTextTypeID = FirmaPageTypeEnum.Reports;
     public reportTemplates$: Observable<ReportTemplateGridRow[]>;
     public columnDefs: ColDef[];
+    public isAdmin = false;
 
     private refreshData$ = new BehaviorSubject<void>(undefined);
 
     constructor(
         private reportTemplateService: ReportTemplateService,
         private utilityFunctions: UtilityFunctionsService,
+        private authenticationService: AuthenticationService,
         private dialogService: DialogService,
         private alertService: AlertService,
         private confirmService: ConfirmService,
@@ -41,15 +44,31 @@ export class ReportsComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.columnDefs = [
-            this.utilityFunctions.createActionsColumnDef((params) => {
-                const row = params.data as ReportTemplateGridRow;
-                const actions = [{ ActionName: "Edit", ActionHandler: () => this.openEditModal(row), ActionIcon: "fa fa-pencil" }];
-                if (!row.IsSystemTemplate) {
-                    actions.push({ ActionName: "Delete", ActionHandler: () => this.confirmDelete(row), ActionIcon: "fa fa-trash" });
-                }
-                return actions;
-            }),
+        this.authenticationService.getCurrentUser().subscribe(user => {
+            this.isAdmin = this.authenticationService.isUserAnAdministrator(user);
+            this.buildColumnDefs();
+        });
+
+        this.reportTemplates$ = this.refreshData$.pipe(switchMap(() => this.reportTemplateService.listReportTemplate()));
+    }
+
+    private buildColumnDefs(): void {
+        this.columnDefs = [];
+
+        if (this.isAdmin) {
+            this.columnDefs.push(
+                this.utilityFunctions.createActionsColumnDef((params) => {
+                    const row = params.data as ReportTemplateGridRow;
+                    const actions = [{ ActionName: "Edit", ActionHandler: () => this.openEditModal(row), ActionIcon: "fa fa-pencil" }];
+                    if (!row.IsSystemTemplate) {
+                        actions.push({ ActionName: "Delete", ActionHandler: () => this.confirmDelete(row), ActionIcon: "fa fa-trash" });
+                    }
+                    return actions;
+                })
+            );
+        }
+
+        this.columnDefs.push(
             this.utilityFunctions.createBasicColumnDef("Name", "DisplayName"),
             this.utilityFunctions.createBasicColumnDef("Description", "Description"),
             this.utilityFunctions.createBasicColumnDef("Model", "ReportTemplateModelDisplayName"),
@@ -63,9 +82,7 @@ export class ReportsComponent implements OnInit {
                     return params.value || "";
                 },
             },
-        ];
-
-        this.reportTemplates$ = this.refreshData$.pipe(switchMap(() => this.reportTemplateService.listReportTemplate()));
+        );
     }
 
     openCreateModal(): void {

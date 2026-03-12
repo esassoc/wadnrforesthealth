@@ -21,7 +21,7 @@ public class FieldDefinitionController(
     : SitkaController<FieldDefinitionController>(dbContext, logger, configuration)
 {
     [HttpGet]
-    [AllowAnonymous]
+    [AdminFeature]
     public async Task<ActionResult<List<FieldDefinitionDatumDetail>>> List()
     {
         var entities = await FieldDefinitionData.ListAsDetailAsync(DbContext);

@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { Observable, BehaviorSubject, switchMap, take } from "rxjs";
+import { Observable, BehaviorSubject, switchMap, take, first } from "rxjs";
 import { ColDef } from "ag-grid-community";
 import { AsyncPipe } from "@angular/common";
 import { DialogService } from "@ngneat/dialog";
@@ -8,6 +8,7 @@ import { FieldDefinitionService } from "src/app/shared/generated/api/field-defin
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { AuthenticationService } from "src/app/services/authentication.service";
 import { FieldDefinitionEditComponent, FieldDefinitionEditModalData } from "../field-definition-edit/field-definition-edit.component";
 
 @Component({
@@ -19,6 +20,7 @@ import { FieldDefinitionEditComponent, FieldDefinitionEditModalData } from "../f
 export class FieldDefinitionListComponent implements OnInit {
     public fieldDefinitions$: Observable<FieldDefinitionDatumDetail[]>;
     public columnDefs: ColDef[];
+    public canManagePageContent = false;
 
     private refreshData$ = new BehaviorSubject<void>(undefined);
 
@@ -26,20 +28,30 @@ export class FieldDefinitionListComponent implements OnInit {
         private fieldDefinitionService: FieldDefinitionService,
         private utilityFunctions: UtilityFunctionsService,
         private dialogService: DialogService,
+        private authenticationService: AuthenticationService,
     ) {}
 
     ngOnInit() {
+        this.authenticationService.currentUserSetObservable.pipe(first()).subscribe((user) => {
+            this.canManagePageContent = this.authenticationService.canManagePageContent(user);
+            this.buildColumnDefs();
+        });
+
         this.fieldDefinitions$ = this.refreshData$.pipe(
             switchMap(() => this.fieldDefinitionService.listFieldDefinition()),
         );
+    }
 
+    private buildColumnDefs(): void {
         this.columnDefs = [
-            this.utilityFunctions.createActionsColumnDef((params) => {
-                const row = params.data as FieldDefinitionDatumDetail;
-                return [
-                    { ActionName: "Edit", ActionHandler: () => this.openEdit(row), ActionIcon: "fa fa-pencil" },
-                ];
-            }),
+            ...(this.canManagePageContent
+                ? [
+                      this.utilityFunctions.createActionsColumnDef((params) => {
+                          const row = params.data as FieldDefinitionDatumDetail;
+                          return [{ ActionName: "Edit", ActionHandler: () => this.openEdit(row), ActionIcon: "fa fa-pencil" }];
+                      }),
+                  ]
+                : []),
             this.utilityFunctions.createBasicColumnDef("Custom Label", "FieldDefinitionLabel"),
             this.utilityFunctions.createBasicColumnDef("Default Label", "FieldDefinition.FieldDefinitionDisplayName"),
             this.utilityFunctions.createBooleanColumnDef("Has Custom Field Name?", "FieldDefinitionLabel", {

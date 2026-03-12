@@ -264,6 +264,31 @@ export class AuthenticationService {
     }
 
     /**
+     * Checks if user can manage contacts (create/edit/delete non-full-user person records).
+     * Matches [ContactManageFeature]: Admin, EsaAdmin, CanAddEditUsersContactsOrganizations,
+     * ProjectSteward, or Normal users from WADNR org (ID 4704).
+     */
+    public canManageContacts(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        if (this.isUserAnAdministrator(user)) return true;
+        if (this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.CanAddEditUsersContactsOrganizations])) return true;
+        if (user.BaseRole?.RoleID === RoleEnum.ProjectSteward) return true;
+        if (user.BaseRole?.RoleID === RoleEnum.Normal && user.OrganizationID === 4704) return true;
+        return false;
+    }
+
+    /**
+     * Checks if user can delete contact (non-full-user) person records.
+     * Matches [UserManageFeature]: Admin, EsaAdmin, CanAddEditUsersContactsOrganizations.
+     * Legacy PersonDeleteFeature required this intersection — broader roles like
+     * Normal/ProjectSteward could edit contacts but not delete them.
+     */
+    public canDeleteContacts(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanAddEditUsersContactsOrganizations]);
+    }
+
+    /**
      * Checks if user can manage organizations (create/edit/delete).
      * Matches [UserManageFeature]: Admin, EsaAdmin, CanAddEditUsersContactsOrganizations.
      */
@@ -277,6 +302,57 @@ export class AuthenticationService {
      * Matches [InvoiceManageFeature]: ProjectSteward, Admin, EsaAdmin.
      */
     public canManageInvoices(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.ProjectSteward]);
+    }
+
+    /**
+     * Checks if user can see the Manage menu in the nav bar.
+     * Legacy: menu visible if user has access to ANY child item.
+     */
+    public canViewManageMenu(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        return this.doesUserHaveOneOfTheseRoles(user, [
+            RoleEnum.Admin,
+            RoleEnum.EsaAdmin,
+            RoleEnum.ProjectSteward,
+            RoleEnum.CanManagePageContent,
+            RoleEnum.CanAddEditUsersContactsOrganizations,
+        ]);
+    }
+
+    /**
+     * Checks if user can manage page content (custom pages, field definitions).
+     * Matches [PageContentManageFeature]: Admin, EsaAdmin, CanManagePageContent.
+     */
+    public canManagePageContent(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanManagePageContent]);
+    }
+
+    /**
+     * Checks if user can manage programs (create/edit/delete basics, editors, notifications, block list).
+     * Matches [ProgramManageFeature]: Admin, EsaAdmin only.
+     */
+    public canManagePrograms(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        return this.isUserAnAdministrator(user);
+    }
+
+    /**
+     * Checks if user can edit program GDB mappings (import basics, default mappings, crosswalk values, download GDB).
+     * Matches [ProgramEditMappingsFeature]: Admin, EsaAdmin, CanEditProgram.
+     */
+    public canEditProgramMappings(user: PersonDetail | null): boolean {
+        if (!user) return false;
+        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanEditProgram]);
+    }
+
+    /**
+     * Checks if user can create GIS bulk imports.
+     * Matches [GisBulkImportFeature]: Admin, EsaAdmin, ProjectSteward.
+     */
+    public canCreateGisUpload(user: PersonDetail | null): boolean {
         if (!user) return false;
         return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.ProjectSteward]);
     }

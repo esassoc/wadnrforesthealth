@@ -3096,8 +3096,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/field-definitions/{fieldDefinitionID}": {
@@ -8079,8 +8078,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       },
       "post": {
         "tags": [

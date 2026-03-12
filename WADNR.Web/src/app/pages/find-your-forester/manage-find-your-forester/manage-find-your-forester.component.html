@@ -26,13 +26,15 @@
                     <span class="card-title">Forester Work Units</span>
                 </div>
                 <div class="card-body" [loadingSpinner]="{ isLoading: isLoadingGrid, loadingHeight: 200 }">
-                    <div class="flex-end mb-2">
-                        <button class="btn btn-sm btn-primary" [disabled]="selectedWorkUnits.length === 0" (click)="openBulkAssignModal()">Manage Forester Assignments</button>
-                    </div>
+                    @if (canManage) {
+                        <div class="flex-end mb-2">
+                            <button class="btn btn-sm btn-primary" [disabled]="selectedWorkUnits.length === 0" (click)="openBulkAssignModal()">Manage Forester Assignments</button>
+                        </div>
+                    }
                     <wadnr-grid
                         [rowData]="(workUnits$ | async) ?? []"
                         [columnDefs]="columnDefs"
-                        [defaultRowSelection]="'multiRow'"
+                        [defaultRowSelection]="canManage ? 'multiRow' : undefined"
                         [height]="'400px'"
                         [downloadFileName]="'forester-work-units'"
                         [getRowId]="getRowId"

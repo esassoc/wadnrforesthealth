@@ -11,7 +11,6 @@ import { AuthenticationService } from "src/app/services/authentication.service";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectUpdateStatusGridRow } from "src/app/shared/generated/model/project-update-status-grid-row";
 import { ProjectUpdateStateEnum } from "src/app/shared/generated/enum/project-update-state-enum";
-import { RoleEnum } from "src/app/shared/generated/enum/role-enum";
 
 type FilterKey = "requiring-update" | "recently-submitted" | "submitted-projects" | "all-projects" | null;
 
@@ -42,9 +41,8 @@ export class MyProjectsComponent implements OnInit {
     ngOnInit(): void {
         // Determine admin status
         this.authenticationService.currentUserSetObservable.subscribe((user) => {
-            if (user?.BaseRole) {
-                const roleID = user.BaseRole.RoleID;
-                this.isAdmin = roleID === RoleEnum.Admin || roleID === RoleEnum.EsaAdmin || roleID === RoleEnum.ProjectSteward;
+            if (user) {
+                this.isAdmin = this.authenticationService.hasElevatedProjectAccess(user);
             }
         });
 

@@ -153,31 +153,42 @@
                     <li class="nav-item dropdown">
                         <a href="javascript:void(0);" [dropdownToggle]="manageMenu" class="nav-link dropdown-toggle">Manage <icon icon="AngleDown"></icon></a>
                         <ul #manageMenu class="dropdown-menu">
-                            <!-- Group 1: Classification -->
+                            <!-- Group 1: Classification (Admin only) -->
+                            @if (isAdmin(currentUserForManage)) {
                             <li><a routerLink="/project-types" class="dropdown-item">Project Types</a></li>
                             <li><a routerLink="/project-themes" class="dropdown-item">Project Themes</a></li>
                             <li class="divider"></li>
+                            }
                             <!-- Group 2: System Config -->
                             <li><a routerLink="/people" class="dropdown-item">Users and Contacts</a></li>
+                            @if (isAdmin(currentUserForManage)) {
                             <li><a routerLink="/featured-projects" class="dropdown-item">Featured Projects</a></li>
                             <li><a routerLink="/project-updates" class="dropdown-item">Project Updates</a></li>
                             <li><a routerLink="/homepage-configuration" class="dropdown-item">Homepage Configuration</a></li>
+                            }
                             <li class="divider"></li>
-                            <!-- Group 3: Content Editing -->
+                            <!-- Group 3: Content Editing (PageContentManageFeature) -->
+                            @if (canManagePageContent(currentUserForManage)) {
                             <li><a routerLink="/manage-page-content" class="dropdown-item">Manage Page Content</a></li>
                             <li><a routerLink="/labels-and-definitions" class="dropdown-item">Custom Labels &amp; Definitions</a></li>
                             <li><a routerLink="/manage-custom-pages" class="dropdown-item">Custom Pages</a></li>
                             <li class="divider"></li>
-                            <!-- Group 4: Other -->
+                            }
+                            <!-- Group 4: Other (Admin only) -->
+                            @if (isAdmin(currentUserForManage)) {
                             <li><a routerLink="/internal-setup-notes" class="dropdown-item">Internal Setup Notes</a></li>
                             <li><a routerLink="/style-guide" class="dropdown-item">Style Guide</a></li>
                             <li><a routerLink="/upload-excel-files" class="dropdown-item">Upload Excel Files / ETL</a></li>
                             <li class="divider"></li>
+                            }
                             <!-- Group 5: Organizations -->
+                            @if (isAdmin(currentUserForManage)) {
                             <li><a routerLink="/organization-and-relationship-types" class="dropdown-item">Contributing Organization Types</a></li>
+                            }
                             @if (isStewardOrAbove(currentUserForManage)) {
                             <li><a routerLink="/manage-find-your-forester" class="dropdown-item">Manage Find Your Forester</a></li>
                             }
+                            @if (isAdmin(currentUserForManage)) {
                             <li><a routerLink="/map-layers" class="dropdown-item">Map Layers</a></li>
                             <li class="divider"></li>
                             <!-- Group 6: Jobs -->
@@ -185,9 +196,8 @@
                             <li class="divider"></li>
                             <!-- Group 7: JSON APIs -->
                             <li><a routerLink="/json-apis" class="dropdown-item">JSON APIs</a></li>
-                            @if (isAdmin(currentUserForManage)) {
                             <li class="divider"></li>
-                            <!-- Group 8: Admin Only -->
+                            <!-- Group 8: Hangfire (Admin only) -->
                             <li><a href="/hangfire" class="dropdown-item" target="_blank">Hangfire <icon icon="ExternalLink"></icon></a></li>
                             }
                         </ul>

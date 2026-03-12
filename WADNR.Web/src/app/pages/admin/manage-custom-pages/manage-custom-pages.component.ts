@@ -8,6 +8,7 @@ import { DialogService } from "@ngneat/dialog";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { AuthenticationService } from "src/app/services/authentication.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
@@ -36,6 +37,7 @@ export class ManageCustomPagesComponent implements OnInit {
     public customPages$: Observable<CustomPageGridRow[]>;
     public columnDefs: ColDef<CustomPageGridRow>[] = [];
     public gridOptions: GridOptions = {};
+    public canManagePageContent = false;
 
     public selectedPage: CustomPageGridRow | null = null;
     public previewContent$: Observable<PreviewState>;
@@ -46,6 +48,7 @@ export class ManageCustomPagesComponent implements OnInit {
     constructor(
         private customPageService: CustomPageService,
         private utilityFunctions: UtilityFunctionsService,
+        private authenticationService: AuthenticationService,
         private dialogService: DialogService,
         private confirmService: ConfirmService,
         private alertService: AlertService,
@@ -54,10 +57,14 @@ export class ManageCustomPagesComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
+        this.authenticationService.getCurrentUser().subscribe(user => {
+            this.canManagePageContent = this.authenticationService.canManagePageContent(user);
+            this.buildColumnDefs();
+        });
+
         this.customPages$ = this.refreshPages$.pipe(
             switchMap(() => this.customPageService.listCustomPage())
         );
-        this.buildColumnDefs();
         this.gridOptions = {
             onRowClicked: (event) => this.onRowClicked(event),
         };
@@ -80,21 +87,28 @@ export class ManageCustomPagesComponent implements OnInit {
     }
 
     private buildColumnDefs(): void {
-        this.columnDefs = [
-            this.utilityFunctions.createActionsColumnDef((params) => {
-                const page = params.data as CustomPageGridRow;
-                return [
-                    { ActionName: "Edit", ActionHandler: () => this.openEdit(page), ActionIcon: "fa fa-pencil" },
-                    { ActionName: "Edit Content", ActionHandler: () => this.openEditContent(page), ActionIcon: "fa fa-file-text" },
-                    { ActionName: "Delete", ActionHandler: () => this.confirmDelete(page), ActionIcon: "fa fa-trash" },
-                ];
-            }),
+        this.columnDefs = [];
+
+        if (this.canManagePageContent) {
+            this.columnDefs.push(
+                this.utilityFunctions.createActionsColumnDef((params) => {
+                    const page = params.data as CustomPageGridRow;
+                    return [
+                        { ActionName: "Edit", ActionHandler: () => this.openEdit(page), ActionIcon: "fa fa-pencil" },
+                        { ActionName: "Edit Content", ActionHandler: () => this.openEditContent(page), ActionIcon: "fa fa-file-text" },
+                        { ActionName: "Delete", ActionHandler: () => this.confirmDelete(page), ActionIcon: "fa fa-trash" },
+                    ];
+                })
+            );
+        }
+
+        this.columnDefs.push(
             this.utilityFunctions.createBasicColumnDef("Page Name", "CustomPageDisplayName", { Width: 200 }),
             this.utilityFunctions.createBasicColumnDef("Vanity URL", "CustomPageVanityUrl", { Width: 150 }),
             this.utilityFunctions.createBooleanColumnDef("Has Content", "HasContent", { Width: 100, CustomDropdownFilterField: "HasContent" }),
             this.utilityFunctions.createBasicColumnDef("Display Type", "CustomPageDisplayTypeName", { Width: 120, FieldDefinitionType: "CustomPageDisplayType" }),
             this.utilityFunctions.createBasicColumnDef("Navigation Section", "CustomPageNavigationSectionName", { Width: 150 }),
-        ];
+        );
     }
 
     onRowClicked(event: any): void {

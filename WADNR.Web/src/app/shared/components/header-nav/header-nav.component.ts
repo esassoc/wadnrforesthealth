@@ -15,7 +15,6 @@ import { catchError, map, shareReplay, switchMap } from "rxjs/operators";
 import { CustomPageNavService } from "src/app/shared/services/custom-page-nav.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { PersonDetail } from "src/app/shared/generated/model/person-detail";
-import { RoleEnum } from "src/app/shared/generated/enum/role-enum";
 import { RelationshipTypeService } from "src/app/shared/generated/api/relationship-type.service";
 
 @Component({
@@ -95,22 +94,11 @@ export class HeaderNavComponent implements OnInit {
     }
 
     public canViewManageMenu(user: PersonDetail | null): boolean {
-        if (!user) return false;
-        const roleID = user.BaseRole?.RoleID;
-        // Admins and users with content management roles can see the Manage menu
-        return (
-            roleID === RoleEnum.Admin ||
-            roleID === RoleEnum.EsaAdmin ||
-            roleID === RoleEnum.CanManagePageContent ||
-            roleID === RoleEnum.CanAddEditUsersContactsOrganizations ||
-            roleID === RoleEnum.ProjectSteward
-        );
+        return this.authenticationService.canViewManageMenu(user);
     }
 
     public isAdmin(user: PersonDetail | null): boolean {
-        if (!user) return false;
-        const roleID = user.BaseRole?.RoleID;
-        return roleID === RoleEnum.Admin || roleID === RoleEnum.EsaAdmin;
+        return this.authenticationService.isUserAnAdministrator(user);
     }
 
     public isStewardOrAbove(user: PersonDetail | null): boolean {
@@ -118,16 +106,15 @@ export class HeaderNavComponent implements OnInit {
     }
 
     public canCreateProject(user: PersonDetail | null): boolean {
-        if (!user) return false;
-        const roleID = user.BaseRole?.RoleID;
-        // Roles that can create projects: Normal, EsaAdmin, Admin, ProjectSteward, CanEditProgram
-        return (
-            roleID === RoleEnum.Admin ||
-            roleID === RoleEnum.EsaAdmin ||
-            roleID === RoleEnum.Normal ||
-            roleID === RoleEnum.ProjectSteward ||
-            roleID === RoleEnum.CanEditProgram
-        );
+        return this.authenticationService.canCreateProject(user);
+    }
+
+    public canManagePageContent(user: PersonDetail | null): boolean {
+        return this.authenticationService.canManagePageContent(user);
+    }
+
+    public canManageUsers(user: PersonDetail | null): boolean {
+        return this.authenticationService.canManageOrganizations(user);
     }
 
     public isBeingImpersonated(user: PersonDetail | null): boolean {

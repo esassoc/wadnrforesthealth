@@ -8,9 +8,11 @@
         <div class="card">
             <div class="card-header flex-between">
                 <span class="card-title">Basics</span>
-                <button class="card-header-edit-link" (click)="openEditModal(program)" title="Edit Basics">
-                    <icon icon="Edit"></icon>
-                </button>
+                @if (canManagePrograms$ | async) {
+                    <button class="card-header-edit-link" (click)="openEditModal(program)" title="Edit Basics">
+                        <icon icon="Edit"></icon>
+                    </button>
+                }
             </div>
             <div class="card-body">
                 <div class="grid-12">
@@ -77,9 +79,11 @@
         <div class="card">
             <div class="card-header flex-between">
                 <span class="card-title">Program Editors</span>
-                <button class="card-header-edit-link" (click)="openEditEditorsModal(program)" title="Edit Program Editors">
-                    <icon icon="Edit"></icon>
-                </button>
+                @if (canManagePrograms$ | async) {
+                    <button class="card-header-edit-link" (click)="openEditEditorsModal(program)" title="Edit Program Editors">
+                        <icon icon="Edit"></icon>
+                    </button>
+                }
             </div>
             <div class="card-body">
                 @if (program.ProgramEditors && program.ProgramEditors.length > 0) {
@@ -103,11 +107,13 @@
                 <span class="card-title">Projects Associated with this Program</span>
             </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
-                <div class="flex-end mb-2">
-                    <button class="btn btn-sm btn-primary" title="Download GDB of projects" (click)="downloadGdb()">
-                        <i class="fa fa-download"></i> Download GDB
-                    </button>
-                </div>
+                @if (canEditProgramMappings$ | async) {
+                    <div class="flex-end mb-2">
+                        <button class="btn btn-sm btn-primary" title="Download GDB of projects" (click)="downloadGdb()">
+                            <i class="fa fa-download"></i> Download GDB
+                        </button>
+                    </div>
+                }
                 @if (projects.length > 0) {
                     <wadnr-grid
                         [rowData]="projects"
@@ -131,9 +137,11 @@
                 <span class="card-title">Project Import Block List</span>
             </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: blockListEntriesIsLoading$ | async, loadingHeight: 300 }">
-                <div class="flex-end mb-2">
-                    <button class="btn btn-sm btn-primary" (click)="openCreateBlockListEntryModal(program.ProgramID)">Create New</button>
-                </div>
+                @if (canManagePrograms$ | async) {
+                    <div class="flex-end mb-2">
+                        <button class="btn btn-sm btn-primary" (click)="openCreateBlockListEntryModal(program.ProgramID)">Create New</button>
+                    </div>
+                }
                 @if (blockListEntries.length > 0) {
                     <wadnr-grid
                         [rowData]="blockListEntries"
@@ -157,9 +165,11 @@
                 <span class="card-title">Notifications</span>
             </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: notificationsIsLoading$ | async, loadingHeight: 300 }">
-                <div class="flex-end mb-2">
-                    <button class="btn btn-sm btn-primary" (click)="openCreateNotificationModal(program.ProgramID)">Create New</button>
-                </div>
+                @if (canManagePrograms$ | async) {
+                    <div class="flex-end mb-2">
+                        <button class="btn btn-sm btn-primary" (click)="openCreateNotificationModal(program.ProgramID)">Create New</button>
+                    </div>
+                }
                 @if (notifications.length > 0) {
                     <wadnr-grid
                         [rowData]="notifications"
@@ -181,9 +191,11 @@
         <div class="card">
             <div class="card-header flex-between">
                 <span class="card-title">GDB Import Basics</span>
-                <button class="card-header-edit-link" (click)="openEditImportBasicsModal(program)" title="Edit GDB Import Basics">
-                    <icon icon="Edit"></icon>
-                </button>
+                @if (canEditProgramMappings$ | async) {
+                    <button class="card-header-edit-link" (click)="openEditImportBasicsModal(program)" title="Edit GDB Import Basics">
+                        <icon icon="Edit"></icon>
+                    </button>
+                }
             </div>
             <div class="card-body">
                 <div class="grid-12">
@@ -238,9 +250,11 @@
         <div class="card">
             <div class="card-header flex-between">
                 <span class="card-title">GDB Import Default Mappings</span>
-                <button class="card-header-edit-link" (click)="openEditDefaultMappingsModal(program)" title="Edit Default Mappings">
-                    <icon icon="Edit"></icon>
-                </button>
+                @if (canEditProgramMappings$ | async) {
+                    <button class="card-header-edit-link" (click)="openEditDefaultMappingsModal(program)" title="Edit Default Mappings">
+                        <icon icon="Edit"></icon>
+                    </button>
+                }
             </div>
             <div class="card-body">
                 <div class="grid-12">
@@ -335,9 +349,11 @@
         <div class="card">
             <div class="card-header flex-between">
                 <span class="card-title">GDB Import Crosswalk Values</span>
-                <button class="card-header-edit-link" (click)="openEditCrosswalkValuesModal(program)" title="Edit Crosswalk Values">
-                    <icon icon="Edit"></icon>
-                </button>
+                @if (canEditProgramMappings$ | async) {
+                    <button class="card-header-edit-link" (click)="openEditCrosswalkValuesModal(program)" title="Edit Crosswalk Values">
+                        <icon icon="Edit"></icon>
+                    </button>
+                }
             </div>
             <div class="card-body">
                 <div class="grid-12">

@@ -1,7 +1,7 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, signal } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
-import { BehaviorSubject, Subject, combineLatest, distinctUntilChanged, filter, map, Observable, shareReplay, startWith, switchMap } from "rxjs";
+import { BehaviorSubject, Subject, combineLatest, distinctUntilChanged, filter, map, Observable, shareReplay, startWith, switchMap, take } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap, Control } from "leaflet";
@@ -47,6 +47,7 @@ import {
 } from "src/app/shared/components/select-single-polygon-gdb-modal/select-single-polygon-gdb-modal.component";
 import { FeedbackModalComponent, FeedbackModalData } from "src/app/shared/components/feedback-modal/feedback-modal.component";
 import { SupportRequestTypeEnum } from "src/app/shared/generated/enum/support-request-type-enum";
+import { AuthenticationService } from "src/app/services/authentication.service";
 
 @Component({
     selector: "organization-detail",
@@ -106,6 +107,9 @@ export class OrganizationDetailComponent {
     public legendColorsToUse: Record<string, Palette> = PROJECT_STAGE_LEGEND_COLORS;
     public OverlayMode = OverlayMode;
 
+    public canManageOrganizations$: Observable<boolean>;
+    public canManagePrograms$: Observable<boolean>;
+
     private refreshData$ = new Subject<void>();
 
     constructor(
@@ -116,7 +120,8 @@ export class OrganizationDetailComponent {
         private utilityFunctions: UtilityFunctionsService,
         private dialogService: DialogService,
         private confirmService: ConfirmService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private authenticationService: AuthenticationService
     ) {}
 
     ngOnInit(): void {
@@ -184,7 +189,19 @@ export class OrganizationDetailComponent {
         this.projectsIsLoading$ = toLoadingState(this.projects$);
         this.agreementsIsLoading$ = toLoadingState(this.agreements$);
 
-        this.programColumnDefs = this.createProgramColumnDefs();
+        this.canManageOrganizations$ = this.authenticationService.currentUserSetObservable.pipe(
+            map(user => this.authenticationService.canManageOrganizations(user)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.canManagePrograms$ = this.authenticationService.currentUserSetObservable.pipe(
+            map(user => this.authenticationService.canManagePrograms(user)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.canManagePrograms$.pipe(take(1)).subscribe(canManage => {
+            this.programColumnDefs = this.createProgramColumnDefs(canManage);
+        });
         this.projectColumnDefs = this.createProjectColumnDefs();
         this.agreementColumnDefs = this.createAgreementColumnDefs();
     }
@@ -194,13 +211,15 @@ export class OrganizationDetailComponent {
         return `${environment.mainAppApiUrl}/file-resources/${logoGuid}`;
     }
 
-    private createProgramColumnDefs(): ColDef<ProgramGridRow>[] {
-        return [
-            this.utilityFunctions.createActionsColumnDef((params) => {
+    private createProgramColumnDefs(canManage: boolean): ColDef<ProgramGridRow>[] {
+        const cols: ColDef<ProgramGridRow>[] = [];
+        if (canManage) {
+            cols.push(this.utilityFunctions.createActionsColumnDef((params) => {
                 const row = params.data as ProgramGridRow;
                 return [{ ActionName: "Delete", ActionHandler: () => this.confirmDeleteProgram(row), ActionIcon: "fa fa-trash" }];
-            }),
-            this.utilityFunctions.createLinkColumnDef("Program", "ProgramName", "ProgramID", {
+            }));
+        }
+        cols.push(this.utilityFunctions.createLinkColumnDef("Program", "ProgramName", "ProgramID", {
                 InRouterLink: "/programs/",
             }),
             this.utilityFunctions.createBasicColumnDef("Short Name", "ProgramShortName"),
@@ -212,8 +231,8 @@ export class OrganizationDetailComponent {
             }),
             this.utilityFunctions.createBooleanColumnDef("Is Default for Bulk Import Only", "IsDefaultProgramForImportOnly", {
                 CustomDropdownFilterField: "IsDefaultProgramForImportOnly",
-            }),
-        ];
+            }));
+        return cols;
     }
 
     private createProjectColumnDefs(): ColDef<ProjectOrganizationDetailGridRow>[] {

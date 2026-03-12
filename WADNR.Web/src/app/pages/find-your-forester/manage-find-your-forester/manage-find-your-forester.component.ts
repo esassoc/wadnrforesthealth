@@ -16,6 +16,7 @@ import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { WfsService } from "src/app/shared/services/wfs.service";
+import { AuthenticationService } from "src/app/services/authentication.service";
 import { FindYourForesterService } from "src/app/shared/generated/api/find-your-forester.service";
 import { ForesterRoleLookupItem } from "src/app/shared/generated/model/forester-role-lookup-item";
 import { ForesterWorkUnitGridRow } from "src/app/shared/generated/model/forester-work-unit-grid-row";
@@ -40,6 +41,7 @@ export class ManageFindYourForesterComponent implements OnInit, OnDestroy {
     private gridApi: GridApi;
     private highlightLayers = new Map<number, L.GeoJSON>();
 
+    canManage = false;
     activeRoles: ForesterRoleLookupItem[] = [];
     selectedRoleID: number | null = null;
 
@@ -58,6 +60,7 @@ export class ManageFindYourForesterComponent implements OnInit, OnDestroy {
         private findYourForesterService: FindYourForesterService,
         private wfsService: WfsService,
         private utilityFunctionsService: UtilityFunctionsService,
+        private authenticationService: AuthenticationService,
         private dialogService: DialogService,
         private alertService: AlertService
     ) {}
@@ -82,6 +85,10 @@ export class ManageFindYourForesterComponent implements OnInit, OnDestroy {
     );
 
     ngOnInit(): void {
+        this.authenticationService.getCurrentUser().subscribe(user => {
+            this.canManage = this.authenticationService.hasElevatedProjectAccess(user);
+        });
+
         const assignedCol = this.utilityFunctionsService.createLinkColumnDef("Assigned to Person", "AssignedPersonName", "PersonID", {
             InRouterLink: "/people/",
         });

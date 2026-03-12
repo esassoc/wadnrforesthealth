@@ -108,11 +108,10 @@ public class PersonController(
     }
 
     [HttpPut("{personID}")]
-    [UserManageFeature]
+    [PersonEditFeature]
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<PersonDetail>> UpdateContact([FromRoute] int personID, [FromBody] PersonUpsertRequestDto request)
     {
-        // Allow self-edit or users with manage permission (enforced by [UserManageFeature] for non-self)
         var callingUserID = CallingUser.PersonID;
 
         // Determine if target person is a full user
@@ -137,7 +136,7 @@ public class PersonController(
     }
 
     [HttpPut("{personID}/roles")]
-    [AdminFeature]
+    [UserManageFeature]
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<PersonDetail>> UpdateRoles([FromRoute] int personID, [FromBody] PersonRolesUpsertRequestDto request)
     {
@@ -194,7 +193,7 @@ public class PersonController(
     }
 
     [HttpPut("{personID}/stewardship-areas")]
-    [AdminFeature]
+    [UserManageFeature]
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<PersonDetail>> UpdateStewardshipAreas(
         [FromRoute] int personID,

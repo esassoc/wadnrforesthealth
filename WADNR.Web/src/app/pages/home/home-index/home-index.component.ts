@@ -8,7 +8,6 @@ import { AuthenticationService } from "src/app/services/authentication.service";
 import { FirmaHomePageImageService } from "src/app/shared/generated/api/firma-home-page-image.service";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
-import { RoleEnum } from "src/app/shared/generated/enum/role-enum";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
 import { PersonDetail } from "src/app/shared/generated/model/person-detail";
 import { ProjectFeatured } from "src/app/shared/generated/model/project-featured";
@@ -92,9 +91,7 @@ export class HomeIndexComponent implements OnInit {
     }
 
     canCreateGisUpload(user: PersonDetail | null): boolean {
-        if (!user) return false;
-        const roleID = user.BaseRole?.RoleID;
-        return roleID === RoleEnum.Admin || roleID === RoleEnum.EsaAdmin || roleID === RoleEnum.ProjectSteward;
+        return this.authenticationService.canCreateGisUpload(user);
     }
 
     openGisImportModal(): void {

@@ -5,11 +5,13 @@
         [rowData]="reportTemplates$ | async"
         [columnDefs]="columnDefs"
         downloadFileName="report-templates">
-        <div customGridActionsRight>
-            <button class="btn btn-sm btn-primary" (click)="openCreateModal()">
-                New Report Template
-            </button>
-        </div>
+        @if (isAdmin) {
+            <div customGridActionsRight>
+                <button class="btn btn-sm btn-primary" (click)="openCreateModal()">
+                    New Report Template
+                </button>
+            </div>
+        }
     </wadnr-grid>
 
     <div class="card mt-4">

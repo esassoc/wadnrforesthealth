@@ -24,7 +24,7 @@ public class InvoiceController(
     : SitkaController<InvoiceController>(dbContext, logger, configuration)
 {
     [HttpGet]
-    [AllowAnonymous]
+    [InvoiceManageFeature]
     public async Task<ActionResult<List<InvoiceGridRow>>> List()
     {
         var invoices = await Invoices.ListAsGridRowAsync(DbContext);

@@ -1,7 +1,7 @@
 import { AsyncPipe } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, switchMap, take } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, of, shareReplay, switchMap, take } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 import { DialogService } from "@ngneat/dialog";
@@ -42,6 +42,7 @@ import { AsyncConfirmModalComponent, AsyncConfirmModalData } from "src/app/share
 import { FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { GdbImportBasics } from "src/app/shared/generated/model/gdb-import-basics";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
+import { AuthenticationService } from "src/app/services/authentication.service";
 
 @Component({
     selector: "program-detail",
@@ -65,6 +66,9 @@ export class ProgramDetailComponent {
     public notificationColumnDefs: ColDef<ProgramNotificationGridRow>[] = [];
     public blockListColumnDefs: ColDef<ProjectImportBlockListGridRow>[] = [];
 
+    public canManagePrograms$: Observable<boolean>;
+    public canEditProgramMappings$: Observable<boolean>;
+
     private refreshData$ = new BehaviorSubject<void>(undefined);
     private refreshNotifications$ = new BehaviorSubject<void>(undefined);
     private refreshBlockList$ = new BehaviorSubject<void>(undefined);
@@ -78,7 +82,8 @@ export class ProgramDetailComponent {
         private utilityFunctions: UtilityFunctionsService,
         private dialogService: DialogService,
         private confirmService: ConfirmService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private authenticationService: AuthenticationService
     ) {}
 
     ngOnInit(): void {
@@ -113,9 +118,21 @@ export class ProgramDetailComponent {
         this.notificationsIsLoading$ = toLoadingState(this.notifications$);
         this.blockListEntriesIsLoading$ = toLoadingState(this.blockListEntries$);
 
-        this.projectColumnDefs = this.createProjectColumnDefs();
-        this.notificationColumnDefs = this.createNotificationColumnDefs();
-        this.blockListColumnDefs = this.createBlockListColumnDefs();
+        this.canManagePrograms$ = this.authenticationService.currentUserSetObservable.pipe(
+            map(user => this.authenticationService.canManagePrograms(user)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.canEditProgramMappings$ = this.authenticationService.currentUserSetObservable.pipe(
+            map(user => this.authenticationService.canEditProgramMappings(user)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.canManagePrograms$.pipe(take(1)).subscribe(canManage => {
+            this.projectColumnDefs = this.createProjectColumnDefs(canManage);
+            this.notificationColumnDefs = this.createNotificationColumnDefs(canManage);
+            this.blockListColumnDefs = this.createBlockListColumnDefs(canManage);
+        });
     }
 
     getFileUrl(fileResourceUrl: string | null | undefined): string | null {
@@ -142,16 +159,18 @@ export class ProgramDetailComponent {
         });
     }
 
-    private createProjectColumnDefs(): ColDef<ProjectProgramDetailGridRow>[] {
-        return [
-            this.utilityFunctions.createActionsColumnDef((params) => {
+    private createProjectColumnDefs(canManage: boolean): ColDef<ProjectProgramDetailGridRow>[] {
+        const cols: ColDef<ProjectProgramDetailGridRow>[] = [];
+        if (canManage) {
+            cols.push(this.utilityFunctions.createActionsColumnDef((params) => {
                 const row = params.data as ProjectProgramDetailGridRow;
                 return [
                     { ActionName: "Delete", ActionHandler: () => this.confirmDeleteProject(row), ActionIcon: "fa fa-trash" },
                     { ActionName: "Add to Block List", ActionHandler: () => this.openAddToBlockListModal(row), ActionIcon: "fa fa-ban" },
                 ];
-            }),
-            this.utilityFunctions.createBasicColumnDef("Project Identifier", "ProjectGisIdentifier", {
+            }));
+        }
+        cols.push(this.utilityFunctions.createBasicColumnDef("Project Identifier", "ProjectGisIdentifier", {
                 FieldDefinitionType: "ProjectIdentifier",
             }),
             this.utilityFunctions.createLinkColumnDef("FHT Project Number", "FhtProjectNumber", "ProjectID", {
@@ -171,25 +190,29 @@ export class ProgramDetailComponent {
             }),
             this.utilityFunctions.createBasicColumnDef("Programs", "Programs", {
                 FieldDefinitionType: "Program",
-            }),
-        ];
+            }));
+        return cols;
     }
 
-    private createNotificationColumnDefs(): ColDef<ProgramNotificationGridRow>[] {
+    private createNotificationColumnDefs(canManage: boolean): ColDef<ProgramNotificationGridRow>[] {
         const emailTextCol = this.utilityFunctions.createBasicColumnDef("Notification Email Text", "NotificationEmailText");
         emailTextCol.valueFormatter = (params) => this.utilityFunctions.stripHtml(params.value);
 
-        return [
-            this.utilityFunctions.createActionsColumnDef((params) => {
+        const cols: ColDef<ProgramNotificationGridRow>[] = [];
+        if (canManage) {
+            cols.push(this.utilityFunctions.createActionsColumnDef((params) => {
                 const row = params.data as ProgramNotificationGridRow;
                 return [
                     { ActionName: "Edit", ActionHandler: () => this.openEditNotificationModal(row), ActionIcon: "fa fa-edit" },
                 ];
-            }),
+            }));
+        }
+        cols.push(
             this.utilityFunctions.createBasicColumnDef("Program Notification Type", "ProgramNotificationTypeDisplayName"),
             this.utilityFunctions.createBasicColumnDef("Recurrence Interval in Years", "RecurrenceIntervalInYears"),
             emailTextCol,
-        ];
+        );
+        return cols;
     }
 
     openEditModal(program: ProgramDetail): void {
@@ -396,18 +419,22 @@ export class ProgramDetailComponent {
 
     // --- Block List ---
 
-    private createBlockListColumnDefs(): ColDef<ProjectImportBlockListGridRow>[] {
-        return [
-            this.utilityFunctions.createActionsColumnDef((params) => {
+    private createBlockListColumnDefs(canManage: boolean): ColDef<ProjectImportBlockListGridRow>[] {
+        const cols: ColDef<ProjectImportBlockListGridRow>[] = [];
+        if (canManage) {
+            cols.push(this.utilityFunctions.createActionsColumnDef((params) => {
                 const row = params.data as ProjectImportBlockListGridRow;
                 return [
                     { ActionName: "Remove", ActionHandler: () => this.confirmDeleteBlockListEntry(row), ActionIcon: "fa fa-trash" },
                 ];
-            }),
+            }));
+        }
+        cols.push(
             this.utilityFunctions.createBasicColumnDef("Project Name", "ProjectName"),
             this.utilityFunctions.createBasicColumnDef("Project GIS Identifier", "ProjectGisIdentifier"),
             this.utilityFunctions.createBasicColumnDef("Notes", "Notes"),
-        ];
+        );
+        return cols;
     }
 
     openCreateBlockListEntryModal(programID: number): void {

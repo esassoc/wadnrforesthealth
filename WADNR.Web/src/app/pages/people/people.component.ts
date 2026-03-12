@@ -13,8 +13,6 @@ import { AuthenticationService } from "src/app/services/authentication.service";
 
 import { PersonService } from "src/app/shared/generated/api/person.service";
 import { PersonGridRow } from "src/app/shared/generated/model/person-grid-row";
-import { RoleEnum } from "src/app/shared/generated/enum/role-enum";
-
 import { AddContactModalComponent } from "./add-contact-modal/add-contact-modal.component";
 
 enum PeopleFilter {
@@ -105,14 +103,7 @@ export class PeopleComponent {
         );
 
         this.canAddContact$ = this.authenticationService.currentUserSetObservable.pipe(
-            map((user) => {
-                if (!user) return false;
-                return this.authenticationService.doesUserHaveOneOfTheseRoles(user, [
-                    RoleEnum.Admin,
-                    RoleEnum.EsaAdmin,
-                    RoleEnum.CanAddEditUsersContactsOrganizations,
-                ]);
-            })
+            map((user) => this.authenticationService.canManageOrganizations(user))
         );
     }
 

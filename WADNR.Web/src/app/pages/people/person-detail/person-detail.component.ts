@@ -145,10 +145,7 @@ export class PersonDetailComponent {
             map(([person, currentUser]) => {
                 if (!currentUser || !person) return false;
                 const isSelf = person.PersonID === currentUser.PersonID;
-                const hasManageRole = this.authenticationService.doesUserHaveOneOfTheseRoles(currentUser, [
-                    RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanAddEditUsersContactsOrganizations,
-                ]);
-                return isSelf || hasManageRole;
+                return isSelf || this.authenticationService.canManageContacts(currentUser);
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
@@ -156,7 +153,7 @@ export class PersonDetailComponent {
         this.canEditRoles$ = userAndPerson$.pipe(
             map(([_, currentUser]) => {
                 if (!currentUser) return false;
-                return this.authenticationService.isUserAnAdministrator(currentUser);
+                return this.authenticationService.canManageOrganizations(currentUser);
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
@@ -164,11 +161,8 @@ export class PersonDetailComponent {
         this.canToggleActive$ = userAndPerson$.pipe(
             map(([person, currentUser]) => {
                 if (!currentUser || !person) return false;
-                const hasManageRole = this.authenticationService.doesUserHaveOneOfTheseRoles(currentUser, [
-                    RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanAddEditUsersContactsOrganizations,
-                ]);
                 const isNotSelf = person.PersonID !== currentUser.PersonID;
-                return hasManageRole && person.IsFullUser && isNotSelf;
+                return this.authenticationService.canManageOrganizations(currentUser) && person.IsFullUser && isNotSelf;
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
@@ -176,11 +170,8 @@ export class PersonDetailComponent {
         this.canDelete$ = userAndPerson$.pipe(
             map(([person, currentUser]) => {
                 if (!currentUser || !person) return false;
-                const hasManageRole = this.authenticationService.doesUserHaveOneOfTheseRoles(currentUser, [
-                    RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanAddEditUsersContactsOrganizations,
-                ]);
                 const isNotSelf = person.PersonID !== currentUser.PersonID;
-                return hasManageRole && !person.IsFullUser && isNotSelf;
+                return this.authenticationService.canDeleteContacts(currentUser) && !person.IsFullUser && isNotSelf;
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );

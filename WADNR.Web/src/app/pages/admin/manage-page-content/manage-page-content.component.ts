@@ -2,12 +2,13 @@ import { Component, OnInit } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { ColDef, GridOptions } from "ag-grid-community";
-import { BehaviorSubject, Observable, of, switchMap, map, startWith, shareReplay } from "rxjs";
+import { BehaviorSubject, Observable, of, switchMap, map, startWith, shareReplay, first } from "rxjs";
 import { DialogService } from "@ngneat/dialog";
 
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { AuthenticationService } from "src/app/services/authentication.service";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
 import { CustomRichTextService } from "src/app/shared/generated/api/custom-rich-text.service";
@@ -37,18 +38,25 @@ export class ManagePageContentComponent implements OnInit {
     private refreshPages$ = new BehaviorSubject<void>(undefined);
     private selectedPageTypeID$ = new BehaviorSubject<number | null>(null);
 
+    private canManagePageContent = false;
+
     constructor(
         private customRichTextService: CustomRichTextService,
         private utilityFunctions: UtilityFunctionsService,
         private dialogService: DialogService,
-        private sanitizer: DomSanitizer
+        private sanitizer: DomSanitizer,
+        private authenticationService: AuthenticationService,
     ) {}
 
     ngOnInit(): void {
+        this.authenticationService.currentUserSetObservable.pipe(first()).subscribe((user) => {
+            this.canManagePageContent = this.authenticationService.canManagePageContent(user);
+            this.buildColumnDefs();
+        });
+
         this.firmaPages$ = this.refreshPages$.pipe(
             switchMap(() => this.customRichTextService.listCustomRichText())
         );
-        this.buildColumnDefs();
         this.gridOptions = {
             onRowClicked: (event) => this.onRowClicked(event),
         };
@@ -72,12 +80,14 @@ export class ManagePageContentComponent implements OnInit {
 
     private buildColumnDefs(): void {
         this.columnDefs = [
-            this.utilityFunctions.createActionsColumnDef((params) => {
-                const page = params.data as FirmaPageGridRow;
-                return [
-                    { ActionName: "Edit Content", ActionHandler: () => this.editContent(page), ActionIcon: "fa fa-pencil" },
-                ];
-            }),
+            ...(this.canManagePageContent
+                ? [
+                      this.utilityFunctions.createActionsColumnDef((params) => {
+                          const page = params.data as FirmaPageGridRow;
+                          return [{ ActionName: "Edit Content", ActionHandler: () => this.editContent(page), ActionIcon: "fa fa-pencil" }];
+                      }),
+                  ]
+                : []),
             this.utilityFunctions.createBasicColumnDef("Page Name", "FirmaPageTypeDisplayName", { Width: 300 }),
             this.utilityFunctions.createBasicColumnDef("Type", "FirmaPageRenderTypeDisplayName", { Width: 110 }),
             this.utilityFunctions.createBooleanColumnDef("Has Content", "HasContent", { Width: 120, CustomDropdownFilterField: "HasContent" }),

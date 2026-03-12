@@ -10,7 +10,6 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
-import { RoleEnum } from "src/app/shared/generated/enum/role-enum";
 import { PersonDetail } from "src/app/shared/generated/model/person-detail";
 import { ProjectGridComponent } from "src/app/shared/components/project-grid/project-grid.component";
 import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row";
@@ -39,9 +38,7 @@ export class ProjectsComponent {
     }
 
     canCreateGisUpload(user: PersonDetail | null): boolean {
-        if (!user) return false;
-        const roleID = user.BaseRole?.RoleID;
-        return roleID === RoleEnum.Admin || roleID === RoleEnum.EsaAdmin || roleID === RoleEnum.ProjectSteward;
+        return this.authenticationService.canCreateGisUpload(user);
     }
 
     openGisImportModal(): void {
