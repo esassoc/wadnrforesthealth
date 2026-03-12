@@ -31,6 +31,22 @@ If `--card` was provided:
 
 Evaluate every changed file against the following checklist. Report findings grouped by severity: **Blockers**, **Warnings**, **Suggestions**.
 
+### Legacy Parity (Migration Only — check if changes involve MVC-to-Angular migration)
+
+If the changes are part of a migration from legacy MVC to Angular, this is the **most important** section. The goal is absolute parity with the legacy app.
+
+- [ ] Every card/section in the legacy Razor view has a corresponding element in the Angular template
+- [ ] Every grid column in legacy matches: same header text, same data, same links
+- [ ] Every form field in legacy matches: same label, same input type, same validation rules
+- [ ] Every button and link in legacy exists with the same text and equivalent behavior
+- [ ] Card titles, field labels, and descriptions match the legacy text **verbatim**
+- [ ] Conditional visibility (role-based, data-state-based) matches legacy logic
+- [ ] Empty states match legacy behavior (hidden sections, "no records" messages)
+- [ ] Authorization attributes on API endpoints match the legacy `*Feature` attributes
+- [ ] Sort order of sections, columns, and fields matches legacy
+
+To verify: read the legacy controller + views referenced by the migration, then compare against the new Angular output element by element.
+
 ### Code Quality
 - [ ] No TODO/FIXME/HACK comments introduced without a tracking ticket
 - [ ] No commented-out code left behind

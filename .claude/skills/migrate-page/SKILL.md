@@ -5,22 +5,39 @@
 
 When the user invokes `/migrate-page <EntityName>`:
 
-## 1. Analyze Legacy Code
+## 1. Analyze Legacy Code (THOROUGH — parity depends on this)
 
-First, thoroughly examine the existing MVC implementation:
+The #1 goal of migration is **absolute parity** with the legacy app. Every visual element,
+every data field, every label, every conditional must be reproduced exactly. This step
+determines success — do not rush it.
+
+Read EVERY file completely (not skimming):
 
 - Read the legacy controller: `{LegacyPath}/Controllers/{Entity}Controller.cs`
-- Read all views in: `{LegacyPath}/Views/{Entity}/`
-- Check for partials in: `{LegacyPath}/Views/Shared/` that may be used
+  - Note every action method, what data it fetches, and how it transforms it
+  - Note the `*Feature` attribute on each action (maps to authorization)
+- Read ALL views in: `{LegacyPath}/Views/{Entity}/` — read each .cshtml file fully
+  - For each view, inventory every visual element: panels/cards, tables/grids, forms, buttons, links, labels, conditional sections
+  - Note the exact text of every label, title, header, and button
+  - Note any `@if` / `@Html.Raw` / role-check conditionals
+- Check for partials: search each view for `@Html.RenderPartial`, `@Html.Partial`, `Html.RenderPartialView` and read those partial views too
 - Look for JavaScript in: `{LegacyPath}/Scripts/` related to the entity
+- Check for ViewData / ViewBag usage that passes data to views
 
-Identify and document:
+Create a parity inventory — for each view, list:
 - All CRUD operations (Index, Detail, New, Edit, Delete)
+- Every card/panel with its title text
+- Every grid with its column headers (in order)
+- Every form with its field labels (in order)
+- Every button with its text and action
+- Every link with its text and destination
+- Conditional visibility rules (what shows for admin vs normal user, what hides when data is empty)
 - Special/custom endpoints
-- Bootstrap patterns used (panels, tables, forms, modals)
 - Client-side validation or JavaScript behavior
 - Related entities and their relationships
 - Authorization/permission requirements
+
+This inventory is your checklist — every item must appear in the Angular output.
 
 ### Identify Components Requiring Specialized Skills
 
@@ -248,6 +265,17 @@ npm start
 ```
 
 ## Checklist Before Completion
+
+### Legacy Parity (MOST IMPORTANT — verify element by element)
+- [ ] Every card/section from legacy views exists in Angular with the same title text
+- [ ] Every grid has the same columns in the same order with the same header text
+- [ ] Every form has the same fields in the same order with the same labels
+- [ ] Every button exists with the same text and equivalent action
+- [ ] Every link exists with the same text and navigates to the equivalent route
+- [ ] Conditional visibility matches legacy (role-based, data-state-based)
+- [ ] Empty states match legacy (hidden sections, placeholder messages)
+- [ ] No legacy visual elements were omitted or renamed
+- [ ] No new UI elements were added that don't exist in legacy
 
 ### Core Migration
 - [ ] All CRUD operations migrated
