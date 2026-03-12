@@ -27,7 +27,7 @@
                 <button class="btn btn-primary home-action-btn" (click)="openGisImportModal()">GIS Import/Update</button>
                 }
             }
-            <a class="btn btn-primary home-action-btn" routerLink="/projects">Update Project</a>
+            <a class="btn btn-primary home-action-btn" routerLink="/my-projects" [queryParams]="{ filter: 'requiring-update' }">Update Project</a>
             }
 
             <!-- Project map -->

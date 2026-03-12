@@ -12,11 +12,12 @@ import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
 import { PersonDetail } from "src/app/shared/generated/model/person-detail";
 import { ProjectGridComponent } from "src/app/shared/components/project-grid/project-grid.component";
+import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row";
 
 @Component({
     selector: "projects",
-    imports: [PageHeaderComponent, ProjectGridComponent, AsyncPipe, RouterLink],
+    imports: [PageHeaderComponent, ProjectGridComponent, AsyncPipe, RouterLink, IconComponent],
     templateUrl: "./projects.component.html",
 })
 export class ProjectsComponent {

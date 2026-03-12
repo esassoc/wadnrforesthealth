@@ -60,6 +60,18 @@
         }
     }
 
+    icon {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 0.25rem;
+        vertical-align: middle;
+
+        svg {
+            width: 0.875em;
+            height: 0.875em;
+        }
+    }
+
     &-success {
         background-color: var(--green-default);
         color: var(--white);
