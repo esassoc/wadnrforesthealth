@@ -7,7 +7,7 @@
 <div class="page-body">
     <wadnr-grid
         height="800px"
-        [rowData]="fieldDefinitions"
+        [rowData]="fieldDefinitions$ | async"
         [columnDefs]="columnDefs"
         downloadFileName="field-definitions"
         [pagination]="true"

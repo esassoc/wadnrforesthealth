@@ -10,5 +10,6 @@ public static class FieldDefinitionProjections
         FieldDefinitionID = x.FieldDefinitionID,
         FieldDefinitionName = x.FieldDefinitionName,
         FieldDefinitionDisplayName = x.FieldDefinitionDisplayName,
+        DefaultDefinition = x.DefaultDefinition,
     };
 }

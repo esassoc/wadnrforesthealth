@@ -22,6 +22,7 @@ public static class FieldDefinitionData
             .SingleAsync(x => x.FieldDefinitionID == fieldDefinitionID);
 
         fieldDefinitionDatum.FieldDefinitionDatumValue = upsertRequest.FieldDefinitionDatumValue;
+        fieldDefinitionDatum.FieldDefinitionLabel = upsertRequest.FieldDefinitionLabel;
 
         await dbContext.SaveChangesAsync();
 

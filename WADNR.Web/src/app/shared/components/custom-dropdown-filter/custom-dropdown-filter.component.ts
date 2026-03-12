@@ -157,6 +157,13 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
     }
 
     private getNodeValue(rowNode: RowNode) {
+        // Prefer filterValueGetter when present so boolean columns can
+        // return true/false while the display valueGetter returns the raw value.
+        if (this.params?.colDef?.filterValueGetter) {
+            return typeof this.params.colDef.filterValueGetter === "function"
+                ? this.params.colDef.filterValueGetter({ ...rowNode, data: rowNode.data })
+                : this.getPropertyValue(rowNode.data, this.params.colDef.filterValueGetter, null);
+        }
         if (this.field) {
             return this.getPropertyValue(rowNode.data, this.field, null);
         }

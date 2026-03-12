@@ -5,6 +5,7 @@
         public int FieldDefinitionID { get; set; }
         public string FieldDefinitionName { get; set; }
         public string FieldDefinitionDisplayName { get; set; }
+        public string DefaultDefinition { get; set; }
         public PersonDetail LastUpdatePerson { get; set; } //todo: we just need PersonDetail generated
     }
 }

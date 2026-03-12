@@ -1,82 +1,89 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from "@angular/core";
-import { LinkRendererComponent } from "src/app/shared/components/ag-grid/link-renderer/link-renderer.component";
+import { Component, OnInit } from "@angular/core";
+import { Observable, BehaviorSubject, switchMap, take } from "rxjs";
 import { ColDef } from "ag-grid-community";
-import { AgGridAngular, AgGridModule } from "ag-grid-angular";
-import { FieldDefinitionDatumDetail, PersonDetail } from "src/app/shared/generated/model/models";
+import { AsyncPipe } from "@angular/common";
+import { DialogService } from "@ngneat/dialog";
+import { FieldDefinitionDatumDetail } from "src/app/shared/generated/model/models";
 import { FieldDefinitionService } from "src/app/shared/generated/api/field-definition.service";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
+import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { FieldDefinitionEditComponent, FieldDefinitionEditModalData } from "../field-definition-edit/field-definition-edit.component";
 
 @Component({
     selector: "field-definition-list",
     templateUrl: "./field-definition-list.component.html",
     styleUrls: ["./field-definition-list.component.scss"],
-    imports: [AgGridModule, WADNRGridComponent, PageHeaderComponent],
+    imports: [AsyncPipe, WADNRGridComponent, PageHeaderComponent],
 })
 export class FieldDefinitionListComponent implements OnInit {
-    @ViewChild("fieldDefinitionsGrid") fieldDefinitionsGrid: AgGridAngular;
-
-    private currentUser: PersonDetail;
-
-    public fieldDefinitions: Array<FieldDefinitionDatumDetail>;
-
-    public rowData = [];
+    public fieldDefinitions$: Observable<FieldDefinitionDatumDetail[]>;
     public columnDefs: ColDef[];
 
-    constructor(private fieldDefinitionService: FieldDefinitionService, private cdr: ChangeDetectorRef) {}
+    private refreshData$ = new BehaviorSubject<void>(undefined);
+
+    constructor(
+        private fieldDefinitionService: FieldDefinitionService,
+        private utilityFunctions: UtilityFunctionsService,
+        private dialogService: DialogService,
+    ) {}
 
     ngOnInit() {
-        this.fieldDefinitionService.listFieldDefinition().subscribe((fieldDefinitions) => {
-            this.fieldDefinitions = fieldDefinitions;
-            this.rowData = fieldDefinitions;
-            this.fieldDefinitionsGrid.api.hideOverlay();
-            this.cdr.detectChanges();
-        });
+        this.fieldDefinitions$ = this.refreshData$.pipe(
+            switchMap(() => this.fieldDefinitionService.listFieldDefinition()),
+        );
+
         this.columnDefs = [
+            this.utilityFunctions.createActionsColumnDef((params) => {
+                const row = params.data as FieldDefinitionDatumDetail;
+                return [
+                    { ActionName: "Edit", ActionHandler: () => this.openEdit(row), ActionIcon: "fa fa-pencil" },
+                ];
+            }),
+            this.utilityFunctions.createBasicColumnDef("Custom Label", "FieldDefinitionLabel"),
+            this.utilityFunctions.createBasicColumnDef("Default Label", "FieldDefinition.FieldDefinitionDisplayName"),
+            this.utilityFunctions.createBooleanColumnDef("Has Custom Field Name?", "FieldDefinitionLabel", {
+                UseCustomDropdownFilter: true,
+                FilterValueGetter: (params) => !!params.data?.FieldDefinitionLabel,
+            }),
+            this.utilityFunctions.createBooleanColumnDef("Has Custom Field Definition?", "FieldDefinitionDatumValue", {
+                UseCustomDropdownFilter: true,
+                FilterValueGetter: (params) => !!params.data?.FieldDefinitionDatumValue,
+            }),
             {
-                headerName: "Label",
-                valueGetter: function (params: any) {
-                    return { LinkValue: params.data.FieldDefinitionType.FieldDefinitionTypeID, LinkDisplay: params.data.FieldDefinitionType.FieldDefinitionTypeDisplayName };
-                },
-                cellRenderer: LinkRendererComponent,
-                filterValueGetter: function (params: any) {
-                    return params.data.FieldDefinitionType.FieldDefinitionTypeDisplayName;
-                },
-                comparator: function (id1: any, id2: any) {
-                    let link1 = id1.LinkDisplay;
-                    let link2 = id2.LinkDisplay;
-                    if (link1 < link2) {
-                        return -1;
-                    }
-                    if (link1 > link2) {
-                        return 1;
-                    }
-                    return 0;
-                },
-                sortable: true,
-                filter: true,
-                width: 200,
-            },
-            {
-                headerName: "Definition",
-                field: "FieldDefinitionValue",
-                cellRenderer: function (params: any) {
-                    return params.data.FieldDefinitionValue ? params.data.FieldDefinitionValue : "";
-                },
+                headerName: "Custom Definition",
+                field: "FieldDefinitionDatumValue",
+                cellRenderer: (params: any) => params.value ?? "",
                 autoHeight: true,
                 sortable: true,
                 filter: true,
-                width: 900,
                 cellStyle: { "white-space": "normal" },
+                hide: true,
+            },
+            {
+                headerName: "Default Definition",
+                field: "FieldDefinition.DefaultDefinition",
+                valueGetter: (params: any) => params.data?.FieldDefinition?.DefaultDefinition,
+                cellRenderer: (params: any) => params.value ?? "",
+                autoHeight: true,
+                sortable: true,
+                filter: true,
+                cellStyle: { "white-space": "normal" },
+                hide: true,
             },
         ];
-
-        this.columnDefs.forEach((x) => {
-            x.resizable = true;
-        });
     }
 
-    ngOnDestroy(): void {
-        this.cdr.detach();
+    openEdit(row: FieldDefinitionDatumDetail): void {
+        const dialogRef = this.dialogService.open(FieldDefinitionEditComponent, {
+            data: {
+                fieldDefinitionID: row.FieldDefinition.FieldDefinitionID,
+                fieldDefinitionDisplayName: row.FieldDefinition.FieldDefinitionDisplayName,
+            } as FieldDefinitionEditModalData,
+            width: "900px",
+        });
+        dialogRef.afterClosed$.pipe(take(1)).subscribe(result => {
+            if (result) this.refreshData$.next();
+        });
     }
 }

@@ -25018,6 +25018,10 @@
           "FieldDefinitionDatumValue": {
             "type": "string",
             "nullable": true
+          },
+          "FieldDefinitionLabel": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -25026,6 +25030,10 @@
         "type": "object",
         "properties": {
           "FieldDefinitionDatumValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "FieldDefinitionLabel": {
             "type": "string",
             "nullable": true
           }
@@ -25044,6 +25052,10 @@
             "nullable": true
           },
           "FieldDefinitionDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "DefaultDefinition": {
             "type": "string",
             "nullable": true
           },

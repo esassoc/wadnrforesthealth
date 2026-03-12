@@ -9,7 +9,8 @@ public static class FieldDefinitionDatumProjections
     {
         FieldDefinitionDatumID = x.FieldDefinitionDatumID,
         FieldDefinitionID = x.FieldDefinitionID,
-        FieldDefinition = new FieldDefinitionDetail {FieldDefinitionID = x.FieldDefinition.FieldDefinitionID, FieldDefinitionName = x.FieldDefinition.FieldDefinitionName, FieldDefinitionDisplayName = x.FieldDefinition.FieldDefinitionDisplayName},
+        FieldDefinition = new FieldDefinitionDetail {FieldDefinitionID = x.FieldDefinition.FieldDefinitionID, FieldDefinitionName = x.FieldDefinition.FieldDefinitionName, FieldDefinitionDisplayName = x.FieldDefinition.FieldDefinitionDisplayName, DefaultDefinition = x.FieldDefinition.DefaultDefinition},
         FieldDefinitionDatumValue = x.FieldDefinitionDatumValue,
+        FieldDefinitionLabel = x.FieldDefinitionLabel,
     };
 }

@@ -1,13 +1,54 @@
-@if (fieldDefinitionDatum) {
-<div class="container mt-sm-4">
-    <page-header pageTitle="Edit Definition for Label: {{ fieldDefinitionDatum.FieldDefinition.FieldDefinitionDisplayName }}"> </page-header>
-    <editor #tinyMceEditor [init]="tinyMceConfig" [(ngModel)]="fieldDefinitionDatum.FieldDefinitionDatumValue"> </editor>
-    <div class="flex-between no-wrap mt-2">
-        <i></i>
-        <div>
-            <button type="button" class="btn btn-primary mt-1 mr-1 mb-1" (click)="saveDefinition()" [disabled]="isLoadingSubmit">Save</button>
-            <a routerLink="/labels-and-definitions" class="btn btn-secondary mt-1 mb-1">Cancel</a>
-        </div>
-    </div>
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit Definition: {{ fieldDefinitionDisplayName }}</h3>
 </div>
+@if (loadState$ | async; as state) {
+    <div class="modal-body" [loadingSpinner]="{ isLoading: state.loading, loadingHeight: 200 }">
+        <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+        @if (!state.loading && !state.error) {
+            <form-field
+                [formControl]="customLabelControl"
+                [fieldLabel]="'Custom Label'"
+                [placeholder]="'Leave blank to use default label'"
+                [type]="FormFieldType.Text"
+                [name]="'customLabel'">
+            </form-field>
+
+            <div class="mb-3">
+                <label class="field-label">Custom Definition</label>
+                <div class="tinyMCEFontColor">
+                    <editor #tinyMceEditor [init]="tinyMceConfig" [(ngModel)]="customDefinition"></editor>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="field-label">Default Label</label>
+                <div class="form-control-plaintext">{{ defaultLabel }}</div>
+            </div>
+
+            @if (defaultDefinition) {
+                <div>
+                    <label class="field-label">Default Definition</label>
+                    <div [innerHTML]="defaultDefinition"></div>
+                </div>
+            }
+        }
+    </div>
+    <div class="modal-footer">
+        <button
+            class="btn btn-primary"
+            (click)="save()"
+            [disabled]="isSubmitting || state.loading || state.error"
+            [buttonLoading]="isSubmitting">
+            Save
+        </button>
+        <button
+            class="btn btn-secondary"
+            (click)="cancel()"
+            [disabled]="isSubmitting">
+            Cancel
+        </button>
+    </div>
 }
+</div>

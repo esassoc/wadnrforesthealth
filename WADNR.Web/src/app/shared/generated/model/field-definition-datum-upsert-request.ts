@@ -12,6 +12,7 @@
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
 export class FieldDefinitionDatumUpsertRequest { 
     FieldDefinitionDatumValue?: string | null;
+    FieldDefinitionLabel?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -19,10 +20,21 @@ export class FieldDefinitionDatumUpsertRequest {
 
 export interface FieldDefinitionDatumUpsertRequestForm { 
     FieldDefinitionDatumValue?: FormControl<string>;
+    FieldDefinitionLabel?: FormControl<string>;
 }
 
 export class FieldDefinitionDatumUpsertRequestFormControls { 
     public static FieldDefinitionDatumValue = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FieldDefinitionLabel = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

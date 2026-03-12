@@ -15,6 +15,7 @@ export class FieldDefinitionDetail {
     FieldDefinitionID?: number;
     FieldDefinitionName?: string | null;
     FieldDefinitionDisplayName?: string | null;
+    DefaultDefinition?: string | null;
     LastUpdatePerson?: PersonDetail;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -25,6 +26,7 @@ export interface FieldDefinitionDetailForm {
     FieldDefinitionID?: FormControl<number>;
     FieldDefinitionName?: FormControl<string>;
     FieldDefinitionDisplayName?: FormControl<string>;
+    DefaultDefinition?: FormControl<string>;
     LastUpdatePerson?: FormControl<PersonDetail>;
 }
 
@@ -50,6 +52,16 @@ export class FieldDefinitionDetailFormControls {
         }
     );
     public static FieldDefinitionDisplayName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static DefaultDefinition = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

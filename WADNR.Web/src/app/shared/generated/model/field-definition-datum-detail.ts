@@ -16,6 +16,7 @@ export class FieldDefinitionDatumDetail {
     FieldDefinitionID?: number;
     FieldDefinition?: FieldDefinitionDetail;
     FieldDefinitionDatumValue?: string | null;
+    FieldDefinitionLabel?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -26,6 +27,7 @@ export interface FieldDefinitionDatumDetailForm {
     FieldDefinitionID?: FormControl<number>;
     FieldDefinition?: FormControl<FieldDefinitionDetail>;
     FieldDefinitionDatumValue?: FormControl<string>;
+    FieldDefinitionLabel?: FormControl<string>;
 }
 
 export class FieldDefinitionDatumDetailFormControls { 
@@ -60,6 +62,16 @@ export class FieldDefinitionDatumDetailFormControls {
         }
     );
     public static FieldDefinitionDatumValue = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static FieldDefinitionLabel = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

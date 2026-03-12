@@ -6,5 +6,5 @@ public class FieldDefinitionDatumDetail
     public int FieldDefinitionID { get; set; }
     public FieldDefinitionDetail FieldDefinition { get; set; }
     public string FieldDefinitionDatumValue { get; set; }
-
+    public string FieldDefinitionLabel { get; set; }
 }
