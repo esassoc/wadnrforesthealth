@@ -675,6 +675,9 @@ export class UtilityFunctionsService {
         if (params.Width) {
             colDef.width = params.Width;
         }
+        if (params.MinWidth) {
+            colDef.minWidth = params.MinWidth;
+        }
         if (params.MaxWidth) {
             colDef.maxWidth = params.MaxWidth;
         }
@@ -765,6 +768,7 @@ export class UtilityFunctionsService {
 
 export interface LtinfoColumnDefParams {
     Width?: number;
+    MinWidth?: number;
     MaxWidth?: number;
     Hide?: boolean;
     WrapHeaderText?: boolean; // When true, header text wraps (default: false)

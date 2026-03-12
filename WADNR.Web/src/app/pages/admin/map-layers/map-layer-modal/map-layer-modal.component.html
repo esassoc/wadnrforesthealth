@@ -15,52 +15,52 @@
 
         <form-field
             [formControl]="form.controls.LayerUrl"
-            fieldLabel="Layer URL"
+            fieldLabel="Url"
             [type]="FormFieldType.Text"
             placeholder="Enter layer URL">
         </form-field>
 
         <form-field
             [formControl]="form.controls.LayerDescription"
-            fieldLabel="Description"
+            fieldLabel="Internal Layer Description"
             [type]="FormFieldType.Textarea"
             placeholder="Enter description">
         </form-field>
 
         <form-field
             [formControl]="form.controls.FeatureNameField"
-            fieldLabel="Feature Name Field"
+            fieldLabel="Field to use as source for feature names"
             [type]="FormFieldType.Text"
             placeholder="Enter feature name field">
         </form-field>
 
         <form-field
             [formControl]="form.controls.DisplayOnProjectMap"
-            fieldLabel="Display on Project Map"
+            fieldLabel="Display on Project Map?"
             [type]="FormFieldType.Toggle">
         </form-field>
 
         <form-field
             [formControl]="form.controls.DisplayOnPriorityLandscape"
-            fieldLabel="Display on Priority Landscape"
+            fieldLabel="Display on Priority Landscape Maps?"
             [type]="FormFieldType.Toggle">
         </form-field>
 
         <form-field
             [formControl]="form.controls.DisplayOnAllOthers"
-            fieldLabel="Display on All Others"
+            fieldLabel="Display on All Other Maps?"
             [type]="FormFieldType.Toggle">
         </form-field>
 
         <form-field
             [formControl]="form.controls.IsActive"
-            fieldLabel="Active"
+            fieldLabel="Is Active?"
             [type]="FormFieldType.Toggle">
         </form-field>
 
         <form-field
             [formControl]="form.controls.IsTiledMapService"
-            fieldLabel="Tiled Map Service"
+            fieldLabel="Is a Tiled Map Service?"
             [type]="FormFieldType.Toggle">
         </form-field>
     </form>

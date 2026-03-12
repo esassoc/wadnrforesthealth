@@ -54,15 +54,15 @@ export class MapLayersComponent implements OnInit {
                     { ActionName: "Delete", ActionHandler: () => this.confirmDelete(layer), ActionIcon: "fa fa-trash" },
                 ];
             }),
-            this.utilityFunctions.createBasicColumnDef("Display Name", "DisplayName", { Width: 200, FieldDefinitionType: "ExternalMapLayerDisplayName", FieldDefinitionLabelOverride: "Display Name" }),
-            this.utilityFunctions.createBasicColumnDef("Layer URL", "LayerUrl", { Width: 250, FieldDefinitionType: "ExternalMapLayerUrl", FieldDefinitionLabelOverride: "Layer URL" }),
-            this.utilityFunctions.createBasicColumnDef("Description", "LayerDescription", { Width: 200, FieldDefinitionType: "ExternalMapLayerDescription", FieldDefinitionLabelOverride: "Description" }),
-            this.utilityFunctions.createBasicColumnDef("Feature Name Field", "FeatureNameField", { Width: 150, FieldDefinitionType: "ExternalMapLayerFeatureNameField", FieldDefinitionLabelOverride: "Feature Name Field" }),
-            this.utilityFunctions.createBooleanColumnDef("On Project Map", "DisplayOnProjectMap", { Width: 80, CustomDropdownFilterField: "DisplayOnProjectMap", FieldDefinitionType: "ExternalMapLayerDisplayOnProjectMap", FieldDefinitionLabelOverride: "On Project Map" }),
-            this.utilityFunctions.createBooleanColumnDef("On Priority Landscape", "DisplayOnPriorityLandscape", { Width: 80, CustomDropdownFilterField: "DisplayOnPriorityLandscape", FieldDefinitionType: "ExternalMapLayerDisplayOnPriorityLandscape", FieldDefinitionLabelOverride: "On Priority Landscape" }),
-            this.utilityFunctions.createBooleanColumnDef("On All Others", "DisplayOnAllOthers", { Width: 80, CustomDropdownFilterField: "DisplayOnAllOthers", FieldDefinitionType: "ExternalMapLayerDisplayOnAllOthers", FieldDefinitionLabelOverride: "On All Others" }),
-            this.utilityFunctions.createBooleanColumnDef("Active", "IsActive", { Width: 80, CustomDropdownFilterField: "IsActive", FieldDefinitionType: "ExternalMapLayerIsActive", FieldDefinitionLabelOverride: "Active" }),
-            this.utilityFunctions.createBooleanColumnDef("Tiled Map Service", "IsTiledMapService", { Width: 80, CustomDropdownFilterField: "IsTiledMapService", FieldDefinitionType: "ExternalMapLayerIsATiledMapService", FieldDefinitionLabelOverride: "Tiled Map Service" }),
+            this.utilityFunctions.createBasicColumnDef("Display Name", "DisplayName", { Width: 200, MinWidth: 150, FieldDefinitionType: "ExternalMapLayerDisplayName", FieldDefinitionLabelOverride: "Display Name" }),
+            this.utilityFunctions.createBasicColumnDef("Url", "LayerUrl", { Width: 250, MinWidth: 100, FieldDefinitionType: "ExternalMapLayerUrl", FieldDefinitionLabelOverride: "Url" }),
+            this.utilityFunctions.createBasicColumnDef("Internal Layer Description", "LayerDescription", { Width: 240, MinWidth: 200, FieldDefinitionType: "ExternalMapLayerDescription", FieldDefinitionLabelOverride: "Internal Layer Description" }),
+            this.utilityFunctions.createBasicColumnDef("Field to use as source for feature names", "FeatureNameField", { Width: 350, MinWidth: 280, FieldDefinitionType: "ExternalMapLayerFeatureNameField", FieldDefinitionLabelOverride: "Field to use as source for feature names" }),
+            this.utilityFunctions.createBooleanColumnDef("Display on Project Map?", "DisplayOnProjectMap", { Width: 215, MinWidth: 185, CustomDropdownFilterField: "DisplayOnProjectMap", FieldDefinitionType: "ExternalMapLayerDisplayOnProjectMap", FieldDefinitionLabelOverride: "Display on Project Map?" }),
+            this.utilityFunctions.createBooleanColumnDef("Display on Priority Landscape Maps?", "DisplayOnPriorityLandscape", { Width: 310, MinWidth: 275, CustomDropdownFilterField: "DisplayOnPriorityLandscape", FieldDefinitionType: "ExternalMapLayerDisplayOnPriorityLandscape", FieldDefinitionLabelOverride: "Display on Priority Landscape Maps?" }),
+            this.utilityFunctions.createBooleanColumnDef("Display on All Other Maps?", "DisplayOnAllOthers", { Width: 240, MinWidth: 210, CustomDropdownFilterField: "DisplayOnAllOthers", FieldDefinitionType: "ExternalMapLayerDisplayOnAllOthers", FieldDefinitionLabelOverride: "Display on All Other Maps?" }),
+            this.utilityFunctions.createBooleanColumnDef("Is Active?", "IsActive", { Width: 110, MinWidth: 110, CustomDropdownFilterField: "IsActive", FieldDefinitionType: "ExternalMapLayerIsActive", FieldDefinitionLabelOverride: "Is Active?" }),
+            this.utilityFunctions.createBooleanColumnDef("Is a Tiled Map Service?", "IsTiledMapService", { Width: 215, MinWidth: 185, CustomDropdownFilterField: "IsTiledMapService", FieldDefinitionType: "ExternalMapLayerIsATiledMapService", FieldDefinitionLabelOverride: "Is a Tiled Map Service?" }),
         ];
     }
 
