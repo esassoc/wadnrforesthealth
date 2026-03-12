@@ -83,7 +83,6 @@ export class FundSourceAllocationDetailComponent {
     public canManageFundSources$: Observable<boolean>;
 
     public currentAllocationID: number;
-
     public budgetLineItemColumnDefs: ColDef<FundSourceAllocationBudgetLineItemGridRow>[];
     public projectColumnDefs: ColDef<FundSourceAllocationProjectGridRow>[];
     public expenditureColumnDefs: ColDef<FundSourceAllocationExpenditureGridRow>[];

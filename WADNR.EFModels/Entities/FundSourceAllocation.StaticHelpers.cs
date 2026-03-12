@@ -341,6 +341,65 @@ public static class FundSourceAllocations
         return await ListProgramIndexProjectCodesAsync(dbContext, fundSourceAllocationID);
     }
 
+    public static async Task<FundSourceAllocationDetail?> DuplicateAsync(WADNRDbContext dbContext, int fundSourceAllocationID)
+    {
+        var original = await dbContext.FundSourceAllocations
+            .AsNoTracking()
+            .Include(x => x.FundSourceAllocationProgramManagers)
+            .Include(x => x.FundSourceAllocationLikelyPeople)
+            .SingleOrDefaultAsync(x => x.FundSourceAllocationID == fundSourceAllocationID);
+
+        if (original == null)
+        {
+            return null;
+        }
+
+        var upsertRequest = new FundSourceAllocationUpsertRequest
+        {
+            FundSourceAllocationName = original.FundSourceAllocationName + " - Copy",
+            FundSourceID = original.FundSourceID,
+            StartDate = original.StartDate,
+            EndDate = original.EndDate,
+            AllocationAmount = null,
+            FederalFundCodeID = original.FederalFundCodeID,
+            OrganizationID = original.OrganizationID,
+            DNRUplandRegionID = original.DNRUplandRegionID,
+            DivisionID = original.DivisionID,
+            FundSourceManagerID = original.FundSourceManagerID,
+            FundSourceAllocationPriorityID = original.FundSourceAllocationPriorityID,
+            FundSourceAllocationSourceID = original.FundSourceAllocationSourceID,
+            HasFundFSPs = original.HasFundFSPs,
+            LikelyToUse = original.LikelyToUse,
+            ProgramManagerPersonIDs = original.FundSourceAllocationProgramManagers.Select(pm => pm.PersonID).ToList(),
+            LikelyToUsePersonIDs = original.FundSourceAllocationLikelyPeople.Select(lp => lp.PersonID).ToList(),
+        };
+
+        var newDetail = await CreateAsync(dbContext, upsertRequest);
+
+        if (newDetail != null)
+        {
+            // Copy program index / project code mappings
+            var originalPIPCs = await dbContext.FundSourceAllocationProgramIndexProjectCodes
+                .AsNoTracking()
+                .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
+                .ToListAsync();
+
+            if (originalPIPCs.Any())
+            {
+                dbContext.FundSourceAllocationProgramIndexProjectCodes.AddRange(
+                    originalPIPCs.Select(pipc => new FundSourceAllocationProgramIndexProjectCode
+                    {
+                        FundSourceAllocationID = newDetail.FundSourceAllocationID,
+                        ProgramIndexID = pipc.ProgramIndexID,
+                        ProjectCodeID = pipc.ProjectCodeID,
+                    }));
+                await dbContext.SaveChangesAsync();
+            }
+        }
+
+        return newDetail;
+    }
+
     public static async Task<FundSourceAllocationDetail?> CreateAsync(WADNRDbContext dbContext, FundSourceAllocationUpsertRequest dto)
     {
         var entity = new FundSourceAllocation

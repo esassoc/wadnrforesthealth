@@ -83,6 +83,18 @@ public class FundSourceAllocationController(
         return Ok(detail);
     }
 
+    [HttpPost("{fundSourceAllocationID}/duplicate")]
+    [FundSourceManageFeature]
+    public async Task<ActionResult<FundSourceAllocationDetail>> Duplicate([FromRoute] int fundSourceAllocationID)
+    {
+        var duplicate = await FundSourceAllocations.DuplicateAsync(DbContext, fundSourceAllocationID);
+        if (duplicate == null)
+        {
+            return NotFound();
+        }
+        return CreatedAtAction(nameof(GetByID), new { fundSourceAllocationID = duplicate.FundSourceAllocationID }, duplicate);
+    }
+
     [HttpDelete("{fundSourceAllocationID}")]
     [FundSourceManageFeature]
     [EntityNotFound(typeof(FundSourceAllocation), "fundSourceAllocationID")]
