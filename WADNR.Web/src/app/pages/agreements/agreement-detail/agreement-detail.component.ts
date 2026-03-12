@@ -2,7 +2,7 @@ import { AsyncPipe, CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, DestroyRef, inject } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DomSanitizer, SafeHtml, SafeResourceUrl } from "@angular/platform-browser";
-import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { DialogService } from "@ngneat/dialog";
 import { ColDef } from "ag-grid-community";
 import { combineLatest, distinctUntilChanged, filter, map, Observable, shareReplay, startWith, Subject, switchMap } from "rxjs";
@@ -58,7 +58,6 @@ export class AgreementDetailComponent {
 
     constructor(
         private route: ActivatedRoute,
-        private router: Router,
         private agreementService: AgreementService,
         private utilityFunctions: UtilityFunctionsService,
         private sanitizer: DomSanitizer,
@@ -258,28 +257,6 @@ export class AgreementDetailComponent {
                 next: () => {
                     this.alertService.pushAlert(new Alert("Contact removed.", AlertContext.Success, true));
                     this.refreshData$.next();
-                },
-            });
-        }
-    }
-
-    async confirmDeleteAgreement(agreement: AgreementDetail): Promise<void> {
-        const confirmed = await this.confirmService.confirm({
-            title: "Delete Agreement",
-            message: `Are you sure you want to delete agreement "${agreement.AgreementTitle}"? This action cannot be undone.`,
-            buttonTextYes: "Delete",
-            buttonClassYes: "btn-danger",
-            buttonTextNo: "Cancel",
-        });
-
-        if (confirmed) {
-            this.agreementService.deleteAgreement(agreement.AgreementID).subscribe({
-                next: () => {
-                    this.alertService.pushAlert(new Alert("Agreement deleted successfully.", AlertContext.Success, true));
-                    this.router.navigate(["/agreements"]);
-                },
-                error: (err) => {
-                    this.alertService.pushAlert(new Alert(err?.error?.message ?? err?.error ?? "Failed to delete agreement.", AlertContext.Danger, true));
                 },
             });
         }

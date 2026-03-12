@@ -222,27 +222,8 @@
                             </a>
                         </div>
                     </div>
-                    @if (canManage$ | async) {
-                        <div class="flex-end mt-2">
-                            <button class="btn btn-sm btn-danger" [buttonLoading]="isDeletingVoucher" (click)="confirmDeleteVoucher(invoice)">
-                                <icon icon="Delete"></icon> Delete Voucher
-                            </button>
-                        </div>
-                    }
                 } @else {
                     <p class="system-text">No voucher file uploaded.</p>
-                    @if (canManage$ | async) {
-                        <div class="flex-end mt-2">
-                            <label class="btn btn-sm btn-primary mb-0" [class.disabled]="isUploadingVoucher">
-                                @if (isUploadingVoucher) {
-                                    <span class="fas fa-spinner fa-spin"></span>
-                                }
-                                <icon icon="Upload"></icon> Upload Voucher
-                                <input type="file" class="d-none" accept=".pdf,.xlsx,.xls,.doc,.docx,.jpg,.jpeg,.png"
-                                    (change)="onVoucherFileSelected($event, invoice)" [disabled]="isUploadingVoucher" />
-                            </label>
-                        </div>
-                    }
                 }
             </div>
         </div>

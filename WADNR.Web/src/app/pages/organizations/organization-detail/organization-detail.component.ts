@@ -45,8 +45,6 @@ import {
     SelectSinglePolygonGdbModalComponent,
     SelectSinglePolygonGdbModalData,
 } from "src/app/shared/components/select-single-polygon-gdb-modal/select-single-polygon-gdb-modal.component";
-import { FeedbackModalComponent, FeedbackModalData } from "src/app/shared/components/feedback-modal/feedback-modal.component";
-import { SupportRequestTypeEnum } from "src/app/shared/generated/enum/support-request-type-enum";
 import { AuthenticationService } from "src/app/services/authentication.service";
 
 @Component({
@@ -499,11 +497,4 @@ export class OrganizationDetailComponent {
         }
     }
 
-    requestOrganizationNameChange(): void {
-        const data: FeedbackModalData = {
-            currentPageUrl: window.location.href,
-            defaultSupportRequestType: SupportRequestTypeEnum.RequestOrganizationNameChange,
-        };
-        this.dialogService.open(FeedbackModalComponent, { data, width: "600px" });
-    }
 }

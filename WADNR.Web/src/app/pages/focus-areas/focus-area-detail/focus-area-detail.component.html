@@ -56,7 +56,7 @@
                         </div>
                         @if (canManageFocusAreas$ | async) {
                             <div class="g-col-2 flex-end">
-                                <button class="btn btn-primary btn-sm" (click)="openUploadGdbModal(focusArea)"><icon icon="Upload"></icon> Upload GDB</button>
+                                <button class="btn btn-primary btn-sm" (click)="openUploadGdbModal(focusArea)"><icon icon="Edit"></icon> Edit Location</button>
                                 @if (hasLocation$ | async) {
                                     <button class="btn btn-danger btn-sm ms-1" (click)="confirmDeleteLocation(focusArea)"><icon icon="Delete"></icon> Delete Location</button>
                                 }

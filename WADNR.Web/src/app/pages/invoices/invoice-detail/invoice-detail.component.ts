@@ -9,12 +9,7 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 import { PersonLinkComponent } from "src/app/shared/components/person-link/person-link.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
-import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { AuthenticationService } from "src/app/services/authentication.service";
-import { AlertService } from "src/app/shared/services/alert.service";
-import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
-import { Alert } from "src/app/shared/models/alert";
-import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { getFileResourceUrlFromBase } from "src/app/shared/utils/file-resource-utils";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { environment } from "src/environments/environment";
@@ -25,7 +20,7 @@ import { InvoiceDetail } from "src/app/shared/generated/model/invoice-detail";
 @Component({
     selector: "invoice-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, CurrencyPipe, DatePipe, PersonLinkComponent, LoadingDirective, ButtonLoadingDirective, IconComponent],
+    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, CurrencyPipe, DatePipe, PersonLinkComponent, LoadingDirective, IconComponent],
     templateUrl: "./invoice-detail.component.html",
     styleUrls: ["./invoice-detail.component.scss"],
 })
@@ -39,15 +34,11 @@ export class InvoiceDetailComponent {
 
     public invoice$: Observable<InvoiceDetail>;
     public canManage$: Observable<boolean>;
-    public isUploadingVoucher = false;
-    public isDeletingVoucher = false;
 
     constructor(
         private invoiceService: InvoiceService,
         private dialogService: DialogService,
         private authService: AuthenticationService,
-        private alertService: AlertService,
-        private confirmService: ConfirmService,
         private sanitizer: DomSanitizer,
     ) {}
 
@@ -79,53 +70,6 @@ export class InvoiceDetailComponent {
                 }
             });
         });
-    }
-
-    onVoucherFileSelected(event: Event, invoice: InvoiceDetail): void {
-        const input = event.target as HTMLInputElement;
-        const file = input.files?.[0];
-        if (!file) return;
-
-        this.isUploadingVoucher = true;
-        this.invoiceService.uploadVoucherInvoice(invoice.InvoiceID!, file).subscribe({
-            next: () => {
-                this.isUploadingVoucher = false;
-                this.alertService.pushAlert(new Alert("Voucher uploaded successfully.", AlertContext.Success, true));
-                this.refreshData$.next();
-            },
-            error: (err) => {
-                this.isUploadingVoucher = false;
-                this.alertService.pushAlert(new Alert(err?.error?.message ?? err?.error ?? "Failed to upload voucher.", AlertContext.Danger, true));
-            },
-        });
-
-        // Reset file input so the same file can be re-selected
-        input.value = "";
-    }
-
-    async confirmDeleteVoucher(invoice: InvoiceDetail): Promise<void> {
-        const confirmed = await this.confirmService.confirm({
-            title: "Delete Voucher",
-            message: `Are you sure you want to delete the voucher file "${invoice.InvoiceFileOriginalFileName}"?`,
-            buttonTextYes: "Delete",
-            buttonClassYes: "btn-danger",
-            buttonTextNo: "Cancel",
-        });
-
-        if (confirmed) {
-            this.isDeletingVoucher = true;
-            this.invoiceService.deleteVoucherInvoice(invoice.InvoiceID!).subscribe({
-                next: () => {
-                    this.isDeletingVoucher = false;
-                    this.alertService.pushAlert(new Alert("Voucher deleted successfully.", AlertContext.Success, true));
-                    this.refreshData$.next();
-                },
-                error: (err) => {
-                    this.isDeletingVoucher = false;
-                    this.alertService.pushAlert(new Alert(err?.error?.message ?? err?.error ?? "Failed to delete voucher.", AlertContext.Danger, true));
-                },
-            });
-        }
     }
 
     public voucherUrl(fileResourceGuid?: string | null): SafeResourceUrl | null {
