@@ -79,6 +79,18 @@ public class TagController(
         return NoContent();
     }
 
+    [HttpPost("bulk-tag-projects")]
+    [AdminFeature]
+    public async Task<ActionResult<TagDetail>> BulkTagProjects([FromBody] BulkTagProjectsRequest dto)
+    {
+        var result = await Tags.BulkTagProjectsAsync(DbContext, dto);
+        if (result == null)
+        {
+            return BadRequest();
+        }
+        return Ok(result);
+    }
+
     [HttpGet("{tagID}/projects")]
     [ProjectViewFeature]
     public async Task<ActionResult<IEnumerable<ProjectTagDetailGridRow>>> ListProjectsForTagID([FromRoute] int tagID)

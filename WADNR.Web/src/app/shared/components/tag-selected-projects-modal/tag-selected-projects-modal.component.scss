@@ -1,1 +1,20 @@
 /* styling for tag selected projects modal */
+
+.tag-suggestions {
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0 0;
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+
+  li {
+    padding: 0.4rem 0.75rem;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--hover-bg, #f0f0f0);
+    }
+  }
+}

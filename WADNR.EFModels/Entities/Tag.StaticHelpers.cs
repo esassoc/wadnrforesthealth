@@ -49,6 +49,44 @@ public static class Tags
         return await GetByIDAsDetailAsync(dbContext, entity.TagID);
     }
 
+    public static async Task<TagDetail?> BulkTagProjectsAsync(WADNRDbContext dbContext, BulkTagProjectsRequest dto)
+    {
+        // Case-insensitive find-or-create
+        var tag = await dbContext.Tags
+            .FirstOrDefaultAsync(x => x.TagName.ToLower() == dto.TagName.ToLower());
+
+        if (tag == null)
+        {
+            tag = new Tag { TagName = dto.TagName };
+            dbContext.Tags.Add(tag);
+            await dbContext.SaveChangesAsync();
+        }
+
+        // Get existing ProjectTag rows to avoid AK violation
+        var existingProjectIDs = await dbContext.ProjectTags
+            .Where(pt => pt.TagID == tag.TagID && dto.ProjectIDs.Contains(pt.ProjectID))
+            .Select(pt => pt.ProjectID)
+            .ToListAsync();
+
+        var newProjectIDs = dto.ProjectIDs.Except(existingProjectIDs).ToList();
+
+        foreach (var projectID in newProjectIDs)
+        {
+            dbContext.ProjectTags.Add(new ProjectTag
+            {
+                TagID = tag.TagID,
+                ProjectID = projectID
+            });
+        }
+
+        if (newProjectIDs.Count > 0)
+        {
+            await dbContext.SaveChangesAsync();
+        }
+
+        return await GetByIDAsDetailAsync(dbContext, tag.TagID);
+    }
+
     public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int tagID)
     {
         await dbContext.ProjectTags
