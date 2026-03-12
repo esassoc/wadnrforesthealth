@@ -109,6 +109,14 @@ public class ProjectTypeController(
         return Ok(updated);
     }
 
+    [HttpPut("sort-order")]
+    [AdminFeature]
+    public async Task<ActionResult<List<ProjectTypeGridRow>>> UpdateSortOrder([FromBody] List<SortOrderUpdateItem> sortOrderUpdates)
+    {
+        var rows = await ProjectTypes.UpdateSortOrderAsync(DbContext, sortOrderUpdates);
+        return Ok(rows);
+    }
+
     [HttpDelete("{projectTypeID}")]
     [AdminFeature]
     [EntityNotFound(typeof(ProjectType), "projectTypeID")]

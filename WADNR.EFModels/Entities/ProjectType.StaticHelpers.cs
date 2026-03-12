@@ -66,6 +66,19 @@ public static class ProjectTypes
         return await GetByIDAsDetailAsync(dbContext, entity.ProjectTypeID);
     }
 
+    public static async Task<List<ProjectTypeGridRow>> UpdateSortOrderAsync(WADNRDbContext dbContext, List<SortOrderUpdateItem> updates)
+    {
+        var ids = updates.Select(u => u.ID).ToList();
+        var entities = await dbContext.ProjectTypes.Where(x => ids.Contains(x.ProjectTypeID)).ToListAsync();
+        foreach (var entity in entities)
+        {
+            var update = updates.First(u => u.ID == entity.ProjectTypeID);
+            entity.ProjectTypeSortOrder = update.SortOrder;
+        }
+        await dbContext.SaveChangesAsync();
+        return await ListAsGridRowAsync(dbContext);
+    }
+
     public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int id)
     {
         var deleted = await dbContext.ProjectTypes.Where(x => x.ProjectTypeID == id).ExecuteDeleteAsync();

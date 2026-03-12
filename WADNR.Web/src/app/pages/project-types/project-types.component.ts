@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { ColDef } from "ag-grid-community";
-import { BehaviorSubject, Observable, switchMap } from "rxjs";
+import { BehaviorSubject, Observable, switchMap, take } from "rxjs";
 import { DialogService } from "@ngneat/dialog";
 
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -17,6 +17,7 @@ import { ProjectTypeService } from "src/app/shared/generated/api/project-type.se
 import { ProjectTypeGridRow } from "src/app/shared/generated/model/project-type-grid-row";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
 import { ProjectTypeModalComponent, ProjectTypeModalData } from "./project-type-modal/project-type-modal.component";
+import { SortOrderModalComponent, SortOrderModalData } from "src/app/shared/components/sort-order-modal/sort-order-modal.component";
 
 @Component({
     selector: "project-types",
@@ -82,6 +83,32 @@ export class ProjectTypesComponent {
                 Width: 120,
             }),
         );
+    }
+
+    openEditSortOrder(): void {
+        this.projectTypes$.pipe(take(1)).subscribe(projectTypes => {
+            const dialogRef = this.dialogService.open(SortOrderModalComponent, {
+                data: {
+                    items: projectTypes.map(t => ({ id: t.ProjectTypeID, displayName: t.ProjectTypeName })),
+                    entityLabel: "project types",
+                } as SortOrderModalData,
+                width: "500px",
+            });
+            dialogRef.afterClosed$.subscribe(result => {
+                if (result) {
+                    this.projectTypeService.updateSortOrderProjectType(result).subscribe({
+                        next: () => {
+                            this.alertService.pushAlert(new Alert("Sort order updated successfully.", AlertContext.Success));
+                            this.refreshProjectTypes$.next();
+                        },
+                        error: (err) => {
+                            const message = err?.error ?? err?.message ?? "An error occurred.";
+                            this.alertService.pushAlert(new Alert(message, AlertContext.Danger));
+                        },
+                    });
+                }
+            });
+        });
     }
 
     openCreateProjectType(): void {
