@@ -27,6 +27,9 @@ data:
   ArcGisLoaDataWesternUrl: "https://services.arcgis.com/4x406oNViizbGo13/arcgis/rest/services/western_wa_service_foresters_treatments/FeatureServer/0/query"
   ArcGisUsfsDataUrl: "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_ActivityFactsCommonAttributes_01/MapServer/0/query"
   ArcGisUsfsNepaBoundaryDataUrl: "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_ActivityProjectAreas_01/MapServer/0/query"
+  # Auth0
+  Auth0__Authority: "https://wadnr-qa.us.auth0.com/"
+  Auth0__Audience: "WADNRAPI"
   # Notifications
   WebsiteDisplayName: "WA DNR Forest Health Tracker"
 {{ end }}

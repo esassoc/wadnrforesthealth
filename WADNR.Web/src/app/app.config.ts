@@ -34,7 +34,6 @@ export const appConfig: ApplicationConfig = {
                 redirect_uri: environment.auth0?.redirectUri ?? window.location.origin,
                 audience: environment.auth0?.audience,
                 scope: "openid profile email offline_access",
-                connection: "wa-state-ciam",
             },
             useRefreshTokens: true,
             cacheLocation: "localstorage",

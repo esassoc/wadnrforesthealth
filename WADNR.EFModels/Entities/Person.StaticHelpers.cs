@@ -500,12 +500,19 @@ public static class People
 
     public static async Task<PersonDetail?> UpdateClaims(WADNRDbContext dbContext, ClaimsPrincipal claimsPrincipal)
     {
+        const int wadnrOrganizationID = 4704;
+
         int? personID = null;
         var globalID = claimsPrincipal?.Claims.SingleOrDefault(c => c.Type == ClaimsConstants.Sub)?.Value;
         if (!string.IsNullOrEmpty(globalID))
         {
             personID = await dbContext.People.AsNoTracking().Where(x => x.GlobalID == globalID).Select(x => x.PersonID).SingleOrDefaultAsync();
         }
+
+        // Detect if this is an enterprise login (Entra ID) from the sub claim prefix.
+        // Auth0 database connections produce subs like "auth0|...", while enterprise
+        // connections (Entra) produce subs like "waad|..." or similar.
+        var isEnterpriseUser = !string.IsNullOrEmpty(globalID) && !globalID.StartsWith("auth0|");
 
         Person person;
         var email = claimsPrincipal?.Claims.SingleOrDefault(c => c.Type == ClaimsConstants.Emails)?.Value;
@@ -528,10 +535,22 @@ public static class People
                 WebServiceAccessToken = Guid.NewGuid(),
                 ReceiveSupportEmails = false,
             };
-            var personRole = new PersonRole { Person = person, RoleID = (int)RoleEnum.Unassigned };
+
+            if (isEnterpriseUser)
+            {
+                // Entra ID users: Normal role + WA DNR organization
+                var personRole = new PersonRole { Person = person, RoleID = (int)RoleEnum.Normal };
+                person.OrganizationID = wadnrOrganizationID;
+                dbContext.PersonRoles.Add(personRole);
+            }
+            else
+            {
+                // Public users: Unassigned role
+                var personRole = new PersonRole { Person = person, RoleID = (int)RoleEnum.Unassigned };
+                dbContext.PersonRoles.Add(personRole);
+            }
 
             dbContext.People.Add(person);
-            dbContext.PersonRoles.Add(personRole);
         }
 
         var firstName = claimsPrincipal?.Claims.SingleOrDefault(c => c.Type == ClaimsConstants.GivenName)?.Value;
@@ -556,6 +575,8 @@ public static class People
         {
             person.Email = email;
         }
+
+        person.LastActivityDate = DateTime.UtcNow;
 
         await dbContext.SaveChangesWithNoAuditingAsync();
         await dbContext.Entry(person).ReloadAsync();

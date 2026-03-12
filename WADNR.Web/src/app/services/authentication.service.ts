@@ -89,6 +89,15 @@ export class AuthenticationService {
         return this.claimsUser != null;
     }
 
+    /**
+     * Checks if the currently logged-in user authenticated via an enterprise IDP (e.g. Entra ID).
+     * Enterprise users manage credentials through their organization's portal, not Auth0.
+     */
+    public isExternalIdpUser(): boolean {
+        if (!this.claimsUser?.sub) return false;
+        return !this.claimsUser.sub.startsWith("auth0|");
+    }
+
     public handleUnauthorized(): void {
         this.forcedLogout();
     }
@@ -139,8 +148,7 @@ export class AuthenticationService {
     }
 
     resetPassword() {
-        // Password reset flow should be handled via Auth0 hosted page or Management API. Triggering a redirect to a password reset can be done via Universal Login with proper configurations.
-        this.auth0.loginWithRedirect({ authorizationParams: { screen_hint: "reset-password" } } as any);
+        this.auth0.loginWithRedirect({ authorizationParams: { screen_hint: "reset-password", connection: "wa-state-ciam" } } as any);
     }
 
     editProfile() {
@@ -155,7 +163,7 @@ export class AuthenticationService {
     signUp() {
         const baseRedirect = environment.auth0?.redirectUri ?? window.location.origin;
         const target = baseRedirect.replace(/\/$/, "") + "/create-user-callback";
-        this.auth0.loginWithRedirect({ authorizationParams: { screen_hint: "signup", redirect_uri: target } } as any);
+        this.auth0.loginWithRedirect({ authorizationParams: { screen_hint: "signup", redirect_uri: target, connection: "wa-state-ciam" } } as any);
     }
 
     public isCurrentUserNullOrUndefined(): boolean {

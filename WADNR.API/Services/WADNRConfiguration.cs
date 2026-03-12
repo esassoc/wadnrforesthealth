@@ -18,6 +18,7 @@
         public string WebUrl { get; set; } = "https://wadnrforesthealth.wa.gov";
         public string GDALAPIBaseUrl { get; set; }
         public bool EnableE2ETestAuth { get; set; }
+        public Auth0Configuration Auth0 { get; set; } = new();
 
         // Finance API (ArcGIS Online)
         public string ProjectCodeJsonApiBaseUrl { get; set; }
@@ -42,5 +43,11 @@
         public string WebsiteDisplayName { get; set; } = "WA DNR Forest Health Tracker";
 
         public int Pre2007ProjectCount => 266; // todo: keeping this as a constant here since I doubt it changes now
+    }
+
+    public class Auth0Configuration
+    {
+        public string Authority { get; set; } = "https://wadnr.us.auth0.com/";
+        public string Audience { get; set; } = "WADNRAPI";
     }
 }

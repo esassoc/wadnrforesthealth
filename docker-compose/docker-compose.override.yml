@@ -12,7 +12,6 @@ services:
       - SitkaSupportEmail=${SitkaSupportEmail}
       - DoNotReplyEmail=${DoNotReplyEmail}
       - MailLogBcc=${MailLogBcc}
-      - KeystoneOpenIDUrl=${KeystoneOpenIDUrl}
       - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY}
       - RECAPTCHA_VERIFY_URL=${RECAPTCHA_VERIFY_URL}
       - RECAPTCHA_SCORE_THRESHOLD=${RECAPTCHA_SCORE_THRESHOLD}

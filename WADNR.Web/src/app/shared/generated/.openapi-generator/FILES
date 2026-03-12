@@ -456,6 +456,4 @@ model/workflow-state-transition-request.ts
 model/workflow-state-transition-response.ts
 model/workflow-step-status.ts
 param.ts
-provide-api.ts
-query.params.ts
 variables.ts

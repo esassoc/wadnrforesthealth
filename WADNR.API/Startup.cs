@@ -71,6 +71,8 @@ namespace WADNR.API
             services.AddSitkaCaptureService(configuration.SitkaCaptureServiceUrl);
 
             var enableTestAuth = configuration.EnableE2ETestAuth;
+            var auth0Authority = configuration.Auth0.Authority;
+            var auth0Audience = configuration.Auth0.Audience;
             if (enableTestAuth)
             {
                 // Register both JWT and E2E test auth; a policy scheme picks which to use per-request
@@ -81,8 +83,8 @@ namespace WADNR.API
                 })
                 .AddJwtBearer(options =>
                 {
-                    options.Authority = "https://wadnr.us.auth0.com/";
-                    options.Audience = "WADNRAPI";
+                    options.Authority = auth0Authority;
+                    options.Audience = auth0Audience;
                 })
                 .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(TestAuthHandler.SchemeName, null)
                 .AddPolicyScheme("DualAuth", "JWT or E2E Test Auth", options =>
@@ -104,8 +106,8 @@ namespace WADNR.API
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 }).AddJwtBearer(options =>
                 {
-                    options.Authority = "https://wadnr.us.auth0.com/";
-                    options.Audience = "WADNRAPI";
+                    options.Authority = auth0Authority;
+                    options.Audience = auth0Audience;
                 });
             }
 
@@ -139,7 +141,6 @@ namespace WADNR.API
             services.AddScoped<ProgramAuthorizationContext>();
             services.AddScoped<ImpersonationService>();
             services.AddScoped<FileService>();
-            services.AddScoped<AzureBlobStorageService>();
             services.AddScoped<IAzureStorage, AzureStorage>();
             services.AddScoped<ProjectNotificationService>();
             services.AddScoped<IAuditUserProvider, HttpContextAuditUserProvider>();
