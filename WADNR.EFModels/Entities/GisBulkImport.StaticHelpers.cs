@@ -14,16 +14,7 @@ public static class GisBulkImports
         return await dbContext.GisUploadSourceOrganizations
             .AsNoTracking()
             .OrderBy(x => x.GisUploadSourceOrganizationName)
-            .Select(x => new GisUploadSourceOrganizationSummary
-            {
-                GisUploadSourceOrganizationID = x.GisUploadSourceOrganizationID,
-                GisUploadSourceOrganizationName = x.GisUploadSourceOrganizationName,
-                ProgramName = x.Program.ProgramName,
-                ProgramDisplayName = x.Program.ProgramName
-                    + (x.Program.ProgramShortName != null ? " (" + x.Program.ProgramShortName + ")" : "")
-                    + (!x.Program.ProgramIsActive ? " (Inactive)" : ""),
-                ProgramID = x.ProgramID
-            })
+            .Select(GisUploadSourceOrganizationProjections.AsSummary)
             .ToListAsync();
     }
 
