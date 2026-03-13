@@ -252,7 +252,7 @@ export class AuthenticationService {
      */
     public canViewLandownerInfo(user: PersonDetail | null): boolean {
         if (!user) return false;
-        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanViewLandownerInfo]);
+        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.ProjectSteward, RoleEnum.CanViewLandownerInfo]);
     }
 
     /**

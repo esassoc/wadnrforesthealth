@@ -19,6 +19,7 @@ import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { SelectDropdownOption } from "src/app/shared/components/forms/form-field/form-field.component";
 
+import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
 import { FocusAreaService } from "src/app/shared/generated/api/focus-area.service";
 import { DNRUplandRegionService } from "src/app/shared/generated/api/dnr-upland-region.service";
 import { FocusAreaGridRow } from "src/app/shared/generated/model/focus-area-grid-row";
@@ -35,6 +36,7 @@ export class FocusAreasComponent {
     public focusAreas$: Observable<FocusAreaGridRow[]>;
     public focusAreaLocations$: Observable<IFeature[]>;
     public columnDefs: ColDef[];
+    public customRichTextTypeID = FirmaPageTypeEnum.FocusAreasList;
     public canManageFocusAreas = false;
     public isLoading = true;
 

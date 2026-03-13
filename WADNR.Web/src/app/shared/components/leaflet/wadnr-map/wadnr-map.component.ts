@@ -40,8 +40,8 @@ export class WADNRMapComponent implements OnInit, AfterViewInit, OnChanges, OnDe
     @Input() showLegend: boolean = false;
     @Input() legendPosition: ControlPosition = "topleft";
     @Input() disableMapInteraction: boolean = false; // disables all interaction when true
-    /** When true, the layers control starts closed (collapsed). Default false preserves current behavior (open). */
-    @Input() collapseLayerControlOnLoad: boolean = false;
+    /** When true, the layers control starts closed (collapsed). */
+    @Input() collapseLayerControlOnLoad: boolean = true;
     /** Overlay group names that should use radio buttons (mutually exclusive selection). */
     @Input() exclusiveGroups: string[] = [];
     @Output() onMapLoad: EventEmitter<WADNRMapInitEvent> = new EventEmitter();

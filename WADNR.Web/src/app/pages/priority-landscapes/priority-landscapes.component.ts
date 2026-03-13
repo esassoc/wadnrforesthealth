@@ -6,6 +6,8 @@ import { Observable, shareReplay, tap } from "rxjs";
 
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { HybridMapGridComponent } from "src/app/shared/components/hybrid-map-grid/hybrid-map-grid.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
 import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
@@ -17,7 +19,7 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 @Component({
     selector: "priority-landscapes",
     standalone: true,
-    imports: [HybridMapGridComponent, AsyncPipe, LoadingDirective, PriorityLandscapesLayerComponent, PageHeaderComponent],
+    imports: [HybridMapGridComponent, AsyncPipe, LoadingDirective, PriorityLandscapesLayerComponent, ExternalMapLayersComponent, GenericWmsWfsLayerComponent, PageHeaderComponent],
     templateUrl: "./priority-landscapes.component.html",
 })
 export class PriorityLandscapesComponent {

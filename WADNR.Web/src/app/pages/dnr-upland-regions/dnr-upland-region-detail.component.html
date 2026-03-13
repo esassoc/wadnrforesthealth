@@ -55,7 +55,8 @@
                 <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
                     <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
                     @if (projectFeatures$ | async; as projectFeatures) {
-                    <generic-feature-collection-layer [map]="map" [layerControl]="layerControl" [featureCollection]="projectFeatures" [layerName]="'Project Locations'" [layerColor]="'#ffff00'" [displayOnLoad]="true"></generic-feature-collection-layer>
+                    <generic-feature-collection-layer [map]="map" [layerControl]="layerControl" [featureCollection]="projectFeatures" [layerName]="'Project Locations'" [layerColor]="'#ffff00'" [displayOnLoad]="true"
+                        [popupContentFn]="buildProjectPopupContent()"></generic-feature-collection-layer>
                     }
                     <dnr-upland-regions-layer
                         [map]="map"

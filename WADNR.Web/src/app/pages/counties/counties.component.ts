@@ -7,16 +7,18 @@ import { Observable, shareReplay, tap } from "rxjs";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { HybridMapGridComponent } from "src/app/shared/components/hybrid-map-grid/hybrid-map-grid.component";
 import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { CountyService } from "src/app/shared/generated/api/county.service";
 import { CountyGridRow } from "src/app/shared/generated/model/county-grid-row";
+import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 
 @Component({
     selector: "counties",
     standalone: true,
-    imports: [HybridMapGridComponent, AsyncPipe, LoadingDirective, CountiesLayerComponent, PageHeaderComponent],
+    imports: [HybridMapGridComponent, AsyncPipe, LoadingDirective, CountiesLayerComponent, ExternalMapLayersComponent, PageHeaderComponent],
     templateUrl: "./counties.component.html",
 })
 export class CountiesComponent {
@@ -30,7 +32,7 @@ export class CountiesComponent {
     public isLoading = true;
 
     public selectedCountyID: number;
-    public customRichTextTypeID: any = null;
+    public customRichTextTypeID = FirmaPageTypeEnum.County;
 
     public gridApi: GridApi;
 

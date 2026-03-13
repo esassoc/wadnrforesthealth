@@ -19,6 +19,7 @@
                 [selectedIDs]="selectedDNRUplandRegionID ? [selectedDNRUplandRegionID] : null"
                 (selectedIDsChange)="onSelectedDNRUplandRegionIDChanged($event, true)">
             </dnr-upland-regions-layer>
+            <external-map-layers [map]="map" [layerControl]="layerControl" [displayOnLoad]="false"></external-map-layers>
         </hybrid-map-grid>
     </div>
 </div>

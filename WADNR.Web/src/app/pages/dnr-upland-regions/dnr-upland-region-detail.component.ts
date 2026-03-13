@@ -25,6 +25,8 @@ import { ColDef } from "ag-grid-community";
 import { ProjectDNRUplandRegionDetailGridRow } from "src/app/shared/generated/model/project-dnr-upland-region-detail-grid-row";
 import { FundSourceAllocationDNRUplandRegionDetailGridRow } from "src/app/shared/generated/model/fund-source-allocation-dnr-upland-region-detail-grid-row";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
+import { Feature } from "geojson";
+import * as L from "leaflet";
 
 @Component({
     selector: "dnr-upland-region-detail",
@@ -144,13 +146,18 @@ export class DNRUplandRegionDetailComponent {
         this.projectsIsLoading$ = toLoadingState(this.projects$);
         this.fundSourceAllocationsIsLoading$ = toLoadingState(this.fundSourceAllocations$);
 
-        this.isAdmin$.pipe(take(1)).subscribe((isAdmin) => {
-            this.projectColumnDefs = this.createProjectColumnDefs(isAdmin);
+        this.projectColumnDefs = this.createProjectColumnDefs(false, false);
+        this.authService.currentUserSetObservable.pipe(take(1)).subscribe((user) => {
+            const isAdmin = this.authService.isUserAnAdministrator(user);
+            const canViewLandowner = this.authService.canViewLandownerInfo(user);
+            if (isAdmin || canViewLandowner) {
+                this.projectColumnDefs = this.createProjectColumnDefs(isAdmin, canViewLandowner);
+            }
         });
         this.fundSourceAllocationColumnDefs = this.createFundSourceAllocationColumnDefs();
     }
 
-    private createProjectColumnDefs(isAdmin: boolean): ColDef<ProjectDNRUplandRegionDetailGridRow>[] {
+    private createProjectColumnDefs(isAdmin: boolean, canViewLandownerInfo: boolean): ColDef<ProjectDNRUplandRegionDetailGridRow>[] {
         const cols: ColDef<ProjectDNRUplandRegionDetailGridRow>[] = [
             this.utilityFunctions.createLinkColumnDef("Lead Implementer", "LeadImplementer.OrganizationName", "LeadImplementer.OrganizationID", {
                 InRouterLink: "/organizations/",
@@ -168,7 +175,7 @@ export class DNRUplandRegionDetailComponent {
             }),
         ];
 
-        if (isAdmin) {
+        if (canViewLandownerInfo) {
             cols.push(
                 this.utilityFunctions.createBasicColumnDef("Landowner", "PrivateLandowners", {
                     FieldDefinitionType: "Landowner",
@@ -316,6 +323,16 @@ export class DNRUplandRegionDetailComponent {
                 RequiresAuth: true,
             }),
         ];
+    }
+
+    buildProjectPopupContent(): (feature: Feature, latlng: L.LatLng) => string | null {
+        return (feature: Feature): string | null => {
+            const props = feature.properties;
+            if (!props) return null;
+            const projectID = props["ProjectID"];
+            const projectName = props["ProjectName"] ?? projectID;
+            return `<a href="/projects/${projectID}">${projectName}</a>`;
+        };
     }
 
     handleMapReady(event: any) {

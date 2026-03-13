@@ -15,6 +15,7 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 
 import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import {
@@ -43,7 +44,7 @@ import { FieldDefinitionComponent } from "src/app/shared/components/field-defini
 @Component({
     selector: "focus-area-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, DecimalPipe, CurrencyPipe, WADNRMapComponent, GenericFeatureCollectionLayerComponent, WADNRGridComponent, IconComponent, LoadingDirective, FieldDefinitionComponent],
+    imports: [PageHeaderComponent, AsyncPipe, RouterModule, BreadcrumbComponent, DecimalPipe, CurrencyPipe, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ExternalMapLayersComponent, WADNRGridComponent, IconComponent, LoadingDirective, FieldDefinitionComponent],
     templateUrl: "./focus-area-detail.component.html",
     styleUrls: ["./focus-area-detail.component.scss"],
 })

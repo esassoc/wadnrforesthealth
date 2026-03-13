@@ -1,3 +1,12 @@
+.leaflet-control a {
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+        text-decoration: none;
+    }
+}
+
 .leaflet-control-layers label {
     display: flex;
     align-items: center;

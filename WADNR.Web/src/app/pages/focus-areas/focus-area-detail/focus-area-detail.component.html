@@ -89,6 +89,7 @@
                                 [displayOnLoad]="true"
                                 [popupContentFn]="buildProjectPopupContent()">
                             </generic-feature-collection-layer>
+                            <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
                         }
                     </wadnr-map>
                 </div>

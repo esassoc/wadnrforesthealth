@@ -1,10 +1,11 @@
-<page-header pageTitle="DNR LOA Focus Areas">
-    @if (canManageFocusAreas) {
-        <button class="btn btn-primary" (click)="openCreateModal()"><i class="fa fa-plus"></i> Create New Focus Area</button>
-    }
-</page-header>
+<page-header pageTitle="DNR LOA Focus Areas" [customRichTextTypeID]="customRichTextTypeID"></page-header>
 
 <div class="page-body mt-3">
+    @if (canManageFocusAreas) {
+        <div class="flex-end mb-2">
+            <button class="btn btn-primary" (click)="openCreateModal()"><i class="fa fa-plus"></i> Create New Focus Area</button>
+        </div>
+    }
     <div [loadingSpinner]="{ isLoading, loadingHeight: 400 }">
         <hybrid-map-grid
             [rowData]="focusAreas$ | async"

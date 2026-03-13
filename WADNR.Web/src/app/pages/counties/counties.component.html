@@ -19,6 +19,7 @@
                 [selectedIDs]="selectedCountyID ? [selectedCountyID] : null"
                 (selectedIDsChange)="onSelectedCountyIDChanged($event, true)">
             </counties-layer>
+            <external-map-layers [map]="map" [layerControl]="layerControl" [displayOnLoad]="false"></external-map-layers>
         </hybrid-map-grid>
     </div>
 </div>
