@@ -69,29 +69,21 @@ public static class GisBulkImports
         var attempt = await dbContext.GisUploadAttempts
             .FirstAsync(x => x.GisUploadAttemptID == gisUploadAttemptID);
 
-        // Clear any existing data from a previous upload on this attempt
-        var existingFeatures = await dbContext.GisFeatures
-            .Where(x => x.GisUploadAttemptID == gisUploadAttemptID)
-            .ToListAsync();
-        if (existingFeatures.Any())
-        {
-            var featureIDs = existingFeatures.Select(f => f.GisFeatureID).ToList();
-            var existingFeatureMetadata = await dbContext.GisFeatureMetadataAttributes
-                .Where(x => featureIDs.Contains(x.GisFeatureID))
-                .ToListAsync();
-            dbContext.GisFeatureMetadataAttributes.RemoveRange(existingFeatureMetadata);
-            dbContext.GisFeatures.RemoveRange(existingFeatures);
-        }
+        // Clear any existing data from a previous upload on this attempt (bulk SQL deletes)
+        await dbContext.GisFeatureMetadataAttributes
+            .Where(x => dbContext.GisFeatures
+                .Where(f => f.GisUploadAttemptID == gisUploadAttemptID)
+                .Select(f => f.GisFeatureID)
+                .Contains(x.GisFeatureID))
+            .ExecuteDeleteAsync();
 
-        var existingAttemptAttrs = await dbContext.GisUploadAttemptGisMetadataAttributes
+        await dbContext.GisFeatures
             .Where(x => x.GisUploadAttemptID == gisUploadAttemptID)
-            .ToListAsync();
-        if (existingAttemptAttrs.Any())
-        {
-            dbContext.GisUploadAttemptGisMetadataAttributes.RemoveRange(existingAttemptAttrs);
-        }
+            .ExecuteDeleteAsync();
 
-        await dbContext.SaveChangesWithNoAuditingAsync();
+        await dbContext.GisUploadAttemptGisMetadataAttributes
+            .Where(x => x.GisUploadAttemptID == gisUploadAttemptID)
+            .ExecuteDeleteAsync();
 
         var jsonOptions = new JsonSerializerOptions();
         jsonOptions.Converters.Add(new GeoJsonConverterFactory());
@@ -150,8 +142,10 @@ public static class GisBulkImports
             });
         }
 
-        // Save features and their metadata values
+        // Phase 1: Create all GisFeature entities and save once (bulk)
         var featureKey = 0;
+        var featureList = new List<(GisFeature gisFeature, IFeature sourceFeature)>();
+
         foreach (var feature in featureCollection)
         {
             if (feature.Geometry == null) continue;
@@ -175,21 +169,26 @@ public static class GisBulkImports
             }
 
             dbContext.GisFeatures.Add(gisFeature);
-            await dbContext.SaveChangesWithNoAuditingAsync(); // Need ID for metadata attributes
+            featureList.Add((gisFeature, feature));
+        }
 
-            if (feature.Attributes != null)
+        await dbContext.SaveChangesWithNoAuditingAsync(); // Single save — all GisFeatureIDs now populated
+
+        // Phase 2: Create all GisFeatureMetadataAttribute records (bulk)
+        foreach (var (gisFeature, sourceFeature) in featureList)
+        {
+            if (sourceFeature.Attributes == null) continue;
+
+            foreach (var attrName in sourceFeature.Attributes.GetNames())
             {
-                foreach (var attrName in feature.Attributes.GetNames())
+                var metadataAttr = attributeDictionary[attrName.ToLowerInvariant()];
+                var value = sourceFeature.Attributes[attrName];
+                dbContext.GisFeatureMetadataAttributes.Add(new GisFeatureMetadataAttribute
                 {
-                    var metadataAttr = attributeDictionary[attrName.ToLowerInvariant()];
-                    var value = feature.Attributes[attrName];
-                    dbContext.GisFeatureMetadataAttributes.Add(new GisFeatureMetadataAttribute
-                    {
-                        GisFeatureID = gisFeature.GisFeatureID,
-                        GisMetadataAttributeID = metadataAttr.GisMetadataAttributeID,
-                        GisFeatureMetadataAttributeValue = value?.ToString()
-                    });
-                }
+                    GisFeatureID = gisFeature.GisFeatureID,
+                    GisMetadataAttributeID = metadataAttr.GisMetadataAttributeID,
+                    GisFeatureMetadataAttributeValue = value?.ToString()
+                });
             }
         }
 

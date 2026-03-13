@@ -8,6 +8,8 @@ import { Map } from "leaflet";
 
 import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { HybridMapGridComponent } from "src/app/shared/components/hybrid-map-grid/hybrid-map-grid.component";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
@@ -21,7 +23,7 @@ import { IFeature } from "src/app/shared/generated/model/i-feature";
 @Component({
     selector: "gis-validate-metadata-step",
     standalone: true,
-    imports: [AsyncPipe, ReactiveFormsModule, FormFieldComponent, HybridMapGridComponent, GenericFeatureCollectionLayerComponent],
+    imports: [AsyncPipe, ReactiveFormsModule, FormFieldComponent, HybridMapGridComponent, GenericFeatureCollectionLayerComponent, LoadingDirective, ButtonLoadingDirective],
     templateUrl: "./validate-metadata-step.component.html",
 })
 export class ValidateMetadataStepComponent implements OnInit {

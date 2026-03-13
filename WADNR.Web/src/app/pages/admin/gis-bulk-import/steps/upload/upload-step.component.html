@@ -25,12 +25,8 @@
         </div>
     </div>
     <div class="card-footer d-flex justify-content-end gap-2">
-        <button class="btn btn-primary" (click)="uploadFile()" [disabled]="(isUploading$ | async) || !fileControl.value">
-            @if (isUploading$ | async) {
-                <span class="fa fa-spinner fa-spin"></span> Uploading and processing...
-            } @else {
-                Upload &amp; Continue
-            }
+        <button class="btn btn-primary" (click)="uploadFile()" [buttonLoading]="isUploading$ | async" [disabled]="(isUploading$ | async) || !fileControl.value">
+            Upload &amp; Continue
         </button>
     </div>
 </div>

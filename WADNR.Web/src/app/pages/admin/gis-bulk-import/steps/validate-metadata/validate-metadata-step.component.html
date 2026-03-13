@@ -260,22 +260,13 @@
                     </div>
                 </div>
             }
-        </div>
-        <div class="card-footer d-flex justify-content-end gap-2">
-            <button class="btn btn-primary" (click)="runImport()" [disabled]="(isImporting$ | async) || !projectIdentifierControl.value || !projectNameControl.value">
-                @if (isImporting$ | async) {
-                    <span class="fa fa-spinner fa-spin"></span> Importing...
-                } @else {
-                    Create Projects
-                }
-            </button>
-        </div>
     </div>
+    <div class="card-footer d-flex justify-content-end gap-2">
+        <button class="btn btn-primary" (click)="runImport()" [buttonLoading]="isImporting$ | async" [disabled]="(isImporting$ | async) || !projectIdentifierControl.value || !projectNameControl.value">
+            Create Projects
+        </button>
+    </div>
+</div>
 } @else {
-    <div class="card">
-        <div class="card-body text-center py-4">
-            <span class="fa fa-spinner fa-spin fa-2x"></span>
-            <p class="mt-2">Loading metadata attributes...</p>
-        </div>
-    </div>
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
 }

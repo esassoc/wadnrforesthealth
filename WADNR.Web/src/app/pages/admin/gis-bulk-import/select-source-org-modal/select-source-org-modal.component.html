@@ -2,7 +2,7 @@
 <div class="modal-header">
     <h3>GIS Import/Update</h3>
 </div>
-<div class="modal-body">
+<div class="modal-body" [loadingSpinner]="{ isLoading: !(sourceOrgs$ | async), loadingHeight: 100, opacity: 0 }">
     <modal-alerts [alerts]="localAlerts"></modal-alerts>
     @if (sourceOrgs$ | async) {
         <p>Select the source organization for your GIS upload:</p>
@@ -17,17 +17,11 @@
                 </form-field>
             </div>
         </div>
-    } @else {
-        <span class="fa fa-spinner fa-spin"></span> Loading source organizations...
     }
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" (click)="continue()" [disabled]="isCreating || !sourceOrgControl.value">
-        @if (isCreating) {
-            <span class="fa fa-spinner fa-spin"></span> Creating...
-        } @else {
-            Continue
-        }
+    <button class="btn btn-primary" (click)="continue()" [buttonLoading]="isCreating" [disabled]="isCreating || !sourceOrgControl.value">
+        Continue
     </button>
     <button class="btn btn-secondary" (click)="ref.close()">Cancel</button>
 </div>

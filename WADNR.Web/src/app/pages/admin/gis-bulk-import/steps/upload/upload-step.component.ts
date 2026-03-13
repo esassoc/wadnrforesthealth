@@ -8,6 +8,7 @@ import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { GisBulkImportService } from "src/app/shared/generated/api/gis-bulk-import.service";
 import { WorkflowProgressService } from "src/app/shared/services/workflow-progress.service";
 
@@ -19,7 +20,7 @@ interface UploadStepVM {
 @Component({
     selector: "gis-upload-step",
     standalone: true,
-    imports: [AsyncPipe, ReactiveFormsModule, RouterLink, FormFieldComponent],
+    imports: [AsyncPipe, ReactiveFormsModule, RouterLink, FormFieldComponent, ButtonLoadingDirective],
     templateUrl: "./upload-step.component.html",
 })
 export class UploadStepComponent implements OnInit {
