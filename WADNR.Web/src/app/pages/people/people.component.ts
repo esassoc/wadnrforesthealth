@@ -27,6 +27,7 @@ enum PeopleFilter {
     standalone: true,
     imports: [PageHeaderComponent, WADNRGridComponent, FormFieldComponent, AsyncPipe, ReactiveFormsModule],
     templateUrl: "./people.component.html",
+    styleUrls: ["./people.component.scss"],
 })
 export class PeopleComponent {
     public FormFieldType = FormFieldType;

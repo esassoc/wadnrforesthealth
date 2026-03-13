@@ -51,6 +51,8 @@ export class FormFieldComponent implements OnInit, OnDestroy {
     @Input() formInputOptionLabel: string = "Label";
     @Input() formInputOptionValue: string = "Value";
     @Input() multiple: boolean = false;
+    @Input() searchable: boolean = true;
+    @Input() clearable: boolean = true;
     @Input() appendTo: string = "#dropdown-host";
 
     @Input() readOnly: boolean = false;

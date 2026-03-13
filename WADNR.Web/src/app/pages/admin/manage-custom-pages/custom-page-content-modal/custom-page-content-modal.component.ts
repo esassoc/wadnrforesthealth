@@ -28,7 +28,7 @@ export class CustomPageContentModalComponent extends BaseModal implements OnInit
     public ref: DialogRef<CustomPageContentModalData, boolean> = inject(DialogRef);
 
     @ViewChild("tinyMceEditor") tinyMceEditor: EditorComponent;
-    public tinyMceConfig: object = {};
+    public tinyMceConfig: object = TinyMCEHelpers.DefaultInitConfig();
     public editedContent: string = "";
     public isSubmitting = false;
 

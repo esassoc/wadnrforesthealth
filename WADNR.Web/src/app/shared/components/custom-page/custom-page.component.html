@@ -1,7 +1,28 @@
 <div [loadingSpinner]="{ isLoading, loadingHeight: 100 }">
     @if (customPage$ | async; as customPage) {
     <page-header [pageTitle]="customPage.CustomPageDisplayName ?? ''"></page-header>
-    <div class="copy copy-3" [innerHtml]="safeHtml(customPage.CustomPageContent)"></div>
+    @if (!(isEditing$ | async)) {
+        <div class="customPageContent" [class.editable]="canEdit$ | async" style="position: relative; min-height: 3rem">
+            @if (canEdit$ | async) {
+                <div class="hoverEditButton">
+                    <div style="transform: translate3d(-10px, 20px, 0)">
+                        <button type="button" class="btn btn-secondary" (click)="enterEdit()">Edit</button>
+                    </div>
+                </div>
+            }
+            <div class="copy copy-3" [innerHtml]="safeHtml(customPage.CustomPageContent)"></div>
+        </div>
+    } @else {
+        <div>
+            <div class="tinyMCEFontColor">
+                <editor #tinyMceEditor [init]="tinyMceConfig" [(ngModel)]="editedContent"></editor>
+            </div>
+            <div class="flex-end">
+                <button type="button" class="btn btn-secondary mt-1 mr-2" (click)="saveEdit()">Save</button>
+                <button type="button" class="btn btn-secondary-outline mt-1" (click)="cancelEdit()">Cancel</button>
+            </div>
+        </div>
+    }
     <ng-content></ng-content>
     }
 </div>
