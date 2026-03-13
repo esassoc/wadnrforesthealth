@@ -29,6 +29,8 @@ test.describe("Dropdown navigation", () => {
         await expect(dropdown.locator(".dropdown-menu .dropdown-item").first()).toBeVisible();
     });
 
+    // ── Projects dropdown ──────────────────────────────────────────────────────
+
     test("Projects > Full Project List navigates to /projects", async ({ authedPage: page }) => {
         await page.goto("/");
         await clickDropdownItem(page, "Projects", "Full Project List");
@@ -48,6 +50,26 @@ test.describe("Dropdown navigation", () => {
         await expect(page).toHaveURL(/\/tags/);
     });
 
+    test("Projects > Projects Map navigates to /projects/map", async ({ authedPage: page }) => {
+        await page.goto("/");
+        await clickDropdownItem(page, "Projects", "Projects Map");
+        await expect(page).toHaveURL(/\/projects\/map/);
+    });
+
+    test("Projects > My Projects navigates to /my-projects", async ({ authedPage: page }) => {
+        await page.goto("/");
+        await clickDropdownItem(page, "Projects", "My Projects");
+        await expect(page).toHaveURL(/\/my-projects/);
+    });
+
+    test("Projects > Pending Projects navigates to /pending-projects", async ({ authedPage: page }) => {
+        await page.goto("/");
+        await clickDropdownItem(page, "Projects", "Pending Projects");
+        await expect(page).toHaveURL(/\/pending-projects/);
+    });
+
+    // ── Financials dropdown ────────────────────────────────────────────────────
+
     test("Financials > Full Fund Source List navigates to /fund-sources", async ({ authedPage: page }) => {
         await page.goto("/");
         await clickDropdownItem(page, "Financials", "Full Fund Source List");
@@ -60,9 +82,69 @@ test.describe("Dropdown navigation", () => {
         await expect(page).toHaveURL(/\/agreements$/);
     });
 
+    test("Financials > Full Invoice List navigates to /invoices", async ({ authedPage: page }) => {
+        await page.goto("/");
+        await clickDropdownItem(page, "Financials", "Full Invoice List");
+        await expect(page).toHaveURL(/\/invoices$/);
+    });
+
+    test("Financials > Program Indices navigates to /program-indices", async ({ authedPage: page }) => {
+        await page.goto("/");
+        await clickDropdownItem(page, "Financials", "Program Indices");
+        await expect(page).toHaveURL(/\/program-indices/);
+    });
+
+    test("Financials > Project Codes navigates to /project-codes", async ({ authedPage: page }) => {
+        await page.goto("/");
+        await clickDropdownItem(page, "Financials", "Project Codes");
+        await expect(page).toHaveURL(/\/project-codes/);
+    });
+
+    // ── Program Info dropdown ──────────────────────────────────────────────────
+
     test("Program Info > Programs navigates to /programs", async ({ authedPage: page }) => {
         await page.goto("/");
         await clickDropdownItem(page, "Program Info", "Programs");
         await expect(page).toHaveURL(/\/programs$/);
+    });
+
+    test("Program Info > Focus Areas navigates to /focus-areas", async ({ authedPage: page }) => {
+        await page.goto("/");
+        await clickDropdownItem(page, "Program Info", "Focus Areas");
+        await expect(page).toHaveURL(/\/focus-areas/);
+    });
+
+    test("Program Info > Interactions/Events navigates to /interactions-events", async ({ authedPage: page }) => {
+        await page.goto("/");
+        await clickDropdownItem(page, "Program Info", "Interactions/Events");
+        await expect(page).toHaveURL(/\/interactions-events/);
+    });
+
+    // ── Reports dropdown ───────────────────────────────────────────────────────
+
+    test("Reports > Project Reports navigates to /reports/projects", async ({ authedPage: page }) => {
+        await page.goto("/");
+        await clickDropdownItem(page, "Reports", "Project Reports");
+        await expect(page).toHaveURL(/\/reports\/projects/);
+    });
+
+    test("Reports > IPR Reports navigates to /reports/ipr", async ({ authedPage: page }) => {
+        await page.goto("/");
+        await clickDropdownItem(page, "Reports", "IPR Reports");
+        await expect(page).toHaveURL(/\/reports\/ipr/);
+    });
+
+    // ── Manage dropdown (admin) ────────────────────────────────────────────────
+
+    test("Manage > Report Templates navigates to /reports", async ({ authedPage: page }) => {
+        await page.goto("/");
+        await clickDropdownItem(page, "Manage", "Report Templates");
+        await expect(page).toHaveURL(/\/reports$/);
+    });
+
+    test("Manage > Labels and Definitions navigates to /labels-and-definitions", async ({ authedPage: page }) => {
+        await page.goto("/");
+        await clickDropdownItem(page, "Manage", "Labels and Definitions");
+        await expect(page).toHaveURL(/\/labels-and-definitions/);
     });
 });

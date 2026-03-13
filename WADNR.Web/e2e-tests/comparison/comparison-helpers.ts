@@ -33,7 +33,7 @@ export interface PageComparisonResult {
     pageName: string;
     angularUrl: string;
     legacyUrl: string;
-    status: "pass" | "fail" | "error" | "skipped" | "accepted";
+    status: "pass" | "fail" | "error" | "skipped" | "accepted" | "legacy-only" | "modern-only";
     diffs: ComparisonDiff[];
     angularScreenshot?: string;
     legacyScreenshot?: string;
@@ -1054,6 +1054,8 @@ export function generateComparisonReport(
     const failed = results.filter(r => r.status === "fail").length;
     const errors = results.filter(r => r.status === "error").length;
     const skipped = results.filter(r => r.status === "skipped").length;
+    const legacyOnly = results.filter(r => r.status === "legacy-only").length;
+    const modernOnly = results.filter(r => r.status === "modern-only").length;
     const total = results.length;
 
     const html = `<!DOCTYPE html>
@@ -1069,6 +1071,8 @@ export function generateComparisonReport(
             --error: #f97316;
             --skip: #94a3b8;
             --accepted: #3b82f6;
+            --legacy-only: #a855f7;
+            --modern-only: #06b6d4;
             --bg: #0f172a;
             --surface: #1e293b;
             --surface-hover: #334155;
@@ -1103,6 +1107,8 @@ export function generateComparisonReport(
         .summary-card.error .count { color: var(--error); }
         .summary-card.skip .count { color: var(--skip); }
         .summary-card.accepted .count { color: var(--accepted); }
+        .summary-card.legacy-only .count { color: var(--legacy-only); }
+        .summary-card.modern-only .count { color: var(--modern-only); }
 
         .filter-bar {
             display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;
@@ -1152,6 +1158,8 @@ export function generateComparisonReport(
         .status-badge.error { background: var(--error); color: #000; }
         .status-badge.skipped { background: var(--skip); color: #000; }
         .status-badge.accepted { background: var(--accepted); color: #fff; }
+        .status-badge.legacy-only { background: var(--legacy-only); color: #fff; }
+        .status-badge.modern-only { background: var(--modern-only); color: #000; }
 
         .page-name { font-weight: 600; }
         .urls { color: var(--text-muted); font-size: 0.8rem; }
@@ -1181,6 +1189,28 @@ export function generateComparisonReport(
             width: 100%;
             border-radius: 4px;
             border: 1px solid var(--border);
+        }
+        .screenshot-col.is-404 { position: relative; }
+        .screenshot-col.is-404 img { opacity: 0.3; }
+        .screenshot-col.is-404::after {
+            content: '404';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--fail);
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        .info-banner {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--text);
         }
 
         .diff-list { margin-top: 1rem; }
@@ -1246,6 +1276,14 @@ export function generateComparisonReport(
                 <div class="count">${skipped}</div>
                 <div class="label">Skipped</div>
             </div>
+            <div class="summary-card legacy-only">
+                <div class="count">${legacyOnly}</div>
+                <div class="label">Legacy Only</div>
+            </div>
+            <div class="summary-card modern-only">
+                <div class="count">${modernOnly}</div>
+                <div class="label">Modern Only</div>
+            </div>
         </div>
 
         <div class="filter-bar">
@@ -1254,6 +1292,8 @@ export function generateComparisonReport(
             <button class="filter-btn" onclick="filterResults('fail')">Fail (${failed})</button>
             <button class="filter-btn" onclick="filterResults('error')">Error (${errors})</button>
             <button class="filter-btn" onclick="filterResults('skipped')">Skipped (${skipped})</button>
+            <button class="filter-btn" onclick="filterResults('legacy-only')">Legacy Only (${legacyOnly})</button>
+            <button class="filter-btn" onclick="filterResults('modern-only')">Modern Only (${modernOnly})</button>
         </div>
 
         <div id="results">
@@ -1313,6 +1353,8 @@ function generateResultCard(result: PageComparisonResult, index: number): string
         : result.status === "accepted" ? "accepted"
         : result.status === "fail" ? "fail"
         : result.status === "error" ? "error"
+        : result.status === "legacy-only" ? "legacy-only"
+        : result.status === "modern-only" ? "modern-only"
         : "skipped";
 
     let body = "";
@@ -1321,15 +1363,24 @@ function generateResultCard(result: PageComparisonResult, index: number): string
         body += `<div class="diff-item error"><strong>Error:</strong> ${escapeHtml(result.error)}</div>`;
     }
 
+    if (result.status === "legacy-only") {
+        body += `<div class="info-banner">Angular returned <strong>404 (Page Not Found)</strong> &mdash; this page exists only in the legacy MVC app and needs to be migrated.</div>`;
+    } else if (result.status === "modern-only") {
+        body += `<div class="info-banner">Legacy returned <strong>404</strong> &mdash; this page exists only in the Angular app (new feature or restructured route).</div>`;
+    }
+
+    const angular404 = result.status === "legacy-only";
+    const legacy404 = result.status === "modern-only";
+
     if (result.angularScreenshot && result.legacyScreenshot) {
         body += `
         <div class="screenshots">
-            <div class="screenshot-col">
-                <h4>Angular (New)</h4>
+            <div class="screenshot-col${angular404 ? " is-404" : ""}">
+                <h4>Angular (New)${angular404 ? " &mdash; 404" : ""}</h4>
                 <img src="data:image/png;base64,${result.angularScreenshot}" alt="Angular screenshot" loading="lazy" />
             </div>
-            <div class="screenshot-col">
-                <h4>Legacy (MVC)</h4>
+            <div class="screenshot-col${legacy404 ? " is-404" : ""}">
+                <h4>Legacy (MVC)${legacy404 ? " &mdash; 404" : ""}</h4>
                 <img src="data:image/png;base64,${result.legacyScreenshot}" alt="Legacy screenshot" loading="lazy" />
             </div>
         </div>`;
@@ -1386,6 +1437,25 @@ function escapeHtml(text: string): string {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+// ─── 404 Detection ──────────────────────────────────────────────────────────
+
+/**
+ * Detect whether the Angular app has routed to its "Page Not Found" screen.
+ * Angular SPAs always return HTTP 200, so we check the final URL and page content.
+ */
+export async function isAngular404Page(page: Page): Promise<boolean> {
+    if (page.url().includes("/not-found")) return true;
+    const count = await page.locator('text="Page Not Found"').count();
+    return count > 0;
+}
+
+/**
+ * Detect whether a legacy MVC response is a 404.
+ */
+export function isLegacy404Response(httpStatus: number): boolean {
+    return httpStatus === 404;
 }
 
 // ─── Utilities ──────────────────────────────────────────────────────────────

@@ -23,11 +23,12 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         channel: "chrome", // Use system-installed Chrome (avoids Playwright CDN download behind corporate proxy)
       },
-      testIgnore: ["**/comparison/**", "**/visual-regression/**"],
+      testIgnore: ["**/comparison/**", "**/visual-regression/**", "**/registry/**"],
     },
     {
       name: "comparison",
       testMatch: "comparison/*.spec.ts",
+      fullyParallel: false,
       use: {
         ...devices["Desktop Chrome"],
         channel: "chrome",
@@ -47,6 +48,14 @@ export default defineConfig({
           threshold: 0.2,
           animations: "disabled",
         },
+      },
+    },
+    {
+      name: "registry-audit",
+      testMatch: "registry/*.spec.ts",
+      use: {
+        ...devices["Desktop Chrome"],
+        channel: "chrome",
       },
     },
   ],

@@ -11,15 +11,14 @@ import {
     waitForPageReady,
     waitForLegacyPageReady,
     resolvePath,
+    isAngular404Page,
+    isLegacy404Response,
     PageComparisonResult,
 } from "./comparison-helpers";
 import { authenticateToLegacy, getLegacyContext } from "./legacy-auth";
 
 const LEGACY_BASE_URL = process.env.LEGACY_BASE_URL;
 const REPORT_DIR = "comparison-reports";
-
-// All comparison tests run serially — they share browser context and accumulate results
-test.describe.configure({ mode: "serial" });
 
 // Skip the entire suite if LEGACY_BASE_URL is not configured
 test.skip(!LEGACY_BASE_URL, "LEGACY_BASE_URL not configured — skipping comparison tests");
@@ -88,7 +87,9 @@ const tokenMap = getTokenMap();
 
 for (const compPage of pages) {
     test(`Compare: ${compPage.name}`, async ({ page, browser }) => {
-        test.setTimeout(compPage.slowPage ? 120_000 : 90_000);
+        const hardTimeout = compPage.slowPage ? 120_000 : 90_000;
+        test.setTimeout(hardTimeout);
+        const softTimeoutMs = hardTimeout - 10_000;
 
         const start = Date.now();
         const result: PageComparisonResult = {
@@ -100,65 +101,89 @@ for (const compPage of pages) {
             duration: 0,
         };
 
+        let legacyPage: Page | null = null;
+
         try {
-            // Skip if required tokens are missing
-            if (!hasRequiredTokens(compPage)) {
-                const missing = compPage.tokens!.filter(t => tokenMap[t] == null);
-                result.status = "skipped";
-                result.error = `Missing test data tokens: ${missing.join(", ")}. Add them to test-data.ts.`;
-                allResults.push(result);
-                return;
-            }
+            await Promise.race([
+                (async () => {
+                    // Skip if required tokens are missing
+                    if (!hasRequiredTokens(compPage)) {
+                        const missing = compPage.tokens!.filter(t => tokenMap[t] == null);
+                        result.status = "skipped";
+                        result.error = `Missing test data tokens: ${missing.join(", ")}. Add them to test-data.ts.`;
+                        return;
+                    }
 
-            // ── Angular page ──
-            await setupTestAuth(page, testUsers.admin);
+                    // ── Angular page ──
+                    await setupTestAuth(page, testUsers.admin);
 
-            const angularUrl = resolvePath(compPage.angularPath, tokenMap);
-            await page.goto(angularUrl, { waitUntil: "domcontentloaded", timeout: 30_000 });
-            await waitForPageReady(page, compPage.slowPage ? 60_000 : 30_000);
+                    const angularUrl = resolvePath(compPage.angularPath, tokenMap);
+                    await page.goto(angularUrl, { waitUntil: "domcontentloaded", timeout: 30_000 });
+                    await waitForPageReady(page, compPage.slowPage ? 60_000 : 30_000);
 
-            const angularSnapshot = await takePageSnapshot(page);
-            result.angularSnapshot = angularSnapshot;
-            result.angularScreenshot = angularSnapshot.screenshot;
+                    const angularSnapshot = await takePageSnapshot(page);
+                    result.angularSnapshot = angularSnapshot;
+                    result.angularScreenshot = angularSnapshot.screenshot;
+                    const angular404 = await isAngular404Page(page);
 
-            // ── Legacy page ──
-            if (!legacyContext) {
-                result.status = "skipped";
-                result.error = "Legacy site authentication failed — cannot compare";
-                allResults.push(result);
-                return;
-            }
+                    // ── Legacy page ──
+                    if (!legacyContext) {
+                        result.status = "skipped";
+                        result.error = "Legacy site authentication failed — cannot compare";
+                        return;
+                    }
 
-            const legacyPage = await legacyContext.newPage();
-            try {
-                const legacyUrl = `${LEGACY_BASE_URL}${resolvePath(compPage.legacyPath, tokenMap)}`;
-                await legacyPage.goto(legacyUrl, { waitUntil: "domcontentloaded", timeout: 60_000 });
-                await waitForLegacyPageReady(legacyPage, compPage.slowPage ? 60_000 : 30_000);
+                    legacyPage = await legacyContext.newPage();
+                    let legacyHttpStatus = 200;
+                    const legacyUrl = `${LEGACY_BASE_URL}${resolvePath(compPage.legacyPath, tokenMap)}`;
+                    const legacyResponse = await legacyPage.goto(legacyUrl, { waitUntil: "domcontentloaded", timeout: 60_000 });
+                    legacyHttpStatus = legacyResponse?.status() ?? 200;
+                    await waitForLegacyPageReady(legacyPage, compPage.slowPage ? 60_000 : 30_000);
 
-                const legacySnapshot = await takePageSnapshot(legacyPage);
-                result.legacySnapshot = legacySnapshot;
-                result.legacyScreenshot = legacySnapshot.screenshot;
-            } finally {
-                await legacyPage.close();
-            }
+                    const legacySnapshot = await takePageSnapshot(legacyPage);
+                    result.legacySnapshot = legacySnapshot;
+                    result.legacyScreenshot = legacySnapshot.screenshot;
 
-            // ── Compare ──
-            if (result.angularSnapshot && result.legacySnapshot) {
-                result.diffs = compareSnapshots(result.angularSnapshot, result.legacySnapshot);
+                    // ── Compare ──
+                    if (result.angularSnapshot && result.legacySnapshot) {
+                        const legacy404 = isLegacy404Response(legacyHttpStatus);
 
-                if (isPageAccepted(compPage.name, result.diffs)) {
-                    result.status = "accepted";
-                } else if (result.diffs.length === 0) {
-                    result.status = "pass";
-                } else {
-                    const hasErrors = result.diffs.some(d => d.severity === "error");
-                    const hasWarnings = result.diffs.some(d => d.severity === "warning");
-                    result.status = hasErrors ? "fail" : hasWarnings ? "fail" : "pass";
-                }
-            }
+                        if (angular404 && !legacy404) {
+                            result.status = "legacy-only";
+                        } else if (!angular404 && legacy404) {
+                            result.status = "modern-only";
+                        } else if (angular404 && legacy404) {
+                            result.status = "pass"; // both agree page doesn't exist
+                        } else {
+                            result.diffs = compareSnapshots(result.angularSnapshot, result.legacySnapshot);
+
+                            if (isPageAccepted(compPage.name, result.diffs)) {
+                                result.status = "accepted";
+                            } else if (result.diffs.length === 0) {
+                                result.status = "pass";
+                            } else {
+                                const hasErrors = result.diffs.some(d => d.severity === "error");
+                                const hasWarnings = result.diffs.some(d => d.severity === "warning");
+                                result.status = hasErrors ? "fail" : hasWarnings ? "fail" : "pass";
+                            }
+                        }
+                    }
+                })(),
+                new Promise<never>((_, reject) =>
+                    setTimeout(() => reject(new Error(
+                        `Soft timeout after ${(softTimeoutMs / 1000).toFixed(0)}s — page took too long to load or render`
+                    )), softTimeoutMs)
+                ),
+            ]);
         } catch (error) {
-            result.status = "error";
-            result.error = error instanceof Error ? error.message : String(error);
+            // Only overwrite status if still at default "error" (not already set to a meaningful status like "skipped")
+            if (result.status === "error") {
+                result.error = error instanceof Error ? error.message : String(error);
+            }
+        } finally {
+            if (legacyPage) {
+                await legacyPage.close().catch(() => {});
+            }
         }
 
         result.duration = Date.now() - start;
@@ -194,8 +219,10 @@ test.afterAll(async () => {
     const failed = allResults.filter(r => r.status === "fail").length;
     const errors = allResults.filter(r => r.status === "error").length;
     const skipped = allResults.filter(r => r.status === "skipped").length;
+    const legacyOnly = allResults.filter(r => r.status === "legacy-only").length;
+    const modernOnly = allResults.filter(r => r.status === "modern-only").length;
 
-    console.log(`Results: ${passed} passed, ${failed} failed, ${errors} errors, ${skipped} skipped out of ${allResults.length} total`);
+    console.log(`Results: ${passed} passed, ${failed} failed, ${errors} errors, ${skipped} skipped, ${legacyOnly} legacy-only, ${modernOnly} modern-only out of ${allResults.length} total`);
 
     if (legacyContext) {
         await legacyContext.close();
