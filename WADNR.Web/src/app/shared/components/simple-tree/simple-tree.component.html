@@ -4,7 +4,7 @@
             <button type="button" class="btn btn-sm btn-primary" (click)="expandAll()">Expand All</button>
             <button type="button" class="btn btn-sm btn-primary" (click)="collapseAll()">Collapse All</button>
         </div>
-        <div class="simple-tree-search__input-wrapper">
+        <div class="simple-tree-search__input-wrapper field">
             <input type="text" placeholder="Search..." [(ngModel)]="searchTerm" aria-label="Search tree" />
             @if (searchTerm) {
             <button type="button" class="btn btn-secondary simple-tree-search__clear" (click)="searchTerm = ''" aria-label="Clear search" title="Clear search">&times;</button>
@@ -93,6 +93,7 @@
         <li
             class="simple-tree__node"
             [class.simple-tree__node--top-level-border]="(showTopLevelBorder || topLevelBorder) && item.depth === 0"
+            [class.simple-tree__node--root-group]="item.rootId"
             [class.simple-tree__group-start]="item.isGroupStart"
             [class.simple-tree__group-end]="item.isGroupEnd"
             [attr.data-root-id]="item.rootId"

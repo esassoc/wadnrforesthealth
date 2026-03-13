@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges, HostListener } from "@angular/core";
+import { Component, OnInit, OnDestroy, Input, SimpleChanges, HostListener, signal } from "@angular/core";
 import { AlertDisplayComponent } from "src/app/shared/components/alert-display/alert-display.component";
 import { CommonModule, AsyncPipe } from "@angular/common";
 import { RouterLink } from "@angular/router";
@@ -34,7 +34,7 @@ import { ProjectImageGridRow } from "src/app/shared/generated/model/models";
     styleUrls: ["./project-fact-sheet.component.scss"],
     imports: [AlertDisplayComponent, CommonModule, AsyncPipe, RouterLink, ButtonLoadingDirective, WADNRMapComponent, ProjectLocationsAsReferenceLayersComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent],
 })
-export class ProjectFactSheetComponent implements OnInit {
+export class ProjectFactSheetComponent implements OnInit, OnDestroy {
     @Input() public projectID?: number | null;
     public project$!: Observable<ProjectFactSheet>;
     public images$!: Observable<Array<ProjectImageGridRow>>;
@@ -49,12 +49,13 @@ export class ProjectFactSheetComponent implements OnInit {
     public selectedIndex: number = -1;
     public today: Date = new Date();
 
-    public isLoadingPdf: boolean = false;
+    public isLoadingPdf = signal(false);
     public isPrintMode = false;
     public OverlayMode = OverlayMode;
 
     public map?: L.Map;
     public layerControl?: any;
+    private resizeObserver?: ResizeObserver;
 
     constructor(
         private projectService: ProjectService,
@@ -64,15 +65,25 @@ export class ProjectFactSheetComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        // Initial load if input was provided via withComponentInputBinding or embedding
-        this.loadData(this.projectID ?? null);
-
+        // Detect capture/print mode before anything renders so layout is correct from the start
         this.handlePrintMode();
+
+        this.loadData(this.projectID ?? null);
     }
 
     public handleMapReady(event: WADNRMapInitEvent) {
         this.map = event.map;
         this.layerControl = event.layerControl;
+
+        // Observe the map container so Leaflet re-renders tiles when container size changes
+        const container = this.map.getContainer();
+        this.resizeObserver = new ResizeObserver(() => this.map?.invalidateSize());
+        this.resizeObserver.observe(container);
+    }
+
+    ngOnDestroy() {
+        this.resizeObserver?.disconnect();
+        document.body.classList.remove("map-layers-ready");
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -187,7 +198,11 @@ export class ProjectFactSheetComponent implements OnInit {
     }
 
     public getMapHeight(): string {
-        return this.isPrintMode ? "200px" : "480px";
+        return this.isPrintMode ? "350px" : "480px";
+    }
+
+    public onMapLayersReady() {
+        document.body.classList.add("map-layers-ready");
     }
 
     // Build a file resource URL from a file-resource GUID string.
@@ -257,8 +272,8 @@ export class ProjectFactSheetComponent implements OnInit {
     }
 
     public downloadFactSheetPdf(projectName: string | null | undefined) {
-        this.isLoadingPdf = true;
-        var requestDto = { url: window.location.href } as CapturePostData;
+        this.isLoadingPdf.set(true);
+        var requestDto = { url: window.location.href, waitForSelector: ".map-layers-ready" } as any as CapturePostData;
         this.sitkaCaptureService.generatePdfSitkaCapture(requestDto).subscribe({
             next: (blob) => {
                 const url = window.URL.createObjectURL(blob);
@@ -268,9 +283,9 @@ export class ProjectFactSheetComponent implements OnInit {
                 link.click();
                 window.URL.revokeObjectURL(url);
 
-                this.isLoadingPdf = false;
+                this.isLoadingPdf.set(false);
             },
-            error: () => (this.isLoadingPdf = false),
+            error: () => this.isLoadingPdf.set(false),
         });
     }
 }

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, Output } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { AsyncPipe } from "@angular/common";
 import * as L from "leaflet";
@@ -47,10 +47,14 @@ export class ProjectLocationsAsReferenceLayersComponent implements OnChanges {
     /** Optional: fit the map to the bounds of all returned reference features. */
     @Input() fitBoundsOnLoad: boolean = false;
 
+    /** Emits when all location layers have been added to the map. */
+    @Output() allLayersReady = new EventEmitter<void>();
+
     public layers$: Observable<GenericLayer[]> = of([]);
 
     private expectedLayerCount = 0;
     private didFitBoundsForCurrentLoad = false;
+    private hasReceivedLayerData = false;
     private readonly boundsByLayerKey = new Map<string, L.LatLngBounds | null>();
 
     layerKey(index: number, layer: Partial<GenericLayer> | null | undefined): string {
@@ -80,9 +84,18 @@ export class ProjectLocationsAsReferenceLayersComponent implements OnChanges {
         }
 
         this.layers$ = this.projectService.listLocationsAsGenericLayersProject(projectID).pipe(
-            tap((layers) => this.resetFitBoundsState(layers?.length ?? 0)),
+            tap((layers) => {
+                const count = layers?.length ?? 0;
+                this.resetFitBoundsState(count);
+                this.hasReceivedLayerData = true;
+                if (count === 0) {
+                    this.allLayersReady.emit();
+                }
+            }),
             catchError(() => {
                 this.resetFitBoundsState(0);
+                this.hasReceivedLayerData = true;
+                this.allLayersReady.emit();
                 return of([]);
             })
         );
@@ -91,6 +104,7 @@ export class ProjectLocationsAsReferenceLayersComponent implements OnChanges {
     private resetFitBoundsState(expectedCount: number): void {
         this.expectedLayerCount = expectedCount;
         this.didFitBoundsForCurrentLoad = false;
+        this.hasReceivedLayerData = false;
         this.boundsByLayerKey.clear();
     }
 
@@ -101,6 +115,11 @@ export class ProjectLocationsAsReferenceLayersComponent implements OnChanges {
     }
 
     private tryFitBounds(): void {
+        // Don't emit before layer data has actually been received from the API.
+        if (!this.hasReceivedLayerData) {
+            return;
+        }
+
         // Wait until all layers have reported (even if some are empty).
         if (this.expectedLayerCount > 0 && this.boundsByLayerKey.size < this.expectedLayerCount) {
             return;
@@ -113,6 +132,8 @@ export class ProjectLocationsAsReferenceLayersComponent implements OnChanges {
             }
             combined = combined ? combined.extend(b) : b;
         }
+
+        this.allLayersReady.emit();
 
         if (!this.fitBoundsOnLoad || this.didFitBoundsForCurrentLoad) {
             return;

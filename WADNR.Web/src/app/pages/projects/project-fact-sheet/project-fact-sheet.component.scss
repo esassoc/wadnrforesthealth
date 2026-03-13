@@ -76,7 +76,7 @@
 .keyPhoto img {
     width: 100%;
     max-height: 340px;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 6px;
 }
 
@@ -161,10 +161,8 @@
     color: #333;
 }
 
-.only-print {
-    display: none;
-}
-@media print {
+// Shared print/capture styles extracted to a mixin
+@mixin fact-sheet-print-layout {
     .no-print {
         display: none;
     }
@@ -201,16 +199,9 @@
             }
         }
 
-        // Reduce map and chart heights for print
-        wadnr-map {
-            height: 300px !important;
-
-            // Target the internal map container
-            .map-container,
-            .leaflet-container {
-                height: 300px !important;
-                max-height: 300px !important;
-            }
+        // Scale map height for the narrower PDF page width
+        wadnr-map .map-wrapper > div {
+            height: 350px !important;
         }
 
         // Reduce pie chart height for print
@@ -268,12 +259,21 @@
             break-inside: avoid;
             page-break-inside: avoid;
         }
-
-        //MP 1/15/26 Map only shows the appropriate area in print if the grid-columns are full span (as of right now)
-        //Would like this to not be an issue, but for now it's a full width display
-        .map-area,
-        .chart-area {
-            grid-column: span 12;
-        }
     }
+}
+
+.only-print {
+    display: none;
+}
+
+// Ctrl+P / browser print
+@media print {
+    @include fact-sheet-print-layout;
+}
+
+// HeadlessChrome capture — apply print layout from page load so the map
+// initializes at the correct narrow dimensions (no resize needed).
+.capture-mode {
+    max-width: 7.5in;
+    @include fact-sheet-print-layout;
 }

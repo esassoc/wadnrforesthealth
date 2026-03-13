@@ -10,6 +10,7 @@ namespace SitkaCaptureService
         public string cssSelector { get; set; }
         public string html { get; set; }
 
+        public string waitForSelector { get; set; }
         public int timeoutInMilliseconds { get; set; }
         public bool debug { get; set; }
         public bool debugNetwork { get; set; }

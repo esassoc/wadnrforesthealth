@@ -26,16 +26,16 @@
 
                 <div class="control-group control-group--values control-group--inline">
                     @if (filterValueOptions$ | async; as filterValueOptions) {
-                    <ng-select #filterValuesSelect class="lt-panel-w-540" [items]="filterValueOptions" bindLabel="Label" bindValue="Value" multiple formControlName="filterValues" (open)="onDropdownOpen(filterValuesSelect)">
+                    <ng-select #filterValuesSelect class="lt-panel-w-540" [items]="filterValueOptions" bindLabel="Label" bindValue="Value" [compareWith]="compareFilterValues" multiple formControlName="filterValues" [closeOnSelect]="false" [searchable]="false" [clearOnBackspace]="false" (open)="onDropdownOpen(filterValuesSelect)">
                         <ng-template ng-header-tmp>
                             <div class="ng-select-header-actions">
                                 <button type="button" class="btn btn-link" (click)="selectAllFilterValues(); $event.stopPropagation()">Select all</button>
                                 <button type="button" class="btn btn-link" (click)="deselectAllFilterValues(); $event.stopPropagation()">Deselect all</button>
                             </div>
                         </ng-template>
-                        <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm" let-active="active" let-selected="selected">
-                            <div class="ng-option-with-checkbox" (click)="$event.stopPropagation()">
-                                <input type="checkbox" [checked]="isFilterValueSelected(item.Value)" (click)="$event.stopPropagation(); toggleFilterValue(item.Value)" />
+                        <ng-template ng-option-tmp let-item="item" let-item$="item$">
+                            <div class="ng-option-with-checkbox">
+                                <input type="checkbox" [checked]="item$.selected" />
                                 <span class="ng-option-label">{{ item.Label }}</span>
                             </div>
                         </ng-template>

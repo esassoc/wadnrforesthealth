@@ -2,5 +2,5 @@
 
 <div class="page-body">
     <div class="taxonomy__title">Project Type > Project</div>
-    <simple-tree [nodes]="nodes$ | async" (select)="onSelect($event)" [topLevelBorder]="true"></simple-tree>
+    <simple-tree [nodes]="nodes$ | async" (select)="onSelect($event)" [topLevelBorder]="true" mode="filter"></simple-tree>
 </div>

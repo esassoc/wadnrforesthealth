@@ -21974,7 +21974,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/support-requests": {
@@ -23935,6 +23936,10 @@
             "nullable": true
           },
           "html": {
+            "type": "string",
+            "nullable": true
+          },
+          "waitForSelector": {
             "type": "string",
             "nullable": true
           },

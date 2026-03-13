@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, AfterViewChecked } from "@angular/core";
 import { Observable, map, forkJoin, combineLatest, startWith, Subscription, of, concat, defer } from "rxjs";
 import { shareReplay, tap } from "rxjs/operators";
 import { AsyncPipe, CommonModule } from "@angular/common";
@@ -58,7 +58,7 @@ import * as L from "leaflet";
         ExternalMapLayersComponent,
     ],
 })
-export class ProjectsMapComponent implements OnInit {
+export class ProjectsMapComponent implements OnInit, AfterViewChecked {
     public OverlayMode = OverlayMode;
     public customRichTextTypeID: number = FirmaPageTypeEnum.ProjectMap;
     public projectPoints$: Observable<IFeature[]>;
@@ -112,6 +112,15 @@ export class ProjectsMapComponent implements OnInit {
 
     // Saved map view from query params (applied once when map is ready)
     private _savedMapView: { lat: number; lng: number; zoom: number } | null = null;
+    private _savedBasemap: string | null = null;
+    // Overlay names parsed from the "overlays" query param, consumed by ngAfterViewChecked.
+    // Overlay restoration can't happen in handleMapReady because child layer components
+    // (e.g. generic-wms-wfs-layer, counties-layer) register their overlays in ngOnChanges,
+    // which runs *after* the parent sets mapIsReady. Different layers register across
+    // multiple change-detection cycles, so ngAfterViewChecked retries until all saved
+    // names are matched (or a max-attempt limit is hit to avoid infinite loops).
+    private _savedOverlays: string[] | null = null;
+    private _overlayRestoreAttempts = 0;
 
     // projects with no simple location list visibility
     public showProjectWithNoSimpleLocationList = false;
@@ -175,6 +184,10 @@ export class ProjectsMapComponent implements OnInit {
                 this._savedMapView = { lat, lng, zoom };
             }
         }
+        const qpBasemap = qp.get("basemap");
+        const qpOverlays = qp.get("overlays");
+        if (qpBasemap) this._savedBasemap = qpBasemap;
+        if (qpOverlays) this._savedOverlays = qpOverlays.split(",").filter(s => s !== "");
         // derive color-by options from generated ProjectColorByTypes (map to property names)
         this.colorByOptions = ProjectColorByTypes.filter((x) => x.DisplayName == "Stage").map(
             (x: any) => ({ Value: String((x.Name ?? x.Name) + "ID"), Label: x.DisplayName } as SelectDropdownOption)
@@ -303,7 +316,9 @@ export class ProjectsMapComponent implements OnInit {
     private _programCache: SelectDropdownOption[] = [];
     private _classificationCache: SelectDropdownOption[] = [];
     private _organizationCache: SelectDropdownOption[] = [];
-    public projectStageCache: SelectDropdownOption[] = ProjectStagesAsSelectDropdownOptions.filter((x) => x.Label !== "Terminated" && x.Label !== "Deferred");
+    public projectStageCache: SelectDropdownOption[] = ProjectStagesAsSelectDropdownOptions
+        .filter((x) => x.Label !== "Terminated" && x.Label !== "Deferred")
+        .map((x) => ({ ...x, Value: String(x.Value) }));
 
     public get selectedFilterValues(): string[] {
         // return the cached array reference (stable unless values actually change)
@@ -343,6 +358,19 @@ export class ProjectsMapComponent implements OnInit {
                 params.set("lat", center.lat.toFixed(5));
                 params.set("lng", center.lng.toFixed(5));
             }
+            // basemap & overlays
+            if (this.layerControl) {
+                const layers = this.layerControl.getLayers();
+                const activeBasemap = layers.find((l: any) => !l.overlay && this.map.hasLayer(l.layer));
+                if (activeBasemap) params.set("basemap", this.stripHtml(activeBasemap.name));
+                else params.delete("basemap");
+
+                const activeOverlays = layers
+                    .filter((l: any) => l.overlay && this.map.hasLayer(l.layer))
+                    .map((l: any) => this.stripHtml(l.name));
+                if (activeOverlays.length) params.set("overlays", activeOverlays.join(","));
+                else params.delete("overlays");
+            }
 
             // return full href
             return url.toString();
@@ -362,6 +390,16 @@ export class ProjectsMapComponent implements OnInit {
                 qp.push(`zoom=${this.map.getZoom()}`);
                 qp.push(`lat=${center.lat.toFixed(5)}`);
                 qp.push(`lng=${center.lng.toFixed(5)}`);
+            }
+            if (this.layerControl) {
+                const layers = this.layerControl.getLayers();
+                const activeBasemap = layers.find((l: any) => !l.overlay && this.map.hasLayer(l.layer));
+                if (activeBasemap) qp.push(`basemap=${encodeURIComponent(this.stripHtml(activeBasemap.name))}`);
+
+                const activeOverlays = layers
+                    .filter((l: any) => l.overlay && this.map.hasLayer(l.layer))
+                    .map((l: any) => this.stripHtml(l.name));
+                if (activeOverlays.length) qp.push(`overlays=${encodeURIComponent(activeOverlays.join(","))}`);
             }
             return `${window.location.pathname}${qp.length ? "?" + qp.join("&") : ""}`;
         }
@@ -402,6 +440,10 @@ export class ProjectsMapComponent implements OnInit {
         if (this.showSharePopup) {
             this.shareUrl = this.buildShareUrl();
         }
+    }
+
+    private stripHtml(s: string): string {
+        return s.replace(/<[^>]*>/g, "").trim();
     }
 
     private arraysEqual(a: any[], b: any[]) {
@@ -463,6 +505,44 @@ export class ProjectsMapComponent implements OnInit {
             this.map.setView([this._savedMapView.lat, this._savedMapView.lng], this._savedMapView.zoom);
             this._savedMapView = null;
         }
+
+        // Restore basemap from URL params
+        if (this._savedBasemap && this.layerControl) {
+            const layers = this.layerControl.getLayers();
+            const target = layers.find((l: any) => !l.overlay && this.stripHtml(l.name) === this._savedBasemap);
+            if (target) {
+                layers.filter((l: any) => !l.overlay && this.map.hasLayer(l.layer))
+                    .forEach((l: any) => this.map.removeLayer(l.layer));
+                this.map.addLayer(target.layer);
+            }
+            this._savedBasemap = null;
+        }
+
+        // Overlay restoration deferred to ngAfterViewChecked (overlays register after child ngOnChanges)
+    }
+
+    // Restores overlays saved from the "overlays" query param. Runs each CD cycle until
+    // all overlay names are matched or 50 attempts pass (bail-out for typos / removed layers).
+    // Layers that are found are added immediately; unmatched names stay in _savedOverlays
+    // for the next cycle so late-registering layers (e.g. the second generic-wms-wfs-layer)
+    // are still picked up once they call addOverlay in their own ngOnChanges.
+    ngAfterViewChecked(): void {
+        if (!this._savedOverlays?.length || !this.layerControl || !this.map) return;
+
+        const layers = this.layerControl.getLayers();
+        if (!layers.some((l: any) => l.overlay)) return; // no overlays registered yet
+
+        this._overlayRestoreAttempts++;
+        const remaining: string[] = [];
+        for (const name of this._savedOverlays) {
+            const target = layers.find((l: any) => l.overlay && this.stripHtml(l.name) === name);
+            if (target && !this.map.hasLayer(target.layer)) {
+                this.map.addLayer(target.layer);
+            } else if (!target) {
+                remaining.push(name);
+            }
+        }
+        this._savedOverlays = remaining.length && this._overlayRestoreAttempts < 50 ? remaining : null;
     }
 
     ngAfterViewInit(): void {
@@ -570,7 +650,7 @@ export class ProjectsMapComponent implements OnInit {
 
     // Select all available filter values (useful for ng-select "Select All")
     public selectAllFilterValues() {
-        const vals = (this.filterValueOptions || []).map((o: any) => o.Value);
+        const vals = (this.filterValueOptions || []).map((o: any) => String(o.Value));
         this.form.get("filterValues")?.setValue([...vals]);
     }
 
@@ -579,26 +659,11 @@ export class ProjectsMapComponent implements OnInit {
         this.form.get("filterValues")?.setValue([]);
     }
 
-    // Toggle a single filter value in the form control (keeps stable cache updates)
-    public toggleFilterValue(value: string) {
-        const ctrl = this.form.get("filterValues");
-        if (!ctrl) return;
-        const arr = Array.isArray(ctrl.value) ? [...ctrl.value] : [];
-        const s = String(value);
-        const idx = arr.findIndex((v) => String(v) === s);
-        if (idx >= 0) {
-            arr.splice(idx, 1);
-        } else {
-            arr.push(s);
-        }
-        ctrl.setValue(arr);
-    }
+    // Compare function for ng-select so it can match string model values to item Values
+    public compareFilterValues = (a: any, b: any) => {
+        const aVal = a != null && typeof a === "object" ? String(a.Value) : String(a);
+        const bVal = b != null && typeof b === "object" ? String(b.Value) : String(b);
+        return aVal === bVal;
+    };
 
-    // Return whether a given filter value is currently selected in the form control
-    public isFilterValueSelected(value: string): boolean {
-        const ctrl = this.form.get("filterValues");
-        if (!ctrl) return false;
-        const arr = Array.isArray(ctrl.value) ? ctrl.value : [];
-        return arr.some((v) => String(v) === String(value));
-    }
 }

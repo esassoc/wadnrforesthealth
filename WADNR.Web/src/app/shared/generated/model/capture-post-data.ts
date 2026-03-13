@@ -16,6 +16,7 @@ export class CapturePostData {
     url?: string | null;
     cssSelector?: string | null;
     html?: string | null;
+    waitForSelector?: string | null;
     timeoutInMilliseconds?: number;
     debug?: boolean;
     debugNetwork?: boolean;
@@ -30,6 +31,7 @@ export interface CapturePostDataForm {
     url?: FormControl<string>;
     cssSelector?: FormControl<string>;
     html?: FormControl<string>;
+    waitForSelector?: FormControl<string>;
     timeoutInMilliseconds?: FormControl<number>;
     debug?: FormControl<boolean>;
     debugNetwork?: FormControl<boolean>;
@@ -77,6 +79,16 @@ export class CapturePostDataFormControls {
         }
     );
     public static html = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static waitForSelector = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {
