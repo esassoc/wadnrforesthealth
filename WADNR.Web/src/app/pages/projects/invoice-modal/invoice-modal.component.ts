@@ -12,6 +12,7 @@ import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 
+import { environment } from "src/environments/environment";
 import { InvoiceService } from "src/app/shared/generated/api/invoice.service";
 import { InvoiceDetail } from "src/app/shared/generated/model/invoice-detail";
 import {
@@ -73,6 +74,7 @@ export class InvoiceModalComponent extends BaseModal implements OnInit {
 
     // Voucher file upload
     public fileControl = new FormControl<File | null>(null);
+    apiUrl = environment.mainAppApiUrl;
     public existingFileName: string | null = null;
     public existingFileResourceGuid: string | null = null;
 

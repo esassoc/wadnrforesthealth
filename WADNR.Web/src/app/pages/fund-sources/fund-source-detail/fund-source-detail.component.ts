@@ -4,6 +4,7 @@ import { RouterLink } from "@angular/router";
 import { DialogService } from "@ngneat/dialog";
 import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, of, shareReplay, startWith, Subject, switchMap } from "rxjs";
 import { ColDef } from "ag-grid-community";
+import { environment } from "src/environments/environment";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -32,6 +33,7 @@ import { LoadingDirective } from "src/app/shared/directives/loading.directive";
     styleUrls: ["./fund-source-detail.component.scss"],
 })
 export class FundSourceDetailComponent {
+    apiUrl = environment.mainAppApiUrl;
     @Input() set fundSourceID(value: string | number) {
         this._fundSourceID$.next(Number(value));
     }

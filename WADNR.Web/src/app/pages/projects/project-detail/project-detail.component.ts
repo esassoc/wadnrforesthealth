@@ -152,8 +152,10 @@ export class ProjectDetailComponent implements OnDestroy {
     ProjectApprovalStatusEnum = ProjectApprovalStatusEnum;
     OverlayMode = OverlayMode;
 
+    apiUrl = environment.mainAppApiUrl;
+
     // Cost Share
-    blankCostShareUrl = `${environment.mainAppApiUrl}/cost-share/generate-pdf`;
+    blankCostShareUrl = `${this.apiUrl}/cost-share/generate-pdf`;
 
     public projectID$: Observable<number>;
     public project$: Observable<ProjectDetail>;
@@ -797,7 +799,7 @@ export class ProjectDetailComponent implements OnDestroy {
                 },
                 cellRenderer: (params: any) => {
                     const doc = params.data as ProjectDocumentGridRow;
-                    return `<a href="/api/file-resources/${doc.FileResourceGuid}" target="_blank">${doc.DisplayName}</a>`;
+                    return `<a href="${this.apiUrl}/file-resources/${doc.FileResourceGuid}" target="_blank">${doc.DisplayName}</a>`;
                 },
             },
             this.utilityFunctions.createBasicColumnDef("Description", "Description"),
@@ -907,7 +909,7 @@ export class ProjectDetailComponent implements OnDestroy {
                 if (invoice.InvoiceFileResourceGuid) {
                     actions.push({
                         ActionName: "Download Voucher",
-                        ActionHandler: () => window.open(`/api/file-resources/${invoice.InvoiceFileResourceGuid}`, "_blank"),
+                        ActionHandler: () => window.open(`${this.apiUrl}/file-resources/${invoice.InvoiceFileResourceGuid}`, "_blank"),
                         ActionIcon: "fa fa-download"
                     });
                 }

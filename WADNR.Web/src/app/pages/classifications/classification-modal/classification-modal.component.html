@@ -44,7 +44,7 @@
         @if (existingImageGUID && !keyImageControl.value) {
         <div class="existing-image">
             <label class="field-label">Current Key Image</label>
-            <img [src]="'/api/file-resources/' + existingImageGUID" alt="Current key image" class="key-image-preview">
+            <img [src]="apiUrl + '/file-resources/' + existingImageGUID" alt="Current key image" class="key-image-preview">
         </div>
         }
 

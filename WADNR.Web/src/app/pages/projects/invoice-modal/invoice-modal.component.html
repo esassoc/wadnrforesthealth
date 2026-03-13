@@ -129,7 +129,7 @@
             <div class="field">
                 <div class="field-label">Current Voucher File</div>
                 <div>
-                    <a href="/api/file-resources/{{ existingFileResourceGuid }}" target="_blank">{{ existingFileName }}</a>
+                    <a [href]="apiUrl + '/file-resources/' + existingFileResourceGuid" target="_blank">{{ existingFileName }}</a>
                 </div>
             </div>
         }

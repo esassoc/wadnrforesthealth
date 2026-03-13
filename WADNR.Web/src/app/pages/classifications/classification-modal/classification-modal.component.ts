@@ -9,6 +9,7 @@ import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 
+import { environment } from "src/environments/environment";
 import { ClassificationService } from "src/app/shared/generated/api/classification.service";
 import { ClassificationSystemService } from "src/app/shared/generated/api/classification-system.service";
 import { ClassificationDetail } from "src/app/shared/generated/model/classification-detail";
@@ -38,6 +39,7 @@ export class ClassificationModalComponent extends BaseModal implements OnInit {
     public isSubmitting = false;
     public mode: "create" | "edit" = "create";
     public classification: ClassificationDetail | null = null;
+    apiUrl = environment.mainAppApiUrl;
     public existingImageGUID: string | null = null;
     public keyImageControl = new FormControl<File>(null);
 

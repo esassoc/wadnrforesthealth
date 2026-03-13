@@ -3,6 +3,7 @@ import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, startWith, Subject, switchMap } from "rxjs";
 import { DialogService } from "@ngneat/dialog";
+import { environment } from "src/environments/environment";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -26,6 +27,7 @@ import { IconComponent } from "src/app/shared/components/icon/icon.component";
     styleUrls: ["./classification-detail.component.scss"],
 })
 export class ClassificationDetailComponent {
+    apiUrl = environment.mainAppApiUrl;
     public classificationDetailPageData$: Observable<{ classification: ClassificationDetail; projects: ProjectClassificationDetailGridRow[] }>;
     public classificationID$: Observable<number>;
 

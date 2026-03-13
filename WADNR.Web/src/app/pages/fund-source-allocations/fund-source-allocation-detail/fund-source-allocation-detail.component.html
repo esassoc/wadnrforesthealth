@@ -220,7 +220,7 @@
                             @for (file of files; track file.FundSourceAllocationFileResourceID) {
                                 <div class="file-entry">
                                     <div class="file-entry__main">
-                                        <a [href]="'/api/file-resources/' + file.FileResourceGUID" target="_blank">{{ file.DisplayName || file.OriginalBaseFilename }}</a>
+                                        <a [href]="apiUrl + '/file-resources/' + file.FileResourceGUID" target="_blank">{{ file.DisplayName || file.OriginalBaseFilename }}</a>
                                         <span class="file-entry__meta">({{ file.FileResourceMimeTypeName }}) &mdash; {{ formatDate(file.CreateDate) }}</span>
                                         @if (canManageFundSources$ | async) {
                                             <span class="file-entry__actions">

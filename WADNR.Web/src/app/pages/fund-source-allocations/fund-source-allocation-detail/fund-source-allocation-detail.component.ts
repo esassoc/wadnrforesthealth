@@ -6,6 +6,7 @@ import { DialogService } from "@ngneat/dialog";
 import { CellValueChangedEvent, ColDef } from "ag-grid-community";
 import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, of, shareReplay, startWith, Subject, switchMap, take } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
+import { environment } from "src/environments/environment";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -48,6 +49,7 @@ export interface BudgetVsActualsRow {
     styleUrls: ["./fund-source-allocation-detail.component.scss"],
 })
 export class FundSourceAllocationDetailComponent {
+    apiUrl = environment.mainAppApiUrl;
     private destroyRef = inject(DestroyRef);
 
     @Input() set fundSourceAllocationID(value: string | number) {
