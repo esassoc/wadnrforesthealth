@@ -13,12 +13,12 @@ public class PendingProjectGridRow
     public List<ProgramLookupItem> Programs { get; set; } = new List<ProgramLookupItem>();
     public PriorityLandscapeLookupItem? PriorityLandscape { get; set; }
     public CountyLookupItem? County { get; set; }
-    public DateTime? ProjectInitiationDate { get; set; }
-    public DateTime? ExpirationDate { get; set; }
-    public DateTime? CompletionDate { get; set; }
+    public DateOnly? ProjectInitiationDate { get; set; }
+    public DateOnly? ExpirationDate { get; set; }
+    public DateOnly? CompletionDate { get; set; }
     public decimal? EstimatedTotalCost { get; set; }
     public decimal? TotalAmount { get; set; }
-    public DateTime? SubmittedDate { get; set; }
-    public DateTime? LastUpdatedDate { get; set; }
+    public DateTimeOffset? SubmittedDate { get; set; }
+    public DateTimeOffset? LastUpdatedDate { get; set; }
     public string? ProjectDescription { get; set; }
 }

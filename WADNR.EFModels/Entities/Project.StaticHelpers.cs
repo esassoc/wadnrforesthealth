@@ -147,9 +147,9 @@ public static class Projects
             ProjectLocationSimpleTypeID = dto.ProjectLocationSimpleTypeID,
             ProjectApprovalStatusID = dto.ProjectApprovalStatusID,
             ProposingPersonID = dto.ProposingPersonID,
-            ProposingDate = dto.ProposingDate,
-            SubmissionDate = dto.SubmissionDate,
-            ApprovalDate = dto.ApprovalDate,
+            ProposingDate = dto.ProposingDate?.DateTime,
+            SubmissionDate = dto.SubmissionDate?.DateTime,
+            ApprovalDate = dto.ApprovalDate?.DateTime,
             FocusAreaID = dto.FocusAreaID,
             ExpirationDate = dto.ExpirationDate,
             FhtProjectNumber = dto.FhtProjectNumber
@@ -173,9 +173,9 @@ public static class Projects
         entity.ProjectLocationSimpleTypeID = dto.ProjectLocationSimpleTypeID;
         entity.ProjectApprovalStatusID = dto.ProjectApprovalStatusID;
         entity.ProposingPersonID = dto.ProposingPersonID;
-        entity.ProposingDate = dto.ProposingDate;
-        entity.SubmissionDate = dto.SubmissionDate;
-        entity.ApprovalDate = dto.ApprovalDate;
+        entity.ProposingDate = dto.ProposingDate?.DateTime;
+        entity.SubmissionDate = dto.SubmissionDate?.DateTime;
+        entity.ApprovalDate = dto.ApprovalDate?.DateTime;
         entity.FocusAreaID = dto.FocusAreaID;
         entity.ExpirationDate = dto.ExpirationDate;
         entity.FhtProjectNumber = dto.FhtProjectNumber;

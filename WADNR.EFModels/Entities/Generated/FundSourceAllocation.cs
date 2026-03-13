@@ -16,11 +16,9 @@ public partial class FundSourceAllocation
     [Unicode(false)]
     public string? FundSourceAllocationName { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? StartDate { get; set; }
+    public DateOnly? StartDate { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? EndDate { get; set; }
+    public DateOnly? EndDate { get; set; }
 
     [Column(TypeName = "money")]
     public decimal? AllocationAmount { get; set; }

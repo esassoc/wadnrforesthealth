@@ -14,8 +14,8 @@ public class ProjectExcelRow
     public string DNRUplandRegionNames { get; set; } = string.Empty;
     public string CountyNames { get; set; } = string.Empty;
     public string? FocusAreaName { get; set; }
-    public DateTime? PlannedDate { get; set; }
-    public DateTime? CompletionDate { get; set; }
+    public DateOnly? PlannedDate { get; set; }
+    public DateOnly? CompletionDate { get; set; }
     public string? ProjectDescription { get; set; }
     public decimal? EstimatedTotalCost { get; set; }
     public decimal? TotalFundingAmount { get; set; }

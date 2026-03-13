@@ -16,8 +16,7 @@ public partial class Invoice
     [Unicode(false)]
     public string? InvoiceIdentifyingName { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime InvoiceDate { get; set; }
+    public DateOnly InvoiceDate { get; set; }
 
     [Column(TypeName = "money")]
     public decimal? PaymentAmount { get; set; }

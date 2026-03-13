@@ -2,7 +2,7 @@
 CREATE TABLE [dbo].[Invoice](
 	[InvoiceID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_Invoice_InvoiceID] PRIMARY KEY,
 	[InvoiceIdentifyingName] [varchar](255) NULL,
-	[InvoiceDate] [datetime] NOT NULL,
+	[InvoiceDate] [date] NOT NULL,
 	[PaymentAmount] [money] NULL,
 	[InvoiceApprovalStatusID] [int] NOT NULL CONSTRAINT [FK_Invoice_InvoiceApprovalStatus_InvoiceApprovalStatusID] FOREIGN KEY REFERENCES [dbo].[InvoiceApprovalStatus]([InvoiceApprovalStatusID]),
 	[InvoiceApprovalStatusComment] [varchar](max) NULL,

@@ -4,8 +4,8 @@ CREATE TABLE [dbo].[LoaStage](
     [ProjectStatus] [varchar](600) NULL,
     [FundSourceNumber] [varchar](600) NULL,
     [FocusAreaName] [varchar](600) NULL,
-    [ProjectExpirationDate] [datetime] NULL,
-    [LetterDate] [datetime] NULL,
+    [ProjectExpirationDate] [date] NULL,
+    [LetterDate] [date] NULL,
     [MatchAmount] [money] NULL,
     [PayAmount] [money] NULL,
     [ProgramIndex] [varchar](50) NULL,
@@ -16,8 +16,8 @@ CREATE TABLE [dbo].[LoaStage](
     [ForesterFirstName] [varchar](200) NULL,
     [ForesterPhone] [varchar](200) NULL,
     [ForesterEmail] [varchar](200) NULL,
-    [ApplicationDate] [datetime] NULL,
-    [DecisionDate] [datetime] NULL
+    [ApplicationDate] [date] NULL,
+    [DecisionDate] [date] NULL
 )
 GO
 CREATE NONCLUSTERED INDEX [IDX_LoaStageGrantNumber] ON [dbo].[LoaStage]([FundSourceNumber]) INCLUDE([FocusAreaName],[IsSoutheast])

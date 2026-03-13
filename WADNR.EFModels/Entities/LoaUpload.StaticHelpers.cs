@@ -70,14 +70,14 @@ public static class LoaUploads
                 PayAmount = row.PayAmount.HasValue ? (decimal)row.PayAmount.Value : null,
                 FundSourceNumber = row.FundSourceNumber,
                 FocusAreaName = row.FocusArea,
-                ProjectExpirationDate = row.ProjectExpirationDate,
-                LetterDate = row.LetterDate,
+                ProjectExpirationDate = row.ProjectExpirationDate.HasValue ? DateOnly.FromDateTime(row.ProjectExpirationDate.Value) : null,
+                LetterDate = row.LetterDate.HasValue ? DateOnly.FromDateTime(row.LetterDate.Value) : null,
                 ProgramIndex = row.ProgramIndex,
                 ProjectCode = row.ProjectCode,
                 IsNortheast = isNortheast,
                 // IsSoutheast is a computed column — do not set
-                ApplicationDate = row.ApplicationDate,
-                DecisionDate = row.DecisionDate,
+                ApplicationDate = row.ApplicationDate.HasValue ? DateOnly.FromDateTime(row.ApplicationDate.Value) : null,
+                DecisionDate = row.DecisionDate.HasValue ? DateOnly.FromDateTime(row.DecisionDate.Value) : null,
             };
 
             // Split forester name: "John Van Dyke" → first="John", last="VanDyke"

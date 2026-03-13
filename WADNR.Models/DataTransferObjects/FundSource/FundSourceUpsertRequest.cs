@@ -4,8 +4,8 @@ public class FundSourceUpsertRequest
 {
     public string FundSourceName { get; set; } = string.Empty;
     public string? FundSourceNumber { get; set; }
-    public DateTime? StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
     public string? ConditionsAndRequirements { get; set; }
     public string? ComplianceNotes { get; set; }
     public string? CFDANumber { get; set; }

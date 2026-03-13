@@ -254,7 +254,7 @@ export class InvoiceEditModalComponent extends BaseModal implements OnInit {
                     this.form.patchValue({
                         invoiceNumber: inv.InvoiceNumber ?? null,
                         invoiceIdentifyingName: inv.InvoiceIdentifyingName ?? null,
-                        invoiceDate: inv.InvoiceDate ? new Date(inv.InvoiceDate).toISOString().split("T")[0] : null,
+                        invoiceDate: inv.InvoiceDate ? String(inv.InvoiceDate).substring(0, 10) : null,
                         paymentAmount: inv.PaymentAmount ?? null,
                         matchAmount: inv.MatchAmount ?? null,
                         invoiceMatchAmountTypeID: inv.InvoiceMatchAmountTypeID ?? null,

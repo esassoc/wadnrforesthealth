@@ -7,7 +7,7 @@ public class AgreementExcelRow
     public string FundSourceAllocationNumbers { get; set; } = string.Empty;
     public string OrganizationName { get; set; } = string.Empty;
     public string AgreementTitle { get; set; } = string.Empty;
-    public DateTime? StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
     public decimal? AgreementAmount { get; set; }
 }

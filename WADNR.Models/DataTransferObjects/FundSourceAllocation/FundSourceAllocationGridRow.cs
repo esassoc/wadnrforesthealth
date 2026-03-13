@@ -6,8 +6,8 @@ public class FundSourceAllocationGridRow
     public string? FundSourceAllocationName { get; set; }
     public int FundSourceID { get; set; }
     public string FundSourceNumber { get; set; } = string.Empty;
-    public DateTime? StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
     public decimal? AllocationAmount { get; set; }
     public string? DNRUplandRegionName { get; set; }
     public int? DNRUplandRegionID { get; set; }

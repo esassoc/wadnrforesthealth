@@ -10,7 +10,7 @@ public class UpdateWorkflowProgressResponse
     public string ProjectName { get; set; } = string.Empty;
     public int ProjectUpdateStateID { get; set; }
     public string ProjectUpdateStateName { get; set; } = string.Empty;
-    public DateTime LastUpdateDate { get; set; }
+    public DateTimeOffset LastUpdateDate { get; set; }
     public string? LastUpdatedByPersonName { get; set; }
 
     /// <summary>
@@ -21,7 +21,7 @@ public class UpdateWorkflowProgressResponse
     /// <summary>
     /// Date when this update batch was submitted (if submitted).
     /// </summary>
-    public DateTime? SubmittedDate { get; set; }
+    public DateTimeOffset? SubmittedDate { get; set; }
 
     /// <summary>
     /// Person who returned this update batch for revisions (if returned).
@@ -31,7 +31,7 @@ public class UpdateWorkflowProgressResponse
     /// <summary>
     /// Date when this update batch was returned (if returned).
     /// </summary>
-    public DateTime? ReturnedDate { get; set; }
+    public DateTimeOffset? ReturnedDate { get; set; }
 
     public bool CanSubmit { get; set; }
 

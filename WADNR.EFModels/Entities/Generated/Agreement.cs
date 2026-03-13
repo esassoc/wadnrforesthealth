@@ -18,11 +18,9 @@ public partial class Agreement
     [Unicode(false)]
     public string? AgreementNumber { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? StartDate { get; set; }
+    public DateOnly? StartDate { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? EndDate { get; set; }
+    public DateOnly? EndDate { get; set; }
 
     [Column(TypeName = "money")]
     public decimal? AgreementAmount { get; set; }
@@ -35,8 +33,7 @@ public partial class Agreement
 
     public int? DNRUplandRegionID { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? FirstBillDueOn { get; set; }
+    public DateOnly? FirstBillDueOn { get; set; }
 
     [Unicode(false)]
     public string? Notes { get; set; }

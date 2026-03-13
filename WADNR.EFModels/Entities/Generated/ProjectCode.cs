@@ -24,11 +24,9 @@ public partial class ProjectCode
     [Column(TypeName = "datetime")]
     public DateTime? CreateDate { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? ProjectStartDate { get; set; }
+    public DateOnly? ProjectStartDate { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? ProjectEndDate { get; set; }
+    public DateOnly? ProjectEndDate { get; set; }
 
     [InverseProperty("ProjectCode")]
     public virtual ICollection<FundSourceAllocationProgramIndexProjectCode> FundSourceAllocationProgramIndexProjectCodes { get; set; } = new List<FundSourceAllocationProgramIndexProjectCode>();

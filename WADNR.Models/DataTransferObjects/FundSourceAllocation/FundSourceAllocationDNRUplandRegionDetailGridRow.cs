@@ -7,7 +7,7 @@ public class FundSourceAllocationDNRUplandRegionDetailGridRow
 {
     public int FundSourceAllocationID { get; set; }
     public string? FundSourceAllocationName { get; set; }
-    public DateTime? FundSourceEndDate { get; set; }
+    public DateOnly? FundSourceEndDate { get; set; }
     public bool? HasFundFSPs { get; set; }
     public FundSourceAllocationPriorityDetail FundSourceAllocationPriority { get; set; } = new FundSourceAllocationPriorityDetail();
     public List<ProgramIndexLookupItem> ProgramIndices { get; set; } = new List<ProgramIndexLookupItem>();

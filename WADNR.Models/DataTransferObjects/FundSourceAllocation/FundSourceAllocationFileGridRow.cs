@@ -9,5 +9,5 @@ public class FundSourceAllocationFileGridRow
     public string? Description { get; set; }
     public string? OriginalBaseFilename { get; set; }
     public string? FileResourceMimeTypeName { get; set; }
-    public DateTime CreateDate { get; set; }
+    public DateTimeOffset CreateDate { get; set; }
 }

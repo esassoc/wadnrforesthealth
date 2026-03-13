@@ -3,14 +3,14 @@ CREATE TABLE [dbo].[ProjectUpdate](
     [ProjectUpdateBatchID] [int] NOT NULL CONSTRAINT [FK_ProjectUpdate_ProjectUpdateBatch_ProjectUpdateBatchID] FOREIGN KEY REFERENCES [dbo].[ProjectUpdateBatch]([ProjectUpdateBatchID]),
     [ProjectStageID] [int] NOT NULL CONSTRAINT [FK_ProjectUpdate_ProjectStage_ProjectStageID] FOREIGN KEY REFERENCES [dbo].[ProjectStage] ([ProjectStageID]),
     [ProjectDescription] [varchar](4000) NULL,
-    [CompletionDate] [datetime] NULL,
+    [CompletionDate] [date] NULL,
     [EstimatedTotalCost] [money] NULL,
     [ProjectLocationPoint] [geometry] NULL,
     [ProjectLocationNotes] [varchar](4000) NULL,
-    [PlannedDate] [datetime] NULL,
+    [PlannedDate] [date] NULL,
     [ProjectLocationSimpleTypeID] [int] NOT NULL CONSTRAINT [FK_ProjectUpdate_ProjectLocationSimpleType_ProjectLocationSimpleTypeID] FOREIGN KEY REFERENCES [dbo].[ProjectLocationSimpleType] ([ProjectLocationSimpleTypeID]),
     [FocusAreaID] [int] NULL CONSTRAINT [FK_ProjectUpdate_FocusArea_FocusAreaID] FOREIGN KEY REFERENCES [dbo].[FocusArea] ([FocusAreaID]),
-    [ExpirationDate] [datetime] NULL,
+    [ExpirationDate] [date] NULL,
     [ProjectFundingSourceNotes] [varchar](4000) NULL,
     [PercentageMatch] [int] NULL
 )

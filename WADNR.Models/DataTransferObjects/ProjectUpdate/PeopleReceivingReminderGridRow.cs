@@ -15,5 +15,5 @@ public class PeopleReceivingReminderGridRow
     public int UpdatesReturned { get; set; }
     public int UpdatesApproved { get; set; }
     public int RemindersSent { get; set; }
-    public DateTime? LastReminderDate { get; set; }
+    public DateTimeOffset? LastReminderDate { get; set; }
 }

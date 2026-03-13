@@ -26,8 +26,7 @@ public partial class InteractionEvent
     [Unicode(false)]
     public string? InteractionEventDescription { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime InteractionEventDate { get; set; }
+    public DateOnly InteractionEventDate { get; set; }
 
     [Column(TypeName = "geometry")]
     public Geometry? InteractionEventLocationSimple { get; set; }

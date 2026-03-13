@@ -47,7 +47,7 @@ public static class ProjectUpdateWorkflowProgress
         public string? ReturnedByPersonName { get; init; }
         public DateTime? ReturnedDate { get; init; }
         public int ProjectStageID { get; init; }
-        public DateTime? PlannedDate { get; init; }
+        public DateOnly? PlannedDate { get; init; }
         public bool HasSimpleLocation { get; init; }
         public string? ProjectLocationNotes { get; init; }
         public int ProjectLocationSimpleTypeID { get; init; }

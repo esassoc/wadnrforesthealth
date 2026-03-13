@@ -24,8 +24,8 @@ public class FundSourceDetail
     public string? CFDANumber { get; set; }
 
     // Dates
-    public DateTime? StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
 
     // Additional details
     public string? ConditionsAndRequirements { get; set; }

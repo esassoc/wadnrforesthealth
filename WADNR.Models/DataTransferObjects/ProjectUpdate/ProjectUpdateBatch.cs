@@ -10,12 +10,12 @@ public class ProjectUpdateBatchDetail
     public string ProjectName { get; set; } = string.Empty;
     public int ProjectUpdateStateID { get; set; }
     public string ProjectUpdateStateName { get; set; } = string.Empty;
-    public DateTime LastUpdateDate { get; set; }
+    public DateTimeOffset LastUpdateDate { get; set; }
     public string? LastUpdatedByPersonName { get; set; }
     public string? SubmittedByPersonName { get; set; }
-    public DateTime? SubmittalDate { get; set; }
+    public DateTimeOffset? SubmittalDate { get; set; }
     public string? ApprovedByPersonName { get; set; }
-    public DateTime? ApprovalDate { get; set; }
+    public DateTimeOffset? ApprovalDate { get; set; }
     public string? ReturnedByPersonName { get; set; }
     public string? ReturnComment { get; set; }
 
@@ -36,12 +36,12 @@ public class ProjectUpdateBatchGridRow
     public int ProjectID { get; set; }
     public int ProjectUpdateStateID { get; set; }
     public string ProjectUpdateStateName { get; set; } = string.Empty;
-    public DateTime LastUpdateDate { get; set; }
+    public DateTimeOffset LastUpdateDate { get; set; }
     public string? LastUpdatedByPersonName { get; set; }
     public string? SubmittedByPersonName { get; set; }
-    public DateTime? SubmittalDate { get; set; }
+    public DateTimeOffset? SubmittalDate { get; set; }
     public string? ApprovedByPersonName { get; set; }
-    public DateTime? ApprovalDate { get; set; }
+    public DateTimeOffset? ApprovalDate { get; set; }
 }
 
 /// <summary>

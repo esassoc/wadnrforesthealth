@@ -32,9 +32,9 @@ public class ProjectNoteUpdateItem
     public int ProjectNoteUpdateID { get; set; }
     public int ProjectUpdateBatchID { get; set; }
     public string Note { get; set; } = string.Empty;
-    public DateTime CreateDate { get; set; }
+    public DateTimeOffset CreateDate { get; set; }
     public string? CreatedByPersonName { get; set; }
-    public DateTime? UpdateDate { get; set; }
+    public DateTimeOffset? UpdateDate { get; set; }
     public string? UpdatedByPersonName { get; set; }
 }
 

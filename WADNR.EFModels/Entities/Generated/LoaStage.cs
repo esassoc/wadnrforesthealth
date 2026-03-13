@@ -29,11 +29,9 @@ public partial class LoaStage
     [Unicode(false)]
     public string? FocusAreaName { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? ProjectExpirationDate { get; set; }
+    public DateOnly? ProjectExpirationDate { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? LetterDate { get; set; }
+    public DateOnly? LetterDate { get; set; }
 
     [Column(TypeName = "money")]
     public decimal? MatchAmount { get; set; }
@@ -69,9 +67,7 @@ public partial class LoaStage
     [Unicode(false)]
     public string? ForesterEmail { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? ApplicationDate { get; set; }
+    public DateOnly? ApplicationDate { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? DecisionDate { get; set; }
+    public DateOnly? DecisionDate { get; set; }
 }

@@ -6,9 +6,9 @@ public class ProjectFocusAreaDetailGridRow
     public string FhtProjectNumber { get; set; } = string.Empty;
     public string ProjectName { get; set; } = string.Empty;
     public ProjectStageLookupItem ProjectStage { get; set; } = new();
-    public DateTime? ProjectInitiationDate { get; set; }
-    public DateTime? ExpirationDate { get; set; }
-    public DateTime? CompletionDate { get; set; }
+    public DateOnly? ProjectInitiationDate { get; set; }
+    public DateOnly? ExpirationDate { get; set; }
+    public DateOnly? CompletionDate { get; set; }
     public decimal? EstimatedTotalCost { get; set; }
     public decimal? TotalFunding { get; set; }
     public string? ProjectDescription { get; set; }

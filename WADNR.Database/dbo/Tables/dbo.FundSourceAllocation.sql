@@ -1,8 +1,8 @@
 CREATE TABLE [dbo].[FundSourceAllocation](
     [FundSourceAllocationID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_FundSourceAllocation_FundSourceAllocationID] PRIMARY KEY,
     [FundSourceAllocationName] [varchar](100) NULL,
-    [StartDate] [datetime] NULL,
-    [EndDate] [datetime] NULL,
+    [StartDate] [date] NULL,
+    [EndDate] [date] NULL,
     [AllocationAmount] [money] NULL,
     [FederalFundCodeID] [int] NULL CONSTRAINT [FK_FundSourceAllocation_FederalFundCode_FederalFundCodeID] FOREIGN KEY REFERENCES [dbo].[FederalFundCode]([FederalFundCodeID]),
     [OrganizationID] [int] NULL CONSTRAINT [FK_FundSourceAllocation_Organization_OrganizationID] FOREIGN KEY REFERENCES [dbo].[Organization]([OrganizationID]),

@@ -4,7 +4,7 @@ public class InvoicePaymentRequestGridRow
 {
     public int InvoicePaymentRequestID { get; set; }
     public int ProjectID { get; set; }
-    public DateTime InvoicePaymentRequestDate { get; set; }
+    public DateOnly InvoicePaymentRequestDate { get; set; }
     public int? VendorID { get; set; }
     public string? VendorName { get; set; }
     public string? VendorAddress { get; set; }

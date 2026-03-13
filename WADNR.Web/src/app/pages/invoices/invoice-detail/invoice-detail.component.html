@@ -30,7 +30,7 @@
                     <div class="g-col-4">
                         <strong>Invoice Date</strong>
                     </div>
-                    <div class="g-col-8">{{ invoice.InvoiceDate | date:'shortDate' }}</div>
+                    <div class="g-col-8">{{ invoice.InvoiceDate | date:'M/d/yyyy' }}</div>
 
                     <div class="g-col-4">
                         <strong>Status</strong>
@@ -157,7 +157,7 @@
                     <div class="g-col-4">
                         <strong>Request Date</strong>
                     </div>
-                    <div class="g-col-8">{{ invoice.InvoicePaymentRequestDate | date:'shortDate' }}</div>
+                    <div class="g-col-8">{{ invoice.InvoicePaymentRequestDate | date:'M/d/yyyy' }}</div>
 
                     @if (invoice.VendorName) {
                     <div class="g-col-4">

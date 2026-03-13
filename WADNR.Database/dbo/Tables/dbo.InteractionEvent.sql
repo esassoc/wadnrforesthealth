@@ -4,7 +4,7 @@ CREATE TABLE [dbo].[InteractionEvent](
     [StaffPersonID] [int] NULL CONSTRAINT [FK_InteractionEvent_Person_StaffPersonID_PersonID] FOREIGN KEY REFERENCES [dbo].[Person]([PersonID]),
     [InteractionEventTitle] [varchar](255) NOT NULL,
     [InteractionEventDescription] [varchar](3000) NULL,
-    [InteractionEventDate] [datetime] NOT NULL,
+    [InteractionEventDate] [date] NOT NULL,
     [InteractionEventLocationSimple] [geometry] NULL
 )
 GO

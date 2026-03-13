@@ -36,8 +36,8 @@ namespace WADNR.API.ReportTemplates.Models
         public string ProjectLastUpdatedDisplay => ProjectLastUpdated.ToShortDateString();
         public DateTime? ApprovalDate { get; set; }
         public string ApprovalDateDisplay => ApprovalDate.HasValue ? ApprovalDate.Value.ToShortDateString() : string.Empty;
-        public DateTime? ExpirationDate { get; set; }
-        public string ExpirationDateDisplay => ExpirationDate.HasValue ? ExpirationDate.Value.ToShortDateString() : string.Empty;
+        public DateOnly? ExpirationDate { get; set; }
+        public string ExpirationDateDisplay => ExpirationDate.HasValue ? ExpirationDate.Value.ToString("d") : string.Empty;
         public string ProjectRegionsDisplay => string.Join(", ", GetProjectRegions().OrderBy(x => x.Name).Select(x => x.Name));
         public string ProjectCountiesDisplay => string.Join(", ", GetProjectCounties().OrderBy(x => x.Name).Select(x => x.Name));
 

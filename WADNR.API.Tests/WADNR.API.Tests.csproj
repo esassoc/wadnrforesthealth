@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.9.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.9.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WADNR.API\WADNR.API.csproj" />
+    <ProjectReference Include="..\WADNR.Models\WADNR.Models.csproj" />
+    <ProjectReference Include="..\WADNR.EFModels\WADNR.EFModels.csproj" />
+    <ProjectReference Include="..\WADNR.Common\WADNR.Common.csproj" />
+  </ItemGroup>
+
+</Project>

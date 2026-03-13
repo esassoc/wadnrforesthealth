@@ -10,7 +10,7 @@ public class SystemInfoDetail
     public string FullInformationalVersion { get; set; }
     public string PodName { get; set; }
     public string Version { get; set; }
-    public DateTime CompilationDateTime { get; set; }
+    public DateTimeOffset CompilationDateTime { get; set; }
 
     public SystemInfoDetail()
     {

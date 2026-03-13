@@ -36,14 +36,12 @@ public partial class FundSourceAllocationExpenditureJsonStage
     [Unicode(false)]
     public string? DocSuffix { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? DocDate { get; set; }
+    public DateOnly? DocDate { get; set; }
 
     [Unicode(false)]
     public string? InvoiceDesc { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? InvoiceDate { get; set; }
+    public DateOnly? InvoiceDate { get; set; }
 
     public int? GlAcctNo { get; set; }
 

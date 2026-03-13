@@ -9,9 +9,9 @@ public class ProjectOrganizationDetailGridRow
     public OrganizationLookupItem? ProjectStewardOrganization { get; set; }
     public ProjectStageLookupItem ProjectStage { get; set; } = null!;
     public string RelationshipTypes { get; set; } = string.Empty;
-    public DateTime? ProjectInitiationDate { get; set; }
-    public DateTime? ExpirationDate { get; set; }
-    public DateTime? CompletionDate { get; set; }
+    public DateOnly? ProjectInitiationDate { get; set; }
+    public DateOnly? ExpirationDate { get; set; }
+    public DateOnly? CompletionDate { get; set; }
     public decimal? EstimatedTotalCost { get; set; }
     public decimal? TotalAmount { get; set; }
     public string? ProjectDescription { get; set; }

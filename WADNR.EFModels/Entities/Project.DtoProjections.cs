@@ -22,9 +22,9 @@ public class ProjectFeaturedRaw
     public Guid? KeyPhotoFileResourceGuid { get; set; }
     public string? KeyPhotoCaption { get; set; }
     public string? PrimaryContactOrganization { get; set; }
-    public DateTime? PlannedDate { get; set; }
-    public DateTime? ExpirationDate { get; set; }
-    public DateTime? CompletionDate { get; set; }
+    public DateOnly? PlannedDate { get; set; }
+    public DateOnly? ExpirationDate { get; set; }
+    public DateOnly? CompletionDate { get; set; }
     public decimal? EstimatedTotalCost { get; set; }
     public decimal? TotalFunding { get; set; }
     public int NumberOfPhotos { get; set; }

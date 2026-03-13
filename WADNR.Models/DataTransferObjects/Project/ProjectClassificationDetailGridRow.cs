@@ -9,6 +9,6 @@ public class ProjectClassificationDetailGridRow
     public string FhtProjectNumber { get; set; } = string.Empty;
     public OrganizationLookupItem? PrimaryContactOrganization { get; set; }
     public ProjectStageLookupItem ProjectStage { get; set; } = null!;
-    public DateTime? ProjectInitiationDate { get; set; }
+    public DateOnly? ProjectInitiationDate { get; set; }
     public string ProjectThemeNotes { get; set; } = string.Empty;
 }

@@ -53,7 +53,6 @@ namespace WADNR.API
                 .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.Converters.Add(new GeoJsonConverterFactory(false));
-                options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
                 options.JsonSerializerOptions.Converters.Add(new DoubleConverter(7));
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;

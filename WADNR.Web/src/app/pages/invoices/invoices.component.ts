@@ -45,7 +45,7 @@ export class InvoicesComponent {
             this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", {
                 InRouterLink: "/projects/",
             }),
-            this.utilityFunctions.createDateColumnDef("Invoice Date", "InvoiceDate", "M/d/yyyy", { Width: 120 }),
+            this.utilityFunctions.createDateColumnDef("Invoice Date", "InvoiceDate", "MM/dd/yy", { Width: 120 }),
             this.utilityFunctions.createBasicColumnDef("Fund Source", "FundSourceNumber", { Width: 120 }),
             this.utilityFunctions.createBasicColumnDef("Fund", "Fund", { Width: 100 }),
             this.utilityFunctions.createBasicColumnDef("Appn", "Appn", { Width: 100 }),

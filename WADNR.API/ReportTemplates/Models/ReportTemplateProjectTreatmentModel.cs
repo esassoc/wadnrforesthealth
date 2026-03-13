@@ -10,10 +10,10 @@ namespace WADNR.API.ReportTemplates.Models
 
         public string Code { get; set; }
         public string Name { get; set; }
-        public DateTime? StartDate { get; set; }
-        public string StartDateDisplay => StartDate.HasValue ? StartDate.Value.ToShortDateString() : string.Empty;
-        public DateTime? EndDate { get; set; }
-        public string EndDateDisplay => EndDate.HasValue ? EndDate.Value.ToShortDateString() : string.Empty;
+        public DateOnly? StartDate { get; set; }
+        public string StartDateDisplay => StartDate.HasValue ? StartDate.Value.ToString("d") : string.Empty;
+        public DateOnly? EndDate { get; set; }
+        public string EndDateDisplay => EndDate.HasValue ? EndDate.Value.ToString("d") : string.Empty;
         public decimal FootprintAcres { get; set; }
         public string FootprintAcresDisplay(int decimalPlaces = 3) => ProjectTreatment.TreatmentFootprintAcres.ToString($"N{decimalPlaces}");
         public decimal? TreatedAcres { get; set; }

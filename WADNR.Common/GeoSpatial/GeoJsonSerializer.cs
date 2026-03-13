@@ -123,7 +123,6 @@ public static class GeoJsonSerializer
             PropertyNameCaseInsensitive = false,
             PropertyNamingPolicy = null,
         };
-        jsonSerializerOptions.Converters.Add(new DateTimeConverter());
         jsonSerializerOptions.Converters.Add(new DoubleConverter(numberOfSignificantDigits));
         jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         return jsonSerializerOptions;

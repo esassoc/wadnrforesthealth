@@ -10,13 +10,13 @@ public class PersonGridRow
     public string? OrganizationName { get; set; }
     public string? OrganizationShortName { get; set; }
     public string? Phone { get; set; }
-    public DateTime? LastActivityDate { get; set; }
+    public DateTimeOffset? LastActivityDate { get; set; }
     public string? RoleName { get; set; }
     public string? SupplementalRoles { get; set; }
     public bool IsActive { get; set; }
     public bool IsFullUser { get; set; }
     public int PrimaryContactOrganizationCount { get; set; }
-    public DateTime CreateDate { get; set; }
+    public DateTimeOffset CreateDate { get; set; }
     public int? AddedByPersonID { get; set; }
     public string? AddedByPersonName { get; set; }
     public string? AuthenticationMethods { get; set; }

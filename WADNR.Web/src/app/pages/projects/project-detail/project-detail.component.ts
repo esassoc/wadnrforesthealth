@@ -761,7 +761,7 @@ export class ProjectDetailComponent implements OnDestroy {
                 InRouterLink: "/interactions-events/",
             }),
             this.utilityFunctions.createBasicColumnDef("Description", "InteractionEventDescription"),
-            this.utilityFunctions.createDateColumnDef("Date", "InteractionEventDate", "short"),
+            this.utilityFunctions.createDateColumnDef("Date", "InteractionEventDate", "MM/dd/yy"),
             this.utilityFunctions.createBasicColumnDef("Event Type", "InteractionEventType.InteractionEventTypeDisplayName", {
                 FieldDefinitionType: "InteractionEventType",
                 CustomDropdownFilterField: "InteractionEventType.InteractionEventTypeDisplayName",
@@ -858,7 +858,7 @@ export class ProjectDetailComponent implements OnDestroy {
             this.utilityFunctions.createBasicColumnDef("Invoice Number", "InvoiceNumber", {
                 FieldDefinitionType: "InvoiceNumber",
             }),
-            this.utilityFunctions.createDateColumnDef("Invoice Date", "InvoiceDate", "short", {
+            this.utilityFunctions.createDateColumnDef("Invoice Date", "InvoiceDate", "MM/dd/yy", {
                 FieldDefinitionType: "InvoiceDate",
             }),
             this.utilityFunctions.createBasicColumnDef("Fund", "Fund", {

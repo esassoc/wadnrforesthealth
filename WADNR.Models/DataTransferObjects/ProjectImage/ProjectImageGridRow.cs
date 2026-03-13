@@ -14,7 +14,7 @@ public class ProjectImageGridRow
     public bool ExcludeFromFactSheet { get; set; }
     public int? ProjectImageTimingID { get; set; }
     public string? ProjectImageTimingDisplayName { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public DateTimeOffset CreatedDate { get; set; }
     public string OriginalFilename { get; set; } = string.Empty;
     public long? ContentLength { get; set; }
 }

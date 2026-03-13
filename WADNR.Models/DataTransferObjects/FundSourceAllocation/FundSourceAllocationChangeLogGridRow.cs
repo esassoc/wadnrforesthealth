@@ -8,5 +8,5 @@ public class FundSourceAllocationChangeLogGridRow
     public string? Note { get; set; }
     public int ChangePersonID { get; set; }
     public string ChangePersonName { get; set; } = string.Empty;
-    public DateTime ChangeDate { get; set; }
+    public DateTimeOffset ChangeDate { get; set; }
 }

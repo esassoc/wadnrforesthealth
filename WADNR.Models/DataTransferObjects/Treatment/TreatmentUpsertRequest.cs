@@ -19,10 +19,10 @@ public class TreatmentUpsertRequest
     public int? TreatmentCodeID { get; set; }
 
     [Required]
-    public DateTime TreatmentStartDate { get; set; }
+    public DateOnly TreatmentStartDate { get; set; }
 
     [Required]
-    public DateTime TreatmentEndDate { get; set; }
+    public DateOnly TreatmentEndDate { get; set; }
 
     [Required]
     public decimal TreatmentFootprintAcres { get; set; }

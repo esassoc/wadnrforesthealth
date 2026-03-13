@@ -6,13 +6,13 @@ public class AgreementDetail
     public AgreementTypeLookupItem AgreementType { get; set; } = new();
     public string AgreementTitle { get; set; } = string.Empty;
     public string? AgreementNumber { get; set; }
-    public DateTime? StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
     public decimal? AgreementAmount { get; set; }
     public decimal? ExpendedAmount { get; set; }
     public decimal? BalanceAmount { get; set; }
     public DNRUplandRegionLookupItem? DNRUplandRegion { get; set; }
-    public DateTime? FirstBillDueOn { get; set; }
+    public DateOnly? FirstBillDueOn { get; set; }
     public string? Notes { get; set; }
     public OrganizationLookupItem ContributingOrganization { get; set; } = new();
     public AgreementStatusLookupItem? AgreementStatus { get; set; }

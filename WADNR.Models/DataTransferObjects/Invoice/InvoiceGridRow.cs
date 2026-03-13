@@ -9,7 +9,7 @@ public class InvoiceGridRow
     public int? FundSourceID { get; set; }
     public string? FundSourceNumber { get; set; }
     public string InvoiceNumber { get; set; } = string.Empty;
-    public DateTime InvoiceDate { get; set; }
+    public DateOnly InvoiceDate { get; set; }
     public string? Fund { get; set; }
     public string? Appn { get; set; }
     public string? ProgramIndexCode { get; set; }

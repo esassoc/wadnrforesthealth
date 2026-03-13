@@ -9,9 +9,9 @@ public class ProjectForPersonDetailGridRow
     public ProjectStageLookupItem ProjectStage { get; set; } = null!;
     public OrganizationLookupItem? LeadImplementerOrganization { get; set; }
     public string? PrimaryContactOrganization { get; set; }
-    public DateTime? PlannedDate { get; set; }
-    public DateTime? ExpirationDate { get; set; }
-    public DateTime? CompletionDate { get; set; }
+    public DateOnly? PlannedDate { get; set; }
+    public DateOnly? ExpirationDate { get; set; }
+    public DateOnly? CompletionDate { get; set; }
     public decimal? EstimatedTotalCost { get; set; }
     public decimal? TotalFunding { get; set; }
     public string? ProjectDescription { get; set; }

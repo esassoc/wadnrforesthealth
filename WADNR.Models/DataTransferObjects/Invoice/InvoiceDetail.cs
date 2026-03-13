@@ -5,11 +5,11 @@ public class InvoiceDetail
     public int InvoiceID { get; set; }
     public string InvoiceNumber { get; set; } = string.Empty;
     public string? InvoiceIdentifyingName { get; set; }
-    public DateTime InvoiceDate { get; set; }
+    public DateOnly InvoiceDate { get; set; }
 
     // Payment Request info
     public int InvoicePaymentRequestID { get; set; }
-    public DateTime InvoicePaymentRequestDate { get; set; }
+    public DateOnly InvoicePaymentRequestDate { get; set; }
     public string? PurchaseAuthority { get; set; }
     public bool PurchaseAuthorityIsLandownerCostShareAgreement { get; set; }
     public string? Duns { get; set; }

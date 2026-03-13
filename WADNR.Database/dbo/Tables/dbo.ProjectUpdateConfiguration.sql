@@ -1,7 +1,7 @@
 CREATE TABLE [dbo].[ProjectUpdateConfiguration](
     [ProjectUpdateConfigurationID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_ProjectUpdateConfiguration_ProjectUpdateConfigurationID] PRIMARY KEY,
-    [ProjectUpdateKickOffDate] [datetime] NULL,
-    [ProjectUpdateCloseOutDate] [datetime] NULL,
+    [ProjectUpdateKickOffDate] [date] NULL,
+    [ProjectUpdateCloseOutDate] [date] NULL,
     [ProjectUpdateReminderInterval] [int] NULL,
     [EnableProjectUpdateReminders] [bit] NOT NULL,
     [SendPeriodicReminders] [bit] NOT NULL,

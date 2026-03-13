@@ -12,11 +12,9 @@ public partial class ProjectUpdateConfiguration
     [Key]
     public int ProjectUpdateConfigurationID { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? ProjectUpdateKickOffDate { get; set; }
+    public DateOnly? ProjectUpdateKickOffDate { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? ProjectUpdateCloseOutDate { get; set; }
+    public DateOnly? ProjectUpdateCloseOutDate { get; set; }
 
     public int? ProjectUpdateReminderInterval { get; set; }
 

@@ -603,13 +603,12 @@ export class UtilityFunctionsService {
 
     public createDateColumnDef(headerName: string, fieldName: string, dateFormat: string, dateColumnDefParams?: DateColumnDefParams): ColDef {
         const _datePipe = this.datePipe;
-        const timezone = dateColumnDefParams?.IgnoreLocalTimezone ? "+0000" : null;
 
         const dateColDef: ColDef = {
             headerName: headerName,
             valueGetter: (params) => {
                 const value = this.defaultValueGetter(params, fieldName);
-                return _datePipe.transform(value, dateFormat, timezone);
+                return _datePipe.transform(value, dateFormat);
             },
             comparator: this.dateSortComparator,
             filter: "agDateColumnFilter",
@@ -846,7 +845,6 @@ export interface CurrencyColumnDefParams extends DecimalColumnDefParams {
 
 export interface DateColumnDefParams extends LtinfoColumnDefParams {
     Sort?: SortDirection;
-    IgnoreLocalTimezone?: boolean;
 }
 
 export interface PercentColumnDefParams extends DecimalColumnDefParams {

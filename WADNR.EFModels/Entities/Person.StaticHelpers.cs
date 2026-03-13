@@ -8,11 +8,19 @@ namespace WADNR.EFModels.Entities;
 
 public static class People
 {
-    public static async Task<List<PersonLookupItem>> ListAsLookupItemAsync(WADNRDbContext dbContext)
+    public static async Task<List<PersonLookupItem>> ListAsLookupItemAsync(WADNRDbContext dbContext, bool wadnrOnly = false)
     {
-        var items = await dbContext.People
+        const int wadnrOrganizationID = 4704;
+        var query = dbContext.People
             .AsNoTracking()
-            .Where(x => x.IsActive)
+            .Where(x => x.IsActive);
+
+        if (wadnrOnly)
+        {
+            query = query.Where(x => x.OrganizationID == wadnrOrganizationID);
+        }
+
+        var items = await query
             .OrderBy(x => x.LastName)
             .ThenBy(x => x.FirstName)
             .Select(PersonProjections.AsLookupItem)

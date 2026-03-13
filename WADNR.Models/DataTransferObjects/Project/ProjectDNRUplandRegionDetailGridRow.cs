@@ -10,10 +10,10 @@ public class ProjectDNRUplandRegionDetailGridRow
     public decimal? TotalTreatedAcres { get; set; }
     public ProjectTypeLookupItem ProjectType { get; set; } = new();
     public ProjectStageLookupItem ProjectStage { get; set; } = new();
-    public DateTime? ProjectApplicationDate { get; set; }
-    public DateTime? ProjectInitiationDate { get; set; }
-    public DateTime? ProjectExpiryDate { get; set; }
-    public DateTime? ProjectCompletionDate { get; set; }
+    public DateTimeOffset? ProjectApplicationDate { get; set; }
+    public DateOnly? ProjectInitiationDate { get; set; }
+    public DateOnly? ProjectExpiryDate { get; set; }
+    public DateOnly? ProjectCompletionDate { get; set; }
     public decimal TotalPaymentAmount { get; set; }
     public decimal TotalMatchAmount { get; set; }
     public int? PercentageMatch { get; set; }

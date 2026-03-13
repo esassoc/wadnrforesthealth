@@ -882,10 +882,10 @@ public static class ProjectUpdateWorkflowSteps
                 existing.TreatmentTreatedAcres = treatmentRequest.TreatmentTreatedAcres;
                 existing.TreatmentNotes = treatmentRequest.TreatmentNotes;
                 existing.TreatmentStartDate = treatmentRequest.TreatmentStartYear.HasValue
-                    ? new DateTime(treatmentRequest.TreatmentStartYear.Value, 1, 1)
+                    ? new DateOnly(treatmentRequest.TreatmentStartYear.Value, 1, 1)
                     : null;
                 existing.TreatmentEndDate = treatmentRequest.TreatmentEndYear.HasValue
-                    ? new DateTime(treatmentRequest.TreatmentEndYear.Value, 12, 31)
+                    ? new DateOnly(treatmentRequest.TreatmentEndYear.Value, 12, 31)
                     : null;
                 existing.CostPerAcre = treatmentRequest.CostPerAcre;
             }
@@ -902,10 +902,10 @@ public static class ProjectUpdateWorkflowSteps
                     TreatmentTreatedAcres = treatmentRequest.TreatmentTreatedAcres,
                     TreatmentNotes = treatmentRequest.TreatmentNotes,
                     TreatmentStartDate = treatmentRequest.TreatmentStartYear.HasValue
-                        ? new DateTime(treatmentRequest.TreatmentStartYear.Value, 1, 1)
+                        ? new DateOnly(treatmentRequest.TreatmentStartYear.Value, 1, 1)
                         : null,
                     TreatmentEndDate = treatmentRequest.TreatmentEndYear.HasValue
-                        ? new DateTime(treatmentRequest.TreatmentEndYear.Value, 12, 31)
+                        ? new DateOnly(treatmentRequest.TreatmentEndYear.Value, 12, 31)
                         : null,
                     CostPerAcre = treatmentRequest.CostPerAcre
                 });

@@ -53,8 +53,8 @@ namespace WADNR.API.ReportTemplates.Models
         public ReportTemplatePersonModel PreparedByPerson { get; set; }
         public string PurchaseAuthority { get; set; }
         public string DUNS { get; set; }
-        public DateTime InvoicePaymentRequestDate { get; set; }
-        public string InvoicePaymentRequestDateDisplay => InvoicePaymentRequestDate.ToShortDateString();
+        public DateOnly InvoicePaymentRequestDate { get; set; }
+        public string InvoicePaymentRequestDateDisplay => InvoicePaymentRequestDate.ToString("d");
         public string Notes { get; set; }
         public List<ReportTemplateInvoiceModel> Invoices { get; set; }
 

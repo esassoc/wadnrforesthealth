@@ -90,9 +90,39 @@ namespace WADNR.Common.ExcelWorkbookUtilities
             _columns.Add(new ExcelColumnSpec<T>(columnname, valueFunc));
         }
 
+        public void AddColumn(string columnname, Func<T, DateOnly> valueFunc)
+        {
+            _columns.Add(new ExcelColumnSpec<T>(columnname, x => (DateTime?)valueFunc(x).ToDateTime(TimeOnly.MinValue)));
+        }
+
+        public void AddColumn(string columnname, Func<T, DateOnly?> valueFunc)
+        {
+            _columns.Add(new ExcelColumnSpec<T>(columnname, x => valueFunc(x)?.ToDateTime(TimeOnly.MinValue)));
+        }
+
+        public void AddColumn(string columnname, Func<T, DateTimeOffset> valueFunc)
+        {
+            _columns.Add(new ExcelColumnSpec<T>(columnname, x => (DateTime?)valueFunc(x).DateTime));
+        }
+
+        public void AddColumn(string columnname, Func<T, DateTimeOffset?> valueFunc)
+        {
+            _columns.Add(new ExcelColumnSpec<T>(columnname, x => valueFunc(x)?.DateTime));
+        }
+
         public void AddColumn(string columnname, Func<T, DateTime?> valueFunc, string numberFormat)
         {
             _columns.Add(new ExcelColumnSpec<T>(columnname, valueFunc) { NumberFormat = numberFormat });
+        }
+
+        public void AddColumn(string columnname, Func<T, DateTimeOffset?> valueFunc, string numberFormat)
+        {
+            _columns.Add(new ExcelColumnSpec<T>(columnname, x => valueFunc(x)?.DateTime) { NumberFormat = numberFormat });
+        }
+
+        public void AddColumn(string columnname, Func<T, DateOnly?> valueFunc, string numberFormat)
+        {
+            _columns.Add(new ExcelColumnSpec<T>(columnname, x => valueFunc(x)?.ToDateTime(TimeOnly.MinValue)) { NumberFormat = numberFormat });
         }
 
         public void AddColumn(string columnname, Func<T, decimal> valueFunc, string numberFormat)

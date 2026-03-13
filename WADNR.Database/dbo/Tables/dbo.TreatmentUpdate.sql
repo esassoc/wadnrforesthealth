@@ -1,8 +1,8 @@
 CREATE TABLE [dbo].[TreatmentUpdate](
     [TreatmentUpdateID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_TreatmentUpdate_TreatmentUpdateID] PRIMARY KEY,
     [ProjectUpdateBatchID] [int] NOT NULL CONSTRAINT [FK_TreatmentUpdate_ProjectUpdateBatch_ProjectUpdateBatchID] FOREIGN KEY REFERENCES [dbo].[ProjectUpdateBatch]([ProjectUpdateBatchID]),
-    [TreatmentStartDate] [datetime] NULL,
-    [TreatmentEndDate] [datetime] NULL,
+    [TreatmentStartDate] [date] NULL,
+    [TreatmentEndDate] [date] NULL,
     [TreatmentFootprintAcres] [decimal](38, 10) NOT NULL,
     [TreatmentNotes] [varchar](2000) NULL,
     [TreatmentTypeID] [int] NOT NULL CONSTRAINT [FK_TreatmentUpdate_TreatmentType_TreatmentTypeID] FOREIGN KEY REFERENCES [dbo].[TreatmentType]([TreatmentTypeID]),

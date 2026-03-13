@@ -15,7 +15,7 @@ public class InvoiceUpsertRequest
     public string? InvoiceIdentifyingName { get; set; }
 
     [Required]
-    public DateTime InvoiceDate { get; set; }
+    public DateOnly InvoiceDate { get; set; }
 
     public decimal? PaymentAmount { get; set; }
 

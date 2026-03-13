@@ -16,11 +16,9 @@ public partial class FundSource
     [Unicode(false)]
     public string? FundSourceNumber { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? StartDate { get; set; }
+    public DateOnly? StartDate { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? EndDate { get; set; }
+    public DateOnly? EndDate { get; set; }
 
     [Unicode(false)]
     public string? ConditionsAndRequirements { get; set; }

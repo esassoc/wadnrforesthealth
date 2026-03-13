@@ -78,8 +78,8 @@ public class TreatmentUpdateDetail
     public string TreatmentDetailedActivityTypeName { get; set; } = string.Empty;
     public int? TreatmentCodeID { get; set; }
     public string? TreatmentCodeName { get; set; }
-    public DateTime? TreatmentStartDate { get; set; }
-    public DateTime? TreatmentEndDate { get; set; }
+    public DateOnly? TreatmentStartDate { get; set; }
+    public DateOnly? TreatmentEndDate { get; set; }
     public decimal TreatmentFootprintAcres { get; set; }
     public decimal? TreatmentTreatedAcres { get; set; }
     public decimal? CostPerAcre { get; set; }
@@ -99,8 +99,8 @@ public class TreatmentUpdateUpsertRequest
     [Required] public int TreatmentTypeID { get; set; }
     [Required] public int TreatmentDetailedActivityTypeID { get; set; }
     public int? TreatmentCodeID { get; set; }
-    [Required] public DateTime TreatmentStartDate { get; set; }
-    [Required] public DateTime TreatmentEndDate { get; set; }
+    [Required] public DateOnly TreatmentStartDate { get; set; }
+    [Required] public DateOnly TreatmentEndDate { get; set; }
     [Required] public decimal TreatmentFootprintAcres { get; set; }
     public decimal? TreatmentTreatedAcres { get; set; }
     public decimal? CostPerAcre { get; set; }

@@ -19,7 +19,7 @@ public class WorkflowStateTransitionResponse
     public int ProjectID { get; set; }
     public int NewProjectApprovalStatusID { get; set; }
     public string NewProjectApprovalStatusName { get; set; } = string.Empty;
-    public DateTime TransitionDate { get; set; }
+    public DateTimeOffset TransitionDate { get; set; }
     public bool Success { get; set; }
     public string? ErrorMessage { get; set; }
 }

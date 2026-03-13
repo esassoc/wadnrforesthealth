@@ -5,8 +5,8 @@ namespace WADNR.API.ReportTemplates.Models
 {
     public class ReportTemplateInvoiceModel : ReportTemplateBaseModel
     {
-        public DateTime InvoiceDate { get; set; }
-        public string InvoiceDateDisplay => InvoiceDate.ToShortDateString();
+        public DateOnly InvoiceDate { get; set; }
+        public string InvoiceDateDisplay => InvoiceDate.ToString("d");
         public decimal? PaymentAmount { get; set; }
         public string PaymentAmountDisplay(int decimalPlaces = 2) => PaymentAmount.HasValue ? PaymentAmount.Value.ToString($"C{decimalPlaces}", UsCulture) : string.Empty;
         public decimal? MatchAmount { get; set; }

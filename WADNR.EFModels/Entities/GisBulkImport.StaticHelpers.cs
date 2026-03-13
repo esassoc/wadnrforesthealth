@@ -462,14 +462,14 @@ public static class GisBulkImports
                     firstMetadata.TryGetValue(request.StartDateMetadataAttributeID.Value, out var startDateStr) &&
                     DateTime.TryParse(startDateStr, out var startDate))
                 {
-                    newProject.PlannedDate = startDate;
+                    newProject.PlannedDate = DateOnly.FromDateTime(startDate);
                 }
 
                 if (sourceOrg.ApplyCompletedDateToProject && request.CompletionDateMetadataAttributeID.HasValue &&
                     firstMetadata.TryGetValue(request.CompletionDateMetadataAttributeID.Value, out var completionDateStr) &&
                     DateTime.TryParse(completionDateStr, out var completionDate))
                 {
-                    newProject.CompletionDate = completionDate;
+                    newProject.CompletionDate = DateOnly.FromDateTime(completionDate);
                 }
 
                 // Set project description

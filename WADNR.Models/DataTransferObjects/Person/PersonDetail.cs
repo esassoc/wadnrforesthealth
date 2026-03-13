@@ -15,9 +15,9 @@ public class PersonDetail
     public string? Phone { get; set; }
     public string? PersonAddress { get; set; }
     public string? Notes { get; set; }
-    public DateTime CreateDate { get; set; }
-    public DateTime? UpdateDate { get; set; }
-    public DateTime? LastActivityDate { get; set; }
+    public DateTimeOffset CreateDate { get; set; }
+    public DateTimeOffset? UpdateDate { get; set; }
+    public DateTimeOffset? LastActivityDate { get; set; }
     public bool IsActive { get; set; }
     public bool ReceiveSupportEmails { get; set; }
 

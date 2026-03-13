@@ -20,8 +20,7 @@ public partial class TrainingVideo
     [Unicode(false)]
     public string? VideoDescription { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime VideoUploadDate { get; set; }
+    public DateOnly VideoUploadDate { get; set; }
 
     [StringLength(100)]
     [Unicode(false)]

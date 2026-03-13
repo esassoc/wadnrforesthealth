@@ -3,7 +3,7 @@ CREATE TABLE [dbo].[ProjectCode](
     [ProjectCodeName] [varchar](100) NOT NULL CONSTRAINT [AK_ProjectCode_ProjectCodeName] UNIQUE,
     [ProjectCodeTitle] [varchar](255) NULL,
     [CreateDate] [datetime] NULL,
-    [ProjectStartDate] [datetime] NULL,
-    [ProjectEndDate] [datetime] NULL
+    [ProjectStartDate] [date] NULL,
+    [ProjectEndDate] [date] NULL
 )
 GO

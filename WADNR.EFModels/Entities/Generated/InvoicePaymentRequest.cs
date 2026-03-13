@@ -28,8 +28,7 @@ public partial class InvoicePaymentRequest
     [Unicode(false)]
     public string? Duns { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime InvoicePaymentRequestDate { get; set; }
+    public DateOnly InvoicePaymentRequestDate { get; set; }
 
     [Unicode(false)]
     public string? Notes { get; set; }

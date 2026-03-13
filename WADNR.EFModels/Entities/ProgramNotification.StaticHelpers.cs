@@ -60,7 +60,7 @@ public static class ProgramNotifications
         var completedProjects = allProjects
             .Where(p => p.ProjectStageID == (int)ProjectStageEnum.Completed)
             .Where(p => p.CompletionDate.HasValue &&
-                        p.CompletionDate.Value.AddYears(recurrenceIntervalInYears) < DateTime.Now)
+                        p.CompletionDate.Value.AddYears(recurrenceIntervalInYears) < DateOnly.FromDateTime(DateTime.Now))
             .ToList();
 
         var projectsNeedingNotification = new List<Project>();

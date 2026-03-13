@@ -6,5 +6,5 @@ public class ProjectNoteExcelRow
     public string ProjectName { get; set; } = string.Empty;
     public string Note { get; set; } = string.Empty;
     public string? CreatedByPersonName { get; set; }
-    public DateTime? CreateDate { get; set; }
+    public DateTimeOffset? CreateDate { get; set; }
 }

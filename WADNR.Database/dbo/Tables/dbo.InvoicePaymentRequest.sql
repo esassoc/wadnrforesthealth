@@ -6,7 +6,7 @@ CREATE TABLE [dbo].[InvoicePaymentRequest](
     [PurchaseAuthority] [varchar](255) NULL,
     [PurchaseAuthorityIsLandownerCostShareAgreement] [bit] NOT NULL,
     [Duns] [varchar](20) NULL,
-    [InvoicePaymentRequestDate] [datetime] NOT NULL,
+    [InvoicePaymentRequestDate] [date] NOT NULL,
     [Notes] [varchar](max) NULL
 )
 GO

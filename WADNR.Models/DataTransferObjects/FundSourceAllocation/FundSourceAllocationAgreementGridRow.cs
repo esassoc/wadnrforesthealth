@@ -8,7 +8,7 @@ public class FundSourceAllocationAgreementGridRow
     public string? AgreementTypeAbbrev { get; set; }
     public int OrganizationID { get; set; }
     public string OrganizationName { get; set; } = string.Empty;
-    public DateTime? StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
     public decimal? AgreementAmount { get; set; }
 }

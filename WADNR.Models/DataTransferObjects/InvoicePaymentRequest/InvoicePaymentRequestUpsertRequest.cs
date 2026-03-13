@@ -13,7 +13,7 @@ public class InvoicePaymentRequestUpsertRequest
     public int? PreparedByPersonID { get; set; }
 
     [Required]
-    public DateTime InvoicePaymentRequestDate { get; set; }
+    public DateOnly InvoicePaymentRequestDate { get; set; }
 
     [MaxLength(255)]
     public string? PurchaseAuthority { get; set; }

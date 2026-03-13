@@ -1,8 +1,8 @@
 CREATE TABLE [dbo].[FundSource](
     [FundSourceID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT [PK_FundSource_FundSourceID] PRIMARY KEY,
     [FundSourceNumber] [varchar](30) NULL,
-    [StartDate] [datetime] NULL,
-    [EndDate] [datetime] NULL,
+    [StartDate] [date] NULL,
+    [EndDate] [date] NULL,
     [ConditionsAndRequirements] [varchar](max) NULL,
     [ComplianceNotes] [varchar](max) NULL,
     [CFDANumber] [varchar](10) NULL,

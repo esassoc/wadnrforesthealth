@@ -5,7 +5,7 @@ public class GisUploadAttemptDetail
     public int GisUploadAttemptID { get; set; }
     public int GisUploadSourceOrganizationID { get; set; }
     public string GisUploadSourceOrganizationName { get; set; } = string.Empty;
-    public DateTime GisUploadAttemptCreateDate { get; set; }
+    public DateTimeOffset GisUploadAttemptCreateDate { get; set; }
     public string CreatedByPersonName { get; set; } = string.Empty;
     public bool? FileUploadSuccessful { get; set; }
     public bool? FeaturesSaved { get; set; }

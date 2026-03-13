@@ -16,11 +16,9 @@ public partial class Treatment
 
     public int TreatmentTypeID { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? TreatmentStartDate { get; set; }
+    public DateOnly? TreatmentStartDate { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? TreatmentEndDate { get; set; }
+    public DateOnly? TreatmentEndDate { get; set; }
 
     [Column(TypeName = "decimal(38, 10)")]
     public decimal TreatmentFootprintAcres { get; set; }

@@ -4,8 +4,8 @@ public class FundSourceAllocationUpsertRequest
 {
     public string? FundSourceAllocationName { get; set; }
     public int FundSourceID { get; set; }
-    public DateTime? StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
     public decimal? AllocationAmount { get; set; }
     public int? FederalFundCodeID { get; set; }
     public int? OrganizationID { get; set; }

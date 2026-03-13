@@ -5,8 +5,8 @@ public class AgreementGridRow
     public int AgreementID { get; set; }
     public string AgreementTitle { get; set; } = string.Empty;
     public string? AgreementNumber { get; set; }
-    public DateTime? StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
     public decimal? AgreementAmount { get; set; }
     public decimal? ExpendedAmount { get; set; }
     public decimal? BalanceAmount { get; set; }

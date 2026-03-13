@@ -6,7 +6,7 @@ public class FundSourceAllocationNoteInternalDetail
     public int FundSourceAllocationID { get; set; }
     public string? Note { get; set; }
     public string? CreatedByPersonName { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public DateTimeOffset CreatedDate { get; set; }
     public string? UpdatedByPersonName { get; set; }
-    public DateTime? UpdatedDate { get; set; }
+    public DateTimeOffset? UpdatedDate { get; set; }
 }

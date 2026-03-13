@@ -7,9 +7,9 @@ public class ProjectBasicsSaveRequest
     public string? ProjectDescription { get; set; }
     public int ProjectStageID { get; set; }
     public decimal? EstimatedTotalCost { get; set; }
-    public DateTime? PlannedDate { get; set; }
-    public DateTime? CompletionDate { get; set; }
-    public DateTime? ExpirationDate { get; set; }
+    public DateOnly? PlannedDate { get; set; }
+    public DateOnly? CompletionDate { get; set; }
+    public DateOnly? ExpirationDate { get; set; }
     public string? ProjectGisIdentifier { get; set; }
     public int? LeadImplementerOrganizationID { get; set; }
     public int? FocusAreaID { get; set; }

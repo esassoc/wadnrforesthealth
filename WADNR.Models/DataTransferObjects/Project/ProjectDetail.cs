@@ -17,9 +17,9 @@ public class ProjectDetail
     public string? ProjectApprovalStatusName { get; set; }
 
     // Dates
-    public DateTime? PlannedDate { get; set; }
-    public DateTime? CompletionDate { get; set; }
-    public DateTime? ExpirationDate { get; set; }
+    public DateOnly? PlannedDate { get; set; }
+    public DateOnly? CompletionDate { get; set; }
+    public DateOnly? ExpirationDate { get; set; }
     public string? Duration { get; set; }
 
     // Description and Notes

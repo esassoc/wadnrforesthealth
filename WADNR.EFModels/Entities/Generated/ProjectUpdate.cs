@@ -22,8 +22,7 @@ public partial class ProjectUpdate
     [Unicode(false)]
     public string? ProjectDescription { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? CompletionDate { get; set; }
+    public DateOnly? CompletionDate { get; set; }
 
     [Column(TypeName = "money")]
     public decimal? EstimatedTotalCost { get; set; }
@@ -35,15 +34,13 @@ public partial class ProjectUpdate
     [Unicode(false)]
     public string? ProjectLocationNotes { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? PlannedDate { get; set; }
+    public DateOnly? PlannedDate { get; set; }
 
     public int ProjectLocationSimpleTypeID { get; set; }
 
     public int? FocusAreaID { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? ExpirationDate { get; set; }
+    public DateOnly? ExpirationDate { get; set; }
 
     [StringLength(4000)]
     [Unicode(false)]
