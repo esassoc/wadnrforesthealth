@@ -1,5 +1,11 @@
 <page-header pageTitle="Vendors" [customRichTextTypeID]="customRichTextTypeID"></page-header>
 
 <div class="page-body">
-    <wadnr-grid [rowData]="vendors$ | async" [columnDefs]="columnDefs" downloadFileName="vendors" [gridTitle]="'Vendors'"></wadnr-grid>
+    <wadnr-grid [rowData]="vendors$ | async" [columnDefs]="columnDefs" downloadFileName="vendors">
+        <div customGridActionsRight>
+            <button class="btn btn-sm btn-secondary" (click)="downloadExcel()" [buttonLoading]="isDownloading()">
+                <span class="fas fa-download"></span> Download Full Database
+            </button>
+        </div>
+    </wadnr-grid>
 </div>

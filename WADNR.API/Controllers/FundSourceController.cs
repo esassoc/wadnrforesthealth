@@ -1,3 +1,4 @@
+using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -6,9 +7,11 @@ using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WADNR.API.ExcelSpecs;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.API.Services.Authorization;
+using WADNR.Common.ExcelWorkbookUtilities;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -29,6 +32,28 @@ public class FundSourceController(
     {
         var sources = await FundSources.ListAsGridRowAsync(DbContext);
         return Ok(sources);
+    }
+
+    [HttpGet("excel-download")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ExcelDownload()
+    {
+        var fundSources = await FundSources.ListAsExcelRowAsync(DbContext);
+        var allocations = await FundSourceAllocations.ListAsExcelRowAsync(DbContext);
+
+        var sheets = new List<IExcelWorkbookSheetDescriptor>
+        {
+            ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Fund Sources", new FundSourceExcelSpec(), fundSources),
+            ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Fund Source Allocations", new FundSourceAllocationExcelSpec(), allocations),
+        };
+        var wbm = new ExcelWorkbookMaker(sheets);
+        var workbook = wbm.ToXLWorkbook();
+
+        var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        stream.Seek(0, SeekOrigin.Begin);
+
+        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "FundSources.xlsx");
     }
 
     [HttpGet("lookup")]

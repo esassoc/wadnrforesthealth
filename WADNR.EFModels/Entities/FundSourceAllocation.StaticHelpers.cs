@@ -15,6 +15,22 @@ public static class FundSourceAllocations
             .Select(FundSourceAllocationProjections.AsGridRow)
             .ToListAsync();
 
+        var allocationIDs = rows.Select(r => r.FundSourceAllocationID).ToList();
+
+        var budgetTotals = await dbContext.FundSourceAllocationBudgetLineItems
+            .AsNoTracking()
+            .Where(x => allocationIDs.Contains(x.FundSourceAllocationID))
+            .GroupBy(x => x.FundSourceAllocationID)
+            .Select(g => new { FundSourceAllocationID = g.Key, Total = g.Sum(x => x.FundSourceAllocationBudgetLineItemAmount) })
+            .ToDictionaryAsync(x => x.FundSourceAllocationID, x => x.Total);
+
+        var expenditureTotals = await dbContext.FundSourceAllocationExpenditures
+            .AsNoTracking()
+            .Where(x => allocationIDs.Contains(x.FundSourceAllocationID))
+            .GroupBy(x => x.FundSourceAllocationID)
+            .Select(g => new { FundSourceAllocationID = g.Key, Total = g.Sum(x => x.ExpenditureAmount) })
+            .ToDictionaryAsync(x => x.FundSourceAllocationID, x => x.Total);
+
         foreach (var row in rows)
         {
             if (row.FundSourceStatusID != null && FundSourceStatus.AllLookupDictionary.TryGetValue(row.FundSourceStatusID.Value, out var status))
@@ -25,9 +41,66 @@ public static class FundSourceAllocations
             {
                 row.DivisionName = division.DivisionDisplayName;
             }
+
+            budgetTotals.TryGetValue(row.FundSourceAllocationID, out var budget);
+            expenditureTotals.TryGetValue(row.FundSourceAllocationID, out var expenditures);
+            row.CurrentBalance = budget - expenditures;
         }
 
         return rows;
+    }
+
+    public static async Task<List<FundSourceAllocationExcelRow>> ListAsExcelRowAsync(WADNRDbContext dbContext)
+    {
+        var rawRows = await dbContext.FundSourceAllocations
+            .AsNoTracking()
+            .OrderBy(x => x.FundSource.FundSourceNumber)
+            .ThenBy(x => x.FundSourceAllocationName)
+            .Select(x => new
+            {
+                FundSourceNumber = x.FundSource.FundSourceNumber,
+                x.FundSourceAllocationName,
+                ProgramManagerNames = string.Join(", ",
+                    x.FundSourceAllocationProgramManagers
+                        .Select(pm => pm.Person.FirstName + " " + pm.Person.LastName)),
+                x.StartDate,
+                x.EndDate,
+                FundSourceStatusID = x.FundSource.FundSourceStatusID,
+                DNRUplandRegionName = x.DNRUplandRegion != null ? x.DNRUplandRegion.DNRUplandRegionName : null,
+                FederalFundCodeDisplay = x.FederalFundCode != null
+                    ? x.FederalFundCode.FederalFundCodeAbbrev : null,
+                x.AllocationAmount,
+                ProgramIndexProjectCodeDisplay = string.Join(", ",
+                    x.FundSourceAllocationProgramIndexProjectCodes
+                        .Select(y => y.ProgramIndex.ProgramIndexCode
+                            + (y.ProjectCode != null ? " / " + y.ProjectCode.ProjectCodeName : ""))),
+                OrganizationName = x.Organization != null ? x.Organization.OrganizationName : null
+            })
+            .ToListAsync();
+
+        return rawRows.Select(x =>
+        {
+            string? statusName = null;
+            if (FundSourceStatus.AllLookupDictionary.TryGetValue(x.FundSourceStatusID, out var status))
+            {
+                statusName = status.FundSourceStatusName;
+            }
+
+            return new FundSourceAllocationExcelRow
+            {
+                FundSourceNumber = x.FundSourceNumber ?? string.Empty,
+                FundSourceAllocationName = x.FundSourceAllocationName,
+                ProgramManagerNames = x.ProgramManagerNames,
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
+                ParentFundSourceStatusName = statusName,
+                DNRUplandRegionName = x.DNRUplandRegionName,
+                FederalFundCodeDisplay = x.FederalFundCodeDisplay,
+                AllocationAmount = x.AllocationAmount,
+                ProgramIndexProjectCodeDisplay = x.ProgramIndexProjectCodeDisplay,
+                OrganizationName = x.OrganizationName
+            };
+        }).ToList();
     }
 
     public static async Task<List<FundSourceAllocationGridRow>> ListForFundSourceAsGridRowAsync(WADNRDbContext dbContext, int fundSourceID)
@@ -39,6 +112,22 @@ public static class FundSourceAllocations
             .Select(FundSourceAllocationProjections.AsGridRow)
             .ToListAsync();
 
+        var allocationIDs = rows.Select(r => r.FundSourceAllocationID).ToList();
+
+        var budgetTotals = await dbContext.FundSourceAllocationBudgetLineItems
+            .AsNoTracking()
+            .Where(x => allocationIDs.Contains(x.FundSourceAllocationID))
+            .GroupBy(x => x.FundSourceAllocationID)
+            .Select(g => new { FundSourceAllocationID = g.Key, Total = g.Sum(x => x.FundSourceAllocationBudgetLineItemAmount) })
+            .ToDictionaryAsync(x => x.FundSourceAllocationID, x => x.Total);
+
+        var expenditureTotals = await dbContext.FundSourceAllocationExpenditures
+            .AsNoTracking()
+            .Where(x => allocationIDs.Contains(x.FundSourceAllocationID))
+            .GroupBy(x => x.FundSourceAllocationID)
+            .Select(g => new { FundSourceAllocationID = g.Key, Total = g.Sum(x => x.ExpenditureAmount) })
+            .ToDictionaryAsync(x => x.FundSourceAllocationID, x => x.Total);
+
         foreach (var row in rows)
         {
             if (row.FundSourceStatusID != null && FundSourceStatus.AllLookupDictionary.TryGetValue(row.FundSourceStatusID.Value, out var status))
@@ -49,6 +138,10 @@ public static class FundSourceAllocations
             {
                 row.DivisionName = division.DivisionDisplayName;
             }
+
+            budgetTotals.TryGetValue(row.FundSourceAllocationID, out var budget);
+            expenditureTotals.TryGetValue(row.FundSourceAllocationID, out var expenditures);
+            row.CurrentBalance = budget - expenditures;
         }
 
         return rows;

@@ -1,12 +1,13 @@
-import { Component, OnInit, ViewContainerRef } from "@angular/core";
+import { Component, OnInit, signal, ViewContainerRef } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { Router, RouterLink } from "@angular/router";
 import { ColDef } from "ag-grid-community";
-import { BehaviorSubject, Observable, switchMap } from "rxjs";
+import { BehaviorSubject, Observable, switchMap, finalize } from "rxjs";
 
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -14,22 +15,26 @@ import { ConfirmService } from "src/app/shared/services/confirm/confirm.service"
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
 import { PendingProjectGridRow } from "src/app/shared/generated/model/pending-project-grid-row";
+import { environment } from "src/environments/environment";
 
 @Component({
     selector: "pending-projects",
-    imports: [PageHeaderComponent, WADNRGridComponent, AsyncPipe, RouterLink],
+    imports: [PageHeaderComponent, WADNRGridComponent, AsyncPipe, RouterLink, ButtonLoadingDirective],
     templateUrl: "./pending-projects.component.html",
 })
 export class PendingProjectsComponent implements OnInit {
     public projects$: Observable<PendingProjectGridRow[]>;
     public columnDefs: ColDef<PendingProjectGridRow>[];
     public customRichTextTypeID = FirmaPageTypeEnum.PendingProjects;
+    private excelDownloadUrl = `${environment.mainAppApiUrl}/projects/pending/excel-download`;
 
     public pinnedTotalsRow = {
         fields: ["EstimatedTotalCost", "TotalAmount"],
         label: "Totals",
         labelField: "ProjectName",
     };
+
+    public isDownloading = signal(false);
 
     private refreshData$ = new BehaviorSubject<void>(undefined);
 
@@ -105,6 +110,13 @@ export class PendingProjectsComponent implements OnInit {
 
     private editProject(row: PendingProjectGridRow): void {
         this.router.navigate(["/projects/edit", row.ProjectID]);
+    }
+
+    downloadExcel(): void {
+        this.isDownloading.set(true);
+        this.utilityFunctions.downloadExcel(this.excelDownloadUrl, "pending-projects.xlsx")
+            .pipe(finalize(() => this.isDownloading.set(false)))
+            .subscribe();
     }
 
     async confirmDelete(row: PendingProjectGridRow): Promise<void> {

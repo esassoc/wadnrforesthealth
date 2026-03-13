@@ -15,6 +15,8 @@ using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.API.Services.Authorization;
 using WADNR.Common.EMail;
+using WADNR.API.ExcelSpecs;
+using WADNR.Common.ExcelWorkbookUtilities;
 using WADNR.EFModels.Entities;
 using WADNR.EFModels.Workflows;
 using WADNR.Models.DataTransferObjects;
@@ -62,12 +64,73 @@ public class ProjectController(
         return NoContent();
     }
 
+    [HttpGet("excel-download")]
+    [AllowAnonymous]
+    [ProjectViewFeature]
+    public async Task<IActionResult> ExcelDownload()
+    {
+        var projects = await Projects.ListAsExcelRowForUserAsync(DbContext, CallingUser);
+        var projectIDs = projects.Select(p => p.ProjectID).ToList();
+
+        var descriptions = await Projects.ListAsDescriptionExcelRowForUserAsync(DbContext, CallingUser);
+        var organizations = await ProjectOrganizations.ListAllAsExcelRowAsync(DbContext, projectIDs);
+        var notes = await ProjectNotes.ListAllAsExcelRowAsync(DbContext, projectIDs);
+        var classifications = await ProjectClassifications.ListAllAsExcelRowAsync(DbContext, projectIDs);
+
+        var sheets = new List<IExcelWorkbookSheetDescriptor>
+        {
+            ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Projects", new ProjectExcelSpec(), projects),
+            ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Project Descriptions", new ProjectDescriptionExcelSpec(), descriptions),
+            ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Project Contributing Organizations", new ProjectOrganizationExcelSpec(), organizations),
+            ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Project Notes", new ProjectNoteExcelSpec(), notes),
+            ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Project Themes", new ProjectClassificationExcelSpec(), classifications),
+        };
+        var wbm = new ExcelWorkbookMaker(sheets);
+        var workbook = wbm.ToXLWorkbook();
+
+        var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        stream.Seek(0, SeekOrigin.Begin);
+
+        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Projects.xlsx");
+    }
+
     [HttpGet("pending")]
     [ProjectPendingViewFeature]
     public async Task<ActionResult<IEnumerable<PendingProjectGridRow>>> ListPending()
     {
         var projects = await Projects.ListPendingAsGridRowForUserAsync(DbContext, CallingUser);
         return Ok(projects);
+    }
+
+    [HttpGet("pending/excel-download")]
+    [ProjectPendingViewFeature]
+    public async Task<IActionResult> PendingExcelDownload()
+    {
+        var projects = await Projects.ListPendingAsExcelRowForUserAsync(DbContext, CallingUser);
+        var projectIDs = projects.Select(p => p.ProjectID).ToList();
+
+        var descriptions = await Projects.ListPendingAsDescriptionExcelRowForUserAsync(DbContext, CallingUser);
+        var organizations = await ProjectOrganizations.ListAllAsExcelRowAsync(DbContext, projectIDs);
+        var notes = await ProjectNotes.ListAllAsExcelRowAsync(DbContext, projectIDs);
+        var classifications = await ProjectClassifications.ListAllAsExcelRowAsync(DbContext, projectIDs);
+
+        var sheets = new List<IExcelWorkbookSheetDescriptor>
+        {
+            ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Pending Projects", new ProjectExcelSpec(), projects),
+            ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Project Descriptions", new ProjectDescriptionExcelSpec(), descriptions),
+            ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Project Contributing Organizations", new ProjectOrganizationExcelSpec(), organizations),
+            ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Project Notes", new ProjectNoteExcelSpec(), notes),
+            ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Project Themes", new ProjectClassificationExcelSpec(), classifications),
+        };
+        var wbm = new ExcelWorkbookMaker(sheets);
+        var workbook = wbm.ToXLWorkbook();
+
+        var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        stream.Seek(0, SeekOrigin.Begin);
+
+        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "PendingProjects.xlsx");
     }
 
     [HttpGet("update-status")]

@@ -211,6 +211,15 @@ public static class FundSources
             .ToListAsync();
     }
 
+    public static async Task<List<FundSourceExcelRow>> ListAsExcelRowAsync(WADNRDbContext dbContext)
+    {
+        return await dbContext.FundSources
+            .AsNoTracking()
+            .OrderByDescending(x => x.FundSourceNumber)
+            .Select(FundSourceProjections.AsExcelRow)
+            .ToListAsync();
+    }
+
     public static async Task<List<FundSourceLookupItem>> ListAsLookupItemAsync(WADNRDbContext dbContext)
     {
         return await dbContext.FundSources.AsNoTracking()

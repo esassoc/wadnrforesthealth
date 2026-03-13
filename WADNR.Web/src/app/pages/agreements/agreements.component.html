@@ -2,12 +2,15 @@
 
 <div class="page-body">
     <wadnr-grid [rowData]="agreements$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" downloadFileName="agreements" [gridTitle]="'Agreements'">
-        @if (canManage$ | async) {
-        <div customGridActionsRight>
+        <div customGridActionsRight class="flex">
+            <button class="btn btn-sm btn-secondary" (click)="downloadExcel()" [buttonLoading]="isDownloading()">
+                <span class="fas fa-download"></span> Download Full Database
+            </button>
+            @if (canManage$ | async) {
             <button class="btn btn-sm btn-primary" (click)="createNewAgreement()">
                 <span class="fas fa-plus"></span> Create New
             </button>
+            }
         </div>
-        }
     </wadnr-grid>
 </div>

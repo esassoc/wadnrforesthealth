@@ -14,6 +14,7 @@ import { PersonDetail } from "src/app/shared/generated/model/person-detail";
 import { ProjectGridComponent } from "src/app/shared/components/project-grid/project-grid.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row";
+import { environment } from "src/environments/environment";
 
 @Component({
     selector: "projects",
@@ -25,6 +26,7 @@ export class ProjectsComponent {
     public currentUser$: Observable<PersonDetail | null>;
     public columnDefs: ColDef[];
     public customRichTextTypeID = FirmaPageTypeEnum.FullProjectList;
+    public excelDownloadUrl = `${environment.mainAppApiUrl}/projects/excel-download`;
 
     constructor(
         private projectService: ProjectService,

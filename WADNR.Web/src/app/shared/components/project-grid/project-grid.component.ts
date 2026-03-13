@@ -1,20 +1,22 @@
-import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
+import { Component, Input, Output, EventEmitter, OnInit, signal } from "@angular/core";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
-import { DialogService } from "@ngneat/dialog";
 import { ColDef } from "ag-grid-community";
 import { ProjectGridRow } from "src/app/shared/generated/model/project-grid-row";
+import { finalize } from "rxjs";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 
 @Component({
     selector: "project-grid",
     standalone: true,
-    imports: [WADNRGridComponent],
+    imports: [WADNRGridComponent, ButtonLoadingDirective],
     templateUrl: "./project-grid.component.html",
     styleUrls: ["./project-grid.component.scss"],
 })
 export class ProjectGridComponent implements OnInit {
     @Input() public rowData: ProjectGridRow[] | null = null;
     @Input() public downloadFileName: string = "projects";
+    @Input() public excelDownloadUrl: string | null = null;
 
     @Output() public selectionChanged: EventEmitter<any> = new EventEmitter<any>();
 
@@ -22,8 +24,18 @@ export class ProjectGridComponent implements OnInit {
     public selectedRows: ProjectGridRow[] = [];
 
     public columnDefs: ColDef<ProjectGridRow>[] = [];
+    public isDownloading = signal(false);
 
-    constructor(private dialogService: DialogService, private utilityFunctions: UtilityFunctionsService) {}
+    constructor(private utilityFunctions: UtilityFunctionsService) {}
+
+    onDownloadExcel(): void {
+        if (this.excelDownloadUrl) {
+            this.isDownloading.set(true);
+            this.utilityFunctions.downloadExcel(this.excelDownloadUrl, this.downloadFileName + ".xlsx")
+                .pipe(finalize(() => this.isDownloading.set(false)))
+                .subscribe();
+        }
+    }
 
     ngOnInit(): void {
         this.columnDefs = this.createDefaultColumnDefs();

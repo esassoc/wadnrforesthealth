@@ -1,11 +1,14 @@
+using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WADNR.API.ExcelSpecs;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.API.Services.Authorization;
+using WADNR.Common.ExcelWorkbookUtilities;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -25,6 +28,23 @@ public class VendorController(
     {
         var vendors = await Vendors.ListAsGridRowAsync(DbContext);
         return Ok(vendors);
+    }
+
+    [HttpGet("excel-download")]
+    [VendorViewFeature]
+    public async Task<IActionResult> ExcelDownload()
+    {
+        var vendors = await Vendors.ListAsExcelRowAsync(DbContext);
+        var spec = new VendorExcelSpec();
+        var sheet = ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Vendors", spec, vendors);
+        var wbm = new ExcelWorkbookMaker(sheet);
+        var workbook = wbm.ToXLWorkbook();
+
+        var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        stream.Seek(0, SeekOrigin.Begin);
+
+        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Vendors.xlsx");
     }
 
     [HttpGet("{vendorID}")]

@@ -258,4 +258,37 @@ public static class Agreements
 
         return agreements;
     }
+
+    public static async Task<List<AgreementExcelRow>> ListAsExcelRowAsync(WADNRDbContext dbContext)
+    {
+        return await dbContext.Agreements
+            .AsNoTracking()
+            .Select(AgreementProjections.AsExcelRow)
+            .ToListAsync();
+    }
+
+    public static async Task<List<AgreementExcelRow>> ListAsExcelRowByOrganizationIDAsync(WADNRDbContext dbContext, int organizationID)
+    {
+        return await dbContext.Agreements
+            .AsNoTracking()
+            .Where(x => x.OrganizationID == organizationID)
+            .Select(AgreementProjections.AsExcelRow)
+            .ToListAsync();
+    }
+
+    public static async Task<List<AgreementExcelRow>> ListForPersonAsExcelRowAsync(WADNRDbContext dbContext, int personID)
+    {
+        var agreementIDs = await dbContext.AgreementPeople
+            .AsNoTracking()
+            .Where(ap => ap.PersonID == personID)
+            .Select(ap => ap.AgreementID)
+            .Distinct()
+            .ToListAsync();
+
+        return await dbContext.Agreements
+            .AsNoTracking()
+            .Where(a => agreementIDs.Contains(a.AgreementID))
+            .Select(AgreementProjections.AsExcelRow)
+            .ToListAsync();
+    }
 }

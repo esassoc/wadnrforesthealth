@@ -16,6 +16,7 @@ export class FundSourceGridRow {
     FundSourceNumber?: string | null;
     ShortName?: string | null;
     TotalAwardAmount?: number;
+    CurrentBalance?: number;
     CFDANumber?: string | null;
     FundSourceTitle?: string | null;
     StartDate?: string | null;
@@ -33,6 +34,7 @@ export interface FundSourceGridRowForm {
     FundSourceNumber?: FormControl<string>;
     ShortName?: FormControl<string>;
     TotalAwardAmount?: FormControl<number>;
+    CurrentBalance?: FormControl<number>;
     CFDANumber?: FormControl<string>;
     FundSourceTitle?: FormControl<string>;
     StartDate?: FormControl<string>;
@@ -83,6 +85,16 @@ export class FundSourceGridRowFormControls {
         }
     );
     public static TotalAwardAmount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CurrentBalance = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

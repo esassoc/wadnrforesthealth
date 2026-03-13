@@ -34,6 +34,7 @@ export class FundSourceAllocationGridRow {
     DivisionName?: string | null;
     FederalFundCodeAbbrev?: string | null;
     ProgramIndexProjectCodeDisplay?: string | null;
+    CurrentBalance?: number | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -63,6 +64,7 @@ export interface FundSourceAllocationGridRowForm {
     DivisionName?: FormControl<string>;
     FederalFundCodeAbbrev?: FormControl<string>;
     ProgramIndexProjectCodeDisplay?: FormControl<string>;
+    CurrentBalance?: FormControl<number>;
 }
 
 export class FundSourceAllocationGridRowFormControls { 
@@ -287,6 +289,16 @@ export class FundSourceAllocationGridRowFormControls {
         }
     );
     public static ProgramIndexProjectCodeDisplay = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CurrentBalance = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

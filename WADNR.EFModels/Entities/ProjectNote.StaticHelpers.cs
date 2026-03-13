@@ -40,6 +40,26 @@ public static class ProjectNotes
         return detail;
     }
 
+    public static async Task<List<ProjectNoteExcelRow>> ListAllAsExcelRowAsync(WADNRDbContext dbContext, List<int> projectIDs)
+    {
+        return await dbContext.ProjectNotes
+            .AsNoTracking()
+            .Where(n => projectIDs.Contains(n.ProjectID))
+            .Select(n => new ProjectNoteExcelRow
+            {
+                ProjectID = n.ProjectID,
+                ProjectName = n.Project.ProjectName,
+                Note = n.Note,
+                CreatedByPersonName = n.CreatePerson != null
+                    ? n.CreatePerson.FirstName + " " + n.CreatePerson.LastName
+                    : null,
+                CreateDate = n.CreateDate
+            })
+            .OrderBy(n => n.ProjectID)
+            .ThenByDescending(n => n.CreateDate)
+            .ToListAsync();
+    }
+
     public static async Task<ProjectNote> CreateAsync(WADNRDbContext dbContext, int projectID, string note, int personID)
     {
         var projectNote = new ProjectNote

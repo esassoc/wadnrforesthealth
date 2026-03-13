@@ -1,1 +1,9 @@
-<wadnr-grid [rowData]="rowData" [columnDefs]="columnDefs" [downloadFileName]="downloadFileName"> </wadnr-grid>
+<wadnr-grid [rowData]="rowData" [columnDefs]="columnDefs" [downloadFileName]="downloadFileName">
+    @if (excelDownloadUrl) {
+        <div customGridActionsRight class="flex">
+            <button class="btn btn-sm btn-secondary" (click)="onDownloadExcel()" [buttonLoading]="isDownloading()">
+                <span class="fas fa-download"></span> Download Full Database
+            </button>
+        </div>
+    }
+</wadnr-grid>

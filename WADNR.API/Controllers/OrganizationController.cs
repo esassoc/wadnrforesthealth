@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -10,6 +11,8 @@ using NetTopologySuite.Features;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.API.Services.Authorization;
+using WADNR.API.ExcelSpecs;
+using WADNR.Common.ExcelWorkbookUtilities;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 using WADNR.Models.DataTransferObjects.Shared;
@@ -175,6 +178,24 @@ public class OrganizationController(
     {
         var agreements = await Agreements.ListAsGridRowByOrganizationIDAsync(DbContext, organizationID);
         return Ok(agreements);
+    }
+
+    [HttpGet("{organizationID}/agreements/excel-download")]
+    [AllowAnonymous]
+    [EntityNotFound(typeof(Organization), "organizationID")]
+    public async Task<IActionResult> AgreementsExcelDownload([FromRoute] int organizationID)
+    {
+        var agreements = await Agreements.ListAsExcelRowByOrganizationIDAsync(DbContext, organizationID);
+        var spec = new AgreementExcelSpec();
+        var sheet = ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Agreements", spec, agreements);
+        var wbm = new ExcelWorkbookMaker(sheet);
+        var workbook = wbm.ToXLWorkbook();
+
+        var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        stream.Seek(0, SeekOrigin.Begin);
+
+        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Agreements.xlsx");
     }
 
     [HttpGet("{organizationID}/boundary")]

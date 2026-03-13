@@ -24,6 +24,22 @@ public static class ProjectClassifications
             .ToListAsync();
     }
 
+    public static async Task<List<ProjectClassificationExcelRow>> ListAllAsExcelRowAsync(WADNRDbContext dbContext, List<int> projectIDs)
+    {
+        return await dbContext.ProjectClassifications
+            .AsNoTracking()
+            .Where(pc => projectIDs.Contains(pc.ProjectID))
+            .Select(pc => new ProjectClassificationExcelRow
+            {
+                ProjectID = pc.ProjectID,
+                ProjectName = pc.Project.ProjectName,
+                ClassificationName = pc.Classification.DisplayName
+            })
+            .OrderBy(pc => pc.ProjectID)
+            .ThenBy(pc => pc.ClassificationName)
+            .ToListAsync();
+    }
+
     public static async Task<List<ProjectClassificationDetailItem>> SaveAllAsync(WADNRDbContext dbContext, int projectID, ProjectClassificationSaveRequest request)
     {
         var existing = await dbContext.ProjectClassifications

@@ -92,6 +92,27 @@ public static class FundSourceAllocationProjections
         FundSourceName = x.FundSource.FundSourceName
     };
 
+    public static readonly Expression<Func<FundSourceAllocation, FundSourceAllocationExcelRow>> AsExcelRow = x => new FundSourceAllocationExcelRow
+    {
+        FundSourceNumber = x.FundSource.FundSourceNumber,
+        FundSourceAllocationName = x.FundSourceAllocationName,
+        ProgramManagerNames = string.Join(", ",
+            x.FundSourceAllocationProgramManagers
+                .Select(pm => pm.Person.FirstName + " " + pm.Person.LastName)),
+        StartDate = x.StartDate,
+        EndDate = x.EndDate,
+        ParentFundSourceStatusName = null, // Resolved post-query via static lookup
+        DNRUplandRegionName = x.DNRUplandRegion != null ? x.DNRUplandRegion.DNRUplandRegionName : null,
+        FederalFundCodeDisplay = x.FederalFundCode != null
+            ? x.FederalFundCode.FederalFundCodeAbbrev : null,
+        AllocationAmount = x.AllocationAmount,
+        ProgramIndexProjectCodeDisplay = string.Join(", ",
+            x.FundSourceAllocationProgramIndexProjectCodes
+                .Select(y => y.ProgramIndex.ProgramIndexCode
+                    + (y.ProjectCode != null ? " / " + y.ProjectCode.ProjectCodeName : ""))),
+        OrganizationName = x.Organization != null ? x.Organization.OrganizationName : null
+    };
+
     public static readonly Expression<Func<FundSourceAllocation, FundSourceAllocationGridRow>> AsGridRow = x => new FundSourceAllocationGridRow
     {
         FundSourceAllocationID = x.FundSourceAllocationID,

@@ -90,6 +90,21 @@ namespace WADNR.Common.ExcelWorkbookUtilities
             _columns.Add(new ExcelColumnSpec<T>(columnname, valueFunc));
         }
 
+        public void AddColumn(string columnname, Func<T, DateTime?> valueFunc, string numberFormat)
+        {
+            _columns.Add(new ExcelColumnSpec<T>(columnname, valueFunc) { NumberFormat = numberFormat });
+        }
+
+        public void AddColumn(string columnname, Func<T, decimal> valueFunc, string numberFormat)
+        {
+            _columns.Add(new ExcelColumnSpec<T>(columnname, valueFunc) { NumberFormat = numberFormat });
+        }
+
+        public void AddColumn(string columnname, Func<T, decimal?> valueFunc, string numberFormat)
+        {
+            _columns.Add(new ExcelColumnSpec<T>(columnname, valueFunc) { NumberFormat = numberFormat });
+        }
+
         public List<ExcelColumnSpec<T>> Columnns
         {
             get { return _columns; }

@@ -121,6 +121,21 @@ public static class AgreementProjections
     // NOTE: Do not add a projection that reads `AgreementPerson.AgreementPersonRole` here; it's a computed lookup
     // property and EF can't translate it to SQL.
 
+    public static readonly Expression<Func<Agreement, AgreementExcelRow>> AsExcelRow = x => new AgreementExcelRow
+    {
+        AgreementTypeAbbrev = x.AgreementType.AgreementTypeAbbrev,
+        AgreementNumber = x.AgreementNumber,
+        FundSourceAllocationNumbers = string.Join(", ", x.AgreementFundSourceAllocations
+            .Select(a => a.FundSourceAllocation.FundSource.FundSourceNumber)
+            .Distinct()
+            .OrderBy(n => n)),
+        OrganizationName = x.Organization.OrganizationName,
+        AgreementTitle = x.AgreementTitle,
+        StartDate = x.StartDate,
+        EndDate = x.EndDate,
+        AgreementAmount = x.AgreementAmount
+    };
+
     public static AgreementContactGridRow ToContactGridRow(AgreementContactGridRowRaw x) => new()
     {
         AgreementPersonID = x.AgreementPersonID,

@@ -28,6 +28,27 @@ public static class VendorProjections
         Email = x.Email
     };
 
+    public static readonly Expression<Func<Vendor, VendorExcelRow>> AsExcelRow = x => new VendorExcelRow
+    {
+        VendorID = x.VendorID,
+        VendorType = x.VendorType,
+        BillingAgency = x.BillingAgency,
+        BillingSubAgency = x.BillingSubAgency,
+        BillingFund = x.BillingFund,
+        BillingFundBreakout = x.BillingFundBreakout,
+        VendorAddressLine1 = x.VendorAddressLine1,
+        VendorAddressLine2 = x.VendorAddressLine2,
+        VendorAddressLine3 = x.VendorAddressLine3,
+        VendorCity = x.VendorCity,
+        VendorState = x.VendorState,
+        VendorZip = x.VendorZip,
+        Remarks = x.Remarks,
+        VendorPhone = x.VendorPhone,
+        VendorStatus = x.VendorStatus,
+        TaxpayerIdNumber = x.TaxpayerIdNumber,
+        Email = x.Email
+    };
+
     public static readonly Expression<Func<Vendor, VendorDetail>> AsDetail = x => new VendorDetail
     {
         VendorID = x.VendorID,

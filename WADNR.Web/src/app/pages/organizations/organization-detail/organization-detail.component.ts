@@ -1,7 +1,7 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, signal } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
-import { BehaviorSubject, Subject, combineLatest, distinctUntilChanged, filter, map, Observable, shareReplay, startWith, switchMap, take } from "rxjs";
+import { BehaviorSubject, Subject, combineLatest, distinctUntilChanged, filter, finalize, map, Observable, shareReplay, startWith, switchMap, take } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap, Control } from "leaflet";
@@ -22,6 +22,7 @@ import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/la
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { PersonLinkComponent } from "src/app/shared/components/person-link/person-link.component";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { Palette, PROJECT_STAGE_LEGEND_COLORS } from "src/app/shared/models/legend-colors";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
@@ -67,6 +68,7 @@ import { AuthenticationService } from "src/app/services/authentication.service";
         ExternalMapLayersComponent,
         IconComponent,
         PersonLinkComponent,
+        ButtonLoadingDirective,
         LoadingDirective,
     ],
     templateUrl: "./organization-detail.component.html",
@@ -83,6 +85,8 @@ export class OrganizationDetailComponent {
     public programsIsLoading$: Observable<boolean>;
     public projectsIsLoading$: Observable<boolean>;
     public agreementsIsLoading$: Observable<boolean>;
+    public isDownloadingAgreements = signal(false);
+    private agreementExcelDownloadUrl: string;
 
     // Map properties
     public boundaryFeatures$: Observable<IFeature[]>;
@@ -186,6 +190,9 @@ export class OrganizationDetailComponent {
         this.programsIsLoading$ = toLoadingState(this.programs$);
         this.projectsIsLoading$ = toLoadingState(this.projects$);
         this.agreementsIsLoading$ = toLoadingState(this.agreements$);
+        this.organizationID$.subscribe((id) => {
+            this.agreementExcelDownloadUrl = `${environment.mainAppApiUrl}/organizations/${id}/agreements/excel-download`;
+        });
 
         this.canManageOrganizations$ = this.authenticationService.currentUserSetObservable.pipe(
             map(user => this.authenticationService.canManageOrganizations(user)),
@@ -332,6 +339,15 @@ export class OrganizationDetailComponent {
                 CustomDropdownFilterField: "ProjectCodes",
             }),
         ];
+    }
+
+    downloadAgreementExcel(): void {
+        if (this.agreementExcelDownloadUrl) {
+            this.isDownloadingAgreements.set(true);
+            this.utilityFunctions.downloadExcel(this.agreementExcelDownloadUrl, "organization-agreements.xlsx")
+                .pipe(finalize(() => this.isDownloadingAgreements.set(false)))
+                .subscribe();
+        }
     }
 
     handleMapReady(event: WADNRMapInitEvent): void {

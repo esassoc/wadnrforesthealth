@@ -8,13 +8,16 @@
         [gridTitle]="'Fund Sources'"
         [defaultRowSelection]="'singleRow'"
         (selectionChanged)="onFundSourceSelected($event)">
-        @if (canManage$ | async) {
-        <div customGridActionsRight>
+        <div customGridActionsRight class="flex">
+            <button class="btn btn-sm btn-secondary" (click)="downloadExcel()" [buttonLoading]="isDownloading()">
+                <span class="fas fa-download"></span> Download Full Database
+            </button>
+            @if (canManage$ | async) {
             <button class="btn btn-sm btn-primary" (click)="createNewFundSource()">
                 <span class="fas fa-plus"></span> Create New
             </button>
+            }
         </div>
-        }
     </wadnr-grid>
 
     <div class="mt-3">

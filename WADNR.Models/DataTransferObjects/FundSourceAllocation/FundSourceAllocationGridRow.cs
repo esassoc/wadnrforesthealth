@@ -25,4 +25,5 @@ public class FundSourceAllocationGridRow
     public string? DivisionName { get; set; }
     public string? FederalFundCodeAbbrev { get; set; }
     public string? ProgramIndexProjectCodeDisplay { get; set; }
+    public decimal? CurrentBalance { get; set; }
 }

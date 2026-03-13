@@ -678,6 +678,140 @@ public static class Projects
         return projects;
     }
 
+    public static async Task<List<ProjectExcelRow>> ListAsExcelRowForUserAsync(
+        WADNRDbContext dbContext,
+        PersonDetail? callingUser)
+    {
+        var query = ProjectVisibility.ApplyVisibilityFilter(dbContext.Projects, callingUser);
+
+        var rows = await query
+            .AsNoTracking()
+            .OrderBy(x => x.ProjectName)
+            .Select(p => new ProjectExcelRow
+            {
+                ProjectID = p.ProjectID,
+                ProjectName = p.ProjectName,
+                FhtProjectNumber = p.FhtProjectNumber,
+                ProjectGisIdentifier = p.ProjectGisIdentifier,
+                ProgramNames = string.Join(", ", p.ProjectPrograms
+                    .Where(pp => !pp.Program.IsDefaultProgramForImportOnly)
+                    .Select(pp => pp.Program.ProgramName)),
+                NonLeadImplementingOrganizations = string.Join(", ", p.ProjectOrganizations
+                    .Where(po => !po.RelationshipType.IsPrimaryContact)
+                    .Select(po => po.Organization.OrganizationName)),
+                ProjectStageName = p.ProjectStage.ProjectStageName,
+                ProjectThemes = string.Join(", ", p.ProjectClassifications
+                    .Select(pc => pc.Classification.DisplayName)),
+                PriorityLandscapeNames = string.Join(", ", p.ProjectPriorityLandscapes
+                    .Select(ppl => ppl.PriorityLandscape.PriorityLandscapeName)),
+                DNRUplandRegionNames = string.Join(", ", p.ProjectRegions
+                    .Select(pr => pr.DNRUplandRegion.DNRUplandRegionName)),
+                CountyNames = string.Join(", ", p.ProjectCounties
+                    .Select(pc => pc.County.CountyName)),
+                FocusAreaName = p.FocusArea != null ? p.FocusArea.FocusAreaName : null,
+                PlannedDate = p.PlannedDate,
+                CompletionDate = p.CompletionDate,
+                ProjectDescription = p.ProjectDescription,
+                EstimatedTotalCost = p.EstimatedTotalCost,
+                ProjectLocationNotes = p.ProjectLocationNotes
+            })
+            .ToListAsync();
+
+        var fundingByProjectId = await GetTotalFundingByProjectAsync(dbContext);
+
+        foreach (var r in rows)
+        {
+            r.TotalFundingAmount = fundingByProjectId.TryGetValue(r.ProjectID, out var funding) ? funding : null;
+        }
+
+        return rows;
+    }
+
+    public static async Task<List<ProjectDescriptionExcelRow>> ListAsDescriptionExcelRowForUserAsync(
+        WADNRDbContext dbContext,
+        PersonDetail? callingUser)
+    {
+        var query = ProjectVisibility.ApplyVisibilityFilter(dbContext.Projects, callingUser);
+
+        return await query
+            .AsNoTracking()
+            .OrderBy(x => x.ProjectName)
+            .Select(p => new ProjectDescriptionExcelRow
+            {
+                ProjectID = p.ProjectID,
+                ProjectName = p.ProjectName,
+                ProjectDescription = p.ProjectDescription
+            })
+            .ToListAsync();
+    }
+
+    public static async Task<List<ProjectExcelRow>> ListPendingAsExcelRowForUserAsync(
+        WADNRDbContext dbContext,
+        PersonDetail? callingUser)
+    {
+        var query = ProjectVisibility.ApplyGlobalPendingVisibilityFilter(dbContext.Projects, callingUser);
+
+        var rows = await query
+            .AsNoTracking()
+            .OrderBy(x => x.ProjectName)
+            .Select(p => new ProjectExcelRow
+            {
+                ProjectID = p.ProjectID,
+                ProjectName = p.ProjectName,
+                FhtProjectNumber = p.FhtProjectNumber,
+                ProjectGisIdentifier = p.ProjectGisIdentifier,
+                ProgramNames = string.Join(", ", p.ProjectPrograms
+                    .Where(pp => !pp.Program.IsDefaultProgramForImportOnly)
+                    .Select(pp => pp.Program.ProgramName)),
+                NonLeadImplementingOrganizations = string.Join(", ", p.ProjectOrganizations
+                    .Where(po => !po.RelationshipType.IsPrimaryContact)
+                    .Select(po => po.Organization.OrganizationName)),
+                ProjectStageName = p.ProjectStage.ProjectStageName,
+                ProjectThemes = string.Join(", ", p.ProjectClassifications
+                    .Select(pc => pc.Classification.DisplayName)),
+                PriorityLandscapeNames = string.Join(", ", p.ProjectPriorityLandscapes
+                    .Select(ppl => ppl.PriorityLandscape.PriorityLandscapeName)),
+                DNRUplandRegionNames = string.Join(", ", p.ProjectRegions
+                    .Select(pr => pr.DNRUplandRegion.DNRUplandRegionName)),
+                CountyNames = string.Join(", ", p.ProjectCounties
+                    .Select(pc => pc.County.CountyName)),
+                FocusAreaName = p.FocusArea != null ? p.FocusArea.FocusAreaName : null,
+                PlannedDate = p.PlannedDate,
+                CompletionDate = p.CompletionDate,
+                ProjectDescription = p.ProjectDescription,
+                EstimatedTotalCost = p.EstimatedTotalCost,
+                ProjectLocationNotes = p.ProjectLocationNotes
+            })
+            .ToListAsync();
+
+        var fundingByProjectId = await GetTotalFundingByProjectAsync(dbContext);
+
+        foreach (var r in rows)
+        {
+            r.TotalFundingAmount = fundingByProjectId.TryGetValue(r.ProjectID, out var funding) ? funding : null;
+        }
+
+        return rows;
+    }
+
+    public static async Task<List<ProjectDescriptionExcelRow>> ListPendingAsDescriptionExcelRowForUserAsync(
+        WADNRDbContext dbContext,
+        PersonDetail? callingUser)
+    {
+        var query = ProjectVisibility.ApplyGlobalPendingVisibilityFilter(dbContext.Projects, callingUser);
+
+        return await query
+            .AsNoTracking()
+            .OrderBy(x => x.ProjectName)
+            .Select(p => new ProjectDescriptionExcelRow
+            {
+                ProjectID = p.ProjectID,
+                ProjectName = p.ProjectName,
+                ProjectDescription = p.ProjectDescription
+            })
+            .ToListAsync();
+    }
+
     /// <summary>
     /// Gets a single project by ID as detail, if visible to the calling user.
     /// Returns null if the project doesn't exist or the user cannot view it.

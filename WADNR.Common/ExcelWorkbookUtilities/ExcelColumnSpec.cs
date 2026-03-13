@@ -26,6 +26,7 @@ namespace WADNR.Common.ExcelWorkbookUtilities
     public class ExcelColumnSpec<T>
     {
         public readonly string ColumnName;
+        public string? NumberFormat { get; set; }
         private readonly Func<T, int> _intValueFunc;
         private readonly Func<T, int?> _nullableIntValueFunc;
         private readonly Func<T, short> _shortValueFunc;
@@ -256,6 +257,11 @@ namespace WADNR.Common.ExcelWorkbookUtilities
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+
+            if (NumberFormat != null)
+            {
+                cell.Style.NumberFormat.Format = NumberFormat;
             }
         }
     }

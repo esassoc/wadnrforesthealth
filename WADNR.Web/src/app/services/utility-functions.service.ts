@@ -1,5 +1,8 @@
 import { DatePipe, DecimalPipe, PercentPipe } from "@angular/common";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
+import { map, tap } from "rxjs/operators";
 import { AgGridAngular } from "ag-grid-angular";
 import {
     CellClassFunc,
@@ -30,7 +33,20 @@ export class UtilityFunctionsService {
 
     public static readonly actionsColumnID = "actions";
 
-    constructor(private datePipe: DatePipe, private decimalPipe: DecimalPipe, private phonePipe: PhonePipe, private percentPipe: PercentPipe) {}
+    constructor(private datePipe: DatePipe, private decimalPipe: DecimalPipe, private phonePipe: PhonePipe, private percentPipe: PercentPipe, private http: HttpClient) {}
+
+    public downloadExcel(url: string, filename: string): Observable<void> {
+        return this.http.get(url, { responseType: "blob" }).pipe(
+            tap((blob) => {
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(a.href);
+            }),
+            map(() => void 0),
+        );
+    }
 
     public getMonthName(monthNumber) {
         return UtilityFunctionsService.months[monthNumber - 1];

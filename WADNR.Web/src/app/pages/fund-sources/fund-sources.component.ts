@@ -1,10 +1,11 @@
-import { Component, ViewContainerRef } from "@angular/core";
+import { Component, signal, ViewContainerRef } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { Router } from "@angular/router";
 import { ColDef, GridApi, GridReadyEvent, SelectionChangedEvent } from "ag-grid-community";
-import { map, Observable } from "rxjs";
+import { finalize, map, Observable } from "rxjs";
 import { DialogService } from "@ngneat/dialog";
 
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
@@ -13,6 +14,7 @@ import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 
+import { environment } from "src/environments/environment";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { FundSourceService } from "src/app/shared/generated/api/fund-source.service";
 import { FundSourceAllocationService } from "src/app/shared/generated/api/fund-source-allocation.service";
@@ -23,7 +25,7 @@ import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type
 
 @Component({
     selector: "fund-sources",
-    imports: [PageHeaderComponent, WADNRGridComponent, AsyncPipe],
+    imports: [PageHeaderComponent, WADNRGridComponent, AsyncPipe, ButtonLoadingDirective],
     templateUrl: "./fund-sources.component.html",
 })
 export class FundSourcesComponent {
@@ -31,6 +33,8 @@ export class FundSourcesComponent {
     public columnDefs: ColDef[];
     public customRichTextTypeID = FirmaPageTypeEnum.FullFundSourceList;
     public canManage$: Observable<boolean>;
+    public isDownloading = signal(false);
+    private excelDownloadUrl = `${environment.mainAppApiUrl}/fund-sources/excel-download`;
 
     public allAllocations: FundSourceAllocationGridRow[] = [];
     public allocationColumnDefs: ColDef[];
@@ -70,6 +74,12 @@ export class FundSourcesComponent {
             }),
             this.utilityFunctions.createCurrencyColumnDef("Total Award", "TotalAwardAmount", {
                 MaxDecimalPlacesToDisplay: 2,
+                FieldDefinitionType: "TotalAwardAmount",
+            }),
+            this.utilityFunctions.createCurrencyColumnDef("Current Balance", "CurrentBalance", {
+                MaxDecimalPlacesToDisplay: 2,
+                FieldDefinitionType: "FundSourceCurrentBalance",
+                FieldDefinitionLabelOverride: "Estimated Current Fund Source Balance",
             }),
             this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy", {
                 FieldDefinitionType: "FundSourceStartDate",
@@ -110,37 +120,72 @@ export class FundSourcesComponent {
             this.allocationColumnDefs = [
                 ...actionsColumn,
                 this.utilityFunctions.createLinkColumnDef("Fund Source Number", "FundSourceNumber", "FundSourceID", {
+                    FieldDefinitionType: "FundSourceNumber",
                     InRouterLink: "/fund-sources/",
                 }),
                 this.utilityFunctions.createLinkColumnDef("Allocation Name", "FundSourceAllocationName", "FundSourceAllocationID", {
+                    FieldDefinitionType: "FundSourceAllocationName",
+                    FieldDefinitionLabelOverride: "Allocation Name",
                     InRouterLink: "/fund-source-allocations/",
                 }),
                 this.utilityFunctions.createCurrencyColumnDef("Allocation Amount", "AllocationAmount", {
                     MaxDecimalPlacesToDisplay: 2,
+                    FieldDefinitionType: "AllocationAmount",
                 }),
-                this.utilityFunctions.createBasicColumnDef("Fund Source Manager", "FundSourceManagerName"),
-                this.utilityFunctions.createBasicColumnDef("Program Managers", "ProgramManagerNames"),
-                this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy"),
-                this.utilityFunctions.createDateColumnDef("End Date", "EndDate", "M/d/yyyy"),
-                this.utilityFunctions.createBasicColumnDef("Parent FS Status", "FundSourceStatusName", {
+                this.utilityFunctions.createCurrencyColumnDef("Current Balance", "CurrentBalance", {
+                    MaxDecimalPlacesToDisplay: 2,
+                    FieldDefinitionType: "FundSourceAllocationCurrentBalance",
+                    FieldDefinitionLabelOverride: "Allocation Current Balance",
+                }),
+                this.utilityFunctions.createBasicColumnDef("Fund Source Manager", "FundSourceManagerName", {
+                    FieldDefinitionType: "FundSourceManager",
+                }),
+                this.utilityFunctions.createBasicColumnDef("Program Managers", "ProgramManagerNames", {
+                    FieldDefinitionType: "ProgramManager",
+                }),
+                this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy", {
+                    FieldDefinitionType: "FundSourceStartDate",
+                }),
+                this.utilityFunctions.createDateColumnDef("End Date", "EndDate", "M/d/yyyy", {
+                    FieldDefinitionType: "FundSourceEndDate",
+                }),
+                this.utilityFunctions.createBasicColumnDef("Parent Fund Source Status", "FundSourceStatusName", {
+                    FieldDefinitionType: "FundSourceStatus",
+                    FieldDefinitionLabelOverride: "Parent Fund Source Status",
                     CustomDropdownFilterField: "FundSourceStatusName",
                 }),
                 this.utilityFunctions.createBasicColumnDef("Division", "DivisionName", {
+                    FieldDefinitionType: "Division",
                     CustomDropdownFilterField: "DivisionName",
                 }),
                 this.utilityFunctions.createBasicColumnDef("DNR Upland Region", "DNRUplandRegionName", {
+                    FieldDefinitionType: "DNRUplandRegion",
                     CustomDropdownFilterField: "DNRUplandRegionName",
                 }),
-                this.utilityFunctions.createBasicColumnDef("Federal Fund Code", "FederalFundCodeAbbrev", {
+                this.utilityFunctions.createBasicColumnDef("Federal Job Code", "FederalFundCodeAbbrev", {
+                    FieldDefinitionType: "FederalFundCode",
+                    FieldDefinitionLabelOverride: "Federal Job Code",
                     CustomDropdownFilterField: "FederalFundCodeAbbrev",
                 }),
-                this.utilityFunctions.createBasicColumnDef("PI/PC Pairs", "ProgramIndexProjectCodeDisplay"),
-                this.utilityFunctions.createBasicColumnDef("Organization", "OrganizationName"),
+                this.utilityFunctions.createBasicColumnDef("PI/PC Pairs", "ProgramIndexProjectCodeDisplay", {
+                    FieldDefinitionType: "ProgramIndexProjectCode",
+                }),
+                this.utilityFunctions.createBasicColumnDef("Contributing Organization", "OrganizationName", {
+                    FieldDefinitionType: "Organization",
+                    FieldDefinitionLabelOverride: "Contributing Organization",
+                }),
             ];
         });
     }
 
-    public allocationGridTitle = "Fund Source Allocations";
+    downloadExcel(): void {
+        this.isDownloading.set(true);
+        this.utilityFunctions.downloadExcel(this.excelDownloadUrl, "fund-sources.xlsx")
+            .pipe(finalize(() => this.isDownloading.set(false)))
+            .subscribe();
+    }
+
+    public allocationGridTitle = "WA DNR Fund Source Allocations";
 
     onAllocationGridReady(event: GridReadyEvent): void {
         this.allocationGridApi = event.api;

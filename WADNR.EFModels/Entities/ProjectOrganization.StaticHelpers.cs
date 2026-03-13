@@ -16,6 +16,29 @@ public static class ProjectOrganizations
             .ToListAsync();
     }
 
+    public static async Task<List<ProjectOrganizationExcelRow>> ListAllAsExcelRowAsync(WADNRDbContext dbContext, List<int> projectIDs)
+    {
+        return await dbContext.ProjectOrganizations
+            .AsNoTracking()
+            .Where(o => projectIDs.Contains(o.ProjectID))
+            .Select(o => new ProjectOrganizationExcelRow
+            {
+                ProjectID = o.ProjectID,
+                ProjectName = o.Project.ProjectName,
+                OrganizationID = o.OrganizationID,
+                OrganizationName = o.Organization.OrganizationName,
+                RelationshipTypeName = o.RelationshipType.RelationshipTypeName,
+                PrimaryContactPersonName = o.Organization.PrimaryContactPerson != null
+                    ? o.Organization.PrimaryContactPerson.FirstName + " " + o.Organization.PrimaryContactPerson.LastName
+                    : null,
+                OrganizationTypeName = o.Organization.OrganizationType.OrganizationTypeName
+            })
+            .OrderBy(o => o.ProjectID)
+            .ThenBy(o => o.RelationshipTypeName)
+            .ThenBy(o => o.OrganizationName)
+            .ToListAsync();
+    }
+
     public static async Task<List<ProjectOrganizationItem>> SaveAllAsync(WADNRDbContext dbContext, int projectID, ProjectOrganizationSaveRequest request)
     {
         var existing = await dbContext.ProjectOrganizations

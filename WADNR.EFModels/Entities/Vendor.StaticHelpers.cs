@@ -14,6 +14,15 @@ public static class Vendors
             .ToListAsync();
     }
 
+    public static async Task<List<VendorExcelRow>> ListAsExcelRowAsync(WADNRDbContext dbContext)
+    {
+        return await dbContext.Vendors
+            .AsNoTracking()
+            .OrderBy(x => x.VendorName)
+            .Select(VendorProjections.AsExcelRow)
+            .ToListAsync();
+    }
+
     public static async Task<VendorDetail?> GetByIDAsDetailAsync(WADNRDbContext dbContext, int vendorID)
     {
         return await dbContext.Vendors

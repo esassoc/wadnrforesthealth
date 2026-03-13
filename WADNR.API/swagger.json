@@ -92,6 +92,20 @@
         }
       }
     },
+    "/agreements/excel-download": {
+      "get": {
+        "tags": [
+          "Agreement"
+        ],
+        "operationId": "ExcelDownload_Agreement",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-anonymous": true
+      }
+    },
     "/agreements/{agreementID}": {
       "get": {
         "tags": [
@@ -4440,6 +4454,20 @@
             }
           }
         }
+      }
+    },
+    "/fund-sources/excel-download": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "ExcelDownload_FundSource",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-anonymous": true
       }
     },
     "/fund-sources/lookup": {
@@ -9293,6 +9321,31 @@
         "x-anonymous": true
       }
     },
+    "/organizations/{organizationID}/agreements/excel-download": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "AgreementsExcelDownload_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-anonymous": true
+      }
+    },
     "/organizations/{organizationID}/boundary": {
       "get": {
         "tags": [
@@ -10162,6 +10215,30 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/people/{personID}/agreements/excel-download": {
+      "get": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "AgreementsExcelDownload_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -12533,6 +12610,20 @@
         }
       }
     },
+    "/projects/excel-download": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ExcelDownload_Project",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-anonymous": true
+      }
+    },
     "/projects/pending": {
       "get": {
         "tags": [
@@ -12568,6 +12659,19 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/projects/pending/excel-download": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "PendingExcelDownload_Project",
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -23172,6 +23276,19 @@
         }
       }
     },
+    "/vendors/excel-download": {
+      "get": {
+        "tags": [
+          "Vendor"
+        ],
+        "operationId": "ExcelDownload_Vendor",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/vendors/{vendorID}": {
       "get": {
         "tags": [
@@ -26190,6 +26307,11 @@
           "ProgramIndexProjectCodeDisplay": {
             "type": "string",
             "nullable": true
+          },
+          "CurrentBalance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -26978,6 +27100,10 @@
             "nullable": true
           },
           "TotalAwardAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "CurrentBalance": {
             "type": "number",
             "format": "double"
           },

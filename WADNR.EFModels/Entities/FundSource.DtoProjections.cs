@@ -63,11 +63,25 @@ public static class FundSourceProjections
         FundSourceNumber = x.FundSourceNumber,
         ShortName = x.ShortName,
         TotalAwardAmount = x.TotalAwardAmount,
+        CurrentBalance = x.FundSourceAllocations.SelectMany(a => a.FundSourceAllocationBudgetLineItems).Sum(b => b.FundSourceAllocationBudgetLineItemAmount)
+            - x.FundSourceAllocations.SelectMany(a => a.FundSourceAllocationExpenditures).Sum(e => e.ExpenditureAmount),
         CFDANumber = x.CFDANumber,
         FundSourceTitle = string.IsNullOrWhiteSpace(x.ShortName) ? x.FundSourceName : $"{x.FundSourceName} ({x.ShortName})",
         StartDate = x.StartDate,
         EndDate = x.EndDate,
         FundSourceStatusName = x.FundSourceStatus == null? null : x.FundSourceStatus.FundSourceStatusName,
+        FundSourceTypeDisplay = x.FundSourceType == null ? null : x.FundSourceType.FundSourceTypeName
+    };
+
+    public static readonly Expression<Func<FundSource, FundSourceExcelRow>> AsExcelRow = x => new FundSourceExcelRow
+    {
+        FundSourceNumber = x.FundSourceNumber,
+        CFDANumber = x.CFDANumber,
+        FundSourceName = x.FundSourceName,
+        TotalAwardAmount = x.TotalAwardAmount,
+        StartDate = x.StartDate,
+        EndDate = x.EndDate,
+        FundSourceStatusName = x.FundSourceStatus == null ? string.Empty : x.FundSourceStatus.FundSourceStatusName,
         FundSourceTypeDisplay = x.FundSourceType == null ? null : x.FundSourceType.FundSourceTypeName
     };
 

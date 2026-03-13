@@ -1,22 +1,24 @@
-import { Component } from "@angular/core";
+import { Component, signal } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { Router } from "@angular/router";
 import { ColDef } from "ag-grid-community";
-import { map, Observable } from "rxjs";
+import { finalize, map, Observable } from "rxjs";
 import { DialogService } from "@ngneat/dialog";
 
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
 
+import { environment } from "src/environments/environment";
 import { AgreementService } from "src/app/shared/generated/api/agreement.service";
 import { AgreementGridRow } from "src/app/shared/generated/model/agreement-grid-row";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
 
 @Component({
     selector: "agreements",
-    imports: [PageHeaderComponent, WADNRGridComponent, AsyncPipe],
+    imports: [PageHeaderComponent, WADNRGridComponent, AsyncPipe, ButtonLoadingDirective],
     templateUrl: "./agreements.component.html",
 })
 export class AgreementsComponent {
@@ -28,6 +30,8 @@ export class AgreementsComponent {
     };
     public customRichTextTypeID = FirmaPageTypeEnum.FullAgreementList;
     public canManage$: Observable<boolean>;
+    public isDownloading = signal(false);
+    private excelDownloadUrl = `${environment.mainAppApiUrl}/agreements/excel-download`;
 
     constructor(
         private agreementService: AgreementService,
@@ -109,6 +113,13 @@ export class AgreementsComponent {
         ];
 
         this.agreements$ = this.agreementService.listAgreement();
+    }
+
+    downloadExcel(): void {
+        this.isDownloading.set(true);
+        this.utilityFunctions.downloadExcel(this.excelDownloadUrl, "agreements.xlsx")
+            .pipe(finalize(() => this.isDownloading.set(false)))
+            .subscribe();
     }
 
     createNewAgreement(): void {

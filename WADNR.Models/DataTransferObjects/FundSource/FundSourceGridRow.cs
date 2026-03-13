@@ -7,6 +7,7 @@ public class FundSourceGridRow
     public string? FundSourceNumber { get; set; }
     public string? ShortName { get; set; }
     public decimal TotalAwardAmount { get; set; }
+    public decimal CurrentBalance { get; set; }
     public string? CFDANumber { get; set; }
     public string FundSourceTitle { get; set; } = string.Empty;
     public DateTime? StartDate { get; set; }

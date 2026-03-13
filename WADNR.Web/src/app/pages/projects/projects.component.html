@@ -19,5 +19,5 @@
 </ng-template>
 
 <div class="page-body">
-    <project-grid [rowData]="projects$ | async" defaultRowSelection="multiRow"> </project-grid>
+    <project-grid [rowData]="projects$ | async" defaultRowSelection="multiRow" [excelDownloadUrl]="excelDownloadUrl"> </project-grid>
 </div>
