@@ -2024,6 +2024,21 @@
         </ComplexTypeMapping>
       </ResultMapping>
     </FunctionImportMapping>
+    <FunctionImportMapping FunctionName="ProjectFirma.Web.Models.Store.fGetForesterWorkUnitsByPoint" FunctionImportName="fGetForesterWorkUnitsByPoint">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="ProjectFirma.Web.Models.fGetForesterWorkUnitsByPoint_Result">
+          <ScalarProperty Name="ForesterWorkUnitID" ColumnName="ForesterWorkUnitID" />
+          <ScalarProperty Name="ForesterRoleID" ColumnName="ForesterRoleID" />
+          <ScalarProperty Name="ForesterRoleDisplayName" ColumnName="ForesterRoleDisplayName" />
+          <ScalarProperty Name="PersonID" ColumnName="PersonID" />
+          <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+          <ScalarProperty Name="LastName" ColumnName="LastName" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="ForesterWorkUnitName" ColumnName="ForesterWorkUnitName" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
     <FunctionImportMapping FunctionName="ProjectFirma.Web.Models.Store.fGetProjectDnrUploadRegion" FunctionImportName="fGetProjectDnrUploadRegion">
       <ResultMapping>
         <ComplexTypeMapping TypeName="ProjectFirma.Web.Models.fGetProjectDnrUploadRegion_Result">

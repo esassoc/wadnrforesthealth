@@ -21,6 +21,7 @@ Source code is available upon request via <support@sitkatech.com>.
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using ProjectFirma.Web.Common;
 using ProjectFirma.Web.Controllers;
 using ProjectFirma.Web.Models;
@@ -33,14 +34,16 @@ namespace ProjectFirma.Web.Views.FindYourForester
 
         public List<FindYourForesterQuestion> RootQuestions { get; }
         public string GeocodeAddressUrl { get; set; }
+        public Dictionary<int, string> ForesterRoleDefinitions { get; }
 
         public FindYourForesterViewData(Person currentPerson, MapInitJson mapInitJson, Models.FirmaPage firmaPage,
-            List<FindYourForesterQuestion> findYourForesterQuestions) : base(currentPerson, firmaPage)
+            List<FindYourForesterQuestion> findYourForesterQuestions, Dictionary<int, string> foresterRoleDefinitions) : base(currentPerson, firmaPage)
         {
             PageTitle = "Find Your Forester";
             MapInitJson = mapInitJson;
             RootQuestions = findYourForesterQuestions;
             GeocodeAddressUrl = SitkaRoute<ResultsController>.BuildUrlFromExpression(t => t.GeocodeAddress(null));
+            ForesterRoleDefinitions = foresterRoleDefinitions;
         }
 
     }

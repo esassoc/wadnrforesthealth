@@ -1103,6 +1103,9 @@
     <FunctionImport Name="fGetColumnNamesForTable" ReturnType="Collection(ProjectFirma.Web.Models.fGetColumnNamesForTable_Result)" IsComposable="true">
       <Parameter Name="psTableName" Type="String" />
     </FunctionImport>
+    <FunctionImport Name="fGetForesterWorkUnitsByPoint" ReturnType="Collection(ProjectFirma.Web.Models.fGetForesterWorkUnitsByPoint_Result)" IsComposable="true">
+      <Parameter Name="Point" Type="Geometry" />
+    </FunctionImport>
     <FunctionImport Name="fGetProjectDnrUploadRegion" ReturnType="Collection(ProjectFirma.Web.Models.fGetProjectDnrUploadRegion_Result)" IsComposable="true">
       <Parameter Name="piGisUploadAttemptID" Type="Int32" />
       <Parameter Name="piGisMetadataAttributeID" Type="Int32" />
@@ -1132,6 +1135,17 @@
   <ComplexType Name="fGetColumnNamesForTable_Result">
     <Property Name="PrimaryKey" Type="Int32" Nullable="false" />
     <Property Name="ColumnName" Type="String" Nullable="false" MaxLength="500" Unicode="false" FixedLength="false" />
+  </ComplexType>
+  <ComplexType Name="fGetForesterWorkUnitsByPoint_Result">
+    <Property Name="ForesterWorkUnitID" Type="Int32" Nullable="false" />
+    <Property Name="ForesterRoleID" Type="Int32" Nullable="false" />
+    <Property Name="ForesterRoleDisplayName" Type="String" Nullable="false" MaxLength="100" Unicode="false" FixedLength="false" />
+    <Property Name="PersonID" Type="Int32" />
+    <Property Name="FirstName" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+    <Property Name="LastName" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+    <Property Name="Email" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+    <Property Name="Phone" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+    <Property Name="ForesterWorkUnitName" Type="String" Nullable="false" MaxLength="100" Unicode="false" FixedLength="false" />
   </ComplexType>
   <ComplexType Name="fGetProjectDnrUploadRegion_Result">
     <Property Name="number" Type="Int64" />
