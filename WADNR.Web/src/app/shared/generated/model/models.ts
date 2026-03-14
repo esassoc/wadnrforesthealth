@@ -139,6 +139,7 @@ export * from './geographic-lookup-item';
 export * from './geographic-override-request';
 export * from './geometry';
 export * from './geometry-factory';
+export * from './gis-bulk-import-project-result';
 export * from './gis-bulk-import-request';
 export * from './gis-bulk-import-result';
 export * from './gis-feature-grid-row';

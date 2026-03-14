@@ -46,7 +46,7 @@ export class ProjectsComponent {
 
     openGisImportModal(): void {
         import("../admin/gis-bulk-import/select-source-org-modal/select-source-org-modal.component").then(({ SelectSourceOrgModalComponent }) => {
-            const ref = this.dialogService.open(SelectSourceOrgModalComponent, { size: "md" });
+            const ref = this.dialogService.open(SelectSourceOrgModalComponent, { size: "lg" });
             ref.afterClosed$.subscribe((attemptID) => {
                 if (attemptID) {
                     this.router.navigate(["/gis-bulk-import", attemptID, "instructions"]);

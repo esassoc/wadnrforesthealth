@@ -17,6 +17,7 @@ import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { GisBulkImportService } from "src/app/shared/generated/api/gis-bulk-import.service";
 import { GisMetadataMappingDefaults } from "src/app/shared/generated/model/gis-metadata-mapping-defaults";
 import { GisBulkImportRequest } from "src/app/shared/generated/model/gis-bulk-import-request";
+import { GisBulkImportResult } from "src/app/shared/generated/model/gis-bulk-import-result";
 import { GisFeatureGridRow } from "src/app/shared/generated/model/gis-feature-grid-row";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
 
@@ -209,9 +210,9 @@ export class ValidateMetadataStepComponent implements OnInit {
         this.gisBulkImportService.importProjectsGisBulkImport(attemptID, request).subscribe({
             next: (result) => {
                 this.isImporting$.next(false);
-                const msg = `GIS Import complete: ${result.ProjectsCreated} projects created, ${result.ProjectsUpdated} updated, ${result.ProjectsSkipped} skipped.`;
+                const msg = this.buildImportResultMessage(result);
                 this.router.navigate(["/projects"]).then(() => {
-                    this.alertService.pushAlert(new Alert(msg, AlertContext.Success, true));
+                    this.alertService.pushAlert(new Alert(msg, AlertContext.Success, true, "", false));
                 });
             },
             error: (err) => {
@@ -220,5 +221,37 @@ export class ValidateMetadataStepComponent implements OnInit {
                 this.isImporting$.next(false);
             },
         });
+    }
+
+    private buildImportResultMessage(result: GisBulkImportResult): string {
+        const lines: string[] = [`<strong>GIS Import complete</strong>`];
+
+        if (result.CreatedProjects?.length) {
+            lines.push(`<br/><strong>Projects created (${result.CreatedProjects.length}):</strong>`);
+            lines.push(
+                "<ul style='margin: 0.25rem 0 0.5rem 1.5rem;'>" +
+                    result.CreatedProjects.map((p) => `<li><a href="/projects/${p.ProjectID}">${p.ProjectName}</a></li>`).join("") +
+                    "</ul>"
+            );
+        }
+
+        if (result.UpdatedProjects?.length) {
+            lines.push(`<br/><strong>Projects updated (${result.UpdatedProjects.length}):</strong>`);
+            lines.push(
+                "<ul style='margin: 0.25rem 0 0.5rem 1.5rem;'>" +
+                    result.UpdatedProjects.map((p) => `<li><a href="/projects/${p.ProjectID}">${p.ProjectName}</a></li>`).join("") +
+                    "</ul>"
+            );
+        }
+
+        if (result.ProjectsSkipped) {
+            lines.push(`<br/>${result.ProjectsSkipped} project(s) skipped.`);
+        }
+
+        if (result.Warnings?.length) {
+            lines.push(`<br/><strong>Warnings:</strong><br/>` + result.Warnings.join("<br/>"));
+        }
+
+        return lines.join("");
     }
 }

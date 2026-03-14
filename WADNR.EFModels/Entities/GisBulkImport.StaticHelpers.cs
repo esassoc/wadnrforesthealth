@@ -311,56 +311,52 @@ public static class GisBulkImports
 
     private static void MapFieldDefinitionToDefault(GisMetadataMappingDefaults defaults, int fieldDefinitionID, int metadataAttributeID)
     {
-        // FieldDefinition IDs map to specific import fields
-        // These values correspond to the FieldDefinition table in the database
-        switch (fieldDefinitionID)
-        {
-            case 44: // FhtProjectNumber / Project Identifier
-                defaults.ProjectIdentifierMetadataAttributeID = metadataAttributeID;
-                break;
-            case 22: // ProjectName
-                defaults.ProjectNameMetadataAttributeID = metadataAttributeID;
-                break;
-            case 305: // TreatmentType
-                defaults.TreatmentTypeMetadataAttributeID = metadataAttributeID;
-                break;
-            case 56: // CompletionDate
-                defaults.CompletionDateMetadataAttributeID = metadataAttributeID;
-                break;
-            case 97: // ProjectInitiationDate / StartDate
-                defaults.StartDateMetadataAttributeID = metadataAttributeID;
-                break;
-            case 24: // ProjectStage
-                defaults.ProjectStageMetadataAttributeID = metadataAttributeID;
-                break;
-            case 296: // LeadImplementer
-                defaults.LeadImplementerMetadataAttributeID = metadataAttributeID;
-                break;
-            case 304: // FootprintAcres
-                defaults.FootprintAcresMetadataAttributeID = metadataAttributeID;
-                break;
-            case 298: // PrivateLandowner
-                defaults.PrivateLandownerMetadataAttributeID = metadataAttributeID;
-                break;
-            case 306: // TreatmentDetailedActivityType
-                defaults.TreatmentDetailedActivityTypeMetadataAttributeID = metadataAttributeID;
-                break;
-            case 307: // TreatedAcres
-                defaults.TreatedAcresMetadataAttributeID = metadataAttributeID;
-                break;
-            case 308: defaults.PruningAcresMetadataAttributeID = metadataAttributeID; break;
-            case 309: defaults.ThinningAcresMetadataAttributeID = metadataAttributeID; break;
-            case 310: defaults.ChippingAcresMetadataAttributeID = metadataAttributeID; break;
-            case 311: defaults.MasticationAcresMetadataAttributeID = metadataAttributeID; break;
-            case 312: defaults.GrazingAcresMetadataAttributeID = metadataAttributeID; break;
-            case 313: defaults.LopScatAcresMetadataAttributeID = metadataAttributeID; break;
-            case 314: defaults.BiomassRemovalAcresMetadataAttributeID = metadataAttributeID; break;
-            case 315: defaults.HandPileAcresMetadataAttributeID = metadataAttributeID; break;
-            case 316: defaults.HandPileBurnAcresMetadataAttributeID = metadataAttributeID; break;
-            case 317: defaults.MachinePileBurnAcresMetadataAttributeID = metadataAttributeID; break;
-            case 318: defaults.BroadcastBurnAcresMetadataAttributeID = metadataAttributeID; break;
-            case 319: defaults.OtherAcresMetadataAttributeID = metadataAttributeID; break;
-        }
+        if (fieldDefinitionID == FieldDefinition.ProjectIdentifier.FieldDefinitionID)
+            defaults.ProjectIdentifierMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.ProjectName.FieldDefinitionID)
+            defaults.ProjectNameMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.TreatmentType.FieldDefinitionID)
+            defaults.TreatmentTypeMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.CompletionDate.FieldDefinitionID)
+            defaults.CompletionDateMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.PlannedDate.FieldDefinitionID)
+            defaults.StartDateMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.ProjectStage.FieldDefinitionID)
+            defaults.ProjectStageMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.LeadImplementerOrganization.FieldDefinitionID)
+            defaults.LeadImplementerMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.FootprintAcres.FieldDefinitionID)
+            defaults.FootprintAcresMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.Landowner.FieldDefinitionID)
+            defaults.PrivateLandownerMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.TreatmentDetailedActivityType.FieldDefinitionID)
+            defaults.TreatmentDetailedActivityTypeMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.TreatedAcres.FieldDefinitionID)
+            defaults.TreatedAcresMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.PruningAcres.FieldDefinitionID)
+            defaults.PruningAcresMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.ThinningAcres.FieldDefinitionID)
+            defaults.ThinningAcresMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.ChippingAcres.FieldDefinitionID)
+            defaults.ChippingAcresMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.MasticationAcres.FieldDefinitionID)
+            defaults.MasticationAcresMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.GrazingAcres.FieldDefinitionID)
+            defaults.GrazingAcresMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.LopAndScatterAcres.FieldDefinitionID)
+            defaults.LopScatAcresMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.BiomassRemovalAcres.FieldDefinitionID)
+            defaults.BiomassRemovalAcresMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.HandPileAcres.FieldDefinitionID)
+            defaults.HandPileAcresMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.HandPileBurnAcres.FieldDefinitionID)
+            defaults.HandPileBurnAcresMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.MachinePileBurnAcres.FieldDefinitionID)
+            defaults.MachinePileBurnAcresMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.BroadcastBurnAcres.FieldDefinitionID)
+            defaults.BroadcastBurnAcresMetadataAttributeID = metadataAttributeID;
+        else if (fieldDefinitionID == FieldDefinition.OtherTreatmentAcres.FieldDefinitionID)
+            defaults.OtherAcresMetadataAttributeID = metadataAttributeID;
     }
 
     public static async Task<GisBulkImportResult> ImportProjectsAsync(WADNRDbContext dbContext, int gisUploadAttemptID, GisBulkImportRequest request)
@@ -392,14 +388,17 @@ public static class GisBulkImports
                 m => m.GisFeatureMetadataAttributeValue));
 
         // Get project identifier values to group features by project
+        // Normalize to uppercase for case-insensitive grouping; keep originals for display/storage
         var projectIdentifierLookup = new Dictionary<int, string>();
+        var originalIdentifierLookup = new Dictionary<int, string>();
         foreach (var feature in features)
         {
             if (featureMetadata.TryGetValue(feature.GisFeatureID, out var metadata) &&
                 metadata.TryGetValue(request.ProjectIdentifierMetadataAttributeID, out var identifier) &&
                 !string.IsNullOrWhiteSpace(identifier))
             {
-                projectIdentifierLookup[feature.GisFeatureID] = identifier;
+                projectIdentifierLookup[feature.GisFeatureID] = identifier.Trim().ToUpperInvariant();
+                originalIdentifierLookup[feature.GisFeatureID] = identifier.Trim();
             }
         }
 
@@ -415,23 +414,74 @@ public static class GisBulkImports
             var firstFeature = projectGroup.First();
             var firstMetadata = featureMetadata[firstFeature.GisFeatureID];
 
-            // Get project name
+            // Get project name (use original mixed-case identifier as fallback, not the uppercased key)
+            var originalIdentifier = originalIdentifierLookup[firstFeature.GisFeatureID];
             string projectName = null;
             if (firstMetadata.TryGetValue(request.ProjectNameMetadataAttributeID, out var name))
             {
                 projectName = name;
             }
-            projectName ??= projectIdentifier;
+            projectName ??= originalIdentifier;
 
-            // Find existing project by FHT number within the same program
+            // Find existing project by GIS identifier within the same program (case-insensitive)
             var existingProject = await dbContext.Projects
-                .FirstOrDefaultAsync(p => p.FhtProjectNumber == projectIdentifier &&
+                .Include(p => p.ProjectPrograms)
+                .FirstOrDefaultAsync(p => p.ProjectGisIdentifier != null &&
+                    p.ProjectGisIdentifier.Trim().ToUpper() == projectIdentifier &&
                     p.ProjectPrograms.Any(pp => pp.ProgramID == sourceOrg.ProgramID));
 
             if (existingProject != null)
             {
+                // Update fields from GIS data (matching legacy behavior)
+                existingProject.ProjectName = projectName.Length > 140 ? projectName[..140] : projectName;
+                existingProject.ProjectStageID = sourceOrg.ProjectStageDefaultID;
                 existingProject.LastUpdateGisUploadAttemptID = gisUploadAttemptID;
+
+                // Auto-approve if stage is not Planned and project is Draft/PendingApproval
+                if (sourceOrg.ProjectStageDefaultID != (int)ProjectStageEnum.Planned
+                    && (existingProject.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Draft
+                        || existingProject.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.PendingApproval))
+                {
+                    existingProject.ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.Approved;
+                }
+
+                // Update dates if configured
+                if (sourceOrg.ApplyStartDateToProject && request.StartDateMetadataAttributeID.HasValue &&
+                    firstMetadata.TryGetValue(request.StartDateMetadataAttributeID.Value, out var existingStartDateStr) &&
+                    DateTime.TryParse(existingStartDateStr, out var existingStartDate))
+                {
+                    existingProject.PlannedDate = DateOnly.FromDateTime(existingStartDate);
+                }
+
+                if (sourceOrg.ApplyCompletedDateToProject && request.CompletionDateMetadataAttributeID.HasValue &&
+                    firstMetadata.TryGetValue(request.CompletionDateMetadataAttributeID.Value, out var existingCompletionDateStr) &&
+                    DateTime.TryParse(existingCompletionDateStr, out var existingCompletionDate))
+                {
+                    existingProject.CompletionDate = DateOnly.FromDateTime(existingCompletionDate);
+                }
+
+                // Set description only if empty
+                if (string.IsNullOrEmpty(existingProject.ProjectDescription) && !string.IsNullOrEmpty(sourceOrg.ProjectDescriptionDefaultText))
+                {
+                    existingProject.ProjectDescription = sourceOrg.ProjectDescriptionDefaultText;
+                }
+
+                // Ensure program link exists
+                if (!existingProject.ProjectPrograms.Any(pp => pp.ProgramID == sourceOrg.ProgramID))
+                {
+                    dbContext.ProjectPrograms.Add(new ProjectProgram
+                    {
+                        ProjectID = existingProject.ProjectID,
+                        ProgramID = sourceOrg.ProgramID
+                    });
+                }
+
                 result.ProjectsUpdated++;
+                result.UpdatedProjects.Add(new GisBulkImportProjectResult
+                {
+                    ProjectID = existingProject.ProjectID,
+                    ProjectName = existingProject.ProjectName
+                });
             }
             else
             {
@@ -448,7 +498,8 @@ public static class GisBulkImports
                 var newProject = new Project
                 {
                     ProjectName = projectName.Length > 140 ? projectName[..140] : projectName,
-                    FhtProjectNumber = projectIdentifier.Length > 20 ? projectIdentifier[..20] : projectIdentifier,
+                    FhtProjectNumber = await Projects.GenerateFhtProjectNumberAsync(dbContext),
+                    ProjectGisIdentifier = originalIdentifier.Length > 140 ? originalIdentifier[..140] : originalIdentifier,
                     ProjectTypeID = projectTypeID,
                     ProjectStageID = sourceOrg.ProjectStageDefaultID,
                     ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.Approved,
@@ -498,12 +549,37 @@ public static class GisBulkImports
 
                 existingProject = newProject;
                 result.ProjectsCreated++;
+                result.CreatedProjects.Add(new GisBulkImportProjectResult
+                {
+                    ProjectID = newProject.ProjectID,
+                    ProjectName = newProject.ProjectName
+                });
+            }
+
+            // Remove prior ProjectArea locations for this project+program before re-creating (matching legacy DeleteFull behavior)
+            var locationIDsToDelete = await dbContext.ProjectLocations
+                .Where(pl => pl.ProjectID == existingProject.ProjectID &&
+                    pl.ProjectLocationTypeID == (int)ProjectLocationTypeEnum.ProjectArea &&
+                    pl.ProgramID == sourceOrg.ProgramID)
+                .Select(pl => pl.ProjectLocationID)
+                .ToListAsync();
+
+            if (locationIDsToDelete.Count > 0)
+            {
+                // Delete child Treatments first, then the locations
+                await dbContext.Treatments
+                    .Where(t => t.ProjectLocationID != null && locationIDsToDelete.Contains(t.ProjectLocationID.Value))
+                    .ExecuteDeleteAsync();
+
+                await dbContext.ProjectLocations
+                    .Where(pl => locationIDsToDelete.Contains(pl.ProjectLocationID))
+                    .ExecuteDeleteAsync();
             }
 
             // Create project locations from feature geometries
             foreach (var feature in projectGroup)
             {
-                var locationName = $"{projectIdentifier} - Feature {feature.GisImportFeatureKey}";
+                var locationName = $"{originalIdentifier} - Feature {feature.GisImportFeatureKey}";
 
                 dbContext.ProjectLocations.Add(new ProjectLocation
                 {
@@ -520,15 +596,56 @@ public static class GisBulkImports
             await dbContext.SaveChangesWithNoAuditingAsync();
         }
 
-        // Call stored proc for treatment imports if applicable
+        // Call stored proc for treatment imports
         try
         {
+            // Resolve default TreatmentTypeID from source org name (fallback to Other)
+            var treatmentTypeID = TreatmentType.Other.TreatmentTypeID;
+            if (!string.IsNullOrEmpty(sourceOrg.TreatmentTypeDefaultName))
+            {
+                var treatmentType = TreatmentType.All.SingleOrDefault(x =>
+                    x.TreatmentTypeDisplayName.Equals(sourceOrg.TreatmentTypeDefaultName, StringComparison.InvariantCultureIgnoreCase));
+                if (treatmentType != null)
+                {
+                    treatmentTypeID = treatmentType.TreatmentTypeID;
+                }
+            }
+
+            var treatmentDetailedActivityTypeID = TreatmentDetailedActivityType.Other.TreatmentDetailedActivityTypeID;
+            var isFlattened = sourceOrg.ImportIsFlattened == true ? 1 : 0;
+
+            // Null metadata attribute IDs use -1 sentinel for the proc
+            int ToSqlID(int? id) => id ?? -1;
+
             await dbContext.Database.ExecuteSqlInterpolatedAsync(
-                $"EXEC dbo.procImportTreatmentsFromGisUploadAttempt @GisUploadAttemptID = {gisUploadAttemptID}");
+                $@"EXEC dbo.procImportTreatmentsFromGisUploadAttempt
+                    @piGisUploadAttemptID = {gisUploadAttemptID},
+                    @projectIdentifierGisMetadataAttributeID = {request.ProjectIdentifierMetadataAttributeID},
+                    @footprintAcresMetadataAttributeID = {ToSqlID(request.FootprintAcresMetadataAttributeID)},
+                    @treatedAcresMetadataAttributeID = {ToSqlID(request.TreatedAcresMetadataAttributeID)},
+                    @treatmentTypeMetadataAttributeID = {ToSqlID(request.TreatmentTypeMetadataAttributeID)},
+                    @treatmentDetailedActivityTypeMetadataAttributeID = {ToSqlID(request.TreatmentDetailedActivityTypeMetadataAttributeID)},
+                    @treatmentTypeID = {treatmentTypeID},
+                    @treatmentDetailedActivityTypeID = {treatmentDetailedActivityTypeID},
+                    @isFlattened = {isFlattened},
+                    @pruningAcresMetadataAttributeID = {ToSqlID(request.PruningAcresMetadataAttributeID)},
+                    @thinningAcresMetadataAttributeID = {ToSqlID(request.ThinningAcresMetadataAttributeID)},
+                    @chippingAcresMetadataAttributeID = {ToSqlID(request.ChippingAcresMetadataAttributeID)},
+                    @masticationAcresMetadataAttributeID = {ToSqlID(request.MasticationAcresMetadataAttributeID)},
+                    @grazingAcresMetadataAttributeID = {ToSqlID(request.GrazingAcresMetadataAttributeID)},
+                    @lopScatterAcresMetadataAttributeID = {ToSqlID(request.LopScatAcresMetadataAttributeID)},
+                    @biomassRemovalAcresMetadataAttributeID = {ToSqlID(request.BiomassRemovalAcresMetadataAttributeID)},
+                    @handPileAcresMetadataAttributeID = {ToSqlID(request.HandPileAcresMetadataAttributeID)},
+                    @handPileBurnAcresMetadataAttributeID = {ToSqlID(request.HandPileBurnAcresMetadataAttributeID)},
+                    @machineBurnAcresMetadataAttributeID = {ToSqlID(request.MachinePileBurnAcresMetadataAttributeID)},
+                    @broadcastBurnAcresMetadataAttributeID = {ToSqlID(request.BroadcastBurnAcresMetadataAttributeID)},
+                    @otherBurnAcresMetadataAttributeID = {ToSqlID(request.OtherAcresMetadataAttributeID)},
+                    @startDateMetadataAttributeID = {ToSqlID(request.StartDateMetadataAttributeID)},
+                    @endDateMetadataAttributeID = {ToSqlID(request.CompletionDateMetadataAttributeID)}");
         }
-        catch
+        catch (Exception ex)
         {
-            result.Warnings.Add("Treatment import stored procedure encountered an error. Treatments may not have been fully imported.");
+            result.Warnings.Add($"Treatment import stored procedure encountered an error: {ex.Message}");
         }
 
         return result;

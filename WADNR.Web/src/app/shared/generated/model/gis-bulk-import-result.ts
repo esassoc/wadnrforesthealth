@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { GisBulkImportProjectResult } from './gis-bulk-import-project-result';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
@@ -16,6 +17,8 @@ export class GisBulkImportResult {
     ProjectsSkipped?: number;
     TreatmentsCreated?: number;
     LocationsCreated?: number;
+    CreatedProjects?: Array<GisBulkImportProjectResult> | null;
+    UpdatedProjects?: Array<GisBulkImportProjectResult> | null;
     Warnings?: Array<string> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -28,6 +31,8 @@ export interface GisBulkImportResultForm {
     ProjectsSkipped?: FormControl<number>;
     TreatmentsCreated?: FormControl<number>;
     LocationsCreated?: FormControl<number>;
+    CreatedProjects?: FormControl<Array<GisBulkImportProjectResult>>;
+    UpdatedProjects?: FormControl<Array<GisBulkImportProjectResult>>;
     Warnings?: FormControl<Array<string>>;
 }
 
@@ -73,6 +78,26 @@ export class GisBulkImportResultFormControls {
         }
     );
     public static LocationsCreated = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CreatedProjects = (value: FormControlState<Array<GisBulkImportProjectResult>> | Array<GisBulkImportProjectResult> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<GisBulkImportProjectResult>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static UpdatedProjects = (value: FormControlState<Array<GisBulkImportProjectResult>> | Array<GisBulkImportProjectResult> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<GisBulkImportProjectResult>>(
         value,
         formControlOptions ?? 
         {

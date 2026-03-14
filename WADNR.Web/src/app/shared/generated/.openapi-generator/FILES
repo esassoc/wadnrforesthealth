@@ -203,6 +203,7 @@ model/geographic-lookup-item.ts
 model/geographic-override-request.ts
 model/geometry-factory.ts
 model/geometry.ts
+model/gis-bulk-import-project-result.ts
 model/gis-bulk-import-request.ts
 model/gis-bulk-import-result.ts
 model/gis-feature-grid-row.ts

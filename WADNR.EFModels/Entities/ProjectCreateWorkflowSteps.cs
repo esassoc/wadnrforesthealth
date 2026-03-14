@@ -175,22 +175,7 @@ public static class ProjectCreateWorkflowSteps
 
     private static async Task<string> GenerateFhtProjectNumberAsync(WADNRDbContext dbContext)
     {
-        // Get the max FHT number and increment
-        var maxNumber = await dbContext.Projects
-            .Where(p => p.FhtProjectNumber.StartsWith("FHT-"))
-            .Select(p => p.FhtProjectNumber)
-            .ToListAsync();
-
-        var maxNumeric = maxNumber
-            .Select(n =>
-            {
-                var parts = n.Split('-');
-                return parts.Length > 1 && int.TryParse(parts[1], out var num) ? num : 0;
-            })
-            .DefaultIfEmpty(0)
-            .Max();
-
-        return $"FHT-{maxNumeric + 1:D5}";
+        return await Projects.GenerateFhtProjectNumberAsync(dbContext);
     }
 
     #endregion

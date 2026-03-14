@@ -5,7 +5,8 @@ export class Alert {
         public message: string,
         public context: AlertContext = AlertContext.Primary,
         public dismissible: boolean = true,
-        public uniqueCode: string = ""
+        public uniqueCode: string = "",
+        public autoHide: boolean = true
     ) {
     }
 }
