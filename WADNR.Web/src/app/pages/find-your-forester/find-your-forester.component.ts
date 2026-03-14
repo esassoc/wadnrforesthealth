@@ -16,6 +16,7 @@ import { environment } from "src/environments/environment";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
 import { AlertService } from "src/app/shared/services/alert.service";
+import { WamasService } from "src/app/shared/services/wamas.service";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
@@ -64,7 +65,9 @@ export class FindYourForesterComponent {
 
     totalContacts = computed(() => this.foresterInfo().size);
 
-    constructor(private findYourForesterService: FindYourForesterService) {}
+    constructor(private findYourForesterService: FindYourForesterService, private wamasService: WamasService) {
+        this.wamasService.warmUp();
+    }
 
     data$ = forkJoin({
         questions: this.findYourForesterService.listQuestionsFindYourForester(),

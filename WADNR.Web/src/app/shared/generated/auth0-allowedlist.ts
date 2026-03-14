@@ -29,7 +29,7 @@ const ANON_EXACT: ExactMap = {
 const SECURED_EXACT: ExactMap = {
   'DELETE': [],
   'GET': ["/api/Job/import-history","/custom-pages","/custom-rich-texts","/external-map-layers","/field-definitions","/find-your-forester/assignable-people","/focus-areas","/focus-areas/locations","/gis-bulk-import/source-organizations","/invoices","/loa-upload/dashboard","/people","/people/lookup","/people/lookup/wadnr","/people/stewardship-areas/regions","/programs/eligible-editors","/project-types/taxonomy","/project-update-configurations","/projects/lookup","/projects/no-contact-count","/projects/pending","/projects/pending/excel-download","/projects/people-receiving-reminders","/projects/update-status","/report-templates","/report-templates/models","/roles","/vendors","/vendors/excel-download","/vendors/search"],
-  'POST': ["/agreements","/agreements/upload-file","/api/Job/clear-outdated-imports","/classifications","/classifications/upload-key-image","/counties","/custom-pages","/dnr-upland-regions","/external-map-layers","/find-your-forester/work-units/bulk-assign","/firma-home-page-images","/focus-areas","/fund-source-allocation-notes","/fund-source-allocation-notes-internal","/fund-source-allocations","/fund-sources","/gis-bulk-import/attempts","/impersonation/stop","/interactions-events","/invoice-payment-requests","/invoices","/loa-upload/publish","/organization-types","/organizations","/people/contacts","/priority-landscapes","/programs","/programs/upload-example-geospatial-file","/programs/upload-program-file","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/projects/send-custom-notification","/projects/send-preview-notification","/relationship-types","/report-templates","/report-templates/generate-reports","/support-requests","/tags","/tags/bulk-tag-projects","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
+  'POST': ["/agreements","/agreements/upload-file","/api/Job/clear-outdated-imports","/classifications","/classifications/upload-key-image","/custom-pages","/dnr-upland-regions","/external-map-layers","/find-your-forester/work-units/bulk-assign","/firma-home-page-images","/focus-areas","/fund-source-allocation-notes","/fund-source-allocation-notes-internal","/fund-source-allocations","/fund-sources","/gis-bulk-import/attempts","/impersonation/stop","/interactions-events","/invoice-payment-requests","/invoices","/loa-upload/publish","/organization-types","/organizations","/people/contacts","/priority-landscapes","/programs","/programs/upload-example-geospatial-file","/programs/upload-program-file","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/projects/send-custom-notification","/projects/send-preview-notification","/relationship-types","/report-templates","/report-templates/generate-reports","/support-requests","/tags","/tags/bulk-tag-projects","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
   'PUT': ["/classifications/sort-order","/firma-home-page-images/sort-order","/project-types/sort-order","/project-update-configurations","/projects/featured"],
 };
 
@@ -133,7 +133,6 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/agreements/[^/]+$"),
     new RegExp("^/agreements/[^/]+/contacts/[^/]+$"),
     new RegExp("^/classifications/[^/]+$"),
-    new RegExp("^/counties/[^/]+$"),
     new RegExp("^/custom-pages/[^/]+$"),
     new RegExp("^/dnr-upland-regions/[^/]+$"),
     new RegExp("^/external-map-layers/[^/]+$"),
@@ -180,6 +179,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/treatments/[^/]+$"),
   ],
   'GET': [
+    new RegExp("^/api/Job/[^/]+/freshness$"),
     new RegExp("^/classifications/[^/]+/projects$"),
     new RegExp("^/cost-share/generate-pdf/[^/]+$"),
     new RegExp("^/custom-pages/[^/]+$"),
@@ -329,7 +329,6 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/agreements/[^/]+/fund-source-allocations$"),
     new RegExp("^/agreements/[^/]+/projects$"),
     new RegExp("^/classifications/[^/]+$"),
-    new RegExp("^/counties/[^/]+$"),
     new RegExp("^/custom-pages/[^/]+$"),
     new RegExp("^/custom-pages/[^/]+/content$"),
     new RegExp("^/custom-rich-texts/[^/]+$"),

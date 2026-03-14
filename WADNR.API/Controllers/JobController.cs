@@ -19,7 +19,9 @@ namespace WADNR.API.Controllers;
 public class JobController(
     WADNRDbContext dbContext,
     ILogger<JobController> logger,
-    IOptions<WADNRConfiguration> configuration)
+    IOptions<WADNRConfiguration> configuration,
+    FinanceApiDownloadService financeApiDownloadService,
+    ArcGisAuthService arcGisAuthService)
     : SitkaController<JobController>(dbContext, logger, configuration)
 {
     /// <summary>
@@ -79,6 +81,50 @@ public class JobController(
 
         return Ok(history);
     }
+
+    /// <summary>
+    /// Returns freshness info for a given import job by comparing the local DB's latest
+    /// successful import against the external Finance API's current LOAD_COMPLETE_DATE.
+    /// </summary>
+    [HttpGet("{jobName}/freshness")]
+    [AdminFeature]
+    public async Task<ActionResult> CheckFreshness([FromRoute] string jobName)
+    {
+        if (!JobNameToTableTypeID.TryGetValue(jobName, out var tableTypeID))
+        {
+            return BadRequest(new { Message = $"Unknown job name '{jobName}'." });
+        }
+
+        try
+        {
+            var token = await arcGisAuthService.GetDataImportUserTokenAsync();
+            var externalLastLoadDate = await financeApiDownloadService.GetLastLoadDateAsync(token);
+            var importInfo = await financeApiDownloadService.GetLatestSuccessfulImportAsync(tableTypeID, null);
+
+            var isCurrent = importInfo != null && importInfo.FinanceApiLastLoadDate == externalLastLoadDate;
+
+            return Ok(new
+            {
+                IsCurrent = isCurrent,
+                LastImportDate = importInfo?.JsonImportDate,
+                LastLoadDate = importInfo?.FinanceApiLastLoadDate,
+                LatestAvailableLoadDate = externalLastLoadDate
+            });
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to check freshness for job {JobName}", jobName);
+            return StatusCode(500, new { Message = $"Unable to check freshness: {ex.Message}" });
+        }
+    }
+
+    private static readonly Dictionary<string, int> JobNameToTableTypeID = new()
+    {
+        ["Vendor Import"] = (int)ArcOnlineFinanceApiRawJsonImportTableTypeEnum.Vendor,
+        ["Program Index Import"] = (int)ArcOnlineFinanceApiRawJsonImportTableTypeEnum.ProgramIndex,
+        ["Project Code Import"] = (int)ArcOnlineFinanceApiRawJsonImportTableTypeEnum.ProjectCode,
+        ["FundSource Expenditure Import"] = (int)ArcOnlineFinanceApiRawJsonImportTableTypeEnum.FundSourceExpenditure,
+    };
 
     /// <summary>
     /// Clears outdated ArcOnline finance API raw JSON imports.

@@ -38,6 +38,11 @@ export class WamasService {
         return this.http.get<WamasSinglelineResponse>(url);
     }
 
+    /** Fire a lightweight request to wake the service. Response is discarded. */
+    public warmUp(): void {
+        this.makeWamasRequest("98501").subscribe({ error: () => {} });
+    }
+
     /** Convenience wrapper that extracts GcYCoord/GcXCoord into lat/lng. */
     public geocodeSingleline(address: string): Observable<WamasGeocodeResult> {
         return this.makeWamasRequest(address).pipe(

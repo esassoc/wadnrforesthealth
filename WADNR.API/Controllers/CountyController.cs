@@ -63,42 +63,4 @@ public class CountyController(
         var featureCollection = await Projects.MapProjectFeatureCollection(projectQuery);
         return Ok(featureCollection);
     }
-
-    [HttpPost]
-    [AdminFeature]
-    public async Task<ActionResult<CountyDetail>> Create([FromBody] CountyUpsertRequest dto)
-    {
-        var created = await Counties.CreateAsync(DbContext, dto, CallingUser.PersonID);
-        if (created == null)
-        {
-            return BadRequest();
-        }
-        return CreatedAtAction(nameof(Get), new { countyID = created.CountyID }, created);
-    }
-
-    [HttpPut("{countyID}")]
-    [AdminFeature]
-    [EntityNotFound(typeof(County), "countyID")]
-    public async Task<ActionResult<CountyDetail>> Update([FromRoute] int countyID, [FromBody] CountyUpsertRequest dto)
-    {
-        var updated = await Counties.UpdateAsync(DbContext, countyID, dto, CallingUser.PersonID);
-        if (updated == null)
-        {
-            return NotFound();
-        }
-        return Ok(updated);
-    }
-
-    [HttpDelete("{countyID}")]
-    [AdminFeature]
-    [EntityNotFound(typeof(County), "countyID")]
-    public async Task<IActionResult> Delete([FromRoute] int countyID)
-    {
-        var deleted = await Counties.DeleteAsync(DbContext, countyID);
-        if (!deleted)
-        {
-            return NotFound();
-        }
-        return NoContent();
-    }
 }

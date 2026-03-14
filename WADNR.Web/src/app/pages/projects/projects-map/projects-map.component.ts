@@ -32,6 +32,7 @@ import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/l
 import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 import * as L from "leaflet";
+import { WamasService } from "src/app/shared/services/wamas.service";
 // ButtonLoadingDirective removed from imports because it's not used in this template
 
 @Component({
@@ -133,8 +134,10 @@ export class ProjectsMapComponent implements OnInit, AfterViewChecked {
         private classificationService: ClassificationService,
         private organizationService: OrganizationService,
         private router: Router,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private wamasService: WamasService
     ) {
+        this.wamasService.warmUp();
         this.form = this.fb.group({
             colorBy: ["ProjectStageID"],
             filterType: [this.selectedFilterType],

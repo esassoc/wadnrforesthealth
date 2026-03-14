@@ -31,7 +31,6 @@ export * from './coordinate-sequence-factory';
 export * from './county-detail';
 export * from './county-grid-row';
 export * from './county-lookup-item';
-export * from './county-upsert-request';
 export * from './create-workflow-progress-response';
 export * from './create-workflow-progress-response-steps';
 export * from './custom-notification-request';

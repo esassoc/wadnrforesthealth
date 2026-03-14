@@ -1463,53 +1463,6 @@
           }
         },
         "x-anonymous": true
-      },
-      "post": {
-        "tags": [
-          "County"
-        ],
-        "operationId": "Create_County",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CountyUpsertRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CountyUpsertRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CountyUpsertRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/CountyDetail"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CountyDetail"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CountyDetail"
-                }
-              }
-            }
-          }
-        }
       }
     },
     "/counties/{countyID}": {
@@ -1552,86 +1505,6 @@
           }
         },
         "x-anonymous": true
-      },
-      "put": {
-        "tags": [
-          "County"
-        ],
-        "operationId": "Update_County",
-        "parameters": [
-          {
-            "name": "countyID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CountyUpsertRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CountyUpsertRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CountyUpsertRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/CountyDetail"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CountyDetail"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CountyDetail"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "County"
-        ],
-        "operationId": "Delete_County",
-        "parameters": [
-          {
-            "name": "countyID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
       }
     },
     "/counties/{countyID}/projects": {
@@ -8555,6 +8428,29 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/Job/{jobName}/freshness": {
+      "get": {
+        "tags": [
+          "Job"
+        ],
+        "operationId": "CheckFreshness_Job",
+        "parameters": [
+          {
+            "name": "jobName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -23566,12 +23462,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AgreementAmount": {
@@ -23594,7 +23490,7 @@
           },
           "FirstBillDueOn": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "Notes": {
@@ -23652,12 +23548,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AgreementAmount": {
@@ -23799,12 +23695,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AgreementAmount": {
@@ -23829,7 +23725,7 @@
           },
           "FirstBillDueOn": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "Notes": {
@@ -24422,20 +24318,6 @@
           "CountyName": {
             "type": "string",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CountyUpsertRequest": {
-        "type": "object",
-        "properties": {
-          "CountyName": {
-            "type": "string",
-            "nullable": true
-          },
-          "StateProvinceID": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -25716,12 +25598,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AgreementAmount": {
@@ -25769,12 +25651,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AgreementAmount": {
@@ -25891,7 +25773,7 @@
           },
           "FundSourceEndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "HasFundFSPs": {
@@ -25954,12 +25836,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AllocationAmount": {
@@ -26234,12 +26116,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AllocationAmount": {
@@ -26818,12 +26700,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AllocationAmount": {
@@ -26992,12 +26874,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ConditionsAndRequirements": {
@@ -27124,12 +27006,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "FundSourceStatusName": {
@@ -27323,12 +27205,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ConditionsAndRequirements": {
@@ -28409,7 +28291,7 @@
           },
           "InteractionEventDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "HasSimpleLocation": {
             "type": "boolean"
@@ -28454,7 +28336,7 @@
           },
           "InteractionEventDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "StaffPerson": {
             "$ref": "#/components/schemas/PersonLookupItem"
@@ -28515,7 +28397,7 @@
           },
           "InteractionEventDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "ProjectIDs": {
             "type": "array",
@@ -28567,7 +28449,7 @@
           },
           "InvoiceDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "InvoicePaymentRequestID": {
             "type": "integer",
@@ -28575,7 +28457,7 @@
           },
           "InvoicePaymentRequestDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "PurchaseAuthority": {
             "type": "string",
@@ -28771,7 +28653,7 @@
           },
           "InvoiceDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "Fund": {
             "type": "string",
@@ -28853,7 +28735,7 @@
           },
           "InvoicePaymentRequestDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "VendorID": {
             "type": "integer",
@@ -28930,7 +28812,7 @@
           },
           "InvoicePaymentRequestDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "PurchaseAuthority": {
             "maxLength": 255,
@@ -28979,7 +28861,7 @@
           },
           "InvoiceDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "PaymentAmount": {
             "type": "number",
@@ -29737,17 +29619,17 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -31061,17 +30943,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectGisIdentifier": {
@@ -31130,17 +31012,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "FocusAreaID": {
@@ -31190,17 +31072,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "FocusAreaID": {
@@ -31252,7 +31134,7 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectThemeNotes": {
@@ -31426,12 +31308,12 @@
           },
           "ProjectStartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectEndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "InvoiceCount": {
@@ -31467,12 +31349,12 @@
           },
           "ProjectStartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectEndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "InvoiceCount": {
@@ -31631,17 +31513,17 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -31710,17 +31592,17 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectExpiryDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectCompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TotalPaymentAmount": {
@@ -31792,17 +31674,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "Duration": {
@@ -32342,17 +32224,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -32399,17 +32281,17 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -32470,17 +32352,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -33381,17 +33263,17 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -33747,17 +33629,17 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -33853,17 +33735,17 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -34090,17 +33972,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "FocusAreaID": {
@@ -34159,17 +34041,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "FocusAreaID": {
@@ -34285,7 +34167,7 @@
           },
           "ProjectUpdateKickOffDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectUpdateKickOffIntroContent": {
@@ -34309,7 +34191,7 @@
           },
           "ProjectUpdateCloseOutDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectUpdateCloseOutIntroContent": {
@@ -34332,7 +34214,7 @@
           },
           "ProjectUpdateKickOffDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectUpdateKickOffIntroContent": {
@@ -34358,7 +34240,7 @@
           },
           "ProjectUpdateCloseOutDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectUpdateCloseOutIntroContent": {
@@ -34885,17 +34767,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TotalFunding": {
@@ -34993,12 +34875,12 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -35041,7 +34923,7 @@
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "FhtProjectNumber": {
@@ -35968,12 +35850,12 @@
           },
           "TreatmentStartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TreatmentEndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TreatmentFootprintAcres": {
@@ -36035,12 +35917,12 @@
           },
           "TreatmentStartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TreatmentEndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TreatmentFootprintAcres": {
@@ -36127,12 +36009,12 @@
           },
           "TreatmentStartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TreatmentEndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TreatmentFootprintAcres": {
@@ -36351,11 +36233,11 @@
           },
           "TreatmentStartDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "TreatmentEndDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "TreatmentFootprintAcres": {
             "type": "number",
@@ -36420,11 +36302,11 @@
           },
           "TreatmentStartDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "TreatmentEndDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "TreatmentFootprintAcres": {
             "type": "number",
