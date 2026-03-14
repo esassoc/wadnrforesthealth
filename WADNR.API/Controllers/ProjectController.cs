@@ -65,8 +65,7 @@ public class ProjectController(
     }
 
     [HttpGet("excel-download")]
-    [AllowAnonymous]
-    [ProjectViewFeature]
+    [ExcelDownloadFeature]
     public async Task<IActionResult> ExcelDownload()
     {
         var projects = await Projects.ListAsExcelRowForUserAsync(DbContext, CallingUser);
@@ -104,7 +103,7 @@ public class ProjectController(
     }
 
     [HttpGet("pending/excel-download")]
-    [ProjectPendingViewFeature]
+    [ExcelDownloadFeature]
     public async Task<IActionResult> PendingExcelDownload()
     {
         var projects = await Projects.ListPendingAsExcelRowForUserAsync(DbContext, CallingUser);
@@ -400,7 +399,8 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}/invoices")]
-    [ProjectEditAsAdminFeature]
+    [AllowAnonymous]
+    [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<List<InvoiceGridRow>>> ListInvoices([FromRoute] int projectID)
     {
@@ -409,7 +409,8 @@ public class ProjectController(
     }
 
     [HttpGet("{projectID}/invoice-payment-requests")]
-    [ProjectEditAsAdminFeature]
+    [AllowAnonymous]
+    [ProjectViewFeature]
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<List<InvoicePaymentRequestGridRow>>> ListInvoicePaymentRequests([FromRoute] int projectID)
     {

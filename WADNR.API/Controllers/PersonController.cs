@@ -81,7 +81,7 @@ public class PersonController(
     }
 
     [HttpGet("{personID}/agreements/excel-download")]
-    [NormalUserFeature]
+    [ExcelDownloadFeature]
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<IActionResult> AgreementsExcelDownload([FromRoute] int personID)
     {

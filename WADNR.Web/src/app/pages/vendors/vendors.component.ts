@@ -1,13 +1,14 @@
 import { Component, signal } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { ColDef } from "ag-grid-community";
-import { finalize, Observable } from "rxjs";
+import { finalize, map, Observable } from "rxjs";
 
 import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 
+import { AuthenticationService } from "src/app/services/authentication.service";
 import { environment } from "src/environments/environment";
 import { VendorService } from "src/app/shared/generated/api/vendor.service";
 import { VendorGridRow } from "src/app/shared/generated/model/vendor-grid-row";
@@ -24,9 +25,14 @@ export class VendorsComponent {
     public columnDefs: ColDef<VendorGridRow>[];
     public customRichTextTypeID = FirmaPageTypeEnum.Vendor;
     public isDownloading = signal(false);
+    public canDownloadExcel$: Observable<boolean>;
     private excelDownloadUrl = `${environment.mainAppApiUrl}/vendors/excel-download`;
 
-    constructor(private vendorService: VendorService, private utilityFunctions: UtilityFunctionsService) {}
+    constructor(
+        private vendorService: VendorService,
+        private utilityFunctions: UtilityFunctionsService,
+        private authenticationService: AuthenticationService,
+    ) {}
 
     downloadExcel(): void {
         this.isDownloading.set(true);
@@ -36,6 +42,9 @@ export class VendorsComponent {
     }
 
     ngOnInit(): void {
+        this.canDownloadExcel$ = this.authenticationService.currentUserSetObservable.pipe(
+            map((user) => this.authenticationService.hasElevatedProjectAccess(user)),
+        );
         this.columnDefs = [
             this.utilityFunctions.createLinkColumnDef("Vendor Name", "VendorName", "VendorID", {
                 InRouterLink: "/vendors/",

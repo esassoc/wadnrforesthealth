@@ -34,7 +34,7 @@ public class AgreementController(
     }
 
     [HttpGet("excel-download")]
-    [AllowAnonymous]
+    [ExcelDownloadFeature]
     public async Task<IActionResult> ExcelDownload()
     {
         var agreements = await Agreements.ListAsExcelRowAsync(DbContext);

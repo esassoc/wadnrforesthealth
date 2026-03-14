@@ -62,6 +62,7 @@ export class PersonDetailComponent {
     public isDownloadingAgreements = signal(false);
     private agreementExcelDownloadUrl: string;
 
+    public canDownloadExcel$: Observable<boolean>;
     public canImpersonate$: Observable<boolean>;
     public canEditBasics$: Observable<boolean>;
     public canEditRoles$: Observable<boolean>;
@@ -138,6 +139,10 @@ export class PersonDetailComponent {
             this.person$,
             this.authenticationService.currentUserSetObservable,
         ]).pipe(shareReplay({ bufferSize: 1, refCount: true }));
+
+        this.canDownloadExcel$ = this.authenticationService.currentUserSetObservable.pipe(
+            map((user) => this.authenticationService.hasElevatedProjectAccess(user)),
+        );
 
         this.canImpersonate$ = userAndPerson$.pipe(
             map(([person, currentUser]) => {

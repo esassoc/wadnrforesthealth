@@ -254,11 +254,13 @@
                         <p>{{ organization.OrganizationName }} is associated with the following Agreements:</p>
                         @if (agreements.length > 0) {
                             <wadnr-grid [rowData]="agreements" [columnDefs]="agreementColumnDefs" height="300px" downloadFileName="Organization_Agreements">
+                                @if (canDownloadExcel$ | async) {
                                 <div customGridActionsRight class="flex">
                                     <button class="btn btn-sm btn-secondary" (click)="downloadAgreementExcel()" [buttonLoading]="isDownloadingAgreements()">
                                         <span class="fas fa-download"></span> Download Full Database
                                     </button>
                                 </div>
+                                }
                             </wadnr-grid>
                         } @else {
                             <p class="system-text">No Agreements associated with this Contributing Organization.</p>

@@ -111,6 +111,7 @@ export class OrganizationDetailComponent {
 
     public canManageOrganizations$: Observable<boolean>;
     public canManagePrograms$: Observable<boolean>;
+    public canDownloadExcel$: Observable<boolean>;
 
     private refreshData$ = new Subject<void>();
 
@@ -202,6 +203,9 @@ export class OrganizationDetailComponent {
         this.canManagePrograms$ = this.authenticationService.currentUserSetObservable.pipe(
             map(user => this.authenticationService.canManagePrograms(user)),
             shareReplay({ bufferSize: 1, refCount: true })
+        );
+        this.canDownloadExcel$ = this.authenticationService.currentUserSetObservable.pipe(
+            map(user => this.authenticationService.hasElevatedProjectAccess(user)),
         );
 
         this.canManagePrograms$.pipe(take(1)).subscribe(canManage => {

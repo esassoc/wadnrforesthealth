@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { Router, RouterLink } from "@angular/router";
 import { ColDef } from "ag-grid-community";
-import { Observable } from "rxjs";
+import { map, Observable } from "rxjs";
 import { DialogService } from "@ngneat/dialog";
 
 import { AuthenticationService } from "src/app/services/authentication.service";
@@ -26,6 +26,7 @@ export class ProjectsComponent {
     public currentUser$: Observable<PersonDetail | null>;
     public columnDefs: ColDef[];
     public customRichTextTypeID = FirmaPageTypeEnum.FullProjectList;
+    public canDownloadExcel$: Observable<boolean>;
     public excelDownloadUrl = `${environment.mainAppApiUrl}/projects/excel-download`;
 
     constructor(
@@ -37,6 +38,7 @@ export class ProjectsComponent {
 
     ngOnInit(): void {
         this.currentUser$ = this.authenticationService.currentUserSetObservable;
+        this.canDownloadExcel$ = this.currentUser$.pipe(map((user) => this.authenticationService.hasElevatedProjectAccess(user)));
         this.projects$ = this.projectService.listProject();
     }
 

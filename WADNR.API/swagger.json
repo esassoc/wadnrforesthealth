@@ -102,8 +102,7 @@
           "200": {
             "description": "OK"
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/agreements/{agreementID}": {
@@ -4341,8 +4340,7 @@
           "200": {
             "description": "OK"
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/fund-sources/lookup": {
@@ -9240,8 +9238,7 @@
           "200": {
             "description": "OK"
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/organizations/{organizationID}/boundary": {
@@ -12518,8 +12515,7 @@
           "200": {
             "description": "OK"
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/projects/pending": {
@@ -13661,7 +13657,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/invoice-payment-requests": {
@@ -13711,7 +13708,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/organizations": {

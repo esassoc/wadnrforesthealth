@@ -31,7 +31,7 @@ public class VendorController(
     }
 
     [HttpGet("excel-download")]
-    [VendorViewFeature]
+    [ExcelDownloadFeature]
     public async Task<IActionResult> ExcelDownload()
     {
         var vendors = await Vendors.ListAsExcelRowAsync(DbContext);

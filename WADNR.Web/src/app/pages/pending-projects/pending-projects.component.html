@@ -11,10 +11,12 @@
         [columnDefs]="columnDefs"
         [pinnedTotalsRow]="pinnedTotalsRow"
         downloadFileName="pending-projects">
+        @if (canDownloadExcel$ | async) {
         <div customGridActionsRight class="flex">
             <button class="btn btn-sm btn-secondary" (click)="downloadExcel()" [buttonLoading]="isDownloading()">
                 <span class="fas fa-download"></span> Download Full Database
             </button>
         </div>
+        }
     </wadnr-grid>
 </div>

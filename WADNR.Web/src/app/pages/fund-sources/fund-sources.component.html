@@ -9,9 +9,11 @@
         [defaultRowSelection]="'singleRow'"
         (selectionChanged)="onFundSourceSelected($event)">
         <div customGridActionsRight class="flex">
+            @if (canDownloadExcel$ | async) {
             <button class="btn btn-sm btn-secondary" (click)="downloadExcel()" [buttonLoading]="isDownloading()">
                 <span class="fas fa-download"></span> Download Full Database
             </button>
+            }
             @if (canManage$ | async) {
             <button class="btn btn-sm btn-primary" (click)="createNewFundSource()">
                 <span class="fas fa-plus"></span> Create New

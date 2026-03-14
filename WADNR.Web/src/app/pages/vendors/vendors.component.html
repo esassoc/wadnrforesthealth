@@ -2,10 +2,12 @@
 
 <div class="page-body">
     <wadnr-grid [rowData]="vendors$ | async" [columnDefs]="columnDefs" downloadFileName="vendors">
+        @if (canDownloadExcel$ | async) {
         <div customGridActionsRight>
             <button class="btn btn-sm btn-secondary" (click)="downloadExcel()" [buttonLoading]="isDownloading()">
                 <span class="fas fa-download"></span> Download Full Database
             </button>
         </div>
+        }
     </wadnr-grid>
 </div>

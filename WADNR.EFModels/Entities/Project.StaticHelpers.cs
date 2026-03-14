@@ -714,11 +714,13 @@ public static class Projects
                 FhtProjectNumber = p.FhtProjectNumber,
                 ProjectGisIdentifier = p.ProjectGisIdentifier,
                 ProgramNames = string.Join(", ", p.ProjectPrograms
-                    .Where(pp => !pp.Program.IsDefaultProgramForImportOnly)
-                    .Select(pp => pp.Program.ProgramName)),
+                    .Select(pp => pp.Program.IsDefaultProgramForImportOnly ? "(default)" : pp.Program.ProgramName)),
                 NonLeadImplementingOrganizations = string.Join(", ", p.ProjectOrganizations
-                    .Where(po => !po.RelationshipType.IsPrimaryContact)
-                    .Select(po => po.Organization.OrganizationName)),
+                    .Select(po => po.Organization.OrganizationName
+                        + (!string.IsNullOrWhiteSpace(po.Organization.OrganizationShortName)
+                            ? " (" + po.Organization.OrganizationShortName + ")"
+                            : string.Empty)
+                        + (!po.Organization.IsActive ? " (Inactive)" : string.Empty))),
                 ProjectStageName = p.ProjectStage.ProjectStageName,
                 ProjectThemes = string.Join(", ", p.ProjectClassifications
                     .Select(pc => pc.Classification.DisplayName)),
@@ -781,11 +783,13 @@ public static class Projects
                 FhtProjectNumber = p.FhtProjectNumber,
                 ProjectGisIdentifier = p.ProjectGisIdentifier,
                 ProgramNames = string.Join(", ", p.ProjectPrograms
-                    .Where(pp => !pp.Program.IsDefaultProgramForImportOnly)
-                    .Select(pp => pp.Program.ProgramName)),
+                    .Select(pp => pp.Program.IsDefaultProgramForImportOnly ? "(default)" : pp.Program.ProgramName)),
                 NonLeadImplementingOrganizations = string.Join(", ", p.ProjectOrganizations
-                    .Where(po => !po.RelationshipType.IsPrimaryContact)
-                    .Select(po => po.Organization.OrganizationName)),
+                    .Select(po => po.Organization.OrganizationName
+                        + (!string.IsNullOrWhiteSpace(po.Organization.OrganizationShortName)
+                            ? " (" + po.Organization.OrganizationShortName + ")"
+                            : string.Empty)
+                        + (!po.Organization.IsActive ? " (Inactive)" : string.Empty))),
                 ProjectStageName = p.ProjectStage.ProjectStageName,
                 ProjectThemes = string.Join(", ", p.ProjectClassifications
                     .Select(pc => pc.Classification.DisplayName)),

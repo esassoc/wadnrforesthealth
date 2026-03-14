@@ -2,12 +2,13 @@ import { Component, OnInit, signal, ViewContainerRef } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { Router, RouterLink } from "@angular/router";
 import { ColDef } from "ag-grid-community";
-import { BehaviorSubject, Observable, switchMap, finalize } from "rxjs";
+import { BehaviorSubject, map, Observable, switchMap, finalize } from "rxjs";
 
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
+import { AuthenticationService } from "src/app/services/authentication.service";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -35,6 +36,7 @@ export class PendingProjectsComponent implements OnInit {
     };
 
     public isDownloading = signal(false);
+    public canDownloadExcel$: Observable<boolean>;
 
     private refreshData$ = new BehaviorSubject<void>(undefined);
 
@@ -44,10 +46,14 @@ export class PendingProjectsComponent implements OnInit {
         private router: Router,
         private alertService: AlertService,
         private confirmService: ConfirmService,
-        private viewContainerRef: ViewContainerRef
+        private viewContainerRef: ViewContainerRef,
+        private authenticationService: AuthenticationService
     ) {}
 
     ngOnInit(): void {
+        this.canDownloadExcel$ = this.authenticationService.currentUserSetObservable.pipe(
+            map((user) => this.authenticationService.hasElevatedProjectAccess(user)),
+        );
         this.projects$ = this.refreshData$.pipe(switchMap(() => this.projectService.listPendingProject()));
         this.columnDefs = this.createColumnDefs();
     }

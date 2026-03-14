@@ -35,7 +35,7 @@ public class FundSourceController(
     }
 
     [HttpGet("excel-download")]
-    [AllowAnonymous]
+    [ExcelDownloadFeature]
     public async Task<IActionResult> ExcelDownload()
     {
         var fundSources = await FundSources.ListAsExcelRowAsync(DbContext);

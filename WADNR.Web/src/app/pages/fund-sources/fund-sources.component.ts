@@ -33,6 +33,7 @@ export class FundSourcesComponent {
     public columnDefs: ColDef[];
     public customRichTextTypeID = FirmaPageTypeEnum.FullFundSourceList;
     public canManage$: Observable<boolean>;
+    public canDownloadExcel$: Observable<boolean>;
     public isDownloading = signal(false);
     private excelDownloadUrl = `${environment.mainAppApiUrl}/fund-sources/excel-download`;
 
@@ -57,6 +58,9 @@ export class FundSourcesComponent {
     ngOnInit(): void {
         this.canManage$ = this.authService.currentUserSetObservable.pipe(
             map((user) => this.authService.canManageFundSources(user)),
+        );
+        this.canDownloadExcel$ = this.authService.currentUserSetObservable.pipe(
+            map((user) => this.authService.hasElevatedProjectAccess(user)),
         );
 
         this.columnDefs = [

@@ -3,9 +3,11 @@
 <div class="page-body">
     <wadnr-grid [rowData]="agreements$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" downloadFileName="agreements" [gridTitle]="'Agreements'">
         <div customGridActionsRight class="flex">
+            @if (canDownloadExcel$ | async) {
             <button class="btn btn-sm btn-secondary" (click)="downloadExcel()" [buttonLoading]="isDownloading()">
                 <span class="fas fa-download"></span> Download Full Database
             </button>
+            }
             @if (canManage$ | async) {
             <button class="btn btn-sm btn-primary" (click)="createNewAgreement()">
                 <span class="fas fa-plus"></span> Create New

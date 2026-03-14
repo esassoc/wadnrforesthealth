@@ -30,6 +30,7 @@ export class AgreementsComponent {
     };
     public customRichTextTypeID = FirmaPageTypeEnum.FullAgreementList;
     public canManage$: Observable<boolean>;
+    public canDownloadExcel$: Observable<boolean>;
     public isDownloading = signal(false);
     private excelDownloadUrl = `${environment.mainAppApiUrl}/agreements/excel-download`;
 
@@ -44,6 +45,9 @@ export class AgreementsComponent {
     ngOnInit(): void {
         this.canManage$ = this.authService.currentUserSetObservable.pipe(
             map((user) => this.authService.canManageFundSources(user)),
+        );
+        this.canDownloadExcel$ = this.authService.currentUserSetObservable.pipe(
+            map((user) => this.authService.hasElevatedProjectAccess(user)),
         );
 
         this.columnDefs = [

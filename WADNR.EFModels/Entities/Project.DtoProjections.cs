@@ -86,11 +86,16 @@ public static class ProjectProjections
 
         // Programs
         Programs = x.ProjectPrograms
-            .Where(pp => !pp.Program.IsDefaultProgramForImportOnly)
             .Select(pp => new ProgramLookupItem
             {
                 ProgramID = pp.Program.ProgramID,
-                ProgramName = pp.Program.DisplayName
+                ProgramName = pp.Program.IsDefaultProgramForImportOnly
+                    ? pp.Program.Organization.DisplayName
+                    : (
+                        pp.Program.ProgramName
+                        + (!string.IsNullOrWhiteSpace(pp.Program.ProgramShortName) ? " (" + pp.Program.ProgramShortName + ")" : string.Empty)
+                        + (!pp.Program.ProgramIsActive ? " (Inactive)" : string.Empty)
+                      )
             })
             .ToList(),
 

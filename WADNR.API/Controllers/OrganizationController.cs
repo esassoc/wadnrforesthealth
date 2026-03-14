@@ -181,7 +181,7 @@ public class OrganizationController(
     }
 
     [HttpGet("{organizationID}/agreements/excel-download")]
-    [AllowAnonymous]
+    [ExcelDownloadFeature]
     [EntityNotFound(typeof(Organization), "organizationID")]
     public async Task<IActionResult> AgreementsExcelDownload([FromRoute] int organizationID)
     {
