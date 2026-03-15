@@ -15,6 +15,7 @@ import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-g
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { UpdateTreatmentModalComponent, UpdateTreatmentModalData } from "./update-treatment-modal.component";
+import { LocalDatePipe } from "src/app/shared/pipes/local-date.pipe";
 
 interface TreatmentsViewModel {
     isLoading: boolean;
@@ -38,6 +39,7 @@ export class UpdateTreatmentsStepComponent extends UpdateWorkflowStepBase implem
     private currentTreatmentAreas: TreatmentAreaUpdateLookupItem[] = [];
 
     public columnDefs: ColDef[] = [];
+    private localDatePipe = new LocalDatePipe();
 
     constructor(
         private projectService: ProjectService,
@@ -120,14 +122,14 @@ export class UpdateTreatmentsStepComponent extends UpdateWorkflowStepBase implem
                 field: "TreatmentStartDate",
                 flex: 1,
                 minWidth: 100,
-                valueFormatter: (params) => this.formatDate(params.value),
+                valueFormatter: (params) => this.localDatePipe.transform(params.value),
             },
             {
                 headerName: "End Date",
                 field: "TreatmentEndDate",
                 flex: 1,
                 minWidth: 100,
-                valueFormatter: (params) => this.formatDate(params.value),
+                valueFormatter: (params) => this.localDatePipe.transform(params.value),
             },
             {
                 headerName: "Footprint (Acres)",
@@ -220,12 +222,6 @@ export class UpdateTreatmentsStepComponent extends UpdateWorkflowStepBase implem
                     },
                 });
             });
-    }
-
-    private formatDate(dateString: string | null | undefined): string {
-        if (!dateString) return "";
-        const date = new Date(dateString);
-        return date.toLocaleDateString();
     }
 
     onSave(navigate: boolean): void {

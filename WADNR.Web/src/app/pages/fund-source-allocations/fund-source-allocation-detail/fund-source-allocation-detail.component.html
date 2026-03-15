@@ -137,13 +137,13 @@
                     <!-- 14. Start Date -->
                     <div class="basics-field-row">
                         <div class="basics-field-label"><field-definition fieldDefinition="FundSourceStartDate"></field-definition></div>
-                        <div class="basics-field-value">{{ formatDate(allocation.StartDate) }}</div>
+                        <div class="basics-field-value">{{ allocation.StartDate | localDate }}</div>
                     </div>
 
                     <!-- 15. End Date -->
                     <div class="basics-field-row">
                         <div class="basics-field-label"><field-definition fieldDefinition="FundSourceEndDate"></field-definition></div>
-                        <div class="basics-field-value">{{ formatDate(allocation.EndDate) }}</div>
+                        <div class="basics-field-value">{{ allocation.EndDate | localDate }}</div>
                     </div>
 
                     <!-- 16. Federal Job Code -->
@@ -221,7 +221,7 @@
                                 <div class="file-entry">
                                     <div class="file-entry__main">
                                         <a [href]="apiUrl + '/file-resources/' + file.FileResourceGUID" target="_blank">{{ file.DisplayName || file.OriginalBaseFilename }}</a>
-                                        <span class="file-entry__meta">({{ file.FileResourceMimeTypeName }}) &mdash; {{ formatDate(file.CreateDate) }}</span>
+                                        <span class="file-entry__meta">({{ file.FileResourceMimeTypeName }}) &mdash; {{ file.CreateDate | localDate }}</span>
                                         @if (canManageFundSources$ | async) {
                                             <span class="file-entry__actions">
                                                 <a
@@ -271,31 +271,52 @@
         </div>
 
         <!-- ALLOCATION BUDGET LINE ITEMS -->
-        @if (budgetLineItems$ | async; as budgetLineItems) {
-            <div class="g-col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Allocation Budget Line Items</span>
-                    </div>
-                    <div class="card-body" [loadingSpinner]="{ isLoading: budgetLineItemsIsLoading$ | async, loadingHeight: 300 }">
-                        @if (budgetLineItems.length) {
-                            @if (canManageFundSources$ | async) {
-                                <p class="text-muted mb-2"><em>Double-click a cell to edit its value.</em></p>
-                            }
-                            <wadnr-grid
-                                [columnDefs]="budgetLineItemColumnDefs"
-                                [rowData]="budgetLineItems"
-                                height="300px"
-                                downloadFileName="budget-line-items"
-                                (cellValueChanged)="onBudgetLineItemChanged($event)">
-                            </wadnr-grid>
-                        } @else {
-                            <p class="text-muted">No budget line items.</p>
-                        }
-                    </div>
+        <div class="g-col-12">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Allocation Budget Line Items</span>
+                </div>
+                <div class="card-body" [loadingSpinner]="{ isLoading: budgetLineItemsIsLoading$ | async, loadingHeight: 300 }">
+                    @if (budgetLineItemSaveAlert(); as saveAlert) {
+                        <alert [alert]="saveAlert" (closed)="budgetLineItemSaveAlert.set(null)">
+                            {{ saveAlert.message }}
+                        </alert>
+                    }
+                    @if (budgetLineItemRows.length) {
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Cost Type</th>
+                                    <th>Amount</th>
+                                    <th>Note</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (item of budgetLineItemRows; track item.costTypeID) {
+                                    <tr>
+                                        <th scope="row">{{ item.costTypeName }}</th>
+                                        <td (focusout)="onBudgetLineItemBlur()">
+                                            <form-field [formControl]="item.amount"
+                                                [type]="FormFieldType.Currency"
+                                                [readOnly]="!canManageFundSourcesSync">
+                                            </form-field>
+                                        </td>
+                                        <td (focusout)="onBudgetLineItemBlur()">
+                                            <form-field [formControl]="item.note"
+                                                [type]="FormFieldType.Text"
+                                                [readOnly]="!canManageFundSourcesSync">
+                                            </form-field>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    } @else {
+                        <p class="text-muted">No budget line items.</p>
+                    }
                 </div>
             </div>
-        }
+        </div>
 
         <!-- BUDGET VS ACTUALS -->
         @if (budgetVsActuals$ | async; as budgetVsActuals) {
@@ -330,7 +351,7 @@
                     </div>
                     <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
                         @if (projects.length) {
-                            <wadnr-grid [columnDefs]="projectColumnDefs" [rowData]="projects" height="300px" downloadFileName="fund-source-allocation-projects"> </wadnr-grid>
+                            <wadnr-grid [columnDefs]="projectColumnDefs" [rowData]="projects" height="300px" downloadFileName="fund-source-allocation-projects" [pinnedTotalsRow]="{ fields: ['MatchAmount', 'PayAmount', 'TotalAmount'], label: 'Totals', labelField: 'ProjectName' }"> </wadnr-grid>
                         } @else {
                             <p class="text-muted">No projects associated with this allocation.</p>
                         }

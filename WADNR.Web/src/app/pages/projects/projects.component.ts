@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { Router, RouterLink } from "@angular/router";
 import { ColDef } from "ag-grid-community";
-import { map, Observable } from "rxjs";
+import { BehaviorSubject, map, Observable, shareReplay, switchMap } from "rxjs";
 import { DialogService } from "@ngneat/dialog";
 
 import { AuthenticationService } from "src/app/services/authentication.service";
@@ -27,7 +27,10 @@ export class ProjectsComponent {
     public columnDefs: ColDef[];
     public customRichTextTypeID = FirmaPageTypeEnum.FullProjectList;
     public canDownloadExcel$: Observable<boolean>;
+    public isAdmin$: Observable<boolean>;
     public excelDownloadUrl = `${environment.mainAppApiUrl}/projects/excel-download`;
+
+    private refreshProjects$ = new BehaviorSubject<void>(undefined);
 
     constructor(
         private projectService: ProjectService,
@@ -39,7 +42,18 @@ export class ProjectsComponent {
     ngOnInit(): void {
         this.currentUser$ = this.authenticationService.currentUserSetObservable;
         this.canDownloadExcel$ = this.currentUser$.pipe(map((user) => this.authenticationService.hasElevatedProjectAccess(user)));
-        this.projects$ = this.projectService.listProject();
+        this.isAdmin$ = this.currentUser$.pipe(
+            map((user) => this.authenticationService.isUserAnAdministrator(user)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+        this.projects$ = this.refreshProjects$.pipe(
+            switchMap(() => this.projectService.listProject()),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+    }
+
+    onTagged(): void {
+        this.refreshProjects$.next();
     }
 
     canCreateGisUpload(user: PersonDetail | null): boolean {

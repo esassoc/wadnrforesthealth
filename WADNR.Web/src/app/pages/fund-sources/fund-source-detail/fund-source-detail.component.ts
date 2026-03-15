@@ -24,11 +24,12 @@ import { FundSourceFileResourceGridRow } from "src/app/shared/generated/model/fu
 import { FundSourceNoteGridRow } from "src/app/shared/generated/model/fund-source-note-grid-row";
 import { FundSourceNoteInternalGridRow } from "src/app/shared/generated/model/fund-source-note-internal-grid-row";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { LocalDatePipe } from "src/app/shared/pipes/local-date.pipe";
 
 @Component({
     selector: "fund-source-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, FieldDefinitionComponent, IconComponent, LoadingDirective],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, FieldDefinitionComponent, IconComponent, LoadingDirective, LocalDatePipe],
     templateUrl: "./fund-source-detail.component.html",
     styleUrls: ["./fund-source-detail.component.scss"],
 })
@@ -296,12 +297,6 @@ export class FundSourceDetailComponent {
     formatCurrency(value: number | null | undefined): string {
         if (value == null) return "\u2014";
         return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
-    }
-
-    formatDate(value: string | null | undefined): string {
-        if (!value) return "\u2014";
-        const date = new Date(value);
-        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
     }
 
     formatDateTime(value: string | null | undefined): string {

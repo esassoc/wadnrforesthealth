@@ -1,4 +1,5 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit, signal } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
 
@@ -6,6 +7,7 @@ import { FormFieldComponent, FormFieldType } from "src/app/shared/components/for
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { AlertService } from "src/app/shared/services/alert.service";
+import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 
@@ -32,7 +34,7 @@ export interface TagModalData {
                 <h3>{{ modalTitle }}</h3>
             </div>
             <div class="modal-body">
-                <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+                <modal-alerts [alerts]="alerts()" (onClosed)="removeAlert($event)"></modal-alerts>
 
                 <form [formGroup]="form">
                     <form-field
@@ -54,14 +56,14 @@ export interface TagModalData {
                 <button
                     class="btn btn-primary"
                     (click)="save()"
-                    [buttonLoading]="isSubmitting"
-                    [disabled]="isSubmitting">
+                    [buttonLoading]="isSubmitting()"
+                    [disabled]="isSubmitting()">
                     Save
                 </button>
                 <button
                     class="btn btn-secondary"
                     (click)="cancel()"
-                    [disabled]="isSubmitting">
+                    [disabled]="isSubmitting()">
                     Cancel
                 </button>
             </div>
@@ -70,11 +72,13 @@ export interface TagModalData {
 })
 export class TagModalComponent extends BaseModal implements OnInit {
     public ref: DialogRef<TagModalData, TagDetail | null> = inject(DialogRef);
+    private destroyRef = inject(DestroyRef);
 
     public FormFieldType = FormFieldType;
     public mode: "create" | "edit" = "create";
     public tag?: TagDetail;
-    public isSubmitting = false;
+    public isSubmitting = signal(false);
+    public alerts = signal<Alert[]>([]);
 
     public form = new FormGroup<TagUpsertRequestForm>({
         TagName: TagUpsertRequestFormControls.TagName("", {
@@ -103,6 +107,12 @@ export class TagModalComponent extends BaseModal implements OnInit {
                 TagDescription: this.tag.TagDescription,
             });
         }
+
+        this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+            if (this.alerts().length > 0) {
+                this.alerts.set([]);
+            }
+        });
     }
 
     get modalTitle(): string {
@@ -115,8 +125,8 @@ export class TagModalComponent extends BaseModal implements OnInit {
             return;
         }
 
-        this.isSubmitting = true;
-        this.localAlerts = [];
+        this.isSubmitting.set(true);
+        this.alerts.set([]);
 
         const dto = new TagUpsertRequest(this.form.value);
 
@@ -133,11 +143,15 @@ export class TagModalComponent extends BaseModal implements OnInit {
                 this.ref.close(result);
             },
             error: (err) => {
-                this.isSubmitting = false;
-                const message = err?.error?.message ?? err?.message ?? "An error occurred.";
-                this.addLocalAlert(message, AlertContext.Danger, true);
+                this.isSubmitting.set(false);
+                const message = typeof err?.error === "string" ? err.error : (err?.message ?? "An error occurred.");
+                this.alerts.update(current => [...current, new Alert(message, AlertContext.Danger, true)]);
             }
         });
+    }
+
+    removeAlert(alert: Alert): void {
+        this.alerts.update(current => current.filter(a => a !== alert));
     }
 
     cancel(): void {

@@ -209,9 +209,16 @@ export class InteractionEventDetailComponent {
     openEditModal(vm: { interactionEvent: InteractionEventDetail; contacts: PersonLookupItem[]; projects: ProjectLookupItem[] }): void {
         forkJoin({
             people: this.personService.listLookupPerson(),
+            wadnrPeople: this.personService.listWadnrLookupPerson(),
             projects: this.projectService.listLookupProject(),
-        }).subscribe(({ people, projects }) => {
+        }).subscribe(({ people, wadnrPeople, projects }) => {
             const personOptions: SelectDropdownOption[] = people.map(p => ({
+                Value: p.PersonID,
+                Label: p.FullName,
+                disabled: false,
+            } as SelectDropdownOption));
+
+            const staffOptions: SelectDropdownOption[] = wadnrPeople.map(p => ({
                 Value: p.PersonID,
                 Label: p.FullName,
                 disabled: false,
@@ -228,7 +235,7 @@ export class InteractionEventDetailComponent {
                     data: {
                         mode: "edit" as const,
                         projectID: 0,
-                        staffPersonOptions: personOptions,
+                        staffPersonOptions: staffOptions,
                         contactOptions: personOptions,
                         projectOptions: projectOptions,
                         interactionEvent: {

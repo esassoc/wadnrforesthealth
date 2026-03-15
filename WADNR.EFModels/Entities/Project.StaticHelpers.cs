@@ -968,6 +968,13 @@ public static class Projects
             || ProjectAuthorization.CanApprove(callingUser, authData, stewardshipAreaTypeID)
             || ProjectAuthorization.IsMyProject(callingUser, authData);
 
+        entity.UserCanManageTreatments = isAdmin
+            || (callingUser.SupplementalRoleList?.Any(r =>
+                r.RoleID == (int)RoleEnum.CanManageFundSourcesAndAgreements) ?? false);
+
+        entity.UserCanEditProjectAsAdmin = entity.UserCanDirectEdit
+            || callingUser.HasCanEditProgramRole();
+
         entity.CanStartUpdate = entity.UserCanEdit && isApproved && !entity.HasExistingUpdateBatch;
     }
 

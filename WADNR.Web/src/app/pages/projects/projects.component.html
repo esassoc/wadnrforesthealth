@@ -19,5 +19,5 @@
 </ng-template>
 
 <div class="page-body">
-    <project-grid [rowData]="projects$ | async" defaultRowSelection="multiRow" [excelDownloadUrl]="(canDownloadExcel$ | async) ? excelDownloadUrl : null"> </project-grid>
+    <project-grid [rowData]="projects$ | async" [showTagging]="(isAdmin$ | async) ?? false" [excelDownloadUrl]="(canDownloadExcel$ | async) ? excelDownloadUrl : null" (tagged)="onTagged()"></project-grid>
 </div>

@@ -82,13 +82,13 @@
                 <!-- 10. Start Date -->
                 <div class="basics-field-row">
                     <div class="basics-field-label"><field-definition fieldDefinition="FundSourceStartDate"></field-definition></div>
-                    <div class="basics-field-value">{{ formatDate(fundSource.StartDate) }}</div>
+                    <div class="basics-field-value">{{ fundSource.StartDate | localDate }}</div>
                 </div>
 
                 <!-- 11. End Date -->
                 <div class="basics-field-row">
                     <div class="basics-field-label"><field-definition fieldDefinition="FundSourceEndDate"></field-definition></div>
-                    <div class="basics-field-value">{{ formatDate(fundSource.EndDate) }}</div>
+                    <div class="basics-field-value">{{ fundSource.EndDate | localDate }}</div>
                 </div>
             </div>
         </div>
@@ -112,7 +112,7 @@
                             <div class="file-entry">
                                 <div class="file-entry__main">
                                     <a [href]="apiUrl + '/file-resources/' + file.FileResourceGUID" target="_blank">{{ file.DisplayName || file.OriginalBaseFilename }}</a>
-                                    <span class="file-entry__meta">({{ file.FileResourceMimeTypeName }}) &mdash; {{ formatDate(file.CreateDate) }}</span>
+                                    <span class="file-entry__meta">({{ file.FileResourceMimeTypeName }}) &mdash; {{ file.CreateDate | localDate }}</span>
                                     @if (canManageFundSources$ | async) {
                                         <span class="file-entry__actions">
                                             <a

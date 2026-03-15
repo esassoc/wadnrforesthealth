@@ -132,10 +132,10 @@
                         <div class="g-col-8">{{ project.ProjectStage?.ProjectStageName || "—" }}</div>
 
                         <div class="g-col-4 field-label"><field-definition fieldDefinition="ProjectInitiationDate"></field-definition></div>
-                        <div class="g-col-8">{{ formatDate(project.PlannedDate) }}</div>
+                        <div class="g-col-8">{{ project.PlannedDate | localDate }}</div>
 
                         <div class="g-col-4 field-label"><field-definition fieldDefinition="CompletionDate"></field-definition></div>
-                        <div class="g-col-8">{{ formatDate(project.CompletionDate) }}</div>
+                        <div class="g-col-8">{{ project.CompletionDate | localDate }}</div>
 
                         <div class="g-col-4 field-label"><field-definition fieldDefinition="LeadImplementerOrganization"></field-definition></div>
                         <div class="g-col-8">
@@ -152,7 +152,7 @@
                         <div class="g-col-8">{{ project.ProjectDescription || "—" }}</div>
 
                         <div class="g-col-4 field-label"><field-definition fieldDefinition="ExpirationDate"></field-definition></div>
-                        <div class="g-col-8">{{ formatDate(project.ExpirationDate) }}</div>
+                        <div class="g-col-8">{{ project.ExpirationDate | localDate }}</div>
 
                         <div class="g-col-4 field-label"><field-definition fieldDefinition="FocusArea" labelOverride="DNR LOA Focus Area"></field-definition></div>
                         <div class="g-col-8">{{ project.FocusAreaName || "—" }}</div>
@@ -253,8 +253,8 @@
                                     <h5 class="card-subsection-heading">Location Information</h5>
                                 </div>
                                 <ul class="list-unstyled">
-                                    <li>Latitude: {{ project.Latitude }}</li>
-                                    <li>Longitude: {{ project.Longitude }}</li>
+                                    <li>Latitude: {{ project.Latitude | number:'1.0-4' }}</li>
+                                    <li>Longitude: {{ project.Longitude | number:'1.0-4' }}</li>
                                 </ul>
                             }
 
@@ -384,11 +384,13 @@
                     }
                 </div>
                 <div class="card-body">
-                    <div class="flex-end mb-2">
-                        <button class="btn btn-sm btn-secondary" (click)="requestPrimaryContactChange()">
-                            Request Primary Contact Change
-                        </button>
-                    </div>
+                    @if (perms.userIsLoggedIn) {
+                        <div class="flex-end mb-2">
+                            <button class="btn btn-sm btn-secondary" (click)="requestPrimaryContactChange()">
+                                Request Primary Contact Change
+                            </button>
+                        </div>
+                    }
                     @if (project.People && project.People.length > 0) {
                         <table class="table">
                             <thead>
@@ -634,7 +636,7 @@
                             </div>
                             @if (!showFlattenedTreatments) {
                                 <wadnr-grid [rowData]="treatments" [columnDefs]="treatmentColumnDefs" height="400px" downloadFileName="Project_Treatments">
-                                    @if (perms.userCanDirectEdit) {
+                                    @if (perms.userCanManageTreatments) {
                                         <button customGridActionsRight class="btn btn-sm btn-primary" (click)="openAddTreatmentModal(project.ProjectID)">
                                             <i class="fa fa-plus"></i> Add Treatment
                                         </button>
@@ -740,24 +742,26 @@
             </div>
 
             <!-- Documents Card -->
-            @if (documents$ | async; as documents) {
-                <div class="card" id="card-documents">
-                    <div class="card-header">
-                        <span class="card-title">Documents</span>
+            @if (isAuthenticated) {
+                @if (documents$ | async; as documents) {
+                    <div class="card" id="card-documents">
+                        <div class="card-header">
+                            <span class="card-title">Documents</span>
+                        </div>
+                        <div class="card-body">
+                            @if (perms.userCanEditProjectAsAdmin) {
+                                <div class="flex-end mb-2">
+                                    <button class="btn btn-sm btn-primary" (click)="openAddDocumentModal(project.ProjectID)">Add Document</button>
+                                </div>
+                            }
+                            @if (documents.length > 0) {
+                                <wadnr-grid [rowData]="documents" [columnDefs]="documentColumnDefs" height="300px" downloadFileName="Project_Documents"></wadnr-grid>
+                            } @else {
+                                <p class="system-text">No documents uploaded for this project.</p>
+                            }
+                        </div>
                     </div>
-                    <div class="card-body">
-                        @if (perms.userCanDirectEdit) {
-                            <div class="flex-end mb-2">
-                                <button class="btn btn-sm btn-primary" (click)="openAddDocumentModal(project.ProjectID)">Add Document</button>
-                            </div>
-                        }
-                        @if (documents.length > 0) {
-                            <wadnr-grid [rowData]="documents" [columnDefs]="documentColumnDefs" height="300px" downloadFileName="Project_Documents"></wadnr-grid>
-                        } @else {
-                            <p class="system-text">No documents uploaded for this project.</p>
-                        }
-                    </div>
-                </div>
+                }
             }
 
             <!-- Notes Card (Public + Internal in one card) -->
@@ -768,7 +772,7 @@
                 <div class="card-body">
                     <div class="subsection-header">
                         <h4 class="card-subsection-heading">Public Notes</h4>
-                        @if (perms.userCanDirectEdit) {
+                        @if (perms.userCanEditProjectAsAdmin) {
                             <button class="btn btn-sm btn-primary" (click)="openAddNoteModal(project.ProjectID)">Add Note</button>
                         }
                     </div>

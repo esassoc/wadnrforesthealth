@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
@@ -45,6 +46,9 @@ public class TagController(
     [AdminFeature]
     public async Task<ActionResult<TagDetail>> Create([FromBody] TagUpsertRequest dto)
     {
+        var validationError = await ValidateUpsertRequest(dto, null);
+        if (validationError != null) return BadRequest(validationError);
+
         var created = await Tags.CreateAsync(DbContext, dto);
         if (created == null)
         {
@@ -58,6 +62,9 @@ public class TagController(
     [EntityNotFound(typeof(Tag), "tagID")]
     public async Task<ActionResult<TagDetail>> Update([FromRoute] int tagID, [FromBody] TagUpsertRequest dto)
     {
+        var validationError = await ValidateUpsertRequest(dto, tagID);
+        if (validationError != null) return BadRequest(validationError);
+
         var updated = await Tags.UpdateAsync(DbContext, tagID, dto);
         if (updated == null)
         {
@@ -97,5 +104,17 @@ public class TagController(
     {
         var projects = await Projects.ListAsTagDetailGridRowForUserAsync(DbContext, tagID, CallingUser);
         return Ok(projects);
+    }
+
+    private async Task<string?> ValidateUpsertRequest(TagUpsertRequest request, int? excludeID)
+    {
+        var duplicateName = await DbContext.Tags
+            .AsNoTracking()
+            .AnyAsync(x => x.TagName == request.TagName && (excludeID == null || x.TagID != excludeID));
+        if (duplicateName)
+        {
+            return "Tag Name already exists.";
+        }
+        return null;
     }
 }

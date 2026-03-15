@@ -1,9 +1,10 @@
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using WADNR.Models.DataTransferObjects;
 
 namespace WADNR.EFModels.Entities;
 
-public static class AuditLogs
+public static partial class AuditLogs
 {
     public static async Task<List<ProjectAuditLogGridRow>> ListForProjectAsGridRowAsync(WADNRDbContext dbContext, int projectID)
     {
@@ -19,8 +20,34 @@ public static class AuditLogs
             log.AuditLogEventTypeName = AuditLogEventType.AllLookupDictionary.TryGetValue(log.AuditLogEventTypeID, out var eventType)
                 ? eventType.AuditLogEventTypeDisplayName
                 : $"Unknown ({log.AuditLogEventTypeID})";
+
+            log.Section = PascalCaseToSpaced(log.TableName);
+
+            if (!string.IsNullOrWhiteSpace(log.AuditDescription))
+            {
+                log.Description = log.AuditDescription;
+            }
+            else
+            {
+                log.Description = log.AuditLogEventTypeID switch
+                {
+                    (int)AuditLogEventTypeEnum.Added => $"{log.ColumnName}: set to {log.NewValue}",
+                    (int)AuditLogEventTypeEnum.Modified => $"{log.ColumnName}: {log.OriginalValue} changed to {log.NewValue}",
+                    (int)AuditLogEventTypeEnum.Deleted => $"{log.ColumnName}: deleted {log.OriginalValue}",
+                    _ => $"{log.ColumnName}: {log.OriginalValue} → {log.NewValue}"
+                };
+            }
         }
 
         return logs;
     }
+
+    private static string PascalCaseToSpaced(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return value;
+        return PascalCaseRegex().Replace(value, " $1").Trim();
+    }
+
+    [GeneratedRegex(@"(?<=[a-z])([A-Z])|(?<=[A-Z])([A-Z][a-z])")]
+    private static partial Regex PascalCaseRegex();
 }

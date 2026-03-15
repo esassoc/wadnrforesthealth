@@ -39,8 +39,7 @@ export class AlertComponent implements OnInit {
     }
 
     closeAlert(): void {
-        // Emit closed event so parent can decide how to remove the alert (local vs global)
-        // this.closed.emit(this.alert);
+        this.closed.emit(this.alert);
         this.alertService.removeAlert(this.alert);
     }
 }

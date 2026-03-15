@@ -49,7 +49,14 @@
 
                         <div class="g-col-6 field-label">Vendor</div>
                         <div class="g-col-6">
-                            @if (organization.VendorName) {
+                            @if (organization.VendorID) {
+                                <a [routerLink]="['/vendors', organization.VendorID]">
+                                    {{ organization.VendorName }}
+                                    @if (organization.VendorNumber) {
+                                        ({{ organization.VendorNumber }})
+                                    }
+                                </a>
+                            } @else if (organization.VendorName) {
                                 {{ organization.VendorName }}
                                 @if (organization.VendorNumber) {
                                     ({{ organization.VendorNumber }})

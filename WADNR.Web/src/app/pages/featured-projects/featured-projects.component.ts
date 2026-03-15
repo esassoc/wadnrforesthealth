@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { ColDef } from "ag-grid-community";
-import { BehaviorSubject, Observable, switchMap } from "rxjs";
+import { BehaviorSubject, map, Observable, shareReplay, switchMap } from "rxjs";
 import { DialogService } from "@ngneat/dialog";
 
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -28,6 +28,7 @@ export class FeaturedProjectsComponent implements OnInit {
     public featuredProjects$: Observable<ProjectFeatured[]>;
     public columnDefs: ColDef[] = [];
     public selectedRows: ProjectFeatured[] = [];
+    public isAdmin$: Observable<boolean>;
     public pinnedTotalsRow = {
         fields: ["EstimatedTotalCost", "TotalFunding"],
         label: "Total",
@@ -45,6 +46,10 @@ export class FeaturedProjectsComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
+        this.isAdmin$ = this.authenticationService.currentUserSetObservable.pipe(
+            map((user) => this.authenticationService.isUserAnAdministrator(user)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
         this.buildColumnDefs();
         this.featuredProjects$ = this.refreshProjects$.pipe(
             switchMap(() => this.projectService.listFeaturedProject())

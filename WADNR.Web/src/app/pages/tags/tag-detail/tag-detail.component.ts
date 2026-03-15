@@ -13,6 +13,7 @@ import { UtilityFunctionsService } from "src/app/services/utility-functions.serv
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { TagCheckedProjectsButtonComponent } from "src/app/shared/components/tag-checked-projects-button/tag-checked-projects-button.component";
 
 import { TagService } from "src/app/shared/generated/api/tag.service";
 import { TagDetail } from "src/app/shared/generated/model/tag-detail";
@@ -22,7 +23,7 @@ import { TagModalComponent, TagModalData } from "../tag-modal.component";
 @Component({
     selector: "tag-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent, LoadingDirective],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, FieldDefinitionComponent, WADNRGridComponent, LoadingDirective, TagCheckedProjectsButtonComponent],
     templateUrl: "./tag-detail.component.html",
     styleUrls: ["./tag-detail.component.scss"],
 })
@@ -32,6 +33,7 @@ export class TagDetailComponent {
     public projects$: Observable<ProjectTagDetailGridRow[]>;
     public projectsIsLoading$: Observable<boolean>;
     public isAdmin = false;
+    public selectedRows: ProjectTagDetailGridRow[] = [];
 
     public columnDefs: ColDef<ProjectTagDetailGridRow>[] = [];
     public pinnedTotalsRow = {
@@ -111,6 +113,14 @@ export class TagDetailComponent {
             }),
             this.utilityFunctions.createBasicColumnDef("Project Description", "ProjectDescription", { FieldDefinitionType: "ProjectDescription" }),
         ];
+    }
+
+    onSelectionChanged(event: any): void {
+        this.selectedRows = event.api?.getSelectedRows() || [];
+    }
+
+    onTagged(): void {
+        this.refreshTag$.next();
     }
 
     openEditTag(tag: TagDetail): void {

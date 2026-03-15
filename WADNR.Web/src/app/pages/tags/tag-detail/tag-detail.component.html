@@ -35,7 +35,14 @@
         <div class="card">
             <div class="card-header"><span class="card-title">Projects</span></div>
             <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
+                @if (isAdmin) {
+                <div class="flex-end mb-2">
+                    <tag-checked-projects-button [selectedRows]="selectedRows" (tagged)="onTagged()"></tag-checked-projects-button>
+                </div>
+                <wadnr-grid [rowData]="projects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" [downloadFileName]="'projects'" defaultRowSelection="multiRow" (selectionChanged)="onSelectionChanged($event)"></wadnr-grid>
+                } @else {
                 <wadnr-grid [rowData]="projects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" [downloadFileName]="'projects'"></wadnr-grid>
+                }
             </div>
         </div>
     </div>

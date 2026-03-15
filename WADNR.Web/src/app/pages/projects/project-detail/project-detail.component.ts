@@ -1,4 +1,5 @@
-import { AsyncPipe, DatePipe } from "@angular/common";
+import { AsyncPipe, DatePipe, DecimalPipe } from "@angular/common";
+import { LocalDatePipe } from "src/app/shared/pipes/local-date.pipe";
 import { Component, Input, OnDestroy, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
@@ -30,7 +31,10 @@ type ProjectPermissions = {
     userCanApprove: boolean;
     userIsAdmin: boolean;
     userCanViewCostSharePDFs: boolean;
+    userCanManageTreatments: boolean;
+    userCanEditProjectAsAdmin: boolean;
     canStartUpdate: boolean;
+    userIsLoggedIn: boolean;
 };
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
@@ -41,6 +45,7 @@ import { GenericFeatureCollectionLayerComponent } from "src/app/shared/component
 import { ImageGalleryComponent, ImageGalleryItem } from "src/app/shared/components/image-gallery/image-gallery.component";
 import { ScrollSpyStickyDirective } from "src/app/shared/directives/scroll-spy-sticky.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { AuthenticationService } from "src/app/services/authentication.service";
 import { LeafletHelperService } from "src/app/shared/services/leaflet-helper.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { AlertService } from "src/app/shared/services/alert.service";
@@ -137,7 +142,7 @@ interface FlattenedTreatmentRow {
 @Component({
     selector: "project-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, DatePipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ImageGalleryComponent, ScrollSpyStickyDirective, DropdownToggleDirective, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent, FieldDefinitionComponent, LoadingDirective, FormsModule, IconComponent],
+    imports: [PageHeaderComponent, AsyncPipe, DatePipe, DecimalPipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, WADNRMapComponent, GenericFeatureCollectionLayerComponent, ImageGalleryComponent, ScrollSpyStickyDirective, DropdownToggleDirective, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent, FieldDefinitionComponent, LoadingDirective, FormsModule, IconComponent, LocalDatePipe],
     templateUrl: "./project-detail.component.html",
     styleUrls: ["./project-detail.component.scss"],
 })
@@ -284,6 +289,7 @@ export class ProjectDetailComponent implements OnDestroy {
 
     activeParentId = signal<string | null>(null);
     activeChildId = signal<string | null>(null);
+    isAuthenticated = false;
 
     private childToParentMap = new Map<string, string>();
     private allScrollTargetIds: string[] = [];
@@ -310,7 +316,8 @@ export class ProjectDetailComponent implements OnDestroy {
         private dialogService: DialogService,
         private confirmService: ConfirmService,
         private alertService: AlertService,
-        private router: Router
+        private router: Router,
+        private authenticationService: AuthenticationService
     ) {}
 
     ngOnInit(): void {
@@ -325,15 +332,21 @@ export class ProjectDetailComponent implements OnDestroy {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.permissions$ = this.project$.pipe(
-            map(project => ({
+        this.permissions$ = combineLatest([
+            this.project$,
+            this.authenticationService.currentUserSetObservable,
+        ]).pipe(
+            map(([project, user]) => ({
                 userCanEdit: project.UserCanEdit,
                 userCanDirectEdit: project.UserCanDirectEdit,
                 userCanDelete: project.UserCanDelete,
                 userCanApprove: project.UserCanApprove,
                 userIsAdmin: project.UserIsAdmin,
                 userCanViewCostSharePDFs: project.UserCanViewCostSharePDFs,
+                userCanManageTreatments: project.UserCanManageTreatments,
+                userCanEditProjectAsAdmin: project.UserCanEditProjectAsAdmin,
                 canStartUpdate: project.CanStartUpdate,
+                userIsLoggedIn: user != null,
             })),
             shareReplay({ bufferSize: 1, refCount: true })
         );
@@ -527,7 +540,8 @@ export class ProjectDetailComponent implements OnDestroy {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.treatmentColumnDefs = this.createTreatmentColumnDefs();
+        this.isAuthenticated = this.authenticationService.isAuthenticated();
+
         this.flattenedTreatmentColumnDefs = this.createFlattenedTreatmentColumnDefs();
         this.flattenedTreatments$ = this.treatments$.pipe(
             map(treatments => this.pivotTreatmentsByArea(treatments))
@@ -538,15 +552,20 @@ export class ProjectDetailComponent implements OnDestroy {
             label: "Total",
             labelField: "TreatmentAreaName",
         };
-        this.interactionEventColumnDefs = this.createInteractionEventColumnDefs();
         this.imageColumnDefs = this.createImageColumnDefs();
-        this.documentColumnDefs = this.createDocumentColumnDefs();
-        this.noteColumnDefs = this.createNoteColumnDefs();
-        this.internalNoteColumnDefs = this.createInternalNoteColumnDefs();
-        this.invoiceColumnDefs = this.createInvoiceColumnDefs();
         this.updateHistoryColumnDefs = this.createUpdateHistoryColumnDefs();
         this.notificationColumnDefs = this.createNotificationColumnDefs();
         this.auditLogColumnDefs = this.createAuditLogColumnDefs();
+
+        // Permission-gated column defs
+        this.permissions$.pipe(take(1)).subscribe(perms => {
+            this.treatmentColumnDefs = this.createTreatmentColumnDefs(perms.userCanManageTreatments);
+            this.interactionEventColumnDefs = this.createInteractionEventColumnDefs(perms.userCanDirectEdit);
+            this.documentColumnDefs = this.createDocumentColumnDefs(perms.userCanEditProjectAsAdmin);
+            this.noteColumnDefs = this.createNoteColumnDefs(perms.userCanEditProjectAsAdmin);
+            this.internalNoteColumnDefs = this.createInternalNoteColumnDefs();
+            this.invoiceColumnDefs = this.createInvoiceColumnDefs(perms.userCanDirectEdit);
+        });
 
         // Scrollspy scroll listener
         this.scrollSub = fromEvent(window, "scroll")
@@ -639,10 +658,9 @@ export class ProjectDetailComponent implements OnDestroy {
         }
     }
 
-    private createTreatmentColumnDefs(): ColDef<TreatmentGridRow>[] {
-        return [
-            this.utilityFunctions.createLinkColumnDef("Treatment Area", "TreatmentAreaName", "TreatmentID", {
-                InRouterLink: "/treatments/",
+    private createTreatmentColumnDefs(canEdit: boolean): ColDef<TreatmentGridRow>[] {
+        const cols: ColDef<TreatmentGridRow>[] = [
+            this.utilityFunctions.createBasicColumnDef("Treatment Area", "TreatmentAreaName", {
                 CustomDropdownFilterField: "TreatmentAreaName",
             }),
             this.utilityFunctions.createBasicColumnDef("Treatment ID", "TreatmentID"),
@@ -684,15 +702,18 @@ export class ProjectDetailComponent implements OnDestroy {
             this.utilityFunctions.createBooleanColumnDef("Imported", "ImportedFromGis", {
                 CustomDropdownFilterField: "ImportedFromGis",
             }),
-            this.utilityFunctions.createActionsColumnDef((params) => {
+        ];
+        if (canEdit) {
+            cols.push(this.utilityFunctions.createActionsColumnDef((params) => {
                 const treatment = params.data as TreatmentGridRow;
                 if (treatment.ImportedFromGis) return null;
                 return [
                     { ActionName: "Edit", ActionHandler: () => this.openEditTreatmentModal(treatment), ActionIcon: "fa fa-pencil" },
                     { ActionName: "Delete", ActionHandler: () => this.deleteTreatment(treatment), ActionIcon: "fa fa-trash" },
                 ];
-            }),
-        ];
+            }));
+        }
+        return cols;
     }
 
     private pivotTreatmentsByArea(treatments: TreatmentGridRow[]): FlattenedTreatmentRow[] {
@@ -755,8 +776,8 @@ export class ProjectDetailComponent implements OnDestroy {
         return [...fixedCols, ...activityCols];
     }
 
-    private createInteractionEventColumnDefs(): ColDef<InteractionEventGridRow>[] {
-        return [
+    private createInteractionEventColumnDefs(canEdit: boolean): ColDef<InteractionEventGridRow>[] {
+        const cols: ColDef<InteractionEventGridRow>[] = [
             this.utilityFunctions.createLinkColumnDef("Event Title", "InteractionEventTitle", "InteractionEventID", {
                 InRouterLink: "/interactions-events/",
             }),
@@ -770,14 +791,17 @@ export class ProjectDetailComponent implements OnDestroy {
                 FieldDefinitionType: "DNRStaffPerson",
                 CustomDropdownFilterField: "StaffPerson.FullName",
             }),
-            this.utilityFunctions.createActionsColumnDef((params) => {
+        ];
+        if (canEdit) {
+            cols.push(this.utilityFunctions.createActionsColumnDef((params) => {
                 const event = params.data as InteractionEventGridRow;
                 return [
                     { ActionName: "Edit", ActionHandler: () => this.openEditInteractionEventModal(event), ActionIcon: "fa fa-pencil" },
                     { ActionName: "Delete", ActionHandler: () => this.deleteInteractionEvent(event), ActionIcon: "fa fa-trash" },
                 ];
-            }),
-        ];
+            }));
+        }
+        return cols;
     }
 
     private createImageColumnDefs(): ColDef<ProjectImageGridRow>[] {
@@ -789,8 +813,8 @@ export class ProjectDetailComponent implements OnDestroy {
         ];
     }
 
-    private createDocumentColumnDefs(): ColDef<ProjectDocumentGridRow>[] {
-        return [
+    private createDocumentColumnDefs(canEdit: boolean): ColDef<ProjectDocumentGridRow>[] {
+        const cols: ColDef<ProjectDocumentGridRow>[] = [
             {
                 headerName: "Document",
                 valueGetter: (params) => {
@@ -804,31 +828,37 @@ export class ProjectDetailComponent implements OnDestroy {
             },
             this.utilityFunctions.createBasicColumnDef("Description", "Description"),
             this.utilityFunctions.createBasicColumnDef("Type", "DocumentTypeName"),
-            this.utilityFunctions.createActionsColumnDef((params) => {
+        ];
+        if (canEdit) {
+            cols.push(this.utilityFunctions.createActionsColumnDef((params) => {
                 const doc = params.data as ProjectDocumentGridRow;
                 return [
                     { ActionName: "Edit", ActionHandler: () => this.openEditDocumentModal(doc), ActionIcon: "fa fa-pencil" },
                     { ActionName: "Delete", ActionHandler: () => this.deleteDocument(doc), ActionIcon: "fa fa-trash" },
                 ];
-            }),
-        ];
+            }));
+        }
+        return cols;
     }
 
-    private createNoteColumnDefs(): ColDef<ProjectNoteGridRow>[] {
-        return [
+    private createNoteColumnDefs(canEdit: boolean): ColDef<ProjectNoteGridRow>[] {
+        const cols: ColDef<ProjectNoteGridRow>[] = [
             this.utilityFunctions.createBasicColumnDef("Note", "Note"),
             this.utilityFunctions.createBasicColumnDef("Created By", "CreatedByPersonName"),
             this.utilityFunctions.createDateColumnDef("Created", "CreateDate", "short"),
             this.utilityFunctions.createBasicColumnDef("Updated By", "UpdatedByPersonName"),
             this.utilityFunctions.createDateColumnDef("Updated", "UpdateDate", "short"),
-            this.utilityFunctions.createActionsColumnDef((params) => {
+        ];
+        if (canEdit) {
+            cols.push(this.utilityFunctions.createActionsColumnDef((params) => {
                 const note = params.data as ProjectNoteGridRow;
                 return [
                     { ActionName: "Edit", ActionHandler: () => this.openEditNoteModal(note), ActionIcon: "fa fa-pencil" },
                     { ActionName: "Delete", ActionHandler: () => this.deleteNote(note), ActionIcon: "fa fa-trash" },
                 ];
-            }),
-        ];
+            }));
+        }
+        return cols;
     }
 
     private createInternalNoteColumnDefs(): ColDef<ProjectInternalNoteGridRow>[] {
@@ -848,8 +878,8 @@ export class ProjectDetailComponent implements OnDestroy {
         ];
     }
 
-    private createInvoiceColumnDefs(): ColDef<InvoiceGridRow>[] {
-        return [
+    private createInvoiceColumnDefs(canEdit: boolean): ColDef<InvoiceGridRow>[] {
+        const cols: ColDef<InvoiceGridRow>[] = [
             this.utilityFunctions.createLinkColumnDef("Fund Source Number", "FundSourceNumber", "FundSourceID", {
                 InRouterLink: "/fund-sources/",
                 FieldDefinitionType: "FundSource",
@@ -901,7 +931,9 @@ export class ProjectDetailComponent implements OnDestroy {
                 FieldDefinitionType: "InvoiceIdentifyingName",
                 FieldDefinitionLabelOverride: "Nickname",
             }),
-            this.utilityFunctions.createActionsColumnDef((params) => {
+        ];
+        if (canEdit) {
+            cols.push(this.utilityFunctions.createActionsColumnDef((params) => {
                 const invoice = params.data as InvoiceGridRow;
                 const actions: any[] = [
                     { ActionName: "Edit", ActionHandler: () => this.openEditInvoiceModal(invoice), ActionIcon: "fa fa-pencil" },
@@ -914,8 +946,9 @@ export class ProjectDetailComponent implements OnDestroy {
                     });
                 }
                 return actions;
-            }),
-        ];
+            }));
+        }
+        return cols;
     }
 
     getPurchaseAuthorityDisplay(pr: InvoicePaymentRequestGridRow): string {
@@ -967,12 +1000,9 @@ export class ProjectDetailComponent implements OnDestroy {
     private createAuditLogColumnDefs(): ColDef<ProjectAuditLogGridRow>[] {
         return [
             this.utilityFunctions.createDateColumnDef("Date", "AuditLogDate", "short"),
-            this.utilityFunctions.createBasicColumnDef("User", "PersonName"),
-            this.utilityFunctions.createBasicColumnDef("Event", "AuditLogEventTypeName"),
-            this.utilityFunctions.createBasicColumnDef("Table", "TableName"),
-            this.utilityFunctions.createBasicColumnDef("Column", "ColumnName"),
-            this.utilityFunctions.createBasicColumnDef("Original Value", "OriginalValue"),
-            this.utilityFunctions.createBasicColumnDef("New Value", "NewValue"),
+            this.utilityFunctions.createLinkColumnDef("User", "PersonName", "PersonID", { InRouterLink: "/people/" }),
+            this.utilityFunctions.createBasicColumnDef("Section", "Section", { UseCustomDropdownFilter: true }),
+            this.utilityFunctions.createBasicColumnDef("Description", "Description"),
         ];
     }
 
@@ -1035,11 +1065,6 @@ export class ProjectDetailComponent implements OnDestroy {
         return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
     }
 
-    formatDate(value: string | null | undefined): string {
-        if (!value) return "—";
-        const date = new Date(value);
-        return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
-    }
 
     formatPercentage(value: number | null | undefined): string {
         if (value == null) return "—";
@@ -1135,9 +1160,16 @@ export class ProjectDetailComponent implements OnDestroy {
     openAddInteractionEventModal(projectID: number): void {
         forkJoin({
             people: this.personService.listLookupPerson(),
+            wadnrPeople: this.personService.listWadnrLookupPerson(),
             projects: this.projectService.listLookupProject(),
-        }).subscribe(({ people, projects }) => {
+        }).subscribe(({ people, wadnrPeople, projects }) => {
             const personOptions: SelectDropdownOption[] = people.map(p => ({
+                Value: p.PersonID,
+                Label: p.FullName,
+                disabled: false,
+            } as SelectDropdownOption));
+
+            const staffOptions: SelectDropdownOption[] = wadnrPeople.map(p => ({
                 Value: p.PersonID,
                 Label: p.FullName,
                 disabled: false,
@@ -1152,7 +1184,7 @@ export class ProjectDetailComponent implements OnDestroy {
             const data: InteractionEventModalData = {
                 mode: "create",
                 projectID: projectID,
-                staffPersonOptions: personOptions,
+                staffPersonOptions: staffOptions,
                 contactOptions: personOptions,
                 projectOptions: projectOptions,
             };
@@ -1170,11 +1202,18 @@ export class ProjectDetailComponent implements OnDestroy {
     openEditInteractionEventModal(event: InteractionEventGridRow): void {
         forkJoin({
             people: this.personService.listLookupPerson(),
+            wadnrPeople: this.personService.listWadnrLookupPerson(),
             projects: this.projectService.listLookupProject(),
             existingProjects: this.interactionEventService.listProjectsForInteractionEventIDInteractionEvent(event.InteractionEventID),
             existingContacts: this.interactionEventService.listContactsForInteractionEventIDInteractionEvent(event.InteractionEventID),
-        }).subscribe(({ people, projects, existingProjects, existingContacts }) => {
+        }).subscribe(({ people, wadnrPeople, projects, existingProjects, existingContacts }) => {
             const personOptions: SelectDropdownOption[] = people.map(p => ({
+                Value: p.PersonID,
+                Label: p.FullName,
+                disabled: false,
+            } as SelectDropdownOption));
+
+            const staffOptions: SelectDropdownOption[] = wadnrPeople.map(p => ({
                 Value: p.PersonID,
                 Label: p.FullName,
                 disabled: false,
@@ -1189,7 +1228,7 @@ export class ProjectDetailComponent implements OnDestroy {
             const data: InteractionEventModalData = {
                 mode: "edit",
                 projectID: 0,
-                staffPersonOptions: personOptions,
+                staffPersonOptions: staffOptions,
                 contactOptions: personOptions,
                 projectOptions: projectOptions,
                 interactionEvent: event,

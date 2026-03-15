@@ -1,10 +1,12 @@
 import { AsyncPipe } from "@angular/common";
-import { Component, DestroyRef, inject, Input } from "@angular/core";
+import { Component, DestroyRef, inject, Input, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterLink } from "@angular/router";
 import { DialogService } from "@ngneat/dialog";
-import { CellValueChangedEvent, ColDef } from "ag-grid-community";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, of, shareReplay, startWith, Subject, switchMap, take } from "rxjs";
+import { ColDef } from "ag-grid-community";
+import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, map, Observable, of, shareReplay, startWith, Subject, switchMap, take } from "rxjs";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { environment } from "src/environments/environment";
 
@@ -17,6 +19,9 @@ import { FieldDefinitionComponent } from "src/app/shared/components/field-defini
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
+import { Alert } from "src/app/shared/models/alert";
+import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
+import { AlertComponent } from "src/app/shared/components/alert/alert.component";
 
 import { FundSourceAllocationService } from "src/app/shared/generated/api/fund-source-allocation.service";
 import { FundSourceAllocationNoteService } from "src/app/shared/generated/api/fund-source-allocation-note.service";
@@ -32,6 +37,7 @@ import { FundSourceAllocationFileGridRow } from "src/app/shared/generated/model/
 import { FundSourceAllocationExpenditureGridRow } from "src/app/shared/generated/model/fund-source-allocation-expenditure-grid-row";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { LocalDatePipe } from "src/app/shared/pipes/local-date.pipe";
 import { FundSourceAllocationExpenditureSummary } from "src/app/shared/generated/model/fund-source-allocation-expenditure-summary";
 
 export interface BudgetVsActualsRow {
@@ -44,7 +50,7 @@ export interface BudgetVsActualsRow {
 @Component({
     selector: "fund-source-allocation-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, PersonLinkComponent, WADNRGridComponent, PieChartComponent, FieldDefinitionComponent, IconComponent, LoadingDirective],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, PersonLinkComponent, WADNRGridComponent, PieChartComponent, FieldDefinitionComponent, IconComponent, LoadingDirective, LocalDatePipe, ReactiveFormsModule, FormFieldComponent, AlertComponent],
     templateUrl: "./fund-source-allocation-detail.component.html",
     styleUrls: ["./fund-source-allocation-detail.component.scss"],
 })
@@ -58,6 +64,7 @@ export class FundSourceAllocationDetailComponent {
 
     private _fundSourceAllocationID$ = new BehaviorSubject<number | null>(null);
     private refreshData$ = new Subject<void>();
+    private budgetSave$ = new Subject<void>();
 
     public fundSourceAllocationID$: Observable<number>;
     public fundSourceAllocation$: Observable<FundSourceAllocationDetail>;
@@ -85,7 +92,10 @@ export class FundSourceAllocationDetailComponent {
     public canManageFundSources$: Observable<boolean>;
 
     public currentAllocationID: number;
-    public budgetLineItemColumnDefs: ColDef<FundSourceAllocationBudgetLineItemGridRow>[];
+    public budgetLineItemRows: { costTypeID: number; costTypeName: string; amount: FormControl<number | null>; note: FormControl<string | null> }[] = [];
+    public budgetLineItemSaveAlert = signal<Alert | null>(null);
+    public canManageFundSourcesSync = false;
+    public FormFieldType = FormFieldType;
     public projectColumnDefs: ColDef<FundSourceAllocationProjectGridRow>[];
     public expenditureColumnDefs: ColDef<FundSourceAllocationExpenditureGridRow>[];
     public budgetVsActualsColumnDefs: ColDef<BudgetVsActualsRow>[];
@@ -210,27 +220,49 @@ export class FundSourceAllocationDetailComponent {
         this.expenditureSummaryIsLoading$ = toLoadingState(this.expenditureSummary$);
         this.budgetVsActualsIsLoading$ = toLoadingState(this.budgetVsActuals$);
 
-        this.budgetLineItemColumnDefs = [
-            this.utilityFunctions.createBasicColumnDef("Cost Type", "CostTypeName"),
-            this.utilityFunctions.createCurrencyColumnDef("Amount", "FundSourceAllocationBudgetLineItemAmount", { MaxDecimalPlacesToDisplay: 2 }),
-            this.utilityFunctions.createBasicColumnDef("Note", "FundSourceAllocationBudgetLineItemNote"),
-        ];
         this.canManageFundSources$.pipe(take(1)).subscribe((canManage) => {
-            if (canManage) {
-                this.budgetLineItemColumnDefs = [
-                    this.utilityFunctions.createBasicColumnDef("Cost Type", "CostTypeName"),
-                    this.utilityFunctions.createCurrencyColumnDef("Amount", "FundSourceAllocationBudgetLineItemAmount", { MaxDecimalPlacesToDisplay: 2, Editable: true }),
-                    this.utilityFunctions.createBasicColumnDef("Note", "FundSourceAllocationBudgetLineItemNote", { Editable: true }),
-                ];
-            }
+            this.canManageFundSourcesSync = canManage;
+        });
+
+        this.budgetLineItems$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((items) => {
+            this.budgetLineItemRows = items.map((item) => ({
+                costTypeID: item.CostTypeID,
+                costTypeName: item.CostTypeName ?? "Unknown",
+                amount: new FormControl<number | null>(item.FundSourceAllocationBudgetLineItemAmount ?? null),
+                note: new FormControl<string | null>(item.FundSourceAllocationBudgetLineItemNote ?? null),
+            }));
+        });
+
+        this.budgetSave$.pipe(
+            debounceTime(300),
+            switchMap(() => {
+                const allItems = this.budgetLineItemRows.map((row) => ({
+                    CostTypeID: row.costTypeID,
+                    Amount: row.amount.value,
+                    Note: row.note.value,
+                }));
+                return this.fundSourceAllocationService
+                    .saveBudgetLineItemsFundSourceAllocation(this.currentAllocationID, { Items: allItems });
+            }),
+            takeUntilDestroyed(this.destroyRef),
+        ).subscribe({
+            next: () => {
+                this.budgetLineItemSaveAlert.set(new Alert("Saved successfully.", AlertContext.Success, true));
+                setTimeout(() => this.budgetLineItemSaveAlert.set(null), 5000);
+                this.refreshData$.next();
+            },
+            error: (err) => {
+                const message = typeof err?.error === "string" ? err.error : (err?.message ?? "An error occurred while saving.");
+                this.budgetLineItemSaveAlert.set(new Alert(message, AlertContext.Danger, true));
+            },
         });
 
         this.projectColumnDefs = [
-            this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", { InRouterLink: "/projects/" }),
-            this.utilityFunctions.createBasicColumnDef("Project Stage", "ProjectStageName", { CustomDropdownFilterField: "ProjectStageName" }),
-            this.utilityFunctions.createCurrencyColumnDef("Match Amount", "MatchAmount", { MaxDecimalPlacesToDisplay: 2 }),
-            this.utilityFunctions.createCurrencyColumnDef("DNR Pay Amount", "PayAmount", { MaxDecimalPlacesToDisplay: 2 }),
-            this.utilityFunctions.createCurrencyColumnDef("Total Amount", "TotalAmount", { MaxDecimalPlacesToDisplay: 2 }),
+            this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", { InRouterLink: "/projects/", FieldDefinitionType: "ProjectName", FieldDefinitionLabelOverride: "Project" }),
+            this.utilityFunctions.createBasicColumnDef("Project Stage", "ProjectStageName", { CustomDropdownFilterField: "ProjectStageName", FieldDefinitionType: "ProjectStage" }),
+            this.utilityFunctions.createCurrencyColumnDef("Match Amount", "MatchAmount", { MaxDecimalPlacesToDisplay: 2, FieldDefinitionType: "MatchAmount" }),
+            this.utilityFunctions.createCurrencyColumnDef("DNR Pay Amount", "PayAmount", { MaxDecimalPlacesToDisplay: 2, FieldDefinitionType: "ProjectFundSourceAllocationRequestPayAmount", FieldDefinitionLabelOverride: "DNR Pay Amount" }),
+            this.utilityFunctions.createCurrencyColumnDef("Total Amount", "TotalAmount", { MaxDecimalPlacesToDisplay: 2, FieldDefinitionType: "ProjectFundSourceAllocationRequestTotalAmount" }),
         ];
 
         this.expenditureColumnDefs = [
@@ -326,21 +358,9 @@ export class FundSourceAllocationDetailComponent {
         this.fundSourceAllocationService.deleteFileFundSourceAllocation(fundSourceAllocationID, fundSourceAllocationFileResourceID).subscribe(() => this.refreshData$.next());
     }
 
-    onBudgetLineItemChanged(event: CellValueChangedEvent): void {
-        this.canManageFundSources$.pipe(take(1)).subscribe((canManage) => {
-            if (!canManage) return;
-            const allItems: any[] = [];
-            event.api.forEachNode((node) =>
-                allItems.push({
-                    CostTypeID: node.data.CostTypeID,
-                    Amount: node.data.FundSourceAllocationBudgetLineItemAmount,
-                    Note: node.data.FundSourceAllocationBudgetLineItemNote,
-                })
-            );
-            this.fundSourceAllocationService
-                .saveBudgetLineItemsFundSourceAllocation(this.currentAllocationID, { Items: allItems })
-                .subscribe(() => this.refreshData$.next());
-        });
+    onBudgetLineItemBlur(): void {
+        if (!this.canManageFundSourcesSync) return;
+        this.budgetSave$.next();
     }
 
     getChartData(summary: FundSourceAllocationExpenditureSummary[]): Array<{ label: string; value: number }> {
@@ -350,12 +370,6 @@ export class FundSourceAllocationDetailComponent {
     formatCurrency(value: number | null | undefined): string {
         if (value == null) return "\u2014";
         return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
-    }
-
-    formatDate(value: string | null | undefined): string {
-        if (!value) return "\u2014";
-        const date = new Date(value);
-        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
     }
 
     formatDateTime(value: string | null | undefined): string {

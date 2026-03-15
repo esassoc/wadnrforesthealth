@@ -14,6 +14,7 @@ export class ProjectAuditLogGridRow {
     AuditLogID?: number;
     AuditLogEventTypeID?: number;
     AuditLogDate?: string;
+    PersonID?: number;
     PersonName?: string | null;
     AuditLogEventTypeName?: string | null;
     TableName?: string | null;
@@ -21,6 +22,8 @@ export class ProjectAuditLogGridRow {
     OriginalValue?: string | null;
     NewValue?: string | null;
     AuditDescription?: string | null;
+    Section?: string | null;
+    Description?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -30,6 +33,7 @@ export interface ProjectAuditLogGridRowForm {
     AuditLogID?: FormControl<number>;
     AuditLogEventTypeID?: FormControl<number>;
     AuditLogDate?: FormControl<string>;
+    PersonID?: FormControl<number>;
     PersonName?: FormControl<string>;
     AuditLogEventTypeName?: FormControl<string>;
     TableName?: FormControl<string>;
@@ -37,6 +41,8 @@ export interface ProjectAuditLogGridRowForm {
     OriginalValue?: FormControl<string>;
     NewValue?: FormControl<string>;
     AuditDescription?: FormControl<string>;
+    Section?: FormControl<string>;
+    Description?: FormControl<string>;
 }
 
 export class ProjectAuditLogGridRowFormControls { 
@@ -61,6 +67,16 @@ export class ProjectAuditLogGridRowFormControls {
         }
     );
     public static AuditLogDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PersonID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -131,6 +147,26 @@ export class ProjectAuditLogGridRowFormControls {
         }
     );
     public static AuditDescription = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Section = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Description = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

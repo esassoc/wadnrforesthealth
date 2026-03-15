@@ -91,9 +91,16 @@ export class InteractionsEventsComponent {
     createNewInteractionEvent(): void {
         forkJoin({
             people: this.personService.listLookupPerson(),
+            wadnrPeople: this.personService.listWadnrLookupPerson(),
             projects: this.projectService.listLookupProject(),
-        }).subscribe(({ people, projects }) => {
+        }).subscribe(({ people, wadnrPeople, projects }) => {
             const personOptions: SelectDropdownOption[] = people.map(p => ({
+                Value: p.PersonID,
+                Label: p.FullName,
+                disabled: false,
+            } as SelectDropdownOption));
+
+            const staffOptions: SelectDropdownOption[] = wadnrPeople.map(p => ({
                 Value: p.PersonID,
                 Label: p.FullName,
                 disabled: false,
@@ -110,7 +117,7 @@ export class InteractionsEventsComponent {
                     data: {
                         mode: "create" as const,
                         projectID: 0,
-                        staffPersonOptions: personOptions,
+                        staffPersonOptions: staffOptions,
                         contactOptions: personOptions,
                         projectOptions: projectOptions,
                     },
@@ -128,11 +135,18 @@ export class InteractionsEventsComponent {
     openEditModal(row: InteractionEventGridRow): void {
         forkJoin({
             people: this.personService.listLookupPerson(),
+            wadnrPeople: this.personService.listWadnrLookupPerson(),
             projects: this.projectService.listLookupProject(),
             existingProjects: this.interactionEventService.listProjectsForInteractionEventIDInteractionEvent(row.InteractionEventID!),
             existingContacts: this.interactionEventService.listContactsForInteractionEventIDInteractionEvent(row.InteractionEventID!),
-        }).subscribe(({ people, projects, existingProjects, existingContacts }) => {
+        }).subscribe(({ people, wadnrPeople, projects, existingProjects, existingContacts }) => {
             const personOptions: SelectDropdownOption[] = people.map(p => ({
+                Value: p.PersonID,
+                Label: p.FullName,
+                disabled: false,
+            } as SelectDropdownOption));
+
+            const staffOptions: SelectDropdownOption[] = wadnrPeople.map(p => ({
                 Value: p.PersonID,
                 Label: p.FullName,
                 disabled: false,
@@ -149,7 +163,7 @@ export class InteractionsEventsComponent {
                     data: {
                         mode: "edit" as const,
                         projectID: 0,
-                        staffPersonOptions: personOptions,
+                        staffPersonOptions: staffOptions,
                         contactOptions: personOptions,
                         projectOptions: projectOptions,
                         interactionEvent: {

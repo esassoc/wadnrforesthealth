@@ -27,6 +27,7 @@ import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaf
 import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
 import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
+import { TagCheckedProjectsButtonComponent } from "src/app/shared/components/tag-checked-projects-button/tag-checked-projects-button.component";
 import { ProjectTypeModalComponent, ProjectTypeModalData } from "../project-type-modal/project-type-modal.component";
 
 @Component({
@@ -47,6 +48,7 @@ import { ProjectTypeModalComponent, ProjectTypeModalData } from "../project-type
         PriorityLandscapesLayerComponent,
         DNRUplandRegionsLayerComponent,
         CountiesLayerComponent,
+        TagCheckedProjectsButtonComponent,
     ],
     templateUrl: "./project-type-detail.component.html",
     styleUrls: ["./project-type-detail.component.scss"],
@@ -70,6 +72,7 @@ export class ProjectTypeDetailComponent {
     public legendColorsToUse: Record<string, Palette> = PROJECT_STAGE_LEGEND_COLORS;
     public OverlayMode = OverlayMode;
     public isAdmin$: Observable<boolean>;
+    public selectedRows: ProjectProjectTypeDetailGridRow[] = [];
 
     private refreshData$ = new Subject<void>();
 
@@ -99,8 +102,8 @@ export class ProjectTypeDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.projects$ = this.projectTypeID$.pipe(
-            switchMap((projectTypeID) => this.projectTypeService.listProjectsForProjectTypeIDProjectType(projectTypeID)),
+        this.projects$ = combineLatest([this.projectTypeID$, this.refreshData$.pipe(startWith(undefined))]).pipe(
+            switchMap(([projectTypeID]) => this.projectTypeService.listProjectsForProjectTypeIDProjectType(projectTypeID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -151,6 +154,14 @@ export class ProjectTypeDetailComponent {
             }),
             this.utilityFunctions.createBasicColumnDef("Project Description", "ProjectDescription", { FieldDefinitionType: "ProjectDescription" }),
         ];
+    }
+
+    onSelectionChanged(event: any): void {
+        this.selectedRows = event.api?.getSelectedRows() || [];
+    }
+
+    onTagged(): void {
+        this.refreshData$.next();
     }
 
     public handleMapReady(event: any): void {

@@ -31,7 +31,6 @@ export const routeParams = {
     projectCodeID: "projectCodeID",
     classificationSystemID: "classificationSystemID",
     fundSourceAllocationID: "fundSourceAllocationID",
-    treatmentID: "treatmentID",
 };
 
 export const routes: Routes = [
@@ -186,11 +185,6 @@ export const routes: Routes = [
         path: `taxonomy-trunks/:${routeParams.taxonomyTrunkID}`,
         title: "Taxonomy Trunk Detail",
         loadComponent: () => import("./pages/taxonomy-trunks/taxonomy-trunk-detail/taxonomy-trunk-detail.component").then((m) => m.TaxonomyTrunkDetailComponent),
-    },
-    {
-        path: `treatments/:${routeParams.treatmentID}`,
-        title: "Treatment Detail",
-        loadComponent: () => import("./pages/treatments/treatment-detail/treatment-detail.component").then((m) => m.TreatmentDetailComponent),
     },
     {
         path: "roles",

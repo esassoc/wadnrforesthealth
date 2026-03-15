@@ -10,7 +10,11 @@ public static class AuditLogProjections
         AuditLogID = x.AuditLogID,
         AuditLogEventTypeID = x.AuditLogEventTypeID,
         AuditLogDate = x.AuditLogDate,
-        PersonName = x.Person.FirstName + " " + x.Person.LastName,
+        PersonID = x.PersonID,
+        PersonName = x.Person.Organization != null
+            ? x.Person.FirstName + " " + x.Person.LastName + " - " + x.Person.Organization.OrganizationName
+                + " (" + x.Person.Organization.OrganizationShortName + ")"
+            : x.Person.FirstName + " " + x.Person.LastName,
         AuditLogEventTypeName = null, // Resolved client-side from AuditLogEventType.AllLookupDictionary
         TableName = x.TableName,
         ColumnName = x.ColumnName,

@@ -30887,6 +30887,10 @@
             "type": "string",
             "format": "date-time"
           },
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "PersonName": {
             "type": "string",
             "nullable": true
@@ -30912,6 +30916,14 @@
             "nullable": true
           },
           "AuditDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "Section": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
             "type": "string",
             "nullable": true
           }
@@ -31860,6 +31872,12 @@
             "type": "boolean"
           },
           "UserCanViewCostSharePDFs": {
+            "type": "boolean"
+          },
+          "UserCanManageTreatments": {
+            "type": "boolean"
+          },
+          "UserCanEditProjectAsAdmin": {
             "type": "boolean"
           },
           "CanStartUpdate": {

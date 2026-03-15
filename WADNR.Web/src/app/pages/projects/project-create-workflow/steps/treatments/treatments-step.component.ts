@@ -16,6 +16,7 @@ import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { TreatmentModalComponent, TreatmentModalData } from "src/app/pages/projects/treatment-modal/treatment-modal.component";
+import { LocalDatePipe } from "src/app/shared/pipes/local-date.pipe";
 
 interface TreatmentsViewModel {
     isLoading: boolean;
@@ -38,6 +39,7 @@ export class TreatmentsStepComponent extends CreateWorkflowStepBase implements O
     private currentTreatmentAreas: TreatmentAreaLookupItem[] = [];
 
     public columnDefs: ColDef[] = [];
+    private localDatePipe = new LocalDatePipe();
 
     constructor(
         private projectService: ProjectService,
@@ -120,14 +122,14 @@ export class TreatmentsStepComponent extends CreateWorkflowStepBase implements O
                 field: "TreatmentStartDate",
                 flex: 1,
                 minWidth: 100,
-                valueFormatter: (params) => this.formatDate(params.value),
+                valueFormatter: (params) => this.localDatePipe.transform(params.value),
             },
             {
                 headerName: "End Date",
                 field: "TreatmentEndDate",
                 flex: 1,
                 minWidth: 100,
-                valueFormatter: (params) => this.formatDate(params.value),
+                valueFormatter: (params) => this.localDatePipe.transform(params.value),
             },
             {
                 headerName: "Footprint (Acres)",
@@ -253,12 +255,6 @@ export class TreatmentsStepComponent extends CreateWorkflowStepBase implements O
                 },
             });
         }
-    }
-
-    private formatDate(dateString: string | null | undefined): string {
-        if (!dateString) return "";
-        const date = new Date(dateString);
-        return date.toLocaleDateString();
     }
 
     /**
