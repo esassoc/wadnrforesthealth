@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace WADNR.Models.DataTransferObjects;
 
 public class FundSourceUpsertRequest
 {
+    [StringLength(64)]
     public string FundSourceName { get; set; } = string.Empty;
     public string? FundSourceNumber { get; set; }
     public DateOnly? StartDate { get; set; }

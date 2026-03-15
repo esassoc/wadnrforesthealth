@@ -98,7 +98,7 @@ export interface EditFundSourceModalInput {
                 }
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" [disabled]="isSubmitting || (isLoadingLookups$ | async)" [buttonLoading]="isSubmitting" (click)="save()">Save</button>
+                <button class="btn btn-primary" [disabled]="isSubmitting || form.invalid || (isLoadingLookups$ | async)" [buttonLoading]="isSubmitting" (click)="save()">Save</button>
                 <button class="btn btn-secondary" (click)="ref.close(null)">Cancel</button>
             </div>
         </div>
@@ -116,7 +116,7 @@ export class FundSourceEditModalComponent extends BaseModal implements OnInit {
     typeOptions: FormInputOption[] = [];
 
     form = new FormGroup({
-        fundSourceName: new FormControl<string | null>(null, Validators.required),
+        fundSourceName: new FormControl<string | null>(null, [Validators.required, Validators.maxLength(64)]),
         shortName: new FormControl<string | null>(null),
         organizationID: new FormControl<number | null>(null, Validators.required),
         fundSourceStatusID: new FormControl<number | null>(null, Validators.required),
@@ -140,7 +140,7 @@ export class FundSourceEditModalComponent extends BaseModal implements OnInit {
     }
 
     ngOnInit(): void {
-        if (this.data.mode === "edit") {
+        if (this.data.fundSourceName != null) {
             this.form.patchValue({
                 fundSourceName: this.data.fundSourceName ?? null,
                 shortName: this.data.shortName ?? null,
@@ -153,6 +153,8 @@ export class FundSourceEditModalComponent extends BaseModal implements OnInit {
                 endDate: this.data.endDate ? new Date(this.data.endDate).toISOString().split("T")[0] : null,
                 totalAwardAmount: this.data.totalAwardAmount ?? null,
             });
+            // Show validation errors immediately for clone scenarios
+            this.form.controls.fundSourceName.markAsTouched();
         }
 
         this.statusOptions = FundSourceStatusesAsSelectDropdownOptions;

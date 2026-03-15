@@ -551,6 +551,44 @@ public static class FundSourceAllocations
 
     public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int fundSourceAllocationID)
     {
+        // Delete child records first (no CASCADE in DB)
+        await dbContext.ProjectFundSourceAllocationRequestUpdates
+            .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
+            .ExecuteDeleteAsync();
+        await dbContext.ProjectFundSourceAllocationRequests
+            .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
+            .ExecuteDeleteAsync();
+        await dbContext.AgreementFundSourceAllocations
+            .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
+            .ExecuteDeleteAsync();
+        await dbContext.FundSourceAllocationExpenditures
+            .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
+            .ExecuteDeleteAsync();
+        await dbContext.FundSourceAllocationFileResources
+            .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
+            .ExecuteDeleteAsync();
+        await dbContext.FundSourceAllocationNoteInternals
+            .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
+            .ExecuteDeleteAsync();
+        await dbContext.FundSourceAllocationNotes
+            .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
+            .ExecuteDeleteAsync();
+        await dbContext.FundSourceAllocationChangeLogs
+            .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
+            .ExecuteDeleteAsync();
+        await dbContext.FundSourceAllocationProgramIndexProjectCodes
+            .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
+            .ExecuteDeleteAsync();
+        await dbContext.FundSourceAllocationLikelyPeople
+            .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
+            .ExecuteDeleteAsync();
+        await dbContext.FundSourceAllocationProgramManagers
+            .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
+            .ExecuteDeleteAsync();
+        await dbContext.FundSourceAllocationBudgetLineItems
+            .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
+            .ExecuteDeleteAsync();
+
         var deletedCount = await dbContext.FundSourceAllocations
             .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
             .ExecuteDeleteAsync();

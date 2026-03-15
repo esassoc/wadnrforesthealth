@@ -63,43 +63,7 @@ export class FundSourcesComponent {
             map((user) => this.authService.hasElevatedProjectAccess(user)),
         );
 
-        this.columnDefs = [
-            this.utilityFunctions.createLinkColumnDef("Fund Source Number", "FundSourceNumber", "FundSourceID", {
-                FieldDefinitionType: "FundSourceNumber",
-                InRouterLink: "/fund-sources/",
-            }),
-            this.utilityFunctions.createBasicColumnDef("CFDA #", "CFDANumber", {
-                FieldDefinitionType: "CFDA",
-                FieldDefinitionLabelOverride: "Federal Assistance Listing",
-            }),
-            this.utilityFunctions.createLinkColumnDef("Fund Source Name", "FundSourceName", "FundSourceID", {
-                InRouterLink: "/fund-sources/",
-                FieldDefinitionType: "FundSourceName",
-            }),
-            this.utilityFunctions.createCurrencyColumnDef("Total Award", "TotalAwardAmount", {
-                MaxDecimalPlacesToDisplay: 2,
-                FieldDefinitionType: "TotalAwardAmount",
-            }),
-            this.utilityFunctions.createCurrencyColumnDef("Current Balance", "CurrentBalance", {
-                MaxDecimalPlacesToDisplay: 2,
-                FieldDefinitionType: "FundSourceCurrentBalance",
-                FieldDefinitionLabelOverride: "Estimated Current Fund Source Balance",
-            }),
-            this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy", {
-                FieldDefinitionType: "FundSourceStartDate",
-            }),
-            this.utilityFunctions.createDateColumnDef("End Date", "EndDate", "M/d/yyyy", {
-                FieldDefinitionType: "FundSourceEndDate",
-            }),
-            this.utilityFunctions.createBasicColumnDef("Status", "FundSourceStatusName", {
-                FieldDefinitionType: "FundSourceStatus",
-                CustomDropdownFilterField: "FundSourceStatusName",
-            }),
-            this.utilityFunctions.createBasicColumnDef("Type", "FundSourceTypeDisplay", {
-                FieldDefinitionType: "FundSourceType",
-                CustomDropdownFilterField: "FundSourceTypeDisplay",
-            }),
-        ];
+        this.initFundSourceColumnDefs();
 
         this.initAllocationColumnDefs();
 
@@ -261,6 +225,118 @@ export class FundSourcesComponent {
                 },
             });
         }
+    }
+
+    private initFundSourceColumnDefs(): void {
+        this.authService.currentUserSetObservable.pipe(
+            map((user) => this.authService.canManageFundSources(user)),
+        ).subscribe((canManage) => {
+            const actionsColumn = canManage
+                ? [this.utilityFunctions.createActionsColumnDef((params) => {
+                    const row = params.data as FundSourceGridRow;
+                    return [
+                        { ActionName: "Clone", ActionHandler: () => this.cloneFundSource(row), ActionIcon: "fa fa-copy" },
+                        { ActionName: "Delete", ActionHandler: () => this.confirmDeleteFundSource(row), ActionIcon: "fa fa-trash" },
+                    ];
+                })]
+                : [];
+
+            this.columnDefs = [
+                ...actionsColumn,
+                this.utilityFunctions.createLinkColumnDef("Fund Source Number", "FundSourceNumber", "FundSourceID", {
+                    FieldDefinitionType: "FundSourceNumber",
+                    InRouterLink: "/fund-sources/",
+                }),
+                this.utilityFunctions.createBasicColumnDef("CFDA #", "CFDANumber", {
+                    FieldDefinitionType: "CFDA",
+                    FieldDefinitionLabelOverride: "Federal Assistance Listing",
+                }),
+                this.utilityFunctions.createLinkColumnDef("Fund Source Name", "FundSourceName", "FundSourceID", {
+                    InRouterLink: "/fund-sources/",
+                    FieldDefinitionType: "FundSourceName",
+                }),
+                this.utilityFunctions.createCurrencyColumnDef("Total Award", "TotalAwardAmount", {
+                    MaxDecimalPlacesToDisplay: 2,
+                    FieldDefinitionType: "TotalAwardAmount",
+                }),
+                this.utilityFunctions.createCurrencyColumnDef("Current Balance", "CurrentBalance", {
+                    MaxDecimalPlacesToDisplay: 2,
+                    FieldDefinitionType: "FundSourceCurrentBalance",
+                    FieldDefinitionLabelOverride: "Estimated Current Fund Source Balance",
+                }),
+                this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy", {
+                    FieldDefinitionType: "FundSourceStartDate",
+                }),
+                this.utilityFunctions.createDateColumnDef("End Date", "EndDate", "M/d/yyyy", {
+                    FieldDefinitionType: "FundSourceEndDate",
+                }),
+                this.utilityFunctions.createBasicColumnDef("Status", "FundSourceStatusName", {
+                    FieldDefinitionType: "FundSourceStatus",
+                    CustomDropdownFilterField: "FundSourceStatusName",
+                }),
+                this.utilityFunctions.createBasicColumnDef("Type", "FundSourceTypeDisplay", {
+                    FieldDefinitionType: "FundSourceType",
+                    CustomDropdownFilterField: "FundSourceTypeDisplay",
+                }),
+            ];
+        });
+    }
+
+    async confirmDeleteFundSource(row: FundSourceGridRow): Promise<void> {
+        const confirmed = await this.confirmService.confirm(
+            {
+                title: "Delete Fund Source",
+                message: `Are you sure you want to delete fund source "${row.FundSourceName}"? This will also delete all allocations under this fund source.`,
+                buttonTextYes: "Delete",
+                buttonClassYes: "btn-danger",
+                buttonTextNo: "Cancel",
+            },
+            this.viewContainerRef,
+        );
+
+        if (confirmed) {
+            this.fundSourceService.deleteFundSource(row.FundSourceID!).subscribe({
+                next: () => {
+                    this.alertService.pushAlert(new Alert("Fund source deleted successfully.", AlertContext.Success, true));
+                    this.fundSources$ = this.fundSourceService.listFundSource();
+                    this.loadAllocations();
+                },
+                error: (err) => {
+                    const message = err?.error?.message ?? err?.error ?? "An error occurred while deleting.";
+                    this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true));
+                },
+            });
+        }
+    }
+
+    cloneFundSource(row: FundSourceGridRow): void {
+        this.fundSourceService.getFundSource(row.FundSourceID!).subscribe({
+            next: (detail) => {
+                import("./fund-source-edit-modal.component").then(({ FundSourceEditModalComponent }) => {
+                    const dialogRef = this.dialogService.open(FundSourceEditModalComponent, {
+                        data: {
+                            mode: "create" as const,
+                            fundSourceName: (detail.FundSourceName ?? "") + " - Copy",
+                            shortName: detail.ShortName,
+                            organizationID: detail.Organization?.OrganizationID,
+                            fundSourceStatusID: detail.FundSourceStatus?.FundSourceStatusID,
+                            fundSourceTypeID: detail.FundSourceTypeID,
+                            fundSourceNumber: detail.FundSourceNumber,
+                            cfdaNumber: detail.CFDANumber,
+                            startDate: detail.StartDate,
+                            endDate: detail.EndDate,
+                        },
+                        size: "lg",
+                    });
+                    dialogRef.afterClosed$.subscribe((result) => {
+                        if (typeof result === "number") {
+                            this.router.navigate(["/fund-sources", result]);
+                        }
+                    });
+                });
+            },
+            error: () => this.alertService.pushAlert(new Alert("Failed to load fund source for cloning.", AlertContext.Danger, true)),
+        });
     }
 
     createNewFundSource(): void {

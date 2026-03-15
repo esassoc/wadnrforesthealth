@@ -27219,6 +27219,8 @@
         "type": "object",
         "properties": {
           "FundSourceName": {
+            "maxLength": 64,
+            "minLength": 0,
             "type": "string",
             "nullable": true
           },

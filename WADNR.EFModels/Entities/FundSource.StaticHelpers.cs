@@ -71,6 +71,27 @@ public static class FundSources
 
     public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int fundSourceID)
     {
+        // Delete all allocations and their children first
+        var allocationIDs = await dbContext.FundSourceAllocations
+            .Where(x => x.FundSourceID == fundSourceID)
+            .Select(x => x.FundSourceAllocationID)
+            .ToListAsync();
+        foreach (var allocationID in allocationIDs)
+        {
+            await FundSourceAllocations.DeleteAsync(dbContext, allocationID);
+        }
+
+        // Delete fund source's own children
+        await dbContext.FundSourceNoteInternals
+            .Where(x => x.FundSourceID == fundSourceID)
+            .ExecuteDeleteAsync();
+        await dbContext.FundSourceNotes
+            .Where(x => x.FundSourceID == fundSourceID)
+            .ExecuteDeleteAsync();
+        await dbContext.FundSourceFileResources
+            .Where(x => x.FundSourceID == fundSourceID)
+            .ExecuteDeleteAsync();
+
         var deletedCount = await dbContext.FundSources
             .Where(x => x.FundSourceID == fundSourceID)
             .ExecuteDeleteAsync();
