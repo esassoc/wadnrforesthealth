@@ -8,7 +8,7 @@
             <div class="card">
                 <div class="card-header flex-between">
                     <span class="card-title">Basics</span>
-                    @if (canManageOrganizations$ | async) {
+                    @if (canManageUsersContactsOrganizations$ | async) {
                         <button class="card-header-edit-link" (click)="openEditModal(organization)" title="Edit Basics">
                             <icon icon="Edit"></icon>
                         </button>
@@ -131,7 +131,7 @@
                     <span class="card-title">Project Locations and Boundary</span>
                 </div>
                 <div class="card-body">
-                    @if (canManageOrganizations$ | async) {
+                    @if (canManageUsersContactsOrganizations$ | async) {
                         <div class="flex-end mb-2">
                             <button class="btn btn-primary btn-sm" (click)="openUploadBoundaryModal(organization)"><icon icon="Upload"></icon> Upload Boundary</button>
                             @if (organization.HasOrganizationBoundary) {

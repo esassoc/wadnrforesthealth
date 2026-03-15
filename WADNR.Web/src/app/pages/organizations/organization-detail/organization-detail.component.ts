@@ -109,7 +109,7 @@ export class OrganizationDetailComponent {
     public legendColorsToUse: Record<string, Palette> = PROJECT_STAGE_LEGEND_COLORS;
     public OverlayMode = OverlayMode;
 
-    public canManageOrganizations$: Observable<boolean>;
+    public canManageUsersContactsOrganizations$: Observable<boolean>;
     public canManagePrograms$: Observable<boolean>;
     public canDownloadExcel$: Observable<boolean>;
 
@@ -195,8 +195,8 @@ export class OrganizationDetailComponent {
             this.agreementExcelDownloadUrl = `${environment.mainAppApiUrl}/organizations/${id}/agreements/excel-download`;
         });
 
-        this.canManageOrganizations$ = this.authenticationService.currentUserSetObservable.pipe(
-            map(user => this.authenticationService.canManageOrganizations(user)),
+        this.canManageUsersContactsOrganizations$ = this.authenticationService.currentUserSetObservable.pipe(
+            map(user => this.authenticationService.canManageUsersContactsOrganizations(user)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 

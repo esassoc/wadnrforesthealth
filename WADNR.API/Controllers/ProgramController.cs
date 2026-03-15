@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +27,7 @@ public class ProgramController(
     : SitkaController<ProgramController>(dbContext, logger, configuration)
 {
     [HttpGet]
-    [AllowAnonymous]
+    [ProgramViewFeature]
     public async Task<ActionResult<IEnumerable<ProgramGridRow>>> List()
     {
         var sources = await Programs.ListAsGridRowAsync(DbContext);
@@ -36,7 +35,7 @@ public class ProgramController(
     }
 
     [HttpGet("{programID}")]
-    [AllowAnonymous]
+    [ProgramViewFeature]
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<ActionResult<ProgramDetail>> Get([FromRoute] int programID)
     {
@@ -111,7 +110,7 @@ public class ProgramController(
     }
 
     [HttpGet("{programID}/projects")]
-    [AllowAnonymous]
+    [ProgramViewFeature]
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<ActionResult<IEnumerable<ProjectProgramDetailGridRow>>> ListProjects([FromRoute] int programID)
     {
@@ -120,7 +119,7 @@ public class ProgramController(
     }
 
     [HttpGet("{programID}/notifications")]
-    [AllowAnonymous]
+    [ProgramViewFeature]
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<ActionResult<IEnumerable<ProgramNotificationGridRow>>> ListNotifications([FromRoute] int programID)
     {
@@ -286,7 +285,7 @@ public class ProgramController(
     #region Block List
 
     [HttpGet("{programID}/block-list")]
-    [ProgramManageFeature]
+    [ProgramViewFeature]
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<ActionResult<List<ProjectImportBlockListGridRow>>> ListBlockListEntries([FromRoute] int programID)
     {

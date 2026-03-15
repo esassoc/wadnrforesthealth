@@ -11876,7 +11876,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       },
       "post": {
         "tags": [
@@ -31922,6 +31923,9 @@
             "type": "boolean"
           },
           "UserCanEditProjectAsAdmin": {
+            "type": "boolean"
+          },
+          "UserCanViewInternalNotes": {
             "type": "boolean"
           },
           "CanStartUpdate": {

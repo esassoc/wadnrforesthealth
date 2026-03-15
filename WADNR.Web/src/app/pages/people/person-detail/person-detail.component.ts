@@ -166,7 +166,7 @@ export class PersonDetailComponent {
         this.canEditRoles$ = userAndPerson$.pipe(
             map(([_, currentUser]) => {
                 if (!currentUser) return false;
-                return this.authenticationService.canManageOrganizations(currentUser);
+                return this.authenticationService.canManageUsersContactsOrganizations(currentUser);
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
@@ -175,7 +175,7 @@ export class PersonDetailComponent {
             map(([person, currentUser]) => {
                 if (!currentUser || !person) return false;
                 const isNotSelf = person.PersonID !== currentUser.PersonID;
-                return this.authenticationService.canManageOrganizations(currentUser) && person.IsFullUser && isNotSelf;
+                return this.authenticationService.canManageUsersContactsOrganizations(currentUser) && person.IsFullUser && isNotSelf;
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );

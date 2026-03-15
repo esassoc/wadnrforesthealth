@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -20,7 +19,6 @@ public class SearchController(
     : SitkaController<SearchController>(dbContext, logger, configuration)
 {
     [HttpGet("projects/{searchText}")]
-    [AllowAnonymous]
     [ProjectViewFeature]
     public async Task<ActionResult<List<ProjectSearchResult>>> SearchProjects([FromRoute] string searchText)
     {

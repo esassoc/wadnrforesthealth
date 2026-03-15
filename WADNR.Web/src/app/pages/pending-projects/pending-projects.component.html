@@ -1,11 +1,13 @@
 <page-header pageTitle="Pending Projects" [customRichTextTypeID]="customRichTextTypeID"></page-header>
 
 <div class="page-body">
+    @if (canCreateProject$ | async) {
     <div class="flex-end mb-3">
         <a class="btn btn-primary" [routerLink]="['/projects/new']">
             <span class="fas fa-plus"></span> Propose New Project
         </a>
     </div>
+    }
     <wadnr-grid
         [rowData]="projects$ | async"
         [columnDefs]="columnDefs"

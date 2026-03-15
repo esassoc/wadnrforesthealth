@@ -130,8 +130,12 @@ export class HeaderNavComponent implements OnInit {
         return this.authenticationService.canManagePageContent(user);
     }
 
-    public canManageUsers(user: PersonDetail | null): boolean {
-        return this.authenticationService.canManageOrganizations(user);
+    public canManageUsersContactsOrganizations(user: PersonDetail | null): boolean {
+        return this.authenticationService.canManageUsersContactsOrganizations(user);
+    }
+
+    public isUnassigned(user: PersonDetail | null): boolean {
+        return this.authenticationService.isUserUnassigned(user);
     }
 
     public isBeingImpersonated(user: PersonDetail | null): boolean {

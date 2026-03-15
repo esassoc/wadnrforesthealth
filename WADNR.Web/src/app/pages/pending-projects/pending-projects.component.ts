@@ -37,6 +37,7 @@ export class PendingProjectsComponent implements OnInit {
 
     public isDownloading = signal(false);
     public canDownloadExcel$: Observable<boolean>;
+    public canCreateProject$: Observable<boolean>;
 
     private refreshData$ = new BehaviorSubject<void>(undefined);
 
@@ -53,6 +54,9 @@ export class PendingProjectsComponent implements OnInit {
     ngOnInit(): void {
         this.canDownloadExcel$ = this.authenticationService.currentUserSetObservable.pipe(
             map((user) => this.authenticationService.hasElevatedProjectAccess(user)),
+        );
+        this.canCreateProject$ = this.authenticationService.currentUserSetObservable.pipe(
+            map((user) => this.authenticationService.canCreateProject(user)),
         );
         this.projects$ = this.refreshData$.pipe(switchMap(() => this.projectService.listPendingProject()));
         this.columnDefs = this.createColumnDefs();

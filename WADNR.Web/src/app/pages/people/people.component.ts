@@ -104,7 +104,7 @@ export class PeopleComponent {
         );
 
         this.canAddContact$ = this.authenticationService.currentUserSetObservable.pipe(
-            map((user) => this.authenticationService.canManageOrganizations(user))
+            map((user) => this.authenticationService.canManageUsersContactsOrganizations(user))
         );
     }
 

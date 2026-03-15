@@ -1,4 +1,5 @@
 using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace WADNR.API.Services.Authorization;
@@ -22,7 +23,7 @@ namespace WADNR.API.Services.Authorization;
 /// so authenticated users will have their claims populated.
 /// </remarks>
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false)]
-public class ProjectViewFeature : Attribute, IAuthorizationFilter
+public class ProjectViewFeature : Attribute, IAuthorizationFilter, IAllowAnonymous
 {
     public void OnAuthorization(AuthorizationFilterContext context)
     {

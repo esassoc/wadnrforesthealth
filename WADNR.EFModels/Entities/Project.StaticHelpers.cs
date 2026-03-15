@@ -885,6 +885,15 @@ public static class Projects
         // Populate user-specific permission flags
         await PopulatePermissionFlagsAsync(entity, dbContext, projectID, callingUser);
 
+        // Filter out restricted relationship types (e.g. Private Landowner) for unauthorized users
+        if (!callingUser.CanViewLandownerInfo())
+        {
+            entity.People = entity.People
+                .Where(p => !ProjectPersonRelationshipType.AllLookupDictionary.TryGetValue(p.RelationshipTypeID, out var rt)
+                    || !rt.IsRestrictedToAdminAndProjectStewardAndCanViewLandownerInfo)
+                .ToList();
+        }
+
         // Populate bounding box using fallback chain
         entity.DefaultBoundingBox = await GetProjectBoundingBoxAsync(dbContext, projectID);
 
@@ -966,7 +975,7 @@ public static class Projects
         var isAdmin = callingUser.BaseRole?.RoleID is (int)RoleEnum.Admin or (int)RoleEnum.EsaAdmin;
         var isApproved = entity.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Approved;
 
-        entity.UserIsAdmin = callingUser.HasElevatedProjectAccess();
+        entity.UserIsAdmin = isAdmin;
         entity.UserCanDelete = isAdmin;
         entity.UserCanApprove = ProjectAuthorization.CanApprove(callingUser, authData, stewardshipAreaTypeID);
         entity.UserCanDirectEdit = entity.UserCanApprove;
@@ -984,6 +993,8 @@ public static class Projects
 
         entity.UserCanEditProjectAsAdmin = entity.UserCanDirectEdit
             || callingUser.HasCanEditProgramRole();
+
+        entity.UserCanViewInternalNotes = entity.UserCanEditProjectAsAdmin;
 
         entity.CanStartUpdate = entity.UserCanEdit && isApproved && !entity.HasExistingUpdateBatch;
     }

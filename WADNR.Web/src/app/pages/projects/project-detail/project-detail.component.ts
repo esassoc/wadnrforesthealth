@@ -33,6 +33,7 @@ type ProjectPermissions = {
     userCanViewCostSharePDFs: boolean;
     userCanManageTreatments: boolean;
     userCanEditProjectAsAdmin: boolean;
+    userCanViewInternalNotes: boolean;
     canStartUpdate: boolean;
     userIsLoggedIn: boolean;
 };
@@ -345,6 +346,7 @@ export class ProjectDetailComponent implements OnDestroy {
                 userCanViewCostSharePDFs: project.UserCanViewCostSharePDFs,
                 userCanManageTreatments: project.UserCanManageTreatments,
                 userCanEditProjectAsAdmin: project.UserCanEditProjectAsAdmin,
+                userCanViewInternalNotes: project.UserCanViewInternalNotes,
                 canStartUpdate: project.CanStartUpdate,
                 userIsLoggedIn: user != null,
             })),

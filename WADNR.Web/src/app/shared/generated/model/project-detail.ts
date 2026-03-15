@@ -68,6 +68,7 @@ export class ProjectDetail {
     UserCanViewCostSharePDFs?: boolean;
     UserCanManageTreatments?: boolean;
     UserCanEditProjectAsAdmin?: boolean;
+    UserCanViewInternalNotes?: boolean;
     CanStartUpdate?: boolean;
     CanViewFactSheet?: boolean;
     HasExistingUpdateBatch?: boolean;
@@ -124,6 +125,7 @@ export interface ProjectDetailForm {
     UserCanViewCostSharePDFs?: FormControl<boolean>;
     UserCanManageTreatments?: FormControl<boolean>;
     UserCanEditProjectAsAdmin?: FormControl<boolean>;
+    UserCanViewInternalNotes?: FormControl<boolean>;
     CanStartUpdate?: FormControl<boolean>;
     CanViewFactSheet?: FormControl<boolean>;
     HasExistingUpdateBatch?: FormControl<boolean>;
@@ -555,6 +557,16 @@ export class ProjectDetailFormControls {
         }
     );
     public static UserCanEditProjectAsAdmin = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static UserCanViewInternalNotes = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

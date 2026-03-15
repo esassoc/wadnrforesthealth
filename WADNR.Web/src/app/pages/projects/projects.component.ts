@@ -27,6 +27,8 @@ export class ProjectsComponent {
     public columnDefs: ColDef[];
     public customRichTextTypeID = FirmaPageTypeEnum.FullProjectList;
     public canDownloadExcel$: Observable<boolean>;
+    public canCreateProject$: Observable<boolean>;
+    public canCreateGisUpload$: Observable<boolean>;
     public isAdmin$: Observable<boolean>;
     public excelDownloadUrl = `${environment.mainAppApiUrl}/projects/excel-download`;
 
@@ -42,6 +44,8 @@ export class ProjectsComponent {
     ngOnInit(): void {
         this.currentUser$ = this.authenticationService.currentUserSetObservable;
         this.canDownloadExcel$ = this.currentUser$.pipe(map((user) => this.authenticationService.hasElevatedProjectAccess(user)));
+        this.canCreateProject$ = this.currentUser$.pipe(map((user) => this.authenticationService.canCreateProject(user)));
+        this.canCreateGisUpload$ = this.currentUser$.pipe(map((user) => this.authenticationService.canCreateGisUpload(user)));
         this.isAdmin$ = this.currentUser$.pipe(
             map((user) => this.authenticationService.isUserAnAdministrator(user)),
             shareReplay({ bufferSize: 1, refCount: true })
@@ -54,10 +58,6 @@ export class ProjectsComponent {
 
     onTagged(): void {
         this.refreshProjects$.next();
-    }
-
-    canCreateGisUpload(user: PersonDetail | null): boolean {
-        return this.authenticationService.canCreateGisUpload(user);
     }
 
     openGisImportModal(): void {

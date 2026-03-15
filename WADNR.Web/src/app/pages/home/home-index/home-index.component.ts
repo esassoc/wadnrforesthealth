@@ -44,7 +44,8 @@ export class HomeIndexComponent implements OnInit {
     homeAdditionalInfoTypeID = FirmaPageTypeEnum.HomeAdditionalInfo;
 
     // Observables
-    isAuthenticated$: Observable<boolean>;
+    canCreateProject$: Observable<boolean>;
+    canCreateGisUpload$: Observable<boolean>;
     currentUser$: Observable<PersonDetail | null>;
     carouselImages$: Observable<ImageCarouselItem[]>;
     featuredProjects$: Observable<ProjectFeatured[]>;
@@ -66,8 +67,11 @@ export class HomeIndexComponent implements OnInit {
 
     ngOnInit(): void {
         this.currentUser$ = this.authenticationService.currentUserSetObservable;
-        this.isAuthenticated$ = this.currentUser$.pipe(
-            map((user) => user != null),
+        this.canCreateProject$ = this.currentUser$.pipe(
+            map((user) => this.authenticationService.canCreateProject(user)),
+        );
+        this.canCreateGisUpload$ = this.currentUser$.pipe(
+            map((user) => this.authenticationService.canCreateGisUpload(user)),
         );
 
         this.carouselImages$ = this.firmaHomePageImageService.listFirmaHomePageImage().pipe(
@@ -88,10 +92,6 @@ export class HomeIndexComponent implements OnInit {
         this.map = event.map;
         this.layerControl = event.layerControl;
         this.mapIsReady = true;
-    }
-
-    canCreateGisUpload(user: PersonDetail | null): boolean {
-        return this.authenticationService.canCreateGisUpload(user);
     }
 
     openGisImportModal(): void {

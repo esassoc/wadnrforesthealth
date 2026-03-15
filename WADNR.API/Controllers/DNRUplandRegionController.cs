@@ -91,7 +91,6 @@ public class DNRUplandRegionController(
     }
 
     [HttpGet("{dnrUplandRegionID}/projects")]
-    [AllowAnonymous]
     [ProjectViewFeature]
     public async Task<ActionResult<IEnumerable<ProjectDNRUplandRegionDetailGridRow>>> ListProjectsForDNRUplandRegionID([FromRoute] int dnrUplandRegionID)
     {

@@ -44,7 +44,6 @@ public class CountyController(
     }
 
     [HttpGet("{countyID}/projects")]
-    [AllowAnonymous]
     [ProjectViewFeature]
     public async Task<ActionResult<IEnumerable<ProjectCountyDetailGridRow>>> ListProjectsForCountyID([FromRoute] int countyID)
     {

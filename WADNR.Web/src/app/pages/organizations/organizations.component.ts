@@ -35,7 +35,7 @@ export class OrganizationsComponent {
 
     ngOnInit(): void {
         this.canManage$ = this.authService.currentUserSetObservable.pipe(
-            map((user) => this.authService.canManageOrganizations(user)),
+            map((user) => this.authService.canManageUsersContactsOrganizations(user)),
         );
         this.columnDefs = [
             this.utilityFunctions.createLinkColumnDef("Organization", "OrganizationName", "OrganizationID", {

@@ -612,4 +612,9 @@ public static class PersonDetailExtensions
 
     public static bool CanViewAdminLimitedProjects(this PersonDetail? user) =>
         user.HasElevatedProjectAccess() || user.HasCanEditProgramRole();
+
+    public static bool CanViewLandownerInfo(this PersonDetail? user) =>
+        user != null &&
+        (user.HasElevatedProjectAccess() ||
+         (user.SupplementalRoleList?.Any(r => r.RoleID == (int)RoleEnum.CanViewLandownerInfo) ?? false));
 }

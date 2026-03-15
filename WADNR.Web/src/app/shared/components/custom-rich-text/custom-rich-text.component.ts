@@ -46,7 +46,7 @@ export class CustomRichTextComponent implements OnInit, AfterViewChecked {
     public editedContent: string;
 
     public canEdit$ = this.authenticationService.currentUserSetObservable.pipe(
-        map(user => this.authenticationService.isUserAnAdministrator(user))
+        map(user => this.authenticationService.canManagePageContent(user))
     );
 
     constructor(

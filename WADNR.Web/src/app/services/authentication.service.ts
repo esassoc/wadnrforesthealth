@@ -300,7 +300,7 @@ export class AuthenticationService {
      * Checks if user can manage organizations (create/edit/delete).
      * Matches [UserManageFeature]: Admin, EsaAdmin, CanAddEditUsersContactsOrganizations.
      */
-    public canManageOrganizations(user: PersonDetail | null): boolean {
+    public canManageUsersContactsOrganizations(user: PersonDetail | null): boolean {
         if (!user) return false;
         return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanAddEditUsersContactsOrganizations]);
     }

@@ -2,11 +2,11 @@
 
 <ng-template #headerButtons>
     <div class="flex gap-2">
-        @if (currentUser$ | async; as currentUser) {
-            @if (canCreateGisUpload(currentUser)) {
-            <button class="btn btn-primary" (click)="openGisImportModal()">
-                <span class="fas fa-upload"></span> GIS Import/Update
-            </button>
+        @if (canCreateProject$ | async) {
+            @if (canCreateGisUpload$ | async) {
+                <button class="btn btn-primary" (click)="openGisImportModal()">
+                    <span class="fas fa-upload"></span> GIS Import/Update
+                </button>
             }
             <a class="btn btn-primary" [routerLink]="['/projects/new']">
                 <span class="fas fa-plus"></span> Add Project

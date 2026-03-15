@@ -90,8 +90,10 @@
                         <li><a routerLink="/projects-by-type" class="dropdown-item">Projects By Type</a></li>
                         <li><a routerLink="/projects-by-theme" class="dropdown-item">Projects By Theme</a></li>
                         <li><a routerLink="/tags" class="dropdown-item">Project Tags</a></li>
-                        @if (currentUser$ | async) {
-                        <li><a routerLink="/pending-projects" class="dropdown-item">Pending Projects</a></li>
+                        @if (currentUser$ | async; as currentUserForPending) {
+                            @if (!isUnassigned(currentUserForPending)) {
+                            <li><a routerLink="/pending-projects" class="dropdown-item">Pending Projects</a></li>
+                            }
                         }
                         <li class="divider"></li>
                         <li><a routerLink="/interactions-events" class="dropdown-item">Full Interactions/Events List</a></li>
@@ -160,7 +162,9 @@
                             <li class="divider"></li>
                             }
                             <!-- Group 2: System Config -->
+                            @if (canManageUsersContactsOrganizations(currentUserForManage)) {
                             <li><a routerLink="/people" class="dropdown-item">Users and Contacts</a></li>
+                            }
                             @if (isAdmin(currentUserForManage)) {
                             <li><a routerLink="/featured-projects" class="dropdown-item">Featured Projects</a></li>
                             <li><a routerLink="/project-updates" class="dropdown-item">Project Updates</a></li>

@@ -20,12 +20,10 @@
         <!-- Right column: actions + map -->
         <div class="g-col-4">
             <!-- Action buttons (authenticated only) -->
-            @if (isAuthenticated$ | async) {
+            @if (canCreateProject$ | async) {
             <a class="btn btn-primary home-action-btn" routerLink="/projects/new">Add Project</a>
-            @if (currentUser$ | async; as currentUser) {
-                @if (canCreateGisUpload(currentUser)) {
+            @if (canCreateGisUpload$ | async) {
                 <button class="btn btn-primary home-action-btn" (click)="openGisImportModal()">GIS Import/Update</button>
-                }
             }
             <a class="btn btn-primary home-action-btn" routerLink="/my-projects" [queryParams]="{ filter: 'requiring-update' }">Update Project</a>
             }

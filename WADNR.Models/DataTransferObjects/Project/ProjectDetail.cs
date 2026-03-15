@@ -78,6 +78,7 @@ public class ProjectDetail
     public bool UserCanViewCostSharePDFs { get; set; }
     public bool UserCanManageTreatments { get; set; }
     public bool UserCanEditProjectAsAdmin { get; set; }
+    public bool UserCanViewInternalNotes { get; set; }
     public bool CanStartUpdate { get; set; }
 
     // Button visibility flags
