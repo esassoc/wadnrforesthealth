@@ -154,6 +154,7 @@ public class OrganizationController(
     }
 
     [HttpGet("{organizationID}/projects")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(Organization), "organizationID")]
     public async Task<ActionResult<IEnumerable<ProjectOrganizationDetailGridRow>>> ListProjectsForOrganization([FromRoute] int organizationID)

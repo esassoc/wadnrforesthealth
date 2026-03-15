@@ -190,7 +190,7 @@ export function openTwoPhaseCustomElementPopupAt<T>(
                     // ignore
                 }
 
-                const loadedPopup = L.popup(popupOptions).setLatLng(latlng).setContent(loadedHtml).openOn(map);
+                const loadedPopup = L.popup({ ...popupOptions, autoPan: true }).setLatLng(latlng).setContent(loadedHtml).openOn(map);
                 scheduleLeafletPopupUpdate(loadedPopup);
             },
             error: () => {
@@ -232,7 +232,7 @@ export function bindTwoPhasePopup(layer: L.Layer, config: TwoPhasePopupConfig): 
                         // ignore
                     }
 
-                    const loadedPopup = L.popup(config.popupOptions).setLatLng(latlng).setContent(config.buildLoadedHtml()).openOn(map);
+                    const loadedPopup = L.popup({ ...config.popupOptions, autoPan: true }).setLatLng(latlng).setContent(config.buildLoadedHtml()).openOn(map);
                     scheduleLeafletPopupUpdate(loadedPopup);
                 },
                 error: () => {

@@ -45,6 +45,7 @@ public class TaxonomyBranchController(
     }
 
     [HttpGet("{taxonomyBranchID}/projects")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(TaxonomyBranch), "taxonomyBranchID")]
     public async Task<ActionResult<IEnumerable<ProjectGridRow>>> ListProjects([FromRoute] int taxonomyBranchID)
@@ -54,6 +55,7 @@ public class TaxonomyBranchController(
     }
 
     [HttpGet("{taxonomyBranchID}/projects/mapped-point/feature-collection")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     [EntityNotFound(typeof(TaxonomyBranch), "taxonomyBranchID")]
     public async Task<ActionResult<FeatureCollection>> ListProjectMappedPointsFeatureCollection([FromRoute] int taxonomyBranchID)

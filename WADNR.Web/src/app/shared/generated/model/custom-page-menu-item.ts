@@ -14,6 +14,7 @@ export class CustomPageMenuItem {
     CustomPageID?: number;
     CustomPageDisplayName?: string | null;
     CustomPageVanityUrl?: string | null;
+    CustomPageDisplayTypeID?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -23,6 +24,7 @@ export interface CustomPageMenuItemForm {
     CustomPageID?: FormControl<number>;
     CustomPageDisplayName?: FormControl<string>;
     CustomPageVanityUrl?: FormControl<string>;
+    CustomPageDisplayTypeID?: FormControl<number>;
 }
 
 export class CustomPageMenuItemFormControls { 
@@ -47,6 +49,16 @@ export class CustomPageMenuItemFormControls {
         }
     );
     public static CustomPageVanityUrl = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CustomPageDisplayTypeID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

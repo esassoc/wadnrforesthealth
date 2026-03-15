@@ -41,6 +41,7 @@ public class ProjectTypeController(
     }
 
     [HttpGet("taxonomy")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     public async Task<ActionResult<IEnumerable<ProjectTypeTaxonomy>>> Taxonomy()
     {
@@ -62,6 +63,7 @@ public class ProjectTypeController(
     }
 
     [HttpGet("{projectTypeID}/projects")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     public async Task<ActionResult<IEnumerable<ProjectProjectTypeDetailGridRow>>> ListProjectsForProjectTypeID([FromRoute] int projectTypeID)
     {
@@ -70,6 +72,7 @@ public class ProjectTypeController(
     }
 
     [HttpGet("{projectTypeID}/projects/mapped-point/feature-collection")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     public async Task<ActionResult<FeatureCollection>> ListProjectMappedPointsFeatureCollectionForProjectTypeID(
         [FromRoute] int projectTypeID)

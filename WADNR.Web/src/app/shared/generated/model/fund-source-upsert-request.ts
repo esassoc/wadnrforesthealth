@@ -51,6 +51,8 @@ export class FundSourceUpsertRequestFormControls {
             nonNullable: false,
             validators: 
             [
+                Validators.minLength(0),
+                Validators.maxLength(64),
             ],
         }
     );

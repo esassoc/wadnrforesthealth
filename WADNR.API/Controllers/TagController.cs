@@ -99,6 +99,7 @@ public class TagController(
     }
 
     [HttpGet("{tagID}/projects")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     public async Task<ActionResult<IEnumerable<ProjectTagDetailGridRow>>> ListProjectsForTagID([FromRoute] int tagID)
     {

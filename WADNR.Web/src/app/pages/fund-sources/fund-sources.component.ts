@@ -34,6 +34,7 @@ export class FundSourcesComponent {
     public customRichTextTypeID = FirmaPageTypeEnum.FullFundSourceList;
     public canManage$: Observable<boolean>;
     public canDownloadExcel$: Observable<boolean>;
+    public isAuthenticated$: Observable<boolean>;
     public isDownloading = signal(false);
     private excelDownloadUrl = `${environment.mainAppApiUrl}/fund-sources/excel-download`;
 
@@ -61,6 +62,9 @@ export class FundSourcesComponent {
         );
         this.canDownloadExcel$ = this.authService.currentUserSetObservable.pipe(
             map((user) => this.authService.hasElevatedProjectAccess(user)),
+        );
+        this.isAuthenticated$ = this.authService.currentUserSetObservable.pipe(
+            map((user) => user != null),
         );
 
         this.initFundSourceColumnDefs();

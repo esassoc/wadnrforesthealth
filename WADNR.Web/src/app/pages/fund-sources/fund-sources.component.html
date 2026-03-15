@@ -22,6 +22,7 @@
         </div>
     </wadnr-grid>
 
+    @if (isAuthenticated$ | async) {
     <div class="mt-3">
         @if (noMatchingAllocations) {
             <div class="alert alert-info">
@@ -43,4 +44,5 @@
             }
         </wadnr-grid>
     </div>
+    }
 </div>

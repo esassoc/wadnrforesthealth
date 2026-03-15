@@ -1168,7 +1168,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/classifications/upload-key-image": {
@@ -9113,7 +9114,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/organizations/{organizationID}/projects/pending": {
@@ -20546,7 +20548,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/project-types/{projectTypeID}": {
@@ -20718,7 +20721,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/project-types/{projectTypeID}/projects/mapped-point/feature-collection": {
@@ -20768,7 +20772,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/project-types/sort-order": {
@@ -22267,7 +22272,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/taxonomy-branches": {
@@ -22526,7 +22532,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/taxonomy-branches/{taxonomyBranchID}/projects/mapped-point/feature-collection": {
@@ -22576,7 +22583,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/taxonomy-branches/lookup": {
@@ -22875,7 +22883,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/taxonomy-trunks/lookup": {
@@ -24564,6 +24573,10 @@
           "CustomPageVanityUrl": {
             "type": "string",
             "nullable": true
+          },
+          "CustomPageDisplayTypeID": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

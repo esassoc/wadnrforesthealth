@@ -7,6 +7,7 @@ import { DropdownToggleDirective } from "src/app/shared/directives/dropdown-togg
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { ProjectSearchTypeaheadComponent } from "src/app/shared/components/project-search-typeahead/project-search-typeahead.component";
 import { FeedbackModalComponent, FeedbackModalData } from "src/app/shared/components/feedback-modal/feedback-modal.component";
+import { CustomPageDisplayTypeEnum } from "src/app/shared/generated/enum/custom-page-display-type-enum";
 import { CustomPageNavigationSectionEnum } from "src/app/shared/generated/enum/custom-page-navigation-section-enum";
 import { CustomPageService } from "src/app/shared/generated/api/custom-page.service";
 import { CustomPageMenuItem } from "src/app/shared/generated/model/custom-page-menu-item";
@@ -59,6 +60,22 @@ export class HeaderNavComponent implements OnInit {
                 financials: getSectionMenuItems(CustomPageNavigationSectionEnum.Financials),
                 programInfo: getSectionMenuItems(CustomPageNavigationSectionEnum.ProgramInfo),
             })),
+            switchMap(menus => this.currentUser$.pipe(
+                map(user => {
+                    const filterItems = (items: CustomPageMenuItem[]) =>
+                        items.filter(item => {
+                            if (item.CustomPageDisplayTypeID === CustomPageDisplayTypeEnum.Disabled) return false;
+                            if (item.CustomPageDisplayTypeID === CustomPageDisplayTypeEnum.Protected && !user) return false;
+                            return true;
+                        });
+                    return {
+                        about: filterItems(menus.about),
+                        projects: filterItems(menus.projects),
+                        financials: filterItems(menus.financials),
+                        programInfo: filterItems(menus.programInfo),
+                    };
+                })
+            )),
             shareReplay(1)
         );
 

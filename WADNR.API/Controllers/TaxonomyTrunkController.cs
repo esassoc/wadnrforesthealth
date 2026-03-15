@@ -40,6 +40,7 @@ public class TaxonomyTrunkController(
     }
 
     [HttpGet("{taxonomyTrunkID}/projects")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     public async Task<ActionResult<List<ProjectGridRow>>> ListProjects([FromRoute] int taxonomyTrunkID)
     {

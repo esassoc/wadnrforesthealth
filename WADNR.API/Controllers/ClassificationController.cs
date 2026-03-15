@@ -100,6 +100,7 @@ public class ClassificationController(
     }
 
     [HttpGet("{classificationID}/projects")]
+    [AllowAnonymous]
     [ProjectViewFeature]
     public async Task<ActionResult<IEnumerable<ProjectClassificationDetailGridRow>>> ListProjectsForClassificationID([FromRoute] int classificationID)
     {
