@@ -405,6 +405,16 @@ public static class Projects
             .SingleOrDefaultAsync();
     }
 
+    public static async Task<ProjectMapPopupHtml?> GetByIDAsMapPopupHtmlAsync(WADNRDbContext dbContext, int projectID)
+    {
+        return await dbContext.Projects
+            .AsNoTracking()
+            .Where(IsActiveProjectExpr)
+            .Where(x => x.ProjectID == projectID)
+            .Select(ProjectProjections.AsMapPopupHtml)
+            .SingleOrDefaultAsync();
+    }
+
     private sealed class ProjectTypeDetailProjectMapPointBaseRow
     {
         public int ProjectID { get; init; }

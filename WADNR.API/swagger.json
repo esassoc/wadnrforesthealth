@@ -12887,6 +12887,31 @@
         "x-anonymous": true
       }
     },
+    "/projects/{projectID}/map-popup-html": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetAsMapPopupHtml_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-anonymous": true
+      }
+    },
     "/projects/mapped-point/feature-collection": {
       "get": {
         "tags": [
@@ -30546,6 +30571,10 @@
             "format": "int32"
           },
           "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationShortName": {
             "type": "string",
             "nullable": true
           },

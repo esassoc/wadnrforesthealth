@@ -17,6 +17,7 @@ public static class ProgramProjections
         // Parent Organization
         OrganizationID = x.OrganizationID,
         OrganizationName = x.Organization != null ? x.Organization.OrganizationName : null,
+        OrganizationShortName = x.Organization != null ? x.Organization.OrganizationShortName : null,
 
         // Primary Contact
         PrimaryContactPersonID = x.ProgramPrimaryContactPersonID,

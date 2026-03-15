@@ -23,6 +23,7 @@ export class ProgramDetail {
     ProgramNotes?: string | null;
     OrganizationID?: number;
     OrganizationName?: string | null;
+    OrganizationShortName?: string | null;
     PrimaryContactPersonID?: number | null;
     PrimaryContactPersonFullName?: string | null;
     PrimaryContactPersonOrganization?: string | null;
@@ -51,6 +52,7 @@ export interface ProgramDetailForm {
     ProgramNotes?: FormControl<string>;
     OrganizationID?: FormControl<number>;
     OrganizationName?: FormControl<string>;
+    OrganizationShortName?: FormControl<string>;
     PrimaryContactPersonID?: FormControl<number>;
     PrimaryContactPersonFullName?: FormControl<string>;
     PrimaryContactPersonOrganization?: FormControl<string>;
@@ -139,6 +141,16 @@ export class ProgramDetailFormControls {
         }
     );
     public static OrganizationName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static OrganizationShortName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

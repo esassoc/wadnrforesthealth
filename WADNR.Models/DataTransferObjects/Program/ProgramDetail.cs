@@ -12,6 +12,7 @@ public class ProgramDetail
     // Parent Organization
     public int OrganizationID { get; set; }
     public string? OrganizationName { get; set; }
+    public string? OrganizationShortName { get; set; }
 
     // Primary Contact
     public int? PrimaryContactPersonID { get; set; }

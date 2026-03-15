@@ -223,6 +223,30 @@ public static class ProjectProjections
             }).ToList()
     };
 
+    public static readonly Expression<Func<Project, ProjectMapPopupHtml>> AsMapPopupHtml = x => new ProjectMapPopupHtml
+    {
+        ProjectID = x.ProjectID,
+        ProjectName = x.ProjectName,
+        Duration = x.Duration,
+        ProjectTypeName = x.ProjectType.ProjectTypeName,
+        ProjectStageName = x.ProjectStage.ProjectStageName,
+        LeadImplementerOrganizationID = x.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => (int?)po.OrganizationID)
+            .SingleOrDefault(),
+        LeadImplementerName = x.ProjectOrganizations
+            .Where(po => po.RelationshipType.IsPrimaryContact)
+            .Select(po => po.Organization.DisplayName)
+            .SingleOrDefault(),
+        Classifications = x.ProjectClassifications
+            .Select(pc => new ClassificationWithSystemLookupItem
+            {
+                ClassificationID = pc.Classification.ClassificationID,
+                DisplayName = pc.Classification.DisplayName,
+                ClassificationSystemName = pc.Classification.ClassificationSystem.ClassificationSystemName
+            }).ToList()
+    };
+
     public static readonly Expression<Func<Project, ProjectForPersonDetailGridRow>> AsForPersonDetailGridRow = x => new ProjectForPersonDetailGridRow
     {
         ProjectID = x.ProjectID,

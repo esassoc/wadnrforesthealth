@@ -197,7 +197,9 @@ public class ProgramController(
             return StatusCode(503, "GDAL API service is not configured.");
         }
 
-        var program = await DbContext.Programs.AsNoTracking().FirstOrDefaultAsync(p => p.ProgramID == programID);
+        var program = await DbContext.Programs.AsNoTracking()
+            .Include(p => p.Organization)
+            .FirstOrDefaultAsync(p => p.ProgramID == programID);
         if (program == null) return NotFound();
 
         var projects = await DbContext.ProjectPrograms
@@ -207,12 +209,18 @@ public class ProgramController(
             {
                 pp.Project.ProjectID,
                 pp.Project.ProjectName,
-                pp.Project.ProjectGisIdentifier,
-                pp.Project.FhtProjectNumber,
-                ProjectStageName = pp.Project.ProjectStage.ProjectStageName,
-                ProjectTypeName = pp.Project.ProjectType.ProjectTypeName,
+                pp.Project.ProjectStageID,
+                pp.Project.ProjectTypeID,
+                TaxonomyBranchID = pp.Project.ProjectType.TaxonomyBranchID,
+                TaxonomyTrunkID = pp.Project.ProjectType.TaxonomyBranch.TaxonomyTrunkID,
                 Longitude = pp.Project.ProjectLocationPoint.Coordinate.X,
                 Latitude = pp.Project.ProjectLocationPoint.Coordinate.Y,
+                ClassificationIDs = pp.Project.ProjectClassifications
+                    .Select(pc => pc.ClassificationID).ToList(),
+                ProgramIDs = pp.Project.ProjectPrograms
+                    .Select(prp => prp.ProgramID).ToList(),
+                Organizations = pp.Project.ProjectOrganizations
+                    .Select(po => new { po.OrganizationID, po.RelationshipTypeID, po.RelationshipType.RelationshipTypeName, po.RelationshipType.IsPrimaryContact }).ToList(),
             })
             .ToListAsync();
 
@@ -221,30 +229,50 @@ public class ProgramController(
             return BadRequest("No projects with location data found for this program.");
         }
 
-        var features = projects.Select(p => new
+        var baseUrl = $"{Request.Scheme}://{Request.Host}";
+
+        var features = projects.Select(p =>
         {
-            type = "Feature",
-            geometry = new
+            var properties = new Dictionary<string, object>
             {
-                type = "Point",
-                coordinates = new[] { p.Longitude, p.Latitude }
-            },
-            properties = new Dictionary<string, object>
-            {
+                ["TaxonomyTrunkID"] = p.TaxonomyTrunkID,
+                ["ProjectStageID"] = p.ProjectStageID,
+                ["ProjectStageColor"] = ProjectStage.AllLookupDictionary.TryGetValue(p.ProjectStageID, out var stage) ? stage.ProjectStageColor : "",
+                ["Info"] = p.ProjectName,
                 ["ProjectID"] = p.ProjectID,
-                ["ProjectName"] = p.ProjectName,
-                ["ProjectGisIdentifier"] = p.ProjectGisIdentifier,
-                ["FhtProjectNumber"] = p.FhtProjectNumber,
-                ["ProjectStage"] = p.ProjectStageName,
-                ["ProjectType"] = p.ProjectTypeName,
-                ["FeatureColor"] = "#99b3ff",
+                ["TaxonomyBranchID"] = p.TaxonomyBranchID,
+                ["ProjectTypeID"] = p.ProjectTypeID,
+                ["ClassificationID"] = string.Join(",", p.ClassificationIDs),
+            };
+
+            foreach (var group in p.Organizations.GroupBy(o => o.RelationshipTypeName))
+            {
+                properties[$"{group.Key}ID"] = group.Select(o => o.OrganizationID).ToList();
             }
+
+            properties["PopupUrl"] = $"{baseUrl}/api/projects/{p.ProjectID}/map-popup-html";
+            properties["ProgramID"] = string.Join(",", p.ProgramIDs);
+            properties["LeadImplementerID"] = (object)(p.Organizations.FirstOrDefault(o => o.IsPrimaryContact)?.OrganizationID ?? -1);
+            properties["FeatureColor"] = "#99b3ff";
+
+            return new
+            {
+                type = "Feature",
+                geometry = new
+                {
+                    type = "Point",
+                    coordinates = new[] { p.Longitude, p.Latitude }
+                },
+                properties
+            };
         });
 
         var featureCollection = new { type = "FeatureCollection", features };
         var geoJson = JsonSerializer.Serialize(featureCollection);
 
-        var programDisplayName = program.ProgramName ?? "Default";
+        var programDisplayName = program.IsDefaultProgramForImportOnly
+            ? $"{program.Organization.OrganizationName} ({program.Organization.OrganizationShortName})"
+            : program.ProgramName;
         var dateStr = DateTime.Now.ToString("yyyy-MM-dd");
         var gdbName = $"ProjectsInProgram-{programDisplayName}-{dateStr}";
         var fileName = $"{gdbName}.gdb.zip";

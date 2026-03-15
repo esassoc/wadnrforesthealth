@@ -200,6 +200,96 @@ public class ProjectController(
         return Ok(entity);
     }
 
+    [HttpGet("{projectID}/map-popup-html")]
+    [AllowAnonymous]
+    [EntityNotFound(typeof(Project), "projectID")]
+    public async Task<ContentResult> GetAsMapPopupHtml([FromRoute] int projectID)
+    {
+        var popup = await Projects.GetByIDAsMapPopupHtmlAsync(DbContext, projectID);
+        if (popup == null)
+        {
+            return new ContentResult { Content = "Not found", ContentType = "text/html", StatusCode = 404 };
+        }
+
+        var encode = (string s) => System.Net.WebUtility.HtmlEncode(s);
+
+        var classificationHtml = "";
+        var classificationsBySystem = popup.Classifications
+            .GroupBy(c => c.ClassificationSystemName ?? "Classifications")
+            .OrderBy(g => g.Key);
+        foreach (var group in classificationsBySystem)
+        {
+            var names = string.Join(", ", group.Select(c => encode(c.DisplayName)));
+            classificationHtml += $"<dt><strong>{encode(group.Key)}:</strong></dt>\n<dd>{names}</dd>\n";
+        }
+
+        var leadImplHtml = popup.LeadImplementerOrganizationID != null
+            ? $@"<a target=""_blank"" href=""/organizations/{popup.LeadImplementerOrganizationID}"">{encode(popup.LeadImplementerName)}</a>"
+            : "";
+
+        var projectUrl = $"/projects/{popup.ProjectID}";
+        var html = $@"<style>
+    .row {{
+        margin-bottom: 5px;
+        padding-left: 10px;
+    }}
+
+    dl.inline {{
+        margin-bottom: 0;
+    }}
+
+    dl.inline dd {{
+        display: inline;
+        margin: 0;
+        max-width: 200px;
+        margin-bottom: 8px;
+    }}
+
+    dl.inline dd:after {{
+        display: block;
+        content: '';
+    }}
+
+    dl.inline dt {{
+        display: inline-block;
+    }}
+
+    .leaflet-popup-content {{
+        width: 300px !important;
+    }}
+</style>
+<div style=""width:300px"">
+    <div style=""font-weight: bold; border-bottom: 1px solid lightgray; margin-bottom: 10px"">
+        <a target=""_blank"" href=""{projectUrl}"">{encode(popup.ProjectName)}</a>
+    </div>
+    <div class=""row"">
+        <div class=""col-xs-12"">
+            <dl class=""inline"">
+                <dt><strong>Duration:</strong></dt>
+                <dd>{encode(popup.Duration ?? "")}</dd>
+                <dt><strong>Stage:</strong></dt>
+                <dd>{encode(popup.ProjectStageName)}</dd>
+                <dt><strong>Project Type:</strong></dt>
+                <dd>{encode(popup.ProjectTypeName)}</dd>
+                <dt><strong>Lead Implementer Organization:</strong></dt>
+                <dd>{leadImplHtml}</dd>
+                {classificationHtml}
+            </dl>
+        </div>
+    </div>
+    <div class=""row"">
+        <div class=""col-xs-12"" style=""text-align: center"">
+            <span>
+                For Project information &amp; results, see the
+                <a target=""_blank"" href=""{projectUrl}"">Project Detail page</a>
+            </span>
+        </div>
+    </div>
+</div>";
+
+        return Content(html, "text/html");
+    }
+
     [HttpPost]
     [ProjectEditFeature]
     public async Task<ActionResult<ProjectDetail>> Create([FromBody] ProjectUpsertRequest dto)
