@@ -247,7 +247,7 @@ public static class People
         return await GetByIDAsDetailAsync(dbContext, person.PersonID);
     }
 
-    public static async Task<PersonDetail?> UpdateContactAsync(WADNRDbContext dbContext, int personID, PersonUpsertRequestDto request, bool isFullUser)
+    public static async Task<PersonDetail?> UpdateContactAsync(WADNRDbContext dbContext, int personID, PersonUpsertRequest request, bool isFullUser)
     {
         var person = await dbContext.People.FirstOrDefaultAsync(x => x.PersonID == personID);
         if (person == null) return null;
@@ -273,7 +273,7 @@ public static class People
         return await GetByIDAsDetailAsync(dbContext, person.PersonID);
     }
 
-    public static async Task<PersonDetail?> UpdateRolesAsync(WADNRDbContext dbContext, int personID, PersonRolesUpsertRequestDto request)
+    public static async Task<PersonDetail?> UpdateRolesAsync(WADNRDbContext dbContext, int personID, PersonRolesUpsertRequest request)
     {
         var person = await dbContext.People.FirstOrDefaultAsync(x => x.PersonID == personID);
         if (person == null) return null;

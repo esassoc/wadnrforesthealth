@@ -31,11 +31,11 @@ import { PersonLookupItem } from '../model/person-lookup-item';
 // @ts-ignore
 import { PersonPrimaryContactOrganizationsUpdateRequest } from '../model/person-primary-contact-organizations-update-request';
 // @ts-ignore
-import { PersonRolesUpsertRequestDto } from '../model/person-roles-upsert-request-dto';
+import { PersonRolesUpsertRequest } from '../model/person-roles-upsert-request';
 // @ts-ignore
 import { PersonStewardshipAreasUpsertRequest } from '../model/person-stewardship-areas-upsert-request';
 // @ts-ignore
-import { PersonUpsertRequestDto } from '../model/person-upsert-request-dto';
+import { PersonUpsertRequest } from '../model/person-upsert-request';
 // @ts-ignore
 import { PersonWithOrganizationLookupItem } from '../model/person-with-organization-lookup-item';
 // @ts-ignore
@@ -763,14 +763,14 @@ export class PersonService extends BaseService {
 
     /**
      * @param personID 
-     * @param personUpsertRequestDto 
+     * @param personUpsertRequest 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateContactPerson(personID: number, personUpsertRequestDto?: PersonUpsertRequestDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<PersonDetail>;
-    public updateContactPerson(personID: number, personUpsertRequestDto?: PersonUpsertRequestDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PersonDetail>>;
-    public updateContactPerson(personID: number, personUpsertRequestDto?: PersonUpsertRequestDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PersonDetail>>;
-    public updateContactPerson(personID: number, personUpsertRequestDto?: PersonUpsertRequestDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateContactPerson(personID: number, personUpsertRequest?: PersonUpsertRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<PersonDetail>;
+    public updateContactPerson(personID: number, personUpsertRequest?: PersonUpsertRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PersonDetail>>;
+    public updateContactPerson(personID: number, personUpsertRequest?: PersonUpsertRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PersonDetail>>;
+    public updateContactPerson(personID: number, personUpsertRequest?: PersonUpsertRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (personID === null || personID === undefined) {
             throw new Error('Required parameter personID was null or undefined when calling updateContactPerson.');
         }
@@ -818,7 +818,7 @@ export class PersonService extends BaseService {
         return this.httpClient.request<PersonDetail>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: personUpsertRequestDto,
+                body: personUpsertRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -899,14 +899,14 @@ export class PersonService extends BaseService {
 
     /**
      * @param personID 
-     * @param personRolesUpsertRequestDto 
+     * @param personRolesUpsertRequest 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateRolesPerson(personID: number, personRolesUpsertRequestDto?: PersonRolesUpsertRequestDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<PersonDetail>;
-    public updateRolesPerson(personID: number, personRolesUpsertRequestDto?: PersonRolesUpsertRequestDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PersonDetail>>;
-    public updateRolesPerson(personID: number, personRolesUpsertRequestDto?: PersonRolesUpsertRequestDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PersonDetail>>;
-    public updateRolesPerson(personID: number, personRolesUpsertRequestDto?: PersonRolesUpsertRequestDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateRolesPerson(personID: number, personRolesUpsertRequest?: PersonRolesUpsertRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<PersonDetail>;
+    public updateRolesPerson(personID: number, personRolesUpsertRequest?: PersonRolesUpsertRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PersonDetail>>;
+    public updateRolesPerson(personID: number, personRolesUpsertRequest?: PersonRolesUpsertRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PersonDetail>>;
+    public updateRolesPerson(personID: number, personRolesUpsertRequest?: PersonRolesUpsertRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (personID === null || personID === undefined) {
             throw new Error('Required parameter personID was null or undefined when calling updateRolesPerson.');
         }
@@ -954,7 +954,7 @@ export class PersonService extends BaseService {
         return this.httpClient.request<PersonDetail>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: personRolesUpsertRequestDto,
+                body: personRolesUpsertRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

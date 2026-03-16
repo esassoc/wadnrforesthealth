@@ -29,6 +29,11 @@ public static class Projects
             })
             .SingleOrDefault();
 
+    public static async Task<Project?> GetByIDWithTrackingAsync(WADNRDbContext dbContext, int projectID)
+    {
+        return await dbContext.Projects.FindAsync(projectID);
+    }
+
     internal static async Task<string> GenerateFhtProjectNumberAsync(WADNRDbContext dbContext)
     {
         // Get the max FHT number and increment

@@ -60,6 +60,11 @@ public static class ProjectNotes
             .ToListAsync();
     }
 
+    public static async Task<ProjectNote?> GetByIDWithTrackingAsync(WADNRDbContext dbContext, int projectNoteID)
+    {
+        return await dbContext.ProjectNotes.FindAsync(projectNoteID);
+    }
+
     public static async Task<ProjectNote> CreateAsync(WADNRDbContext dbContext, int projectID, string note, int personID)
     {
         var projectNote = new ProjectNote

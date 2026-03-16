@@ -45,7 +45,7 @@ public class UserClaimsController(
             return BadRequest();
         }
 
-        await People.UpdateClaims(dbContext, claimsPrincipal);
+        await People.UpdateClaims(DbContext, claimsPrincipal);
         return Ok(CallingUser);
     }
 }

@@ -45,7 +45,7 @@ public class ProjectNoteController(
         }
 
         // Verify project exists
-        var project = await DbContext.Projects.FindAsync(request.ProjectID);
+        var project = await Projects.GetByIDWithTrackingAsync(DbContext, request.ProjectID);
         if (project == null)
         {
             return NotFound($"Project with ID {request.ProjectID} not found.");
@@ -67,7 +67,7 @@ public class ProjectNoteController(
         [FromRoute] int projectNoteID,
         [FromBody] ProjectNoteUpsertRequest request)
     {
-        var projectNote = await DbContext.ProjectNotes.FindAsync(projectNoteID);
+        var projectNote = await ProjectNotes.GetByIDWithTrackingAsync(DbContext, projectNoteID);
         if (projectNote == null)
         {
             return NotFound();
@@ -93,7 +93,7 @@ public class ProjectNoteController(
     [ProjectEditAsAdminFeature]
     public async Task<IActionResult> Delete([FromRoute] int projectNoteID)
     {
-        var projectNote = await DbContext.ProjectNotes.FindAsync(projectNoteID);
+        var projectNote = await ProjectNotes.GetByIDWithTrackingAsync(DbContext, projectNoteID);
         if (projectNote == null)
         {
             return NotFound();

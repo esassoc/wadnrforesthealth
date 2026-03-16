@@ -9955,17 +9955,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PersonUpsertRequestDto"
+                "$ref": "#/components/schemas/PersonUpsertRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/PersonUpsertRequestDto"
+                "$ref": "#/components/schemas/PersonUpsertRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/PersonUpsertRequestDto"
+                "$ref": "#/components/schemas/PersonUpsertRequest"
               }
             }
           }
@@ -10320,17 +10320,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PersonRolesUpsertRequestDto"
+                "$ref": "#/components/schemas/PersonRolesUpsertRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/PersonRolesUpsertRequestDto"
+                "$ref": "#/components/schemas/PersonRolesUpsertRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/PersonRolesUpsertRequestDto"
+                "$ref": "#/components/schemas/PersonRolesUpsertRequest"
               }
             }
           }
@@ -30141,7 +30141,7 @@
         },
         "additionalProperties": false
       },
-      "PersonRolesUpsertRequestDto": {
+      "PersonRolesUpsertRequest": {
         "type": "object",
         "properties": {
           "BaseRoleID": {
@@ -30176,7 +30176,7 @@
         },
         "additionalProperties": false
       },
-      "PersonUpsertRequestDto": {
+      "PersonUpsertRequest": {
         "required": [
           "FirstName"
         ],

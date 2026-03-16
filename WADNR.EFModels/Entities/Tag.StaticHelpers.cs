@@ -87,6 +87,13 @@ public static class Tags
         return await GetByIDAsDetailAsync(dbContext, tag.TagID);
     }
 
+    public static async Task<bool> IsNameDuplicateAsync(WADNRDbContext dbContext, string tagName, int? excludeID)
+    {
+        return await dbContext.Tags
+            .AsNoTracking()
+            .AnyAsync(x => x.TagName == tagName && (excludeID == null || x.TagID != excludeID));
+    }
+
     public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int tagID)
     {
         await dbContext.ProjectTags

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WADNR.Models.DataTransferObjects;
 
-public class PersonUpsertRequestDto
+public class PersonUpsertRequest
 {
     [Required]
     [StringLength(100)]

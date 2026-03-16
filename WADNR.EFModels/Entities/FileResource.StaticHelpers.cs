@@ -8,6 +8,20 @@ namespace WADNR.EFModels.Entities;
 
 public static class FileResources
 {
+    public static async Task<FileResource?> GetByGUIDAsync(WADNRDbContext dbContext, Guid fileResourceGUID)
+    {
+        return await dbContext.FileResources
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.FileResourceGUID == fileResourceGUID);
+    }
+
+    public static async Task<FileResource?> GetByGUIDStringAsync(WADNRDbContext dbContext, string fileResourceGuidAsString)
+    {
+        return await dbContext.FileResources
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.FileResourceGUID.ToString() == fileResourceGuidAsString);
+    }
+
     public static async Task<List<FileResourcePriorityLandscapeDetail>> ListForPriorityLandscapeIDAsync(WADNRDbContext dbContext, int priorityLandscapeID)
     {
         return await dbContext.PriorityLandscapeFileResources

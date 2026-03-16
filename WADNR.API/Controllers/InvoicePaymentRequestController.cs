@@ -38,7 +38,7 @@ public class InvoicePaymentRequestController(
             return BadRequest("Prepared By is required.");
         }
 
-        var project = await DbContext.Projects.FindAsync(request.ProjectID);
+        var project = await Projects.GetByIDWithTrackingAsync(DbContext, request.ProjectID);
         if (project == null)
         {
             return NotFound($"Project with ID {request.ProjectID} not found.");

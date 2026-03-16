@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WADNR.API.Services;
@@ -52,7 +50,7 @@ public class InvoiceController(
             return BadRequest("Invoice Number is required.");
         }
 
-        var paymentRequest = await DbContext.InvoicePaymentRequests.FindAsync(request.InvoicePaymentRequestID);
+        var paymentRequest = await InvoicePaymentRequests.GetByIDWithTrackingAsync(DbContext, request.InvoicePaymentRequestID);
         if (paymentRequest == null)
         {
             return NotFound($"Invoice Payment Request with ID {request.InvoicePaymentRequestID} not found.");
@@ -72,7 +70,7 @@ public class InvoiceController(
             return BadRequest("Invoice Number is required.");
         }
 
-        var existingInvoice = await DbContext.Invoices.FindAsync(invoiceID);
+        var existingInvoice = await Invoices.GetByIDWithTrackingAsync(DbContext, invoiceID);
         if (existingInvoice == null)
         {
             return NotFound($"Invoice with ID {invoiceID} not found.");
@@ -93,10 +91,7 @@ public class InvoiceController(
             return BadRequest("File is required.");
         }
 
-        var invoice = await DbContext.Invoices
-            .Include(i => i.InvoiceFileResource)
-            .FirstOrDefaultAsync(i => i.InvoiceID == invoiceID);
-
+        var invoice = await Invoices.GetByIDWithFileResourceAsync(DbContext, invoiceID);
         if (invoice == null)
         {
             return NotFound($"Invoice with ID {invoiceID} not found.");
@@ -126,10 +121,7 @@ public class InvoiceController(
     [InvoiceDeleteFeature]
     public async Task<ActionResult<InvoiceDetail>> DeleteVoucher([FromRoute] int invoiceID)
     {
-        var invoice = await DbContext.Invoices
-            .Include(i => i.InvoiceFileResource)
-            .FirstOrDefaultAsync(i => i.InvoiceID == invoiceID);
-
+        var invoice = await Invoices.GetByIDWithFileResourceAsync(DbContext, invoiceID);
         if (invoice == null)
         {
             return NotFound($"Invoice with ID {invoiceID} not found.");
@@ -155,14 +147,7 @@ public class InvoiceController(
     [AllowAnonymous]
     public async Task<ActionResult<List<InvoiceApprovalStatusLookupItem>>> ListApprovalStatuses()
     {
-        var statuses = await DbContext.InvoiceApprovalStatuses
-            .AsNoTracking()
-            .Select(x => new InvoiceApprovalStatusLookupItem
-            {
-                InvoiceApprovalStatusID = x.InvoiceApprovalStatusID,
-                InvoiceApprovalStatusName = x.InvoiceApprovalStatusName
-            })
-            .ToListAsync();
+        var statuses = await Invoices.ListApprovalStatusesAsync(DbContext);
         return Ok(statuses);
     }
 }

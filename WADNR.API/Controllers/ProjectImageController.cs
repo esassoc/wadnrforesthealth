@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -85,7 +84,7 @@ public class ProjectImageController(
         }
 
         // Verify project exists
-        var project = await DbContext.Projects.FindAsync(projectID);
+        var project = await Projects.GetByIDWithTrackingAsync(DbContext, projectID);
         if (project == null)
         {
             return NotFound($"Project with ID {projectID} not found.");
@@ -114,7 +113,7 @@ public class ProjectImageController(
         [FromRoute] int projectImageID,
         [FromBody] ProjectImageUpsertRequest request)
     {
-        var projectImage = await DbContext.ProjectImages.FindAsync(projectImageID);
+        var projectImage = await ProjectImages.GetByIDWithTrackingAsync(DbContext, projectImageID);
         if (projectImage == null)
         {
             return NotFound();
@@ -142,10 +141,7 @@ public class ProjectImageController(
     [ProjectEditAsAdminFeature]
     public async Task<IActionResult> Delete([FromRoute] int projectImageID)
     {
-        var projectImage = await DbContext.ProjectImages
-            .Include(pi => pi.FileResource)
-            .FirstOrDefaultAsync(pi => pi.ProjectImageID == projectImageID);
-
+        var projectImage = await ProjectImages.GetByIDWithFileResourceAsync(DbContext, projectImageID);
         if (projectImage == null)
         {
             return NotFound();
@@ -163,7 +159,7 @@ public class ProjectImageController(
     [ProjectEditAsAdminFeature]
     public async Task<IActionResult> SetKeyPhoto([FromRoute] int projectImageID)
     {
-        var projectImage = await DbContext.ProjectImages.FindAsync(projectImageID);
+        var projectImage = await ProjectImages.GetByIDWithTrackingAsync(DbContext, projectImageID);
         if (projectImage == null)
         {
             return NotFound();

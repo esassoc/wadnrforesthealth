@@ -10,7 +10,7 @@
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
-export class PersonRolesUpsertRequestDto { 
+export class PersonRolesUpsertRequest { 
     BaseRoleID?: number;
     SupplementalRoleIDs?: Array<number> | null;
     ReceiveSupportEmails?: boolean;
@@ -19,13 +19,13 @@ export class PersonRolesUpsertRequestDto {
     }
 }
 
-export interface PersonRolesUpsertRequestDtoForm { 
+export interface PersonRolesUpsertRequestForm { 
     BaseRoleID?: FormControl<number>;
     SupplementalRoleIDs?: FormControl<Array<number>>;
     ReceiveSupportEmails?: FormControl<boolean>;
 }
 
-export class PersonRolesUpsertRequestDtoFormControls { 
+export class PersonRolesUpsertRequestFormControls { 
     public static BaseRoleID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 

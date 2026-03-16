@@ -50,6 +50,18 @@ public static class ProjectImages
         return detail;
     }
 
+    public static async Task<ProjectImage?> GetByIDWithTrackingAsync(WADNRDbContext dbContext, int projectImageID)
+    {
+        return await dbContext.ProjectImages.FindAsync(projectImageID);
+    }
+
+    public static async Task<ProjectImage?> GetByIDWithFileResourceAsync(WADNRDbContext dbContext, int projectImageID)
+    {
+        return await dbContext.ProjectImages
+            .Include(pi => pi.FileResource)
+            .FirstOrDefaultAsync(pi => pi.ProjectImageID == projectImageID);
+    }
+
     public static async Task<ProjectImage> CreateAsync(
         WADNRDbContext dbContext,
         int projectID,

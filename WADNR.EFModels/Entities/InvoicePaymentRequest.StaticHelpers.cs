@@ -15,6 +15,11 @@ public static class InvoicePaymentRequests
             .ToListAsync();
     }
 
+    public static async Task<InvoicePaymentRequest?> GetByIDWithTrackingAsync(WADNRDbContext dbContext, int invoicePaymentRequestID)
+    {
+        return await dbContext.InvoicePaymentRequests.FindAsync(invoicePaymentRequestID);
+    }
+
     public static async Task<InvoicePaymentRequest> CreateAsync(
         WADNRDbContext dbContext,
         InvoicePaymentRequestUpsertRequest request)

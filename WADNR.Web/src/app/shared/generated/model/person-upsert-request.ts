@@ -10,7 +10,7 @@
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
-export class PersonUpsertRequestDto { 
+export class PersonUpsertRequest { 
     FirstName: string;
     MiddleName?: string | null;
     LastName?: string | null;
@@ -25,7 +25,7 @@ export class PersonUpsertRequestDto {
     }
 }
 
-export interface PersonUpsertRequestDtoForm { 
+export interface PersonUpsertRequestForm { 
     FirstName: FormControl<string>;
     MiddleName?: FormControl<string>;
     LastName?: FormControl<string>;
@@ -37,7 +37,7 @@ export interface PersonUpsertRequestDtoForm {
     Notes?: FormControl<string>;
 }
 
-export class PersonUpsertRequestDtoFormControls { 
+export class PersonUpsertRequestFormControls { 
     public static FirstName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 

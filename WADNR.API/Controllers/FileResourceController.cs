@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -27,7 +26,7 @@ public class FileResourceController(
     [ProducesResponseType(typeof(FileStreamResult), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> DownloadFileResource(string fileResourceGuidAsString)
     {
-        var fileResource = await DbContext.FileResources.AsNoTracking().FirstOrDefaultAsync(x => x.FileResourceGUID.ToString() == fileResourceGuidAsString);
+        var fileResource = await FileResources.GetByGUIDStringAsync(DbContext, fileResourceGuidAsString);
 
         if (fileResource != null)
         {
@@ -97,9 +96,7 @@ public class FileResourceController(
         var isStringAGuid = Guid.TryParse(fileResourceGuidAsString, out var fileResourceInfoGuid);
         if (isStringAGuid)
         {
-            var fileResource =
-                await DbContext.FileResources.FirstOrDefaultAsync(x =>
-                    x.FileResourceGUID == fileResourceInfoGuid);
+            var fileResource = await FileResources.GetByGUIDAsync(DbContext, fileResourceInfoGuid);
 
             var fileStream = await fileService.GetFileStreamFromBlobStorage(fileResource.FileResourceGUID.ToString());
             if (fileStream != null)

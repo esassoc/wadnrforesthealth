@@ -88,6 +88,30 @@ public static class Invoices
         }
     }
 
+    public static async Task<InvoiceEntity?> GetByIDWithTrackingAsync(WADNRDbContext dbContext, int invoiceID)
+    {
+        return await dbContext.Invoices.FindAsync(invoiceID);
+    }
+
+    public static async Task<InvoiceEntity?> GetByIDWithFileResourceAsync(WADNRDbContext dbContext, int invoiceID)
+    {
+        return await dbContext.Invoices
+            .Include(i => i.InvoiceFileResource)
+            .FirstOrDefaultAsync(i => i.InvoiceID == invoiceID);
+    }
+
+    public static async Task<List<InvoiceApprovalStatusLookupItem>> ListApprovalStatusesAsync(WADNRDbContext dbContext)
+    {
+        return await dbContext.InvoiceApprovalStatuses
+            .AsNoTracking()
+            .Select(x => new InvoiceApprovalStatusLookupItem
+            {
+                InvoiceApprovalStatusID = x.InvoiceApprovalStatusID,
+                InvoiceApprovalStatusName = x.InvoiceApprovalStatusName
+            })
+            .ToListAsync();
+    }
+
     public static async Task<InvoiceEntity> CreateAsync(WADNRDbContext dbContext, InvoiceUpsertRequest request)
     {
         var entity = new InvoiceEntity

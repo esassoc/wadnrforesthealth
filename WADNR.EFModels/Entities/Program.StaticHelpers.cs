@@ -9,7 +9,6 @@ public static class Programs
     {
         var entities = await dbContext.Programs
             .AsNoTracking()
-            .Include(x => x.Organization)
             .Select(ProgramProjections.AsGridRow)
             .OrderBy(x => x.ProgramName)
             .ToListAsync();
@@ -20,7 +19,6 @@ public static class Programs
     {
         var entity = await dbContext.Programs
             .AsNoTracking()
-            .Include(x => x.Organization)
             .Where(x => x.ProgramID == programID)
             .Select(ProgramProjections.AsDetail)
             .SingleOrDefaultAsync();
@@ -313,7 +311,6 @@ public static class Programs
     {
         var entities = await dbContext.Programs
             .AsNoTracking()
-            .Include(x => x.Organization)
             .Where(x => x.OrganizationID == organizationID)
             .Select(ProgramProjections.AsGridRow)
             .OrderBy(x => x.ProgramName)

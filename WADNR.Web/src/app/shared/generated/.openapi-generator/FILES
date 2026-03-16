@@ -259,9 +259,9 @@ model/person-lookup-item-with-email.ts
 model/person-lookup-item.ts
 model/person-primary-contact-organizations-update-request.ts
 model/person-relationship-type-lookup-item.ts
-model/person-roles-upsert-request-dto.ts
+model/person-roles-upsert-request.ts
 model/person-stewardship-areas-upsert-request.ts
-model/person-upsert-request-dto.ts
+model/person-upsert-request.ts
 model/person-with-organization-lookup-item.ts
 model/person-with-status.ts
 model/point.ts

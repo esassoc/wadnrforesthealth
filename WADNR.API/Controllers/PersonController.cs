@@ -147,7 +147,7 @@ public class PersonController(
     [HttpPut("{personID}")]
     [PersonEditFeature]
     [EntityNotFound(typeof(Person), "personID")]
-    public async Task<ActionResult<PersonDetail>> UpdateContact([FromRoute] int personID, [FromBody] PersonUpsertRequestDto request)
+    public async Task<ActionResult<PersonDetail>> UpdateContact([FromRoute] int personID, [FromBody] PersonUpsertRequest request)
     {
         var callingUserID = CallingUser.PersonID;
 
@@ -175,7 +175,7 @@ public class PersonController(
     [HttpPut("{personID}/roles")]
     [UserManageFeature]
     [EntityNotFound(typeof(Person), "personID")]
-    public async Task<ActionResult<PersonDetail>> UpdateRoles([FromRoute] int personID, [FromBody] PersonRolesUpsertRequestDto request)
+    public async Task<ActionResult<PersonDetail>> UpdateRoles([FromRoute] int personID, [FromBody] PersonRolesUpsertRequest request)
     {
         try
         {

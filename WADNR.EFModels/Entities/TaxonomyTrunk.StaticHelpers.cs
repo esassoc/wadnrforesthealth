@@ -83,8 +83,8 @@ public static class TaxonomyTrunks
         var query = ProjectVisibility.ApplyVisibilityFilter(dbContext.Projects, callingUser);
 
         return await query
-            .Where(p => p.ProjectType.TaxonomyBranch.TaxonomyTrunkID == taxonomyTrunkID)
             .AsNoTracking()
+            .Where(p => p.ProjectType.TaxonomyBranch.TaxonomyTrunkID == taxonomyTrunkID)
             .OrderBy(p => p.ProjectName)
             .Select(ProjectProjections.AsGridRow)
             .ToListAsync();

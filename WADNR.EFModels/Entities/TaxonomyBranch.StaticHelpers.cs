@@ -86,8 +86,8 @@ public static class TaxonomyBranches
         var query = ProjectVisibility.ApplyVisibilityFilter(dbContext.Projects, callingUser);
 
         return await query
-            .Where(p => p.ProjectType.TaxonomyBranchID == taxonomyBranchID)
             .AsNoTracking()
+            .Where(p => p.ProjectType.TaxonomyBranchID == taxonomyBranchID)
             .OrderBy(p => p.ProjectName)
             .Select(ProjectProjections.AsGridRow)
             .ToListAsync();
