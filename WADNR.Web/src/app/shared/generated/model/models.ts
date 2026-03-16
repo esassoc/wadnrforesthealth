@@ -40,6 +40,7 @@ export * from './custom-page-grid-row';
 export * from './custom-page-menu-item';
 export * from './custom-page-upsert-request';
 export * from './dnr-upland-region-detail';
+export * from './dnr-upland-region-expenditure-by-cost-type-row';
 export * from './dnr-upland-region-grid-row';
 export * from './dnr-upland-region-lookup-item';
 export * from './dnr-upland-region-upsert-request';

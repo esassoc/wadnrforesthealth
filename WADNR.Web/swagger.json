@@ -92,6 +92,19 @@
         }
       }
     },
+    "/agreements/excel-download": {
+      "get": {
+        "tags": [
+          "Agreement"
+        ],
+        "operationId": "ExcelDownload_Agreement",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/agreements/{agreementID}": {
       "get": {
         "tags": [
@@ -1155,7 +1168,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/classifications/upload-key-image": {
@@ -1449,53 +1463,6 @@
           }
         },
         "x-anonymous": true
-      },
-      "post": {
-        "tags": [
-          "County"
-        ],
-        "operationId": "Create_County",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CountyUpsertRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CountyUpsertRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CountyUpsertRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/CountyDetail"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CountyDetail"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CountyDetail"
-                }
-              }
-            }
-          }
-        }
       }
     },
     "/counties/{countyID}": {
@@ -1538,86 +1505,6 @@
           }
         },
         "x-anonymous": true
-      },
-      "put": {
-        "tags": [
-          "County"
-        ],
-        "operationId": "Update_County",
-        "parameters": [
-          {
-            "name": "countyID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CountyUpsertRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CountyUpsertRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CountyUpsertRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/CountyDetail"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CountyDetail"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CountyDetail"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "County"
-        ],
-        "operationId": "Delete_County",
-        "parameters": [
-          {
-            "name": "countyID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
       }
     },
     "/counties/{countyID}/projects": {
@@ -1667,7 +1554,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/counties/{countyID}/projects/feature-collection": {
@@ -2538,7 +2426,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/dnr-upland-regions/{dnrUplandRegionID}/projects/feature-collection": {
@@ -2634,6 +2523,56 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/FocusAreaGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dnr-upland-regions/{dnrUplandRegionID}/expenditures-by-cost-type": {
+      "get": {
+        "tags": [
+          "DNRUplandRegion"
+        ],
+        "operationId": "ListExpendituresByCostType_DNRUplandRegion",
+        "parameters": [
+          {
+            "name": "dnrUplandRegionID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DNRUplandRegionExpenditureByCostTypeRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DNRUplandRegionExpenditureByCostTypeRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DNRUplandRegionExpenditureByCostTypeRow"
                   }
                 }
               }
@@ -3096,8 +3035,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/field-definitions/{fieldDefinitionID}": {
@@ -4439,6 +4377,19 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/fund-sources/excel-download": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "ExcelDownload_FundSource",
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -8079,8 +8030,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       },
       "post": {
         "tags": [
@@ -8531,6 +8481,29 @@
         }
       }
     },
+    "/api/Job/{jobName}/freshness": {
+      "get": {
+        "tags": [
+          "Job"
+        ],
+        "operationId": "CheckFreshness_Job",
+        "parameters": [
+          {
+            "name": "jobName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Job/clear-outdated-imports": {
       "post": {
         "tags": [
@@ -8782,6 +8755,46 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/OrganizationLookupItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/organizations/lookup-with-short-name": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "ListLookupWithShortName_Organization",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationLookupItemWithShortName"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationLookupItemWithShortName"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationLookupItemWithShortName"
                   }
                 }
               }
@@ -9151,7 +9164,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/organizations/{organizationID}/projects/pending": {
@@ -9253,6 +9267,30 @@
           }
         },
         "x-anonymous": true
+      }
+    },
+    "/organizations/{organizationID}/agreements/excel-download": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "AgreementsExcelDownload_Organization",
+        "parameters": [
+          {
+            "name": "organizationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/organizations/{organizationID}/boundary": {
@@ -9967,17 +10005,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PersonUpsertRequestDto"
+                "$ref": "#/components/schemas/PersonUpsertRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/PersonUpsertRequestDto"
+                "$ref": "#/components/schemas/PersonUpsertRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/PersonUpsertRequestDto"
+                "$ref": "#/components/schemas/PersonUpsertRequest"
               }
             }
           }
@@ -10053,7 +10091,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectGridRow"
+                    "$ref": "#/components/schemas/ProjectForPersonDetailGridRow"
                   }
                 }
               },
@@ -10061,7 +10099,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectGridRow"
+                    "$ref": "#/components/schemas/ProjectForPersonDetailGridRow"
                   }
                 }
               },
@@ -10069,7 +10107,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectGridRow"
+                    "$ref": "#/components/schemas/ProjectForPersonDetailGridRow"
                   }
                 }
               }
@@ -10124,6 +10162,30 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/people/{personID}/agreements/excel-download": {
+      "get": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "AgreementsExcelDownload_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -10308,17 +10370,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PersonRolesUpsertRequestDto"
+                "$ref": "#/components/schemas/PersonRolesUpsertRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/PersonRolesUpsertRequestDto"
+                "$ref": "#/components/schemas/PersonRolesUpsertRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/PersonRolesUpsertRequestDto"
+                "$ref": "#/components/schemas/PersonRolesUpsertRequest"
               }
             }
           }
@@ -11864,7 +11926,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       },
       "post": {
         "tags": [
@@ -12495,6 +12558,19 @@
         }
       }
     },
+    "/projects/excel-download": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "ExcelDownload_Project",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/projects/pending": {
       "get": {
         "tags": [
@@ -12530,6 +12606,19 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/projects/pending/excel-download": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "PendingExcelDownload_Project",
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -12846,6 +12935,31 @@
                 }
               }
             }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/projects/{projectID}/map-popup-html": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "GetAsMapPopupHtml_Project",
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         },
         "x-anonymous": true
@@ -13621,7 +13735,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/invoice-payment-requests": {
@@ -13671,7 +13786,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/projects/{projectID}/organizations": {
@@ -20483,7 +20599,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/project-types/{projectTypeID}": {
@@ -20655,7 +20772,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/project-types/{projectTypeID}/projects/mapped-point/feature-collection": {
@@ -20705,7 +20823,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/project-types/sort-order": {
@@ -21832,7 +21951,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/support-requests": {
@@ -22203,7 +22323,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/taxonomy-branches": {
@@ -22462,7 +22583,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/taxonomy-branches/{taxonomyBranchID}/projects/mapped-point/feature-collection": {
@@ -22512,7 +22634,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/taxonomy-branches/lookup": {
@@ -22811,7 +22934,8 @@
               }
             }
           }
-        }
+        },
+        "x-anonymous": true
       }
     },
     "/taxonomy-trunks/lookup": {
@@ -23134,6 +23258,19 @@
         }
       }
     },
+    "/vendors/excel-download": {
+      "get": {
+        "tags": [
+          "Vendor"
+        ],
+        "operationId": "ExcelDownload_Vendor",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/vendors/{vendorID}": {
       "get": {
         "tags": [
@@ -23408,12 +23545,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AgreementAmount": {
@@ -23436,7 +23573,7 @@
           },
           "FirstBillDueOn": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "Notes": {
@@ -23494,12 +23631,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AgreementAmount": {
@@ -23641,12 +23778,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AgreementAmount": {
@@ -23671,7 +23808,7 @@
           },
           "FirstBillDueOn": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "Notes": {
@@ -23780,6 +23917,10 @@
             "nullable": true
           },
           "html": {
+            "type": "string",
+            "nullable": true
+          },
+          "waitForSelector": {
             "type": "string",
             "nullable": true
           },
@@ -24264,20 +24405,6 @@
         },
         "additionalProperties": false
       },
-      "CountyUpsertRequest": {
-        "type": "object",
-        "properties": {
-          "CountyName": {
-            "type": "string",
-            "nullable": true
-          },
-          "StateProvinceID": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
       "CreateWorkflowProgressResponse": {
         "type": "object",
         "properties": {
@@ -24497,6 +24624,10 @@
           "CustomPageVanityUrl": {
             "type": "string",
             "nullable": true
+          },
+          "CustomPageDisplayTypeID": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -24574,6 +24705,24 @@
           "RegionContent": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DNRUplandRegionExpenditureByCostTypeRow": {
+        "type": "object",
+        "properties": {
+          "CostTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CalendarYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ExpenditureAmount": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false
@@ -25018,6 +25167,10 @@
           "FieldDefinitionDatumValue": {
             "type": "string",
             "nullable": true
+          },
+          "FieldDefinitionLabel": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -25026,6 +25179,10 @@
         "type": "object",
         "properties": {
           "FieldDefinitionDatumValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "FieldDefinitionLabel": {
             "type": "string",
             "nullable": true
           }
@@ -25044,6 +25201,10 @@
             "nullable": true
           },
           "FieldDefinitionDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "DefaultDefinition": {
             "type": "string",
             "nullable": true
           },
@@ -25542,12 +25703,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AgreementAmount": {
@@ -25595,12 +25756,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AgreementAmount": {
@@ -25717,7 +25878,7 @@
           },
           "FundSourceEndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "HasFundFSPs": {
@@ -25780,12 +25941,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AllocationAmount": {
@@ -26060,12 +26221,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AllocationAmount": {
@@ -26139,6 +26300,11 @@
           },
           "ProgramIndexProjectCodeDisplay": {
             "type": "string",
+            "nullable": true
+          },
+          "CurrentBalance": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           }
         },
@@ -26639,12 +26805,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "AllocationAmount": {
@@ -26813,12 +26979,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ConditionsAndRequirements": {
@@ -26931,6 +27097,10 @@
             "type": "number",
             "format": "double"
           },
+          "CurrentBalance": {
+            "type": "number",
+            "format": "double"
+          },
           "CFDANumber": {
             "type": "string",
             "nullable": true
@@ -26941,12 +27111,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "FundSourceStatusName": {
@@ -27131,6 +27301,8 @@
         "type": "object",
         "properties": {
           "FundSourceName": {
+            "maxLength": 64,
+            "minLength": 0,
             "type": "string",
             "nullable": true
           },
@@ -27140,12 +27312,12 @@
           },
           "StartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ConditionsAndRequirements": {
@@ -27722,6 +27894,20 @@
         "type": "object",
         "additionalProperties": false
       },
+      "GisBulkImportProjectResult": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "GisBulkImportRequest": {
         "type": "object",
         "properties": {
@@ -27863,6 +28049,20 @@
           "LocationsCreated": {
             "type": "integer",
             "format": "int32"
+          },
+          "CreatedProjects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GisBulkImportProjectResult"
+            },
+            "nullable": true
+          },
+          "UpdatedProjects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GisBulkImportProjectResult"
+            },
+            "nullable": true
           },
           "Warnings": {
             "type": "array",
@@ -28226,7 +28426,7 @@
           },
           "InteractionEventDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "HasSimpleLocation": {
             "type": "boolean"
@@ -28271,7 +28471,7 @@
           },
           "InteractionEventDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "StaffPerson": {
             "$ref": "#/components/schemas/PersonLookupItem"
@@ -28332,7 +28532,7 @@
           },
           "InteractionEventDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "ProjectIDs": {
             "type": "array",
@@ -28384,7 +28584,7 @@
           },
           "InvoiceDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "InvoicePaymentRequestID": {
             "type": "integer",
@@ -28392,7 +28592,7 @@
           },
           "InvoicePaymentRequestDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "PurchaseAuthority": {
             "type": "string",
@@ -28588,7 +28788,7 @@
           },
           "InvoiceDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "Fund": {
             "type": "string",
@@ -28670,7 +28870,7 @@
           },
           "InvoicePaymentRequestDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "VendorID": {
             "type": "integer",
@@ -28747,7 +28947,7 @@
           },
           "InvoicePaymentRequestDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "PurchaseAuthority": {
             "maxLength": 255,
@@ -28796,7 +28996,7 @@
           },
           "InvoiceDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "PaymentAmount": {
             "type": "number",
@@ -29378,6 +29578,24 @@
         },
         "additionalProperties": false
       },
+      "OrganizationLookupItemWithShortName": {
+        "type": "object",
+        "properties": {
+          "OrganizationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OrganizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrganizationShortName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "OrganizationTypeGridRow": {
         "type": "object",
         "properties": {
@@ -29536,17 +29754,17 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -29765,7 +29983,7 @@
           "PrimaryContactOrganizations": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OrganizationLookupItem"
+              "$ref": "#/components/schemas/OrganizationLookupItemWithShortName"
             },
             "nullable": true
           },
@@ -29991,7 +30209,7 @@
         },
         "additionalProperties": false
       },
-      "PersonRolesUpsertRequestDto": {
+      "PersonRolesUpsertRequest": {
         "type": "object",
         "properties": {
           "BaseRoleID": {
@@ -30026,7 +30244,7 @@
         },
         "additionalProperties": false
       },
-      "PersonUpsertRequestDto": {
+      "PersonUpsertRequest": {
         "required": [
           "FirstName"
         ],
@@ -30440,6 +30658,10 @@
             "type": "string",
             "nullable": true
           },
+          "OrganizationShortName": {
+            "type": "string",
+            "nullable": true
+          },
           "PrimaryContactPersonID": {
             "type": "integer",
             "format": "int32",
@@ -30778,6 +31000,10 @@
             "type": "string",
             "format": "date-time"
           },
+          "PersonID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "PersonName": {
             "type": "string",
             "nullable": true
@@ -30803,6 +31029,14 @@
             "nullable": true
           },
           "AuditDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "Section": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
             "type": "string",
             "nullable": true
           }
@@ -30860,17 +31094,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectGisIdentifier": {
@@ -30929,17 +31163,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "FocusAreaID": {
@@ -30989,17 +31223,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "FocusAreaID": {
@@ -31051,7 +31285,7 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectThemeNotes": {
@@ -31225,12 +31459,12 @@
           },
           "ProjectStartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectEndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "InvoiceCount": {
@@ -31266,12 +31500,12 @@
           },
           "ProjectStartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectEndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "InvoiceCount": {
@@ -31430,17 +31664,17 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -31509,17 +31743,17 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectExpiryDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectCompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TotalPaymentAmount": {
@@ -31591,17 +31825,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "Duration": {
@@ -31734,6 +31968,36 @@
               "$ref": "#/components/schemas/PriorityLandscapeLookupItem"
             },
             "nullable": true
+          },
+          "UserCanEdit": {
+            "type": "boolean"
+          },
+          "UserCanDirectEdit": {
+            "type": "boolean"
+          },
+          "UserCanDelete": {
+            "type": "boolean"
+          },
+          "UserCanApprove": {
+            "type": "boolean"
+          },
+          "UserIsAdmin": {
+            "type": "boolean"
+          },
+          "UserCanViewCostSharePDFs": {
+            "type": "boolean"
+          },
+          "UserCanManageTreatments": {
+            "type": "boolean"
+          },
+          "UserCanEditProjectAsAdmin": {
+            "type": "boolean"
+          },
+          "UserCanViewInternalNotes": {
+            "type": "boolean"
+          },
+          "CanStartUpdate": {
+            "type": "boolean"
           },
           "CanViewFactSheet": {
             "type": "boolean"
@@ -32120,17 +32384,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -32177,17 +32441,17 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -32213,6 +32477,66 @@
             "items": {
               "$ref": "#/components/schemas/TagLookupItem"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectForPersonDetailGridRow": {
+        "type": "object",
+        "properties": {
+          "ProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FhtProjectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProjectType": {
+            "$ref": "#/components/schemas/ProjectTypeLookupItem"
+          },
+          "ProjectStage": {
+            "$ref": "#/components/schemas/ProjectStageLookupItem"
+          },
+          "LeadImplementerOrganization": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "PrimaryContactOrganization": {
+            "type": "string",
+            "nullable": true
+          },
+          "PlannedDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "ExpirationDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "CompletionDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "EstimatedTotalCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalFunding": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ProjectDescription": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -33099,17 +33423,17 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -33465,17 +33789,17 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -33571,17 +33895,17 @@
           },
           "ProjectInitiationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -33808,17 +34132,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "FocusAreaID": {
@@ -33877,17 +34201,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "FocusAreaID": {
@@ -34003,7 +34327,7 @@
           },
           "ProjectUpdateKickOffDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectUpdateKickOffIntroContent": {
@@ -34027,7 +34351,7 @@
           },
           "ProjectUpdateCloseOutDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectUpdateCloseOutIntroContent": {
@@ -34050,7 +34374,7 @@
           },
           "ProjectUpdateKickOffDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectUpdateKickOffIntroContent": {
@@ -34076,7 +34400,7 @@
           },
           "ProjectUpdateCloseOutDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ProjectUpdateCloseOutIntroContent": {
@@ -34603,17 +34927,17 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TotalFunding": {
@@ -34711,12 +35035,12 @@
           },
           "PlannedDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "CompletionDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "EstimatedTotalCost": {
@@ -34759,7 +35083,7 @@
           },
           "ExpirationDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "FhtProjectNumber": {
@@ -35686,12 +36010,12 @@
           },
           "TreatmentStartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TreatmentEndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TreatmentFootprintAcres": {
@@ -35753,12 +36077,12 @@
           },
           "TreatmentStartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TreatmentEndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TreatmentFootprintAcres": {
@@ -35845,12 +36169,12 @@
           },
           "TreatmentStartDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TreatmentEndDate": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "TreatmentFootprintAcres": {
@@ -36069,11 +36393,11 @@
           },
           "TreatmentStartDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "TreatmentEndDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "TreatmentFootprintAcres": {
             "type": "number",
@@ -36138,11 +36462,11 @@
           },
           "TreatmentStartDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "TreatmentEndDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "TreatmentFootprintAcres": {
             "type": "number",

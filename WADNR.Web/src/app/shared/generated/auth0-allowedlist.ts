@@ -193,6 +193,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/api/Job/[^/]+/freshness$"),
     new RegExp("^/cost-share/generate-pdf/[^/]+$"),
     new RegExp("^/custom-pages/[^/]+$"),
+    new RegExp("^/dnr-upland-regions/[^/]+/expenditures-by-cost-type$"),
     new RegExp("^/dnr-upland-regions/[^/]+/focus-areas$"),
     new RegExp("^/external-map-layers/[^/]+$"),
     new RegExp("^/find-your-forester/work-units/[^/]+$"),

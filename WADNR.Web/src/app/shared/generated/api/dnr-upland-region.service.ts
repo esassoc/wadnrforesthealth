@@ -17,6 +17,8 @@ import { Observable }                                        from 'rxjs';
 // @ts-ignore
 import { DNRUplandRegionDetail } from '../model/dnr-upland-region-detail';
 // @ts-ignore
+import { DNRUplandRegionExpenditureByCostTypeRow } from '../model/dnr-upland-region-expenditure-by-cost-type-row';
+// @ts-ignore
 import { DNRUplandRegionGridRow } from '../model/dnr-upland-region-grid-row';
 // @ts-ignore
 import { DNRUplandRegionLookupItem } from '../model/dnr-upland-region-lookup-item';
@@ -257,6 +259,61 @@ export class DNRUplandRegionService extends BaseService {
         let localVarPath = `/dnr-upland-regions`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Array<DNRUplandRegionGridRow>>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param dnrUplandRegionID 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public listExpendituresByCostTypeDNRUplandRegion(dnrUplandRegionID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<DNRUplandRegionExpenditureByCostTypeRow>>;
+    public listExpendituresByCostTypeDNRUplandRegion(dnrUplandRegionID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<DNRUplandRegionExpenditureByCostTypeRow>>>;
+    public listExpendituresByCostTypeDNRUplandRegion(dnrUplandRegionID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<DNRUplandRegionExpenditureByCostTypeRow>>>;
+    public listExpendituresByCostTypeDNRUplandRegion(dnrUplandRegionID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (dnrUplandRegionID === null || dnrUplandRegionID === undefined) {
+            throw new Error('Required parameter dnrUplandRegionID was null or undefined when calling listExpendituresByCostTypeDNRUplandRegion.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/dnr-upland-regions/${this.configuration.encodeParam({name: "dnrUplandRegionID", value: dnrUplandRegionID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/expenditures-by-cost-type`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<DNRUplandRegionExpenditureByCostTypeRow>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

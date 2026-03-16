@@ -50,27 +50,47 @@
     }
 
     &__legend {
-        // legend container
+        padding: var(--spacing-200) 0;
     }
 
     &__swatches {
-        // swatches container
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-200);
+        justify-content: center;
     }
 
     &__swatch-btn {
-        // individual swatch button
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-200);
+        padding: var(--spacing-100) var(--spacing-300);
+        background: transparent;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--border-radius-200);
+        cursor: pointer;
+        transition: opacity 0.15s ease, background-color 0.15s ease;
+
+        &:hover {
+            background-color: var(--gray-100);
+        }
 
         &--disabled {
-            opacity: 0.4;
+            opacity: 0.35;
         }
     }
 
     &__swatch-color {
-        // color swatch square
+        width: 14px;
+        height: 14px;
+        border-radius: 2px;
+        flex-shrink: 0;
     }
 
     &__swatch-label {
-        // swatch text label
+        font-size: var(--type-size-100);
+        color: var(--gray-700);
+        white-space: nowrap;
     }
 }
 

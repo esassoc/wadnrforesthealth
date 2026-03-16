@@ -73,6 +73,41 @@ public static class DNRUplandRegions
         return await GetByIDAsDetailAsync(dbContext, entity.DNRUplandRegionID);
     }
 
+    public static async Task<List<DNRUplandRegionExpenditureByCostTypeRow>> ListExpendituresByCostTypeAsync(WADNRDbContext dbContext, int dnrUplandRegionID)
+    {
+        var validCostTypeIDs = CostType.All
+            .Where(ct => ct.IsValidInvoiceLineItemCostType)
+            .Select(ct => ct.CostTypeID)
+            .ToHashSet();
+
+        var rows = await dbContext.FundSourceAllocationExpenditures
+            .AsNoTracking()
+            .Where(e => e.FundSourceAllocation.DNRUplandRegionID == dnrUplandRegionID
+                        && e.CostTypeID != null
+                        && validCostTypeIDs.Contains(e.CostTypeID.Value))
+            .GroupBy(e => new { e.CostTypeID, e.CalendarYear })
+            .Select(g => new
+            {
+                CostTypeID = g.Key.CostTypeID!.Value,
+                CalendarYear = g.Key.CalendarYear,
+                ExpenditureAmount = g.Sum(x => x.ExpenditureAmount)
+            })
+            .ToListAsync();
+
+        return rows
+            .Select(r => new DNRUplandRegionExpenditureByCostTypeRow
+            {
+                CostTypeName = CostType.AllLookupDictionary.TryGetValue(r.CostTypeID, out var ct)
+                    ? ct.CostTypeDisplayName
+                    : $"Unknown ({r.CostTypeID})",
+                CalendarYear = r.CalendarYear,
+                ExpenditureAmount = r.ExpenditureAmount
+            })
+            .OrderBy(r => r.CalendarYear)
+            .ThenBy(r => r.CostTypeName)
+            .ToList();
+    }
+
     public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int dnrUplandRegionID)
     {
         var deletedCount = await dbContext.DNRUplandRegions

@@ -2531,6 +2531,56 @@
         }
       }
     },
+    "/dnr-upland-regions/{dnrUplandRegionID}/expenditures-by-cost-type": {
+      "get": {
+        "tags": [
+          "DNRUplandRegion"
+        ],
+        "operationId": "ListExpendituresByCostType_DNRUplandRegion",
+        "parameters": [
+          {
+            "name": "dnrUplandRegionID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DNRUplandRegionExpenditureByCostTypeRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DNRUplandRegionExpenditureByCostTypeRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DNRUplandRegionExpenditureByCostTypeRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/dnr-upland-regions/{dnrUplandRegionID}/fund-source-allocations": {
       "get": {
         "tags": [
@@ -24655,6 +24705,24 @@
           "RegionContent": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DNRUplandRegionExpenditureByCostTypeRow": {
+        "type": "object",
+        "properties": {
+          "CostTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CalendarYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ExpenditureAmount": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false

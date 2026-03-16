@@ -7,7 +7,7 @@ import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { DNRUplandRegionContactModalComponent, DNRUplandRegionContactModalData } from "./dnr-upland-region-contact-modal.component";
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
-import { Map } from "leaflet";
+import { Map as LeafletMap } from "leaflet";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
@@ -27,11 +27,13 @@ import { FundSourceAllocationDNRUplandRegionDetailGridRow } from "src/app/shared
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 import { Feature } from "geojson";
 import * as L from "leaflet";
+import { ChartDatum } from "src/app/shared/components/charts/chart-datum";
+import { VerticalStackedBarChartComponent } from "src/app/shared/components/charts/vertical-stacked-bar-chart/vertical-stacked-bar-chart.component";
 
 @Component({
     selector: "dnr-upland-region-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRMapComponent, DNRUplandRegionsLayerComponent, ExternalMapLayersComponent, GenericFeatureCollectionLayerComponent, WADNRGridComponent, LoadingDirective, IconComponent, FieldDefinitionComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRMapComponent, DNRUplandRegionsLayerComponent, ExternalMapLayersComponent, GenericFeatureCollectionLayerComponent, WADNRGridComponent, LoadingDirective, IconComponent, FieldDefinitionComponent, VerticalStackedBarChartComponent],
     templateUrl: "./dnr-upland-region-detail.component.html",
     styleUrls: ["./dnr-upland-region-detail.component.scss"],
 })
@@ -77,7 +79,7 @@ export class DNRUplandRegionDetailComponent {
     public fundSourceAllocationsIsLoading$: Observable<boolean>;
     public dnrUplandRegionID$: Observable<number>;
 
-    public map: Map;
+    public map: LeafletMap;
     public layerControl: L.Control.Layers;
     public mapIsReady: boolean = false;
     public highlightedDNRUplandRegionLayerMode = OverlayMode.Single;
@@ -85,6 +87,10 @@ export class DNRUplandRegionDetailComponent {
     public projectFeatures$: Observable<IFeature[]>;
 
     public isAdmin$: Observable<boolean>;
+    public hasAccountWithRole$: Observable<boolean>;
+    public expenditureChartData$: Observable<ChartDatum[]>;
+    public expendituresIsLoading$: Observable<boolean>;
+    public expenditureColorRange: Map<string, string> = new Map<string, string>();
     private refreshData$ = new Subject<void>();
 
     public projectColumnDefs: ColDef<ProjectDNRUplandRegionDetailGridRow>[] = [];
@@ -110,6 +116,10 @@ export class DNRUplandRegionDetailComponent {
     ngOnInit(): void {
         this.isAdmin$ = this.authService.currentUserSetObservable.pipe(
             map((user) => this.authService.isUserAnAdministrator(user)),
+        );
+
+        this.hasAccountWithRole$ = this.authService.currentUserSetObservable.pipe(
+            map((user) => user != null && !this.authService.isUserUnassigned(user)),
         );
 
         this.dnrUplandRegionID$ = this.route.paramMap.pipe(
@@ -143,8 +153,21 @@ export class DNRUplandRegionDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        const costTypeColors = ["#4E79A7", "#F28E2B", "#E15759", "#76B7B2", "#59A14F", "#EDC948", "#B07AA1", "#FF9DA7", "#9C755F"];
+        this.expenditureChartData$ = this.dnrUplandRegionID$.pipe(
+            switchMap((id) => this.dnrUplandRegionService.listExpendituresByCostTypeDNRUplandRegion(id)),
+            map((rows) => {
+                const chartData = rows.map((r) => ({ XValue: r.CalendarYear, YValue: r.ExpenditureAmount, Group: r.CostTypeName } as ChartDatum));
+                const uniqueGroups = [...new Set(chartData.map((d) => d.Group).filter((g): g is string => g != null))];
+                this.expenditureColorRange = new Map<string, string>(uniqueGroups.map((g, i) => [g, costTypeColors[i % costTypeColors.length]]));
+                return chartData;
+            }),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
         this.projectsIsLoading$ = toLoadingState(this.projects$);
         this.fundSourceAllocationsIsLoading$ = toLoadingState(this.fundSourceAllocations$);
+        this.expendituresIsLoading$ = toLoadingState(this.expenditureChartData$);
 
         this.projectColumnDefs = this.createProjectColumnDefs(false, false);
         this.authService.currentUserSetObservable.pipe(take(1)).subscribe((user) => {

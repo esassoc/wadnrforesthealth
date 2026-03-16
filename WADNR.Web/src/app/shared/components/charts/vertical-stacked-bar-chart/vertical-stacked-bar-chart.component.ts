@@ -3,7 +3,7 @@ import { default as vegaEmbed, VisualizationSpec } from "vega-embed";
 import { LoadingDirective } from "../../../directives/loading.directive";
 import { DecimalPipe, PercentPipe, CurrencyPipe } from "@angular/common";
 import { DefaultOrderKeyvaluePipe } from "src/app/shared/pipes/default-order-key-value.pipe";
-import { ChartDatum } from "src/app/shared/generated/model/models";
+import { ChartDatum } from "../chart-datum";
 
 // Augmented datum used internally: include computed breakdown fields
 interface ChartDatumAugmented extends ChartDatum {

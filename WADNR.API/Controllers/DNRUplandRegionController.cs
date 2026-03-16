@@ -118,6 +118,14 @@ public class DNRUplandRegionController(
         return Ok(focusAreas);
     }
 
+    [HttpGet("{dnrUplandRegionID}/expenditures-by-cost-type")]
+    [NormalUserFeature]
+    public async Task<ActionResult<List<DNRUplandRegionExpenditureByCostTypeRow>>> ListExpendituresByCostType([FromRoute] int dnrUplandRegionID)
+    {
+        var rows = await DNRUplandRegions.ListExpendituresByCostTypeAsync(DbContext, dnrUplandRegionID);
+        return Ok(rows);
+    }
+
     [HttpGet("{dnrUplandRegionID}/fund-source-allocations")]
     [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<FundSourceAllocationDNRUplandRegionDetailGridRow>>> ListFundSourceAllocationsForDNRUplandRegionID([FromRoute] int dnrUplandRegionID)

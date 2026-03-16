@@ -107,6 +107,7 @@ model/diff-field.ts
 model/diff-section.ts
 model/dimension.ts
 model/dnr-upland-region-detail.ts
+model/dnr-upland-region-expenditure-by-cost-type-row.ts
 model/dnr-upland-region-grid-row.ts
 model/dnr-upland-region-lookup-item.ts
 model/dnr-upland-region-upsert-request.ts

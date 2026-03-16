@@ -74,6 +74,34 @@
         </div>
     </div>
 
+    @if (hasAccountWithRole$ | async) {
+        <div class="g-col-12">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Fund Source Allocation Expenditures by Cost Type</span>
+                </div>
+                <div class="card-body" [loadingSpinner]="{ isLoading: expendituresIsLoading$ | async, loadingHeight: 300 }">
+                    @if (expenditureChartData$ | async; as chartData) {
+                        @if (chartData.length) {
+                            <vertical-stacked-bar-chart
+                                chartID="expenditures-by-cost-type"
+                                [chartData]="chartData"
+                                [chartHeight]="405"
+                                [colorRange]="expenditureColorRange"
+                                xFieldName="Year"
+                                yFieldName="Annual Expenditures"
+                                groupFieldName="Cost Type"
+                                valueFormatter="currency">
+                            </vertical-stacked-bar-chart>
+                        } @else {
+                            <p class="system-text">No Fund Source Allocation Expenditure data yet provided for this DNR Upland Region.</p>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
     <div class="g-col-12">
         <div class="card">
             <div class="card-header"><span class="card-title">Projects</span></div>
