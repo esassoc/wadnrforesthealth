@@ -27,9 +27,6 @@ export const routeParams = {
     roleID: "roleID",
     invoiceID: "invoiceID",
     focusAreaID: "focusAreaID",
-    programIndexID: "programIndexID",
-    projectCodeID: "projectCodeID",
-    classificationSystemID: "classificationSystemID",
     fundSourceAllocationID: "fundSourceAllocationID",
 };
 
@@ -54,12 +51,6 @@ export const routes: Routes = [
         path: `counties/:${routeParams.countyID}`,
         title: "County Detail",
         loadComponent: () => import("./pages/counties/county-detail/county-detail.component").then((m) => m.CountyDetailComponent),
-    },
-    { path: "classification-systems", title: "Classification Systems", loadComponent: () => import("./pages/classification-systems/classification-systems.component").then((m) => m.ClassificationSystemsComponent) },
-    {
-        path: `classification-systems/:${routeParams.classificationSystemID}`,
-        title: "Classification System Detail",
-        loadComponent: () => import("./pages/classification-systems/classification-system-detail/classification-system-detail.component").then((m) => m.ClassificationSystemDetailComponent),
     },
     {
         path: "dnr-upland-regions",
@@ -147,18 +138,6 @@ export const routes: Routes = [
         path: `programs/:${routeParams.programID}`,
         title: "Program Detail",
         loadComponent: () => import("./pages/programs/program-detail/program-detail.component").then((m) => m.ProgramDetailComponent),
-    },
-    { path: "program-indices", title: "Program Indices", loadComponent: () => import("./pages/program-indices/program-indices.component").then((m) => m.ProgramIndicesComponent) },
-    {
-        path: `program-indices/:${routeParams.programIndexID}`,
-        title: "Program Index Detail",
-        loadComponent: () => import("./pages/program-indices/program-index-detail/program-index-detail.component").then((m) => m.ProgramIndexDetailComponent),
-    },
-    { path: "project-codes", title: "Project Codes", loadComponent: () => import("./pages/project-codes/project-codes.component").then((m) => m.ProjectCodesComponent) },
-    {
-        path: `project-codes/:${routeParams.projectCodeID}`,
-        title: "Project Code Detail",
-        loadComponent: () => import("./pages/project-codes/project-code-detail/project-code-detail.component").then((m) => m.ProjectCodeDetailComponent),
     },
     { path: "tags", title: "Tags", loadComponent: () => import("./pages/tags/tags.component").then((m) => m.TagsComponent) },
     {
@@ -322,7 +301,6 @@ export const routes: Routes = [
     // TODO: Migrate from legacy - developer reference page. Swagger/OpenAPI may replace this.
     { path: "json-apis", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "reports/projects", title: "Project Reports", canActivate: [authGuard], loadComponent: () => import("./pages/reports/project-reports/project-reports.component").then((m) => m.ProjectReportsComponent) },
-    { path: "reports/ipr", title: "IPR Reports", canActivate: [authGuard], loadComponent: () => import("./pages/reports/ipr-reports/ipr-reports.component").then((m) => m.IprReportsComponent) },
     { path: "reports", title: "Manage Report Templates", canActivate: [adminGuard], loadComponent: () => import("./pages/reports/reports.component").then((m) => m.ReportsComponent) },
     {
         path: "gis-bulk-import/:attemptID",
