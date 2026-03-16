@@ -2,8 +2,8 @@ import { Component, inject, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
-import { BehaviorSubject, forkJoin, of } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { forkJoin, Observable, of } from "rxjs";
+import { catchError, map, shareReplay, startWith, tap } from "rxjs/operators";
 
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
@@ -40,7 +40,7 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
     public ref: DialogRef<ProjectBasicsEditorData, boolean> = inject(DialogRef);
 
     public FormFieldType = FormFieldType;
-    public isLoading$ = new BehaviorSubject<boolean>(true);
+    public isLoading$: Observable<boolean>;
     public isSubmitting = signal(false);
 
     public projectTypeOptions: FormInputOption[] = [];
@@ -91,7 +91,7 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
             disabled: false,
         }));
 
-        forkJoin({
+        this.isLoading$ = forkJoin({
             projectTypes: this.projectTypeService.listProjectType().pipe(
                 map((types) => types.map((t: any) => ({ Value: t.ProjectTypeID, Label: t.ProjectTypeName, disabled: false }))),
                 catchError(() => of([] as FormInputOption[]))
@@ -111,54 +111,61 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
             editData: this.projectService.getBasicsEditDataProject(data.projectID).pipe(
                 catchError(() => of(new ProjectBasicsEditData()))
             ),
-        }).subscribe(({ projectTypes, organizations, focusAreas, programs, editData }) => {
-            this.projectTypeOptions = projectTypes;
-            this.organizationOptions = organizations;
-            this.focusAreaOptions = focusAreas;
-            this.programOptions = programs;
-            this.editData = editData;
+        }).pipe(
+            tap((result) => this.initializeFormFromData(result, project)),
+            map(() => false),
+            startWith(true),
+            shareReplay(1)
+        );
+    }
 
-            // Pre-populate form
-            this.form.patchValue({
-                projectTypeID: project.ProjectType?.ProjectTypeID ?? null,
-                projectName: project.ProjectName ?? "",
-                projectDescription: project.ProjectDescription ?? "",
-                projectStageID: project.ProjectStage?.ProjectStageID ?? null,
-                estimatedTotalCost: project.EstimatedTotalCost ?? null,
-                plannedDate: project.PlannedDate ? this.toDateInputValue(project.PlannedDate) : null,
-                completionDate: project.CompletionDate ? this.toDateInputValue(project.CompletionDate) : null,
-                expirationDate: project.ExpirationDate ? this.toDateInputValue(project.ExpirationDate) : null,
-                projectGisIdentifier: project.ProjectGisIdentifier ?? "",
-                leadImplementerOrganizationID: project.LeadImplementer?.OrganizationID ?? null,
-                focusAreaID: project.FocusAreaID ?? null,
-                percentageMatch: project.PercentageMatch ?? null,
-            });
+    private initializeFormFromData(
+        result: { projectTypes: FormInputOption[]; organizations: FormInputOption[]; focusAreas: FormInputOption[]; programs: FormInputOption[]; editData: ProjectBasicsEditData },
+        project: ProjectDetail
+    ): void {
+        const { projectTypes, organizations, focusAreas, programs, editData } = result;
 
-            // Disable imported fields
-            if (editData.IsProjectNameImported) {
-                this.form.controls["projectName"].disable();
-            }
-            if (editData.IsProjectStageImported) {
-                this.form.controls["projectStageID"].disable();
-            }
-            if (editData.IsProjectInitiationDateImported) {
-                this.form.controls["plannedDate"].disable();
-            }
-            if (editData.IsCompletionDateImported) {
-                this.form.controls["completionDate"].disable();
-            }
-            if (editData.IsProjectIdentifierImported) {
-                this.form.controls["projectGisIdentifier"].disable();
-            }
+        this.projectTypeOptions = projectTypes;
+        this.organizationOptions = organizations;
+        this.focusAreaOptions = focusAreas;
+        this.programOptions = programs;
+        this.editData = editData;
 
-            // Pre-populate selected programs
-            this.selectedPrograms = (project.Programs ?? []).map((p) => ({
-                ProgramID: p.ProgramID!,
-                ProgramName: p.ProgramName!,
-            }));
-
-            this.isLoading$.next(false);
+        this.form.patchValue({
+            projectTypeID: project.ProjectType?.ProjectTypeID ?? null,
+            projectName: project.ProjectName ?? "",
+            projectDescription: project.ProjectDescription ?? "",
+            projectStageID: project.ProjectStage?.ProjectStageID ?? null,
+            estimatedTotalCost: project.EstimatedTotalCost ?? null,
+            plannedDate: project.PlannedDate ? this.toDateInputValue(project.PlannedDate) : null,
+            completionDate: project.CompletionDate ? this.toDateInputValue(project.CompletionDate) : null,
+            expirationDate: project.ExpirationDate ? this.toDateInputValue(project.ExpirationDate) : null,
+            projectGisIdentifier: project.ProjectGisIdentifier ?? "",
+            leadImplementerOrganizationID: project.LeadImplementer?.OrganizationID ?? null,
+            focusAreaID: project.FocusAreaID ?? null,
+            percentageMatch: project.PercentageMatch ?? null,
         });
+
+        if (editData.IsProjectNameImported) {
+            this.form.controls["projectName"].disable();
+        }
+        if (editData.IsProjectStageImported) {
+            this.form.controls["projectStageID"].disable();
+        }
+        if (editData.IsProjectInitiationDateImported) {
+            this.form.controls["plannedDate"].disable();
+        }
+        if (editData.IsCompletionDateImported) {
+            this.form.controls["completionDate"].disable();
+        }
+        if (editData.IsProjectIdentifierImported) {
+            this.form.controls["projectGisIdentifier"].disable();
+        }
+
+        this.selectedPrograms = (project.Programs ?? []).map((p) => ({
+            ProgramID: p.ProgramID!,
+            ProgramName: p.ProgramName!,
+        }));
     }
 
     private toDateInputValue(dateStr: string | Date): string {

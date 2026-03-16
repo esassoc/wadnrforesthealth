@@ -15,31 +15,31 @@
     <p><em>Import jobs older than 5 days before the latest Finance API Last Load date will be automatically cleared when jobs are run. If you wish to clear all prior jobs, use the 'Clear Prior ArcOnline Import Jobs' button below.</em></p>
     <br>
     <div>
-        <button class="btn btn-primary" (click)="clearOutdatedImports()" [buttonLoading]="isClearing" [disabled]="isClearing">
+        <button class="btn btn-primary" (click)="clearOutdatedImports()" [buttonLoading]="isClearing()" [disabled]="isClearing()">
             Clear Prior ArcOnline Import Jobs
         </button>
     </div>
     <br><br>
     <div>
-        <button class="btn btn-primary" (click)="triggerJob('Vendor Import', 'isRunningVendor')" [buttonLoading]="isRunningVendor" [disabled]="isRunningVendor">
+        <button class="btn btn-primary" (click)="triggerJob('Vendor Import', isRunningVendor)" [buttonLoading]="isRunningVendor()" [disabled]="isRunningVendor()">
             Run Vendor Import Job
         </button>
     </div>
     <br>
     <div>
-        <button class="btn btn-primary" (click)="triggerJob('Program Index Import', 'isRunningProgramIndex')" [buttonLoading]="isRunningProgramIndex" [disabled]="isRunningProgramIndex">
+        <button class="btn btn-primary" (click)="triggerJob('Program Index Import', isRunningProgramIndex)" [buttonLoading]="isRunningProgramIndex()" [disabled]="isRunningProgramIndex()">
             Run Program Index Import Job
         </button>
     </div>
     <br>
     <div>
-        <button class="btn btn-primary" (click)="triggerJob('Project Code Import', 'isRunningProjectCode')" [buttonLoading]="isRunningProjectCode" [disabled]="isRunningProjectCode">
+        <button class="btn btn-primary" (click)="triggerJob('Project Code Import', isRunningProjectCode)" [buttonLoading]="isRunningProjectCode()" [disabled]="isRunningProjectCode()">
             Run Project Code Import Job
         </button>
     </div>
     <br>
     <div>
-        <button class="btn btn-primary" (click)="triggerJob('FundSource Expenditure Import', 'isRunningFundSource')" [buttonLoading]="isRunningFundSource" [disabled]="isRunningFundSource">
+        <button class="btn btn-primary" (click)="triggerJob('FundSource Expenditure Import', isRunningFundSource)" [buttonLoading]="isRunningFundSource()" [disabled]="isRunningFundSource()">
             Run FundSource Expenditures Import Job
         </button>
     </div>

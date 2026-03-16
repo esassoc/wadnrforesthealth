@@ -104,7 +104,7 @@
         <div class="card-body">
             <wadnr-grid
                 [rowData]="projects$ | async"
-                [columnDefs]="projectColumnDefs"
+                [columnDefs]="(projectColumnDefs$ | async) ?? []"
                 [pinnedTotalsRow]="projectPinnedTotalsRow"
                 downloadFileName="focus-area-projects">
             </wadnr-grid>

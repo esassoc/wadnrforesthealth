@@ -54,6 +54,17 @@ public static class ProjectOrganizations
         var toDelete = existing.Where(e => !requestIDs.Contains(e.ProjectOrganizationID)).ToList();
         dbContext.ProjectOrganizations.RemoveRange(toDelete);
 
+        // Update existing orgs (items with an existing ID)
+        foreach (var item in request.Organizations.Where(r => r.ProjectOrganizationID.HasValue))
+        {
+            var existingRecord = existing.SingleOrDefault(e => e.ProjectOrganizationID == item.ProjectOrganizationID!.Value);
+            if (existingRecord != null)
+            {
+                existingRecord.OrganizationID = item.OrganizationID;
+                existingRecord.RelationshipTypeID = item.RelationshipTypeID;
+            }
+        }
+
         // Create new orgs (items with null ID)
         foreach (var item in request.Organizations.Where(r => !r.ProjectOrganizationID.HasValue))
         {

@@ -60,7 +60,6 @@ export class PersonDetailComponent {
     public interactionEventsIsLoading$: Observable<boolean>;
     public notificationsIsLoading$: Observable<boolean>;
     public isDownloadingAgreements = signal(false);
-    private agreementExcelDownloadUrl: string;
 
     public canDownloadExcel$: Observable<boolean>;
     public canImpersonate$: Observable<boolean>;
@@ -126,10 +125,6 @@ export class PersonDetailComponent {
             switchMap((personID) => this.personService.listNotificationsPerson(personID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
-
-        this.personID$.subscribe((id) => {
-            this.agreementExcelDownloadUrl = `${environment.mainAppApiUrl}/people/${id}/agreements/excel-download`;
-        });
 
         this.projectsIsLoading$ = toLoadingState(this.projects$);
         this.agreementsIsLoading$ = toLoadingState(this.agreements$);
@@ -332,12 +327,13 @@ export class PersonDetailComponent {
     }
 
     downloadAgreementExcel(): void {
-        if (this.agreementExcelDownloadUrl) {
-            this.isDownloadingAgreements.set(true);
-            this.utilityFunctions.downloadExcel(this.agreementExcelDownloadUrl, "person-agreements.xlsx")
-                .pipe(finalize(() => this.isDownloadingAgreements.set(false)))
-                .subscribe();
-        }
+        const id = this._personID$.getValue();
+        if (id == null) return;
+        const url = `${environment.mainAppApiUrl}/people/${id}/agreements/excel-download`;
+        this.isDownloadingAgreements.set(true);
+        this.utilityFunctions.downloadExcel(url, "person-agreements.xlsx")
+            .pipe(finalize(() => this.isDownloadingAgreements.set(false)))
+            .subscribe();
     }
 
     hasRole(person: PersonDetail, roleID: number): boolean {

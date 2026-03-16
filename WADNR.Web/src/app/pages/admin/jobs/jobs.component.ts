@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, DestroyRef, inject, OnDestroy, OnInit, signal, WritableSignal } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AsyncPipe } from "@angular/common";
 import { ColDef } from "ag-grid-community";
 import { BehaviorSubject, interval, Observable, Subject, switchMap, takeUntil, tap } from "rxjs";
@@ -28,15 +29,15 @@ export class JobsComponent implements OnInit, OnDestroy {
     public importHistory$: Observable<ImportHistory[]>;
     public columnDefs: ColDef<ImportHistory>[] = [];
 
-    public isClearing = false;
-    public isRunningVendor = false;
-    public isRunningProgramIndex = false;
-    public isRunningProjectCode = false;
-    public isRunningFundSource = false;
+    public isClearing = signal(false);
+    public isRunningVendor = signal(false);
+    public isRunningProgramIndex = signal(false);
+    public isRunningProjectCode = signal(false);
+    public isRunningFundSource = signal(false);
 
     private refreshHistory$ = new BehaviorSubject<void>(undefined);
     private stopPolling$ = new Subject<void>();
-    private destroy$ = new Subject<void>();
+    private destroyRef = inject(DestroyRef);
 
     constructor(
         private jobService: JobService,
@@ -70,31 +71,31 @@ export class JobsComponent implements OnInit, OnDestroy {
     }
 
     clearOutdatedImports(): void {
-        this.isClearing = true;
+        this.isClearing.set(true);
         this.jobService.clearOutdatedImportsJob().subscribe({
             next: () => {
                 this.alertService.pushAlert(new Alert("Outdated imports cleared successfully.", AlertContext.Success));
-                this.isClearing = false;
+                this.isClearing.set(false);
                 this.refreshHistory$.next();
             },
             error: (err) => {
                 this.alertService.pushAlert(new Alert(err?.error?.Message ?? "Failed to clear imports.", AlertContext.Danger));
-                this.isClearing = false;
+                this.isClearing.set(false);
             },
         });
     }
 
-    triggerJob(jobName: string, loadingProp: string): void {
-        (this as any)[loadingProp] = true;
+    triggerJob(jobName: string, loadingSignal: WritableSignal<boolean>): void {
+        loadingSignal.set(true);
         this.jobService.triggerJobJob(jobName).subscribe({
             next: () => {
                 this.alertService.pushAlert(new Alert(`Job '${jobName}' has been enqueued.`, AlertContext.Success));
-                (this as any)[loadingProp] = false;
+                loadingSignal.set(false);
                 this.startPolling();
             },
             error: (err) => {
                 this.alertService.pushAlert(new Alert(err?.error?.Message ?? `Failed to trigger '${jobName}'.`, AlertContext.Danger));
-                (this as any)[loadingProp] = false;
+                loadingSignal.set(false);
             },
         });
     }
@@ -106,7 +107,7 @@ export class JobsComponent implements OnInit, OnDestroy {
         interval(5000)
             .pipe(
                 takeUntil(this.stopPolling$),
-                takeUntil(this.destroy$),
+                takeUntilDestroyed(this.destroyRef),
                 tap(() => {
                     remaining--;
                     if (remaining <= 0) this.stopPolling$.next();
@@ -119,7 +120,5 @@ export class JobsComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.stopPolling$.next();
-        this.destroy$.next();
-        this.destroy$.complete();
     }
 }

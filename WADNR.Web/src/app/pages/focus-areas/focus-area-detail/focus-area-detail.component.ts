@@ -1,7 +1,7 @@
 import { AsyncPipe, CurrencyPipe, DecimalPipe } from "@angular/common";
 import { Component, Input, signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { BehaviorSubject, Subject, combineLatest, filter, Observable, shareReplay, startWith, switchMap, map, take } from "rxjs";
+import { BehaviorSubject, Subject, combineLatest, filter, Observable, shareReplay, startWith, switchMap, map } from "rxjs";
 import { Map as LeafletMap, Control } from "leaflet";
 import { DialogService } from "@ngneat/dialog";
 import { ColDef } from "ag-grid-community";
@@ -64,9 +64,8 @@ export class FocusAreaDetailComponent {
     public mapBoundingBox$: Observable<BoundingBoxDto | undefined>;
 
     public canManageFocusAreas$: Observable<boolean>;
-    private regionOptions: SelectDropdownOption[] = [];
 
-    public projectColumnDefs: ColDef<ProjectFocusAreaDetailGridRow>[] = [];
+    public projectColumnDefs$: Observable<ColDef<ProjectFocusAreaDetailGridRow>[]>;
     public closeoutColumnDefs: ColDef<FocusAreaCloseoutProjectItem>[] = [];
     public projectPinnedTotalsRow = {
         fields: ["EstimatedTotalCost", "TotalFunding"],
@@ -95,13 +94,6 @@ export class FocusAreaDetailComponent {
         this.canManageFocusAreas$ = this.authService.currentUserSetObservable.pipe(
             map((user) => this.authService.canManageFocusAreas(user)),
         );
-
-        this.dnrUplandRegionService.listLookupDNRUplandRegion().subscribe((regions) => {
-            this.regionOptions = regions.map((r) => ({
-                Value: r.DNRUplandRegionID,
-                Label: r.DNRUplandRegionName,
-            } as SelectDropdownOption));
-        });
 
         const focusAreaID$ = this._focusAreaID$.pipe(filter((id): id is number => id != null && !Number.isNaN(id)));
 
@@ -142,12 +134,11 @@ export class FocusAreaDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.authService.currentUserSetObservable.pipe(
+        this.projectColumnDefs$ = this.authService.currentUserSetObservable.pipe(
             map((user) => this.authService.isUserAnAdministrator(user)),
-            take(1)
-        ).subscribe((isAdmin) => {
-            this.projectColumnDefs = this.createProjectColumnDefs(isAdmin);
-        });
+            map((isAdmin) => this.createProjectColumnDefs(isAdmin)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
 
         this.closeoutColumnDefs = [
             this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", {
@@ -270,18 +261,25 @@ export class FocusAreaDetailComponent {
     }
 
     openEditBasicsModal(focusArea: FocusAreaDetail): void {
-        const dialogRef = this.dialogService.open(FocusAreaEditModalComponent, {
-            data: {
-                mode: "edit",
-                focusArea,
-                regionOptions: this.regionOptions,
-            } as FocusAreaEditModalData,
-        });
+        this.dnrUplandRegionService.listLookupDNRUplandRegion().subscribe((regions) => {
+            const regionOptions: SelectDropdownOption[] = regions.map((r) => ({
+                Value: r.DNRUplandRegionID,
+                Label: r.DNRUplandRegionName,
+            } as SelectDropdownOption));
 
-        dialogRef.afterClosed$.subscribe((result) => {
-            if (result) {
-                this.refreshData$.next();
-            }
+            const dialogRef = this.dialogService.open(FocusAreaEditModalComponent, {
+                data: {
+                    mode: "edit",
+                    focusArea,
+                    regionOptions,
+                } as FocusAreaEditModalData,
+            });
+
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.refreshData$.next();
+                }
+            });
         });
     }
 

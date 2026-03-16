@@ -2,8 +2,8 @@ import { Component, inject, OnInit, signal } from "@angular/core";
 import { AsyncPipe, CommonModule } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
-import { BehaviorSubject, of } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { Observable, of } from "rxjs";
+import { catchError, map, shareReplay, startWith, tap } from "rxjs/operators";
 
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
@@ -57,7 +57,7 @@ export class ProjectContactEditorComponent extends BaseModal implements OnInit {
     public FormFieldType = FormFieldType;
     public contactsByType: ContactsByType[] = [];
     public allPeopleOptions: FormInputOption[] = [];
-    public isLoading$ = new BehaviorSubject<boolean>(true);
+    public isLoading$: Observable<boolean>;
     public isSubmitting = signal(false);
 
     constructor(
@@ -69,47 +69,51 @@ export class ProjectContactEditorComponent extends BaseModal implements OnInit {
     }
 
     ngOnInit(): void {
+        this.isLoading$ = this.personService.listLookupPerson().pipe(
+            catchError(() => of([] as PersonLookupItem[])),
+            tap((people) => this.initializeContactsByType(people)),
+            map(() => false),
+            startWith(true),
+            shareReplay(1)
+        );
+    }
+
+    private initializeContactsByType(people: PersonLookupItem[]): void {
         const data = this.ref.data;
 
-        this.personService.listLookupPerson().pipe(
-            catchError(() => of([] as PersonLookupItem[]))
-        ).subscribe((people) => {
-            this.allPeopleOptions = people.map((p) => ({
-                Value: p.PersonID,
-                Label: p.FullName,
-                disabled: false,
-            }));
+        this.allPeopleOptions = people.map((p) => ({
+            Value: p.PersonID,
+            Label: p.FullName,
+            disabled: false,
+        }));
 
-            const sortedRelationshipTypes = [...ProjectPersonRelationshipTypes].sort((a, b) => a.SortOrder - b.SortOrder);
+        const sortedRelationshipTypes = [...ProjectPersonRelationshipTypes].sort((a, b) => a.SortOrder - b.SortOrder);
 
-            this.contactsByType = sortedRelationshipTypes.map((rt) => {
-                const canOnlyBeRelatedOnce = rt.Value === ProjectPersonRelationshipTypeEnum.PrimaryContact;
-                const formControl = new FormControl<number | null>(null);
-                const fieldDefinitionName = FIELD_DEFINITION_MAP[rt.Value] ?? null;
+        this.contactsByType = sortedRelationshipTypes.map((rt) => {
+            const canOnlyBeRelatedOnce = rt.Value === ProjectPersonRelationshipTypeEnum.PrimaryContact;
+            const formControl = new FormControl<number | null>(null);
+            const fieldDefinitionName = FIELD_DEFINITION_MAP[rt.Value] ?? null;
 
-                const selectedContacts = (data?.existingContacts ?? [])
-                    .filter((c) => c.RelationshipTypeID === rt.Value);
+            const selectedContacts = (data?.existingContacts ?? [])
+                .filter((c) => c.RelationshipTypeID === rt.Value);
 
-                if (canOnlyBeRelatedOnce && selectedContacts.length > 0) {
-                    formControl.setValue(selectedContacts[0].PersonID);
-                }
+            if (canOnlyBeRelatedOnce && selectedContacts.length > 0) {
+                formControl.setValue(selectedContacts[0].PersonID);
+            }
 
-                const selectedPersonIDs = selectedContacts.map((c) => c.PersonID);
-                const availablePeopleOptions = canOnlyBeRelatedOnce
-                    ? this.allPeopleOptions
-                    : this.allPeopleOptions.filter((p) => !selectedPersonIDs.includes(p.Value as number));
+            const selectedPersonIDs = selectedContacts.map((c) => c.PersonID);
+            const availablePeopleOptions = canOnlyBeRelatedOnce
+                ? this.allPeopleOptions
+                : this.allPeopleOptions.filter((p) => !selectedPersonIDs.includes(p.Value as number));
 
-                return {
-                    relationshipType: rt,
-                    canOnlyBeRelatedOnce,
-                    formControl,
-                    fieldDefinitionName,
-                    selectedContacts: [...selectedContacts],
-                    availablePeopleOptions,
-                };
-            });
-
-            this.isLoading$.next(false);
+            return {
+                relationshipType: rt,
+                canOnlyBeRelatedOnce,
+                formControl,
+                fieldDefinitionName,
+                selectedContacts: [...selectedContacts],
+                availablePeopleOptions,
+            };
         });
     }
 

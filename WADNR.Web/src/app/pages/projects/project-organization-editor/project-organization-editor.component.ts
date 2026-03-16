@@ -2,8 +2,8 @@ import { Component, inject, OnInit, signal } from "@angular/core";
 import { AsyncPipe, CommonModule } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
-import { BehaviorSubject, forkJoin, of } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { forkJoin, Observable, of } from "rxjs";
+import { catchError, map, shareReplay, startWith, tap } from "rxjs/operators";
 
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
@@ -55,7 +55,7 @@ export class ProjectOrganizationEditorComponent extends BaseModal implements OnI
     public FormFieldType = FormFieldType;
     public organizationsByType: OrganizationsByType[] = [];
     public allOrganizationOptions: FormInputOption[] = [];
-    public isLoading$ = new BehaviorSubject<boolean>(true);
+    public isLoading$: Observable<boolean>;
     public isSubmitting = signal(false);
 
     constructor(
@@ -68,50 +68,56 @@ export class ProjectOrganizationEditorComponent extends BaseModal implements OnI
     }
 
     ngOnInit(): void {
-        const data = this.ref.data;
-
-        forkJoin({
+        this.isLoading$ = forkJoin({
             relationshipTypes: this.relationshipTypeService.listSummaryRelationshipType().pipe(
                 catchError(() => of([] as RelationshipTypeSummary[]))
             ),
             organizations: this.organizationService.listLookupOrganization().pipe(
                 catchError(() => of([] as any[]))
             ),
-        }).subscribe(({ relationshipTypes, organizations }) => {
-            this.allOrganizationOptions = organizations.map((o: any) => ({
-                Value: o.OrganizationID,
-                Label: o.OrganizationName,
-                disabled: false,
-            }));
+        }).pipe(
+            tap((result) => this.initializeOrganizationsByType(result)),
+            map(() => false),
+            startWith(true),
+            shareReplay(1)
+        );
+    }
 
-            this.organizationsByType = relationshipTypes.map((rt) => {
-                const canOnlyBeRelatedOnce = rt.CanOnlyBeRelatedOnceToAProject || rt.IsPrimaryContact;
-                const formControl = new FormControl<number | null>(null);
-                const fieldDefinitionName = FIELD_DEFINITION_MAP[rt.RelationshipTypeName ?? ""] ?? null;
+    private initializeOrganizationsByType(result: { relationshipTypes: RelationshipTypeSummary[]; organizations: any[] }): void {
+        const data = this.ref.data;
+        const { relationshipTypes, organizations } = result;
 
-                const selectedOrganizations = (data?.existingOrganizations ?? [])
-                    .filter((o) => o.RelationshipTypeID === rt.RelationshipTypeID);
+        this.allOrganizationOptions = organizations.map((o: any) => ({
+            Value: o.OrganizationID,
+            Label: o.OrganizationName,
+            disabled: false,
+        }));
 
-                if (canOnlyBeRelatedOnce && selectedOrganizations.length > 0) {
-                    formControl.setValue(selectedOrganizations[0].OrganizationID);
-                }
+        this.organizationsByType = relationshipTypes.map((rt) => {
+            const canOnlyBeRelatedOnce = rt.CanOnlyBeRelatedOnceToAProject || rt.IsPrimaryContact;
+            const formControl = new FormControl<number | null>(null);
+            const fieldDefinitionName = FIELD_DEFINITION_MAP[rt.RelationshipTypeName ?? ""] ?? null;
 
-                const selectedOrgIDs = selectedOrganizations.map((o) => o.OrganizationID);
-                const availableOrganizationOptions = canOnlyBeRelatedOnce
-                    ? this.allOrganizationOptions
-                    : this.allOrganizationOptions.filter((o) => !selectedOrgIDs.includes(o.Value as number));
+            const selectedOrganizations = (data?.existingOrganizations ?? [])
+                .filter((o) => o.RelationshipTypeID === rt.RelationshipTypeID);
 
-                return {
-                    relationshipType: rt,
-                    canOnlyBeRelatedOnce,
-                    formControl,
-                    fieldDefinitionName,
-                    selectedOrganizations: [...selectedOrganizations],
-                    availableOrganizationOptions,
-                };
-            });
+            if (canOnlyBeRelatedOnce && selectedOrganizations.length > 0) {
+                formControl.setValue(selectedOrganizations[0].OrganizationID);
+            }
 
-            this.isLoading$.next(false);
+            const selectedOrgIDs = selectedOrganizations.map((o) => o.OrganizationID);
+            const availableOrganizationOptions = canOnlyBeRelatedOnce
+                ? this.allOrganizationOptions
+                : this.allOrganizationOptions.filter((o) => !selectedOrgIDs.includes(o.Value as number));
+
+            return {
+                relationshipType: rt,
+                canOnlyBeRelatedOnce,
+                formControl,
+                fieldDefinitionName,
+                selectedOrganizations: [...selectedOrganizations],
+                availableOrganizationOptions,
+            };
         });
     }
 

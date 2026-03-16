@@ -35,6 +35,17 @@ public static class ProjectPeople
         var toDelete = existing.Where(e => !requestIDs.Contains(e.ProjectPersonID)).ToList();
         dbContext.ProjectPeople.RemoveRange(toDelete);
 
+        // Update existing contacts (items with an existing ID)
+        foreach (var item in request.Contacts.Where(r => r.ProjectPersonID.HasValue))
+        {
+            var existingRecord = existing.SingleOrDefault(e => e.ProjectPersonID == item.ProjectPersonID!.Value);
+            if (existingRecord != null)
+            {
+                existingRecord.PersonID = item.PersonID;
+                existingRecord.ProjectPersonRelationshipTypeID = item.ProjectPersonRelationshipTypeID;
+            }
+        }
+
         // Create new contacts (items with null ID)
         foreach (var item in request.Contacts.Where(r => !r.ProjectPersonID.HasValue))
         {
