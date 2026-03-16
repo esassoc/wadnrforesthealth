@@ -64,7 +64,7 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/dnr-upland-regions/dnr-upland-region-detail.component").then((m) => m.DNRUplandRegionDetailComponent),
     },
     { path: "find-your-forester", title: "Find Your Forester", loadComponent: () => import("./pages/find-your-forester/find-your-forester.component").then((m) => m.FindYourForesterComponent) },
-    { path: "focus-areas", title: "DNR LOA Focus Areas", canActivate: [elevatedAccessGuard], loadComponent: () => import("./pages/focus-areas/focus-areas.component").then((m) => m.FocusAreasComponent) },
+    { path: "focus-areas", title: "DNR LOA Focus Areas", canActivate: [authGuard], loadComponent: () => import("./pages/focus-areas/focus-areas.component").then((m) => m.FocusAreasComponent) },
     {
         path: `focus-areas/:${routeParams.focusAreaID}`,
         title: "Focus Area Detail",
@@ -298,7 +298,7 @@ export const routes: Routes = [
     { path: "upload-excel-files", title: "Upload Excel Files / ETL", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/loa-upload/loa-upload.component").then((m) => m.LoaUploadComponent) },
     { path: "manage-find-your-forester", title: "Manage Find Your Forester", canActivate: [elevatedAccessGuard], loadComponent: () => import("./pages/find-your-forester/manage-find-your-forester/manage-find-your-forester.component").then((m) => m.ManageFindYourForesterComponent) },
     { path: "map-layers", title: "Manage External Map Layers", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/map-layers/map-layers.component").then((m) => m.MapLayersComponent) },
-    { path: "jobs", title: "Finance API Import Jobs", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/jobs/jobs.component").then((m) => m.JobsComponent) },
+    { path: "jobs", title: "Finance API Import Jobs", canActivate: [elevatedAccessGuard], loadComponent: () => import("./pages/admin/jobs/jobs.component").then((m) => m.JobsComponent) },
     // TODO: Migrate from legacy - developer reference page. Swagger/OpenAPI may replace this.
     { path: "json-apis", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "reports/projects", title: "Project Reports", canActivate: [authGuard], loadComponent: () => import("./pages/reports/project-reports/project-reports.component").then((m) => m.ProjectReportsComponent) },

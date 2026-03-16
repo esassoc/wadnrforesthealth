@@ -123,7 +123,7 @@ public class InvoiceController(
     }
 
     [HttpDelete("{invoiceID}/voucher")]
-    [InvoiceManageFeature]
+    [InvoiceDeleteFeature]
     public async Task<ActionResult<InvoiceDetail>> DeleteVoucher([FromRoute] int invoiceID)
     {
         var invoice = await DbContext.Invoices

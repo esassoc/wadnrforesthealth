@@ -28,7 +28,7 @@ public class JobController(
     /// Triggers a recurring Hangfire job immediately by name.
     /// </summary>
     [HttpPost("{jobName}/trigger")]
-    [AdminFeature]
+    [JobManageFeature]
     public ActionResult TriggerJob([FromRoute] string jobName)
     {
         try
@@ -47,7 +47,7 @@ public class JobController(
     /// Returns ArcOnlineFinanceApiRawJsonImport records for monitoring.
     /// </summary>
     [HttpGet("import-history")]
-    [AdminFeature]
+    [JobManageFeature]
     public async Task<ActionResult<List<ImportHistory>>> GetImportHistory()
     {
         var history = await DbContext.ArcOnlineFinanceApiRawJsonImports
@@ -87,7 +87,7 @@ public class JobController(
     /// successful import against the external Finance API's current LOAD_COMPLETE_DATE.
     /// </summary>
     [HttpGet("{jobName}/freshness")]
-    [AdminFeature]
+    [JobManageFeature]
     public async Task<ActionResult> CheckFreshness([FromRoute] string jobName)
     {
         if (!JobNameToTableTypeID.TryGetValue(jobName, out var tableTypeID))
@@ -130,7 +130,7 @@ public class JobController(
     /// Clears outdated ArcOnline finance API raw JSON imports.
     /// </summary>
     [HttpPost("clear-outdated-imports")]
-    [AdminFeature]
+    [JobManageFeature]
     public async Task<ActionResult> ClearOutdatedImports()
     {
         await DbContext.Database.ExecuteSqlRawAsync(
