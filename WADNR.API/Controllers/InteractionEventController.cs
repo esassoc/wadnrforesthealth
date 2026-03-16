@@ -41,11 +41,7 @@ public class InteractionEventController(
     public async Task<ActionResult<InteractionEventDetail>> Get([FromRoute] int interactionEventID)
     {
         var entity = await InteractionEvents.GetByIDAsDetailAsync(DbContext, interactionEventID);
-        if (entity == null)
-        {
-            return NotFound();
-        }
-        return Ok(entity);
+        return RequireNotNullThrowNotFound(entity, "InteractionEvent", interactionEventID);
     }
 
     [HttpPost]
@@ -66,11 +62,7 @@ public class InteractionEventController(
     public async Task<ActionResult<InteractionEventDetail>> Update([FromRoute] int interactionEventID, [FromBody] InteractionEventUpsertRequest dto)
     {
         var updated = await InteractionEvents.UpdateAsync(DbContext, interactionEventID, dto);
-        if (updated == null)
-        {
-            return NotFound();
-        }
-        return Ok(updated);
+        return RequireNotNullThrowNotFound(updated, "InteractionEvent", interactionEventID);
     }
 
     [HttpDelete("{interactionEventID}")]
@@ -79,11 +71,7 @@ public class InteractionEventController(
     public async Task<IActionResult> Delete([FromRoute] int interactionEventID)
     {
         var deleted = await InteractionEvents.DeleteAsync(DbContext, interactionEventID);
-        if (!deleted)
-        {
-            return NotFound();
-        }
-        return NoContent();
+        return DeleteOrNotFound(deleted);
     }
 
     [HttpGet("{interactionEventID}/projects")]

@@ -54,11 +54,7 @@ public class ProjectTypeController(
     public async Task<ActionResult<ProjectTypeDetail>> Get([FromRoute] int projectTypeID)
     {
         var entity = await ProjectTypes.GetByIDAsDetailAsync(DbContext, projectTypeID);
-        if (entity == null)
-        {
-            return NotFound();
-        }
-        return Ok(entity);
+        return RequireNotNullThrowNotFound(entity, "ProjectType", projectTypeID);
     }
 
     [HttpGet("{projectTypeID}/projects")]
@@ -102,11 +98,7 @@ public class ProjectTypeController(
     public async Task<ActionResult<ProjectTypeDetail>> Update([FromRoute] int projectTypeID, [FromBody] ProjectTypeUpsertRequest dto)
     {
         var updated = await ProjectTypes.UpdateAsync(DbContext, projectTypeID, dto);
-        if (updated == null)
-        {
-            return NotFound();
-        }
-        return Ok(updated);
+        return RequireNotNullThrowNotFound(updated, "ProjectType", projectTypeID);
     }
 
     [HttpPut("sort-order")]
@@ -123,10 +115,6 @@ public class ProjectTypeController(
     public async Task<IActionResult> Delete([FromRoute] int projectTypeID)
     {
         var deleted = await ProjectTypes.DeleteAsync(DbContext, projectTypeID);
-        if (!deleted)
-        {
-            return NotFound();
-        }
-        return NoContent();
+        return DeleteOrNotFound(deleted);
     }
 }

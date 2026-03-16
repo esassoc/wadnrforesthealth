@@ -32,11 +32,7 @@ public class TaxonomyTrunkController(
     public async Task<ActionResult<TaxonomyTrunkDetail>> GetByID([FromRoute] int taxonomyTrunkID)
     {
         var item = await TaxonomyTrunks.GetByIDAsDetailAsync(DbContext, taxonomyTrunkID);
-        if (item == null)
-        {
-            return NotFound();
-        }
-        return Ok(item);
+        return RequireNotNullThrowNotFound(item, "TaxonomyTrunk", taxonomyTrunkID);
     }
 
     [HttpGet("{taxonomyTrunkID}/projects")]
@@ -68,22 +64,14 @@ public class TaxonomyTrunkController(
     public async Task<ActionResult<TaxonomyTrunkDetail>> Update([FromRoute] int taxonomyTrunkID, [FromBody] TaxonomyTrunkUpsertRequest dto)
     {
         var item = await TaxonomyTrunks.UpdateAsync(DbContext, taxonomyTrunkID, dto);
-        if (item == null)
-        {
-            return NotFound();
-        }
-        return Ok(item);
+        return RequireNotNullThrowNotFound(item, "TaxonomyTrunk", taxonomyTrunkID);
     }
 
     [HttpDelete("{taxonomyTrunkID}")]
     [AdminFeature]
-    public async Task<ActionResult> Delete([FromRoute] int taxonomyTrunkID)
+    public async Task<IActionResult> Delete([FromRoute] int taxonomyTrunkID)
     {
         var deleted = await TaxonomyTrunks.DeleteAsync(DbContext, taxonomyTrunkID);
-        if (!deleted)
-        {
-            return NotFound();
-        }
-        return Ok();
+        return DeleteOrNotFound(deleted);
     }
 }

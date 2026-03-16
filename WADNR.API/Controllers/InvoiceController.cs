@@ -34,11 +34,7 @@ public class InvoiceController(
     public async Task<ActionResult<InvoiceDetail>> GetByID([FromRoute] int invoiceID)
     {
         var invoice = await Invoices.GetByIDAsDetailAsync(DbContext, invoiceID);
-        if (invoice == null)
-        {
-            return NotFound();
-        }
-        return Ok(invoice);
+        return RequireNotNullThrowNotFound(invoice, "Invoice", invoiceID);
     }
 
     [HttpPost]

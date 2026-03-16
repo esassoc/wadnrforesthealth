@@ -34,11 +34,7 @@ public class ProjectDocumentController(
     public async Task<ActionResult<ProjectDocumentDetail>> GetByID([FromRoute] int projectDocumentID)
     {
         var detail = await ProjectDocuments.GetByIDAsDetailAsync(DbContext, projectDocumentID);
-        if (detail == null)
-        {
-            return NotFound();
-        }
-        return Ok(detail);
+        return RequireNotNullThrowNotFound(detail, "ProjectDocument", projectDocumentID);
     }
 
     [HttpPost]

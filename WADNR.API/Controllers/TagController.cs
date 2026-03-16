@@ -34,11 +34,7 @@ public class TagController(
     public async Task<ActionResult<TagDetail>> Get([FromRoute] int tagID)
     {
         var entity = await Tags.GetByIDAsDetailAsync(DbContext, tagID);
-        if (entity == null)
-        {
-            return NotFound();
-        }
-        return Ok(entity);
+        return RequireNotNullThrowNotFound(entity, "Tag", tagID);
     }
 
     [HttpPost]
@@ -65,11 +61,7 @@ public class TagController(
         if (validationError != null) return BadRequest(validationError);
 
         var updated = await Tags.UpdateAsync(DbContext, tagID, dto);
-        if (updated == null)
-        {
-            return NotFound();
-        }
-        return Ok(updated);
+        return RequireNotNullThrowNotFound(updated, "Tag", tagID);
     }
 
     [HttpDelete("{tagID}")]
@@ -78,11 +70,7 @@ public class TagController(
     public async Task<IActionResult> Delete([FromRoute] int tagID)
     {
         var deleted = await Tags.DeleteAsync(DbContext, tagID);
-        if (!deleted)
-        {
-            return NotFound();
-        }
-        return NoContent();
+        return DeleteOrNotFound(deleted);
     }
 
     [HttpPost("bulk-tag-projects")]

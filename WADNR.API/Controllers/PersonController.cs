@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -58,12 +57,7 @@ public class PersonController(
         if (gate != null) return gate;
 
         var person = await People.GetByIDAsDetailAsync(DbContext, personID);
-        if (person == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(person);
+        return RequireNotNullThrowNotFound(person, "Person", personID);
     }
 
     [HttpGet("{personID}/projects")]
@@ -101,14 +95,7 @@ public class PersonController(
         var agreements = await Agreements.ListForPersonAsExcelRowAsync(DbContext, personID);
         var spec = new AgreementExcelSpec();
         var sheet = ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Agreements", spec, agreements);
-        var wbm = new ExcelWorkbookMaker(sheet);
-        var workbook = wbm.ToXLWorkbook();
-
-        var stream = new MemoryStream();
-        workbook.SaveAs(stream);
-        stream.Seek(0, SeekOrigin.Begin);
-
-        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Agreements.xlsx");
+        return ExcelFileResult(new ExcelWorkbookMaker(sheet), "Agreements.xlsx");
     }
 
     [HttpGet("{personID}/interaction-events")]
@@ -129,11 +116,7 @@ public class PersonController(
     public async Task<ActionResult<PersonDetail>> UpdatePrimaryContactOrganizations([FromRoute] int personID, [FromBody] PersonPrimaryContactOrganizationsUpdateRequest dto)
     {
         var updated = await People.UpdatePrimaryContactOrganizationsAsync(DbContext, personID, dto);
-        if (updated == null)
-        {
-            return NotFound();
-        }
-        return Ok(updated);
+        return RequireNotNullThrowNotFound(updated, "Person", personID);
     }
 
     [HttpPost("contacts")]
@@ -165,11 +148,7 @@ public class PersonController(
         var isFullUser = baseRole != null && baseRole != Role.Unassigned;
 
         var updated = await People.UpdateContactAsync(DbContext, personID, request, isFullUser);
-        if (updated == null)
-        {
-            return NotFound();
-        }
-        return Ok(updated);
+        return RequireNotNullThrowNotFound(updated, "Person", personID);
     }
 
     [HttpPut("{personID}/roles")]
@@ -180,11 +159,7 @@ public class PersonController(
         try
         {
             var updated = await People.UpdateRolesAsync(DbContext, personID, request);
-            if (updated == null)
-            {
-                return NotFound();
-            }
-            return Ok(updated);
+            return RequireNotNullThrowNotFound(updated, "Person", personID);
         }
         catch (InvalidOperationException ex)
         {
@@ -200,11 +175,7 @@ public class PersonController(
         try
         {
             var updated = await People.ToggleActiveAsync(DbContext, personID);
-            if (updated == null)
-            {
-                return NotFound();
-            }
-            return Ok(updated);
+            return RequireNotNullThrowNotFound(updated, "Person", personID);
         }
         catch (InvalidOperationException ex)
         {
@@ -240,11 +211,7 @@ public class PersonController(
         [FromBody] PersonStewardshipAreasUpsertRequest request)
     {
         var updated = await People.UpdateStewardshipAreasAsync(DbContext, personID, request);
-        if (updated == null)
-        {
-            return NotFound();
-        }
-        return Ok(updated);
+        return RequireNotNullThrowNotFound(updated, "Person", personID);
     }
 
     [HttpDelete("{personID}")]

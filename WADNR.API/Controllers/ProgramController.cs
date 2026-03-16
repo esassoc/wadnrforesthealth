@@ -40,11 +40,7 @@ public class ProgramController(
     public async Task<ActionResult<ProgramDetail>> Get([FromRoute] int programID)
     {
         var entity = await Programs.GetByIDAsDetailAsync(DbContext, programID);
-        if (entity == null)
-        {
-            return NotFound();
-        }
-        return Ok(entity);
+        return RequireNotNullThrowNotFound(entity, "Program", programID);
     }
 
     [HttpPost]
@@ -65,11 +61,7 @@ public class ProgramController(
     public async Task<ActionResult<ProgramDetail>> Update([FromRoute] int programID, [FromBody] ProgramUpsertRequest dto)
     {
         var updated = await Programs.UpdateAsync(DbContext, programID, dto, CallingUser.PersonID);
-        if (updated == null)
-        {
-            return NotFound();
-        }
-        return Ok(updated);
+        return RequireNotNullThrowNotFound(updated, "Program", programID);
     }
 
     [HttpDelete("{programID}")]
@@ -78,11 +70,7 @@ public class ProgramController(
     public async Task<IActionResult> Delete([FromRoute] int programID)
     {
         var deleted = await Programs.DeleteAsync(DbContext, programID);
-        if (!deleted)
-        {
-            return NotFound();
-        }
-        return NoContent();
+        return DeleteOrNotFound(deleted);
     }
 
     [HttpGet("eligible-editors")]
@@ -142,8 +130,7 @@ public class ProgramController(
     public async Task<ActionResult<ProgramNotificationGridRow>> UpdateNotification([FromRoute] int programID, [FromRoute] int notificationConfigID, [FromBody] ProgramNotificationUpsertRequest request)
     {
         var updated = await Programs.UpdateNotificationAsync(DbContext, notificationConfigID, request);
-        if (updated == null) return NotFound();
-        return Ok(updated);
+        return RequireNotNullThrowNotFound(updated, "ProgramNotificationConfiguration", notificationConfigID);
     }
 
     [HttpDelete("{programID}/notifications/{notificationConfigID}")]
@@ -152,8 +139,7 @@ public class ProgramController(
     public async Task<IActionResult> DeleteNotification([FromRoute] int programID, [FromRoute] int notificationConfigID)
     {
         var deleted = await Programs.DeleteNotificationAsync(DbContext, notificationConfigID);
-        if (!deleted) return NotFound();
-        return NoContent();
+        return DeleteOrNotFound(deleted);
     }
 
     [HttpPost("upload-program-file")]
@@ -305,11 +291,10 @@ public class ProgramController(
     [HttpDelete("{programID}/block-list/{projectImportBlockListID}")]
     [ProgramManageFeature]
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
-    public async Task<ActionResult> DeleteBlockListEntry([FromRoute] int programID, [FromRoute] int projectImportBlockListID)
+    public async Task<IActionResult> DeleteBlockListEntry([FromRoute] int programID, [FromRoute] int projectImportBlockListID)
     {
         var deleted = await Programs.DeleteBlockListEntryAsync(DbContext, projectImportBlockListID);
-        if (!deleted) return NotFound();
-        return NoContent();
+        return DeleteOrNotFound(deleted);
     }
 
     #endregion
@@ -320,8 +305,7 @@ public class ProgramController(
     public async Task<ActionResult<GdbImportBasics>> UpdateGdbImportBasics([FromRoute] int programID, [FromBody] GdbImportBasicsUpsertRequest request)
     {
         var result = await Programs.UpdateGdbImportBasicsAsync(DbContext, programID, request);
-        if (result == null) return NotFound();
-        return Ok(result);
+        return RequireNotNullThrowNotFound(result, "Program", programID);
     }
 
     [HttpPut("{programID}/gis-import-config/default-mappings")]
@@ -330,8 +314,7 @@ public class ProgramController(
     public async Task<ActionResult<List<GdbDefaultMappingItem>>> UpdateGdbDefaultMappings([FromRoute] int programID, [FromBody] GdbDefaultMappingUpsertRequest request)
     {
         var result = await Programs.UpdateGdbDefaultMappingsAsync(DbContext, programID, request);
-        if (result == null) return NotFound();
-        return Ok(result);
+        return RequireNotNullThrowNotFound(result, "Program", programID);
     }
 
     [HttpPut("{programID}/gis-import-config/crosswalk-values")]
@@ -340,7 +323,6 @@ public class ProgramController(
     public async Task<ActionResult<List<GdbCrosswalkItem>>> UpdateGdbCrosswalkValues([FromRoute] int programID, [FromBody] GdbCrosswalkUpsertRequest request)
     {
         var result = await Programs.UpdateGdbCrosswalkValuesAsync(DbContext, programID, request);
-        if (result == null) return NotFound();
-        return Ok(result);
+        return RequireNotNullThrowNotFound(result, "Program", programID);
     }
 }

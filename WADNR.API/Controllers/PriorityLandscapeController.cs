@@ -47,11 +47,7 @@ public class PriorityLandscapeController(
     public async Task<ActionResult<PriorityLandscapeDetail>> Get([FromRoute] int priorityLandscapeID)
     {
         var entity = await PriorityLandscapes.GetByIDAsDetailAsync(DbContext, priorityLandscapeID);
-        if (entity == null)
-        {
-            return NotFound();
-        }
-        return Ok(entity);
+        return RequireNotNullThrowNotFound(entity, "PriorityLandscape", priorityLandscapeID);
     }
 
     [HttpPost]
@@ -72,11 +68,7 @@ public class PriorityLandscapeController(
     public async Task<ActionResult<PriorityLandscapeDetail>> Update([FromRoute] int priorityLandscapeID, [FromBody] PriorityLandscapeUpsertRequest dto)
     {
         var updated = await PriorityLandscapes.UpdateAsync(DbContext, priorityLandscapeID, dto, CallingUser.PersonID);
-        if (updated == null)
-        {
-            return NotFound();
-        }
-        return Ok(updated);
+        return RequireNotNullThrowNotFound(updated, "PriorityLandscape", priorityLandscapeID);
     }
 
     [HttpDelete("{priorityLandscapeID}")]
@@ -85,11 +77,7 @@ public class PriorityLandscapeController(
     public async Task<IActionResult> Delete([FromRoute] int priorityLandscapeID)
     {
         var deleted = await PriorityLandscapes.DeleteAsync(DbContext, priorityLandscapeID);
-        if (!deleted)
-        {
-            return NotFound();
-        }
-        return NoContent();
+        return DeleteOrNotFound(deleted);
     }
 
     [HttpGet("categories")]

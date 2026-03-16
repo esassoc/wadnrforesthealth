@@ -41,11 +41,7 @@ public class ProjectImageController(
     public async Task<ActionResult<ProjectImageDetail>> GetByID([FromRoute] int projectImageID)
     {
         var detail = await ProjectImages.GetByIDAsDetailAsync(DbContext, projectImageID);
-        if (detail == null)
-        {
-            return NotFound();
-        }
-        return Ok(detail);
+        return RequireNotNullThrowNotFound(detail, "ProjectImage", projectImageID);
     }
 
     [HttpPost]

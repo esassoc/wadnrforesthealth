@@ -38,11 +38,7 @@ public class FundSourceAllocationController(
     public async Task<ActionResult<FundSourceAllocationDetail>> GetByID([FromRoute] int fundSourceAllocationID)
     {
         var fundSourceAllocation = await FundSourceAllocations.GetByIDAsDetailAsync(DbContext, fundSourceAllocationID);
-        if (fundSourceAllocation == null)
-        {
-            return NotFound();
-        }
-        return Ok(fundSourceAllocation);
+        return RequireNotNullThrowNotFound(fundSourceAllocation, "FundSourceAllocation", fundSourceAllocationID);
     }
 
     [HttpGet("lookup")]
@@ -101,11 +97,7 @@ public class FundSourceAllocationController(
     public async Task<IActionResult> Delete([FromRoute] int fundSourceAllocationID)
     {
         var deleted = await FundSourceAllocations.DeleteAsync(DbContext, fundSourceAllocationID);
-        if (!deleted)
-        {
-            return NotFound();
-        }
-        return NoContent();
+        return DeleteOrNotFound(deleted);
     }
 
     [HttpGet("{fundSourceAllocationID}/notes")]

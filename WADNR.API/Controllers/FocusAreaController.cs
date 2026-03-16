@@ -48,11 +48,7 @@ public class FocusAreaController(
     public async Task<ActionResult<FocusAreaDetail>> GetByID([FromRoute] int focusAreaID)
     {
         var focusArea = await FocusAreas.GetByIDAsDetailAsync(DbContext, focusAreaID);
-        if (focusArea == null)
-        {
-            return NotFound();
-        }
-        return Ok(focusArea);
+        return RequireNotNullThrowNotFound(focusArea, "FocusArea", focusAreaID);
     }
 
     [HttpPost]
@@ -73,11 +69,7 @@ public class FocusAreaController(
     public async Task<ActionResult<FocusAreaDetail>> Update([FromRoute] int focusAreaID, [FromBody] FocusAreaUpsertRequest dto)
     {
         var updated = await FocusAreas.UpdateAsync(DbContext, focusAreaID, dto);
-        if (updated == null)
-        {
-            return NotFound();
-        }
-        return Ok(updated);
+        return RequireNotNullThrowNotFound(updated, "FocusArea", focusAreaID);
     }
 
     [HttpDelete("{focusAreaID}")]
@@ -185,11 +177,6 @@ public class FocusAreaController(
     public async Task<IActionResult> DeleteLocation([FromRoute] int focusAreaID)
     {
         var deleted = await FocusAreas.DeleteLocationAsync(DbContext, focusAreaID);
-        if (!deleted)
-        {
-            return NotFound();
-        }
-
-        return NoContent();
+        return DeleteOrNotFound(deleted);
     }
 }

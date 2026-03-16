@@ -1,4 +1,3 @@
-using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -37,14 +36,7 @@ public class VendorController(
         var vendors = await Vendors.ListAsExcelRowAsync(DbContext);
         var spec = new VendorExcelSpec();
         var sheet = ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Vendors", spec, vendors);
-        var wbm = new ExcelWorkbookMaker(sheet);
-        var workbook = wbm.ToXLWorkbook();
-
-        var stream = new MemoryStream();
-        workbook.SaveAs(stream);
-        stream.Seek(0, SeekOrigin.Begin);
-
-        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Vendors.xlsx");
+        return ExcelFileResult(new ExcelWorkbookMaker(sheet), "Vendors.xlsx");
     }
 
     [HttpGet("{vendorID}")]
@@ -53,11 +45,7 @@ public class VendorController(
     public async Task<ActionResult<VendorDetail>> Get([FromRoute] int vendorID)
     {
         var vendor = await Vendors.GetByIDAsDetailAsync(DbContext, vendorID);
-        if (vendor == null)
-        {
-            return NotFound();
-        }
-        return Ok(vendor);
+        return RequireNotNullThrowNotFound(vendor, "Vendor", vendorID);
     }
 
     [HttpGet("search")]

@@ -36,11 +36,7 @@ public class CountyController(
     public async Task<ActionResult<CountyDetail>> Get([FromRoute] int countyID)
     {
         var entity = await Counties.GetByIDAsDetailAsync(DbContext, countyID);
-        if (entity == null)
-        {
-            return NotFound();
-        }
-        return Ok(entity);
+        return RequireNotNullThrowNotFound(entity, "County", countyID);
     }
 
     [HttpGet("{countyID}/projects")]

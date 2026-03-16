@@ -83,14 +83,7 @@ public class ProjectController(
             ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Project Notes", new ProjectNoteExcelSpec(), notes),
             ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Project Themes", new ProjectClassificationExcelSpec(), classifications),
         };
-        var wbm = new ExcelWorkbookMaker(sheets);
-        var workbook = wbm.ToXLWorkbook();
-
-        var stream = new MemoryStream();
-        workbook.SaveAs(stream);
-        stream.Seek(0, SeekOrigin.Begin);
-
-        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Projects.xlsx");
+        return ExcelFileResult(new ExcelWorkbookMaker(sheets), "Projects.xlsx");
     }
 
     [HttpGet("pending")]
@@ -121,14 +114,7 @@ public class ProjectController(
             ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Project Notes", new ProjectNoteExcelSpec(), notes),
             ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Project Themes", new ProjectClassificationExcelSpec(), classifications),
         };
-        var wbm = new ExcelWorkbookMaker(sheets);
-        var workbook = wbm.ToXLWorkbook();
-
-        var stream = new MemoryStream();
-        workbook.SaveAs(stream);
-        stream.Seek(0, SeekOrigin.Begin);
-
-        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "PendingProjects.xlsx");
+        return ExcelFileResult(new ExcelWorkbookMaker(sheets), "PendingProjects.xlsx");
     }
 
     [HttpGet("update-status")]
@@ -161,12 +147,7 @@ public class ProjectController(
     public async Task<ActionResult<ProjectDetail>> Get([FromRoute] int projectID)
     {
         var entity = await Projects.GetByIDAsDetailForUserAsync(DbContext, projectID, CallingUser);
-        if (entity == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(entity);
+        return RequireNotNullThrowNotFound(entity, "Project", projectID);
     }
 
     [HttpGet("{projectID}/fact-sheet")]
@@ -175,12 +156,7 @@ public class ProjectController(
     public async Task<ActionResult<ProjectFactSheet>> GetForFactSheet([FromRoute] int projectID)
     {
         var entity = await Projects.GetByIDAsFactSheetForUserAsync(DbContext, projectID, CallingUser);
-        if (entity == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(entity);
+        return RequireNotNullThrowNotFound(entity, "Project", projectID);
     }
 
     [HttpGet("{projectID}/map-popup")]
@@ -189,11 +165,7 @@ public class ProjectController(
     public async Task<ActionResult<ProjectMapPopup>> GetAsMapPopup([FromRoute] int projectID)
     {
         var entity = await Projects.GetByIDAsMapPopupForUserAsync(DbContext, projectID, CallingUser);
-        if (entity == null)
-        {
-            return NotFound();
-        }
-        return Ok(entity);
+        return RequireNotNullThrowNotFound(entity, "Project", projectID);
     }
 
     [HttpGet("{projectID}/map-popup-html")]
@@ -305,12 +277,7 @@ public class ProjectController(
     public async Task<ActionResult<ProjectDetail>> Update([FromRoute] int projectID, [FromBody] ProjectUpsertRequest dto)
     {
         var updated = await Projects.UpdateAsync(DbContext, projectID, dto, CallingUser.PersonID);
-        if (updated == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(updated);
+        return RequireNotNullThrowNotFound(updated, "Project", projectID);
     }
 
     [HttpDelete("{projectID}")]
@@ -735,11 +702,7 @@ public class ProjectController(
     public async Task<ActionResult<CreateWorkflowProgressResponse>> GetCreateWorkflowProgress([FromRoute] int projectID)
     {
         var progress = await ProjectCreateWorkflowProgress.GetProgressForUserAsync(DbContext, projectID, CallingUser);
-        if (progress == null)
-        {
-            return NotFound();
-        }
-        return Ok(progress);
+        return RequireNotNullThrowNotFound(progress, "Project", projectID);
     }
 
     #endregion
@@ -752,11 +715,7 @@ public class ProjectController(
     public async Task<ActionResult<ProjectBasicsStep>> GetCreateBasicsStep([FromRoute] int projectID)
     {
         var dto = await ProjectCreateWorkflowSteps.GetBasicsStepAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/create-workflow/steps/basics")]
@@ -765,11 +724,7 @@ public class ProjectController(
     public async Task<ActionResult<ProjectBasicsStep>> SaveCreateBasicsStep([FromRoute] int projectID, [FromBody] ProjectBasicsStepRequest request)
     {
         var dto = await ProjectCreateWorkflowSteps.SaveBasicsStepAsync(DbContext, projectID, request, CallingUser.PersonID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPost("create-workflow/steps/basics")]
@@ -790,11 +745,7 @@ public class ProjectController(
     public async Task<ActionResult<LocationSimpleStep>> GetCreateLocationSimpleStep([FromRoute] int projectID)
     {
         var dto = await ProjectCreateWorkflowSteps.GetLocationSimpleStepAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/create-workflow/steps/location-simple")]
@@ -803,11 +754,7 @@ public class ProjectController(
     public async Task<ActionResult<LocationSimpleStep>> SaveCreateLocationSimpleStep([FromRoute] int projectID, [FromBody] LocationSimpleStepRequest request)
     {
         var dto = await ProjectCreateWorkflowSteps.SaveLocationSimpleStepAsync(DbContext, projectID, request);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     #endregion
@@ -820,11 +767,7 @@ public class ProjectController(
     public async Task<ActionResult<LocationDetailedStep>> GetCreateLocationDetailedStep([FromRoute] int projectID)
     {
         var dto = await ProjectCreateWorkflowSteps.GetLocationDetailedStepAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/create-workflow/steps/location-detailed")]
@@ -833,11 +776,7 @@ public class ProjectController(
     public async Task<ActionResult<LocationDetailedStep>> SaveCreateLocationDetailedStep([FromRoute] int projectID, [FromBody] LocationDetailedStepRequest request)
     {
         var dto = await ProjectCreateWorkflowSteps.SaveLocationDetailedStepAsync(DbContext, projectID, request);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPost("{projectID}/create-workflow/steps/location-detailed/upload-gdb")]
@@ -904,11 +843,7 @@ public class ProjectController(
     public async Task<ActionResult<LocationDetailedStep>> ApproveGdbForCreateWorkflow([FromRoute] int projectID, [FromBody] GdbApproveRequest request)
     {
         var dto = await ProjectCreateWorkflowSteps.ApproveGdbImportAsync(DbContext, projectID, CallingUser.PersonID, request);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     #endregion
@@ -921,11 +856,7 @@ public class ProjectController(
     public async Task<ActionResult<GeographicAssignmentStep>> GetCreatePriorityLandscapesStep([FromRoute] int projectID)
     {
         var dto = await ProjectCreateWorkflowSteps.GetPriorityLandscapesStepAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/create-workflow/steps/priority-landscapes")]
@@ -934,11 +865,7 @@ public class ProjectController(
     public async Task<ActionResult<GeographicAssignmentStep>> SaveCreatePriorityLandscapesStep([FromRoute] int projectID, [FromBody] GeographicOverrideRequest request)
     {
         var dto = await ProjectCreateWorkflowSteps.SavePriorityLandscapesStepAsync(DbContext, projectID, request);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpGet("{projectID}/create-workflow/steps/dnr-upland-regions")]
@@ -947,11 +874,7 @@ public class ProjectController(
     public async Task<ActionResult<GeographicAssignmentStep>> GetCreateDnrUplandRegionsStep([FromRoute] int projectID)
     {
         var dto = await ProjectCreateWorkflowSteps.GetDnrUplandRegionsStepAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/create-workflow/steps/dnr-upland-regions")]
@@ -960,11 +883,7 @@ public class ProjectController(
     public async Task<ActionResult<GeographicAssignmentStep>> SaveCreateDnrUplandRegionsStep([FromRoute] int projectID, [FromBody] GeographicOverrideRequest request)
     {
         var dto = await ProjectCreateWorkflowSteps.SaveDnrUplandRegionsStepAsync(DbContext, projectID, request);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpGet("{projectID}/create-workflow/steps/counties")]
@@ -973,11 +892,7 @@ public class ProjectController(
     public async Task<ActionResult<GeographicAssignmentStep>> GetCreateCountiesStep([FromRoute] int projectID)
     {
         var dto = await ProjectCreateWorkflowSteps.GetCountiesStepAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/create-workflow/steps/counties")]
@@ -986,11 +901,7 @@ public class ProjectController(
     public async Task<ActionResult<GeographicAssignmentStep>> SaveCreateCountiesStep([FromRoute] int projectID, [FromBody] GeographicOverrideRequest request)
     {
         var dto = await ProjectCreateWorkflowSteps.SaveCountiesStepAsync(DbContext, projectID, request);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     #endregion
@@ -1003,11 +914,7 @@ public class ProjectController(
     public async Task<ActionResult<ProjectOrganizationsStep>> GetCreateOrganizationsStep([FromRoute] int projectID)
     {
         var dto = await ProjectCreateWorkflowSteps.GetOrganizationsStepAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/create-workflow/steps/organizations")]
@@ -1016,11 +923,7 @@ public class ProjectController(
     public async Task<ActionResult<ProjectOrganizationsStep>> SaveCreateOrganizationsStep([FromRoute] int projectID, [FromBody] ProjectOrganizationsStepRequest request)
     {
         var dto = await ProjectCreateWorkflowSteps.SaveOrganizationsStepAsync(DbContext, projectID, request);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     #endregion
@@ -1033,11 +936,7 @@ public class ProjectController(
     public async Task<ActionResult<ProjectContactsStep>> GetCreateContactsStep([FromRoute] int projectID)
     {
         var dto = await ProjectCreateWorkflowSteps.GetContactsStepAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/create-workflow/steps/contacts")]
@@ -1046,11 +945,7 @@ public class ProjectController(
     public async Task<ActionResult<ProjectContactsStep>> SaveCreateContactsStep([FromRoute] int projectID, [FromBody] ProjectContactsStepRequest request)
     {
         var dto = await ProjectCreateWorkflowSteps.SaveContactsStepAsync(DbContext, projectID, request);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     #endregion
@@ -1063,11 +958,7 @@ public class ProjectController(
     public async Task<ActionResult<ExpectedFundingStep>> GetCreateExpectedFundingStep([FromRoute] int projectID)
     {
         var dto = await ProjectCreateWorkflowSteps.GetExpectedFundingStepAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/create-workflow/steps/expected-funding")]
@@ -1076,11 +967,7 @@ public class ProjectController(
     public async Task<ActionResult<ExpectedFundingStep>> SaveCreateExpectedFundingStep([FromRoute] int projectID, [FromBody] ExpectedFundingStepRequest request)
     {
         var dto = await ProjectCreateWorkflowSteps.SaveExpectedFundingStepAsync(DbContext, projectID, request);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     #endregion
@@ -1093,11 +980,7 @@ public class ProjectController(
     public async Task<ActionResult<ProjectClassificationsStep>> GetCreateClassificationsStep([FromRoute] int projectID)
     {
         var dto = await ProjectCreateWorkflowSteps.GetClassificationsStepAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/create-workflow/steps/classifications")]
@@ -1106,11 +989,7 @@ public class ProjectController(
     public async Task<ActionResult<ProjectClassificationsStep>> SaveCreateClassificationsStep([FromRoute] int projectID, [FromBody] ProjectClassificationsStepRequest request)
     {
         var dto = await ProjectCreateWorkflowSteps.SaveClassificationsStepAsync(DbContext, projectID, request);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     #endregion
@@ -1763,11 +1642,7 @@ public class ProjectController(
     public async Task<ActionResult<TreatmentUpdateDetail>> GetTreatmentUpdate([FromRoute] int projectID, [FromRoute] int treatmentUpdateID)
     {
         var dto = await ProjectUpdateWorkflowSteps.GetTreatmentUpdateByIDAsync(DbContext, treatmentUpdateID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "TreatmentUpdate", treatmentUpdateID);
     }
 
     [HttpPost("{projectID}/update-workflow/treatments")]
@@ -2635,11 +2510,7 @@ public class ProjectController(
     public async Task<ActionResult<LocationSimpleStep>> GetLocationSimple([FromRoute] int projectID)
     {
         var dto = await ProjectCreateWorkflowSteps.GetLocationSimpleStepAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/location-simple")]
@@ -2648,11 +2519,7 @@ public class ProjectController(
     public async Task<ActionResult<LocationSimpleStep>> SaveLocationSimple([FromRoute] int projectID, [FromBody] LocationSimpleStepRequest request)
     {
         var dto = await Projects.SaveLocationSimpleAsync(DbContext, projectID, request);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     #endregion
@@ -2665,11 +2532,7 @@ public class ProjectController(
     public async Task<ActionResult<LocationDetailedStep>> GetLocationDetailed([FromRoute] int projectID)
     {
         var dto = await ProjectCreateWorkflowSteps.GetLocationDetailedStepAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/location-detailed")]
@@ -2755,11 +2618,7 @@ public class ProjectController(
     public async Task<ActionResult<LocationDetailedStep>> ApproveGdbForDirectEdit([FromRoute] int projectID, [FromBody] GdbApproveRequest request)
     {
         var dto = await Projects.ApproveGdbImportDirectEditAsync(DbContext, projectID, CallingUser.PersonID, request);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     #endregion
@@ -2772,11 +2631,7 @@ public class ProjectController(
     public async Task<ActionResult<GeographicAssignmentStep>> GetPriorityLandscapes([FromRoute] int projectID)
     {
         var dto = await ProjectCreateWorkflowSteps.GetPriorityLandscapesStepAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/priority-landscapes")]
@@ -2785,11 +2640,7 @@ public class ProjectController(
     public async Task<ActionResult<GeographicAssignmentStep>> SavePriorityLandscapes([FromRoute] int projectID, [FromBody] GeographicOverrideRequest request)
     {
         var dto = await ProjectCreateWorkflowSteps.SavePriorityLandscapesStepAsync(DbContext, projectID, request);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpGet("{projectID}/dnr-upland-regions")]
@@ -2798,11 +2649,7 @@ public class ProjectController(
     public async Task<ActionResult<GeographicAssignmentStep>> GetDnrUplandRegions([FromRoute] int projectID)
     {
         var dto = await ProjectCreateWorkflowSteps.GetDnrUplandRegionsStepAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/dnr-upland-regions")]
@@ -2811,11 +2658,7 @@ public class ProjectController(
     public async Task<ActionResult<GeographicAssignmentStep>> SaveDnrUplandRegions([FromRoute] int projectID, [FromBody] GeographicOverrideRequest request)
     {
         var dto = await ProjectCreateWorkflowSteps.SaveDnrUplandRegionsStepAsync(DbContext, projectID, request);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpGet("{projectID}/counties")]
@@ -2824,11 +2667,7 @@ public class ProjectController(
     public async Task<ActionResult<GeographicAssignmentStep>> GetCounties([FromRoute] int projectID)
     {
         var dto = await ProjectCreateWorkflowSteps.GetCountiesStepAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/counties")]
@@ -2837,11 +2676,7 @@ public class ProjectController(
     public async Task<ActionResult<GeographicAssignmentStep>> SaveCounties([FromRoute] int projectID, [FromBody] GeographicOverrideRequest request)
     {
         var dto = await ProjectCreateWorkflowSteps.SaveCountiesStepAsync(DbContext, projectID, request);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     #endregion
@@ -2854,11 +2689,7 @@ public class ProjectController(
     public async Task<ActionResult<MapExtentStep>> GetMapExtent([FromRoute] int projectID)
     {
         var dto = await Projects.GetMapExtentAsync(DbContext, projectID);
-        if (dto == null)
-        {
-            return NotFound();
-        }
-        return Ok(dto);
+        return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
     [HttpPut("{projectID}/map-extent")]

@@ -46,11 +46,7 @@ public class ClassificationController(
     public async Task<ActionResult<ClassificationDetail>> Get([FromRoute] int classificationID)
     {
         var entity = await Classifications.GetByIDAsDetailAsync(DbContext, classificationID);
-        if (entity == null)
-        {
-            return NotFound();
-        }
-        return Ok(entity);
+        return RequireNotNullThrowNotFound(entity, "Classification", classificationID);
     }
 
     [HttpPost]
@@ -71,11 +67,7 @@ public class ClassificationController(
     public async Task<ActionResult<ClassificationDetail>> Update([FromRoute] int classificationID, [FromBody] ClassificationUpsertRequest dto)
     {
         var updated = await Classifications.UpdateAsync(DbContext, classificationID, dto);
-        if (updated == null)
-        {
-            return NotFound();
-        }
-        return Ok(updated);
+        return RequireNotNullThrowNotFound(updated, "Classification", classificationID);
     }
 
     [HttpPut("sort-order")]
@@ -92,11 +84,7 @@ public class ClassificationController(
     public async Task<IActionResult> Delete([FromRoute] int classificationID)
     {
         var deleted = await Classifications.DeleteAsync(DbContext, classificationID);
-        if (!deleted)
-        {
-            return NotFound();
-        }
-        return NoContent();
+        return DeleteOrNotFound(deleted);
     }
 
     [HttpGet("{classificationID}/projects")]

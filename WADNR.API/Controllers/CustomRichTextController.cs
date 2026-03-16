@@ -42,10 +42,6 @@ public class CustomRichTextController(
         [FromBody] FirmaPageUpsertRequest upsertRequest)
     {
         var updated = await FirmaPages.UpdateAsync(DbContext, customRichTextTypeID, upsertRequest);
-        if (updated == null)
-        {
-            return NotFound();
-        }
-        return Ok(updated);
+        return RequireNotNullThrowNotFound(updated, "CustomRichText", customRichTextTypeID);
     }
 }

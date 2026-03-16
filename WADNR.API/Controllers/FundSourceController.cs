@@ -1,4 +1,3 @@
-using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -46,14 +45,7 @@ public class FundSourceController(
             ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Fund Sources", new FundSourceExcelSpec(), fundSources),
             ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Fund Source Allocations", new FundSourceAllocationExcelSpec(), allocations),
         };
-        var wbm = new ExcelWorkbookMaker(sheets);
-        var workbook = wbm.ToXLWorkbook();
-
-        var stream = new MemoryStream();
-        workbook.SaveAs(stream);
-        stream.Seek(0, SeekOrigin.Begin);
-
-        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "FundSources.xlsx");
+        return ExcelFileResult(new ExcelWorkbookMaker(sheets), "FundSources.xlsx");
     }
 
     [HttpGet("lookup")]
@@ -70,11 +62,7 @@ public class FundSourceController(
     public async Task<ActionResult<FundSourceDetail>> Get([FromRoute] int fundSourceID)
     {
         var entity = await FundSources.GetByIDAsDetailAsync(DbContext, fundSourceID);
-        if (entity == null)
-        {
-            return NotFound();
-        }
-        return Ok(entity);
+        return RequireNotNullThrowNotFound(entity, "FundSource", fundSourceID);
     }
 
     [HttpPost]
@@ -95,11 +83,7 @@ public class FundSourceController(
     public async Task<ActionResult<FundSourceDetail>> Update([FromRoute] int fundSourceID, [FromBody] FundSourceUpsertRequest dto)
     {
         var updated = await FundSources.UpdateAsync(DbContext, fundSourceID, dto);
-        if (updated == null)
-        {
-            return NotFound();
-        }
-        return Ok(updated);
+        return RequireNotNullThrowNotFound(updated, "FundSource", fundSourceID);
     }
 
     [HttpDelete("{fundSourceID}")]
@@ -108,11 +92,7 @@ public class FundSourceController(
     public async Task<IActionResult> Delete([FromRoute] int fundSourceID)
     {
         var deleted = await FundSources.DeleteAsync(DbContext, fundSourceID);
-        if (!deleted)
-        {
-            return NotFound();
-        }
-        return NoContent();
+        return DeleteOrNotFound(deleted);
     }
 
     [HttpGet("{fundSourceID}/allocations")]

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -40,14 +39,7 @@ public class AgreementController(
         var agreements = await Agreements.ListAsExcelRowAsync(DbContext);
         var spec = new AgreementExcelSpec();
         var sheet = ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Agreements", spec, agreements);
-        var wbm = new ExcelWorkbookMaker(sheet);
-        var workbook = wbm.ToXLWorkbook();
-
-        var stream = new MemoryStream();
-        workbook.SaveAs(stream);
-        stream.Seek(0, SeekOrigin.Begin);
-
-        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Agreements.xlsx");
+        return ExcelFileResult(new ExcelWorkbookMaker(sheet), "Agreements.xlsx");
     }
 
     [HttpGet("{agreementID}")]
@@ -56,12 +48,7 @@ public class AgreementController(
     public async Task<ActionResult<AgreementDetail>> Get([FromRoute] int agreementID)
     {
         var entity = await Agreements.GetByIDAsDetailAsync(DbContext, agreementID);
-        if (entity == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(entity);
+        return RequireNotNullThrowNotFound(entity, "Agreement", agreementID);
     }
 
     [HttpPost]
@@ -83,12 +70,7 @@ public class AgreementController(
     public async Task<ActionResult<AgreementDetail>> Update([FromRoute] int agreementID, [FromBody] AgreementUpsertRequest dto)
     {
         var updated = await Agreements.UpdateAsync(DbContext, agreementID, dto, CallingUser.PersonID);
-        if (updated == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(updated);
+        return RequireNotNullThrowNotFound(updated, "Agreement", agreementID);
     }
 
     [HttpDelete("{agreementID}")]
@@ -97,12 +79,7 @@ public class AgreementController(
     public async Task<IActionResult> Delete([FromRoute] int agreementID)
     {
         var deleted = await Agreements.DeleteAsync(DbContext, agreementID);
-        if (!deleted)
-        {
-            return NotFound();
-        }
-
-        return NoContent();
+        return DeleteOrNotFound(deleted);
     }
 
     [HttpGet("{agreementID}/fund-source-allocations")]
@@ -197,11 +174,6 @@ public class AgreementController(
     public async Task<IActionResult> DeleteContact([FromRoute] int agreementID, [FromRoute] int agreementPersonID)
     {
         var deleted = await Agreements.DeleteContactAsync(DbContext, agreementPersonID);
-        if (!deleted)
-        {
-            return NotFound();
-        }
-
-        return NoContent();
+        return DeleteOrNotFound(deleted);
     }
 }

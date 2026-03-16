@@ -23,11 +23,7 @@ public class TreatmentController(
     public async Task<ActionResult<TreatmentDetail>> GetByID([FromRoute] int treatmentID)
     {
         var treatment = await Treatments.GetByIDAsDetailAsync(DbContext, treatmentID);
-        if (treatment == null)
-        {
-            return NotFound();
-        }
-        return Ok(treatment);
+        return RequireNotNullThrowNotFound(treatment, "Treatment", treatmentID);
     }
 
     [HttpPost]
@@ -43,22 +39,14 @@ public class TreatmentController(
     public async Task<ActionResult<TreatmentDetail>> Update([FromRoute] int treatmentID, [FromBody] TreatmentUpsertRequest dto)
     {
         var treatment = await Treatments.UpdateAsync(DbContext, treatmentID, dto);
-        if (treatment == null)
-        {
-            return NotFound();
-        }
-        return Ok(treatment);
+        return RequireNotNullThrowNotFound(treatment, "Treatment", treatmentID);
     }
 
     [HttpDelete("{treatmentID}")]
     [TreatmentManageFeature]
-    public async Task<ActionResult> Delete([FromRoute] int treatmentID)
+    public async Task<IActionResult> Delete([FromRoute] int treatmentID)
     {
         var deleted = await Treatments.DeleteAsync(DbContext, treatmentID);
-        if (!deleted)
-        {
-            return NotFound();
-        }
-        return Ok();
+        return DeleteOrNotFound(deleted);
     }
 }
