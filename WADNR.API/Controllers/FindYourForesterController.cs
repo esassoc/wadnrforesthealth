@@ -48,7 +48,7 @@ public class FindYourForesterController(
     [FindYourForesterManageFeature]
     public async Task<ActionResult<List<PersonLookupItem>>> ListAssignablePeople()
     {
-        var people = await People.ListAsLookupItemAsync(DbContext);
+        var people = await People.ListAsLookupItemAsync(DbContext, wadnrOnly: true);
         return Ok(people);
     }
 

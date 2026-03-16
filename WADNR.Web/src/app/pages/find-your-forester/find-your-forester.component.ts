@@ -1,5 +1,5 @@
 import { AsyncPipe, NgTemplateOutlet } from "@angular/common";
-import { Component, computed, signal, ViewChild, inject } from "@angular/core";
+import { Component, computed, ElementRef, signal, ViewChild, inject } from "@angular/core";
 import { Map as LeafletMap } from "leaflet";
 import * as L from "leaflet";
 import { catchError, forkJoin, of, shareReplay, tap } from "rxjs";
@@ -40,6 +40,7 @@ export interface ForesterContactInfo {
 })
 export class FindYourForesterComponent {
     @ViewChild(MapSearchComponent) mapSearch: MapSearchComponent;
+    @ViewChild("sidebar") sidebarEl: ElementRef<HTMLElement>;
 
     richTextTypeID = FirmaPageTypeEnum.FindYourForester;
 
@@ -88,7 +89,7 @@ export class FindYourForesterComponent {
     onMapInit(event: WADNRMapInitEvent): void {
         this.map = event.map;
         this.layerControl = event.layerControl;
-        this.map.on("click", (e: L.LeafletMouseEvent) => this.queryForestersAtPoint(e));
+        this.map.on("click", (e: L.LeafletMouseEvent) => this.queryForestersAtPoint(e.latlng));
     }
 
     onGeocodeError(message: string): void {
@@ -98,24 +99,36 @@ export class FindYourForesterComponent {
     }
 
     onLocationFound(event: { lat: number; lng: number }): void {
-        this.queryForestersAtPoint(null, L.latLng(event.lat, event.lng));
+        const latlng = L.latLng(event.lat, event.lng);
+
+        // Immediate UI feedback: marker, spinner, scroll — before flyTo animation
+        this.prepareForQuery(latlng);
+
+        // Wait for flyTo animation to complete so map bounds are correct for GetFeatureInfo
+        this.map.once("moveend", () => {
+            this.queryForestersAtPoint(latlng, true);
+        });
     }
 
-    private async queryForestersAtPoint(e: L.LeafletMouseEvent | null, latlng?: L.LatLng): Promise<void> {
-        if (!this.map) return;
-
-        const point = latlng || e?.latlng;
-        if (!point) return;
-
+    private prepareForQuery(point: L.LatLng): void {
         this.alertService.clearAlerts();
         this.hasQueried.set(true);
         this.isQuerying.set(true);
+        this.sidebarEl?.nativeElement.scrollTo({ top: 0, behavior: "smooth" });
 
-        // Place or move the click marker
         if (this.clickMarker) {
             this.clickMarker.setLatLng(point);
         } else {
             this.clickMarker = L.marker(point, { icon: MarkerHelper.iconDefault }).addTo(this.map);
+        }
+    }
+
+    private async queryForestersAtPoint(point: L.LatLng, skipPrepare = false): Promise<void> {
+        if (!this.map) return;
+
+        // For map clicks, prepare UI immediately (search flow calls prepareForQuery before flyTo)
+        if (!skipPrepare) {
+            this.prepareForQuery(point);
         }
 
         // Build GetFeatureInfo params common to all requests
