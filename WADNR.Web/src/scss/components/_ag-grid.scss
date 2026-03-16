@@ -181,6 +181,12 @@ ag-grid-angular {
         $target: $target + 1;
         $index: $index - 1;
     }
+
+    // When a context-menu dropdown is open, lift the row above all others
+    // so the fixed-position dropdown isn't clipped by sibling row stacking contexts
+    &:has(.context-menu__dropdown.active) {
+        z-index: 101;
+    }
 }
 
 .ag-popup {
