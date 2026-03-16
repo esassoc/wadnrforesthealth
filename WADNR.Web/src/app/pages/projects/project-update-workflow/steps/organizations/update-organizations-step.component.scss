@@ -1,11 +1,11 @@
 // organizations step styles
 
 .relationship-type-section {
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--spacing-200);
 }
 
 .relationship-type-label {
-    margin-bottom: 0.25rem;
+    margin-bottom: var(--spacing-100);
 }
 
 .field-definition-hint {
@@ -32,8 +32,8 @@
     .selected-organization-item {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.25rem 0;
+        gap: var(--spacing-200);
+        padding: var(--spacing-100) 0;
 
         a {
             display: flex;

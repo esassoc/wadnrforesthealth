@@ -29,7 +29,7 @@
 
         span {
             background: white;
-            padding: 0.5rem 1rem;
+            padding: var(--spacing-200) var(--spacing-400);
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             font-weight: 500;
@@ -40,12 +40,12 @@
 .radio-options {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: var(--spacing-200);
 
     .radio-label {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--spacing-200);
         cursor: pointer;
 
         input[type="radio"] {
@@ -60,23 +60,23 @@
 }
 
 .location-info {
-    margin-top: 1.5rem;
+    margin-top: var(--spacing-500);
 
     .location-info-header {
         font-weight: 600;
-        margin-bottom: 0.75rem;
+        margin-bottom: var(--spacing-300);
         font-size: 1rem;
     }
 
     .location-info-loading {
         color: #666;
         font-style: italic;
-        margin-bottom: 0.5rem;
+        margin-bottom: var(--spacing-200);
     }
 
     .location-info-row {
         display: flex;
-        margin-bottom: 0.25rem;
+        margin-bottom: var(--spacing-100);
 
         .location-info-label {
             min-width: 140px;

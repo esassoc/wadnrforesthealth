@@ -1,6 +1,6 @@
 .help-text {
     font-size: 0.8rem;
     color: #6c757d;
-    margin-top: -0.25rem;
-    margin-bottom: 0.75rem;
+    margin-top: calc(-1 * var(--spacing-100));
+    margin-bottom: var(--spacing-300);
 }

@@ -8,12 +8,12 @@ $label-width: 120px;
     .field.horizontal {
         display: flex;
         align-items: flex-start;
-        margin-bottom: 1rem;
+        margin-bottom: var(--spacing-400);
 
         .field-label {
             flex: 0 0 $label-width;
             text-align: left;
-            padding-right: 0.5rem;
+            padding-right: var(--spacing-200);
             font-weight: bold;
             font-size: var(--type-size-200, 0.875rem);
 
@@ -25,15 +25,15 @@ $label-width: 120px;
 
         .field-value {
             flex: 1;
-            padding-top: 0.5rem; // Align vertically with input text
-            padding-left: 0.75rem; // Match input field's internal padding
+            padding-top: var(--spacing-200); // Align vertically with input text
+            padding-left: var(--spacing-300); // Match input field's internal padding
         }
     }
 
     // Override form-field horizontal layout to match
     form-field {
         display: block;
-        margin-bottom: 1rem;
+        margin-bottom: var(--spacing-400);
 
         // Target the horizontal form-field inner .field
         ::ng-deep .field {
@@ -41,7 +41,7 @@ $label-width: 120px;
             .field-definition-container {
                 flex: 0 0 $label-width !important;
                 text-align: left;
-                margin-right: 0.5rem !important;
+                margin-right: var(--spacing-200) !important;
             }
         }
     }
@@ -51,8 +51,8 @@ $label-width: 120px;
     text-align: right;
     color: var(--gray-600, #6c757d);
     font-size: 0.875rem;
-    margin-top: -0.5rem;
-    margin-bottom: 1rem;
+    margin-top: calc(-1 * var(--spacing-200));
+    margin-bottom: var(--spacing-400);
 }
 
 .modal-footer {
@@ -71,6 +71,6 @@ $label-width: 120px;
 
     .modal-actions {
         display: flex;
-        gap: 0.5rem;
+        gap: var(--spacing-200);
     }
 }

@@ -1,7 +1,7 @@
 .theme-color-row {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--spacing-200);
 }
 
 .theme-color-swatch {

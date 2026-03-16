@@ -3,14 +3,14 @@
 .tag-suggestions {
   list-style: none;
   padding: 0;
-  margin: 0.25rem 0 0;
+  margin: var(--spacing-100) 0 0;
   border: 1px solid var(--border-color, #ccc);
   border-radius: 4px;
   max-height: 200px;
   overflow-y: auto;
 
   li {
-    padding: 0.4rem 0.75rem;
+    padding: 0.4rem var(--spacing-300);
     cursor: pointer;
 
     &:hover {

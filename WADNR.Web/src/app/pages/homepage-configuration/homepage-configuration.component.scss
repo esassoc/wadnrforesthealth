@@ -1,7 +1,7 @@
 .photo-gallery {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: var(--spacing-400);
 }
 
 .photo-item {
@@ -9,7 +9,7 @@
     width: 180px;
     border: 2px solid #ddd;
     border-radius: 4px;
-    padding: 0.5rem;
+    padding: var(--spacing-200);
     background: var(--white);
     transition: border-color 0.2s, box-shadow 0.2s;
 
@@ -25,10 +25,10 @@
 
 .photo-icons {
     position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
+    top: var(--spacing-200);
+    right: var(--spacing-200);
     display: flex;
-    gap: 0.25rem;
+    gap: var(--spacing-100);
     opacity: 0.7;
     transition: opacity 0.2s;
     z-index: 10;
@@ -82,7 +82,7 @@
 }
 
 .photo-caption {
-    margin-top: 0.5rem;
+    margin-top: var(--spacing-200);
     font-size: 0.85rem;
     color: #333;
     text-align: center;

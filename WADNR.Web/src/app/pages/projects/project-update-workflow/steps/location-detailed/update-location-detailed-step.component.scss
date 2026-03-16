@@ -62,14 +62,14 @@
         &.modified {
             td:nth-child(2) {
                 position: relative;
-                padding-left: 1rem;
+                padding-left: var(--spacing-400);
 
                 &::before {
                     content: "*";
                     color: #0d6efd;
                     font-weight: bold;
                     position: absolute;
-                    left: 0.25rem;
+                    left: var(--spacing-100);
                     top: 50%;
                     transform: translateY(-50%);
                 }
@@ -79,7 +79,7 @@
 
     td {
         vertical-align: middle;
-        padding: 0.25rem 0.5rem;
+        padding: var(--spacing-100) var(--spacing-200);
     }
 
     td:first-child {
@@ -106,7 +106,7 @@
                 textarea {
                     border: 1px solid #ced4da;
                     background-color: var(--white);
-                    padding: 0.25rem 0.5rem;
+                    padding: var(--spacing-100) var(--spacing-200);
                     color: #212529;
 
                     &:focus {
@@ -186,7 +186,7 @@
         opacity: 0.7;
 
         td {
-            padding: 0.5rem;
+            padding: var(--spacing-200);
         }
     }
 }

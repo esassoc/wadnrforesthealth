@@ -30,7 +30,7 @@
 
         span {
             background: white;
-            padding: 0.5rem 1rem;
+            padding: var(--spacing-200) var(--spacing-400);
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             font-weight: 500;
@@ -50,9 +50,9 @@
 
 .selected-items-header {
     font-weight: 600;
-    padding: 0.25rem 0;
+    padding: var(--spacing-100) 0;
     border-bottom: 1px solid var(--muted);
-    margin-bottom: 0.25rem;
+    margin-bottom: var(--spacing-100);
 }
 
 .selected-items-list {
@@ -63,8 +63,8 @@
     .selected-item {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.25rem 0;
+        gap: var(--spacing-200);
+        padding: var(--spacing-100) 0;
 
         .btn-link {
             padding: 0;
@@ -74,7 +74,7 @@
 }
 
 .no-selection-message {
-    padding: 0.75rem;
+    padding: var(--spacing-300);
     color: #856404;
     background-color: #fff3cd;
     border-radius: 4px;

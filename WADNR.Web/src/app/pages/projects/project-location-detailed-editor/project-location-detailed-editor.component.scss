@@ -64,14 +64,14 @@
                 content: "*";
                 color: #0d6efd;
                 font-weight: bold;
-                margin-right: 0.25rem;
+                margin-right: var(--spacing-100);
             }
         }
     }
 
     td {
         vertical-align: middle;
-        padding: 0.25rem 0.5rem;
+        padding: var(--spacing-100) var(--spacing-200);
     }
 
     td:first-child {
@@ -98,7 +98,7 @@
                 textarea {
                     border-color: transparent;
                     background-color: transparent;
-                    padding: 0.25rem 0.5rem;
+                    padding: var(--spacing-100) var(--spacing-200);
                     color: #212529;
 
                     &:focus,
@@ -202,7 +202,7 @@
         opacity: 0.7;
 
         td {
-            padding: 0.5rem;
+            padding: var(--spacing-200);
         }
     }
 }

@@ -9,7 +9,7 @@
 
 /* Title (full-width, above columns) */
 .fc-title {
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--spacing-200);
 }
 a.fc-title-link {
     font-size: 14px;
@@ -20,7 +20,7 @@ a.fc-title-link {
 /* Two-column body */
 .fc-body {
     display: flex;
-    gap: 2rem;
+    gap: var(--spacing-600);
     align-items: flex-start;
 }
 
@@ -52,7 +52,7 @@ a.fc-title-link {
 }
 
 .fc-caption {
-    margin-top: 0.5rem;
+    margin-top: var(--spacing-200);
     font-size: 0.875rem;
     text-align: right;
     opacity: 0.8;
@@ -62,7 +62,7 @@ a.fc-title-link {
     display: flex;
     justify-content: center;
     gap: 0.35rem;
-    margin-top: 0.5rem;
+    margin-top: var(--spacing-200);
     .fc-dot {
         background: transparent;
         border: 0;
@@ -86,7 +86,7 @@ a.fc-title-link {
     color: black;
 
     .grid-12 {
-        row-gap: 0.125rem;
+        row-gap: var(--spacing-050);
     }
 
     dd,
@@ -97,11 +97,11 @@ a.fc-title-link {
     }
 }
 .fc-desc {
-    margin-top: 0.75rem;
+    margin-top: var(--spacing-300);
 }
 .fc-more {
     text-align: right;
-    margin-top: 0.5rem;
+    margin-top: var(--spacing-200);
 }
 
 /* Responsive: stack on narrow screens */

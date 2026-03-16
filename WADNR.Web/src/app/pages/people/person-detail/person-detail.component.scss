@@ -10,7 +10,7 @@
 .kv-pair-list {
     display: grid;
     grid-template-columns: minmax(140px, auto) 1fr;
-    gap: 0.5rem 1rem;
+    gap: var(--spacing-200) var(--spacing-400);
     margin: 0;
 
     dt {
@@ -34,5 +34,5 @@
 }
 
 .mt-3 {
-    margin-top: 1rem;
+    margin-top: var(--spacing-400);
 }

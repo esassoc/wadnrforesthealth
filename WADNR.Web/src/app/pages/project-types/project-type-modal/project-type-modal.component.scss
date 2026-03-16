@@ -17,7 +17,7 @@
         width: 2.5rem;
         height: 2rem;
         flex-shrink: 0;
-        padding: 0.125rem;
+        padding: var(--spacing-050);
         border: 1px solid rgba(black, 0.2);
         border-left: none;
         border-top-right-radius: var(--border-radius-200);

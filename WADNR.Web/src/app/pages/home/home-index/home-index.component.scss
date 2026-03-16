@@ -5,7 +5,7 @@
 }
 
 .home-content {
-    padding: 2rem;
+    padding: var(--spacing-600);
     gap: var(--spacing-600);
     max-width: 94rem;
     margin: 0 auto;
@@ -19,7 +19,7 @@
     display: block;
     width: 100%;
     text-align: center;
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--spacing-300);
 }
 
 .home-sidebar__heading {
@@ -45,7 +45,7 @@
 }
 
 .home-featured {
-    padding: var(--spacing-700) 2rem;
+    padding: var(--spacing-700) var(--spacing-600);
     max-width: 94rem;
     margin: 0 auto;
 
@@ -55,7 +55,7 @@
 }
 
 .home-additional-info {
-    padding: var(--spacing-700) 2rem;
+    padding: var(--spacing-700) var(--spacing-600);
     max-width: 94rem;
     margin: 0 auto;
 }

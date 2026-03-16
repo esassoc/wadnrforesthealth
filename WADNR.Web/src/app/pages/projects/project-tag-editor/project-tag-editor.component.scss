@@ -17,7 +17,7 @@
     &__option {
         height: 3rem;
         line-height: 3rem;
-        padding: 0 0.75rem;
+        padding: 0 var(--spacing-300);
         cursor: pointer;
         white-space: nowrap;
         overflow: hidden;
@@ -34,7 +34,7 @@
             color: var(--primary, #0d6efd);
 
             i {
-                margin-right: 0.25rem;
+                margin-right: var(--spacing-100);
             }
 
             &:hover {
@@ -44,12 +44,12 @@
     }
 
     &__creating {
-        padding: 0.5rem 0.75rem;
+        padding: var(--spacing-200) var(--spacing-300);
         font-size: var(--type-size-200, 0.875rem);
         color: var(--gray-700, #495057);
 
         i {
-            margin-right: 0.25rem;
+            margin-right: var(--spacing-100);
             color: var(--primary, #0d6efd);
         }
     }

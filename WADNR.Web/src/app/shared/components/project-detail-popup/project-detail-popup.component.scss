@@ -41,7 +41,7 @@
 
 .project-title {
     border-bottom: 1px solid rgba(var(--black-rgb), 0.05);
-    padding-bottom: 1rem;
+    padding-bottom: var(--spacing-400);
 
     &__compact {
         border-bottom: none;
@@ -55,8 +55,8 @@
 
 .popup-body {
     .grid-12 {
-        column-gap: 0.5rem;
-        row-gap: 0.25rem;
+        column-gap: var(--spacing-200);
+        row-gap: var(--spacing-100);
     }
 
     dt,

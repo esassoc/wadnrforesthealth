@@ -1,11 +1,11 @@
 // Basics step styles
 .optional-fields-section {
-    margin-top: 1rem;
+    margin-top: var(--spacing-400);
     border: 1px solid var(--muted);
     border-radius: 4px;
 
     .optional-fields-toggle {
-        padding: 0.75rem 1rem;
+        padding: var(--spacing-300) var(--spacing-400);
         cursor: pointer;
         font-weight: 500;
         color: #0056b3;
@@ -13,7 +13,7 @@
         list-style: none;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--spacing-200);
 
         &::-webkit-details-marker {
             display: none;
@@ -37,7 +37,7 @@
     }
 
     .optional-fields-content {
-        padding: 1rem;
+        padding: var(--spacing-400);
         border-top: 1px solid var(--muted);
     }
 }
@@ -50,8 +50,8 @@
     .program-item {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.25rem 0;
+        gap: var(--spacing-200);
+        padding: var(--spacing-100) 0;
 
         .btn-link {
             padding: 0;
@@ -63,7 +63,7 @@
 // Update-specific styles
 .readonly-info {
     background-color: var(--gray-100);
-    padding: 1rem;
+    padding: var(--spacing-400);
     border-radius: var(--border-radius-200);
     border: 1px solid var(--gray-200);
 }

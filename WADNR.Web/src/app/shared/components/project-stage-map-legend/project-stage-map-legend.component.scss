@@ -3,14 +3,14 @@
 }
 
 :host-context(.map-legend-row) .map-legend {
-    margin-top: 0.5rem;
+    margin-top: var(--spacing-200);
 }
 
 .map-legend {
-    margin-top: 0.75rem;
+    margin-top: var(--spacing-300);
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: var(--spacing-300);
     flex-wrap: wrap;
 
     h4 {
@@ -24,14 +24,14 @@
         margin: 0;
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5rem;
+        gap: var(--spacing-200);
     }
 
     .legend-item {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.15rem 0.25rem;
+        gap: var(--spacing-200);
+        padding: 0.15rem var(--spacing-100);
         border-radius: 4px;
     }
 

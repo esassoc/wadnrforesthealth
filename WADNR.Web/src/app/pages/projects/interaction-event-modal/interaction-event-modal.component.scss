@@ -6,8 +6,8 @@
     .selected-item {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.25rem 0;
+        gap: var(--spacing-200);
+        padding: var(--spacing-100) 0;
 
         a {
             display: flex;

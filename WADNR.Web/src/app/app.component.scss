@@ -8,7 +8,7 @@
     background-position: top center;
     font-size: var(--type-size-100);
     color: var(--blue-300);
-    padding: 2rem;
+    padding: var(--spacing-600);
     bottom: 0;
     z-index: 3;
 
@@ -51,7 +51,7 @@ custom-rich-text a {
 
 .system-info {
     display: flex;
-    gap: 2rem;
+    gap: var(--spacing-600);
     color: var(--white);
     justify-content: center;
 }

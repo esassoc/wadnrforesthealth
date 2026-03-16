@@ -91,7 +91,7 @@
         position: absolute;
         right: 0;
         top: 0;
-        padding: 1rem;
+        padding: var(--spacing-400);
         display: none;
     }
 
@@ -181,7 +181,7 @@
             pointer-events: none;
 
             .nav-link {
-                padding-top: 0.5rem;
+                padding-top: var(--spacing-200);
             }
         }
 
@@ -198,8 +198,8 @@
 
             &__label {
                 color: var(--teal-800);
-                margin-right: 2rem;
-                margin-left: 0.5rem;
+                margin-right: var(--spacing-600);
+                margin-left: var(--spacing-200);
             }
         }
 
@@ -241,12 +241,12 @@
 }
 
 .site-logo {
-    margin-right: 2rem;
+    margin-right: var(--spacing-600);
     width: 212px;
     color: var(--white);
 
     &-mobile {
-        margin-bottom: 2rem;
+        margin-bottom: var(--spacing-600);
         width: 212px;
         color: var(--white);
 
@@ -540,7 +540,7 @@
     .dropdown-header {
         display: block;
         width: 100%;
-        padding: 0.5rem 1rem;
+        padding: var(--spacing-200) var(--spacing-400);
         margin: 0;
         color: var(--gray-0);
         font-size: 0.95rem;

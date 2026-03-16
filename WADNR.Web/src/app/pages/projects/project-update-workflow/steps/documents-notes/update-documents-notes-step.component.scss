@@ -1,12 +1,12 @@
 .section {
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--spacing-500);
 
     &-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
+        margin-bottom: var(--spacing-400);
+        padding-bottom: var(--spacing-200);
         border-bottom: 1px solid var(--border-color, var(--muted));
 
         h5 {
@@ -17,7 +17,7 @@
         .btn {
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: var(--spacing-100);
         }
     }
 }
@@ -25,13 +25,13 @@
 .item-list {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: var(--spacing-300);
 }
 
 .item-row {
     display: flex;
-    gap: 1rem;
-    padding: 0.75rem;
+    gap: var(--spacing-400);
+    padding: var(--spacing-300);
     background: var(--bg-secondary, #f8f9fa);
     border: 1px solid var(--border-color, var(--muted));
     border-radius: 4px;
@@ -44,7 +44,7 @@
 .item-actions {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: var(--spacing-200);
     flex-shrink: 0;
 }
 
@@ -77,12 +77,12 @@
 
 .item-title {
     font-weight: 500;
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--spacing-200);
 
     a {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--spacing-200);
         color: var(--link-color, #0d6efd);
         text-decoration: none;
 
@@ -99,8 +99,8 @@
 
 .detail-row {
     display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.25rem;
+    gap: var(--spacing-200);
+    margin-bottom: var(--spacing-100);
 
     dt {
         color: var(--text-muted, #6c757d);
@@ -121,7 +121,7 @@
 .item-meta {
     font-size: 0.875rem;
     color: var(--text-muted, #6c757d);
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--spacing-200);
 }
 
 .note-text {
@@ -132,5 +132,5 @@
 .empty-message {
     color: var(--text-muted, #6c757d);
     margin: 0;
-    padding: 1rem 0;
+    padding: var(--spacing-400) 0;
 }

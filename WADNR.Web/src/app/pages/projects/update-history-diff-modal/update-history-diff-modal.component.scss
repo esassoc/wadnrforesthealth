@@ -6,8 +6,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.75rem;
-        padding-bottom: 0.75rem;
+        margin-bottom: var(--spacing-300);
+        padding-bottom: var(--spacing-300);
         border-bottom: 1px solid var(--gray-200, #e5e5e5);
 
         .diff-subtitle {
@@ -19,7 +19,7 @@
             margin-bottom: 0;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: var(--spacing-200);
         }
 
         .form-check-label {
@@ -30,8 +30,8 @@
     // Color legend
     .diff-legend {
         display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
+        gap: var(--spacing-400);
+        margin-bottom: var(--spacing-400);
         font-size: 0.8rem;
 
         .legend-item {
@@ -59,7 +59,7 @@
 
     // Section panels — all full width, stacked vertically
     .diff-section-panel {
-        margin-bottom: 1rem;
+        margin-bottom: var(--spacing-400);
         border: 1px solid var(--gray-300, #ccc);
         border-radius: 4px;
         overflow: hidden;
@@ -68,7 +68,7 @@
     .diff-section-header {
         background-color: var(--primary, #003366);
         color: var(--white);
-        padding: 0.5rem 0.75rem;
+        padding: var(--spacing-200) var(--spacing-300);
         font-weight: 600;
         font-size: 0.9rem;
         display: flex;
@@ -96,7 +96,7 @@
     }
 
     .diff-section-body {
-        padding: 0.75rem;
+        padding: var(--spacing-300);
     }
 
     .diff-no-changes {
@@ -116,7 +116,7 @@
         font-weight: 600;
         color: var(--primary, #003366);
         border-bottom: 2px solid var(--primary, #003366);
-        padding-bottom: 0.25rem;
+        padding-bottom: var(--spacing-100);
 
         &:first-child {
             margin-top: 0;
@@ -128,10 +128,10 @@
     .diff-table-section {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 0.5rem;
+        margin-bottom: var(--spacing-200);
 
         th {
-            padding: 0.5rem 0.75rem;
+            padding: var(--spacing-200) var(--spacing-300);
             font-weight: 600;
             color: var(--primary, #003366);
             border-bottom: 2px solid var(--gray-300, #ccc);
@@ -139,7 +139,7 @@
         }
 
         td {
-            padding: 0.5rem 0.75rem;
+            padding: var(--spacing-200) var(--spacing-300);
             vertical-align: top;
             border-bottom: 1px solid var(--gray-200, #e5e5e5);
             word-break: break-word;
@@ -184,22 +184,22 @@
     // List section
     .diff-list {
         padding-left: 1.25rem;
-        margin: 0.25rem 0;
+        margin: var(--spacing-100) 0;
         list-style-type: disc;
 
         li {
-            padding: 0.125rem 0;
+            padding: var(--spacing-050) 0;
         }
 
         .diff-item-added {
             background-color: #cfc;
-            padding: 0.125rem 0.25rem;
+            padding: var(--spacing-050) var(--spacing-100);
         }
 
         .diff-item-deleted {
             background-color: #fec8c8;
             text-decoration: line-through;
-            padding: 0.125rem 0.25rem;
+            padding: var(--spacing-050) var(--spacing-100);
         }
     }
 
@@ -240,7 +240,7 @@
         [class*="col-xs-"],
         [class*="col-lg-"] {
             min-height: 1px;
-            padding: 0 0.5rem;
+            padding: 0 var(--spacing-200);
         }
 
         .col-sm-3, .col-md-3, .col-xs-3 {

@@ -172,7 +172,7 @@
             }
 
             button {
-                padding: 1rem 1.5rem;
+                padding: var(--spacing-400) var(--spacing-500);
                 background: none;
                 border: none;
                 text-align: left;
@@ -198,7 +198,7 @@
     .button-head {
         display: flex;
         align-items: center;
-        gap: 0.25rem;
+        gap: var(--spacing-100);
 
         svg {
             path {
@@ -210,6 +210,6 @@
     .wa-name {
         font-size: var(--type-size-300);
         color: var(--black);
-        padding-left: 0.25rem;
+        padding-left: var(--spacing-100);
     }
 }

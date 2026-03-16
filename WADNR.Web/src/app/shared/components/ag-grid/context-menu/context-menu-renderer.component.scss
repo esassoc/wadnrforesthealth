@@ -2,14 +2,14 @@
 
 #menu-dropdown {
     font-size: 0.75rem;
-    padding-inline: 0.5rem;
+    padding-inline: var(--spacing-200);
 }
 
 .context-menu {
     display: none;
     position: fixed;
     background: white;
-    padding: 0.75rem;
+    padding: var(--spacing-300);
     box-shadow: var(--shadow-100);
     border-radius: var(--border-radius-200);
     border: 1px solid rgba(var(--primary-rgb), 1);
@@ -33,7 +33,7 @@
         line-height: 1.5em !important;
 
         & + * {
-            margin-top: 0.5rem;
+            margin-top: var(--spacing-200);
         }
 
         &:hover {

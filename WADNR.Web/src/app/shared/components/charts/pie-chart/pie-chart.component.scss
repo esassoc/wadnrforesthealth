@@ -38,12 +38,12 @@
 .pie-legend {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: var(--spacing-100);
 }
 .pie-legend-row {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--spacing-200);
 }
 .swatch {
     /* Match the small sector swatch used in the sector table */
@@ -54,7 +54,7 @@
     height: 12px;
     padding: 0;
     border-radius: 2px;
-    margin-right: 0.5rem;
+    margin-right: var(--spacing-200);
     border: 1px solid rgba(0, 0, 0, 0.08);
     background: transparent; /* color is set inline via [style.background] */
     cursor: pointer;
@@ -76,7 +76,7 @@
 .legend-label {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--spacing-200);
     border: none;
     background: transparent;
     padding: 0;
@@ -86,7 +86,7 @@
     white-space: nowrap;
 }
 .legend-value {
-    margin-left: 0.5rem;
+    margin-left: var(--spacing-200);
     color: rgba(0, 0, 0, 0.7);
     font-weight: 600;
 }

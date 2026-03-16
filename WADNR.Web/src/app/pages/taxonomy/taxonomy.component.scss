@@ -1,7 +1,7 @@
 .taxonomy__title {
     font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 1rem;
+    margin-bottom: var(--spacing-400);
 }
 
 .simple-tree {
@@ -50,7 +50,7 @@ simple-tree ::ng-deep {
         .simple-tree__node--root-group {
             border-left: 4px solid var(--node-theme-color, rgba(0, 0, 0, 0.06));
             border-right: 4px solid var(--node-theme-color, rgba(0, 0, 0, 0.06));
-            padding: 0.25rem 0.5rem;
+            padding: var(--spacing-100) var(--spacing-200);
             margin: 0.15rem 0;
             background: var(--white);
             background-clip: padding-box;

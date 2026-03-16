@@ -1,27 +1,27 @@
 .workflow-step-actions {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: var(--spacing-200);
     padding-top: 0;
 
     &__buttons-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 1rem;
+        gap: var(--spacing-400);
         flex-wrap: wrap;
         border: none;
     }
 
     &__left {
         display: flex;
-        gap: 0.5rem;
+        gap: var(--spacing-200);
         flex-wrap: wrap;
     }
 
     &__right {
         display: flex;
-        gap: 0.5rem;
+        gap: var(--spacing-200);
         flex-wrap: wrap;
     }
 }

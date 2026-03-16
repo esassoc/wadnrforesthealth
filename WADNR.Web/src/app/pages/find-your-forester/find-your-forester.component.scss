@@ -1,10 +1,10 @@
 .find-your-forester {
     .page-title {
-        margin-bottom: 1rem;
+        margin-bottom: var(--spacing-400);
     }
 
     .map-row {
-        margin-top: 1rem;
+        margin-top: var(--spacing-400);
     }
 
     .forester-sidebar {
@@ -33,7 +33,7 @@
     }
 
     .forester-contact {
-        padding: 0.5rem 0;
+        padding: var(--spacing-200) 0;
         border-bottom: 1px solid #eee;
 
         &:last-child {
@@ -42,13 +42,13 @@
     }
 
     .question-node {
-        margin-bottom: 0.5rem;
+        margin-bottom: var(--spacing-200);
         border: 1px solid #ddd;
         border-radius: 3px;
 
         .question-summary {
             cursor: pointer;
-            padding: 0.625rem 0.75rem;
+            padding: 0.625rem var(--spacing-300);
             font-weight: 500;
             background-color: #f8f8f8;
 
@@ -58,15 +58,15 @@
         }
 
         .question-content {
-            padding: 0.5rem 0.75rem 0.5rem 1.5rem;
+            padding: var(--spacing-200) var(--spacing-300) var(--spacing-200) var(--spacing-500);
         }
     }
 
     .forester-result {
-        padding: 0.5rem 0;
+        padding: var(--spacing-200) 0;
     }
 
     .bonus-content {
-        padding: 0.5rem 0;
+        padding: var(--spacing-200) 0;
     }
 }

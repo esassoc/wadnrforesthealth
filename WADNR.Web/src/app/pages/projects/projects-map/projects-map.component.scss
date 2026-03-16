@@ -13,19 +13,19 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 0.75rem;
+        gap: var(--spacing-300);
         flex-wrap: wrap;
     }
 
     .map-legend-row .no-simple-location-toggle__button {
-        margin-top: 0.5rem;
+        margin-top: var(--spacing-200);
         margin-left: auto;
         text-align: right;
     }
 
     .controls-row {
         display: flex;
-        gap: 1rem;
+        gap: var(--spacing-400);
         align-items: center;
         flex-wrap: wrap;
     }
@@ -33,7 +33,7 @@
         align-items: flex-start;
     }
     .controls-row--secondary {
-        margin-top: 0.5rem;
+        margin-top: var(--spacing-200);
         align-items: center;
     }
     .control-group {
@@ -45,7 +45,7 @@
         display: flex;
         flex-direction: row;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--spacing-200);
     }
     .control-group--inline label {
         white-space: nowrap;
@@ -64,7 +64,7 @@
     .control-group--toggles {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--spacing-200);
     }
 
     .no-simple-location-toggle__button {
@@ -91,17 +91,17 @@
     .filter-select-with-actions {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--spacing-200);
     }
     .filter-select-actions {
         display: flex;
-        gap: 0.25rem;
+        gap: var(--spacing-100);
     }
     /* ng-select header actions inside dropdown */
     .ng-select-header-actions {
         display: flex;
-        gap: 0.5rem;
-        padding: 0.25rem 0.5rem;
+        gap: var(--spacing-200);
+        padding: var(--spacing-100) var(--spacing-200);
     }
     .ng-select-header-actions .btn-link {
         font-size: 0.85rem;
@@ -114,7 +114,7 @@
     .ng-option-with-checkbox {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--spacing-200);
     }
     /* Stronger, more specific rules to override other checkbox sizing in the app */
     .ng-select .ng-option .ng-option-with-checkbox input[type="checkbox"],
@@ -183,7 +183,7 @@
     .map-and-list {
         display: flex;
         /* reduce gap so panel and map sit closer */
-        gap: 0.5rem;
+        gap: var(--spacing-200);
         align-items: stretch;
         position: relative;
         /* allow children to shrink so internal overflow works correctly */
@@ -233,13 +233,13 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.5rem 0.75rem;
+        padding: var(--spacing-200) var(--spacing-300);
         border-bottom: 1px solid #f0f0f0;
         font-size: 14px;
     }
 
     .no-simple-location-side-panel__body {
-        padding: 0.5rem 0.75rem;
+        padding: var(--spacing-200) var(--spacing-300);
         /* take available panel height and scroll internally when content exceeds it */
         flex: 1 1 auto;
         max-height: 100%;
@@ -254,7 +254,7 @@
     }
 
     .no-simple-location-list__item {
-        padding: 0.5rem 0;
+        padding: var(--spacing-200) 0;
         border-bottom: 1px solid #f3f3f3;
     }
 
