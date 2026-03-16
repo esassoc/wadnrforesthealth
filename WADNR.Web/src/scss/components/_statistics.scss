@@ -39,7 +39,7 @@
         border: 1px solid var(--gray-200);
         border-radius: var(--border-radius-200);
         padding: 1.5rem 1rem;
-        box-shadow: 0px 4px 12px 0px rgba(var(--black-rgb), 0.1);
+        box-shadow: var(--shadow-300);
 
         @include desktop-medium {
             padding: var(--spacing-600);

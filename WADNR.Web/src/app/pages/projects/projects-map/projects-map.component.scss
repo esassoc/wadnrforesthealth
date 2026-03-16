@@ -145,7 +145,7 @@
     }
     .ng-select .ng-option.active,
     .ng-select .ng-option:hover {
-        background: #f7f7f7 !important;
+        background: var(--card-body-bg-color) !important;
     }
 
     /* allow the dropdown panel to expand to fit content when necessary */

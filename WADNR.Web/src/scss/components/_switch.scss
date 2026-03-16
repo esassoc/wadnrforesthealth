@@ -58,7 +58,7 @@ input:checked {
             }
 
             & + .toggle {
-                border: 1px solid #dcdcdc;
+                border: 1px solid var(--gray-200);
                 background-color: var(--white);
                 color: #b4b4b4;
 

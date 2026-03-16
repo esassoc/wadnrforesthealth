@@ -50,10 +50,10 @@
     position: absolute;
     cursor: pointer;
     inset: 0;
-    border: 1px solid #3e72b0;
+    border: 1px solid var(--primary);
     background-color: var(--white);
     transition: 0.4s;
-    color: #3e72b0;
+    color: var(--primary);
     text-align: center;
     border-radius: var(--border-radius-700);
 }
@@ -72,7 +72,7 @@
     width: 1rem !important;
     left: 2px !important;
     bottom: 2px !important;
-    background-color: #3e72b0;
+    background-color: var(--primary);
     transition: transform 0.18s ease !important;
     border-radius: 50%;
 }
@@ -82,7 +82,7 @@
     transform: translateX(2.3rem) !important;
     /* White knob when ON for better visual parity with app toggle */
     background-color: var(--white) !important;
-    border: 1px solid #3e72b0 !important;
+    border: 1px solid var(--primary) !important;
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04) inset !important;
 }
 

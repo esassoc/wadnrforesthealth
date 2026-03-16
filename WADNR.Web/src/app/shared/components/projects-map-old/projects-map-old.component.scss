@@ -15,7 +15,7 @@ li.list-group-item:hover {
 }
 
 li.list-group-item.selected {
-    background-color: #ffff85;
+    background-color: var(--yellow-selected);
 }
 
 .card h3 {
