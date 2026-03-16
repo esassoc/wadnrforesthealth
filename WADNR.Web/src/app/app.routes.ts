@@ -23,8 +23,6 @@ export const routeParams = {
     fundSourceID: "fundSourceID",
     vendorID: "vendorID",
     personID: "personID",
-    taxonomyBranchID: "taxonomyBranchID",
-    taxonomyTrunkID: "taxonomyTrunkID",
     roleID: "roleID",
     invoiceID: "invoiceID",
     focusAreaID: "focusAreaID",
@@ -145,26 +143,6 @@ export const routes: Routes = [
         path: `tags/:${routeParams.tagID}`,
         title: "Tag Detail",
         loadComponent: () => import("./pages/tags/tag-detail/tag-detail.component").then((m) => m.TagDetailComponent),
-    },
-    {
-        path: "taxonomy-branches",
-        title: "Taxonomy Branches",
-        loadComponent: () => import("./pages/taxonomy-branches/taxonomy-branches.component").then((m) => m.TaxonomyBranchesComponent),
-    },
-    {
-        path: `taxonomy-branches/:${routeParams.taxonomyBranchID}`,
-        title: "Taxonomy Branch Detail",
-        loadComponent: () => import("./pages/taxonomy-branches/taxonomy-branch-detail/taxonomy-branch-detail.component").then((m) => m.TaxonomyBranchDetailComponent),
-    },
-    {
-        path: "taxonomy-trunks",
-        title: "Taxonomy Trunks",
-        loadComponent: () => import("./pages/taxonomy-trunks/taxonomy-trunks.component").then((m) => m.TaxonomyTrunksComponent),
-    },
-    {
-        path: `taxonomy-trunks/:${routeParams.taxonomyTrunkID}`,
-        title: "Taxonomy Trunk Detail",
-        loadComponent: () => import("./pages/taxonomy-trunks/taxonomy-trunk-detail/taxonomy-trunk-detail.component").then((m) => m.TaxonomyTrunkDetailComponent),
     },
     {
         path: "roles",
