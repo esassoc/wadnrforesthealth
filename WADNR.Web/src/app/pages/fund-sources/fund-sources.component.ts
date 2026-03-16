@@ -2,7 +2,7 @@ import { Component, signal, ViewContainerRef } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { Router } from "@angular/router";
 import { ColDef, GridApi, GridReadyEvent, SelectionChangedEvent } from "ag-grid-community";
-import { finalize, map, Observable } from "rxjs";
+import { finalize, map, Observable, shareReplay, startWith, Subject, switchMap } from "rxjs";
 import { DialogService } from "@ngneat/dialog";
 
 import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
@@ -38,7 +38,8 @@ export class FundSourcesComponent {
     public isDownloading = signal(false);
     private excelDownloadUrl = `${environment.mainAppApiUrl}/fund-sources/excel-download`;
 
-    public allAllocations: FundSourceAllocationGridRow[] = [];
+    public allocations$: Observable<FundSourceAllocationGridRow[]>;
+    private refreshAllocations$ = new Subject<void>();
     public allocationColumnDefs: ColDef[];
     public selectedFundSourceNumber: string | null = null;
     public noMatchingAllocations = false;
@@ -72,7 +73,11 @@ export class FundSourcesComponent {
         this.initAllocationColumnDefs();
 
         this.fundSources$ = this.fundSourceService.listFundSource();
-        this.loadAllocations();
+        this.allocations$ = this.refreshAllocations$.pipe(
+            startWith(undefined),
+            switchMap(() => this.fundSourceAllocationService.listFundSourceAllocation()),
+            shareReplay({ bufferSize: 1, refCount: true }),
+        );
     }
 
     private initAllocationColumnDefs(): void {
@@ -198,12 +203,6 @@ export class FundSourcesComponent {
         this.allocationGridApi?.setFilterModel(null);
     }
 
-    private loadAllocations(): void {
-        this.fundSourceAllocationService.listFundSourceAllocation().subscribe((allocations) => {
-            this.allAllocations = allocations;
-        });
-    }
-
     async confirmDeleteAllocation(row: FundSourceAllocationGridRow): Promise<void> {
         const confirmed = await this.confirmService.confirm(
             {
@@ -220,8 +219,7 @@ export class FundSourcesComponent {
             this.fundSourceAllocationService.deleteFundSourceAllocation(row.FundSourceAllocationID!).subscribe({
                 next: () => {
                     this.alertService.pushAlert(new Alert("Allocation deleted successfully.", AlertContext.Success, true));
-                    this.loadAllocations();
-                    this.fundSources$ = this.fundSourceService.listFundSource();
+                    this.refreshAllocations$.next();
                 },
                 error: (err) => {
                     const message = err?.error?.message ?? err?.error ?? "An error occurred while deleting.";
@@ -303,7 +301,7 @@ export class FundSourcesComponent {
                 next: () => {
                     this.alertService.pushAlert(new Alert("Fund source deleted successfully.", AlertContext.Success, true));
                     this.fundSources$ = this.fundSourceService.listFundSource();
-                    this.loadAllocations();
+                    this.refreshAllocations$.next();
                 },
                 error: (err) => {
                     const message = err?.error?.message ?? err?.error ?? "An error occurred while deleting.";

@@ -145,7 +145,7 @@ export class PersonDetailComponent {
                 if (!currentUser || !person) return false;
                 const isAdmin = this.authenticationService.isUserAnAdministrator(currentUser);
                 const isNotSelf = person.PersonID !== currentUser.PersonID;
-                return isAdmin && isNotSelf;
+                return isAdmin && isNotSelf && person.IsFullUser;
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );

@@ -30,7 +30,7 @@
             </div>
         }
         <wadnr-grid
-            [rowData]="allAllocations"
+            [rowData]="allocations$ | async"
             [columnDefs]="allocationColumnDefs"
             downloadFileName="fund-source-allocations"
             [gridTitle]="allocationGridTitle"
