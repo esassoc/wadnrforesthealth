@@ -1,3 +1,6 @@
+@if (isLoading()) {
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
+} @else {
 <div>
     <!-- 1. Hero image carousel (full-width, edge-to-edge) -->
     @if (carouselImages$ | async; as carouselImages) {
@@ -66,3 +69,4 @@
         <custom-rich-text [customRichTextTypeID]="homeAdditionalInfoTypeID"></custom-rich-text>
     </section>
 </div>
+}

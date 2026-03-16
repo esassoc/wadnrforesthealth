@@ -226,7 +226,7 @@
                             {{ isBeingImpersonated(currentUser) ? "Impersonating: " : "" }}{{ currentUser.FirstName }} {{ currentUser.LastName }} <icon icon="AngleDown"></icon>
                         </a>
                         <ul #userMenu class="dropdown-menu dropdown-menu-right">
-                            <li><a href="javascript:void(0);" (click)="openSupportModal()" class="dropdown-item">Request Support</a></li>
+                            <li><a [routerLink]="['/people', currentUser.PersonID]" class="dropdown-item">View Account</a></li>
                             <li class="divider"></li>
                             <li><a href="javascript:void(0);" (click)="logout()" class="dropdown-item">{{ isBeingImpersonated(currentUser) ? "Stop Impersonating" : "Log Out" }}</a></li>
                         </ul>

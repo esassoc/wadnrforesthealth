@@ -1,7 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, signal } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { Router, RouterLink } from "@angular/router";
-import { Observable, map } from "rxjs";
+import { Observable, forkJoin, map, shareReplay } from "rxjs";
+import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { DialogService } from "@ngneat/dialog";
 
 import { AuthenticationService } from "src/app/services/authentication.service";
@@ -35,6 +36,7 @@ import * as L from "leaflet";
         WADNRMapComponent,
         ProjectLocationsSimpleLayerComponent,
         ProjectStageMapLegendComponent,
+        LoadingDirective,
     ],
 })
 export class HomeIndexComponent implements OnInit {
@@ -56,6 +58,7 @@ export class HomeIndexComponent implements OnInit {
     layerControl: any;
     mapIsReady = false;
     legendColorsToUse = PROJECT_STAGE_LEGEND_COLORS;
+    isLoading = signal(true);
 
     constructor(
         private authenticationService: AuthenticationService,
@@ -81,10 +84,18 @@ export class HomeIndexComponent implements OnInit {
                     Caption: img.Caption,
                 })),
             ),
+            shareReplay({ bufferSize: 1, refCount: true }),
         );
 
-        this.featuredProjects$ = this.projectService.listFeaturedProject();
-        this.projectPoints$ = this.projectService.listMappedPointsFeatureCollectionProject();
+        this.featuredProjects$ = this.projectService.listFeaturedProject().pipe(
+            shareReplay({ bufferSize: 1, refCount: true }),
+        );
+        this.projectPoints$ = this.projectService.listMappedPointsFeatureCollectionProject().pipe(
+            shareReplay({ bufferSize: 1, refCount: true }),
+        );
+
+        forkJoin([this.carouselImages$, this.featuredProjects$, this.projectPoints$])
+            .subscribe(() => { this.isLoading.set(false); });
     }
 
     // Map
