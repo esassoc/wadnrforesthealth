@@ -269,8 +269,9 @@ public class PersonController(
     /// </summary>
     private async Task<ActionResult?> CheckEsaAdminGate(int personID)
     {
+        var baseRoleIDs = Role.All.Where(r => r.IsBaseRole).Select(r => r.RoleID).ToList();
         var targetRoleID = await DbContext.PersonRoles
-            .Where(pr => pr.PersonID == personID && pr.Role.IsBaseRole)
+            .Where(pr => pr.PersonID == personID && baseRoleIDs.Contains(pr.RoleID))
             .Select(pr => pr.RoleID)
             .FirstOrDefaultAsync();
 
