@@ -1,7 +1,7 @@
 // Basics step styles
 .optional-fields-section {
     margin-top: 1rem;
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--muted);
     border-radius: 4px;
 
     .optional-fields-toggle {
@@ -38,7 +38,7 @@
 
     .optional-fields-content {
         padding: 1rem;
-        border-top: 1px solid #dee2e6;
+        border-top: 1px solid var(--muted);
     }
 }
 

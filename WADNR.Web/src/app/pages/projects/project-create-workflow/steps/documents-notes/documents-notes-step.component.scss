@@ -7,7 +7,7 @@
         align-items: center;
         margin-bottom: 1rem;
         padding-bottom: 0.5rem;
-        border-bottom: 1px solid var(--border-color, #dee2e6);
+        border-bottom: 1px solid var(--border-color, var(--muted));
 
         h5 {
             margin: 0;
@@ -33,7 +33,7 @@
     gap: 1rem;
     padding: 0.75rem;
     background: var(--bg-secondary, #f8f9fa);
-    border: 1px solid var(--border-color, #dee2e6);
+    border: 1px solid var(--border-color, var(--muted));
     border-radius: 4px;
 
     &:hover {
@@ -60,7 +60,7 @@
     transition: background-color 0.15s, color 0.15s;
 
     &:hover {
-        background: var(--bg-hover-dark, #dee2e6);
+        background: var(--bg-hover-dark, var(--muted));
         color: var(--primary, #0d6efd);
     }
 

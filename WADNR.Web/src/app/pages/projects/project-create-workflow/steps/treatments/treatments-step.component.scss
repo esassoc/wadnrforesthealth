@@ -25,7 +25,7 @@
         margin-right: 4px;
 
         &:hover {
-            background: var(--bg-hover-dark, #dee2e6);
+            background: var(--bg-hover-dark, var(--muted));
             color: var(--primary, #0d6efd);
         }
 

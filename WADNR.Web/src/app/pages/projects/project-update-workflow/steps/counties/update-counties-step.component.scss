@@ -1,5 +1,5 @@
 .map-container {
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--muted);
     border-radius: 4px;
     position: relative;
     overflow: hidden;
@@ -51,7 +51,7 @@
 .selected-items-header {
     font-weight: 600;
     padding: 0.25rem 0;
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid var(--muted);
     margin-bottom: 0.25rem;
 }
 
