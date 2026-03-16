@@ -89,8 +89,8 @@
         &__label {
             display: block;
             padding: 0.875rem 1.75rem 0.6125rem 1.25rem;
-            border-top-left-radius: 0.25rem;
-            border-top-right-radius: 0.25rem;
+            border-top-left-radius: var(--border-radius-200);
+            border-top-right-radius: var(--border-radius-200);
             font-size: var(--type-size-200);
             position: relative;
             white-space: nowrap;

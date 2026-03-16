@@ -3,7 +3,7 @@
 .reorderable {
     counter-reset: reorderable-list;
     border: 1px solid rgba(var(--black-rgb), 0.05);
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-200);
 
     &__item {
         counter-increment: reorderable-list;

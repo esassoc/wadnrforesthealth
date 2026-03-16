@@ -92,7 +92,7 @@ input:checked {
         color: var(--primary);
 
         text-align: center;
-        border-radius: 2rem;
+        border-radius: var(--border-radius-700);
 
         &.toggle-orange {
             border: 1px solid var(--gray-light);

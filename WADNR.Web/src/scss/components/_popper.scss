@@ -42,7 +42,7 @@
 
     .popover {
         box-shadow: var(--shadow-200);
-        border-radius: 0.5rem;
+        border-radius: var(--border-radius-300);
         z-index: 2;
         font-size: var(--type-size-150);
         border: 1px solid var(--gray-200);
@@ -51,8 +51,8 @@
             background: var(--gray-100);
             border-bottom: 1px solid rgba(0, 0, 0, 0.15);
             padding: 0.5rem 1rem;
-            border-top-left-radius: 0.5rem;
-            border-top-right-radius: 0.5rem;
+            border-top-left-radius: var(--border-radius-300);
+            border-top-right-radius: var(--border-radius-300);
         }
 
         .btn-edit {
@@ -63,8 +63,8 @@
             padding: 1rem;
             font-weight: normal;
             background: white;
-            border-bottom-left-radius: 0.5rem;
-            border-bottom-right-radius: 0.5rem;
+            border-bottom-left-radius: var(--border-radius-300);
+            border-bottom-right-radius: var(--border-radius-300);
             text-align: left;
             max-height: 50vh;
             overflow-y: auto;

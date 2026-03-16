@@ -12,8 +12,8 @@
         background-color: var(--white);
         font-weight: bold;
         transition: all 200ms ease;
-        border-top-left-radius: 0.25rem;
-        border-top-right-radius: 0.25rem;
+        border-top-left-radius: var(--border-radius-200);
+        border-top-right-radius: var(--border-radius-200);
         border: 1px solid var(--primary);
         border-bottom: none;
         appearance: none;

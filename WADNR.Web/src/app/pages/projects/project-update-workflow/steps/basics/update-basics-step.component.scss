@@ -64,7 +64,7 @@
 .readonly-info {
     background-color: var(--gray-100);
     padding: 1rem;
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-200);
     border: 1px solid var(--gray-200);
 }
 

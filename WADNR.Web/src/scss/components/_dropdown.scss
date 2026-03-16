@@ -11,7 +11,7 @@
             left: 0;
             background: white;
             width: 16rem;
-            border-radius: 0.25rem;
+            border-radius: var(--border-radius-200);
             box-shadow: var(--shadow-100);
         }
 
@@ -55,8 +55,8 @@
 
         &:first-of-type {
             @include desktop-small {
-                border-top-left-radius: 0.25rem;
-                border-top-right-radius: 0.25rem;
+                border-top-left-radius: var(--border-radius-200);
+                border-top-right-radius: var(--border-radius-200);
             }
         }
 
@@ -65,8 +65,8 @@
 
             @include desktop-small {
                 padding-bottom: 1rem;
-                border-bottom-left-radius: 0.25rem;
-                border-bottom-right-radius: 0.25rem;
+                border-bottom-left-radius: var(--border-radius-200);
+                border-bottom-right-radius: var(--border-radius-200);
             }
         }
 
@@ -190,7 +190,7 @@
                     line-height: 1em;
                     display: block;
                     padding: 5px 8px 4px 8px;
-                    border-radius: 1rem;
+                    border-radius: var(--border-radius-500);
                     transform: translateY(-1px);
                 }
             }

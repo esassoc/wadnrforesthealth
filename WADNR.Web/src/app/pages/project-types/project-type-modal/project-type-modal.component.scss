@@ -20,8 +20,8 @@
         padding: 0.125rem;
         border: 1px solid rgba(black, 0.2);
         border-left: none;
-        border-top-right-radius: 0.25rem;
-        border-bottom-right-radius: 0.25rem;
+        border-top-right-radius: var(--border-radius-200);
+        border-bottom-right-radius: var(--border-radius-200);
         cursor: pointer;
         background: none;
     }

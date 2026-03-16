@@ -8,7 +8,7 @@
 
 .sort-order-list {
     border: 1px solid rgba(black, 0.15);
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-200);
     overflow: hidden;
 }
 
@@ -38,7 +38,7 @@
     padding: 0.625rem 0.75rem;
     background: white;
     border: 1px solid rgba(black, 0.15);
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-200);
     box-shadow: 0 4px 12px rgba(black, 0.15);
     font-size: inherit;
 

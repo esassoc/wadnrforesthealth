@@ -41,7 +41,7 @@
 
             background: rgb(77, 112, 150);
             width: 18rem;
-            border-radius: 0.25rem;
+            border-radius: var(--border-radius-200);
             box-shadow: var(--shadow-100);
         }
 
@@ -173,7 +173,7 @@
 
             background: white;
             width: 16rem;
-            border-radius: 0.25rem;
+            border-radius: var(--border-radius-200);
             box-shadow: var(--shadow-100);
         }
 
@@ -209,7 +209,7 @@
             z-index: 1111;
             background: white;
             width: 16rem;
-            border-radius: 0.25rem;
+            border-radius: var(--border-radius-200);
             box-shadow: var(--shadow-100);
 
             &-right {

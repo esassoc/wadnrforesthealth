@@ -55,7 +55,7 @@
     transition: 0.4s;
     color: #3e72b0;
     text-align: center;
-    border-radius: 2rem;
+    border-radius: var(--border-radius-700);
 }
 
 /* Hide pseudo-element text to avoid overlap; we'll use explicit knob */

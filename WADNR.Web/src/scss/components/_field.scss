@@ -39,7 +39,7 @@
     textarea,
     .custom-file-upload {
         width: 100%;
-        border-radius: 0.25rem;
+        border-radius: var(--border-radius-200);
         padding: 0.5rem 0.75rem;
         border: 1px solid rgba(black, 0.2);
         background: var(--white);
