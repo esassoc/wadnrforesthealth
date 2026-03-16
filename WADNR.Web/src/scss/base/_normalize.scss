@@ -86,12 +86,12 @@ hr {
 }
 ins {
     background: #ff9;
-    color: #000;
+    color: var(--black);
     text-decoration: none;
 }
 mark {
     background: #ff0;
-    color: #000;
+    color: var(--black);
 }
 p,
 pre {

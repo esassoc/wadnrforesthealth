@@ -4,7 +4,7 @@ ag-grid-angular {
     --ag-accent-color: #0d5b73;
     --ag-header-height: 3rem;
     --ag-header-background-color: #f8f8f8;
-    --ag-header-text-color: #000;
+    --ag-header-text-color: var(--black);
     // --ag-header-column-border: 1px solid #004e66;
     // --ag-header-cell-hover-background-color: #15637b;
     // --ag-header-cell-moving-background-color: #15637b;
@@ -166,7 +166,7 @@ ag-grid-angular {
 // AG Grids pagination
 .ag-paging-panel .ag-paging-row-summary-panel,
 .ag-paging-panel .ag-paging-page-summary-panel {
-    color: #000;
+    color: var(--black);
 }
 
 .ag-row-position-absolute {
