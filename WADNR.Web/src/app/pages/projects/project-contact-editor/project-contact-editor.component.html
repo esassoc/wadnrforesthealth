@@ -35,7 +35,7 @@
                                     [type]="FormFieldType.Select"
                                     [formInputOptions]="allPeopleOptions"
                                     [placeholder]="'Select a ' + cbt.relationshipType.DisplayName + '...'"
-                                    [readOnly]="isSubmitting"
+                                    [readOnly]="isSubmitting()"
                                     (change)="onSingleSelectChange($event, cbt)">
                                 </form-field>
                             </div>
@@ -53,7 +53,7 @@
                                     [type]="FormFieldType.Select"
                                     [formInputOptions]="cbt.availablePeopleOptions"
                                     [placeholder]="'Add a ' + cbt.relationshipType.DisplayName + '...'"
-                                    [readOnly]="isSubmitting"
+                                    [readOnly]="isSubmitting()"
                                     (change)="onMultiSelectChange($event, cbt)">
                                 </form-field>
                                 @if (cbt.selectedContacts.length > 0) {
@@ -63,7 +63,7 @@
                                                 <a href="#"
                                                     class="text-danger"
                                                     (click)="removeContact(cbt, contact.PersonID); $event.preventDefault()"
-                                                    [class.disabled]="isSubmitting"
+                                                    [class.disabled]="isSubmitting()"
                                                     title="Remove">
                                                     <icon icon="Delete"></icon>
                                                 </a>
@@ -94,13 +94,14 @@
     <button
         class="btn btn-primary"
         (click)="save()"
-        [disabled]="isSubmitting || (isLoading$ | async)">
-        {{ isSubmitting ? 'Saving...' : 'Save' }}
+        [buttonLoading]="isSubmitting()"
+        [disabled]="isSubmitting() || (isLoading$ | async)">
+        Save
     </button>
     <button
         class="btn btn-secondary"
         (click)="cancel()"
-        [disabled]="isSubmitting">
+        [disabled]="isSubmitting()">
         Cancel
     </button>
 </div>

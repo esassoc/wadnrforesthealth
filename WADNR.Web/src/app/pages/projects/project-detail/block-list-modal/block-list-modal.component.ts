@@ -1,9 +1,10 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
 
 import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -19,14 +20,14 @@ export interface BlockListModalData {
 @Component({
     selector: "block-list-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent],
+    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, ButtonLoadingDirective],
     templateUrl: "./block-list-modal.component.html",
 })
 export class BlockListModalComponent extends BaseModal implements OnInit {
     public ref: DialogRef<BlockListModalData, boolean> = inject(DialogRef);
 
     public FormFieldType = FormFieldType;
-    public isSubmitting = false;
+    public isSubmitting = signal(false);
 
     public form = new FormGroup({
         ProjectGisIdentifier: new FormControl<string>("", { validators: [Validators.maxLength(140)] }),
@@ -65,7 +66,7 @@ export class BlockListModalComponent extends BaseModal implements OnInit {
             return;
         }
 
-        this.isSubmitting = true;
+        this.isSubmitting.set(true);
 
         this.projectService
             .addToBlockListProject(this.ref.data.projectID, {
@@ -79,7 +80,7 @@ export class BlockListModalComponent extends BaseModal implements OnInit {
                     this.ref.close(true);
                 },
                 error: (err) => {
-                    this.isSubmitting = false;
+                    this.isSubmitting.set(false);
                     const message = err?.error?.ErrorMessage ?? err?.error ?? err?.message ?? "An error occurred.";
                     this.addLocalAlert(message, AlertContext.Danger, true);
                 },

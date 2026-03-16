@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { AsyncPipe, CommonModule } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
@@ -13,6 +13,7 @@ import { FieldDefinitionComponent } from "src/app/shared/components/field-defini
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { PersonService } from "src/app/shared/generated/api/person.service";
@@ -47,7 +48,7 @@ const FIELD_DEFINITION_MAP: Record<number, string> = {
 @Component({
     selector: "project-contact-editor",
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, IconComponent, FieldDefinitionComponent, ModalAlertsComponent, LoadingDirective, AsyncPipe],
+    imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, IconComponent, FieldDefinitionComponent, ModalAlertsComponent, LoadingDirective, ButtonLoadingDirective, AsyncPipe],
     templateUrl: "./project-contact-editor.component.html",
 })
 export class ProjectContactEditorComponent extends BaseModal implements OnInit {
@@ -57,7 +58,7 @@ export class ProjectContactEditorComponent extends BaseModal implements OnInit {
     public contactsByType: ContactsByType[] = [];
     public allPeopleOptions: FormInputOption[] = [];
     public isLoading$ = new BehaviorSubject<boolean>(true);
-    public isSubmitting = false;
+    public isSubmitting = signal(false);
 
     constructor(
         private projectService: ProjectService,
@@ -171,7 +172,7 @@ export class ProjectContactEditorComponent extends BaseModal implements OnInit {
     }
 
     save(): void {
-        this.isSubmitting = true;
+        this.isSubmitting.set(true);
         this.localAlerts = [];
 
         const requestItems: ProjectContactItemRequest[] = [];
@@ -194,7 +195,7 @@ export class ProjectContactEditorComponent extends BaseModal implements OnInit {
                 this.ref.close(result);
             },
             error: (err) => {
-                this.isSubmitting = false;
+                this.isSubmitting.set(false);
                 const message = err?.error ?? err?.message ?? "An error occurred while saving contacts.";
                 this.addLocalAlert(message, AlertContext.Danger, true);
             },

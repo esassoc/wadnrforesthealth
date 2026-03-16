@@ -15,7 +15,7 @@
                     [type]="FormFieldType.Select"
                     [formInputOptions]="projectTypeOptions"
                     placeholder="Select Project Type..."
-                    [readOnly]="isSubmitting">
+                    [readOnly]="isSubmitting()">
                 </form-field>
                 <p class="small text-muted mt-1"><em>Warning: Changing the Project Type may delete previously entered data that doesn't apply to a different Project Type.</em></p>
             </div>
@@ -28,7 +28,7 @@
                     fieldLabel="Project Name"
                     [type]="FormFieldType.Text"
                     placeholder="Enter project name..."
-                    [readOnly]="isSubmitting">
+                    [readOnly]="isSubmitting()">
                 </form-field>
                 @if (editData.IsProjectNameImported) {
                     <p class="small text-muted mt-1">{{ editData.ImportedFieldWarningMessage }}</p>
@@ -44,7 +44,7 @@
                     [type]="FormFieldType.Select"
                     [formInputOptions]="focusAreaOptions"
                     placeholder="Select Focus Area..."
-                    [readOnly]="isSubmitting">
+                    [readOnly]="isSubmitting()">
                 </form-field>
             </div>
             <div class="g-col-6"></div>
@@ -56,7 +56,7 @@
                     fieldLabel="Project Description"
                     [type]="FormFieldType.Textarea"
                     placeholder="Enter project description..."
-                    [readOnly]="isSubmitting">
+                    [readOnly]="isSubmitting()">
                 </form-field>
                 <small class="text-muted">{{ descriptionCharCount }} / 4000 characters</small>
             </div>
@@ -69,7 +69,7 @@
                     [type]="FormFieldType.Select"
                     [formInputOptions]="projectStageOptions"
                     placeholder="Select Project Stage..."
-                    [readOnly]="isSubmitting">
+                    [readOnly]="isSubmitting()">
                 </form-field>
                 @if (editData.IsProjectStageImported) {
                     <p class="small text-muted mt-1">{{ editData.ImportedFieldWarningMessage }}</p>
@@ -84,7 +84,7 @@
                     fieldLabel="Estimated Total Cost"
                     [type]="FormFieldType.Number"
                     placeholder="Enter amount..."
-                    [readOnly]="isSubmitting">
+                    [readOnly]="isSubmitting()">
                 </form-field>
             </div>
             <div class="g-col-6"></div>
@@ -95,7 +95,7 @@
                     [formControl]="$any(form.controls.plannedDate)"
                     fieldLabel="Project Initiation Date"
                     [type]="FormFieldType.Date"
-                    [readOnly]="isSubmitting">
+                    [readOnly]="isSubmitting()">
                 </form-field>
                 @if (editData.IsProjectInitiationDateImported) {
                     <p class="small text-muted mt-1">{{ editData.ImportedFieldWarningMessage }}</p>
@@ -109,7 +109,7 @@
                     [formControl]="$any(form.controls.expirationDate)"
                     fieldLabel="Expiration Date"
                     [type]="FormFieldType.Date"
-                    [readOnly]="isSubmitting">
+                    [readOnly]="isSubmitting()">
                 </form-field>
             </div>
             <div class="g-col-6"></div>
@@ -120,7 +120,7 @@
                     [formControl]="$any(form.controls.completionDate)"
                     fieldLabel="Completion Date"
                     [type]="FormFieldType.Date"
-                    [readOnly]="isSubmitting">
+                    [readOnly]="isSubmitting()">
                 </form-field>
                 @if (editData.IsCompletionDateImported) {
                     <p class="small text-muted mt-1">{{ editData.ImportedFieldWarningMessage }}</p>
@@ -135,7 +135,7 @@
                     fieldLabel="Program Identifier"
                     [type]="FormFieldType.Text"
                     placeholder="Enter identifier..."
-                    [readOnly]="isSubmitting">
+                    [readOnly]="isSubmitting()">
                 </form-field>
                 @if (editData.IsProjectIdentifierImported) {
                     <p class="small text-muted mt-1">{{ editData.ImportedFieldWarningMessage }}</p>
@@ -151,7 +151,7 @@
                     [type]="FormFieldType.Select"
                     [formInputOptions]="organizationOptions"
                     placeholder="Select Organization..."
-                    [readOnly]="isSubmitting">
+                    [readOnly]="isSubmitting()">
                 </form-field>
             </div>
             <div class="g-col-6"></div>
@@ -166,11 +166,11 @@
                             [type]="FormFieldType.Select"
                             [formInputOptions]="availableProgramOptions"
                             placeholder="Select program to add..."
-                            [readOnly]="isSubmitting">
+                            [readOnly]="isSubmitting()">
                         </form-field>
                     </div>
                     <div class="g-col-4">
-                        <button type="button" class="btn btn-primary btn-sm" (click)="addProgram()" [disabled]="isSubmitting || !form.controls.programToAdd.value">Add</button>
+                        <button type="button" class="btn btn-primary btn-sm" (click)="addProgram()" [disabled]="isSubmitting() || !form.controls.programToAdd.value">Add</button>
                     </div>
                 </div>
                 @if (selectedPrograms.length > 0) {
@@ -178,7 +178,7 @@
                         @for (program of selectedPrograms; track program.ProgramID) {
                             <span class="btn btn-sm btn-tag">
                                 {{ program.ProgramName }}
-                                <a href="#" class="ms-1 text-danger" (click)="removeProgram(program.ProgramID); $event.preventDefault()" title="Remove">
+                                <a href="#" class="ml-1 text-danger" (click)="removeProgram(program.ProgramID); $event.preventDefault()" title="Remove">
                                     <icon icon="Delete"></icon>
                                 </a>
                             </span>
@@ -194,7 +194,7 @@
                     fieldLabel="Percentage Match"
                     [type]="FormFieldType.Number"
                     placeholder="Enter percentage..."
-                    [readOnly]="isSubmitting">
+                    [readOnly]="isSubmitting()">
                 </form-field>
             </div>
             <div class="g-col-6"></div>
@@ -205,13 +205,14 @@
     <button
         class="btn btn-primary"
         (click)="save()"
-        [disabled]="isSubmitting || form.invalid">
-        {{ isSubmitting ? 'Saving...' : 'Save' }}
+        [buttonLoading]="isSubmitting()"
+        [disabled]="isSubmitting() || form.invalid">
+        Save
     </button>
     <button
         class="btn btn-secondary"
         (click)="cancel()"
-        [disabled]="isSubmitting">
+        [disabled]="isSubmitting()">
         Cancel
     </button>
 </div>

@@ -10,6 +10,7 @@ import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectExternalLinkGridRow } from "src/app/shared/generated/model/project-external-link-grid-row";
@@ -24,7 +25,7 @@ export interface ProjectExternalLinkEditorData {
 @Component({
     selector: "project-external-link-editor",
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, IconComponent, ModalAlertsComponent],
+    imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, IconComponent, ModalAlertsComponent, ButtonLoadingDirective],
     templateUrl: "./project-external-link-editor.component.html",
 })
 export class ProjectExternalLinkEditorComponent extends BaseModal implements OnInit {
@@ -32,7 +33,7 @@ export class ProjectExternalLinkEditorComponent extends BaseModal implements OnI
 
     public FormFieldType = FormFieldType;
     public externalLinks = signal<ProjectExternalLinkGridRow[]>([]);
-    public isSubmitting = false;
+    public isSubmitting = signal(false);
 
     public addLinkForm = new FormGroup({
         linkLabel: new FormControl<string>("", [Validators.required]),
@@ -90,7 +91,7 @@ export class ProjectExternalLinkEditorComponent extends BaseModal implements OnI
     }
 
     save(): void {
-        this.isSubmitting = true;
+        this.isSubmitting.set(true);
         this.localAlerts = [];
 
         const requestItems: ProjectExternalLinkItemRequest[] = this.externalLinks().map((link) => ({
@@ -107,7 +108,7 @@ export class ProjectExternalLinkEditorComponent extends BaseModal implements OnI
                 this.ref.close(result);
             },
             error: (err) => {
-                this.isSubmitting = false;
+                this.isSubmitting.set(false);
                 const message = err?.error ?? err?.message ?? "An error occurred while saving external links.";
                 this.addLocalAlert(message, AlertContext.Danger, true);
             },

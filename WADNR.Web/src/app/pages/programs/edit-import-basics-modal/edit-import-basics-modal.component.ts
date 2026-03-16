@@ -1,9 +1,10 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
 import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { ProgramService } from "src/app/shared/generated/api/program.service";
 import { GdbImportBasics } from "src/app/shared/generated/model/gdb-import-basics";
 import { GdbImportBasicsUpsertRequest } from "src/app/shared/generated/model/gdb-import-basics-upsert-request";
@@ -19,13 +20,13 @@ export interface EditImportBasicsModalData {
 @Component({
     selector: "edit-import-basics-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent],
+    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, ButtonLoadingDirective],
     templateUrl: "./edit-import-basics-modal.component.html",
 })
 export class EditImportBasicsModalComponent extends BaseModal implements OnInit {
     public ref: DialogRef<EditImportBasicsModalData, GdbImportBasics | null> = inject(DialogRef);
     public FormFieldType = FormFieldType;
-    public isSubmitting = false;
+    public isSubmitting = signal(false);
 
     public projectStageOptions: FormInputOption[] = [];
     public organizationOptions: FormInputOption[] = [];
@@ -76,7 +77,7 @@ export class EditImportBasicsModalComponent extends BaseModal implements OnInit 
     }
 
     save(): void {
-        this.isSubmitting = true;
+        this.isSubmitting.set(true);
         this.localAlerts = [];
 
         const request: GdbImportBasicsUpsertRequest = {
@@ -103,7 +104,7 @@ export class EditImportBasicsModalComponent extends BaseModal implements OnInit 
             },
             error: () => {
                 this.addLocalAlert("Failed to save import basics.");
-                this.isSubmitting = false;
+                this.isSubmitting.set(false);
             },
         });
     }

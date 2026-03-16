@@ -411,7 +411,7 @@
                 </div>
                 <div class="card-body">
                     <!-- Public Notes -->
-                    <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="flex-between mb-2">
                         <h4 class="mb-0">Public Notes</h4>
                         @if (canManageFundSources$ | async) {
                             <button class="btn btn-sm btn-primary" (click)="openNoteModal(allocation.FundSourceAllocationID, false)">Add Note</button>
@@ -454,7 +454,7 @@
                         <hr />
 
                         <!-- Internal Notes -->
-                        <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="flex-between mb-2">
                             <h4 class="mb-0">Internal Notes</h4>
                             <button class="btn btn-sm btn-primary" (click)="openNoteModal(allocation.FundSourceAllocationID, true)">Add Note</button>
                         </div>

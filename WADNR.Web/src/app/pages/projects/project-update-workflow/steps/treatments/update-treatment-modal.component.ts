@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
 
@@ -7,6 +7,7 @@ import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-aler
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { TreatmentUpdateDetail } from "src/app/shared/generated/model/treatment-update-detail";
@@ -30,7 +31,7 @@ export interface UpdateTreatmentModalData {
 @Component({
     selector: "update-treatment-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent],
+    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, ButtonLoadingDirective],
     templateUrl: "./update-treatment-modal.component.html",
     styleUrls: ["./update-treatment-modal.component.scss"]
 })
@@ -41,7 +42,7 @@ export class UpdateTreatmentModalComponent extends BaseModal implements OnInit {
     public mode: "create" | "edit" = "create";
     public projectID: number;
     public treatment?: TreatmentUpdateDetail;
-    public isSubmitting = false;
+    public isSubmitting = signal(false);
 
     // Dropdown options
     public treatmentAreaOptions: SelectDropdownOption[] = [];
@@ -138,7 +139,7 @@ export class UpdateTreatmentModalComponent extends BaseModal implements OnInit {
             return;
         }
 
-        this.isSubmitting = true;
+        this.isSubmitting.set(true);
         this.localAlerts = [];
 
         const dto = new TreatmentUpdateUpsertRequest({
@@ -161,7 +162,7 @@ export class UpdateTreatmentModalComponent extends BaseModal implements OnInit {
                     this.ref.close(result);
                 },
                 error: (err) => {
-                    this.isSubmitting = false;
+                    this.isSubmitting.set(false);
                     const message = err?.error ?? err?.message ?? "An error occurred while adding the treatment.";
                     this.addLocalAlert(message, AlertContext.Danger, true);
                 }
@@ -173,7 +174,7 @@ export class UpdateTreatmentModalComponent extends BaseModal implements OnInit {
                     this.ref.close(result);
                 },
                 error: (err) => {
-                    this.isSubmitting = false;
+                    this.isSubmitting.set(false);
                     const message = err?.error ?? err?.message ?? "An error occurred while updating the treatment.";
                     this.addLocalAlert(message, AlertContext.Danger, true);
                 }

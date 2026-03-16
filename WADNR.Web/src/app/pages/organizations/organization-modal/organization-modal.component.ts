@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { forkJoin, Subject, switchMap, of, Observable, concat, distinctUntilChanged, debounceTime, map } from "rxjs";
 import { DialogRef } from "@ngneat/dialog";
@@ -8,6 +8,7 @@ import { AsyncPipe } from "@angular/common";
 import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -32,7 +33,7 @@ export interface OrganizationModalData {
 @Component({
     selector: "organization-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, LoadingDirective, NgSelectModule, AsyncPipe],
+    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, LoadingDirective, ButtonLoadingDirective, NgSelectModule, AsyncPipe],
     templateUrl: "./organization-modal.component.html",
     styleUrls: ["./organization-modal.component.scss"]
 })
@@ -43,7 +44,7 @@ export class OrganizationModalComponent extends BaseModal implements OnInit {
     public mode: "create" | "edit" = "create";
     public organization?: OrganizationDetail;
     public isLoading = true;
-    public isSubmitting = false;
+    public isSubmitting = signal(false);
 
     public form = new FormGroup<OrganizationUpsertRequestForm>({
         OrganizationName: OrganizationUpsertRequestFormControls.OrganizationName("", {
@@ -169,7 +170,7 @@ export class OrganizationModalComponent extends BaseModal implements OnInit {
             return;
         }
 
-        this.isSubmitting = true;
+        this.isSubmitting.set(true);
         this.localAlerts = [];
 
         const dto = new OrganizationUpsertRequest(this.form.value);
@@ -195,7 +196,7 @@ export class OrganizationModalComponent extends BaseModal implements OnInit {
                 this.ref.close(result);
             },
             error: (err) => {
-                this.isSubmitting = false;
+                this.isSubmitting.set(false);
                 const message = err?.error?.message ?? err?.message ?? "An error occurred.";
                 this.addLocalAlert(message, AlertContext.Danger, true);
             }

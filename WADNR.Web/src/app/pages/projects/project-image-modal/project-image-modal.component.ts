@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
 import { Observable } from "rxjs";
@@ -8,6 +8,7 @@ import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-aler
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 
 import { ProjectImageService } from "src/app/shared/generated/api/project-image.service";
 import { ProjectImageDetail } from "src/app/shared/generated/model/project-image-detail";
@@ -29,7 +30,7 @@ export interface ProjectImageModalData {
 @Component({
     selector: "project-image-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent],
+    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, ButtonLoadingDirective],
     templateUrl: "./project-image-modal.component.html",
     styleUrls: ["./project-image-modal.component.scss"]
 })
@@ -41,7 +42,7 @@ export class ProjectImageModalComponent extends BaseModal implements OnInit {
     public projectID: number;
     public image?: ProjectImageGridRow;
     public timingOptions: ProjectImageTimingLookupItem[] = [];
-    public isSubmitting = false;
+    public isSubmitting = signal(false);
 
     public fileControl = new FormControl<File | null>(null);
 
@@ -112,7 +113,7 @@ export class ProjectImageModalComponent extends BaseModal implements OnInit {
             return;
         }
 
-        this.isSubmitting = true;
+        this.isSubmitting.set(true);
         this.localAlerts = [];
 
         if (this.isCreateMode) {
@@ -139,7 +140,7 @@ export class ProjectImageModalComponent extends BaseModal implements OnInit {
                 this.ref.close(result);
             },
             error: (err) => {
-                this.isSubmitting = false;
+                this.isSubmitting.set(false);
                 const message = err?.error ?? err?.message ?? "An error occurred while uploading the photo.";
                 this.addLocalAlert(message, AlertContext.Danger, true);
             }
@@ -164,7 +165,7 @@ export class ProjectImageModalComponent extends BaseModal implements OnInit {
                 this.ref.close(result);
             },
             error: (err) => {
-                this.isSubmitting = false;
+                this.isSubmitting.set(false);
                 const message = err?.error ?? err?.message ?? "An error occurred while updating the photo.";
                 this.addLocalAlert(message, AlertContext.Danger, true);
             }

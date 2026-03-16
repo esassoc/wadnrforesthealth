@@ -65,4 +65,13 @@
     &__bonus-content {
         padding: var(--spacing-200) 0;
     }
+
+    &__toggle-btn {
+        background: none;
+        border: none;
+        padding: 0;
+        color: var(--primary);
+        cursor: pointer;
+        text-decoration: underline;
+    }
 }

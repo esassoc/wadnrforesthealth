@@ -92,12 +92,12 @@
                             </button>
                         }
                         @if (canReturn(vm.progress)) {
-                            <button class="btn btn-warning me-2" (click)="returnProposal(vm.progress.ProjectID, vm.progress.ProjectName)">
+                            <button class="btn btn-warning mr-2" (click)="returnProposal(vm.progress.ProjectID, vm.progress.ProjectName)">
                                 Return
                             </button>
                         }
                         @if (canReject(vm.progress)) {
-                            <button class="btn btn-danger me-2" (click)="rejectProposal(vm.progress.ProjectID, vm.progress.ProjectName)">
+                            <button class="btn btn-danger mr-2" (click)="rejectProposal(vm.progress.ProjectID, vm.progress.ProjectName)">
                                 Reject
                             </button>
                         }

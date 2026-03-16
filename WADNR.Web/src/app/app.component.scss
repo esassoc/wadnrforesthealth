@@ -13,9 +13,10 @@
     z-index: 3;
 
     .app__credits {
+        text-align: center;
+
         @include desktop-small {
             grid-column: 4 / span 6;
-            text-align: center;
         }
 
         a {

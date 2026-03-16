@@ -84,6 +84,15 @@
         }
     }
 
+    // Action buttons (link-style)
+    &__action-btn {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
     // Deleted features table
     &__deleted-table {
         margin-bottom: 0;
@@ -98,6 +107,14 @@
                 }
             }
         }
+    }
+
+    &__deleted-name {
+        text-decoration: line-through;
+    }
+
+    &__deleted-actions {
+        text-align: right;
     }
 }
 

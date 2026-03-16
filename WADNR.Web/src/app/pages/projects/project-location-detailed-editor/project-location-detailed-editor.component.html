@@ -58,14 +58,14 @@
                             <tr [class.location-editor__features-table--selected]="selectedFeatureId$.value === feature.leafletId"
                                 [class.location-editor__features-table--modified]="feature.isModified || feature.isNew"
                                 (click)="selectFeature(feature)">
-                                <td class="text-center align-middle">
+                                <td>
                                     @if (feature.hasTreatments) {
-                                        <span class="text-muted fw-bold" title="Has associated Treatments">*</span>
+                                        <strong class="text-muted" title="Has associated Treatments">*</strong>
                                     } @else if (feature.isFromArcGis) {
-                                        <span class="text-muted fw-bold" title="Imported from ArcGIS">**</span>
+                                        <strong class="text-muted" title="Imported from ArcGIS">**</strong>
                                     } @else {
                                         <button type="button"
-                                                class="btn btn-sm btn-link text-danger p-0"
+                                                class="btn btn-sm text-danger location-editor__action-btn"
                                                 (click)="deleteFeature(feature); $event.stopPropagation()"
                                                 [disabled]="isSubmitting"
                                                 title="Delete location">
@@ -81,7 +81,7 @@
                                         maxlength="100">
                                     </form-field>
                                 </td>
-                                <td class="align-middle">
+                                <td>
                                     <span class="location-editor__shape-badge location-editor__shape-badge--{{ feature.shapeType | lowercase }}">
                                         {{ feature.shapeType }}
                                     </span>
@@ -125,12 +125,12 @@
                         @for (feature of state.deleted; track feature.leafletId) {
                             <tr class="location-editor__deleted-table--deleted">
                                 <td>
-                                    <span class="text-decoration-line-through">{{ feature.ProjectLocationName }}</span>
-                                    <span class="text-muted ms-2">({{ feature.ProjectLocationTypeName }})</span>
+                                    <span class="location-editor__deleted-name">{{ feature.ProjectLocationName }}</span>
+                                    <span class="text-muted ml-2">({{ feature.ProjectLocationTypeName }})</span>
                                 </td>
-                                <td class="text-end">
+                                <td class="location-editor__deleted-actions">
                                     <button type="button"
-                                            class="btn btn-sm btn-link p-0"
+                                            class="btn btn-sm location-editor__action-btn"
                                             (click)="restoreFeature(feature)"
                                             [disabled]="isSubmitting"
                                             title="Restore location">

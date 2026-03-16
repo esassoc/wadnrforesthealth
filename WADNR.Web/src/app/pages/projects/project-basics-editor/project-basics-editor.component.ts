@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
@@ -12,6 +12,7 @@ import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
@@ -32,7 +33,7 @@ export interface ProjectBasicsEditorData {
 @Component({
     selector: "project-basics-editor",
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormsModule, FormFieldComponent, IconComponent, ModalAlertsComponent, LoadingDirective],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, FormFieldComponent, IconComponent, ModalAlertsComponent, LoadingDirective, ButtonLoadingDirective],
     templateUrl: "./project-basics-editor.component.html",
 })
 export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
@@ -40,7 +41,7 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
 
     public FormFieldType = FormFieldType;
     public isLoading$ = new BehaviorSubject<boolean>(true);
-    public isSubmitting = false;
+    public isSubmitting = signal(false);
 
     public projectTypeOptions: FormInputOption[] = [];
     public projectStageOptions: SelectDropdownOption[] = [];
@@ -195,7 +196,7 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
     }
 
     save(): void {
-        this.isSubmitting = true;
+        this.isSubmitting.set(true);
         this.localAlerts = [];
 
         const raw = this.form.getRawValue();
@@ -222,7 +223,7 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
                 this.ref.close(true);
             },
             error: (err) => {
-                this.isSubmitting = false;
+                this.isSubmitting.set(false);
                 const message = err?.error ?? err?.message ?? "An error occurred while saving project basics.";
                 this.addLocalAlert(message, AlertContext.Danger, true);
             },

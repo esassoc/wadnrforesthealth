@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
 import { Observable } from "rxjs";
@@ -8,6 +8,7 @@ import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-aler
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 
 import { ProjectNoteService } from "src/app/shared/generated/api/project-note.service";
 import { ProjectInternalNoteService } from "src/app/shared/generated/api/project-internal-note.service";
@@ -34,7 +35,7 @@ export interface ProjectNoteModalData {
 @Component({
     selector: "project-note-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent],
+    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, ButtonLoadingDirective],
     templateUrl: "./project-note-modal.component.html",
     styleUrls: ["./project-note-modal.component.scss"]
 })
@@ -46,7 +47,7 @@ export class ProjectNoteModalComponent extends BaseModal implements OnInit {
     public projectID: number;
     public isInternal = false;
     public note?: ProjectNoteGridRow | ProjectInternalNoteGridRow;
-    public isSubmitting = false;
+    public isSubmitting = signal(false);
 
     public form = new FormGroup({
         Note: ProjectNoteUpsertRequestFormControls.Note("", {
@@ -91,7 +92,7 @@ export class ProjectNoteModalComponent extends BaseModal implements OnInit {
             return;
         }
 
-        this.isSubmitting = true;
+        this.isSubmitting.set(true);
         this.localAlerts = [];
 
         if (this.isCreateMode) {
@@ -120,7 +121,7 @@ export class ProjectNoteModalComponent extends BaseModal implements OnInit {
                 this.ref.close(result);
             },
             error: (err) => {
-                this.isSubmitting = false;
+                this.isSubmitting.set(false);
                 const message = err?.error ?? err?.message ?? `An error occurred while adding the ${noteType.toLowerCase()}.`;
                 this.addLocalAlert(message, AlertContext.Danger, true);
             }
@@ -146,7 +147,7 @@ export class ProjectNoteModalComponent extends BaseModal implements OnInit {
                 this.ref.close(result);
             },
             error: (err) => {
-                this.isSubmitting = false;
+                this.isSubmitting.set(false);
                 const message = err?.error ?? err?.message ?? `An error occurred while updating the ${noteType.toLowerCase()}.`;
                 this.addLocalAlert(message, AlertContext.Danger, true);
             }

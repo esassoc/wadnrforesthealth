@@ -1,9 +1,10 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
 
 import { FormFieldComponent, FormFieldType, SelectDropdownOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -22,7 +23,7 @@ export interface CustomPageModalData {
 @Component({
     selector: "custom-page-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent],
+    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, ButtonLoadingDirective],
     templateUrl: "./custom-page-modal.component.html",
 })
 export class CustomPageModalComponent extends BaseModal implements OnInit {
@@ -31,7 +32,7 @@ export class CustomPageModalComponent extends BaseModal implements OnInit {
     public FormFieldType = FormFieldType;
     public mode: "create" | "edit" = "create";
     public customPage?: CustomPageGridRow;
-    public isSubmitting = false;
+    public isSubmitting = signal(false);
 
     public displayTypeOptions: SelectDropdownOption[] = CustomPageDisplayTypesAsSelectDropdownOptions;
     public navSectionOptions: SelectDropdownOption[] = CustomPageNavigationSectionsAsSelectDropdownOptions;
@@ -75,7 +76,7 @@ export class CustomPageModalComponent extends BaseModal implements OnInit {
             return;
         }
 
-        this.isSubmitting = true;
+        this.isSubmitting.set(true);
         this.localAlerts = [];
 
         const dto = new CustomPageUpsertRequest({
@@ -98,7 +99,7 @@ export class CustomPageModalComponent extends BaseModal implements OnInit {
                 this.ref.close(result);
             },
             error: (err) => {
-                this.isSubmitting = false;
+                this.isSubmitting.set(false);
                 const message = err?.error?.message ?? err?.message ?? "An error occurred.";
                 this.addLocalAlert(message, AlertContext.Danger, true);
             },

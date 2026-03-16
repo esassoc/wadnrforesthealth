@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { AsyncPipe, CommonModule } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
@@ -13,6 +13,7 @@ import { FieldDefinitionComponent } from "src/app/shared/components/field-defini
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
@@ -45,7 +46,7 @@ const FIELD_DEFINITION_MAP: Record<string, string> = {
 @Component({
     selector: "project-organization-editor",
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, IconComponent, FieldDefinitionComponent, ModalAlertsComponent, LoadingDirective, AsyncPipe],
+    imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, IconComponent, FieldDefinitionComponent, ModalAlertsComponent, LoadingDirective, AsyncPipe, ButtonLoadingDirective],
     templateUrl: "./project-organization-editor.component.html",
 })
 export class ProjectOrganizationEditorComponent extends BaseModal implements OnInit {
@@ -55,7 +56,7 @@ export class ProjectOrganizationEditorComponent extends BaseModal implements OnI
     public organizationsByType: OrganizationsByType[] = [];
     public allOrganizationOptions: FormInputOption[] = [];
     public isLoading$ = new BehaviorSubject<boolean>(true);
-    public isSubmitting = false;
+    public isSubmitting = signal(false);
 
     constructor(
         private projectService: ProjectService,
@@ -173,7 +174,7 @@ export class ProjectOrganizationEditorComponent extends BaseModal implements OnI
     }
 
     save(): void {
-        this.isSubmitting = true;
+        this.isSubmitting.set(true);
         this.localAlerts = [];
 
         const requestItems: ProjectOrganizationItemRequest[] = [];
@@ -196,7 +197,7 @@ export class ProjectOrganizationEditorComponent extends BaseModal implements OnI
                 this.ref.close(result);
             },
             error: (err) => {
-                this.isSubmitting = false;
+                this.isSubmitting.set(false);
                 const message = err?.error ?? err?.message ?? "An error occurred while saving organizations.";
                 this.addLocalAlert(message, AlertContext.Danger, true);
             },

@@ -1,9 +1,10 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
 import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { ProgramService } from "src/app/shared/generated/api/program.service";
 import { GdbDefaultMappingItem } from "src/app/shared/generated/model/gdb-default-mapping-item";
 import { GdbDefaultMappingUpsertRequest } from "src/app/shared/generated/model/gdb-default-mapping-upsert-request";
@@ -24,13 +25,13 @@ export interface MappingField {
 @Component({
     selector: "edit-default-mappings-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent],
+    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, ButtonLoadingDirective],
     templateUrl: "./edit-default-mappings-modal.component.html",
 })
 export class EditDefaultMappingsModalComponent extends BaseModal implements OnInit {
     public ref: DialogRef<EditDefaultMappingsModalData, GdbDefaultMappingItem[] | null> = inject(DialogRef);
     public FormFieldType = FormFieldType;
-    public isSubmitting = false;
+    public isSubmitting = signal(false);
     public isFlattened = false;
 
     // FieldDefinitionIDs from WADNR database (dbo.FieldDefinition)
@@ -100,7 +101,7 @@ export class EditDefaultMappingsModalComponent extends BaseModal implements OnIn
     }
 
     save(): void {
-        this.isSubmitting = true;
+        this.isSubmitting.set(true);
         this.localAlerts = [];
 
         const request: GdbDefaultMappingUpsertRequest = {
@@ -118,7 +119,7 @@ export class EditDefaultMappingsModalComponent extends BaseModal implements OnIn
             },
             error: () => {
                 this.addLocalAlert("Failed to save default mappings.");
-                this.isSubmitting = false;
+                this.isSubmitting.set(false);
             },
         });
     }

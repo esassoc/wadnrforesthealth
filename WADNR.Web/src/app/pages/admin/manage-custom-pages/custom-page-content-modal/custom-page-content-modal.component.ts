@@ -1,9 +1,10 @@
-import { Component, inject, OnInit, ViewChild, AfterViewChecked } from "@angular/core";
+import { Component, inject, OnInit, signal, ViewChild, AfterViewChecked } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
 import { EditorComponent, TINYMCE_SCRIPT_SRC } from "@tinymce/tinymce-angular";
 
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -20,7 +21,7 @@ export interface CustomPageContentModalData {
 @Component({
     selector: "custom-page-content-modal",
     standalone: true,
-    imports: [FormsModule, EditorComponent, ModalAlertsComponent],
+    imports: [FormsModule, EditorComponent, ModalAlertsComponent, ButtonLoadingDirective],
     providers: [{ provide: TINYMCE_SCRIPT_SRC, useValue: "tinymce/tinymce.min.js" }],
     templateUrl: "./custom-page-content-modal.component.html",
 })
@@ -30,7 +31,7 @@ export class CustomPageContentModalComponent extends BaseModal implements OnInit
     @ViewChild("tinyMceEditor") tinyMceEditor: EditorComponent;
     public tinyMceConfig: object = TinyMCEHelpers.DefaultInitConfig();
     public editedContent: string = "";
-    public isSubmitting = false;
+    public isSubmitting = signal(false);
 
     private customPageID: number;
 
@@ -52,7 +53,7 @@ export class CustomPageContentModalComponent extends BaseModal implements OnInit
     }
 
     save(): void {
-        this.isSubmitting = true;
+        this.isSubmitting.set(true);
         this.localAlerts = [];
 
         const dto = new CustomPageContentUpsertRequest({
@@ -65,7 +66,7 @@ export class CustomPageContentModalComponent extends BaseModal implements OnInit
                 this.ref.close(true);
             },
             error: (err) => {
-                this.isSubmitting = false;
+                this.isSubmitting.set(false);
                 const message = err?.error?.message ?? err?.message ?? "An error occurred.";
                 this.addLocalAlert(message, AlertContext.Danger, true);
             },

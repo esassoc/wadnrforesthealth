@@ -34,13 +34,14 @@
     <button
         class="btn btn-primary"
         (click)="save()"
-        [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Saving...' : 'Add to Block List' }}
+        [buttonLoading]="isSubmitting()"
+        [disabled]="isSubmitting()">
+        Add to Block List
     </button>
     <button
         class="btn btn-secondary"
         (click)="cancel()"
-        [disabled]="isSubmitting">
+        [disabled]="isSubmitting()">
         Cancel
     </button>
 </div>

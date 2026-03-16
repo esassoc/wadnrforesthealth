@@ -1,10 +1,11 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
 import { Observable } from "rxjs";
 
 import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -32,7 +33,7 @@ export interface ProjectDocumentModalData {
 @Component({
     selector: "project-document-modal",
     standalone: true,
-    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent],
+    imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, ButtonLoadingDirective],
     templateUrl: "./project-document-modal.component.html",
     styleUrls: ["./project-document-modal.component.scss"]
 })
@@ -44,7 +45,7 @@ export class ProjectDocumentModalComponent extends BaseModal implements OnInit {
     public projectID: number;
     public document?: ProjectDocumentGridRow;
     public documentTypes: ProjectDocumentTypeLookupItem[] = [];
-    public isSubmitting = false;
+    public isSubmitting = signal(false);
 
     public fileControl = new FormControl<File | null>(null);
 
@@ -114,7 +115,7 @@ export class ProjectDocumentModalComponent extends BaseModal implements OnInit {
             return;
         }
 
-        this.isSubmitting = true;
+        this.isSubmitting.set(true);
         this.localAlerts = [];
 
         if (this.isCreateMode) {
@@ -140,7 +141,7 @@ export class ProjectDocumentModalComponent extends BaseModal implements OnInit {
                 this.ref.close(result);
             },
             error: (err) => {
-                this.isSubmitting = false;
+                this.isSubmitting.set(false);
                 const message = err?.error ?? err?.message ?? "An error occurred while uploading the document.";
                 this.addLocalAlert(message, AlertContext.Danger, true);
             }
@@ -164,7 +165,7 @@ export class ProjectDocumentModalComponent extends BaseModal implements OnInit {
                 this.ref.close(result);
             },
             error: (err) => {
-                this.isSubmitting = false;
+                this.isSubmitting.set(false);
                 const message = err?.error ?? err?.message ?? "An error occurred while updating the document.";
                 this.addLocalAlert(message, AlertContext.Danger, true);
             }

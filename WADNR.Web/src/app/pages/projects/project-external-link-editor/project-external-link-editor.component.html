@@ -19,7 +19,7 @@
                         fieldLabel="Link Label"
                         [type]="FormFieldType.Text"
                         placeholder="Enter link label..."
-                        [readOnly]="isSubmitting">
+                        [readOnly]="isSubmitting()">
                     </form-field>
                 </div>
                 <div class="g-col-5">
@@ -28,11 +28,11 @@
                         fieldLabel="Link URL"
                         [type]="FormFieldType.Text"
                         placeholder="https://..."
-                        [readOnly]="isSubmitting">
+                        [readOnly]="isSubmitting()">
                     </form-field>
                 </div>
                 <div class="g-col-2">
-                    <button type="submit" class="btn btn-primary btn-sm" [disabled]="isSubmitting">Add</button>
+                    <button type="submit" class="btn btn-primary btn-sm" [disabled]="isSubmitting()">Add</button>
                 </div>
             </div>
         </form>
@@ -56,7 +56,7 @@
                                 <a href="#"
                                     class="text-danger"
                                     (click)="removeLink(i); $event.preventDefault()"
-                                    [class.disabled]="isSubmitting"
+                                    [class.disabled]="isSubmitting()"
                                     title="Remove">
                                     <icon icon="Delete"></icon>
                                 </a>
@@ -82,13 +82,14 @@
     <button
         class="btn btn-primary"
         (click)="save()"
-        [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Saving...' : 'Save' }}
+        [disabled]="isSubmitting()"
+        [buttonLoading]="isSubmitting()">
+        Save
     </button>
     <button
         class="btn btn-secondary"
         (click)="cancel()"
-        [disabled]="isSubmitting">
+        [disabled]="isSubmitting()">
         Cancel
     </button>
 </div>
