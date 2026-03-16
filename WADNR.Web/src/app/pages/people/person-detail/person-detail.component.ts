@@ -65,7 +65,8 @@ export class PersonDetailComponent {
     public canDownloadExcel$: Observable<boolean>;
     public canImpersonate$: Observable<boolean>;
     public canEditBasics$: Observable<boolean>;
-    public canEditRoles$: Observable<boolean>;
+    public canManageUsers$: Observable<boolean>;
+    public canViewRoles$: Observable<boolean>;
     public canToggleActive$: Observable<boolean>;
     public canDelete$: Observable<boolean>;
     public canEditInteractionEvents$: Observable<boolean>;
@@ -163,10 +164,19 @@ export class PersonDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.canEditRoles$ = userAndPerson$.pipe(
+        this.canManageUsers$ = userAndPerson$.pipe(
             map(([_, currentUser]) => {
                 if (!currentUser) return false;
                 return this.authenticationService.canManageUsersContactsOrganizations(currentUser);
+            }),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.canViewRoles$ = userAndPerson$.pipe(
+            map(([person, currentUser]) => {
+                if (!currentUser || !person) return false;
+                const isSelf = person.PersonID === currentUser.PersonID;
+                return isSelf || this.authenticationService.canManageUsersContactsOrganizations(currentUser);
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );

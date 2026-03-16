@@ -5,6 +5,7 @@ import { elevatedAccessGuard } from "./shared/guards/elevated-access.guard";
 import { pageContentManageGuard } from "./shared/guards/page-content-manage.guard";
 import { projectEditGuard } from "./shared/guards/project-edit.guard";
 import { UnsavedChangesGuard } from "./shared/guards/unsaved-changes.guard";
+import { userManageGuard } from "./shared/guards/user-manage.guard";
 
 export const routeParams = {
     definitionID: "definitionID",
@@ -178,7 +179,7 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/roles/role-detail/role-detail.component").then((m) => m.RoleDetailComponent),
     },
     { path: "vendors", title: "Vendors", canActivate: [elevatedAccessGuard], loadComponent: () => import("./pages/vendors/vendors.component").then((m) => m.VendorsComponent) },
-    { path: "people", title: "Users and Contacts", canActivate: [authGuard], loadComponent: () => import("./pages/people/people.component").then((m) => m.PeopleComponent) },
+    { path: "people", title: "Users and Contacts", canActivate: [userManageGuard], loadComponent: () => import("./pages/people/people.component").then((m) => m.PeopleComponent) },
     {
         path: `people/:${routeParams.personID}`,
         title: "User/Contact Detail",

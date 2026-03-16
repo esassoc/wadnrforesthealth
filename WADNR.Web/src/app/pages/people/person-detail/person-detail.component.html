@@ -1,5 +1,5 @@
 @if (person$ | async; as person) {
-    <breadcrumb [items]="[{ label: 'Users and Contacts', url: '/people' }, { label: person.FullName || 'User' }]" [linkLast]="false"></breadcrumb>
+    <breadcrumb [items]="[{ label: 'Users and Contacts', url: (canManageUsers$ | async) ? '/people' : undefined }, { label: person.FullName || 'User' }]" [linkLast]="false"></breadcrumb>
     <page-header [pageTitle]="person.FullName + (person.IsActive ? '' : ' (inactive)')" [templateRight]="headerButtons"></page-header>
 
     <ng-template #headerButtons>
@@ -82,22 +82,24 @@
                                 <dd>{{ person.Notes }}</dd>
                             }
 
-                            @if (person.IsFullUser) {
-                                <dt>Last Activity</dt>
-                                <dd>{{ person.LastActivityDate | date: "M/d/yyyy h:mm a" }}</dd>
-                            }
+                            @if (canEditBasics$ | async) {
+                                @if (person.IsFullUser) {
+                                    <dt>Last Activity</dt>
+                                    <dd>{{ person.LastActivityDate | date: "M/d/yyyy h:mm a" }}</dd>
+                                }
 
-                            <dt>Added On</dt>
-                            <dd>{{ person.CreateDate | date: "M/d/yyyy" }}</dd>
+                                <dt>Added On</dt>
+                                <dd>{{ person.CreateDate | date: "M/d/yyyy" }}</dd>
 
-                            @if (person.AddedByPersonID) {
-                                <dt>Added By</dt>
-                                <dd>{{ person.AddedByPersonName }}</dd>
-                            }
+                                @if (person.AddedByPersonID) {
+                                    <dt>Added By</dt>
+                                    <dd>{{ person.AddedByPersonName }}</dd>
+                                }
 
-                            @if (person.Authenticators && person.Authenticators.length > 0) {
-                                <dt>Login Authenticators</dt>
-                                <dd>{{ person.Authenticators.join(", ") }}</dd>
+                                @if (person.Authenticators && person.Authenticators.length > 0) {
+                                    <dt>Login Authenticators</dt>
+                                    <dd>{{ person.Authenticators.join(", ") }}</dd>
+                                }
                             }
                         </dl>
                     </div>
@@ -106,11 +108,11 @@
 
             <!-- Right Column: Roles, Stewardship, Programs, Orgs -->
             <div class="g-col-6">
-                @if (person.IsFullUser) {
+                @if (person.IsFullUser && (canViewRoles$ | async)) {
                     <div class="card">
                         <div class="card-header flex-between">
                             <span class="card-title">Roles</span>
-                            @if (canEditRoles$ | async) {
+                            @if (canManageUsers$ | async) {
                                 <button class="card-header-edit-link" (click)="openEditRoles(person)" title="Edit Roles">
                                     <icon icon="Edit"></icon>
                                 </button>
@@ -134,7 +136,7 @@
                     <div class="card mt-3">
                         <div class="card-header flex-between">
                             <span class="card-title">Assigned Project Stewardship Areas</span>
-                            @if (hasRole(person, RoleEnum.ProjectSteward) && (canEditRoles$ | async)) {
+                            @if (hasRole(person, RoleEnum.ProjectSteward) && (canManageUsers$ | async)) {
                                 <button class="card-header-edit-link" (click)="openEditStewardshipAreas(person)" title="Edit Stewardship Areas">
                                     <icon icon="Edit"></icon>
                                 </button>
@@ -195,7 +197,7 @@
             <div class="card mt-3">
                 <div class="card-header flex-between">
                     <span class="card-title">Organizations for which {{ person.FullName }} is a Contributing Organization Primary Contact</span>
-                    @if (canEditBasics$ | async) {
+                    @if (canManageUsers$ | async) {
                         <button class="card-header-edit-link" (click)="openEditPrimaryContactOrgs(person)" title="Edit Contributing Organization Primary Contact Organizations">
                             <icon icon="Edit"></icon>
                         </button>

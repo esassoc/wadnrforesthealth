@@ -26,7 +26,7 @@ public class PersonController(
     : SitkaController<PersonController>(dbContext, logger, configuration)
 {
     [HttpGet]
-    [NormalUserFeature]
+    [UserManageFeature]
     public async Task<ActionResult<IEnumerable<PersonGridRow>>> List()
     {
         var items = await People.ListAsGridRowAsync(DbContext);
@@ -54,11 +54,15 @@ public class PersonController(
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<PersonDetail>> Get([FromRoute] int personID)
     {
+        var gate = await CheckEsaAdminGate(personID);
+        if (gate != null) return gate;
+
         var person = await People.GetByIDAsDetailAsync(DbContext, personID);
         if (person == null)
         {
             return NotFound();
         }
+
         return Ok(person);
     }
 
@@ -67,6 +71,9 @@ public class PersonController(
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<IEnumerable<ProjectForPersonDetailGridRow>>> ListProjects([FromRoute] int personID)
     {
+        var gate = await CheckEsaAdminGate(personID);
+        if (gate != null) return gate;
+
         var projects = await Projects.ListForPersonAsGridRowAsync(DbContext, personID);
         return Ok(projects);
     }
@@ -76,6 +83,9 @@ public class PersonController(
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<IEnumerable<AgreementGridRow>>> ListAgreements([FromRoute] int personID)
     {
+        var gate = await CheckEsaAdminGate(personID);
+        if (gate != null) return gate;
+
         var agreements = await Agreements.ListForPersonAsGridRowAsync(DbContext, personID);
         return Ok(agreements);
     }
@@ -85,6 +95,9 @@ public class PersonController(
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<IActionResult> AgreementsExcelDownload([FromRoute] int personID)
     {
+        var gate = await CheckEsaAdminGate(personID);
+        if (gate != null) return gate;
+
         var agreements = await Agreements.ListForPersonAsExcelRowAsync(DbContext, personID);
         var spec = new AgreementExcelSpec();
         var sheet = ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Agreements", spec, agreements);
@@ -103,6 +116,9 @@ public class PersonController(
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<IEnumerable<InteractionEventGridRow>>> ListInteractionEvents([FromRoute] int personID)
     {
+        var gate = await CheckEsaAdminGate(personID);
+        if (gate != null) return gate;
+
         var events = await InteractionEvents.ListForPersonAsGridRowAsync(DbContext, personID);
         return Ok(events);
     }
@@ -201,6 +217,9 @@ public class PersonController(
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<IEnumerable<NotificationGridRow>>> ListNotifications([FromRoute] int personID)
     {
+        var gate = await CheckEsaAdminGate(personID);
+        if (gate != null) return gate;
+
         var notifications = await People.ListNotificationsForPersonAsGridRowAsync(DbContext, personID);
         return Ok(notifications);
     }
@@ -242,5 +261,25 @@ public class PersonController(
         {
             return BadRequest(new { ErrorMessage = ex.Message });
         }
+    }
+
+    /// <summary>
+    /// Non-EsaAdmin users cannot access data for EsaAdmin-role persons.
+    /// Returns Forbid if the gate applies, null otherwise.
+    /// </summary>
+    private async Task<ActionResult?> CheckEsaAdminGate(int personID)
+    {
+        var targetRoleID = await DbContext.PersonRoles
+            .Where(pr => pr.PersonID == personID && pr.Role.IsBaseRole)
+            .Select(pr => pr.RoleID)
+            .FirstOrDefaultAsync();
+
+        if (targetRoleID == (int)RoleEnum.EsaAdmin
+            && CallingUser.BaseRole?.RoleID != (int)RoleEnum.EsaAdmin)
+        {
+            return Forbid();
+        }
+
+        return null;
     }
 }
