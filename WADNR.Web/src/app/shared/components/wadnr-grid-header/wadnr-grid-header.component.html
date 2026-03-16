@@ -23,7 +23,7 @@
         <ng-content select="[customGridActionsLeft]"></ng-content>
     </div>
 
-    <div class="grid-actions flex-center" [style]="unsetHeaderGridActionWidth ? 'width: unset;' : ''">
+    <div #centerSection class="grid-actions flex-center" [style]="unsetHeaderGridActionWidth ? 'width: unset;' : ''" [hidden]="!hasCenterContent">
         <ng-content select="[customGridActionsCenter]"></ng-content>
     </div>
 

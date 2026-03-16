@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { AfterContentInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { ClearGridFiltersButtonComponent } from "../clear-grid-filters-button/clear-grid-filters-button.component";
 import { FormsModule } from "@angular/forms";
 
@@ -11,7 +11,10 @@ import { Subscription } from "rxjs";
     templateUrl: "./wadnr-grid-header.component.html",
     styleUrl: "./wadnr-grid-header.component.scss",
 })
-export class WADNRGridHeaderComponent implements OnInit, OnDestroy {
+export class WADNRGridHeaderComponent implements OnInit, OnDestroy, AfterContentInit {
+    @ViewChild('centerSection', { static: true }) centerSection: ElementRef;
+    hasCenterContent = false;
+
     @Input() grid: AgGridAngular;
     @Input() rowDataCount: number;
     @Input() hideGlobalFilter: boolean = false;
@@ -29,6 +32,11 @@ export class WADNRGridHeaderComponent implements OnInit, OnDestroy {
 
     private selectionChangedSubscription: Subscription = Subscription.EMPTY;
     private filterChangedSubscription: Subscription = Subscription.EMPTY;
+
+    ngAfterContentInit(): void {
+        const el = this.centerSection?.nativeElement as HTMLElement;
+        this.hasCenterContent = el?.children.length > 0;
+    }
 
     ngOnInit(): void {
         if (this.grid) {
