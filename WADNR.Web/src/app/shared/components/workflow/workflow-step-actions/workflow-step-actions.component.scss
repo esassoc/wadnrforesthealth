@@ -24,14 +24,14 @@
         gap: var(--spacing-200);
         flex-wrap: wrap;
     }
-}
 
-.required-note {
-    font-size: var(--type-size-100);
-    border: none;
-    border-top: none;
+    &__required-note {
+        font-size: var(--type-size-100);
+        border: none;
+        border-top: none;
+    }
 
-    .required-indicator {
+    &__required-indicator {
         color: var(--red-default);
         font-weight: bold;
     }

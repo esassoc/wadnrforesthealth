@@ -72,6 +72,16 @@
         }
     }
 
+    &-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        icon {
+            margin-right: 0;
+        }
+    }
+
     &-success {
         background-color: var(--green-default);
         color: var(--white);

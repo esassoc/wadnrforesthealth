@@ -1,8 +1,8 @@
-<div class="map-wrapper">
+<div class="wadnr-map__wrapper">
     <!-- <div class="form-group">
         <div class="field">
-            <div class="search-container">
-                <div class="search-prepend">
+            <div class="wadnr-map__search-container">
+                <div class="wadnr-map__search-prepend">
                     <i class="fa" [class.fa-search]="!isSearching" [class.fa-spinner]="isSearching" [class.spin-animation]="isSearching"></i>
                 </div>
                 <input
@@ -16,7 +16,7 @@
                     autocorrect="off"
                     autocapitalize="none"
                     spellcheck="false" />
-                <div class="search-append">
+                <div class="wadnr-map__search-append">
                     @if (searchString.value) {
                     <button class="clear" (click)="clearSearch()">
                         <i class="fa fa-times-circle"></i>
@@ -25,14 +25,14 @@
                 </div>
             </div>
             @if (searchResults$ | async; as searchResults) {
-            <div class="search-results">
+            <div class="wadnr-map__search-results">
                 @if (!isSearching) {
                 <ul>
                     @for (result of searchResults.features; track result) {
                     <li [id]="'Location_' + result.id">
                         <button (click)="selectCurrent(result)">
-                            <div class="button-head">
-                                <strong class="wa-name" [innerHTML]="result.properties.display_name"></strong>
+                            <div class="wadnr-map__button-head">
+                                <strong class="wadnr-map__wa-name" [innerHTML]="result.properties.display_name"></strong>
                             </div>
                         </button>
                     </li>
@@ -47,13 +47,13 @@
     </div> -->
     <div [id]="mapID" [style.height]="mapHeight" [style.cursor]="cursorStyle">
         @if (showLegend) {
-        <div class="legend leaflet-control-layers leaflet-control-layers-expanded" [id]="legendID">
+        <div class="wadnr-map__legend leaflet-control-layers leaflet-control-layers-expanded" [id]="legendID">
             <a class="leaflet-control-layers-toggle">
                 <icon icon="MapLegend" (click)="legendToggle()"></icon>
             </a>
             <div class="leaflet-control-layers-list">
                 @for (legendItem of legendItems; track legendItem) {
-                <div class="legend-item">
+                <div class="wadnr-map__legend-item">
                     <h4>{{ legendItem.Title }}</h4>
                     @if (legendItem.Icon) {
                     <icon [icon]="legendItem.Icon" [color]="legendItem.IconColor" [fillOpacity]="legendItem.IconFillOpacity"></icon>
@@ -78,9 +78,9 @@
         }
         <ng-content></ng-content>
     </div>
-    <div class="map-footer">
+    <div class="wadnr-map__footer">
         <i style="margin-left: auto;"></i>
-        <div class="attribution">
+        <div class="wadnr-map__attribution">
             &copy;
             <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>
             contributors

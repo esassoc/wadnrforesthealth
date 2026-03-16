@@ -1,20 +1,20 @@
-/* styling for tag selected projects modal */
+.tag-projects-modal {
+    &__suggestions {
+        list-style: none;
+        padding: 0;
+        margin: var(--spacing-100) 0 0;
+        border: 1px solid var(--border-color, #ccc);
+        border-radius: 4px;
+        max-height: 200px;
+        overflow-y: auto;
 
-.tag-suggestions {
-  list-style: none;
-  padding: 0;
-  margin: var(--spacing-100) 0 0;
-  border: 1px solid var(--border-color, #ccc);
-  border-radius: 4px;
-  max-height: 200px;
-  overflow-y: auto;
+        li {
+            padding: 0.4rem var(--spacing-300);
+            cursor: pointer;
 
-  li {
-    padding: 0.4rem var(--spacing-300);
-    cursor: pointer;
-
-    &:hover {
-      background-color: var(--hover-bg, #f0f0f0);
+            &:hover {
+                background-color: var(--hover-bg, #f0f0f0);
+            }
+        }
     }
-  }
 }

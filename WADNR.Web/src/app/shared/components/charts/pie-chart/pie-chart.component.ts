@@ -219,7 +219,7 @@ export class PieChartComponent implements OnChanges, OnDestroy {
 
             // basic tooltip element appended to body
             const tooltip = document.createElement("div");
-            tooltip.className = "pie-tooltip";
+            tooltip.className = "pie-chart__tooltip";
             tooltip.style.position = "fixed";
             tooltip.style.pointerEvents = "none";
             tooltip.style.background = "white";
@@ -239,7 +239,7 @@ export class PieChartComponent implements OnChanges, OnDestroy {
                         return;
                     }
                     const d = leaf.datum;
-                    tooltip.innerHTML = `<div class="pie-tooltip-inner"><strong>${String(d.label)}</strong>: ${this.formatLegendValue(Number(d.value) || 0)}</div>`;
+                    tooltip.innerHTML = `<div class="pie-chart__tooltip-inner"><strong>${String(d.label)}</strong>: ${this.formatLegendValue(Number(d.value) || 0)}</div>`;
                     tooltip.style.display = "block";
                     tooltip.style.left = evt.clientX + 12 + "px";
                     tooltip.style.top = evt.clientY + 12 + "px";

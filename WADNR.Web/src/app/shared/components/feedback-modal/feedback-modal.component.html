@@ -5,7 +5,7 @@
 <div class="modal-body">
     <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
-    <form [formGroup]="form" class="feedback-form">
+    <form [formGroup]="form" class="feedback-modal__form">
         <!-- Read-only Name field -->
         <div class="field horizontal">
             <div class="field-label required">Name</div>
@@ -54,16 +54,16 @@
             placeholder="">
         </form-field>
 
-        <div class="characters-remaining">
+        <div class="feedback-modal__chars-remaining">
             Characters Remaining: {{ charactersRemaining }}
         </div>
     </form>
 </div>
 <div class="modal-footer">
-    <div class="required-field-note">
-        <span class="required-indicator">*</span> Required Field
+    <div class="feedback-modal__required-note">
+        <span class="feedback-modal__required-indicator">*</span> Required Field
     </div>
-    <div class="modal-actions">
+    <div class="feedback-modal__actions">
         <button class="btn btn-primary" (click)="submit()" [disabled]="form.invalid || isSubmitting">
             @if (isSubmitting) {
                 Submitting...

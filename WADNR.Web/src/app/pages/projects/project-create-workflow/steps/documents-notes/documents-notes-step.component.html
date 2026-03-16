@@ -12,8 +12,8 @@
                     </p>
 
                     <!-- Documents Section -->
-                    <div class="section mb-4">
-                        <div class="section-header">
+                    <div class="docs-notes-step__section mb-4">
+                        <div class="docs-notes-step__section-header">
                             <h5>Documents</h5>
                             <button class="btn btn-primary btn-sm" (click)="openAddDocumentModal(vm.documentTypes)">
                                 <icon icon="Upload"></icon> Add Document
@@ -21,40 +21,40 @@
                         </div>
 
                         @if (vm.documents.length > 0) {
-                            <div class="item-list">
+                            <div class="docs-notes-step__item-list">
                                 @for (doc of vm.documents; track doc.ProjectDocumentID) {
-                                    <div class="item-row">
-                                        <div class="item-actions">
-                                            <span class="action-icon" (click)="openEditDocumentModal(doc, vm.documentTypes)" title="Edit">
+                                    <div class="docs-notes-step__item">
+                                        <div class="docs-notes-step__item-actions">
+                                            <span class="docs-notes-step__action-icon" (click)="openEditDocumentModal(doc, vm.documentTypes)" title="Edit">
                                                 <icon icon="Edit"></icon>
                                             </span>
-                                            <span class="action-icon delete" (click)="deleteDocument(doc)" title="Delete">
+                                            <span class="docs-notes-step__action-icon docs-notes-step__action-icon--delete" (click)="deleteDocument(doc)" title="Delete">
                                                 <icon icon="Delete"></icon>
                                             </span>
                                         </div>
-                                        <div class="item-content">
-                                            <div class="item-title">
+                                        <div class="docs-notes-step__item-content">
+                                            <div class="docs-notes-step__item-title">
                                                 <a [href]="getDocumentDownloadUrl(doc)" target="_blank">
                                                     <icon icon="File"></icon> {{ doc.DisplayName }}
                                                 </a>
                                             </div>
-                                            <dl class="item-details">
-                                                <div class="detail-row">
+                                            <dl class="docs-notes-step__item-details">
+                                                <div class="docs-notes-step__detail-row">
                                                     <dt>Uploaded On</dt>
                                                     <dd>{{ doc.UploadDate | date:'short' }}</dd>
                                                 </div>
-                                                <div class="detail-row">
+                                                <div class="docs-notes-step__detail-row">
                                                     <dt>File Type</dt>
                                                     <dd>{{ doc.FileExtension | uppercase }}</dd>
                                                 </div>
                                                 @if (doc.DocumentTypeName) {
-                                                    <div class="detail-row">
+                                                    <div class="docs-notes-step__detail-row">
                                                         <dt>Document Type</dt>
                                                         <dd>{{ doc.DocumentTypeName }}</dd>
                                                     </div>
                                                 }
                                                 @if (doc.Description) {
-                                                    <div class="detail-row">
+                                                    <div class="docs-notes-step__detail-row">
                                                         <dt>Description</dt>
                                                         <dd>{{ doc.Description }}</dd>
                                                     </div>
@@ -65,13 +65,13 @@
                                 }
                             </div>
                         } @else {
-                            <p class="empty-message"><em>No documents associated with this Project.</em></p>
+                            <p class="docs-notes-step__empty-message"><em>No documents associated with this Project.</em></p>
                         }
                     </div>
 
                     <!-- Notes Section -->
-                    <div class="section">
-                        <div class="section-header">
+                    <div class="docs-notes-step__section">
+                        <div class="docs-notes-step__section-header">
                             <h5>Notes</h5>
                             <button class="btn btn-primary btn-sm" (click)="openAddNoteModal()">
                                 <icon icon="ChatBubble"></icon> Add Note
@@ -79,25 +79,25 @@
                         </div>
 
                         @if (vm.notes.length > 0) {
-                            <div class="item-list">
+                            <div class="docs-notes-step__item-list">
                                 @for (note of vm.notes; track note.ProjectNoteID) {
-                                    <div class="item-row">
-                                        <div class="item-actions">
-                                            <span class="action-icon" (click)="openEditNoteModal(note)" title="Edit">
+                                    <div class="docs-notes-step__item">
+                                        <div class="docs-notes-step__item-actions">
+                                            <span class="docs-notes-step__action-icon" (click)="openEditNoteModal(note)" title="Edit">
                                                 <icon icon="Edit"></icon>
                                             </span>
-                                            <span class="action-icon delete" (click)="deleteNote(note)" title="Delete">
+                                            <span class="docs-notes-step__action-icon docs-notes-step__action-icon--delete" (click)="deleteNote(note)" title="Delete">
                                                 <icon icon="Delete"></icon>
                                             </span>
                                         </div>
-                                        <div class="item-content">
-                                            <div class="item-meta">
+                                        <div class="docs-notes-step__item-content">
+                                            <div class="docs-notes-step__item-meta">
                                                 Created: {{ note.CreateDate | date:'short' }}
                                                 @if (note.CreatedByPersonName) {
                                                     by {{ note.CreatedByPersonName }}
                                                 }
                                             </div>
-                                            <div class="note-text">
+                                            <div class="docs-notes-step__note-text">
                                                 {{ note.Note }}
                                             </div>
                                         </div>
@@ -105,7 +105,7 @@
                                 }
                             </div>
                         } @else {
-                            <p class="empty-message"><em>No Notes entered.</em></p>
+                            <p class="docs-notes-step__empty-message"><em>No Notes entered.</em></p>
                         }
                     </div>
                 }

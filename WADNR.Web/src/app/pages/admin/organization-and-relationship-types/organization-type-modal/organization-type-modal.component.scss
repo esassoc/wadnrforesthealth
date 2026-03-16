@@ -1,19 +1,21 @@
-.theme-color-field {
-    display: flex;
-    align-items: flex-end;
+.org-type-modal {
+    &__color-field {
+        display: flex;
+        align-items: flex-end;
 
-    form-field {
-        flex: 1;
-        min-width: 0;
+        form-field {
+            flex: 1;
+            min-width: 0;
 
-        ::ng-deep input {
-            border-top-right-radius: 0 !important;
-            border-bottom-right-radius: 0 !important;
-            border-right: none !important;
+            ::ng-deep input {
+                border-top-right-radius: 0 !important;
+                border-bottom-right-radius: 0 !important;
+                border-right: none !important;
+            }
         }
     }
 
-    .color-picker {
+    &__color-picker {
         width: 2.5rem;
         height: 2rem;
         flex-shrink: 0;

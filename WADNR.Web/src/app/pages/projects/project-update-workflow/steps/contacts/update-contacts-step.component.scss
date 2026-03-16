@@ -1,35 +1,35 @@
-// contacts step styles
+.contacts-step {
+    &__relationship-section {
+        margin-bottom: var(--spacing-200);
+    }
 
-.relationship-type-section {
-    margin-bottom: var(--spacing-200);
-}
+    &__relationship-label {
+        margin-bottom: var(--spacing-100);
+    }
 
-.relationship-type-label {
-    margin-bottom: var(--spacing-100);
-}
+    &__field-hint {
+        color: #999;
+        font-style: italic;
+        font-size: 0.9em;
+        display: flex;
+        align-items: center;
 
-.field-definition-hint {
-    color: #999;
-    font-style: italic;
-    font-size: 0.9em;
-    display: flex;
-    align-items: center;
+        ::ng-deep .field-definition__inline {
+            padding-top: 0 !important;
 
-    ::ng-deep .inline-display {
-        padding-top: 0 !important;
-
-        .fa-question-circle {
-            display: none;
+            .fa-question-circle {
+                display: none;
+            }
         }
     }
-}
 
-.selected-contacts-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    &__selected-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
 
-    .selected-contact-item {
+    &__selected-item {
         display: flex;
         align-items: center;
         gap: var(--spacing-200);

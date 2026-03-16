@@ -16,15 +16,15 @@
             </div>
 
             @if (vm.data) {
-                <div class="readonly-info mb-3">
+                <div class="basics-step__readonly-info mb-3">
                     <div class="grid-12">
                         <div class="g-col-6">
                             <label class="field-label">Project Name</label>
-                            <div class="readonly-value">{{ vm.data.ProjectName }}</div>
+                            <div class="basics-step__readonly-value">{{ vm.data.ProjectName }}</div>
                         </div>
                         <div class="g-col-6">
                             <label class="field-label">Project Type</label>
-                            <div class="readonly-value">{{ vm.data.ProjectTypeName }}</div>
+                            <div class="basics-step__readonly-value">{{ vm.data.ProjectTypeName }}</div>
                         </div>
                     </div>
                 </div>
@@ -86,9 +86,9 @@
 
                     <!-- Additional Optional Fields -->
                     <div class="g-col-12">
-                        <details class="optional-fields-section">
-                            <summary class="optional-fields-toggle">Additional Optional Fields</summary>
-                            <div class="optional-fields-content grid-12">
+                        <details class="basics-step__optional-section">
+                            <summary class="basics-step__optional-toggle">Additional Optional Fields</summary>
+                            <div class="basics-step__optional-content grid-12">
                                 <div class="g-col-6">
                                     <form-field [formControl]="$any(form.controls.expirationDate)" fieldDefinitionName="ExpirationDate" [type]="FormFieldType.Date"> </form-field>
                                 </div>
@@ -123,9 +123,9 @@
                                 <div class="g-col-12">
                                     <label class="field-label">Programs</label>
                                     @if (state.programs && state.programs.length > 0) {
-                                        <ul class="program-list">
+                                        <ul class="basics-step__program-list">
                                             @for (program of state.programs; track program.ProgramID) {
-                                                <li class="program-item">
+                                                <li class="basics-step__program-item">
                                                     <button type="button" class="btn btn-sm btn-link text-danger" (click)="removeProgram(program.ProgramID)" title="Remove">
                                                         <icon icon="Delete"></icon>
                                                     </button>

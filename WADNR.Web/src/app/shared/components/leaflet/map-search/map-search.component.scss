@@ -4,23 +4,23 @@
     padding: 0 0 8px 0;
     margin: 0 0 10px 0;
     width: 100%;
-}
 
-.map-search__row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+    &__row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
 
-.map-search__field {
-    flex: 1 1 420px;
-    min-width: 400px;
-}
+    &__field {
+        flex: 1 1 420px;
+        min-width: 400px;
+    }
 
-.map-search__button {
-    flex: 0 0 auto;
-}
+    &__button {
+        flex: 0 0 auto;
+    }
 
-.map-search__error {
-    margin-top: 6px;
+    &__error {
+        margin-top: 6px;
+    }
 }

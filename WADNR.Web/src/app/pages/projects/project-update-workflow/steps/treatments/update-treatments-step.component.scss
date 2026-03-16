@@ -1,16 +1,18 @@
-.section-header {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-
-    .btn {
+.treatments-step {
+    &__header {
         display: flex;
+        justify-content: flex-end;
         align-items: center;
-        gap: var(--spacing-100);
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-100);
+        }
     }
 }
 
-// Grid action icons
+// Grid action icons (inside ag-grid cell renderer)
 :host ::ng-deep {
     .action-icon {
         display: inline-flex;

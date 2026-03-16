@@ -1,99 +1,117 @@
 // Location detailed step styles
 
-.map-container {
-    border: 1px solid var(--muted);
-    border-radius: var(--border-radius-200);
-    overflow: hidden;
-}
-
-// Shape type badges
-.shape-badge {
-    display: inline-block;
-    padding: 0.2em 0.5em;
-    font-size: 0.75rem;
-    font-weight: 500;
-    border-radius: var(--border-radius-200);
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
-
-    &.shape-polygon {
-        background-color: #cfe2ff;
-        color: #084298;
+.location-detailed-step {
+    &__map-container {
+        border: 1px solid var(--muted);
+        border-radius: var(--border-radius-200);
+        overflow: hidden;
     }
 
-    &.shape-line {
-        background-color: #d1e7dd;
-        color: #0f5132;
-    }
+    // Shape type badges
+    &__shape-badge {
+        display: inline-block;
+        padding: 0.2em 0.5em;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border-radius: var(--border-radius-200);
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
 
-    &.shape-point {
-        background-color: #fff3cd;
-        color: #664d03;
-    }
-}
-
-// Features table
-.features-table {
-    margin-bottom: 0;
-
-    th {
-        background-color: #f8f9fa;
-        font-weight: 600;
-        border-bottom: 2px solid var(--muted);
-    }
-
-    tbody tr {
-        cursor: pointer;
-        transition: background-color 0.15s ease-in-out;
-
-        &:hover {
-            background-color: #f8f9fa;
+        &--polygon {
+            background-color: #cfe2ff;
+            color: #084298;
         }
 
-        &.selected {
+        &--line {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+
+        &--point {
             background-color: #fff3cd;
-            border-left: 3px solid #ffc107;
+            color: #664d03;
+        }
+    }
+
+    // Features table
+    &__features-table {
+        margin-bottom: 0;
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            border-bottom: 2px solid var(--muted);
+        }
+
+        tbody tr {
+            cursor: pointer;
+            transition: background-color 0.15s ease-in-out;
 
             &:hover {
-                background-color: #ffecb5;
+                background-color: #f8f9fa;
             }
-        }
 
-        &.modified {
-            td:nth-child(2) {
-                position: relative;
-                padding-left: var(--spacing-400);
+            &--selected {
+                background-color: #fff3cd;
+                border-left: 3px solid #ffc107;
 
-                &::before {
-                    content: "*";
-                    color: #0d6efd;
-                    font-weight: bold;
-                    position: absolute;
-                    left: var(--spacing-100);
-                    top: 50%;
-                    transform: translateY(-50%);
+                &:hover {
+                    background-color: #ffecb5;
+                }
+            }
+
+            &--modified {
+                td:nth-child(2) {
+                    position: relative;
+                    padding-left: var(--spacing-400);
+
+                    &::before {
+                        content: "*";
+                        color: #0d6efd;
+                        font-weight: bold;
+                        position: absolute;
+                        left: var(--spacing-100);
+                        top: 50%;
+                        transform: translateY(-50%);
+                    }
                 }
             }
         }
+
+        td {
+            vertical-align: middle;
+            padding: var(--spacing-100) var(--spacing-200);
+        }
+
+        td:first-child {
+            text-align: center;
+
+            .fas {
+                margin-right: 0;
+            }
+        }
     }
 
-    td {
-        vertical-align: middle;
-        padding: var(--spacing-100) var(--spacing-200);
-    }
+    // Deleted features table
+    &__deleted-table {
+        margin-bottom: 0;
+        background-color: #f8f9fa;
 
-    td:first-child {
-        text-align: center;
+        tr {
+            &--deleted {
+                opacity: 0.7;
 
-        .fas {
-            margin-right: 0;
+                td {
+                    padding: var(--spacing-200);
+                }
+            }
         }
     }
 }
 
 // Scoped form-field overrides for table cells
 :host ::ng-deep {
-    .features-table {
+    .location-detailed-step__features-table {
         form-field {
             .field {
                 margin-bottom: 0;
@@ -173,20 +191,6 @@
                     }
                 }
             }
-        }
-    }
-}
-
-// Deleted features table
-.deleted-features-table {
-    margin-bottom: 0;
-    background-color: #f8f9fa;
-
-    tr.deleted {
-        opacity: 0.7;
-
-        td {
-            padding: var(--spacing-200);
         }
     }
 }

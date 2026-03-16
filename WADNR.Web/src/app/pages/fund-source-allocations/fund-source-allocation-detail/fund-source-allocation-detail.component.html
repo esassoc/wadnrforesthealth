@@ -18,15 +18,15 @@
                 </div>
                 <div class="card-body">
                     <!-- 1. Allocation Name -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="FundSourceAllocationName" labelOverride="Allocation Name"></field-definition></div>
-                        <div class="basics-field-value">{{ allocation.FundSourceAllocationName || "\u2014" }}</div>
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceAllocationName" labelOverride="Allocation Name"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.FundSourceAllocationName || "\u2014" }}</div>
                     </div>
 
                     <!-- 2. Contributing Organization -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="Organization" labelOverride="Contributing Organization"></field-definition></div>
-                        <div class="basics-field-value">
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="Organization" labelOverride="Contributing Organization"></field-definition></div>
+                        <div class="allocation-detail__field-value">
                             @if (allocation.OrganizationID) {
                                 <a [routerLink]="['/organizations', allocation.OrganizationID]">{{ allocation.OrganizationName }}</a>
                             } @else {
@@ -36,9 +36,9 @@
                     </div>
 
                     <!-- 3. Fund Source Manager -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="FundSourceManager"></field-definition></div>
-                        <div class="basics-field-value">
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceManager"></field-definition></div>
+                        <div class="allocation-detail__field-value">
                             @if (allocation.FundSourceManagerID) {
                                 <person-link [personID]="allocation.FundSourceManagerID" [displayText]="allocation.FundSourceManagerName"></person-link>
                             } @else {
@@ -48,9 +48,9 @@
                     </div>
 
                     <!-- 4. Program Manager -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="ProgramManager"></field-definition></div>
-                        <div class="basics-field-value">
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="ProgramManager"></field-definition></div>
+                        <div class="allocation-detail__field-value">
                             @if (allocation.ProgramManagers?.length) {
                                 @for (person of allocation.ProgramManagers; track person.PersonID; let last = $last) {
                                     <person-link [personID]="person.PersonID" [displayText]="person.FullName"></person-link>
@@ -65,21 +65,21 @@
                     </div>
 
                     <!-- 5. Status -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="FundSourceStatus"></field-definition></div>
-                        <div class="basics-field-value">{{ allocation.FundSourceStatusName || "\u2014" }}</div>
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceStatus"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.FundSourceStatusName || "\u2014" }}</div>
                     </div>
 
                     <!-- 6. Type -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="FundSourceType"></field-definition></div>
-                        <div class="basics-field-value">{{ allocation.FundSourceTypeName || "\u2014" }}</div>
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceType"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.FundSourceTypeName || "\u2014" }}</div>
                     </div>
 
                     <!-- 7. Fund Source Number -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="FundSourceNumber"></field-definition></div>
-                        <div class="basics-field-value">
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceNumber"></field-definition></div>
+                        <div class="allocation-detail__field-value">
                             @if (allocation.FundSourceID) {
                                 <a [routerLink]="['/fund-sources', allocation.FundSourceID]">{{ allocation.FundSourceNumber }}</a>
                             } @else {
@@ -89,27 +89,27 @@
                     </div>
 
                     <!-- 8. Program Index - Project Code -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="ProgramIndexProjectCode"></field-definition></div>
-                        <div class="basics-field-value">{{ formatPipc(allocation) }}</div>
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="ProgramIndexProjectCode"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ formatPipc(allocation) }}</div>
                     </div>
 
                     <!-- 9. Federal Assistance Listing -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="CFDA" labelOverride="Federal Assistance Listing"></field-definition></div>
-                        <div class="basics-field-value">{{ allocation.CFDANumber || "\u2014" }}</div>
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="CFDA" labelOverride="Federal Assistance Listing"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.CFDANumber || "\u2014" }}</div>
                     </div>
 
                     <!-- 10. Division -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="Division"></field-definition></div>
-                        <div class="basics-field-value">{{ allocation.DivisionName || "\u2014" }}</div>
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="Division"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.DivisionName || "\u2014" }}</div>
                     </div>
 
                     <!-- 11. DNR Upland Region -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="DNRUplandRegion"></field-definition></div>
-                        <div class="basics-field-value">
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="DNRUplandRegion"></field-definition></div>
+                        <div class="allocation-detail__field-value">
                             @if (allocation.DNRUplandRegionID) {
                                 <a [routerLink]="['/dnr-upland-regions', allocation.DNRUplandRegionID]">{{ allocation.DNRUplandRegionName }}</a>
                             } @else {
@@ -119,43 +119,43 @@
                     </div>
 
                     <!-- 12. Allocation Amount -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="AllocationAmount"></field-definition></div>
-                        <div class="basics-field-value">{{ formatCurrency(allocation.AllocationAmount) }}</div>
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="AllocationAmount"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ formatCurrency(allocation.AllocationAmount) }}</div>
                     </div>
 
                     <!-- 13. Allocation Current Balance -->
                     @if (isUserLoggedIn$ | async) {
-                        <div class="basics-field-row">
-                            <div class="basics-field-label">
+                        <div class="allocation-detail__field-row">
+                            <div class="allocation-detail__field-label">
                                 <field-definition fieldDefinition="FundSourceAllocationCurrentBalance" labelOverride="Allocation Current Balance"></field-definition>
                             </div>
-                            <div class="basics-field-value">{{ formatCurrency(allocationCurrentBalance$ | async) }}</div>
+                            <div class="allocation-detail__field-value">{{ formatCurrency(allocationCurrentBalance$ | async) }}</div>
                         </div>
                     }
 
                     <!-- 14. Start Date -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="FundSourceStartDate"></field-definition></div>
-                        <div class="basics-field-value">{{ allocation.StartDate | localDate }}</div>
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceStartDate"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.StartDate | localDate }}</div>
                     </div>
 
                     <!-- 15. End Date -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="FundSourceEndDate"></field-definition></div>
-                        <div class="basics-field-value">{{ allocation.EndDate | localDate }}</div>
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceEndDate"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.EndDate | localDate }}</div>
                     </div>
 
                     <!-- 16. Federal Job Code -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="FederalFundCode" labelOverride="Federal Job Code"></field-definition></div>
-                        <div class="basics-field-value">{{ allocation.FederalFundCodeName || "\u2014" }}</div>
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FederalFundCode" labelOverride="Federal Job Code"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.FederalFundCodeName || "\u2014" }}</div>
                     </div>
 
                     <!-- 17. Priority -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="FundSourceAllocationPriority"></field-definition></div>
-                        <div class="basics-field-value">
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceAllocationPriority"></field-definition></div>
+                        <div class="allocation-detail__field-value">
                             @if (allocation.FundSourceAllocationPriorityName) {
                                 <span [style.color]="allocation.FundSourceAllocationPriorityColor">{{ allocation.FundSourceAllocationPriorityName }}</span>
                             } @else {
@@ -165,21 +165,21 @@
                     </div>
 
                     <!-- 18. Fund FSPs? -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="FundSourceAllocationFundFSPs"></field-definition></div>
-                        <div class="basics-field-value">{{ formatBoolean(allocation.HasFundFSPs) }}</div>
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceAllocationFundFSPs"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ formatBoolean(allocation.HasFundFSPs) }}</div>
                     </div>
 
                     <!-- 19. Source -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="FundSourceAllocationSource"></field-definition></div>
-                        <div class="basics-field-value">{{ allocation.FundSourceAllocationSourceName || "\u2014" }}</div>
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceAllocationSource"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.FundSourceAllocationSourceName || "\u2014" }}</div>
                     </div>
 
                     <!-- 20. Likely To Use -->
-                    <div class="basics-field-row">
-                        <div class="basics-field-label"><field-definition fieldDefinition="FundSourceAllocationLikelyToUse"></field-definition></div>
-                        <div class="basics-field-value">
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceAllocationLikelyToUse"></field-definition></div>
+                        <div class="allocation-detail__field-value">
                             @if (allocation.LikelyToUse === true) {
                                 @if (allocation.LikelyToUsePeople?.length) {
                                     @for (person of allocation.LikelyToUsePeople; track person.PersonID; let last = $last) {
@@ -218,12 +218,12 @@
                         }
                         @if (files.length) {
                             @for (file of files; track file.FundSourceAllocationFileResourceID) {
-                                <div class="file-entry">
-                                    <div class="file-entry__main">
+                                <div class="allocation-detail__file">
+                                    <div class="allocation-detail__file-main">
                                         <a [href]="apiUrl + '/file-resources/' + file.FileResourceGUID" target="_blank">{{ file.DisplayName || file.OriginalBaseFilename }}</a>
-                                        <span class="file-entry__meta">({{ file.FileResourceMimeTypeName }}) &mdash; {{ file.CreateDate | localDate }}</span>
+                                        <span class="allocation-detail__file-meta">({{ file.FileResourceMimeTypeName }}) &mdash; {{ file.CreateDate | localDate }}</span>
                                         @if (canManageFundSources$ | async) {
-                                            <span class="file-entry__actions">
+                                            <span class="allocation-detail__file-actions">
                                                 <a
                                                     href="#"
                                                     class="ml-2"
@@ -242,7 +242,7 @@
                                         }
                                     </div>
                                     @if (file.Description) {
-                                        <div class="file-entry__description">{{ file.Description }}</div>
+                                        <div class="allocation-detail__file-description">{{ file.Description }}</div>
                                     }
                                 </div>
                             }
@@ -420,8 +420,8 @@
                     @if (notes$ | async; as notes) {
                         @if (notes.length) {
                             @for (note of notes; track note.FundSourceAllocationNoteID) {
-                                <div class="note-entry">
-                                    <div class="note-entry__header">
+                                <div class="allocation-detail__note">
+                                    <div class="allocation-detail__note-header">
                                         @if (canManageFundSources$ | async) {
                                             <a
                                                 href="#"
@@ -442,7 +442,7 @@
                                         }
                                         <span class="ml-2">Created: {{ formatDateTime(note.CreatedDate) }} {{ note.CreatedByPersonName }}</span>
                                     </div>
-                                    <div class="note-entry__body">Note: {{ note.Note }}</div>
+                                    <div class="allocation-detail__note-body">Note: {{ note.Note }}</div>
                                 </div>
                             }
                         } @else {
@@ -461,8 +461,8 @@
                         @if (internalNotes$ | async; as internalNotes) {
                             @if (internalNotes.length) {
                                 @for (note of internalNotes; track note.FundSourceAllocationNoteInternalID) {
-                                    <div class="note-entry">
-                                        <div class="note-entry__header">
+                                    <div class="allocation-detail__note">
+                                        <div class="allocation-detail__note-header">
                                             <a
                                                 href="#"
                                                 (click)="
@@ -481,7 +481,7 @@
                                             ></a>
                                             <span class="ml-2">Created: {{ formatDateTime(note.CreatedDate) }} {{ note.CreatedByPersonName }}</span>
                                         </div>
-                                        <div class="note-entry__body">Note: {{ note.Note }}</div>
+                                        <div class="allocation-detail__note-body">Note: {{ note.Note }}</div>
                                     </div>
                                 }
                             } @else {
@@ -504,7 +504,7 @@
                         <div class="card-body">
                             @if (changeLogs.length) {
                                 @for (log of changeLogs; track log.FundSourceAllocationChangeLogID) {
-                                    <div class="change-log-entry">
+                                    <div class="allocation-detail__change-log">
                                         <div>Created: {{ formatDateTime(log.ChangeDate) }} {{ log.ChangePersonName }}</div>
                                         <div>Old Amount: {{ formatCurrency(log.OldValue) }}</div>
                                         <div>New Amount: {{ formatCurrency(log.NewValue) }}</div>

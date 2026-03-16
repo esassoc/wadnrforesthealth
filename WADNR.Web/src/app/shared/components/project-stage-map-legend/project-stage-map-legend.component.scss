@@ -2,11 +2,11 @@
     display: block;
 }
 
-:host-context(.map-legend-row) .map-legend {
+:host-context(.map-legend-row) .stage-legend {
     margin-top: var(--spacing-200);
 }
 
-.map-legend {
+.stage-legend {
     margin-top: var(--spacing-300);
     display: flex;
     align-items: center;
@@ -18,7 +18,7 @@
         font-size: 0.95rem;
     }
 
-    .legend-list {
+    &__list {
         list-style: none;
         padding: 0;
         margin: 0;
@@ -27,7 +27,7 @@
         gap: var(--spacing-200);
     }
 
-    .legend-item {
+    &__item {
         display: flex;
         align-items: center;
         gap: var(--spacing-200);
@@ -35,7 +35,7 @@
         border-radius: 4px;
     }
 
-    .legend-label {
+    &__label {
         font-size: 0.88rem;
         color: #222;
     }

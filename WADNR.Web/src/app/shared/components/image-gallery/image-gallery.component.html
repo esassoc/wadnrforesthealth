@@ -1,17 +1,17 @@
 @if (images.length > 0) {
-    <div class="photo-gallery">
+    <div class="image-gallery">
         @for (image of images; track image.imageID) {
             <div
-                class="photo-item"
-                [class.is-key-photo]="image.isKeyPhoto"
+                class="image-gallery__item"
+                [class.image-gallery__item--key-photo]="image.isKeyPhoto"
                 (click)="openPreview(image)">
                 <!-- Photo Icons (edit/delete) -->
                 @if (canEdit) {
-                    <div class="photo-icons">
-                        <span class="edit-icon" (click)="edit.emit(image); $event.stopPropagation()" title="Edit">
+                    <div class="image-gallery__icons">
+                        <span class="image-gallery__icon--edit" (click)="edit.emit(image); $event.stopPropagation()" title="Edit">
                             <icon icon="Edit"></icon>
                         </span>
-                        <span class="delete-icon" (click)="delete.emit(image); $event.stopPropagation()" title="Delete">
+                        <span class="image-gallery__icon--delete" (click)="delete.emit(image); $event.stopPropagation()" title="Delete">
                             <icon icon="Delete"></icon>
                         </span>
                     </div>
@@ -19,23 +19,23 @@
 
                 <!-- Key Photo Icon (right side) -->
                 @if (image.isKeyPhoto) {
-                    <div class="key-photo-icon" title="Key Photo">
+                    <div class="image-gallery__key-icon" title="Key Photo">
                         <icon icon="Key"></icon>
                     </div>
                 } @else if (canEdit) {
-                    <div class="key-photo-icon set-key-photo" title="Set as Key Photo" (click)="setKeyPhoto.emit(image); $event.stopPropagation()">
+                    <div class="image-gallery__key-icon image-gallery__key-icon--settable" title="Set as Key Photo" (click)="setKeyPhoto.emit(image); $event.stopPropagation()">
                         <icon icon="Key"></icon>
                     </div>
                 }
 
                 <!-- Photo Thumbnail -->
-                <div class="photo-thumbnail">
+                <div class="image-gallery__thumbnail">
                     <img [src]="getPhotoUrl(image)" [alt]="image.caption || 'Photo'" />
                 </div>
 
                 <!-- Photo Caption -->
                 @if (image.caption) {
-                    <div class="photo-caption">{{ image.caption }}</div>
+                    <div class="image-gallery__caption">{{ image.caption }}</div>
                 }
             </div>
         }

@@ -1,16 +1,16 @@
 <page-header pageTitle="Project Map" [customRichTextTypeID]="customRichTextTypeID"></page-header>
 
-<div class="page-body project-map">
+<div class="page-body projects-map">
     @if (domains$ | async; as domains) {
     <form [formGroup]="form">
-        <div class="map-controls">
-            <div class="controls-row controls-row--primary">
-                <div class="control-group control-group--inline">
+        <div class="projects-map__map-controls">
+            <div class="projects-map__controls-row projects-map__controls-row--primary">
+                <div class="projects-map__control-group projects-map__control-group--inline">
                     <label><strong>Color Projects by:</strong></label>
                     <ng-select #colorBySelect class="lt-panel-w-280" [items]="colorByOptions" bindLabel="Label" bindValue="Value" formControlName="colorBy" [clearable]="false" (open)="onDropdownOpen(colorBySelect)"> </ng-select>
                 </div>
 
-                <div class="control-group control-group--inline">
+                <div class="projects-map__control-group projects-map__control-group--inline">
                     <label><strong>Filter Projects by:</strong></label>
                     <ng-select #filterTypeSelect class="lt-panel-w-320" [items]="filterTypeOptions" bindLabel="Label" bindValue="Value" formControlName="filterType" [clearable]="false" (open)="onDropdownOpen(filterTypeSelect)">
                         <ng-template ng-option-tmp let-item="item" let-index="index" let-active="active" let-selected="selected">
@@ -24,17 +24,17 @@
                     </ng-select>
                 </div>
 
-                <div class="control-group control-group--values control-group--inline">
+                <div class="projects-map__control-group projects-map__control-group--values projects-map__control-group--inline">
                     @if (filterValueOptions$ | async; as filterValueOptions) {
                     <ng-select #filterValuesSelect class="lt-panel-w-540" [items]="filterValueOptions" bindLabel="Label" bindValue="Value" [compareWith]="compareFilterValues" multiple formControlName="filterValues" [closeOnSelect]="false" [searchable]="false" [clearOnBackspace]="false" (open)="onDropdownOpen(filterValuesSelect)">
                         <ng-template ng-header-tmp>
-                            <div class="ng-select-header-actions">
+                            <div class="projects-map__select-header-actions">
                                 <button type="button" class="btn btn-link" (click)="selectAllFilterValues(); $event.stopPropagation()">Select all</button>
                                 <button type="button" class="btn btn-link" (click)="deselectAllFilterValues(); $event.stopPropagation()">Deselect all</button>
                             </div>
                         </ng-template>
                         <ng-template ng-option-tmp let-item="item" let-item$="item$">
-                            <div class="ng-option-with-checkbox">
+                            <div class="projects-map__option-with-checkbox">
                                 <input type="checkbox" [checked]="item$.selected" />
                                 <span class="ng-option-label">{{ item.Label }}</span>
                             </div>
@@ -43,11 +43,11 @@
                     </ng-select>
                     }
                 </div>
-                <div class="control-group control-group--inline" style="position: relative">
-                    <a role="button" class="btn btn-link no-simple-location-toggle__button" (click)="toggleSharePopup()">Link to this map</a>
+                <div class="projects-map__control-group projects-map__control-group--inline" style="position: relative">
+                    <a role="button" class="btn btn-link projects-map__no-simple-location-toggle" (click)="toggleSharePopup()">Link to this map</a>
                     @if(showSharePopup) {
                     <div
-                        class="share-popup"
+                        class="projects-map__share-popup"
                         style="
                             position: absolute;
                             top: 28px;
@@ -72,26 +72,26 @@
                 </div>
             </div>
 
-            <div class="controls-row controls-row--secondary">
-                <div class="control-group control-group--inline control-group--toggles">
+            <div class="projects-map__controls-row projects-map__controls-row--secondary">
+                <div class="projects-map__control-group projects-map__control-group--inline projects-map__control-group--toggles">
                     <label><strong>Cluster Project Locations</strong></label>
                     <input type="checkbox" formControlName="cluster" />
                 </div>
             </div>
 
-            <div class="controls-row controls-row--secondary">
+            <div class="projects-map__controls-row projects-map__controls-row--secondary">
                 <map-search *ngIf="mapIsReady" [map]="map"></map-search>
             </div>
         </div>
     </form>
-    <div class="map-and-list" [loadingSpinner]="{ isLoading: !(projectPoints$ | async) }">
-        <div class="map-area" [class.map-area--with-list]="showProjectWithNoSimpleLocationList">
-            <div class="map-legend-row">
+    <div class="projects-map__map-and-list" [loadingSpinner]="{ isLoading: !(projectPoints$ | async) }">
+        <div class="projects-map__map-area" [class.projects-map__map-area--with-list]="showProjectWithNoSimpleLocationList">
+            <div class="projects-map__map-legend-row">
                 <project-stage-map-legend />
 
                 <button
                     type="button"
-                    class="btn btn-link no-simple-location-toggle__button"
+                    class="btn btn-link projects-map__no-simple-location-toggle"
                     (click)="toggleProjectsWithNoSimpleLocationList()"
                     aria-expanded="{{ showProjectWithNoSimpleLocationList }}">
                     {{ showProjectWithNoSimpleLocationList ? "Hide Projects with no Simple Location" : "Show Projects with no Simple Location" }}
@@ -131,24 +131,24 @@
 
         <!-- Sliding side panel for no-simple-location projects (replaces old aside.no-simple-location-list) -->
         <aside
-            class="no-simple-location-side-panel"
-            [class.no-simple-location-side-panel--open]="showProjectWithNoSimpleLocationList"
+            class="projects-map__side-panel"
+            [class.projects-map__side-panel--open]="showProjectWithNoSimpleLocationList"
             aria-hidden="{{ !showProjectWithNoSimpleLocationList }}">
-            <div class="no-simple-location-side-panel__header">Some Projects do not have a simple location and are not represented by a point on the map, but are listed here.</div>
+            <div class="projects-map__side-panel-header">Some Projects do not have a simple location and are not represented by a point on the map, but are listed here.</div>
 
-            <div class="no-simple-location-side-panel__body">
+            <div class="projects-map__side-panel-body">
                 @if (noSimpleLocationTree$ | async; as treeNodes) {
-                <div class="no-simple-location-fancytree-container">
+                <div class="projects-map__tree-container">
                     <simple-tree [nodes]="treeNodes" [initialExpandedDepth]="1"></simple-tree>
                 </div>
                 } @else {
-                <div class="no-simple-location-side-panel__empty">No no-simple-location projects found.</div>
+                <div class="projects-map__side-panel-empty">No no-simple-location projects found.</div>
                 }
             </div>
         </aside>
     </div>
     } @else {
-    <div class="map-controls">
+    <div class="projects-map__map-controls">
         <p>Loading filter lists...</p>
     </div>
     }

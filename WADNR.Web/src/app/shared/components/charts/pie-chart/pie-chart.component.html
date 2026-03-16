@@ -1,24 +1,24 @@
-<div [loadingSpinner]="{ isLoading }" class="chartSection">
-    <div [id]="chartID" class="pie-chart-root" [style.height.px]="height">
+<div [loadingSpinner]="{ isLoading }" class="pie-chart__section">
+    <div [id]="chartID" class="pie-chart__root" [style.height.px]="height">
         @if (centerTotal !== null) {
-        <div class="pie-center-overlay">
-            <div class="pie-center-value">{{ centerTotalFormatted }}</div>
+        <div class="pie-chart__center-overlay">
+            <div class="pie-chart__center-value">{{ centerTotalFormatted }}</div>
         </div>
         }
     </div>
 
     @if(showLegend) {
-    <div class="chartLegend">
-        <div class="swatches" role="list">
-            <div class="pie-legend">
+    <div class="pie-chart__legend-wrapper">
+        <div class="pie-chart__swatches" role="list">
+            <div class="pie-chart__legend">
                 @for (kv of colors | defaultOrderKeyvalue; track kv) {
-                <div class="pie-legend-row">
-                    <button type="button" class="swatch" [style.background]="kv.value" (click)="toggleGroup(kv.key)">
-                        <span class="swatch-inner" [class.disabled]="hiddenGroups.has(kv.key)"></span>
+                <div class="pie-chart__legend-row">
+                    <button type="button" class="pie-chart__swatch" [style.background]="kv.value" (click)="toggleGroup(kv.key)">
+                        <span class="pie-chart__swatch-inner" [class.pie-chart__swatch-inner--disabled]="hiddenGroups.has(kv.key)"></span>
                     </button>
-                    <button class="legend-label" (click)="toggleGroup(kv.key)">
-                        <span class="legend-text">{{ kv.key }}:</span>
-                        <span class="legend-value">{{ formatLegendValue(legendValues.get(kv.key)) }}</span>
+                    <button class="pie-chart__legend-label" (click)="toggleGroup(kv.key)">
+                        <span class="pie-chart__legend-text">{{ kv.key }}:</span>
+                        <span class="pie-chart__legend-value">{{ formatLegendValue(legendValues.get(kv.key)) }}</span>
                     </button>
                 </div>
                 }

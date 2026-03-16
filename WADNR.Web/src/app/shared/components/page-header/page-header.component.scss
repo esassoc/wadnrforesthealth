@@ -1,19 +1,21 @@
 @use "/src/scss/abstracts" as *;
 
-.page-header-flex {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: var(--spacing-900);
-}
+.page-header {
+    &__flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: var(--spacing-900);
+    }
 
-.page-header-icon {
-    color: var(--blue-light);
-    width: 1.5rem;
-}
+    &__icon {
+        color: var(--blue-light);
+        width: 1.5rem;
+    }
 
-.copy {
-    @include desktop-medium {
-        padding-top: var(--spacing-400);
+    &__copy {
+        @include desktop-medium {
+            padding-top: var(--spacing-400);
+        }
     }
 }

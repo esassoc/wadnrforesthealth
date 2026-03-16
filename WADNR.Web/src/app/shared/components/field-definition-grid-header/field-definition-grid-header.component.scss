@@ -4,24 +4,26 @@
     width: 100%;
 }
 
-.custom-header-label {
-    // margin-left: 5px;
-}
+.field-def-header {
+    &__label {
+        // margin-left: 5px;
+    }
 
-.filter-indicator {
-    color: var(--wadnr-orange);
-    font-size: var(--font-size);
-}
+    &__filter-indicator {
+        color: var(--wadnr-orange);
+        font-size: var(--font-size);
+    }
 
-.hidden {
-    display: none;
-}
+    &__hidden {
+        display: none;
+    }
 
-.sort-buttons {
-    margin: 0 5px;
-}
+    &__sort-buttons {
+        margin: 0 5px;
+    }
 
-.custom-filter-button {
-    margin-right: 6px;
-    font-size: 0.6rem;
+    &__filter-button {
+        margin-right: 6px;
+        font-size: 0.6rem;
+    }
 }

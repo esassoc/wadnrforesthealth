@@ -1,13 +1,15 @@
-.field-label {
-    font-weight: bold;
-    text-align: right;
-}
+.org-detail {
+    &__field-label {
+        font-weight: bold;
+        text-align: right;
+    }
 
-.system-text {
-    color: #6c757d;
-    font-style: italic;
-}
+    &__system-text {
+        color: #6c757d;
+        font-style: italic;
+    }
 
-.wrap-long-string {
-    word-break: break-all;
+    &__wrap-text {
+        word-break: break-all;
+    }
 }

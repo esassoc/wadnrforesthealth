@@ -1,9 +1,11 @@
-.selected-items-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.interaction-event-modal {
+    &__selected-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
 
-    .selected-item {
+    &__selected-item {
         display: flex;
         align-items: center;
         gap: var(--spacing-200);
@@ -20,10 +22,10 @@
             }
         }
     }
-}
 
-.required-note {
-    font-style: italic;
-    color: #666;
-    font-size: 0.875rem;
+    &__required-note {
+        font-style: italic;
+        color: #666;
+        font-size: 0.875rem;
+    }
 }

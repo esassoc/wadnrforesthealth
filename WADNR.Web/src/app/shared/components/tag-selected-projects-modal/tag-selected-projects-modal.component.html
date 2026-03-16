@@ -20,7 +20,7 @@
     <form-field [formControl]="form.controls.TagName" fieldLabel="Tag Name" [type]="FormFieldType.Text" [required]="true" placeholder="Tag name"></form-field>
     @if (filteredTags$ | async; as tags) {
       @if (tags.length) {
-        <ul class="tag-suggestions">
+        <ul class="tag-projects-modal__suggestions">
           @for (tag of tags; track tag.TagID) {
             <li (click)="selectTag(tag.TagName)">
               {{ tag.TagName }} <span class="text-muted">({{ tag.ProjectCount }} projects)</span>

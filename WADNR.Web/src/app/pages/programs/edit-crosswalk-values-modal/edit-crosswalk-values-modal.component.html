@@ -14,7 +14,7 @@
     }
 
     @if (notFlattenedGroups.length > 0) {
-        <div class="not-flattened-container">
+        <div class="crosswalk-modal__container">
             <strong>Import is NOT Flattened fields</strong>
             @for (group of notFlattenedGroups; track group.fieldDefinitionID; let last = $last) {
                 <ng-container *ngTemplateOutlet="fieldGroupTemplate; context: { $implicit: group }"></ng-container>
@@ -33,7 +33,7 @@
 
 <ng-template #fieldGroupTemplate let-group>
     <h4>{{ group.label }}</h4>
-    <div class="grid-12 mb-2 ai-fe add-row">
+    <div class="grid-12 mb-2 ai-fe crosswalk-modal__add-row">
         <div class="g-col-4">
             <form-field [formControl]="group.newSourceValue" [type]="FormFieldType.Text" label="Source Value" placeholder="Source value"></form-field>
         </div>

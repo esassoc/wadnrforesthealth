@@ -1,21 +1,23 @@
-.theme-color-row {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-200);
-}
+.classification-detail {
+    &__color-row {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-200);
+    }
 
-.theme-color-swatch {
-    width: var(--type-size-200);
-    height: var(--type-size-200);
-    border: 1px solid currentColor;
-    border-radius: 2px;
-    display: inline-block;
-    flex: 0 0 auto;
-}
+    &__color-swatch {
+        width: var(--type-size-200);
+        height: var(--type-size-200);
+        border: 1px solid currentColor;
+        border-radius: 2px;
+        display: inline-block;
+        flex: 0 0 auto;
+    }
 
-.key-image {
-    max-width: 300px;
-    max-height: 200px;
-    border: 1px solid rgba(black, 0.15);
-    border-radius: var(--border-radius-200);
+    &__key-image {
+        max-width: 300px;
+        max-height: 200px;
+        border: 1px solid rgba(black, 0.15);
+        border-radius: var(--border-radius-200);
+    }
 }

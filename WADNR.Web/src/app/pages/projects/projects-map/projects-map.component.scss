@@ -1,5 +1,5 @@
-.project-map {
-    .map-wrapper {
+.projects-map {
+    &__map-wrapper {
         max-width: 1200px;
         margin: 0 auto;
         project-map,
@@ -9,65 +9,77 @@
         }
     }
 
-    .map-legend-row {
+    &__map-legend-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: var(--spacing-300);
         flex-wrap: wrap;
+
+        .projects-map__no-simple-location-toggle {
+            margin-top: var(--spacing-200);
+            margin-left: auto;
+            text-align: right;
+        }
     }
 
-    .map-legend-row .no-simple-location-toggle__button {
-        margin-top: var(--spacing-200);
-        margin-left: auto;
-        text-align: right;
+    &__map-controls {
+        // semantic wrapper for controls
     }
 
-    .controls-row {
+    &__controls-row {
         display: flex;
         gap: var(--spacing-400);
         align-items: center;
         flex-wrap: wrap;
+
+        &--primary {
+            align-items: flex-start;
+        }
+
+        &--secondary {
+            margin-top: var(--spacing-200);
+            align-items: center;
+        }
     }
-    .controls-row--primary {
-        align-items: flex-start;
-    }
-    .controls-row--secondary {
-        margin-top: var(--spacing-200);
-        align-items: center;
-    }
-    .control-group {
+
+    &__control-group {
         display: flex;
         flex-direction: column;
         min-width: 200px;
-    }
-    .control-group--inline {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: var(--spacing-200);
-    }
-    .control-group--inline label {
-        white-space: nowrap;
-        margin: 0;
-        flex: 0 0 auto;
-    }
-    .control-group--inline ng-select {
-        flex: 1 1 200px;
-        min-width: 160px;
-        max-width: 320px;
-    }
-    .control-group--values {
-        min-width: 320px;
-        flex: 0 0 320px;
-    }
-    .control-group--toggles {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-200);
+
+        &--inline {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: var(--spacing-200);
+
+            label {
+                white-space: nowrap;
+                margin: 0;
+                flex: 0 0 auto;
+            }
+
+            ng-select {
+                flex: 1 1 200px;
+                min-width: 160px;
+                max-width: 320px;
+            }
+        }
+
+        &--values {
+            min-width: 320px;
+            flex: 0 0 320px;
+        }
+
+        &--toggles {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-200);
+        }
     }
 
-    .no-simple-location-toggle__button {
+    &__no-simple-location-toggle {
         font-size: 0.9rem;
         padding: 0.25rem 0.5rem;
         color: #0066cc;
@@ -75,12 +87,13 @@
         border: none;
         cursor: pointer;
         text-decoration: underline;
-    }
-    .no-simple-location-toggle__button:hover {
-        color: #004a99;
+
+        &:hover {
+            color: #004a99;
+        }
     }
 
-    .share-popup {
+    &__share-popup {
         border-radius: 6px;
         padding: 10px;
         background: var(--white);
@@ -88,37 +101,41 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
-    .filter-select-with-actions {
+    &__filter-select-with-actions {
         display: flex;
         align-items: center;
         gap: var(--spacing-200);
     }
-    .filter-select-actions {
+
+    &__filter-select-actions {
         display: flex;
         gap: var(--spacing-100);
     }
+
     /* ng-select header actions inside dropdown */
-    .ng-select-header-actions {
+    &__select-header-actions {
         display: flex;
         gap: var(--spacing-200);
         padding: var(--spacing-100) var(--spacing-200);
-    }
-    .ng-select-header-actions .btn-link {
-        font-size: 0.85rem;
-        padding: 0.15rem 0.4rem;
-        border: none;
-        background: transparent;
-        cursor: pointer;
+
+        .btn-link {
+            font-size: 0.85rem;
+            padding: 0.15rem 0.4rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+        }
     }
 
-    .ng-option-with-checkbox {
+    &__option-with-checkbox {
         display: flex;
         align-items: center;
         gap: var(--spacing-200);
     }
+
     /* Stronger, more specific rules to override other checkbox sizing in the app */
-    .ng-select .ng-option .ng-option-with-checkbox input[type="checkbox"],
-    .ng-select .ng-option-with-checkbox input[type="checkbox"] {
+    .ng-select .ng-option .projects-map__option-with-checkbox input[type="checkbox"],
+    .ng-select .projects-map__option-with-checkbox input[type="checkbox"] {
         -webkit-appearance: checkbox;
         appearance: checkbox;
         box-sizing: border-box;
@@ -165,22 +182,20 @@
     }
 
     /* Remove the default blue accent for checkboxes and use a subtle neutral color when checked */
-    .ng-select .ng-option-with-checkbox input[type="checkbox"] {
+    .ng-select .projects-map__option-with-checkbox input[type="checkbox"] {
         /* modern browsers */
         accent-color: #666 !important;
         /* fallback styling for browsers not supporting accent-color */
         background-color: var(--white) !important;
         border: 1px solid #cfcfcf !important;
     }
-    .ng-select .ng-option-with-checkbox input[type="checkbox"]:checked {
+    .ng-select .projects-map__option-with-checkbox input[type="checkbox"]:checked {
         background-color: #666 !important;
         border-color: #666 !important;
     }
-}
 
-/* Sliding no-simple-location side panel styles */
-.project-map {
-    .map-and-list {
+    /* Sliding no-simple-location side panel styles */
+    &__map-and-list {
         display: flex;
         /* reduce gap so panel and map sit closer */
         gap: var(--spacing-200);
@@ -192,17 +207,17 @@
         align-items: flex-start;
     }
 
-    .map-area {
+    &__map-area {
         flex: 1 1 auto;
         transition: margin-right 0.25s ease;
+
+        /* avoid adding a large extra margin; let the panel sit next to the map so spacing is controlled by flex gap */
+        &--with-list {
+            margin-right: 0;
+        }
     }
 
-    /* avoid adding a large extra margin; let the panel sit next to the map so spacing is controlled by flex gap */
-    .map-area.map-area--with-list {
-        margin-right: 0;
-    }
-
-    .no-simple-location-side-panel {
+    &__side-panel {
         position: relative;
         width: 0;
         /* increase max width so the panel can be wider when opened */
@@ -222,14 +237,14 @@
         height: auto;
         align-self: stretch;
         max-height: 830px;
+
+        &--open {
+            width: 400px;
+            opacity: 1;
+        }
     }
 
-    .no-simple-location-side-panel--open {
-        width: 400px;
-        opacity: 1;
-    }
-
-    .no-simple-location-side-panel__header {
+    &__side-panel-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -238,7 +253,7 @@
         font-size: 14px;
     }
 
-    .no-simple-location-side-panel__body {
+    &__side-panel-body {
         padding: var(--spacing-200) var(--spacing-300);
         /* take available panel height and scroll internally when content exceeds it */
         flex: 1 1 auto;
@@ -247,18 +262,11 @@
         min-height: 0;
     }
 
-    .no-simple-location-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
+    &__side-panel-empty {
+        // empty state text
     }
 
-    .no-simple-location-list__item {
-        padding: var(--spacing-200) 0;
-        border-bottom: 1px solid #f3f3f3;
-    }
-
-    .no-simple-location-side-panel__close {
+    &__side-panel-close {
         font-size: 1.25rem;
         line-height: 1;
         border: none;
@@ -266,20 +274,37 @@
         cursor: pointer;
     }
 
+    &__no-simple-location-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__no-simple-location-list-item {
+        padding: var(--spacing-200) 0;
+        border-bottom: 1px solid #f3f3f3;
+    }
+
+    &__tree-container {
+        // tree wrapper
+    }
+
     @media (max-width: 800px) {
-        .no-simple-location-side-panel {
+        .projects-map__side-panel {
             position: absolute;
             top: 0;
             right: 0;
             height: 100%;
             z-index: 20;
             width: 0;
+
+            &--open {
+                width: 92%;
+                max-width: 500px;
+            }
         }
-        .no-simple-location-side-panel--open {
-            width: 92%;
-            max-width: 500px;
-        }
-        .map-area.map-area--with-list {
+
+        .projects-map__map-area--with-list {
             margin-right: 0;
         }
     }

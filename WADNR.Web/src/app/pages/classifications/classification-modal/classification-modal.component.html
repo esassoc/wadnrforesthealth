@@ -28,7 +28,7 @@
             placeholder="Enter goal statement">
         </form-field>
 
-        <div class="theme-color-field">
+        <div class="classification-modal__color-field">
             <form-field
                 [formControl]="form.controls.ThemeColor"
                 fieldLabel="Theme Color"
@@ -36,15 +36,15 @@
                 placeholder="#RRGGBB">
             </form-field>
             <input type="color"
-                class="color-picker"
+                class="classification-modal__color-picker"
                 [value]="form.controls.ThemeColor.value || '#000000'"
                 (input)="form.controls.ThemeColor.setValue($any($event.target).value)">
         </div>
 
         @if (existingImageGUID && !keyImageControl.value) {
-        <div class="existing-image">
-            <label class="field-label">Current Key Image</label>
-            <img [src]="apiUrl + '/file-resources/' + existingImageGUID" alt="Current key image" class="key-image-preview">
+        <div class="classification-modal__existing-image">
+            <label class="classification-modal__field-label">Current Key Image</label>
+            <img [src]="apiUrl + '/file-resources/' + existingImageGUID" alt="Current key image" class="classification-modal__image-preview">
         </div>
         }
 

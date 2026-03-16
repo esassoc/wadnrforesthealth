@@ -1,28 +1,28 @@
-<div class="fc-wrap eip-overview-bg" aria-roledescription="carousel" (mouseenter)="pause()" (mouseleave)="resume()">
+<div class="featured-carousel__wrap eip-overview-bg" aria-roledescription="carousel" (mouseenter)="pause()" (mouseleave)="resume()">
     @if (projects?.length) { @let p = projects[index()];
-    <div class="fc-slide" [@slide]="dir()" [attr.aria-live]="hasMany ? 'polite' : 'off'" [attr.id]="ariaSlideId()">
+    <div class="featured-carousel__slide" [@slide]="dir()" [attr.aria-live]="hasMany ? 'polite' : 'off'" [attr.id]="ariaSlideId()">
         <!-- Title (full-width, above columns) -->
-        <div class="fc-title">
-            <a [routerLink]="['/projects/fact-sheet', p.ProjectNumber]" class="fc-title-link">
+        <div class="featured-carousel__title">
+            <a [routerLink]="['/projects/fact-sheet', p.ProjectNumber]" class="featured-carousel__title-link">
                 {{ p.ProjectName }}
             </a>
         </div>
 
         <!-- Two-column body: photo (left) | meta (right) -->
-        <div class="fc-body" [class.fc-body--no-photo]="!p.KeyPhotoFileResourceGuid">
+        <div class="featured-carousel__body" [class.featured-carousel__body--no-photo]="!p.KeyPhotoFileResourceGuid">
             @if (p.KeyPhotoFileResourceGuid) {
-            <div class="fc-media">
-                <div class="fc-photo" [style.--imgRadius.px]="imageRadius">
+            <div class="featured-carousel__media">
+                <div class="featured-carousel__photo" [style.--imgRadius.px]="imageRadius">
                     <img [src]="photoUrl(p.KeyPhotoFileResourceGuid)!" [alt]="p.KeyPhotoCaption || p.ProjectName" />
                 </div>
 
                 @if(p.KeyPhotoCaption) {
-                <div class="fc-caption">{{ p.KeyPhotoCaption }}</div>
+                <div class="featured-carousel__caption">{{ p.KeyPhotoCaption }}</div>
                 }
             </div>
             }
 
-            <div class="fc-meta">
+            <div class="featured-carousel__meta">
                 <dl class="grid-12">
                     <dt class="g-col-4">Project Number</dt>
                     <dd class="g-col-8">{{ p.ProjectNumber }}</dd>
@@ -36,20 +36,20 @@
                     <dd class="g-col-8">{{ p.Duration }}</dd>
                 </dl>
 
-                <div class="fc-desc">
+                <div class="featured-carousel__desc">
                     {{ p.ProjectDescription }}
                 </div>
 
-                <div class="fc-more">
+                <div class="featured-carousel__more">
                     <a [routerLink]="['/projects/fact-sheet', p.ProjectNumber]">View More</a>
                 </div>
             </div>
         </div>
 
         @if(hasMany) {
-        <div class="fc-dots">
+        <div class="featured-carousel__dots">
             @for (proj of projects; track proj.ProjectID; let i = $index) {
-            <button type="button" class="fc-dot" [class.active]="i === index()" (click)="go(i)" [attr.aria-label]="'Go to slide ' + (i + 1)">•</button>
+            <button type="button" class="featured-carousel__dot" [class.active]="i === index()" (click)="go(i)" [attr.aria-label]="'Go to slide ' + (i + 1)">•</button>
             }
         </div>
         }

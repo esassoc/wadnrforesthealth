@@ -1,14 +1,14 @@
 <div (click)="onSortRequested($event)" class="flex-between">
-    <div #header class="custom-header-label">
+    <div #header class="field-def-header__label">
         <field-definition [fieldDefinition]="params.fieldDefinitionType" [labelOverride]="params.labelOverride" [inline]="false" [useBodyContainer]="true"></field-definition>
     </div>
     <!-- MP 1/8/26 And this one! See below comment -->
     <!-- @if (filtered) {
-    <div class="filter-indicator">*</div>
+    <div class="field-def-header__filter-indicator">*</div>
     } -->
 
     <!-- MP 1/8/26 Same with this one ¯\(ツ)/¯. See below comment -->
-    <!-- <div [hidden]="!params.enableSorting" class="sort-buttons">
+    <!-- <div [hidden]="!params.enableSorting" class="field-def-header__sort-buttons">
         @if (this.sorted === 'desc') {
         <i class="fa fa-long-arrow-down"></i>
         } @if (this.sorted === 'asc') {
@@ -17,7 +17,7 @@
     </div> -->
 
     <!-- MP 1/2/26 Not sure why this is here when the regular filter works fine? It's creating double filter icons. -->
-    <!-- <div class="custom-filter-button" (click)="onMenuClick($event)">
+    <!-- <div class="field-def-header__filter-button" (click)="onMenuClick($event)">
         <i class="fas fa-filter" [class.filtered]="filtered"></i>
     </div> -->
 </div>

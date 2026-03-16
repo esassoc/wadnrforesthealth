@@ -1,12 +1,14 @@
-.not-flattened-container {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-top: 10px;
-}
+.crosswalk-modal {
+    &__container {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-top: 10px;
+    }
 
-.add-row {
-    input[type="text"],
-    .ng-select.custom .ng-select-container {
-        height: 3rem;
+    &__add-row {
+        input[type="text"],
+        .ng-select.custom .ng-select-container {
+            height: 3rem;
+        }
     }
 }

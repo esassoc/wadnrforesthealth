@@ -16,7 +16,7 @@ import { PopupDataCacheService } from "src/app/shared/services/popup-data-cache.
     templateUrl: "./project-detail-popup.component.html",
     styleUrls: ["./project-detail-popup.component.scss"],
     host: {
-        "[class.project-detail-popup__compact]": "!showDetails",
+        "[class.project-popup--compact]": "!showDetails",
     },
 })
 export class ProjectDetailPopupComponent implements OnInit {

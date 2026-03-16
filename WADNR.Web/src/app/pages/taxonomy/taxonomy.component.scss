@@ -1,11 +1,13 @@
-.taxonomy__title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: var(--spacing-400);
-}
+.taxonomy {
+    &__title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: var(--spacing-400);
+    }
 
-.simple-tree {
-    max-width: 800px;
+    &__tree {
+        max-width: 800px;
+    }
 }
 
 // Reserve a consistent right-side slot so the Map button aligns

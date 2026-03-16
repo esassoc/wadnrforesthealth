@@ -50,60 +50,62 @@ project-search-typeahead.main-nav__search {
 }
 
 // Dropdown styles
-.typeahead-dropdown {
-    background: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    max-height: 400px;
-    overflow-y: auto;
-    min-width: 350px;
-    box-sizing: border-box;
-}
-
-.typeahead-results {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-
-    li {
-        padding: 10px 12px;
-        cursor: pointer;
-        border-bottom: 1px solid #eee;
-
-        &:last-child { border-bottom: none; }
-        &.active, &:hover { background: #f5f5f5; }
+.project-search {
+    &__dropdown {
+        background: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        max-height: 400px;
+        overflow-y: auto;
+        min-width: 350px;
+        box-sizing: border-box;
     }
-}
 
-.result-name {
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 2px;
-}
+    &__results {
+        margin: 0;
+        padding: 0;
+        list-style: none;
 
-.result-meta {
-    font-size: 12px;
-    color: #666;
-    display: flex;
-    gap: 8px;
-}
+        li {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
 
-.result-stage { color: #007dc3; }
-.result-type { font-style: italic; }
+            &:last-child { border-bottom: none; }
+            &.active, &:hover { background: #f5f5f5; }
+        }
+    }
 
-.typeahead-count {
-    position: sticky;
-    bottom: 0;
-    padding: 6px 12px;
-    font-size: 12px;
-    color: #666;
-    background: #f9f9f9;
-    border-top: 1px solid #eee;
-    text-align: right;
-}
+    &__result-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 2px;
+    }
 
-.typeahead-message {
-    padding: 12px;
-    color: #888;
-    text-align: center;
+    &__result-meta {
+        font-size: 12px;
+        color: #666;
+        display: flex;
+        gap: 8px;
+    }
+
+    &__result-stage { color: #007dc3; }
+    &__result-type { font-style: italic; }
+
+    &__count {
+        position: sticky;
+        bottom: 0;
+        padding: 6px 12px;
+        font-size: 12px;
+        color: #666;
+        background: #f9f9f9;
+        border-top: 1px solid #eee;
+        text-align: right;
+    }
+
+    &__message {
+        padding: 12px;
+        color: #888;
+        text-align: center;
+    }
 }

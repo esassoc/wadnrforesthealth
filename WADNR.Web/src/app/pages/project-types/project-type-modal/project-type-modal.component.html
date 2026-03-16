@@ -19,7 +19,7 @@
             [type]="FormFieldType.RTE">
         </form-field>
 
-        <div class="theme-color-field">
+        <div class="project-type-modal__color-field">
             <form-field
                 [formControl]="form.controls.ThemeColor"
                 fieldLabel="Theme Color"
@@ -27,7 +27,7 @@
                 placeholder="#RRGGBB">
             </form-field>
             <input type="color"
-                class="color-picker"
+                class="project-type-modal__color-picker"
                 [value]="form.controls.ThemeColor.value || '#000000'"
                 (input)="form.controls.ThemeColor.setValue($any($event.target).value)">
         </div>

@@ -1,10 +1,10 @@
-<div class="map-legend">
+<div class="stage-legend">
     <h4>{{ title }}</h4>
-    <ul class="legend-list">
+    <ul class="stage-legend__list">
         @for (item of entries; track item.id) {
-        <li class="legend-item">
+        <li class="stage-legend__item">
             <div [innerHTML]="item.html"></div>
-            <span class="legend-label">{{ item.label }}</span>
+            <span class="stage-legend__label">{{ item.label }}</span>
         </li>
         }
     </ul>

@@ -19,7 +19,7 @@
                                 <icon icon="ExternalLink"></icon> Add External Link
                             </button>
                         } @else {
-                            <div class="add-link-form">
+                            <div class="external-links-step__add-form">
                                 <form [formGroup]="addLinkForm" (ngSubmit)="addLink()">
                                     <div class="grid-12">
                                         <div class="g-col-5">
@@ -52,7 +52,7 @@
 
                     <!-- Links List -->
                     @if (externalLinks.length > 0) {
-                        <div class="links-list">
+                        <div class="external-links-step__list">
                             <table class="table table-sm">
                                 <thead>
                                     <tr>

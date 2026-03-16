@@ -1,4 +1,4 @@
-<div class="find-your-forester" [loadingSpinner]="{ isLoading, loadingHeight: 400 }">
+<div class="find-forester" [loadingSpinner]="{ isLoading, loadingHeight: 400 }">
     @if (data$ | async; as data) {
         <div>
             <page-header pageTitle="Find Your Forester" [customRichTextTypeID]="richTextTypeID"></page-header>
@@ -18,10 +18,10 @@
                     </map-search>
                 </div>
             </div>
-            <div class="grid-12 map-row">
+            <div class="grid-12 find-forester__map-row">
                 <div class="g-col-8" style="position: relative">
                     @if (mapSearch.isSearching$ | async) {
-                        <div class="map-loading-overlay">
+                        <div class="find-forester__map-overlay">
                             <div class="circle"><div class="wave"></div></div>
                         </div>
                     }
@@ -47,9 +47,9 @@
                         <div class="card-header">
                             <span class="card-title">Forester Contact Information</span>
                         </div>
-                        <div class="card-body forester-sidebar" style="position: relative">
+                        <div class="card-body find-forester__sidebar" style="position: relative">
                             @if (isQuerying()) {
-                                <div class="forester-sidebar-loading-overlay">
+                                <div class="find-forester__sidebar-overlay">
                                     <div class="circle"><div class="wave"></div></div>
                                 </div>
                             }
@@ -59,7 +59,7 @@
                                 <p class="text-muted">No foresters found for this location.</p>
                             } @else {
                                 @for (contact of visibleContacts(); track contact.foresterRoleID) {
-                                    <div class="forester-contact">
+                                    <div class="find-forester__contact">
                                         @if (roleNameByID.get(contact.foresterRoleID); as roleName) {
                                             <field-definition [fieldDefinition]="roleName"></field-definition>
                                         } @else {
@@ -101,9 +101,9 @@
     }
 
     <ng-template #questionTpl let-question>
-        <details class="question-node">
-            <summary class="question-summary">{{ question.QuestionText }}</summary>
-            <div class="question-content">
+        <details class="find-forester__question">
+            <summary class="find-forester__question-summary">{{ question.QuestionText }}</summary>
+            <div class="find-forester__question-content">
                 @if (hasChildren(question)) {
                     @for (child of question.Children; track child.FindYourForesterQuestionID) {
                         <ng-container *ngTemplateOutlet="questionTpl; context: { $implicit: child }"></ng-container>
@@ -111,7 +111,7 @@
                 } @else {
                     @if (question.ForesterRoleID) {
                         @let contact = getContactForRole(question.ForesterRoleID);
-                        <div class="forester-result">
+                        <div class="find-forester__result">
                             @if (question.ForesterRoleName) {
                                 <field-definition [fieldDefinition]="question.ForesterRoleName"></field-definition>
                             } @else {
@@ -139,7 +139,7 @@
                         </div>
                     }
                     @if (question.ResultsBonusContent) {
-                        <div class="bonus-content" [innerHTML]="question.ResultsBonusContent"></div>
+                        <div class="find-forester__bonus-content" [innerHTML]="question.ResultsBonusContent"></div>
                     }
                 }
             </div>

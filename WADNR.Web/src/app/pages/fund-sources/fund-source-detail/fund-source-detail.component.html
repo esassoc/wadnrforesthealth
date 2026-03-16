@@ -16,21 +16,21 @@
             </div>
             <div class="card-body">
                 <!-- 1. Fund Source Name -->
-                <div class="basics-field-row">
-                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceName"></field-definition></div>
-                    <div class="basics-field-value">{{ fundSource.FundSourceName }}</div>
+                <div class="fund-source-detail__field-row">
+                    <div class="fund-source-detail__field-label"><field-definition fieldDefinition="FundSourceName"></field-definition></div>
+                    <div class="fund-source-detail__field-value">{{ fundSource.FundSourceName }}</div>
                 </div>
 
                 <!-- 2. Short Name -->
-                <div class="basics-field-row">
-                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceShortName"></field-definition></div>
-                    <div class="basics-field-value">{{ fundSource.ShortName || "\u2014" }}</div>
+                <div class="fund-source-detail__field-row">
+                    <div class="fund-source-detail__field-label"><field-definition fieldDefinition="FundSourceShortName"></field-definition></div>
+                    <div class="fund-source-detail__field-value">{{ fundSource.ShortName || "\u2014" }}</div>
                 </div>
 
                 <!-- 3. Organization -->
-                <div class="basics-field-row">
-                    <div class="basics-field-label"><field-definition fieldDefinition="Organization" labelOverride="Contributing Organization"></field-definition></div>
-                    <div class="basics-field-value">
+                <div class="fund-source-detail__field-row">
+                    <div class="fund-source-detail__field-label"><field-definition fieldDefinition="Organization" labelOverride="Contributing Organization"></field-definition></div>
+                    <div class="fund-source-detail__field-value">
                         @if (fundSource.Organization) {
                             <a [routerLink]="['/organizations', fundSource.Organization.OrganizationID]">
                                 {{ fundSource.Organization.OrganizationName }}
@@ -42,53 +42,53 @@
                 </div>
 
                 <!-- 4. Status -->
-                <div class="basics-field-row">
-                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceStatus"></field-definition></div>
-                    <div class="basics-field-value">{{ fundSource.FundSourceStatus?.FundSourceStatusName || "\u2014" }}</div>
+                <div class="fund-source-detail__field-row">
+                    <div class="fund-source-detail__field-label"><field-definition fieldDefinition="FundSourceStatus"></field-definition></div>
+                    <div class="fund-source-detail__field-value">{{ fundSource.FundSourceStatus?.FundSourceStatusName || "\u2014" }}</div>
                 </div>
 
                 <!-- 5. Type -->
-                <div class="basics-field-row">
-                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceType"></field-definition></div>
-                    <div class="basics-field-value">{{ fundSource.FundSourceTypeName || "\u2014" }}</div>
+                <div class="fund-source-detail__field-row">
+                    <div class="fund-source-detail__field-label"><field-definition fieldDefinition="FundSourceType"></field-definition></div>
+                    <div class="fund-source-detail__field-value">{{ fundSource.FundSourceTypeName || "\u2014" }}</div>
                 </div>
 
                 <!-- 6. CFDA -->
-                <div class="basics-field-row">
-                    <div class="basics-field-label"><field-definition fieldDefinition="CFDA" labelOverride="Federal Assistance Listing"></field-definition></div>
-                    <div class="basics-field-value">{{ fundSource.CFDANumber || "\u2014" }}</div>
+                <div class="fund-source-detail__field-row">
+                    <div class="fund-source-detail__field-label"><field-definition fieldDefinition="CFDA" labelOverride="Federal Assistance Listing"></field-definition></div>
+                    <div class="fund-source-detail__field-value">{{ fundSource.CFDANumber || "\u2014" }}</div>
                 </div>
 
                 <!-- 7. Fund Source Number -->
-                <div class="basics-field-row">
-                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceNumber"></field-definition></div>
-                    <div class="basics-field-value">{{ fundSource.FundSourceNumber || "\u2014" }}</div>
+                <div class="fund-source-detail__field-row">
+                    <div class="fund-source-detail__field-label"><field-definition fieldDefinition="FundSourceNumber"></field-definition></div>
+                    <div class="fund-source-detail__field-value">{{ fundSource.FundSourceNumber || "\u2014" }}</div>
                 </div>
 
                 <!-- 8. Total Award Amount -->
-                <div class="basics-field-row">
-                    <div class="basics-field-label"><field-definition fieldDefinition="TotalAwardAmount"></field-definition></div>
-                    <div class="basics-field-value">{{ formatCurrency(fundSource.TotalAwardAmount) }}</div>
+                <div class="fund-source-detail__field-row">
+                    <div class="fund-source-detail__field-label"><field-definition fieldDefinition="TotalAwardAmount"></field-definition></div>
+                    <div class="fund-source-detail__field-value">{{ formatCurrency(fundSource.TotalAwardAmount) }}</div>
                 </div>
 
                 <!-- 9. Current Balance (logged-in only) -->
                 @if (isUserLoggedIn$ | async) {
-                <div class="basics-field-row">
-                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceCurrentBalance" labelOverride="Estimated current fund source balance"></field-definition></div>
-                    <div class="basics-field-value">{{ formatCurrency(fundSource.CurrentBalance) }}</div>
+                <div class="fund-source-detail__field-row">
+                    <div class="fund-source-detail__field-label"><field-definition fieldDefinition="FundSourceCurrentBalance" labelOverride="Estimated current fund source balance"></field-definition></div>
+                    <div class="fund-source-detail__field-value">{{ formatCurrency(fundSource.CurrentBalance) }}</div>
                 </div>
                 }
 
                 <!-- 10. Start Date -->
-                <div class="basics-field-row">
-                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceStartDate"></field-definition></div>
-                    <div class="basics-field-value">{{ fundSource.StartDate | localDate }}</div>
+                <div class="fund-source-detail__field-row">
+                    <div class="fund-source-detail__field-label"><field-definition fieldDefinition="FundSourceStartDate"></field-definition></div>
+                    <div class="fund-source-detail__field-value">{{ fundSource.StartDate | localDate }}</div>
                 </div>
 
                 <!-- 11. End Date -->
-                <div class="basics-field-row">
-                    <div class="basics-field-label"><field-definition fieldDefinition="FundSourceEndDate"></field-definition></div>
-                    <div class="basics-field-value">{{ fundSource.EndDate | localDate }}</div>
+                <div class="fund-source-detail__field-row">
+                    <div class="fund-source-detail__field-label"><field-definition fieldDefinition="FundSourceEndDate"></field-definition></div>
+                    <div class="fund-source-detail__field-value">{{ fundSource.EndDate | localDate }}</div>
                 </div>
             </div>
         </div>
@@ -109,12 +109,12 @@
                     }
                     @if (files.length) {
                         @for (file of files; track file.FundSourceFileResourceID) {
-                            <div class="file-entry">
-                                <div class="file-entry__main">
+                            <div class="fund-source-detail__file">
+                                <div class="fund-source-detail__file-main">
                                     <a [href]="apiUrl + '/file-resources/' + file.FileResourceGUID" target="_blank">{{ file.DisplayName || file.OriginalBaseFilename }}</a>
-                                    <span class="file-entry__meta">({{ file.FileResourceMimeTypeName }}) &mdash; {{ file.CreateDate | localDate }}</span>
+                                    <span class="fund-source-detail__file-meta">({{ file.FileResourceMimeTypeName }}) &mdash; {{ file.CreateDate | localDate }}</span>
                                     @if (canManageFundSources$ | async) {
-                                        <span class="file-entry__actions">
+                                        <span class="fund-source-detail__file-actions">
                                             <a
                                                 href="#"
                                                 class="ml-2"
@@ -133,7 +133,7 @@
                                     }
                                 </div>
                                 @if (file.Description) {
-                                    <div class="file-entry__description">{{ file.Description }}</div>
+                                    <div class="fund-source-detail__file-description">{{ file.Description }}</div>
                                 }
                             </div>
                         }
@@ -235,8 +235,8 @@
                 @if (notes$ | async; as notes) {
                     @if (notes.length) {
                         @for (note of notes; track note.FundSourceNoteID) {
-                            <div class="note-entry">
-                                <div class="note-entry__header">
+                            <div class="fund-source-detail__note">
+                                <div class="fund-source-detail__note-header">
                                     @if (canManageFundSources$ | async) {
                                         <a
                                             href="#"
@@ -257,7 +257,7 @@
                                     }
                                     <span class="ml-2">Created: {{ formatDateTime(note.CreateDate) }} {{ note.CreatedByPersonName }}</span>
                                 </div>
-                                <div class="note-entry__body">Note: {{ note.Note }}</div>
+                                <div class="fund-source-detail__note-body">Note: {{ note.Note }}</div>
                             </div>
                         }
                     } @else {
@@ -276,8 +276,8 @@
                     @if (internalNotes$ | async; as internalNotes) {
                         @if (internalNotes.length) {
                             @for (note of internalNotes; track note.FundSourceNoteInternalID) {
-                                <div class="note-entry">
-                                    <div class="note-entry__header">
+                                <div class="fund-source-detail__note">
+                                    <div class="fund-source-detail__note-header">
                                         <a
                                             href="#"
                                             (click)="
@@ -296,7 +296,7 @@
                                         ></a>
                                         <span class="ml-2">Created: {{ formatDateTime(note.CreateDate) }} {{ note.CreatedByPersonName }}</span>
                                     </div>
-                                    <div class="note-entry__body">Note: {{ note.Note }}</div>
+                                    <div class="fund-source-detail__note-body">Note: {{ note.Note }}</div>
                                 </div>
                             }
                         } @else {

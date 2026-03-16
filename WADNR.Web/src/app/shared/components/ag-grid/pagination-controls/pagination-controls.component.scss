@@ -1,11 +1,11 @@
 @use "/src/scss/abstracts" as *;
 
-.pagination-control-panel {
+.pagination-controls {
     display: inline-flex;
     justify-content: space-between;
     align-items: center;
 
-    .control-button {
+    &__button {
         border: none;
         background-color: transparent;
         color: var(--gray-default);
@@ -15,7 +15,7 @@
         }
     }
 
-    .control-text {
+    &__text {
         padding: 0 var(--spacing-200);
         width: 200px;
         text-align: center;

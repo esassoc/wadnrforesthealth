@@ -59,9 +59,9 @@
         (change)="onAddContact($event)">
     </form-field>
     @if (selectedContacts.length > 0) {
-        <ul class="selected-items-list mt-2">
+        <ul class="interaction-event-modal__selected-list mt-2">
             @for (contact of selectedContacts; track contact.Value) {
-                <li class="selected-item">
+                <li class="interaction-event-modal__selected-item">
                     <a href="#"
                         class="text-danger"
                         (click)="removeContact(contact.Value); $event.preventDefault()"
@@ -88,9 +88,9 @@
         (change)="onAddProject($event)">
     </form-field>
     @if (selectedProjects.length > 0) {
-        <ul class="selected-items-list mt-2">
+        <ul class="interaction-event-modal__selected-list mt-2">
             @for (project of selectedProjects; track project.Value) {
-                <li class="selected-item">
+                <li class="interaction-event-modal__selected-item">
                     <a href="#"
                         class="text-danger"
                         (click)="removeProject(project.Value); $event.preventDefault()"
@@ -116,7 +116,7 @@
     }
 </div>
 <div class="modal-footer">
-    <span class="required-note">* Required Field</span>
+    <span class="interaction-event-modal__required-note">* Required Field</span>
     <div class="fill"></div>
     <button
         class="btn btn-primary"

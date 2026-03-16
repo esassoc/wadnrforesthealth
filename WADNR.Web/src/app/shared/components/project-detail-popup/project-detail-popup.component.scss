@@ -4,20 +4,20 @@
     display: flex;
 }
 
-:host.project-detail-popup__compact {
+:host.project-popup--compact {
     /* Let Leaflet's popup content padding/margins size the bubble.
          We only ensure our content has no fixed width and is centered. */
     margin: 0;
     display: inline-block;
 
-    .popup-wrapper {
+    .project-popup__wrapper {
         width: auto;
         padding: 0;
         display: inline-flex;
         align-items: center;
     }
 
-    .project-title__compact {
+    .project-popup__title--compact {
         border-bottom: 0;
         padding-bottom: 0;
         display: inline-flex;
@@ -27,47 +27,49 @@
     }
 }
 
-.popup-wrapper {
-    width: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0rem;
-    padding: 16px;
-    & > * {
-        font-family: var(--lexend);
-        font-size: 12px;
-    }
-}
-
-.project-title {
-    border-bottom: 1px solid rgba(var(--black-rgb), 0.05);
-    padding-bottom: var(--spacing-400);
-
-    &__compact {
-        border-bottom: none;
-        padding-bottom: 0;
-        display: inline-flex;
-        font-weight: 700;
-        white-space: nowrap;
-        text-decoration: none;
-    }
-}
-
-.popup-body {
-    .grid-12 {
-        column-gap: var(--spacing-200);
-        row-gap: var(--spacing-100);
+.project-popup {
+    &__wrapper {
+        width: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0rem;
+        padding: 16px;
+        & > * {
+            font-family: var(--lexend);
+            font-size: 12px;
+        }
     }
 
-    dt,
-    dd {
-        font-size: var(--type-size-100);
+    &__title {
+        border-bottom: 1px solid rgba(var(--black-rgb), 0.05);
+        padding-bottom: var(--spacing-400);
 
-        field-definition {
-            font-size: var(--type-size-100);
+        &--compact {
+            border-bottom: none;
+            padding-bottom: 0;
+            display: inline-flex;
+            font-weight: 700;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+    }
+
+    &__body {
+        .grid-12 {
+            column-gap: var(--spacing-200);
+            row-gap: var(--spacing-100);
         }
 
-        padding: 0;
-        margin: 0;
+        dt,
+        dd {
+            font-size: var(--type-size-100);
+
+            field-definition {
+                font-size: var(--type-size-100);
+            }
+
+            padding: 0;
+            margin: 0;
+        }
     }
 }

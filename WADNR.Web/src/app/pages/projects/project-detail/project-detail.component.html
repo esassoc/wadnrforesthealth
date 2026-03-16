@@ -4,7 +4,7 @@
     <page-header pageTitle="{{ project.ProjectName }}" [templateRight]="headerButtons"></page-header>
 
     <ng-template #headerButtons>
-        <div class="header-actions">
+        <div class="project-detail__header-actions">
             <!-- Block List buttons (admin only, when project has programs) -->
             @if (canShowBlockListButton(project, perms)) {
                 @if (!project.ExistsInImportBlockList) {
@@ -59,7 +59,7 @@
                 <p>This Project is pending. Any edits to this Project must be made using the Add New Project workflow.</p>
             }
             @if (perms.userCanApprove && project.ProjectApprovalStatusID === ProjectApprovalStatusEnum.PendingApproval) {
-                <div class="alert-actions">
+                <div class="project-detail__alert-actions">
                     <button class="btn btn-success" (click)="approveProject()">Approve</button>
                     <button class="btn btn-warning" (click)="returnProject()">Return</button>
                     <button class="btn btn-danger" (click)="rejectProject()">Reject</button>
@@ -70,29 +70,29 @@
 
     <!-- Project Stage Breadcrumb -->
     @if (project.ProjectStage) {
-        <div class="stage-breadcrumb">
-            <span class="stage-item" [class.current]="project.ProjectStage.ProjectStageID === 2">Planned</span>
-            <span class="stage-item" [class.current]="project.ProjectStage.ProjectStageID === 3">Implementation</span>
-            <span class="stage-item" [class.current]="project.ProjectStage.ProjectStageID === 4">Completed</span>
+        <div class="project-detail__stage-breadcrumb">
+            <span class="project-detail__stage-item" [class.project-detail__stage-item--current]="project.ProjectStage.ProjectStageID === 2">Planned</span>
+            <span class="project-detail__stage-item" [class.project-detail__stage-item--current]="project.ProjectStage.ProjectStageID === 3">Implementation</span>
+            <span class="project-detail__stage-item" [class.project-detail__stage-item--current]="project.ProjectStage.ProjectStageID === 4">Completed</span>
         </div>
     }
 
-    <div class="dashboard-layout">
+    <div class="project-detail__dashboard-layout">
         <!-- TOC Sidebar -->
-        <aside class="toc-sidebar" appScrollSpySticky contentSelector=".content-area" [topOffset]="80">
-            <nav class="toc-nav">
-                <h3 class="toc-heading">Contents</h3>
+        <aside class="project-detail__toc-sidebar" appScrollSpySticky contentSelector=".project-detail__content-area" [topOffset]="80">
+            <nav class="project-detail__toc-nav">
+                <h3 class="project-detail__toc-heading">Contents</h3>
                 @for (section of getVisibleSections(perms); track section.id) {
                     @if (section.children) {
                         <!-- Parent with children -->
-                        <a class="toc-link toc-parent-link"
+                        <a class="project-detail__toc-link project-detail__toc-parent-link"
                            [class.active]="activeParentId() === section.id"
                            (click)="scrollToParent(section)">
                             {{ section.label }}
                         </a>
                         @if (activeParentId() === section.id) {
                             @for (child of section.children; track child.id) {
-                                <a class="toc-link toc-child-link"
+                                <a class="project-detail__toc-link project-detail__toc-child-link"
                                    [class.active]="activeChildId() === child.id"
                                    (click)="scrollToSection(child.id)">
                                     {{ child.label }}
@@ -101,7 +101,7 @@
                         }
                     } @else {
                         <!-- Leaf -->
-                        <a class="toc-link"
+                        <a class="project-detail__toc-link"
                            [class.active]="activeParentId() === section.id"
                            (click)="scrollToSection(section.id)">
                             {{ section.label }}
@@ -112,7 +112,7 @@
         </aside>
 
         <!-- Content Area -->
-        <div class="content-area">
+        <div class="project-detail__content-area">
 
             <!-- ==================== Project Overview group ==================== -->
 
@@ -184,21 +184,21 @@
 
             <!-- Location Card -->
             <div class="card" id="card-location">
-                <div class="card-header">
+                <div class="card-header flex-between">
                     <span class="card-title">Location</span>
                     @if (perms.userCanDirectEdit) {
-                        <div class="dropdown">
-                            <a href="javascript:void(0);" class="btn btn-sm btn-primary dropdown-toggle" [dropdownToggle]="locationEditMenu" #locationDropdown="dropdownToggleName">
-                                <i class="fa fa-pencil"></i> Edit
-                            </a>
-                            <ul #locationEditMenu class="dropdown-menu dropdown-menu-right">
+                        <div class="project-detail__dropdown">
+                            <button class="card-header-edit-link" [dropdownToggle]="locationEditMenu" #locationDropdown="dropdownToggleName" title="Edit Location">
+                                <icon icon="Edit"></icon>
+                            </button>
+                            <ul #locationEditMenu class="project-detail__dropdown-menu">
                                 <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditLocationSimpleModal(project)">Simple (Point)</a></li>
                                 <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditLocationDetailedModal(project)">Detailed (Geometries)</a></li>
-                                <li><hr class="dropdown-divider" /></li>
+                                <li><hr class="project-detail__dropdown-divider" /></li>
                                 <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditPriorityLandscapesModal(project)">Priority Landscapes</a></li>
                                 <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditDnrUplandRegionsModal(project)">DNR Upland Regions</a></li>
                                 <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditCountiesModal(project)">Counties</a></li>
-                                <li><hr class="dropdown-divider" /></li>
+                                <li><hr class="project-detail__dropdown-divider" /></li>
                                 <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditMapExtentModal(project)">Map Extent</a></li>
                             </ul>
                         </div>
@@ -247,22 +247,22 @@
                         </div>
 
                         <!-- Right Column: Geographic Info -->
-                        <div class="g-col-6 location-info">
+                        <div class="g-col-6 project-detail__location-info">
                             @if (project.Latitude != null && project.Longitude != null) {
-                                <div class="subsection-header">
-                                    <h5 class="card-subsection-heading">Location Information</h5>
+                                <div class="project-detail__subsection-header">
+                                    <h5 class="project-detail__card-subsection-heading">Location Information</h5>
                                 </div>
-                                <ul class="list-unstyled">
+                                <ul class="project-detail__list-unstyled">
                                     <li>Latitude: {{ project.Latitude | number:'1.0-4' }}</li>
                                     <li>Longitude: {{ project.Longitude | number:'1.0-4' }}</li>
                                 </ul>
                             }
 
-                            <div class="subsection-header mt-3">
-                                <h5 class="card-subsection-heading">Counties</h5>
+                            <div class="project-detail__subsection-header mt-3">
+                                <h5 class="project-detail__card-subsection-heading">Counties</h5>
                             </div>
                             @if (project.Counties && project.Counties.length > 0) {
-                                <ul class="list-unstyled">
+                                <ul class="project-detail__list-unstyled">
                                     @for (county of project.Counties; track county.CountyID) {
                                         <li><a [routerLink]="['/counties', county.CountyID]">{{ county.CountyName }}</a></li>
                                     }
@@ -271,11 +271,11 @@
                                 <p class="text-muted mb-3">—</p>
                             }
 
-                            <div class="subsection-header mt-3">
-                                <h5 class="card-subsection-heading">Priority Landscapes</h5>
+                            <div class="project-detail__subsection-header mt-3">
+                                <h5 class="project-detail__card-subsection-heading">Priority Landscapes</h5>
                             </div>
                             @if (project.PriorityLandscapes && project.PriorityLandscapes.length > 0) {
-                                <ul class="list-unstyled">
+                                <ul class="project-detail__list-unstyled">
                                     @for (pl of project.PriorityLandscapes; track pl.PriorityLandscapeID) {
                                         <li><a [routerLink]="['/priority-landscapes', pl.PriorityLandscapeID]">{{ pl.PriorityLandscapeName }}</a></li>
                                     }
@@ -284,11 +284,11 @@
                                 <p class="text-muted mb-3">—</p>
                             }
 
-                            <div class="subsection-header mt-3">
-                                <h5 class="card-subsection-heading">DNR Upland Region</h5>
+                            <div class="project-detail__subsection-header mt-3">
+                                <h5 class="project-detail__card-subsection-heading">DNR Upland Region</h5>
                             </div>
                             @if (project.Regions && project.Regions.length > 0) {
-                                <ul class="list-unstyled">
+                                <ul class="project-detail__list-unstyled">
                                     @for (region of project.Regions; track region.DNRUplandRegionID) {
                                         <li><a [routerLink]="['/dnr-upland-regions', region.DNRUplandRegionID]">{{ region.DNRUplandRegionName }}</a></li>
                                     }
@@ -298,8 +298,8 @@
                             }
 
                             @if (project.ProjectLocationNotes) {
-                                <div class="subsection-header mt-3">
-                                    <h5 class="card-subsection-heading">Location Notes</h5>
+                                <div class="project-detail__subsection-header mt-3">
+                                    <h5 class="project-detail__card-subsection-heading">Location Notes</h5>
                                 </div>
                                 <p>{{ project.ProjectLocationNotes }}</p>
                             }
@@ -320,9 +320,9 @@
                 </div>
                 <div class="card-body">
                     @if (project.Tags && project.Tags.length > 0) {
-                        <div class="tags-list">
+                        <div class="project-detail__tags-list">
                             @for (tag of project.Tags; track tag.TagID) {
-                                <a [routerLink]="['/tags', tag.TagID]" class="btn btn-sm btn-tag">{{ tag.TagName }}</a>
+                                <a [routerLink]="['/tags', tag.TagID]" class="btn btn-sm project-detail__btn-tag">{{ tag.TagName }}</a>
                             }
                         </div>
                     } @else {
@@ -355,7 +355,7 @@
                                     <tr>
                                         <td>{{ group.organizations.length > 1 ? group.relationshipType + "s" : group.relationshipType }}</td>
                                         <td>
-                                            <ul class="list-unstyled">
+                                            <ul class="project-detail__list-unstyled">
                                                 @for (org of group.organizations; track org.ProjectOrganizationID) {
                                                     <li>
                                                         <a [routerLink]="['/organizations', org.OrganizationID]">{{ org.OrganizationName }}</a>
@@ -404,7 +404,7 @@
                                     <tr>
                                         <td>{{ group.people.length > 1 ? group.relationshipType + "s" : group.relationshipType }}</td>
                                         <td>
-                                            <ul class="list-unstyled">
+                                            <ul class="project-detail__list-unstyled">
                                                 @for (person of group.people; track person.ProjectPersonID) {
                                                     <li><a [routerLink]="['/people', person.PersonID]">{{ person.PersonFullName }}</a></li>
                                                 }
@@ -473,7 +473,7 @@
                                         <td style="text-align: right">{{ formatCurrency(request.TotalAmount) }}</td>
                                     </tr>
                                 }
-                                <tr class="totals-row">
+                                <tr class="project-detail__totals-row">
                                     <th style="text-align: right">Total</th>
                                     <th style="text-align: right">{{ formatCurrency(getFundingTotals(project.FundSourceAllocationRequests).total) }}</th>
                                 </tr>
@@ -695,12 +695,12 @@
                         @if (classificationsBySystem.length > 0) {
                             @for (system of classificationsBySystem; track system.classificationSystemID) {
                                 @for (batch of batchItems(system.items, 3); track $index) {
-                                    <div class="classification-row grid-12">
+                                    <div class="project-detail__classification-row grid-12">
                                         @for (item of batch; track item.ClassificationID) {
                                             <div class="g-col-4">
-                                                <a class="classification-name" [routerLink]="['/classifications', item.ClassificationID]">{{ item.ClassificationName }}</a>
+                                                <a class="project-detail__classification-name" [routerLink]="['/classifications', item.ClassificationID]">{{ item.ClassificationName }}</a>
                                                 @if (item.ProjectClassificationNotes) {
-                                                    <div class="classification-notes">{{ item.ProjectClassificationNotes }}</div>
+                                                    <div class="project-detail__classification-notes">{{ item.ProjectClassificationNotes }}</div>
                                                 }
                                             </div>
                                         }
@@ -722,7 +722,7 @@
                     <span class="card-title">Cost Share</span>
                 </div>
                 <div class="card-body">
-                    <ul class="list-unstyled">
+                    <ul class="project-detail__list-unstyled">
                         <li>
                             <a [href]="blankCostShareUrl" target="_blank">
                                 <i class="fa fa-file-pdf-o"></i> Blank Cost Share Agreement
@@ -770,8 +770,8 @@
                     <span class="card-title">Notes</span>
                 </div>
                 <div class="card-body">
-                    <div class="subsection-header">
-                        <h4 class="card-subsection-heading">Public Notes</h4>
+                    <div class="project-detail__subsection-header">
+                        <h4 class="project-detail__card-subsection-heading">Public Notes</h4>
                         @if (perms.userCanEditProjectAsAdmin) {
                             <button class="btn btn-sm btn-primary" (click)="openAddNoteModal(project.ProjectID)">Add Note</button>
                         }
@@ -786,8 +786,8 @@
 
                     @if (perms.userCanViewInternalNotes) {
                         <hr />
-                        <div class="subsection-header">
-                            <h4 class="card-subsection-heading">Internal Notes</h4>
+                        <div class="project-detail__subsection-header">
+                            <h4 class="project-detail__card-subsection-heading">Internal Notes</h4>
                             <button class="btn btn-sm btn-primary" (click)="openAddInternalNoteModal(project.ProjectID)">Add Internal Note</button>
                         </div>
                         @if (internalNotes$ | async; as internalNotes) {
@@ -814,7 +814,7 @@
                     </div>
                     <div class="card-body">
                         @if (externalLinks.length > 0) {
-                            <ul class="external-links-list">
+                            <ul class="project-detail__external-links-list">
                                 @for (link of externalLinks; track link.ProjectExternalLinkID) {
                                     <li>
                                         <a [href]="link.ExternalLinkUrl" target="_blank" rel="noopener noreferrer">{{ link.ExternalLinkLabel }}</a>

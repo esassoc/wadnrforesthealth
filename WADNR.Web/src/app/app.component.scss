@@ -1,6 +1,6 @@
 @use "/src/scss/abstracts" as *;
 
-.site-footer {
+.app__footer {
     height: 300px;
     background-color: var(--blue-800);
     background-image: url("../assets/img/dnr-footer-img.jpg");
@@ -12,7 +12,7 @@
     bottom: 0;
     z-index: 3;
 
-    .credits {
+    .app__credits {
         @include desktop-small {
             grid-column: 4 / span 6;
             text-align: center;
@@ -28,13 +28,13 @@
         font-size: var(--type-size-050);
     }
 
-    .ck {
+    .app__ck {
         a {
             color: unset;
         }
     }
 
-    .btn-secondary-outline {
+    .app__btn-outline {
         color: var(--white);
         border-color: var(--white);
 
@@ -49,7 +49,7 @@ custom-rich-text a {
     color: var(--white);
 }
 
-.system-info {
+.app__system-info {
     display: flex;
     gap: var(--spacing-600);
     color: var(--white);

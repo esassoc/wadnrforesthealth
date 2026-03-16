@@ -1,8 +1,8 @@
 <div [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 100 }">
   @if (!(isEditing$ | async)) {
-    <div class="customRichTextContent" [class.editable]="canEdit$ | async" style="position: relative; min-height: 3rem">
+    <div class="custom-rich-text__content" [class.custom-rich-text__content--editable]="canEdit$ | async" style="position: relative; min-height: 3rem">
       @if (canEdit$ | async) {
-        <div class="hoverEditButton">
+        <div class="custom-rich-text__edit-btn">
           <div style="transform: translate3d(-10px, 20px, 0)">
             <button type="button" class="btn btn-secondary" (click)="enterEdit()">Edit</button>
           </div>
@@ -12,12 +12,12 @@
         <div [innerHtml]="customRichTextContent$ | async"></div>
       }
       @if (isEmptyContent$ | async) {
-        <div class="hoverEmptySpace"></div>
+        <div class="custom-rich-text__empty-space"></div>
       }
     </div>
   } @else {
     <div>
-      <div class="tinyMCEFontColor">
+      <div class="custom-rich-text__editor">
         <editor #tinyMceEditor [init]="tinyMceConfig" [(ngModel)]="editedContent"></editor>
       </div>
       <div class="flex-end">

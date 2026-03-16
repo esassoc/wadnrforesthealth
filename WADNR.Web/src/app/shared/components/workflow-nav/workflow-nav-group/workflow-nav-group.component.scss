@@ -8,64 +8,64 @@
     &:not(:last-child) {
         border-bottom: 1px solid var(--gray-200, #e0e0e0);
     }
-}
 
-.workflow-nav-group-header {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: var(--spacing-300) var(--spacing-400);
-    background: var(--gray-100, #f5f5f5);
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: var(--gray-800, #333);
-    text-align: left;
-    transition: background-color 0.15s ease;
+    &__header {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: var(--spacing-300) var(--spacing-400);
+        background: var(--gray-100, #f5f5f5);
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: var(--gray-800, #333);
+        text-align: left;
+        transition: background-color 0.15s ease;
 
-    &:hover {
-        background: var(--gray-200, #ebebeb);
+        &:hover {
+            background: var(--gray-200, #ebebeb);
+        }
+
+        &:focus {
+            outline: 2px solid var(--primary, #0066cc);
+            outline-offset: -2px;
+        }
     }
 
-    &:focus {
-        outline: 2px solid var(--primary, #0066cc);
-        outline-offset: -2px;
-    }
-}
+    &__status-icon {
+        margin-right: var(--spacing-200);
+        font-size: 0.875rem;
 
-.group-status-icon {
-    margin-right: var(--spacing-200);
-    font-size: 0.875rem;
-
-    &.complete {
-        color: var(--green-default, #28a745);
-    }
-}
-
-.group-title {
-    flex: 1;
-}
-
-.expand-icon {
-    font-size: 0.75rem;
-    color: var(--gray-600, #666);
-}
-
-.workflow-nav-group-items {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-
-    &.hidden {
-        display: none;
+        &--complete {
+            color: var(--green-default, #28a745);
+        }
     }
 
-    // Indent child items slightly
-    ::ng-deep workflow-nav-item {
-        .sidebar-link {
-            padding-left: var(--spacing-600);
+    &__title {
+        flex: 1;
+    }
+
+    &__expand-icon {
+        font-size: 0.75rem;
+        color: var(--gray-600, #666);
+    }
+
+    &__items {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+
+        &--hidden {
+            display: none;
+        }
+
+        // Indent child items slightly
+        ::ng-deep workflow-nav-item {
+            .sidebar-link {
+                padding-left: var(--spacing-600);
+            }
         }
     }
 }

@@ -1,11 +1,11 @@
-<table class="registered-road-classes-table table table-condensed mt-3">
+<table class="road-classes__table table table-condensed mt-3">
     <thead>
         <tr>
             <th><field-definition [fieldDefinition]="'RoadClass'"></field-definition></th>
-            <th class="alignRight"><field-definition [fieldDefinition]="'ExpectedConditionScore'"></field-definition></th>
+            <th class="road-classes__align-right"><field-definition [fieldDefinition]="'ExpectedConditionScore'"></field-definition></th>
             <th>PLRM Model</th>
-            <th class="alignRight"><field-definition [fieldDefinition]="'ImperviousArea'" [labelOverride]="'Impervious Area (acres)'"></field-definition></th>
-            <th class="alignRight">
+            <th class="road-classes__align-right"><field-definition [fieldDefinition]="'ImperviousArea'" [labelOverride]="'Impervious Area (acres)'"></field-definition></th>
+            <th class="road-classes__align-right">
                 <field-definition
                     [fieldDefinition]="'NumberOfRoadSegmentsNeededToMeetAssessmentRequirement'"
                     [labelOverride]="'# of Road Segments Needed To Meet Assessment Requirement'"></field-definition>
@@ -15,7 +15,7 @@
     <tbody>
         @if (roadClasses.length === 0) {
         <tr>
-            <td colspan="5" class="text-center systemText">No Road Classes are entered in the system for this jurisdiction</td>
+            <td colspan="5" class="text-center road-classes__system-text">No Road Classes are entered in the system for this jurisdiction</td>
         </tr>
         } @else { @for (roadClass of roadClasses; track roadClass.RoadClassID) { @if (filterRoadClassesByScore(roadRegistrationScenarioRoadClasses, roadClass.ExpectedScore).length
         === 0) {
@@ -25,13 +25,13 @@
                     ><a [routerLink]="['/road-classes', roadClass.RoadClassID]">{{ roadClass.RoadClassName }}</a></strong
                 >
             </td>
-            <td class="alignRight">{{ roadClass.ExpectedScore | number : "1.0-2" }}</td>
+            <td class="road-classes__align-right">{{ roadClass.ExpectedScore | number : "1.0-2" }}</td>
             <td></td>
-            <td class="alignRight"></td>
-            <td class="alignRight"></td>
+            <td class="road-classes__align-right"></td>
+            <td class="road-classes__align-right"></td>
         </tr>
         <tr>
-            <td colspan="5" class="text-center systemText">This Road Class was not found in any of the PLRM Road Operations scenarios</td>
+            <td colspan="5" class="text-center road-classes__system-text">This Road Class was not found in any of the PLRM Road Operations scenarios</td>
         </tr>
         } @else {
         <tr style="border-top: 2px solid #666">
@@ -40,20 +40,20 @@
                     ><a [routerLink]="['/road-classes', roadClass.RoadClassID]">{{ roadClass.RoadClassName }}</a></strong
                 >
             </td>
-            <td class="alignRight">{{ roadClass.ExpectedScore | number : "1.0-2" }}</td>
+            <td class="road-classes__align-right">{{ roadClass.ExpectedScore | number : "1.0-2" }}</td>
             <td></td>
-            <td class="alignRight">{{ getTotalImperviousAreaOfRoadRegistrationScenarioRoadClasses(roadClass, roadRegistrationScenarioRoadClasses) | number : "1.0-2" }}</td>
-            <td class="alignRight">{{ getNumberOfRoadSegmentsRequiredForImperviousArea(roadClass, roadRegistrationScenarioRoadClasses) | number : "1.0-0" }}</td>
+            <td class="road-classes__align-right">{{ getTotalImperviousAreaOfRoadRegistrationScenarioRoadClasses(roadClass, roadRegistrationScenarioRoadClasses) | number : "1.0-2" }}</td>
+            <td class="road-classes__align-right">{{ getNumberOfRoadSegmentsRequiredForImperviousArea(roadClass, roadRegistrationScenarioRoadClasses) | number : "1.0-0" }}</td>
         </tr>
 
         @for(roadRegistrationScenarioRoadClass of filterRoadClassesByScore(roadRegistrationScenarioRoadClasses, roadClass.ExpectedScore); track
         roadRegistrationScenarioRoadClass.RoadRegistrationScenarioRoadClassID) {
         <tr>
             <td></td>
-            <td class="alignRight"></td>
+            <td class="road-classes__align-right"></td>
             <td>{{ roadRegistrationScenarioRoadClass.ModelName }} ({{ roadRegistrationScenarioRoadClass.ModelFolderName }})</td>
-            <td class="alignRight">{{ roadRegistrationScenarioRoadClass.PlrmRoadClassArea | number : "1.0-2" }}</td>
-            <td class="alignRight"></td>
+            <td class="road-classes__align-right">{{ roadRegistrationScenarioRoadClass.PlrmRoadClassArea | number : "1.0-2" }}</td>
+            <td class="road-classes__align-right"></td>
         </tr>
         } } }
         <tr style="border-top: 2px solid #666">
@@ -61,7 +61,7 @@
             <td></td>
             <td></td>
             <td></td>
-            <td class="alignRight"><strong>Total: </strong>{{ totalNumberOfRoadSegmentsRequired }}</td>
+            <td class="road-classes__align-right"><strong>Total: </strong>{{ totalNumberOfRoadSegmentsRequired }}</td>
         </tr>
         }
     </tbody>

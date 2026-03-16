@@ -1,62 +1,64 @@
 @use "/src/scss/abstracts" as *;
 
-#filter-select-buttons input {
-    display: none;
-}
-
-#filter-select-buttons {
-    background-color: var(--primary);
-    color: var(--white);
-    border: 1px solid var(--secondary);
-    border-radius: 5px;
-    overflow: hidden;
-    font-weight: bold;
-    display: flex;
-    flex-wrap: wrap;
-}
-
-#filter-select-buttons label {
-    padding: 5px;
-    margin: 0;
-    min-height: 27px;
-    height: 27px;
-    flex: 1 0 auto;
-    min-width: max-content;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-}
-
-#filter-select-buttons label[for="select"] {
-    border-right: 1px solid var(--secondary);
-}
-
-#filter-select-buttons label:hover {
-    color: var(--wadnr-orange);
-}
-
-#filter-select-buttons input:checked + label {
-    background-color: var(--muted);
-    color: var(--black);
-    font-weight: bold;
-}
-
-#filter-options {
-    background-color: var(--white);
-    border: 1px solid var(--secondary);
-    max-height: 125px;
-    overflow: auto;
-
-    div {
+.dropdown-filter {
+    &__toggle {
+        background-color: var(--primary);
+        color: var(--white);
+        border: 1px solid var(--secondary);
+        border-radius: 5px;
+        overflow: hidden;
+        font-weight: bold;
         display: flex;
-        align-items: center;
+        flex-wrap: wrap;
+
+        input {
+            display: none;
+        }
 
         label {
-            cursor: pointer;
+            padding: 5px;
+            margin: 0;
+            min-height: 27px;
+            height: 27px;
+            flex: 1 0 auto;
+            min-width: max-content;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
 
-            &.blank-option {
-                font-style: italic;
+        label[for="select"] {
+            border-right: 1px solid var(--secondary);
+        }
+
+        label:hover {
+            color: var(--wadnr-orange);
+        }
+
+        input:checked + label {
+            background-color: var(--muted);
+            color: var(--black);
+            font-weight: bold;
+        }
+    }
+
+    &__options {
+        background-color: var(--white);
+        border: 1px solid var(--secondary);
+        max-height: 125px;
+        overflow: auto;
+
+        div {
+            display: flex;
+            align-items: center;
+
+            label {
+                cursor: pointer;
+
+                &.dropdown-filter__blank-option {
+                    font-style: italic;
+                }
             }
         }
     }

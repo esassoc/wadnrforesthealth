@@ -15,22 +15,22 @@
 
                 @if (vm.classificationSystems && vm.classificationSystems.length > 0) {
                     @for (system of vm.classificationSystems; track system.ClassificationSystemID) {
-                        <div class="classification-system-section">
-                            <h4 class="classification-system-name">{{ system.ClassificationSystemName }}</h4>
+                        <div class="classifications-step__system-section">
+                            <h4 class="classifications-step__system-name">{{ system.ClassificationSystemName }}</h4>
 
                             @for (classification of system.Classifications; track classification.ClassificationID) {
-                                <div class="classification-row grid-12 mb-3">
+                                <div class="classifications-step__row grid-12 mb-3">
                                     <div class="g-col-3">
-                                        <label class="classification-label">
+                                        <label class="classifications-step__label">
                                             <input
                                                 type="checkbox"
                                                 [checked]="isSelected(classification.ClassificationID)"
                                                 (change)="toggleSelection(classification.ClassificationID)"
                                                 [disabled]="state.saving">
-                                            <span class="classification-name">{{ classification.DisplayName }}</span>
+                                            <span class="classifications-step__name">{{ classification.DisplayName }}</span>
                                         </label>
                                         @if (classification.ClassificationDescription) {
-                                            <div class="classification-description">
+                                            <div class="classifications-step__description">
                                                 {{ classification.ClassificationDescription }}
                                             </div>
                                         }

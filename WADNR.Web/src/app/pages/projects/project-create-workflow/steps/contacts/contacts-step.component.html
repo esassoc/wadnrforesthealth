@@ -20,8 +20,8 @@
                 @if (vm.contactsByType.length > 0) {
                     @for (cbt of vm.contactsByType; track cbt.relationshipType.Value) {
                         <hr>
-                        <div class="relationship-type-section">
-                            <div class="relationship-type-label">
+                        <div class="contacts-step__relationship-section">
+                            <div class="contacts-step__relationship-label">
                                 <strong>{{ cbt.relationshipType.DisplayName }}</strong>
                                 @if (cbt.canOnlyBeRelatedOnce) {
                                     <span class="text-danger">*</span>
@@ -42,7 +42,7 @@
                                         </form-field>
                                     </div>
                                     @if (cbt.fieldDefinitionName) {
-                                        <div class="g-col-4 field-definition-hint">
+                                        <div class="g-col-4 contacts-step__field-hint">
                                             <field-definition [fieldDefinition]="cbt.fieldDefinitionName" [inline]="true"></field-definition>
                                         </div>
                                     }
@@ -61,9 +61,9 @@
                                         </form-field>
                                         <!-- Selected contacts list -->
                                         @if (cbt.selectedContacts.length > 0) {
-                                            <ul class="selected-contacts-list mt-2">
+                                            <ul class="contacts-step__selected-list mt-2">
                                                 @for (contact of cbt.selectedContacts; track contact.PersonID) {
-                                                    <li class="selected-contact-item">
+                                                    <li class="contacts-step__selected-item">
                                                         <a href="#"
                                                             class="text-danger"
                                                             (click)="removeContact(cbt, contact.PersonID); $event.preventDefault()"
@@ -78,7 +78,7 @@
                                         }
                                     </div>
                                     @if (cbt.fieldDefinitionName) {
-                                        <div class="g-col-4 field-definition-hint">
+                                        <div class="g-col-4 contacts-step__field-hint">
                                             <field-definition [fieldDefinition]="cbt.fieldDefinitionName" [inline]="true"></field-definition>
                                         </div>
                                     }

@@ -1,22 +1,24 @@
-.map-container {
-    border: 1px solid var(--muted);
-    border-radius: 4px;
-    position: relative;
-    overflow: hidden;
-    z-index: 0;
-    height: 500px;
+.counties-step {
+    &__map-container {
+        border: 1px solid var(--muted);
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+        z-index: 0;
+        height: 500px;
 
-    wadnr-map {
-        display: block;
-        height: 100%;
-        width: 100%;
+        wadnr-map {
+            display: block;
+            height: 100%;
+            width: 100%;
+        }
+
+        &--saving {
+            pointer-events: none;
+        }
     }
 
-    &.saving {
-        pointer-events: none;
-    }
-
-    .map-saving-overlay {
+    &__map-overlay {
         position: absolute;
         top: 0;
         left: 0;
@@ -36,31 +38,31 @@
             font-weight: 500;
         }
     }
-}
 
-.map-caption {
-    font-size: 0.875rem;
-    text-align: center;
-}
+    &__map-caption {
+        font-size: 0.875rem;
+        text-align: center;
+    }
 
-.selected-items-section {
-    max-height: 200px;
-    overflow-y: auto;
-}
+    &__selected-section {
+        max-height: 200px;
+        overflow-y: auto;
+    }
 
-.selected-items-header {
-    font-weight: 600;
-    padding: var(--spacing-100) 0;
-    border-bottom: 1px solid var(--muted);
-    margin-bottom: var(--spacing-100);
-}
+    &__selected-header {
+        font-weight: 600;
+        padding: var(--spacing-100) 0;
+        border-bottom: 1px solid var(--muted);
+        margin-bottom: var(--spacing-100);
+    }
 
-.selected-items-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    &__selected-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
 
-    .selected-item {
+    &__selected-item {
         display: flex;
         align-items: center;
         gap: var(--spacing-200);
@@ -71,12 +73,12 @@
             line-height: 1;
         }
     }
-}
 
-.no-selection-message {
-    padding: var(--spacing-300);
-    color: #856404;
-    background-color: #fff3cd;
-    border-radius: 4px;
-    font-size: 0.875rem;
+    &__no-selection {
+        padding: var(--spacing-300);
+        color: #856404;
+        background-color: #fff3cd;
+        border-radius: 4px;
+        font-size: 0.875rem;
+    }
 }

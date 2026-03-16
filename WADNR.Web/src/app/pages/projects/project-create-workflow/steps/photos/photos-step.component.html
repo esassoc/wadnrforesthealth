@@ -13,7 +13,7 @@
                     </p>
 
                     <!-- Action Buttons -->
-                    <div class="action-buttons mb-3">
+                    <div class="photos-step__actions mb-3">
                         @if (!isSelectingKeyPhoto) {
                             @if (vm.photos.length > 1) {
                                 <button class="btn btn-secondary" (click)="startSelectKeyPhoto()"><icon icon="Key"></icon> Select Key Photo</button>
@@ -28,39 +28,39 @@
 
                     @if (vm.photos.length > 0) {
                         <!-- Photo Gallery -->
-                        <div class="photo-gallery" [class.selecting-key-photo]="isSelectingKeyPhoto">
+                        <div class="photos-step__gallery" [class.photos-step__gallery--selecting]="isSelectingKeyPhoto">
                             @for (photo of vm.photos; track photo.ProjectImageID) {
                                 <div
-                                    class="photo-item"
-                                    [class.is-key-photo]="photo.IsKeyPhoto"
-                                    [class.selected]="isSelectingKeyPhoto && selectedKeyPhotoID === photo.ProjectImageID"
-                                    [class.clickable]="isSelectingKeyPhoto"
+                                    class="photos-step__item"
+                                    [class.photos-step__item--key-photo]="photo.IsKeyPhoto"
+                                    [class.photos-step__item--selected]="isSelectingKeyPhoto && selectedKeyPhotoID === photo.ProjectImageID"
+                                    [class.photos-step__item--clickable]="isSelectingKeyPhoto"
                                     (click)="selectPhoto(photo)">
                                     <!-- Photo Icons -->
-                                    <div class="photo-icons">
+                                    <div class="photos-step__icons">
                                         @if (!isSelectingKeyPhoto) {
-                                            <span class="edit-icon" (click)="openEditPhotoModal(photo, vm.timingOptions); $event.stopPropagation()" title="Edit">
+                                            <span class="photos-step__icon--edit" (click)="openEditPhotoModal(photo, vm.timingOptions); $event.stopPropagation()" title="Edit">
                                                 <icon icon="Edit"></icon>
                                             </span>
-                                            <span class="delete-icon" (click)="deletePhoto(photo); $event.stopPropagation()" title="Delete">
+                                            <span class="photos-step__icon--delete" (click)="deletePhoto(photo); $event.stopPropagation()" title="Delete">
                                                 <icon icon="Delete"></icon>
                                             </span>
                                         }
                                     </div>
                                     <!-- Key Photo Icon (right side) -->
                                     @if (photo.IsKeyPhoto || (isSelectingKeyPhoto && selectedKeyPhotoID === photo.ProjectImageID)) {
-                                        <div class="key-photo-icon" title="Key Photo">
+                                        <div class="photos-step__key-icon" title="Key Photo">
                                             <icon icon="Key"></icon>
                                         </div>
                                     }
 
                                     <!-- Photo Thumbnail -->
-                                    <div class="photo-thumbnail">
+                                    <div class="photos-step__thumbnail">
                                         <img [src]="getPhotoUrl(photo)" [alt]="photo.Caption" />
                                     </div>
 
                                     <!-- Photo Caption -->
-                                    <div class="photo-caption">
+                                    <div class="photos-step__caption">
                                         {{ getPhotoCaption(photo) }}
                                     </div>
                                 </div>

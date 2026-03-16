@@ -1,124 +1,126 @@
-// Controls row
-.diff-controls {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-bottom: var(--spacing-400);
-    padding-bottom: var(--spacing-300);
-    border-bottom: 1px solid var(--gray-200);
-
-    .form-check {
-        margin-bottom: 0;
+.step-diff-modal {
+    // Controls row
+    &__controls {
         display: flex;
+        justify-content: flex-end;
         align-items: center;
-        gap: var(--spacing-200);
-    }
-
-    .form-check-label {
-        font-size: 0.875rem;
-    }
-}
-
-// Hide deletions toggle
-.diff-content.hide-deletions {
-    .diff-row-deleted,
-    .diff-item-deleted,
-    .diff-deleted {
-        display: none !important;
-    }
-}
-
-// Section headings
-.diff-content h5 {
-    margin: 1.25rem 0 var(--spacing-200);
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--primary, #003366);
-    border-bottom: 2px solid var(--primary, #003366);
-    padding-bottom: var(--spacing-100);
-}
-
-// Shared table styles
-.diff-fields-table,
-.diff-table-section {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: var(--spacing-200);
-
-    th {
-        padding: var(--spacing-200) var(--spacing-300);
-        font-weight: 600;
-        color: var(--primary, #003366);
-        border-bottom: 2px solid var(--gray-300);
-        text-align: left;
-    }
-
-    td {
-        padding: var(--spacing-200) var(--spacing-300);
-        vertical-align: top;
+        margin-bottom: var(--spacing-400);
+        padding-bottom: var(--spacing-300);
         border-bottom: 1px solid var(--gray-200);
-        word-break: break-word;
+
+        .form-check {
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-200);
+        }
+
+        .form-check-label {
+            font-size: 0.875rem;
+        }
     }
 
-    tr:last-child td {
-        border-bottom: none;
+    // Hide deletions toggle
+    &__content--hide-deletions {
+        .step-diff-modal__row--deleted,
+        .step-diff-modal__item--deleted,
+        .step-diff-modal__deleted {
+            display: none !important;
+        }
     }
-}
 
-// Fields table: label column styling
-.diff-fields-table {
-    .diff-label {
+    // Section headings
+    &__content h5 {
+        margin: 1.25rem 0 var(--spacing-200);
+        font-size: 0.9rem;
         font-weight: 600;
         color: var(--primary, #003366);
-        white-space: nowrap;
-        width: 200px;
+        border-bottom: 2px solid var(--primary, #003366);
+        padding-bottom: var(--spacing-100);
     }
 
-    .diff-changed .diff-deleted {
-        background-color: #fec8c8;
-        text-decoration: line-through;
+    // Shared table styles
+    &__fields-table,
+    &__table-section {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: var(--spacing-200);
+
+        th {
+            padding: var(--spacing-200) var(--spacing-300);
+            font-weight: 600;
+            color: var(--primary, #003366);
+            border-bottom: 2px solid var(--gray-300);
+            text-align: left;
+        }
+
+        td {
+            padding: var(--spacing-200) var(--spacing-300);
+            vertical-align: top;
+            border-bottom: 1px solid var(--gray-200);
+            word-break: break-word;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
     }
 
-    .diff-changed .diff-added {
-        background-color: #cfc;
-    }
-}
+    // Fields table: label column styling
+    &__fields-table {
+        .step-diff-modal__label {
+            font-weight: 600;
+            color: var(--primary, #003366);
+            white-space: nowrap;
+            width: 200px;
+        }
 
-// Table section: row-level diff highlighting
-.diff-table-section {
-    .diff-row-added td {
-        background-color: #cfc;
-    }
+        .step-diff-modal__changed .step-diff-modal__deleted {
+            background-color: #fec8c8;
+            text-decoration: line-through;
+        }
 
-    .diff-row-deleted td {
-        background-color: #fec8c8;
-        text-decoration: line-through;
-    }
-}
-
-// List section
-.diff-list {
-    padding-left: 1.25rem;
-    margin: var(--spacing-100) 0;
-    list-style-type: disc;
-
-    li {
-        padding: var(--spacing-050) 0;
+        .step-diff-modal__changed .step-diff-modal__added {
+            background-color: #cfc;
+        }
     }
 
-    .diff-item-added {
-        background-color: #cfc;
-        padding: var(--spacing-050) var(--spacing-100);
+    // Table section: row-level diff highlighting
+    &__table-section {
+        .step-diff-modal__row--added td {
+            background-color: #cfc;
+        }
+
+        .step-diff-modal__row--deleted td {
+            background-color: #fec8c8;
+            text-decoration: line-through;
+        }
     }
 
-    .diff-item-deleted {
-        background-color: #fec8c8;
-        text-decoration: line-through;
-        padding: var(--spacing-050) var(--spacing-100);
-    }
-}
+    // List section
+    &__list {
+        padding-left: 1.25rem;
+        margin: var(--spacing-100) 0;
+        list-style-type: disc;
 
-// Empty state
-.diff-empty {
-    color: var(--gray-500);
+        li {
+            padding: var(--spacing-050) 0;
+        }
+
+        .step-diff-modal__item--added {
+            background-color: #cfc;
+            padding: var(--spacing-050) var(--spacing-100);
+        }
+
+        .step-diff-modal__item--deleted {
+            background-color: #fec8c8;
+            text-decoration: line-through;
+            padding: var(--spacing-050) var(--spacing-100);
+        }
+    }
+
+    // Empty state
+    &__empty {
+        color: var(--gray-500);
+    }
 }

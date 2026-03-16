@@ -1,11 +1,12 @@
 <dialog
     #dialog
-    [class.small]="modalSize == ModalSizeEnum.Small"
-    [class.medium]="modalSize == ModalSizeEnum.Medium"
-    [class.large]="modalSize == ModalSizeEnum.Large"
-    [class.extra-large]="modalSize == ModalSizeEnum.ExtraLarge"
+    class="modal-dialog"
+    [class.modal-dialog--small]="modalSize == ModalSizeEnum.Small"
+    [class.modal-dialog--medium]="modalSize == ModalSizeEnum.Medium"
+    [class.modal-dialog--large]="modalSize == ModalSizeEnum.Large"
+    [class.modal-dialog--extra-large]="modalSize == ModalSizeEnum.ExtraLarge"
     [class.not-top-layer]="!topLayer"
-    [class.overflow-visible]="overflowVisible"
+    [class.modal-dialog--overflow-visible]="overflowVisible"
     [class.primary]="modalTheme == ModalThemeEnum.Primary"
     [class.light]="modalTheme == ModalThemeEnum.Light">
     <ng-container #vc>

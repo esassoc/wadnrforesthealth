@@ -19,7 +19,7 @@ export class FullScreenButtonComponent {
     @HostListener("document:fullscreenchange")
     handleFullscreenChange() {
         if (!document.fullscreenElement) {
-            this.elementRef.classList.remove("full-screen");
+            this.elementRef.classList.remove("full-screen-btn--active");
             this.isFullScreen = false;
             this.screenSizeChangedEvent.emit();
         }
@@ -28,7 +28,7 @@ export class FullScreenButtonComponent {
     public enterFullScreen() {
         if (this.elementRef.requestFullscreen) {
             this.elementRef.requestFullscreen().then(() => {
-                this.elementRef.classList.add("full-screen");
+                this.elementRef.classList.add("full-screen-btn--active");
                 this.isFullScreen = true;
                 this.screenSizeChangedEvent.emit();
             });

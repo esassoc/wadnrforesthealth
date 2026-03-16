@@ -1,10 +1,15 @@
-// Basics step styles
-.optional-fields-section {
-    margin-top: var(--spacing-400);
-    border: 1px solid var(--muted);
-    border-radius: 4px;
+.basics-step {
+    &__optional-section {
+        margin-top: var(--spacing-400);
+        border: 1px solid var(--muted);
+        border-radius: 4px;
 
-    .optional-fields-toggle {
+        &[open] .basics-step__optional-toggle::before {
+            transform: rotate(180deg);
+        }
+    }
+
+    &__optional-toggle {
         padding: var(--spacing-300) var(--spacing-400);
         cursor: pointer;
         font-weight: 500;
@@ -32,22 +37,18 @@
         }
     }
 
-    &[open] .optional-fields-toggle::before {
-        transform: rotate(180deg);
-    }
-
-    .optional-fields-content {
+    &__optional-content {
         padding: var(--spacing-400);
         border-top: 1px solid var(--muted);
     }
-}
 
-.program-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    &__program-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
 
-    .program-item {
+    &__program-item {
         display: flex;
         align-items: center;
         gap: var(--spacing-200);

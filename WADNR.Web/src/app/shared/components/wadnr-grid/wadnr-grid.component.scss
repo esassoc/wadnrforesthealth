@@ -1,27 +1,29 @@
 @use "/src/scss/abstracts" as *;
 
-.table-footer {
-    padding: var(--spacing-400);
-    border: 1px solid rgba(var(--black-rgb), 0.1);
-    border-top: none;
-    border-radius: 0 0 var(--spacing-200) var(--spacing-200);
-    gap: 1em;
-    font-size: var(--type-size-200);
-
-    .row-count-data {
-        text-align: right;
-
-        .filtered-rows-count {
-            color: var(--gray-default);
-            font-size: var(--type-size-100);
-            font-style: italic;
-            padding-top: var(--spacing-050);
-        }
+.wadnr-grid {
+    &__footer {
+        padding: var(--spacing-400);
+        border: 1px solid rgba(var(--black-rgb), 0.1);
+        border-top: none;
+        border-radius: 0 0 var(--spacing-200) var(--spacing-200);
+        gap: 1em;
+        font-size: var(--type-size-200);
     }
-}
 
-.full-screen-button {
-    padding-right: var(--spacing-200);
+    &__row-count {
+        text-align: right;
+    }
+
+    &__filtered-count {
+        color: var(--gray-default);
+        font-size: var(--type-size-100);
+        font-style: italic;
+        padding-top: var(--spacing-050);
+    }
+
+    &__fullscreen-btn {
+        padding-right: var(--spacing-200);
+    }
 }
 
 .full-screen {
@@ -29,7 +31,7 @@
         height: 92% !important;
     }
 
-    .table-footer {
+    .wadnr-grid__footer {
         height: 8% !important;
         background-color: white;
     }

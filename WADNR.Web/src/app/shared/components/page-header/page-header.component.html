@@ -1,4 +1,4 @@
-<div class="page-header" [ngClass]="templateBottomRight ? 'page-header-flex no-wrap' : ''">
+<div class="page-header" [ngClass]="templateBottomRight ? 'page-header__flex no-wrap' : ''">
     <div>
         @if (templateAbove) {
         <ng-container [ngTemplateOutlet]="templateAbove"></ng-container>
@@ -9,7 +9,7 @@
             <h2 class="page-title">
                 <span>
                     @if (icon) {
-                    <icon class="page-header-icon" [icon]="icon"></icon>
+                    <icon class="page-header__icon" [icon]="icon"></icon>
                     }
                     {{ pageTitleDisplay }}
                 </span>
@@ -25,7 +25,7 @@
             }
         </div>
         @if (customRichTextTypeID) {
-        <div class="copy copy-3">
+        <div class="page-header__copy copy-3">
             <custom-rich-text [customRichTextTypeID]="customRichTextTypeID"></custom-rich-text>
         </div>
         }

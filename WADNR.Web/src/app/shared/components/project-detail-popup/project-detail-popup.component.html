@@ -1,9 +1,9 @@
-<div class="popup-wrapper" [loadingSpinner]="{ isLoading, loadingHeight: 225 }">
+<div class="project-popup__wrapper" [loadingSpinner]="{ isLoading, loadingHeight: 225 }">
     @if (project$ | async; as project) { @if (!showDetails) {
-    <a class="project-title project-title__compact" [routerLink]="['/projects', project.ProjectID]">{{ project.ProjectName }}</a>
+    <a class="project-popup__title project-popup__title--compact" [routerLink]="['/projects', project.ProjectID]">{{ project.ProjectName }}</a>
     } @else {
-    <a class="project-title" [routerLink]="['/projects', project.ProjectID]">{{ project.ProjectName }}</a>
-    <div class="popup-body">
+    <a class="project-popup__title" [routerLink]="['/projects', project.ProjectID]">{{ project.ProjectName }}</a>
+    <div class="project-popup__body">
         <dl class="grid-12">
             <dt class="g-col-6">Duration</dt>
             <dd class="g-col-6">{{ project.Duration }}</dd>

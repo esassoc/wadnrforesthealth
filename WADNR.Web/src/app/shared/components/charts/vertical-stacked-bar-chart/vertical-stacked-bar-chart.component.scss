@@ -1,4 +1,4 @@
-/* Tooltip breakdown separator */
+/* Tooltip breakdown separator — programmatic classes, keep in ::ng-deep */
 ::ng-deep .breakdown-sep {
     border-top: 3px solid rgba(0, 0, 0, 0.08);
     margin: 6px 0;
@@ -12,24 +12,66 @@
     font-weight: 700;
 }
 
-.chart-controls {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 6px;
-}
+.v-bar-chart {
+    &__section {
+        // wrapper around chart + legend
+    }
 
-.cumulative-toggle {
-    background: transparent;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    padding: 6px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 13px;
-}
+    &__controls {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 6px;
+    }
 
-.cumulative-toggle[aria-pressed="true"] {
-    background: rgba(0, 0, 0, 0.04);
-    font-weight: 700;
+    &__cumulative-toggle {
+        background: transparent;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+
+        &[aria-pressed="true"] {
+            background: rgba(0, 0, 0, 0.04);
+            font-weight: 700;
+        }
+    }
+
+    &__switch-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    &__toggle-text {
+        margin-left: 6px;
+        font-size: 0.82rem; /* smaller */
+        line-height: 1;
+    }
+
+    &__legend {
+        // legend container
+    }
+
+    &__swatches {
+        // swatches container
+    }
+
+    &__swatch-btn {
+        // individual swatch button
+
+        &--disabled {
+            opacity: 0.4;
+        }
+    }
+
+    &__swatch-color {
+        // color swatch square
+    }
+
+    &__swatch-label {
+        // swatch text label
+    }
 }
 
 /* Reuse global toggle styles locally so the inline checkbox matches the reusable toggle */
@@ -102,18 +144,6 @@
     content: "On";
     left: 0.6rem;
     right: auto;
-}
-
-.switch-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.toggle-text {
-    margin-left: 6px;
-    font-size: 0.82rem; /* smaller */
-    line-height: 1;
 }
 
 /* Tooltip styles moved from inline styles in the component TS file */

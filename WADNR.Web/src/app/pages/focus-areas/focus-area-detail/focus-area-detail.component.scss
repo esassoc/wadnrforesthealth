@@ -1,5 +1,5 @@
-// Focus area detail styles
-
-.closeout-heading ::ng-deep .field-definition-label {
-    font-size: inherit;
+.focus-area-detail {
+    &__closeout-heading ::ng-deep .field-definition__label {
+        font-size: inherit;
+    }
 }

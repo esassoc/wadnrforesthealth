@@ -14,7 +14,7 @@
             </div>
 
             <!-- Map (always rendered so Leaflet initializes in parallel with API call) -->
-            <div class="map-container mb-3">
+            <div class="location-detailed-step__map-container mb-3">
                 <wadnr-map [mapHeight]="'400px'" (onMapLoad)="handleMapLoad($event)">
                     @if (mapIsReady()) {
                         <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
@@ -69,7 +69,7 @@
                 @if (visibleFeatures.length > 0) {
                     <div class="mb-3">
                         <h5>Locations</h5>
-                        <table class="table table-sm features-table">
+                        <table class="table table-sm location-detailed-step__features-table">
                             <thead>
                                 <tr>
                                     <th style="width: 5%"></th>
@@ -82,8 +82,8 @@
                             <tbody>
                                 @for (feature of visibleFeatures; track feature.leafletId) {
                                     <tr
-                                        [class.selected]="selectedFeatureId$.value === feature.leafletId"
-                                        [class.modified]="feature.isModified || feature.isNew"
+                                        [class.location-detailed-step__features-table--selected]="selectedFeatureId$.value === feature.leafletId"
+                                        [class.location-detailed-step__features-table--modified]="feature.isModified || feature.isNew"
                                         (click)="selectFeature(feature)">
                                         <td class="text-center align-middle">
                                             @if (feature.hasTreatments || feature.isFromArcGis) {
@@ -104,7 +104,7 @@
                                             <form-field [formControl]="getFeatureControls(feature).name" [type]="FormFieldType.Text" placeholder="Enter name" maxlength="100"></form-field>
                                         </td>
                                         <td class="align-middle">
-                                            <span class="shape-badge shape-{{ feature.shapeType | lowercase }}">{{ feature.shapeType }}</span>
+                                            <span class="location-detailed-step__shape-badge location-detailed-step__shape-badge--{{ feature.shapeType | lowercase }}">{{ feature.shapeType }}</span>
                                         </td>
                                         <td (click)="$event.stopPropagation()">
                                             <form-field [formControl]="getFeatureControls(feature).type" [type]="FormFieldType.Select" [formInputOptions]="locationTypeOptions"></form-field>
@@ -131,10 +131,10 @@
                 @if (deletedFeatures.length > 0) {
                     <div class="mb-3">
                         <h6 class="text-muted">Deleted Locations (will be removed on save)</h6>
-                        <table class="table table-sm deleted-features-table">
+                        <table class="table table-sm location-detailed-step__deleted-table">
                             <tbody>
                                 @for (feature of deletedFeatures; track feature.leafletId) {
-                                    <tr class="deleted">
+                                    <tr class="location-detailed-step__deleted-table--deleted">
                                         <td>
                                             <span class="text-decoration-line-through">{{ feature.ProjectLocationName }}</span>
                                             <span class="text-muted ms-2">({{ feature.ProjectLocationTypeName }})</span>

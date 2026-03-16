@@ -1,6 +1,8 @@
-.help-text {
-    font-size: 0.8rem;
-    color: #6c757d;
-    margin-top: calc(-1 * var(--spacing-100));
-    margin-bottom: var(--spacing-300);
+.project-image-modal {
+    &__help-text {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: calc(-1 * var(--spacing-100));
+        margin-bottom: var(--spacing-300);
+    }
 }

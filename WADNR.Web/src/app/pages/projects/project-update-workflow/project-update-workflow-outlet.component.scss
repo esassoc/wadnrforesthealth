@@ -20,34 +20,6 @@
     }
 }
 
-.badge {
-    display: inline-block;
-    padding: 0.25em 0.5em;
-    font-size: 0.875em;
-    font-weight: 600;
-    border-radius: var(--border-radius-200);
-
-    &.badge-secondary {
-        background-color: var(--gray-500);
-        color: var(--white);
-    }
-
-    &.badge-info {
-        background-color: var(--info, #17a2b8);
-        color: var(--white);
-    }
-
-    &.badge-success {
-        background-color: var(--success, #28a745);
-        color: var(--white);
-    }
-
-    &.badge-warning {
-        background-color: var(--warning, #ffc107);
-        color: #212529;
-    }
-}
-
 .workflow-footer {
     &__actions {
         display: flex;
@@ -56,7 +28,35 @@
     }
 }
 
-.loading-spinner {
+.workflow-footer__badge {
+    display: inline-block;
+    padding: 0.25em 0.5em;
+    font-size: 0.875em;
+    font-weight: 600;
+    border-radius: var(--border-radius-200);
+
+    &--secondary {
+        background-color: var(--gray-500);
+        color: var(--white);
+    }
+
+    &--info {
+        background-color: var(--info, #17a2b8);
+        color: var(--white);
+    }
+
+    &--success {
+        background-color: var(--success, #28a745);
+        color: var(--white);
+    }
+
+    &--warning {
+        background-color: var(--warning, #ffc107);
+        color: #212529;
+    }
+}
+
+.workflow-footer__loading {
     display: flex;
     justify-content: center;
     align-items: center;

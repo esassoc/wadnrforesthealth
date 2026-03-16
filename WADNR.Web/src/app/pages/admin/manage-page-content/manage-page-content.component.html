@@ -14,7 +14,7 @@
             </wadnr-grid>
         </div>
         <div class="g-col-5">
-            <h3 class="preview-heading">{{ selectedPage?.FirmaPageTypeDisplayName ?? 'Page Content' }}</h3>
+            <h3 class="manage-page-content__preview-heading">{{ selectedPage?.FirmaPageTypeDisplayName ?? 'Page Content' }}</h3>
             @if (previewContent$ | async; as preview) {
                 @if (preview.loading) {
                     <div [loadingSpinner]="{ isLoading: true, loadingHeight: 200 }"></div>

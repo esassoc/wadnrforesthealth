@@ -53,17 +53,17 @@
         (cellValueChanged)="onCellValueChanged($event)">
     </ag-grid-angular>
 
-    <div class="table-footer flex-between">
+    <div class="wadnr-grid__footer flex-between">
         <div style="display: flex">
             @if (!hideFullscreenButton) {
-            <div class="full-screen-button">
+            <div class="wadnr-grid__fullscreen-btn">
                 <full-screen-button
                     [elementRef]="gridContainer"
                     [enterFullScreenTitleText]="fullscreenTitleText"
                     (screenSizeChangedEvent)="handleScreenSizeChangedEvent()"></full-screen-button>
             </div>
             } @if (!hideDownloadButton) {
-            <div class="download-button">
+            <div>
                 <wadnr-csv-download-button [grid]="gridref" [fileName]="downloadFileName" [colIDsToExclude]="colIDsToExclude"></wadnr-csv-download-button>
             </div>
             }
@@ -72,11 +72,11 @@
         <pagination-controls [grid]="gridref"></pagination-controls>
         }
 
-        <div class="row-count-data">
+        <div class="wadnr-grid__row-count">
             Total Records: {{ rowData?.length | number }}
 
             @if (anyFilterPresent) {
-            <div class="filtered-rows-count">Filtered Records: {{ filteredRowsCount | number }}</div>
+            <div class="wadnr-grid__filtered-count">Filtered Records: {{ filteredRowsCount | number }}</div>
             }
         </div>
     </div>

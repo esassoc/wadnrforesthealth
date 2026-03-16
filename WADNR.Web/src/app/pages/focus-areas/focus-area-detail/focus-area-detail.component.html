@@ -124,7 +124,7 @@
                 <div class="g-col-9">{{ focusArea.SumOfEstimatedTotalCost != null ? (focusArea.SumOfEstimatedTotalCost | currency) : 'None' }}</div>
             </div>
             <hr>
-            <h3 class="closeout-heading"><field-definition fieldDefinition="FocusAreaCloseoutReportProjectList"></field-definition></h3>
+            <h3 class="focus-area-detail__closeout-heading"><field-definition fieldDefinition="FocusAreaCloseoutReportProjectList"></field-definition></h3>
             <wadnr-grid
                 [rowData]="focusArea.CloseoutProjects"
                 [columnDefs]="closeoutColumnDefs"

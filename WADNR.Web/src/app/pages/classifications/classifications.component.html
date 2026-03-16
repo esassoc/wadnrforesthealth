@@ -3,17 +3,17 @@
 
 <div class="page-body">
     @if (classifications$ | async; as classifications) {
-    <div class="classifications-grid" role="list">
+    <div class="classifications__grid" role="list">
         @for (classification of classifications; track classification.ClassificationID) {
-        <a class="classifications-tile" role="listitem" [routerLink]="['/classifications', classification?.ClassificationID]" [style.backgroundColor]="tileColor(classification)">
-            <div class="classifications-tile__content">
-                <div class="classifications-tile__title">{{ classification.DisplayName }}</div>
-                <div class="classifications-tile__count">{{ classification.ProjectCount ?? 0 }} projects</div>
+        <a class="classifications__tile" role="listitem" [routerLink]="['/classifications', classification?.ClassificationID]" [style.backgroundColor]="tileColor(classification)">
+            <div class="classifications__content">
+                <div class="classifications__title">{{ classification.DisplayName }}</div>
+                <div class="classifications__count">{{ classification.ProjectCount ?? 0 }} projects</div>
             </div>
 
-            <div class="classifications-tile__hover">
-                <div class="classifications-tile__hover-title">{{ classification.DisplayName }}</div>
-                <div class="classifications-tile__hover-description">
+            <div class="classifications__hover">
+                <div class="classifications__hover-title">{{ classification.DisplayName }}</div>
+                <div class="classifications__hover-description">
                     {{ classification.ClassificationDescription | truncateWords : 15 }}
                 </div>
             </div>

@@ -63,7 +63,7 @@
 
         // When field-definition is inside a card-title, inherit the card-title
         // font-size and color so it matches other card headers.
-        field-definition .field-definition-label {
+        field-definition .field-definition__label {
             font-size: inherit;
             color: inherit;
         }

@@ -1,19 +1,19 @@
-<li class="sidebar-item workflow-sidebar-item">
-  <a [routerLink]="navRouterLink" routerLinkActive="active" class="sidebar-link" [class.disabled]="disabled">
+<li class="sidebar-item workflow-nav-item">
+  <a [routerLink]="navRouterLink" routerLinkActive="active workflow-nav-item__link--active" class="sidebar-link workflow-nav-item__link" [class.workflow-nav-item__link--disabled]="disabled">
     <div>
       @if (complete) {
-        <icon class="complete" icon="StepComplete"></icon>
+        <icon class="workflow-nav-item__icon--complete" icon="StepComplete"></icon>
       } @else if (required) {
         <icon class="fade" icon="StepIncomplete"></icon>
       } @else {
-        <icon class="info" icon="Info"></icon>
+        <icon class="workflow-nav-item__icon--info" icon="Info"></icon>
       }
     </div>
     <div [class.required]="required">
       <ng-content></ng-content>
     </div>
     @if (hasChanges) {
-      <icon icon="Flag" class="has-changes-flag"></icon>
+      <icon icon="Flag" class="workflow-nav-item__changes-flag"></icon>
     }
   </a>
 </li>

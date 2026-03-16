@@ -4,19 +4,78 @@
     height: 100%;
 }
 
-.field-definition-container {
-    display: inline-flex;
-    align-items: baseline;
-}
+.form-field {
+    &__definition-container {
+        display: inline-flex;
+        align-items: baseline;
+    }
 
-// Match field-label styling to field-definition-label
-.field-label {
-    display: inline-flex;
-    align-items: center;
-    font-size: var(--type-size-200);
-    font-weight: bold;
-    line-height: 1.4;
-    color: var(--color-text);
+    // Match field-label styling to field-definition-label
+    &__label {
+        display: inline-flex;
+        align-items: center;
+        font-size: var(--type-size-200);
+        font-weight: bold;
+        line-height: 1.4;
+        color: var(--color-text);
+    }
+
+    &__units-wrapper {
+        position: relative;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    &__units {
+        position: absolute;
+        pointer-events: none;
+        right: 2rem;
+        color: var(--gray-700);
+    }
+
+    &__radio-options {
+        display: flex;
+        gap: var(--spacing-400);
+        align-items: center;
+        height: var(--spacing-700);
+    }
+
+    &__check-label {
+        display: flex;
+        gap: var(--spacing-400);
+        input {
+            transform: scale(150%);
+        }
+    }
+
+    &__checkbox-list-options {
+        display: flex;
+        gap: var(--spacing-400);
+        align-items: center;
+        height: var(--spacing-700);
+    }
+
+    &__multi-file-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-200);
+        margin-bottom: var(--spacing-200);
+    }
+
+    &__multi-file-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-200);
+    }
+
+    &__multi-file-name {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }
 
 :host.horizontal {
@@ -27,7 +86,7 @@
         font-size: clamp(0.72rem, 0.62rem + 0.52vw, 0.94rem);
         line-height: 1.375em;
 
-        &-label,
+        .form-field__label,
         field-definition {
             flex: 0 0 auto;
             padding-bottom: 0;
@@ -35,16 +94,16 @@
             margin-bottom: 0;
             margin-right: var(--spacing-400);
 
-            ::ng-deep .field-definition-label {
+            ::ng-deep .field-definition__label {
                 font-weight: bold;
             }
         }
 
-        &-label {
+        .form-field__label {
             font-weight: bold;
         }
 
-        &:not(&-label),
+        &:not(.form-field__label),
         input,
         select,
         textarea,
@@ -55,67 +114,11 @@
             min-width: 0;
         }
 
-        .units-wrapper {
+        .form-field__units-wrapper {
             flex-grow: 1;
             min-width: 0;
         }
     }
-}
-
-.units-wrapper {
-    position: relative;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    .units {
-        position: absolute;
-        pointer-events: none;
-        right: 2rem;
-        color: var(--gray-700);
-    }
-}
-
-.radio-options {
-    display: flex;
-    gap: var(--spacing-400);
-    align-items: center;
-    height: var(--spacing-700);
-}
-
-.check-label {
-    display: flex;
-    gap: var(--spacing-400);
-    input {
-        transform: scale(150%);
-    }
-}
-
-.checkbox-list-options {
-    display: flex;
-    gap: var(--spacing-400);
-    align-items: center;
-    height: var(--spacing-700);
-}
-
-.multi-file-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-200);
-    margin-bottom: var(--spacing-200);
-}
-
-.multi-file-item {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-200);
-}
-
-.multi-file-name {
-    flex: 1 1 auto;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 // Disabled state styling

@@ -1,13 +1,16 @@
-span#icon-base {
-    vertical-align: text-top;
-}
+.icon {
+    &__base {
+        vertical-align: text-top;
+    }
 
-.square-svg {
-    svg {
-        width: 1em;
-        height: 1em;
+    &--square {
+        svg {
+            width: 1em;
+            height: 1em;
+        }
     }
 }
+
 svg {
     path {
         fill: currentColor;

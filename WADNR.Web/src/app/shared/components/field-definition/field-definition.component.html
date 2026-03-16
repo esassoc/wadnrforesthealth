@@ -3,9 +3,9 @@
     <span class="fa fa-spinner loading-spinner"></span>
 </div>
 } @if (!isLoading) {
-<div class="field-definition-wrapper">
+<div class="field-definition__wrapper">
     <ng-template #popTitle>
-        <div class="field-definition-title flex-between">
+        <div class="field-definition__title flex-between">
             <div class="mt-1">
                 {{ getLabelText() }}
             </div>
@@ -30,7 +30,7 @@
         } } @if (isEditing) {
         <div>
             <editor #tinyMceEditor [init]="tinyMceConfig" [(ngModel)]="editedContent"></editor>
-            <div class="editor-buttons">
+            <div class="field-definition__editor-buttons">
                 <button type="button" class="btn btn-sm btn-primary mt-1 mr-1 mb-1" (click)="saveEdit()">Save</button>
                 <button type="button" class="btn btn-sm btn-secondary mt-1 mb-1" (click)="cancelEdit()">Cancel</button>
             </div>
@@ -38,16 +38,16 @@
         }
     </ng-template>
     @if (!inline) { @if (showEditButton()) {
-    <span class="field-definition-label">
-        <span class="field-definition-label__text">{{ getLabelText() }}</span>
-        <span class="field-definition-label__icon">
+    <span class="field-definition__label">
+        <span class="field-definition__text">{{ getLabelText() }}</span>
+        <span class="field-definition__icon">
             <i class="fas fa-question-circle small" style="cursor: help" [popper]="popContent" [useBodyContainer]="useBodyContainer" [popperTitle]="popTitle"></i>
         </span>
     </span>
     } @if (!showEditButton()) {
-    <span class="field-definition-label">
-        <span class="field-definition-label__text">{{ getLabelText() }}</span>
-        <span class="field-definition-label__icon">
+    <span class="field-definition__label">
+        <span class="field-definition__text">{{ getLabelText() }}</span>
+        <span class="field-definition__icon">
             <i
                 class="fas fa-question-circle small"
                 style="cursor: help"
@@ -57,12 +57,12 @@
         </span>
     </span>
     } } @else {
-    <div class="inline-display flex-start pt-2">
+    <div class="field-definition__inline flex-start pt-2">
         <i class="fas fa-question-circle small"></i>
         <div>
             <span [innerHtml]="fieldDefinitionDatum.FieldDefinitionDatumValue"></span>
             @if (showEditButton()) {
-            <em class="edit-button" [popper]="popContent" [useBodyContainer]="useBodyContainer" [popperTitle]="popTitle" (click)="enterEdit($event)"> (edit) </em>
+            <em class="field-definition__edit-button" [popper]="popContent" [useBodyContainer]="useBodyContainer" [popperTitle]="popTitle" (click)="enterEdit($event)"> (edit) </em>
             }
         </div>
     </div>

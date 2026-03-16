@@ -23,8 +23,8 @@
                 @if (vm.organizationsByType.length > 0) {
                     @for (obt of vm.organizationsByType; track obt.relationshipType.RelationshipTypeID) {
                         <hr>
-                        <div class="relationship-type-section">
-                            <div class="relationship-type-label">
+                        <div class="organizations-step__relationship-section">
+                            <div class="organizations-step__relationship-label">
                                 <strong>{{ obt.relationshipType.RelationshipTypeName }}</strong>
                                 @if (obt.relationshipType.IsPrimaryContact) {
                                     <span class="text-danger">*</span>
@@ -44,7 +44,7 @@
                                         </form-field>
                                     </div>
                                     @if (obt.fieldDefinitionName) {
-                                        <div class="g-col-4 field-definition-hint">
+                                        <div class="g-col-4 organizations-step__field-hint">
                                             <field-definition [fieldDefinition]="obt.fieldDefinitionName" [inline]="true"></field-definition>
                                         </div>
                                     }
@@ -61,9 +61,9 @@
                                             (change)="onMultiSelectChange($event, obt)">
                                         </form-field>
                                         @if (obt.selectedOrganizations.length > 0) {
-                                            <ul class="selected-organizations-list mt-2">
+                                            <ul class="organizations-step__selected-list mt-2">
                                                 @for (org of obt.selectedOrganizations; track org.OrganizationID) {
-                                                    <li class="selected-organization-item">
+                                                    <li class="organizations-step__selected-item">
                                                         <a href="#"
                                                             class="text-danger"
                                                             (click)="removeOrganization(obt, org.OrganizationID); $event.preventDefault()"
@@ -78,7 +78,7 @@
                                         }
                                     </div>
                                     @if (obt.fieldDefinitionName) {
-                                        <div class="g-col-4 field-definition-hint">
+                                        <div class="g-col-4 organizations-step__field-hint">
                                             <field-definition [fieldDefinition]="obt.fieldDefinitionName" [inline]="true"></field-definition>
                                         </div>
                                     }

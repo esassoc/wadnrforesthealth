@@ -17,9 +17,9 @@
                             <label class="field-label">
                                 <field-definition fieldDefinition="ProjectLocation"></field-definition>
                             </label>
-                            <div class="radio-options">
+                            <div class="location-simple-step__radio-options">
                                 @for (option of locationTypeOptions; track option.Value) {
-                                    <label class="radio-label" [class.disabled]="state.saving">
+                                    <label class="location-simple-step__radio-label" [class.location-simple-step__radio-label--disabled]="state.saving">
                                         <input
                                             type="radio"
                                             [formControl]="$any(form.controls.projectLocationSimpleTypeID)"
@@ -64,39 +64,39 @@
                         }
 
                         <!-- Location Information -->
-                        <div class="location-info">
-                            <h5 class="location-info-header">Location Information</h5>
+                        <div class="location-simple-step__location-info">
+                            <h5 class="location-simple-step__location-info-header">Location Information</h5>
                             @if (geographicInfo$ | async; as geoInfo) {
                                 @if (geoInfo.isLoading) {
-                                    <div class="location-info-loading">Loading geographic information...</div>
+                                    <div class="location-simple-step__location-info-loading">Loading geographic information...</div>
                                 } @else {
-                                    <div class="location-info-row">
-                                        <span class="location-info-label">
+                                    <div class="location-simple-step__location-info-row">
+                                        <span class="location-simple-step__location-info-label">
                                             <field-definition fieldDefinition="PriorityLandscape"></field-definition>
                                         </span>
-                                        <span class="location-info-value">{{ geoInfo.priorityLandscapeName ?? "None" }}</span>
+                                        <span class="location-simple-step__location-info-value">{{ geoInfo.priorityLandscapeName ?? "None" }}</span>
                                     </div>
-                                    <div class="location-info-row">
-                                        <span class="location-info-label">
+                                    <div class="location-simple-step__location-info-row">
+                                        <span class="location-simple-step__location-info-label">
                                             <field-definition fieldDefinition="DNRUplandRegion"></field-definition>
                                         </span>
-                                        <span class="location-info-value">{{ geoInfo.dnrUplandRegionName ?? "None" }}</span>
+                                        <span class="location-simple-step__location-info-value">{{ geoInfo.dnrUplandRegionName ?? "None" }}</span>
                                     </div>
-                                    <div class="location-info-row">
-                                        <span class="location-info-label">
+                                    <div class="location-simple-step__location-info-row">
+                                        <span class="location-simple-step__location-info-label">
                                             <field-definition fieldDefinition="County"></field-definition>
                                         </span>
-                                        <span class="location-info-value">{{ geoInfo.countyName ?? "None" }}</span>
+                                        <span class="location-simple-step__location-info-value">{{ geoInfo.countyName ?? "None" }}</span>
                                     </div>
                                 }
                             }
-                            <div class="location-info-row">
-                                <span class="location-info-label">Latitude:</span>
-                                <span class="location-info-value">{{ hasLocation ? (form.value.latitude | number: "1.4-4") : "" }}</span>
+                            <div class="location-simple-step__location-info-row">
+                                <span class="location-simple-step__location-info-label">Latitude:</span>
+                                <span class="location-simple-step__location-info-value">{{ hasLocation ? (form.value.latitude | number: "1.4-4") : "" }}</span>
                             </div>
-                            <div class="location-info-row">
-                                <span class="location-info-label">Longitude:</span>
-                                <span class="location-info-value">{{ hasLocation ? (form.value.longitude | number: "1.4-4") : "" }}</span>
+                            <div class="location-simple-step__location-info-row">
+                                <span class="location-simple-step__location-info-label">Longitude:</span>
+                                <span class="location-simple-step__location-info-value">{{ hasLocation ? (form.value.longitude | number: "1.4-4") : "" }}</span>
                             </div>
                         </div>
                     </div>
@@ -104,7 +104,7 @@
                     <!-- Right Column: Map -->
                     <div class="g-col-7">
                         <p class="text-muted mb-2">To zoom, hold down Shift and drag a rectangle.</p>
-                        <div class="map-container" style="height: 500px" [class.saving]="state.saving">
+                        <div class="location-simple-step__map-container" style="height: 500px" [class.location-simple-step__map-container--saving]="state.saving">
                             <wadnr-map (onMapLoad)="handleMapLoad($event)">
                                 @if (mapIsReady()) {
                                     <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
@@ -124,7 +124,7 @@
                                 }
                             </wadnr-map>
                             @if (state.saving) {
-                                <div class="map-saving-overlay">
+                                <div class="location-simple-step__map-overlay">
                                     <span>Saving...</span>
                                 </div>
                             }

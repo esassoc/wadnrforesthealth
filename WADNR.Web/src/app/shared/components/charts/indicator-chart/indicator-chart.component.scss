@@ -1,19 +1,21 @@
 /* header layout for chart tiles: deterministic flex layout without Bootstrap */
-.chart-tile {
-    background-color: var(---chart-tile-bg, #ffffff);
-    padding: var(--spacing-400);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --chart-tile-bg: var(--white); /* your preferred color */
+.indicator-chart {
+    &__tile {
+        background-color: var(---chart-tile-bg, #ffffff);
+        padding: var(--spacing-400);
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        --chart-tile-bg: var(--white); /* your preferred color */
+    }
 
-    .chart-header {
+    &__header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         gap: var(--spacing-200);
     }
 
-    .chart-header .chart-title {
+    &__title {
         margin: 0;
         font-size: 1rem;
         line-height: 1.2;
@@ -22,14 +24,137 @@
         white-space: nowrap;
     }
 
-    .chart-header .chart-select {
+    &__select {
         flex: 0 0 auto;
+
+        select {
+            min-width: 10rem;
+            padding: var(--spacing-100) var(--spacing-200);
+            font-size: 0.9rem;
+        }
     }
 
-    .chart-select select {
-        min-width: 10rem;
-        padding: var(--spacing-100) var(--spacing-200);
-        font-size: 0.9rem;
+    &__tabs {
+        .btn-group-radio-input {
+            display: inline-block;
+        }
+
+        &--full-width {
+            width: 100%;
+
+            .indicator-chart__tab-content {
+                /* visually integrate with card: slightly lighter background */
+                background: rgba(0, 0, 0, 0.015);
+                border-color: rgba(0, 0, 0, 0.04);
+            }
+        }
+    }
+
+    &__tabs-row {
+        display: flex;
+        width: 100%;
+        gap: 12px;
+        align-items: center;
+    }
+
+    &__tabs-controls {
+        display: flex;
+        align-items: center;
+    }
+
+    &__tab-content {
+        min-height: 4.25rem; /* reserve vertical space so layout doesn't jump */
+        padding: 0.75rem 0.9rem;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 6px;
+        background: rgba(0, 0, 0, 0.02);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) inset;
+    }
+
+    &__metadata-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 0.35rem;
+    }
+
+    &__metadata-label {
+        flex: 0 0 35%;
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.7);
+    }
+
+    &__metadata-value {
+        flex: 1 1 auto;
+    }
+
+    &__lightbox-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+    }
+
+    &__lightbox-content {
+        position: relative;
+        max-width: 90vw;
+        max-height: 90vh;
+        background: var(--white);
+        padding: 12px;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+    }
+
+    &__lightbox-close {
+        position: absolute;
+        top: 6px;
+        right: 8px;
+        background: transparent;
+        border: none;
+        font-size: 22px;
+        color: #333;
+        cursor: pointer;
+    }
+
+    &__lightbox-prev,
+    &__lightbox-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        width: 44px;
+        height: 60px;
+        font-size: 28px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        color: #222;
+    }
+
+    &__lightbox-prev {
+        left: 8px;
+    }
+
+    &__lightbox-next {
+        right: 8px;
+    }
+
+    &__lightbox-caption {
+        margin-top: 8px;
+        color: #333;
     }
 }
 
@@ -39,75 +164,6 @@
     display: grid;
     /* Responsive: auto-fit columns with min width 320px */
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-}
-
-/* Tabs under each chart: subtle box and consistent height */
-.chartTabs {
-    .btn-group-radio-input {
-        display: inline-block;
-    }
-    .tab-content {
-        min-height: 4.25rem; /* reserve vertical space so layout doesn't jump */
-        padding: 0.75rem 0.9rem;
-        border: 1px solid rgba(0, 0, 0, 0.06);
-        border-radius: 6px;
-        background: rgba(0, 0, 0, 0.02);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) inset;
-    }
-}
-
-/* Full width variant that stretches inside the chart-tile */
-.chartTabs.fullWidth {
-    width: 100%;
-}
-.chartTabs-row {
-    display: flex;
-    width: 100%;
-    gap: 12px;
-    align-items: center;
-}
-.chartTabs-controls {
-    display: flex;
-    align-items: center;
-}
-
-/* Responsive: on narrow screens stack controls above the content and make them full width */
-@media (max-width: 600px) {
-    .chartTabs-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-    }
-    .chartTabs-controls {
-        justify-content: flex-start;
-        width: 100%;
-    }
-    .chartTabs-controls .btn-group-radio-input {
-        width: 100%;
-        display: block;
-    }
-}
-
-.chartTabs.fullWidth .tab-content {
-    /* visually integrate with card: slightly lighter background */
-    background: rgba(0, 0, 0, 0.015);
-    border-color: rgba(0, 0, 0, 0.04);
-}
-
-.chartTabs .tab-content .metadata-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 0.35rem;
-}
-
-.chartTabs .tab-content .metadata-label {
-    flex: 0 0 35%;
-    font-weight: 600;
-    color: rgba(0, 0, 0, 0.7);
-}
-
-.chartTabs .tab-content .metadata-value {
-    flex: 1 1 auto;
 }
 
 img, iframe {
@@ -125,72 +181,21 @@ iframe {
     height: 70vh;
 }
 
-/* Lightbox modal */
-.lightbox-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-}
+/* Responsive: on narrow screens stack controls above the content and make them full width */
+@media (max-width: 600px) {
+    .indicator-chart__tabs-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
 
-.lightbox-content {
-    position: relative;
-    max-width: 90vw;
-    max-height: 90vh;
-    background: var(--white);
-    padding: 12px;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+    .indicator-chart__tabs-controls {
+        justify-content: flex-start;
+        width: 100%;
+    }
 
-.lightbox-content img {
-    max-width: 100%;
-    max-height: 80vh;
-    object-fit: contain;
-}
-
-.lightbox-close {
-    position: absolute;
-    top: 6px;
-    right: 8px;
-    background: transparent;
-    border: none;
-    font-size: 22px;
-    color: #333;
-    cursor: pointer;
-}
-
-.lightbox-prev,
-.lightbox-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    width: 44px;
-    height: 60px;
-    font-size: 28px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    color: #222;
-}
-
-.lightbox-prev {
-    left: 8px;
-}
-.lightbox-next {
-    right: 8px;
-}
-
-.lightbox-caption {
-    margin-top: 8px;
-    color: #333;
+    .indicator-chart__tabs-controls .btn-group-radio-input {
+        width: 100%;
+        display: block;
+    }
 }

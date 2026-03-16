@@ -1,17 +1,19 @@
 @use "/src/scss/abstracts" as *;
 
-.modal-body__content {
-    padding: var(--spacing-200);
-    border-radius: var(--spacing-100);
-    border: 1px solid var(--red-light);
-    background-color: var(--red-lighter);
-}
+.confirm-modal {
+    &__content {
+        padding: var(--spacing-200);
+        border-radius: var(--spacing-100);
+        border: 1px solid var(--red-light);
+        background-color: var(--red-lighter);
+    }
 
-.confirmation-icon {
-    color: var(--blue-default);
-    font-size: large;
-}
+    &__icon {
+        color: var(--blue-default);
+        font-size: large;
 
-.default-confirmation-icon {
-    color: var(--red-default);
+        &--default {
+            color: var(--red-default);
+        }
+    }
 }

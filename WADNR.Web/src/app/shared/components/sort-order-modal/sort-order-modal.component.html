@@ -3,14 +3,14 @@
         <h4>Edit Sort Order</h4>
     </div>
     <div class="modal-body">
-        <div class="sort-order-instructions">
+        <div class="sort-order-modal__instructions">
             <span>Drag and drop the {{ entityLabel }} to set their sorting order.</span>
             <button class="btn btn-sm btn-secondary" (click)="resetToAlphabetical()">Reset to Alphabetical</button>
         </div>
-        <div cdkDropList (cdkDropListDropped)="drop($event)" class="sort-order-list">
+        <div cdkDropList (cdkDropListDropped)="drop($event)" class="sort-order-modal__list">
             @for (item of items; track item.id) {
-                <div cdkDrag class="sort-order-item">
-                    <i class="fa fa-bars drag-handle"></i>
+                <div cdkDrag class="sort-order-modal__item">
+                    <i class="fa fa-bars sort-order-modal__drag-handle"></i>
                     {{ item.displayName }}
                 </div>
             }

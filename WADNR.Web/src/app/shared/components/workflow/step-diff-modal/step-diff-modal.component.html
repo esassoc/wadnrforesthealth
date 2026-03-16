@@ -4,7 +4,7 @@
 </div>
 
 <div class="modal-body">
-    <div class="diff-controls">
+    <div class="step-diff-modal__controls">
         <label class="form-check">
             <input
                 type="checkbox"
@@ -15,7 +15,7 @@
         </label>
     </div>
 
-    <div class="diff-content" [class.hide-deletions]="!showDeletions">
+    <div class="step-diff-modal__content" [class.step-diff-modal__content--hide-deletions]="!showDeletions">
         @for (section of sections; track section.Title ?? $index) {
             @if (section.Title) {
                 <h5>{{ section.Title }}</h5>
@@ -23,7 +23,7 @@
 
             <!-- Fields section: label / original / updated -->
             @if (section.Type === 'fields') {
-                <table class="diff-fields-table">
+                <table class="step-diff-modal__fields-table">
                     <thead>
                         <tr>
                             <th>Field</th>
@@ -33,10 +33,10 @@
                     </thead>
                     <tbody>
                         @for (field of section.Fields; track field.Label) {
-                            <tr [class.diff-changed]="isFieldChanged(field)">
-                                <td class="diff-label">{{ field.Label }}</td>
-                                <td [class.diff-deleted]="isFieldChanged(field)">{{ field.OriginalValue }}</td>
-                                <td [class.diff-added]="isFieldChanged(field)">{{ field.UpdatedValue }}</td>
+                            <tr [class.step-diff-modal__changed]="isFieldChanged(field)">
+                                <td class="step-diff-modal__label">{{ field.Label }}</td>
+                                <td [class.step-diff-modal__deleted]="isFieldChanged(field)">{{ field.OriginalValue }}</td>
+                                <td [class.step-diff-modal__added]="isFieldChanged(field)">{{ field.UpdatedValue }}</td>
                             </tr>
                         }
                     </tbody>
@@ -45,7 +45,7 @@
 
             <!-- Table section: rows added/removed/unchanged -->
             @if (section.Type === 'table') {
-                <table class="diff-table-section">
+                <table class="step-diff-modal__table-section">
                     <thead>
                         <tr>
                             @for (header of section.Headers; track header) {
@@ -62,14 +62,14 @@
                             </tr>
                         }
                         @for (row of getAddedRows(section); track $index) {
-                            <tr class="diff-row-added">
+                            <tr class="step-diff-modal__row--added">
                                 @for (cell of row; track $index) {
                                     <td>{{ cell }}</td>
                                 }
                             </tr>
                         }
                         @for (row of getRemovedRows(section); track $index) {
-                            <tr class="diff-row-deleted">
+                            <tr class="step-diff-modal__row--deleted">
                                 @for (cell of row; track $index) {
                                     <td>{{ cell }}</td>
                                 }
@@ -77,7 +77,7 @@
                         }
                         @if ((section.OriginalRows?.length ?? 0) === 0 && (section.UpdatedRows?.length ?? 0) === 0) {
                             <tr>
-                                <td [attr.colspan]="section.Headers?.length ?? 1" class="diff-empty">
+                                <td [attr.colspan]="section.Headers?.length ?? 1" class="step-diff-modal__empty">
                                     <em>None</em>
                                 </td>
                             </tr>
@@ -88,20 +88,20 @@
 
             <!-- List section: items added/removed/unchanged -->
             @if (section.Type === 'list') {
-                <ul class="diff-list">
+                <ul class="step-diff-modal__list">
                     @for (item of getUnchangedItems(section); track item) {
                         <li>{{ item }}</li>
                     }
                     @for (item of getAddedItems(section); track item) {
-                        <li class="diff-item-added">{{ item }}</li>
+                        <li class="step-diff-modal__item--added">{{ item }}</li>
                     }
                     @if (showDeletions) {
                         @for (item of getRemovedItems(section); track item) {
-                            <li class="diff-item-deleted">{{ item }}</li>
+                            <li class="step-diff-modal__item--deleted">{{ item }}</li>
                         }
                     }
                     @if ((section.OriginalItems?.length ?? 0) === 0 && (section.UpdatedItems?.length ?? 0) === 0) {
-                        <li class="diff-empty"><em>None</em></li>
+                        <li class="step-diff-modal__empty"><em>None</em></li>
                     }
                 </ul>
             }

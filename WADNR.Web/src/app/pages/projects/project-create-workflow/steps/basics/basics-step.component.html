@@ -56,9 +56,9 @@
 
                     <!-- Additional Optional Basic Data Fields -->
                     <div class="g-col-12">
-                        <details class="optional-fields-section">
-                            <summary class="optional-fields-toggle">Additional Optional Basic Data Fields</summary>
-                            <div class="optional-fields-content grid-12">
+                        <details class="basics-step__optional-section">
+                            <summary class="basics-step__optional-toggle">Additional Optional Basic Data Fields</summary>
+                            <div class="basics-step__optional-content grid-12">
                                 <div class="g-col-12">
                                     <form-field
                                         [formControl]="$any(form.controls.projectDescription)"
@@ -102,9 +102,9 @@
                                 <div class="g-col-12">
                                     <label class="field-label">Programs</label>
                                     @if (state.programs && state.programs.length > 0) {
-                                        <ul class="program-list">
+                                        <ul class="basics-step__program-list">
                                             @for (program of state.programs; track program.ProgramID) {
-                                                <li class="program-item">
+                                                <li class="basics-step__program-item">
                                                     <button type="button" class="btn btn-sm btn-link text-danger" (click)="removeProgram(program.ProgramID)" title="Remove">
                                                         <icon icon="Delete"></icon>
                                                     </button>

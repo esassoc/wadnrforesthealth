@@ -18,24 +18,24 @@
                     <hr />
 
                     <!-- Estimated Total Cost -->
-                    <div class="form-row mb-3">
-                        <div class="form-label">
+                    <div class="funding-step__form-row mb-3">
+                        <div class="funding-step__form-label">
                             <field-definition fieldDefinition="EstimatedTotalCost"></field-definition>
                         </div>
-                        <div class="form-input">
+                        <div class="funding-step__form-input">
                             <form-field [formControl]="estimatedTotalCostControl" [type]="FormFieldType.Currency" [readOnly]="state.saving" placeholder="$0.00"> </form-field>
                         </div>
                     </div>
 
                     <!-- Source of Funds Checkboxes -->
-                    <div class="form-row mb-3">
-                        <div class="form-label">
+                    <div class="funding-step__form-row mb-3">
+                        <div class="funding-step__form-label">
                             <field-definition fieldDefinition="FundSource" labelOverride="Source of Funds"></field-definition>
                         </div>
-                        <div class="form-input">
-                            <div class="checkbox-grid">
+                        <div class="funding-step__form-input">
+                            <div class="funding-step__checkbox-grid">
                                 @for (cb of vm.fundingSourceCheckboxes; track cb.id) {
-                                    <label class="checkbox-label">
+                                    <label class="funding-step__checkbox-label">
                                         <input type="checkbox" [checked]="cb.checked" (change)="toggleFundingSource(cb)" [disabled]="state.saving" />
                                         {{ cb.name }}
                                     </label>
@@ -45,11 +45,11 @@
                     </div>
 
                     <!-- Notes about Project Funding -->
-                    <div class="form-row mb-3">
-                        <div class="form-label">
+                    <div class="funding-step__form-row mb-3">
+                        <div class="funding-step__form-label">
                             <field-definition fieldDefinition="FundSourceNote" labelOverride="Notes about Project Funding"></field-definition>
                         </div>
-                        <div class="form-input">
+                        <div class="funding-step__form-input">
                             <form-field [formControl]="fundingSourceNotesControl" [type]="FormFieldType.Textarea" [readOnly]="state.saving"> </form-field>
                         </div>
                     </div>
@@ -57,8 +57,8 @@
                     <hr />
 
                     <!-- WA DNR Fund Source Allocation to Add -->
-                    <div class="allocation-section mb-3">
-                        <label class="section-label"><strong>WA DNR Fund Source Allocation to Add:</strong></label>
+                    <div class="funding-step__allocation-section mb-3">
+                        <label class="funding-step__section-label"><strong>WA DNR Fund Source Allocation to Add:</strong></label>
                         <form-field
                             [formControl]="allocationToAddControl"
                             [type]="FormFieldType.Select"
@@ -67,12 +67,12 @@
                             [readOnly]="state.saving"
                             (change)="onAllocationSelect($event)">
                         </form-field>
-                        <p class="help-text">WA DNR Fund Source Allocation not listed? <a href="javascript:void(0);" (click)="openMissingAllocationModal()">Contact support</a></p>
+                        <p class="funding-step__help-text">WA DNR Fund Source Allocation not listed? <a href="javascript:void(0);" (click)="openMissingAllocationModal()">Contact support</a></p>
                     </div>
 
                     <!-- Allocations Table -->
                     @if (allocationRequests.length > 0) {
-                        <table class="table allocation-table">
+                        <table class="table funding-step__allocation-table">
                             <thead>
                                 <tr>
                                     <th style="width: 40px"></th>
@@ -112,15 +112,15 @@
                     <hr />
 
                     <!-- Summary Section -->
-                    <div class="summary-section">
-                        <label class="section-label"><strong>Summary of Total Project Costs and Funding:</strong></label>
-                        <div class="summary-row">
-                            <div class="summary-label"><field-definition fieldDefinition="EstimatedTotalCost"></field-definition>:</div>
-                            <div class="summary-value">{{ estimatedTotalCostControl.value ?? 0 | currency }}</div>
+                    <div class="funding-step__summary-section">
+                        <label class="funding-step__section-label"><strong>Summary of Total Project Costs and Funding:</strong></label>
+                        <div class="funding-step__summary-row">
+                            <div class="funding-step__summary-label"><field-definition fieldDefinition="EstimatedTotalCost"></field-definition>:</div>
+                            <div class="funding-step__summary-value">{{ estimatedTotalCostControl.value ?? 0 | currency }}</div>
                         </div>
-                        <div class="summary-row">
-                            <div class="summary-label"><field-definition fieldDefinition="ProjectFundSourceAllocationRequestTotalAmount"></field-definition>:</div>
-                            <div class="summary-value">{{ getTotalAmount() | currency }}</div>
+                        <div class="funding-step__summary-row">
+                            <div class="funding-step__summary-label"><field-definition fieldDefinition="ProjectFundSourceAllocationRequestTotalAmount"></field-definition>:</div>
+                            <div class="funding-step__summary-value">{{ getTotalAmount() | currency }}</div>
                         </div>
                     </div>
                 }

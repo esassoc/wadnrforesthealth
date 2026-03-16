@@ -1,26 +1,26 @@
 <ng-template #layerName>
-    <span class="legend-item">
+    <span class="feature-layer__legend-item">
         @if (legendGeometry === "point") {
-        <img class="legend-marker" [src]="markerIconUrl" alt="" />
+        <img class="feature-layer__marker" [src]="markerIconUrl" alt="" />
         } @else {
 
-        <span class="legend-swatch" [style.border]="'2px solid ' + resolvedLayerColor">
-            <span class="legend-swatch-fill" [style.backgroundColor]="resolvedLayerColor" [style.opacity]="legendFillOpacity"></span>
+        <span class="feature-layer__swatch" [style.border]="'2px solid ' + resolvedLayerColor">
+            <span class="feature-layer__swatch-fill" [style.backgroundColor]="resolvedLayerColor" [style.opacity]="legendFillOpacity"></span>
         </span>
         }
-        <span class="legend-title">{{ resolvedLayerName }}</span>
+        <span class="feature-layer__title">{{ resolvedLayerName }}</span>
     </span>
 </ng-template>
 
 <ng-template #legend>
-    <div class="legend-item">
-        <span class="legend-swatch" [style.border]="'2px solid ' + resolvedLayerColor">
+    <div class="feature-layer__legend-item">
+        <span class="feature-layer__swatch" [style.border]="'2px solid ' + resolvedLayerColor">
             @if (legendGeometry === "point") {
-            <img class="legend-marker" [src]="markerIconUrl" alt="" />
+            <img class="feature-layer__marker" [src]="markerIconUrl" alt="" />
             } @else {
-            <span class="legend-swatch-fill" [style.backgroundColor]="resolvedLayerColor" [style.opacity]="legendFillOpacity"></span>
+            <span class="feature-layer__swatch-fill" [style.backgroundColor]="resolvedLayerColor" [style.opacity]="legendFillOpacity"></span>
             }
         </span>
-        <span class="legend-title">{{ resolvedLayerName }}</span>
+        <span class="feature-layer__title">{{ resolvedLayerName }}</span>
     </div>
 </ng-template>

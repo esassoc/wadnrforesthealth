@@ -1,21 +1,23 @@
-.map-container {
-    border: 1px solid var(--muted);
-    border-radius: 4px;
-    position: relative;
-    overflow: hidden;
-    z-index: 0;
+.location-simple-step {
+    &__map-container {
+        border: 1px solid var(--muted);
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+        z-index: 0;
 
-    wadnr-map {
-        display: block;
-        height: 100%;
-        width: 100%;
+        wadnr-map {
+            display: block;
+            height: 100%;
+            width: 100%;
+        }
+
+        &--saving {
+            pointer-events: none;
+        }
     }
 
-    &.saving {
-        pointer-events: none;
-    }
-
-    .map-saving-overlay {
+    &__map-overlay {
         position: absolute;
         top: 0;
         left: 0;
@@ -35,14 +37,14 @@
             font-weight: 500;
         }
     }
-}
 
-.radio-options {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-200);
+    &__radio-options {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-200);
+    }
 
-    .radio-label {
+    &__radio-label {
         display: flex;
         align-items: center;
         gap: var(--spacing-200);
@@ -52,39 +54,39 @@
             margin: 0;
         }
 
-        &.disabled {
+        &--disabled {
             cursor: not-allowed;
             opacity: 0.6;
         }
     }
-}
 
-.location-info {
-    margin-top: var(--spacing-500);
+    &__location-info {
+        margin-top: var(--spacing-500);
+    }
 
-    .location-info-header {
+    &__location-info-header {
         font-weight: 600;
         margin-bottom: var(--spacing-300);
         font-size: 1rem;
     }
 
-    .location-info-loading {
+    &__location-info-loading {
         color: #666;
         font-style: italic;
         margin-bottom: var(--spacing-200);
     }
 
-    .location-info-row {
+    &__location-info-row {
         display: flex;
         margin-bottom: var(--spacing-100);
+    }
 
-        .location-info-label {
-            min-width: 140px;
-            font-weight: 500;
-        }
+    &__location-info-label {
+        min-width: 140px;
+        font-weight: 500;
+    }
 
-        .location-info-value {
-            color: #333;
-        }
+    &__location-info-value {
+        color: #333;
     }
 }

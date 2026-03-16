@@ -1,6 +1,6 @@
 <div class="field">
     @if (fieldDefinitionName) {
-        <span class="field-definition-container" [class.required]="formControl | isRequired">
+        <span class="form-field__definition-container" [class.required]="formControl | isRequired">
             <field-definition [fieldDefinition]="fieldDefinitionName" [labelOverride]="fieldDefinitionLabelOverride"></field-definition>
         </span>
     }
@@ -9,39 +9,39 @@
             <!-- Text -->
             @case (FormFieldType.Text) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <div class="field-label" [class.required]="formControl | isRequired">
+                    <div class="form-field__label" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </div>
                 }
-                <div class="units-wrapper">
+                <div class="form-field__units-wrapper">
                     <input [mask]="mask" type="text" [placeholder]="placeholder" [formControl]="formControl" [name]="name" />
                     @if (units) {
-                        <span class="units">{{ units }}</span>
+                        <span class="form-field__units">{{ units }}</span>
                     }
                 </div>
             }
             <!-- Number -->
             @case (FormFieldType.Number) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <div class="field-label" [class.required]="formControl | isRequired">
+                    <div class="form-field__label" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </div>
                 }
-                <div class="units-wrapper">
+                <div class="form-field__units-wrapper">
                     <input type="number" [placeholder]="placeholder" [formControl]="formControl" [mask]="mask" [name]="name" />
                     @if (units) {
-                        <span class="units">{{ units }}</span>
+                        <span class="form-field__units">{{ units }}</span>
                     }
                 </div>
             }
             <!-- Currency -->
             @case (FormFieldType.Currency) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <div class="field-label" [class.required]="formControl | isRequired">
+                    <div class="form-field__label" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </div>
                 }
-                <div class="units-wrapper">
+                <div class="form-field__units-wrapper">
                     <input
                         type="text"
                         [placeholder]="placeholder"
@@ -52,14 +52,14 @@
                         [name]="name"
                         inputmode="decimal" />
                     @if (units) {
-                        <span class="units">{{ units }}</span>
+                        <span class="form-field__units">{{ units }}</span>
                     }
                 </div>
             }
             <!-- Textarea -->
             @case (FormFieldType.Textarea) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <div class="field-label" [class.required]="formControl | isRequired">
+                    <div class="form-field__label" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </div>
                 }
@@ -68,7 +68,7 @@
             <!-- RTE -->
             @case (FormFieldType.RTE) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <div class="field-label" [class.required]="formControl | isRequired">
+                    <div class="form-field__label" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </div>
                 }
@@ -77,7 +77,7 @@
             <!-- Toggle -->
             @case (FormFieldType.Toggle) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <label class="field-label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </label>
                 }
@@ -91,11 +91,11 @@
             <!-- Check -->
             @case (FormFieldType.Check) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <label class="field-label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </label>
                 }
-                <label class="check-label">
+                <label class="form-field__check-label">
                     <input type="checkbox" [formControl]="formControl" [name]="name" />
                     {{ checkLabel }}
                 </label>
@@ -103,7 +103,7 @@
             <!-- Date -->
             @case (FormFieldType.Date) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <label class="field-label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </label>
                 }
@@ -112,7 +112,7 @@
             <!-- Select -->
             @case (FormFieldType.Select) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <label class="field-label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </label>
                 }
@@ -143,11 +143,11 @@
             <!-- Radio -->
             @case (FormFieldType.Radio) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <label class="field-label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </label>
                 }
-                <div class="radio-options">
+                <div class="form-field__radio-options">
                     @for (formInputOption of formInputOptions; track formInputOption) {
                         <label>
                             <input type="radio" [formControl]="formControl" [name]="name" [value]="formInputOption.Value" />
@@ -159,15 +159,15 @@
             <!-- File -->
             @case (FormFieldType.File) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <div class="field-label" [class.required]="formControl | isRequired">
+                    <div class="form-field__label" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </div>
                 }
                 @if (multiple) {
-                    <div class="multi-file-list">
+                    <div class="form-field__multi-file-list">
                         @for (file of selectedFiles; track $index) {
-                            <div class="multi-file-item">
-                                <span class="multi-file-name" [title]="file.name">{{ file.name }}</span>
+                            <div class="form-field__multi-file-item">
+                                <span class="form-field__multi-file-name" [title]="file.name">{{ file.name }}</span>
                                 <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeFile($index)">
                                     <i class="fas fa-times"></i>
                                 </button>
@@ -211,14 +211,14 @@
         }
     } @else {
         @if (!fieldDefinitionName && fieldLabel) {
-            <div class="field-label" [class.required]="formControl | isRequired">
+            <div class="form-field__label" [class.required]="formControl | isRequired">
                 {{ fieldLabel }}
             </div>
         }
         <div>
             <span>{{ formControl.getRawValue() }}</span>
             @if (units) {
-                <span class="units">{{ units }}</span>
+                <span class="form-field__units">{{ units }}</span>
             }
         </div>
     }

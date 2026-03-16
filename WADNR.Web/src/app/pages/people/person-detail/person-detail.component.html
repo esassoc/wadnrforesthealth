@@ -3,7 +3,7 @@
     <page-header [pageTitle]="person.FullName + (person.IsActive ? '' : ' (inactive)')" [templateRight]="headerButtons"></page-header>
 
     <ng-template #headerButtons>
-        <div class="flex header-actions">
+        <div class="flex person-detail__header-actions">
         @if (canToggleActive$ | async) {
             @if (person.IsActive) {
                 <button class="btn btn-sm btn-warning" (click)="toggleActive(person)"><icon icon="CircleX"></icon> Inactivate</button>
@@ -40,7 +40,7 @@
                         }
                     </div>
                     <div class="card-body">
-                        <dl class="kv-pair-list">
+                        <dl class="person-detail__kv-list">
                             <dt>Name</dt>
                             <dd>{{ person.FullNameFirstLastAndMiddle }}</dd>
 
@@ -49,7 +49,7 @@
                                 @if (person.Email) {
                                     <a [href]="'mailto:' + person.Email">{{ person.Email }}</a>
                                 } @else {
-                                    <span class="text-muted">Not provided</span>
+                                    <span class="person-detail__text-muted">Not provided</span>
                                 }
                             </dd>
 
@@ -61,7 +61,7 @@
                                 @if (person.OrganizationID) {
                                     <a [routerLink]="['/organizations', person.OrganizationID]">{{ person.OrganizationName }}</a>
                                 } @else {
-                                    <span class="text-muted">None</span>
+                                    <span class="person-detail__text-muted">None</span>
                                 }
                             </dd>
 
@@ -73,7 +73,7 @@
                                 @if (person.VendorID) {
                                     <a [routerLink]="['/vendors', person.VendorID]">{{ person.VendorName }}</a>
                                 } @else {
-                                    <span class="text-muted">None</span>
+                                    <span class="person-detail__text-muted">None</span>
                                 }
                             </dd>
 
@@ -119,7 +119,7 @@
                             }
                         </div>
                         <div class="card-body">
-                            <dl class="kv-pair-list">
+                            <dl class="person-detail__kv-list">
                                 <dt>Base Role</dt>
                                 <dd>{{ person.BaseRole?.RoleName || "None" }}</dd>
 
@@ -172,7 +172,7 @@
                         <div class="card-body">
                             @if (hasSupplementalRole(person, RoleEnum.CanEditProgram)) {
                                 @if (person.AssignedPrograms && person.AssignedPrograms.length > 0) {
-                                    <ul class="list-unstyled mb-0">
+                                    <ul class="person-detail__list-unstyled mb-0">
                                         @for (program of person.AssignedPrograms; track program.ProgramID) {
                                             <li>
                                                 <a [routerLink]="['/programs', program.ProgramID]">{{ program.ProgramName }}</a>
@@ -180,10 +180,10 @@
                                         }
                                     </ul>
                                 } @else {
-                                    <p class="text-muted mb-0">{{ person.FullName }} is not assigned to manage Projects in any Program.</p>
+                                    <p class="person-detail__text-muted mb-0">{{ person.FullName }} is not assigned to manage Projects in any Program.</p>
                                 }
                             } @else {
-                                <p class="text-muted mb-0">{{ person.FullName }} is not assigned to the Program Editor role.</p>
+                                <p class="person-detail__text-muted mb-0">{{ person.FullName }} is not assigned to the Program Editor role.</p>
                             }
                         </div>
                     </div>
@@ -205,7 +205,7 @@
                 </div>
                 <div class="card-body">
                     @if (person.PrimaryContactOrganizations && person.PrimaryContactOrganizations.length > 0) {
-                        <ul class="list-unstyled mb-0">
+                        <ul class="person-detail__list-unstyled mb-0">
                             @for (org of person.PrimaryContactOrganizations; track org.OrganizationID) {
                                 <li>
                                     <a [routerLink]="['/organizations', org.OrganizationID]">{{ org.OrganizationName }} @if (org.OrganizationShortName) {({{ org.OrganizationShortName }})}</a>
@@ -213,7 +213,7 @@
                             }
                         </ul>
                     } @else {
-                        <p class="text-muted mb-0">No organizations assigned.</p>
+                        <p class="person-detail__text-muted mb-0">No organizations assigned.</p>
                     }
                 </div>
             </div>

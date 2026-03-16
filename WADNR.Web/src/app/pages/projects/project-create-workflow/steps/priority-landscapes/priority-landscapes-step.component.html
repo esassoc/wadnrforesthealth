@@ -32,12 +32,12 @@
                             </div>
 
                             <!-- Selected Items List -->
-                            <div class="selected-items-section mb-3">
+                            <div class="landscapes-step__selected-section mb-3">
                                 @if (state.selected && state.selected.length > 0) {
-                                    <div class="selected-items-header">Priority Landscape Name</div>
-                                    <ul class="selected-items-list">
+                                    <div class="landscapes-step__selected-header">Priority Landscape Name</div>
+                                    <ul class="landscapes-step__selected-list">
                                         @for (item of state.selected; track item.ID) {
-                                            <li class="selected-item">
+                                            <li class="landscapes-step__selected-item">
                                                 <button
                                                     type="button"
                                                     class="btn btn-sm btn-link text-danger"
@@ -51,7 +51,7 @@
                                         }
                                     </ul>
                                 } @else {
-                                    <div class="no-selection-message">
+                                    <div class="landscapes-step__no-selection">
                                         No priority landscapes selected for this Project, provide an explanation
                                         in the Notes field or select a priority area.
                                     </div>
@@ -72,7 +72,7 @@
 
                         <!-- Right Column: Map -->
                         <div class="g-col-7">
-                            <div class="map-container" [class.saving]="state.saving">
+                            <div class="landscapes-step__map-container" [class.landscapes-step__map-container--saving]="state.saving">
                                 <wadnr-map (onMapLoad)="handleMapLoad($event)">
                                     @if (mapIsReady()) {
                                         <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
@@ -90,11 +90,11 @@
                                         <counties-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></counties-layer>
                                     }
                                 </wadnr-map>
-                                <div class="map-caption text-muted mt-1">
+                                <div class="landscapes-step__map-caption text-muted mt-1">
                                     Simple and/or Detailed Project location (for reference)
                                 </div>
                                 @if (state.saving) {
-                                    <div class="map-saving-overlay">
+                                    <div class="landscapes-step__map-overlay">
                                         <span>Saving...</span>
                                     </div>
                                 }

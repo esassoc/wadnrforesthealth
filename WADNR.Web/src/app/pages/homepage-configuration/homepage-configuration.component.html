@@ -12,23 +12,23 @@
 
     @if (images$ | async; as images) {
         @if (images.length > 0) {
-            <div class="photo-gallery">
+            <div class="homepage-config__gallery">
                 @for (image of images; track image.FirmaHomePageImageID) {
-                    <div class="photo-item">
-                        <div class="photo-icons">
-                            <span class="edit-icon" (click)="openEditImageModal(image)" title="Edit">
+                    <div class="homepage-config__photo">
+                        <div class="homepage-config__photo-icons">
+                            <span class="homepage-config__icon--edit" (click)="openEditImageModal(image)" title="Edit">
                                 <icon [icon]="'Edit'"></icon>
                             </span>
-                            <span class="delete-icon" (click)="deleteImage(image)" title="Delete">
+                            <span class="homepage-config__icon--delete" (click)="deleteImage(image)" title="Delete">
                                 <icon [icon]="'Delete'"></icon>
                             </span>
                         </div>
-                        <div class="photo-thumbnail">
+                        <div class="homepage-config__thumbnail">
                             <img [src]="getImageUrl(image)" [alt]="image.Caption" />
                         </div>
-                        <div class="photo-caption">{{ image.Caption }}</div>
+                        <div class="homepage-config__caption">{{ image.Caption }}</div>
                         @if (image.ContentLength) {
-                            <div class="photo-file-size">({{ formatFileSize(image.ContentLength) }})</div>
+                            <div class="homepage-config__file-size">({{ formatFileSize(image.ContentLength) }})</div>
                         }
                     </div>
                 }

@@ -1,18 +1,14 @@
-.find-your-forester {
-    .page-title {
-        margin-bottom: var(--spacing-400);
-    }
-
-    .map-row {
+.find-forester {
+    &__map-row {
         margin-top: var(--spacing-400);
     }
 
-    .forester-sidebar {
+    &__sidebar {
         max-height: 400px;
         overflow-y: auto;
     }
 
-    .map-loading-overlay {
+    &__map-overlay {
         position: absolute;
         inset: 0;
         background-color: rgba(255, 255, 255, 0.5);
@@ -22,7 +18,7 @@
         z-index: 1000;
     }
 
-    .forester-sidebar-loading-overlay {
+    &__sidebar-overlay {
         position: absolute;
         inset: 0;
         background-color: rgba(255, 255, 255, 0.5);
@@ -32,7 +28,7 @@
         z-index: 1;
     }
 
-    .forester-contact {
+    &__contact {
         padding: var(--spacing-200) 0;
         border-bottom: 1px solid #eee;
 
@@ -41,32 +37,32 @@
         }
     }
 
-    .question-node {
+    &__question {
         margin-bottom: var(--spacing-200);
         border: 1px solid #ddd;
         border-radius: 3px;
+    }
 
-        .question-summary {
-            cursor: pointer;
-            padding: 0.625rem var(--spacing-300);
-            font-weight: 500;
-            background-color: #f8f8f8;
+    &__question-summary {
+        cursor: pointer;
+        padding: 0.625rem var(--spacing-300);
+        font-weight: 500;
+        background-color: #f8f8f8;
 
-            &:hover {
-                background-color: #f0f0f0;
-            }
-        }
-
-        .question-content {
-            padding: var(--spacing-200) var(--spacing-300) var(--spacing-200) var(--spacing-500);
+        &:hover {
+            background-color: #f0f0f0;
         }
     }
 
-    .forester-result {
+    &__question-content {
+        padding: var(--spacing-200) var(--spacing-300) var(--spacing-200) var(--spacing-500);
+    }
+
+    &__result {
         padding: var(--spacing-200) 0;
     }
 
-    .bonus-content {
+    &__bonus-content {
         padding: var(--spacing-200) 0;
     }
 }

@@ -18,7 +18,7 @@
         </div>
 
         <!-- Map -->
-        <div class="map-container mb-3">
+        <div class="location-editor__map-container mb-3">
             <wadnr-map [mapHeight]="'400px'" [boundingBox]="ref.data.boundingBox" (onMapLoad)="handleMapLoad($event)">
                 @if (mapIsReady()) {
                     <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
@@ -43,7 +43,7 @@
         @if (state.visible && state.visible.length > 0) {
             <div class="mb-3">
                 <h5>Locations</h5>
-                <table class="table table-sm features-table">
+                <table class="table table-sm location-editor__features-table">
                     <thead>
                         <tr>
                             <th style="width: 5%"></th>
@@ -55,8 +55,8 @@
                     </thead>
                     <tbody>
                         @for (feature of state.visible; track feature.leafletId) {
-                            <tr [class.selected]="selectedFeatureId$.value === feature.leafletId"
-                                [class.modified]="feature.isModified || feature.isNew"
+                            <tr [class.location-editor__features-table--selected]="selectedFeatureId$.value === feature.leafletId"
+                                [class.location-editor__features-table--modified]="feature.isModified || feature.isNew"
                                 (click)="selectFeature(feature)">
                                 <td class="text-center align-middle">
                                     @if (feature.hasTreatments) {
@@ -82,7 +82,7 @@
                                     </form-field>
                                 </td>
                                 <td class="align-middle">
-                                    <span class="shape-badge shape-{{ feature.shapeType | lowercase }}">
+                                    <span class="location-editor__shape-badge location-editor__shape-badge--{{ feature.shapeType | lowercase }}">
                                         {{ feature.shapeType }}
                                     </span>
                                 </td>
@@ -120,10 +120,10 @@
         @if (state.deleted && state.deleted.length > 0) {
             <div class="mb-3">
                 <h6 class="text-muted">Deleted Locations (will be removed on save)</h6>
-                <table class="table table-sm deleted-features-table">
+                <table class="table table-sm location-editor__deleted-table">
                     <tbody>
                         @for (feature of state.deleted; track feature.leafletId) {
-                            <tr class="deleted">
+                            <tr class="location-editor__deleted-table--deleted">
                                 <td>
                                     <span class="text-decoration-line-through">{{ feature.ProjectLocationName }}</span>
                                     <span class="text-muted ms-2">({{ feature.ProjectLocationTypeName }})</span>

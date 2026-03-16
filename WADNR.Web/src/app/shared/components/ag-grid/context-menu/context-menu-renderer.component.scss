@@ -1,49 +1,45 @@
 @use "/src/scss/abstracts" as *;
 
-#menu-dropdown {
-    font-size: 0.75rem;
-    padding-inline: var(--spacing-200);
-}
-
 .context-menu {
-    display: none;
-    position: fixed;
-    background: white;
-    padding: var(--spacing-300);
-    box-shadow: var(--shadow-100);
-    border-radius: var(--border-radius-200);
-    border: 1px solid rgba(var(--primary-rgb), 1);
-    z-index: 9999;
-
-    &.active {
-        display: grid;
-        min-width: 8rem;
+    &__trigger {
+        font-size: 0.75rem;
+        padding-inline: var(--spacing-200);
     }
 
-    button,
-    a {
-        font-size: var(--type-size-150);
-        display: inline-block;
-        padding: 0;
-        border: none;
-        text-align: left;
-        color: var(--gray-900);
-        background: none;
-        appearance: none;
-        line-height: 1.5em !important;
+    &__dropdown {
+        display: none;
+        position: fixed;
+        background: white;
+        padding: var(--spacing-300);
+        box-shadow: var(--shadow-100);
+        border-radius: var(--border-radius-200);
+        border: 1px solid rgba(var(--primary-rgb), 1);
+        z-index: 9999;
 
-        & + * {
-            margin-top: var(--spacing-200);
+        &.active {
+            display: grid;
+            min-width: 8rem;
         }
 
-        &:hover {
-            text-decoration: underline;
-        }
-    }
+        button,
+        a {
+            font-size: var(--type-size-150);
+            display: inline-block;
+            padding: 0;
+            border: none;
+            text-align: left;
+            color: var(--gray-900);
+            background: none;
+            appearance: none;
+            line-height: 1.5em !important;
 
-    &-btn {
-        font-size: var(--type-size-100);
-        font-weight: bold;
-        line-height: auto;
+            & + * {
+                margin-top: var(--spacing-200);
+            }
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
     }
 }

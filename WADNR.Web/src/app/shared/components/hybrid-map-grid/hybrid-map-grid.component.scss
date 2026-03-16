@@ -1,52 +1,51 @@
 @use "../../../../scss/abstracts/" as *;
 
-.button-group {
-    padding: 0;
-    overflow: hidden;
+.hybrid-map-grid {
+    &__toggle {
+        padding: 0;
+        overflow: hidden;
 
-    &__item {
-        border: none;
-        border-radius: 0;
-    }
-}
-
-.tab-nav-container__panel.hidden {
-    display: none;
-}
-
-.tab-nav {
-    .btn-sm {
-        padding: 10px 15px 7px;
-        border-right: 1px solid var(--gray-200);
-
-        &:last-of-type {
-            border-right: none;
+        &-btn {
+            border: none;
+            border-radius: 0;
         }
     }
 
-    icon {
-        margin-right: 0.15rem;
+    &__toggle-bar {
+        .btn-sm {
+            padding: 10px 15px 7px;
+            border-right: 1px solid var(--gray-200);
 
-        ::ng-deep svg {
-            height: 12px;
-            width: 12px;
+            &:last-of-type {
+                border-right: none;
+            }
+        }
+
+        icon {
+            margin-right: 0.15rem;
+
+            ::ng-deep svg {
+                height: 12px;
+                width: 12px;
+            }
         }
     }
-}
-.hidden {
-    display: none;
-}
 
-.tab-nav-container {
-    display: grid;
-    gap: 1rem;
-    @include desktop-small {
-        &:not(:has(div.hidden)) {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
+    &__panel--hidden {
+        display: none;
     }
 
-    @include tablet-max {
-        grid-template-columns: unset;
+    &__container {
+        display: grid;
+        gap: 1rem;
+        @include desktop-small {
+            &:not(:has(div.hybrid-map-grid__panel--hidden)) {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @include tablet-max {
+            grid-template-columns: unset;
+        }
     }
 }

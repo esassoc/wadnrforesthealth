@@ -1,17 +1,17 @@
-<div class="simple-tree-root" [class.simple-tree--top-level-border-enabled]="showTopLevelBorder || topLevelBorder">
-    <div class="simple-tree-search">
-        <div class="simple-tree-search__actions">
+<div class="simple-tree__root" [class.simple-tree--top-level-border-enabled]="showTopLevelBorder || topLevelBorder">
+    <div class="simple-tree__search">
+        <div class="simple-tree__search-actions">
             <button type="button" class="btn btn-sm btn-primary" (click)="expandAll()">Expand All</button>
             <button type="button" class="btn btn-sm btn-primary" (click)="collapseAll()">Collapse All</button>
         </div>
-        <div class="simple-tree-search__input-wrapper field">
+        <div class="simple-tree__search-input-wrapper field">
             <input type="text" placeholder="Search..." [(ngModel)]="searchTerm" aria-label="Search tree" />
             @if (searchTerm) {
-            <button type="button" class="btn btn-secondary simple-tree-search__clear" (click)="searchTerm = ''" aria-label="Clear search" title="Clear search">&times;</button>
+            <button type="button" class="btn btn-secondary simple-tree__search-clear" (click)="searchTerm = ''" aria-label="Clear search" title="Clear search">&times;</button>
             }
         </div>
         @if (searchTerm) {
-        <span class="simple-tree-search__matches">({{ totalMatches }} {{ totalMatches === 1 ? 'match' : 'matches' }})</span>
+        <span class="simple-tree__search-matches">({{ totalMatches }} {{ totalMatches === 1 ? 'match' : 'matches' }})</span>
         }
     </div>
 
@@ -36,6 +36,8 @@
                 <button type="button" class="simple-tree__toggler" (click)="$event.stopPropagation(); toggleExpand(item.node.key)" aria-label="Toggle">
                     <span>{{ isExpanded(item.node.key) ? "-" : "+" }}</span>
                 </button>
+                } @else {
+                <span class="simple-tree__toggler-spacer"></span>
                 }
 
                 <!-- title: prefer titleParts for mixed links/text, otherwise fall back to routerLink/href/title -->
@@ -57,7 +59,7 @@
                 </span>
                 } @else if (item.node.routerLink) {
                 <a
-                    class="simple-tree__title btn btn-sm"
+                    class="simple-tree__title"
                     [class.simple-tree__leaf]="!item.hasChildren"
                     [class.simple-tree__match]="searchTerm && item.node.count"
                     [routerLink]="item.node.routerLink"
@@ -107,6 +109,8 @@
                 <button type="button" class="simple-tree__toggler" (click)="$event.stopPropagation(); toggleExpand(item.node.key)" aria-label="Toggle">
                     <span>{{ isExpanded(item.node.key) ? "-" : "+" }}</span>
                 </button>
+                } @else {
+                <span class="simple-tree__toggler-spacer"></span>
                 } @if (item.node.titleParts && item.node.titleParts.length) {
                 <span class="simple-tree__title" [class.simple-tree__leaf]="!item.hasChildren" [class.simple-tree__match]="searchTerm && item.node.count">
                     @if(item.hasChildren && item.node.count) { <span class="simple-tree__badge">{{ item.node.count }}</span> } @for (part of item.node.titleParts; track part.text)

@@ -1,6 +1,8 @@
 @use "/src/scss/abstracts" as *;
 
-.sticky-help {
-    position: sticky;
-    top: var(--spacing-600);
+.workflow-body {
+    &__sticky-help {
+        position: sticky;
+        top: var(--spacing-600);
+    }
 }

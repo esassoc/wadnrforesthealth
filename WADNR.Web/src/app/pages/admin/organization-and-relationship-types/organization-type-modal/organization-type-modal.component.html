@@ -20,7 +20,7 @@
             placeholder="Enter abbreviation">
         </form-field>
 
-        <div class="theme-color-field">
+        <div class="org-type-modal__color-field">
             <form-field
                 [formControl]="form.controls.LegendColor"
                 fieldLabel="Legend Color"
@@ -28,7 +28,7 @@
                 placeholder="#RRGGBB">
             </form-field>
             <input type="color"
-                class="color-picker"
+                class="org-type-modal__color-picker"
                 [value]="form.controls.LegendColor.value || '#000000'"
                 (input)="form.controls.LegendColor.setValue($any($event.target).value)">
         </div>

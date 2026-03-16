@@ -22,18 +22,18 @@
                             </div>
                         }
 
-                        <div class="g-col-6 field-label">Name</div>
+                        <div class="g-col-6 org-detail__field-label">Name</div>
                         <div class="g-col-6">{{ organization.OrganizationName || "—" }}</div>
 
-                        <div class="g-col-6 field-label">Short Name</div>
+                        <div class="g-col-6 org-detail__field-label">Short Name</div>
                         <div class="g-col-6">{{ organization.OrganizationShortName || "—" }}</div>
 
-                        <div class="g-col-6 field-label">
+                        <div class="g-col-6 org-detail__field-label">
                             <field-definition fieldDefinition="OrganizationType" labelOverride="Contributing Organization Type"></field-definition>
                         </div>
                         <div class="g-col-6">{{ organization.OrganizationTypeName || "—" }}</div>
 
-                        <div class="g-col-6 field-label">
+                        <div class="g-col-6 org-detail__field-label">
                             <field-definition fieldDefinition="OrganizationPrimaryContact" labelOverride="Contributing Organization Primary Contact"></field-definition>
                         </div>
                         <div class="g-col-6">
@@ -47,7 +47,7 @@
                             }
                         </div>
 
-                        <div class="g-col-6 field-label">Vendor</div>
+                        <div class="g-col-6 org-detail__field-label">Vendor</div>
                         <div class="g-col-6">
                             @if (organization.VendorID) {
                                 <a [routerLink]="['/vendors', organization.VendorID]">
@@ -66,10 +66,10 @@
                             }
                         </div>
 
-                        <div class="g-col-6 field-label">Home Page</div>
+                        <div class="g-col-6 org-detail__field-label">Home Page</div>
                         <div class="g-col-6">
                             @if (organization.OrganizationUrl) {
-                                <a [href]="organization.OrganizationUrl" target="_blank" class="wrap-long-string">{{ organization.OrganizationUrl }}</a>
+                                <a [href]="organization.OrganizationUrl" target="_blank" class="org-detail__wrap-text">{{ organization.OrganizationUrl }}</a>
                             } @else {
                                 —
                             }
@@ -95,7 +95,7 @@
                             }
                         </ul>
                     } @else {
-                        <p class="system-text">No Fund Source Allocations set for this Contributing Organization.</p>
+                        <p class="org-detail__system-text">No Fund Source Allocations set for this Contributing Organization.</p>
                     }
                 </div>
             </div>
@@ -117,7 +117,7 @@
                         @if (programs.length > 0) {
                             <wadnr-grid [rowData]="programs" [columnDefs]="programColumnDefs" height="300px" downloadFileName="Organization_Programs"> </wadnr-grid>
                         } @else {
-                            <p class="system-text">No Programs associated with this Contributing Organization.</p>
+                            <p class="org-detail__system-text">No Programs associated with this Contributing Organization.</p>
                         }
                     </div>
                 </div>
@@ -213,7 +213,7 @@
                         </wadnr-map>
                         <small class="text-muted">To zoom, hold down Shift and drag a rectangle.</small>
                     } @else {
-                        <p class="system-text">No spatial data associated with this Contributing Organization.</p>
+                        <p class="org-detail__system-text">No spatial data associated with this Contributing Organization.</p>
                     }
                 </div>
             </div>
@@ -243,7 +243,7 @@
                         @if (projects.length > 0) {
                             <wadnr-grid [rowData]="projects" [columnDefs]="projectColumnDefs" [pinnedTotalsRow]="projectPinnedTotalsRow" height="300px" downloadFileName="Organization_Projects"> </wadnr-grid>
                         } @else {
-                            <p class="system-text">No Projects associated with this Contributing Organization.</p>
+                            <p class="org-detail__system-text">No Projects associated with this Contributing Organization.</p>
                         }
                     }
                 </div>
@@ -270,7 +270,7 @@
                                 }
                             </wadnr-grid>
                         } @else {
-                            <p class="system-text">No Agreements associated with this Contributing Organization.</p>
+                            <p class="org-detail__system-text">No Agreements associated with this Contributing Organization.</p>
                         }
                     </div>
                 </div>
@@ -305,7 +305,7 @@
                             }
                         </ul>
                     } @else {
-                        <p class="system-text">No Users belong to this Contributing Organization.</p>
+                        <p class="org-detail__system-text">No Users belong to this Contributing Organization.</p>
                     }
                 </div>
             </div>

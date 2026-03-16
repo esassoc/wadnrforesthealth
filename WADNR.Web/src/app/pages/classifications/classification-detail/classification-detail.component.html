@@ -23,9 +23,9 @@
                         <strong>Theme Color</strong>
                     </div>
                     <div class="g-col-8">
-                        <span class="theme-color-row">
+                        <span class="classification-detail__color-row">
                             <span
-                                class="theme-color-swatch"
+                                class="classification-detail__color-swatch"
                                 [style.backgroundColor]="vm.classification.ThemeColor || 'transparent'"
                                 [attr.aria-label]="'Theme color swatch: ' + (vm.classification.ThemeColor || 'none')"></span>
                             <span>{{ vm.classification.ThemeColor ?? "—" }}</span>
@@ -42,7 +42,7 @@
                         <strong>Key Image</strong>
                     </div>
                     <div class="g-col-8">
-                        <img [src]="apiUrl + '/file-resources/' + vm.classification.KeyImageFileResourceGUID" alt="Key image" class="key-image">
+                        <img [src]="apiUrl + '/file-resources/' + vm.classification.KeyImageFileResourceGUID" alt="Key image" class="classification-detail__key-image">
                     </div>
                     }
                 </div>

@@ -1,38 +1,40 @@
-.classification-system-section {
-    margin-bottom: var(--spacing-400);
-}
-
-.classification-row {
-    padding-top: var(--spacing-400);
-    padding-bottom: var(--spacing-200);
-}
-
-.classification-label {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--spacing-200);
-    cursor: pointer;
-
-    input[type="checkbox"] {
-        margin-top: var(--spacing-100);
+.classification-editor {
+    &__section {
+        margin-bottom: var(--spacing-400);
     }
 
-    .classification-name {
+    &__row {
+        padding-top: var(--spacing-400);
+        padding-bottom: var(--spacing-200);
+    }
+
+    &__label {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--spacing-200);
+        cursor: pointer;
+
+        input[type="checkbox"] {
+            margin-top: var(--spacing-100);
+        }
+    }
+
+    &__name {
         font-weight: 600;
     }
-}
 
-.classification-description {
-    font-size: 0.85rem;
-    color: #666;
-    margin-top: var(--spacing-100);
-    margin-left: 1.5rem;
+    &__description {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: var(--spacing-100);
+        margin-left: 1.5rem;
 
-    ::ng-deep p {
-        margin: 0 0 var(--spacing-100);
+        ::ng-deep p {
+            margin: 0 0 var(--spacing-100);
 
-        &:last-child {
-            margin-bottom: 0;
+            &:last-child {
+                margin-bottom: 0;
+            }
         }
     }
 }

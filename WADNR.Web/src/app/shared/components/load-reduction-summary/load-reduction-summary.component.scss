@@ -1,35 +1,37 @@
 /* Scoped styles for LoadReductionSummaryComponent */
-.load-reduction-summary-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+.load-reduction {
+    &__table {
+        width: 100%;
+        border-collapse: collapse;
 
-.load-reduction-summary-table thead th {
-    font-weight: 600;
-    padding: var(--spacing-200) var(--spacing-300);
-    border-bottom: 1px solid var(--gray-200);
-    color: var(--gray-900);
-}
+        thead th {
+            font-weight: 600;
+            padding: var(--spacing-200) var(--spacing-300);
+            border-bottom: 1px solid var(--gray-200);
+            color: var(--gray-900);
+        }
 
-.load-reduction-summary-table tbody td {
-    padding: var(--spacing-200) var(--spacing-300);
-    vertical-align: middle;
-}
+        tbody td {
+            padding: var(--spacing-200) var(--spacing-300);
+            vertical-align: middle;
+        }
+    }
 
-.load-reduction-summary-table .align-right {
-    text-align: right;
-}
+    &__align-right {
+        text-align: right;
+    }
 
-.load-reduction-summary-table .system-text {
-    color: var(--gray-600);
-    padding: var(--spacing-300) 0;
+    &__system-text {
+        color: var(--gray-600);
+        padding: var(--spacing-300) 0;
+    }
 }
 
 @media (max-width: 576px) {
-    .load-reduction-summary-table thead {
+    .load-reduction__table thead {
         display: none;
     }
-    .load-reduction-summary-table tbody td {
+    .load-reduction__table tbody td {
         display: block;
         width: 100%;
     }

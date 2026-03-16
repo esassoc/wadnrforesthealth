@@ -1,31 +1,33 @@
 @use "/src/scss/abstracts" as *;
 
-.field-definition-wrapper {
-    display: inline-block;
-}
+.field-definition {
+    &__wrapper {
+        display: inline-block;
+    }
 
-.field-definition-label {
-    display: inline-flex;
-    align-items: center;
-    font-size: var(--type-size-200);
-    line-height: 1.4;
-    color: var(--color-text);
+    &__label {
+        display: inline-flex;
+        align-items: center;
+        font-size: var(--type-size-200);
+        line-height: 1.4;
+        color: var(--color-text);
+    }
 
     &__text {
         font-weight: bold;
     }
-}
 
-.field-definition-label__icon {
-    display: inline-flex;
-    align-items: center;
-}
+    &__icon {
+        display: inline-flex;
+        align-items: center;
+    }
 
-.inline-display {
-    align-items: start;
-    column-gap: 0.8rem;
+    &__inline {
+        align-items: start;
+        column-gap: 0.8rem;
+    }
 
-    .edit-button {
+    &__edit-button {
         cursor: pointer;
         color: var(--primary);
 
