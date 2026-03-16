@@ -220,6 +220,91 @@ Before adding any form input (text, select, checkbox, textarea, date picker, etc
 
 ---
 
+## BEM SCSS Convention
+
+**All component SCSS must use BEM naming with SCSS `&` nesting.**
+
+- **Block**: Component's root concept, kebab-case (usually matches the folder name). Example: `image-gallery`, `project-detail`, `fact-sheet`
+- **Element**: `&__element` nested inside the block. Flat kebab children become elements: `.photo-item` → `.image-gallery__item`
+- **Modifier**: `&--modifier` for variants/states: `.image-gallery__item--key-photo`
+
+```scss
+.image-gallery {
+    // block styles
+
+    &__item {
+        // element styles
+
+        &--key-photo {
+            // modifier styles
+        }
+
+        &:hover {
+            // pseudo-class (not a modifier)
+        }
+    }
+
+    &__thumbnail {
+        img {
+            // bare element selectors OK inside BEM elements
+        }
+    }
+
+    // ::ng-deep for third-party overrides stays nested under block
+    ::ng-deep .leaflet-control {
+        // leave external class names alone
+    }
+}
+```
+
+### What NOT to rename to BEM
+
+- **Global classes**: `.card`, `.card-header`, `.card-body`, `.card-footer`, `.card-title`, `.btn`, `.btn-primary`, `.btn-secondary`, `.grid-12`, `.g-col-*`, `.flex`, `.flex-between`, `.flex-end`, `.flex-center`, `.m-*`, `.p-*`, `.alert`, `.field`, `.modal`, `.modal-header`, `.modal-body`, `.modal-footer`, `.page-body`, `.sidebar-item`, `.sidebar-link`, `.badge`, `.table`
+- **Third-party classes** inside `::ng-deep` (Leaflet `.leaflet-*`, ag-grid `.ag-*`, ng-select `.ng-*`)
+- **Directive-toggled classes**: `.active`, `.disabled`, `.scrollspy-fixed`, `.required`, `.fade`
+
+### CSS Custom Properties
+
+**Always use CSS custom properties from `src/scss/base/_theme.scss` instead of raw values.** The theme defines a full design token system:
+
+| Category | Pattern | Examples |
+|----------|---------|----------|
+| Colors | `var(--{color}-{shade})` | `var(--blue-default)`, `var(--gray-200)`, `var(--teal-dark)` |
+| Brand colors | `var(--wadnr-{color})` | `var(--wadnr-blue)`, `var(--wadnr-orange)`, `var(--wadnr-green)` |
+| Semantic colors | `var(--primary)`, `var(--secondary)` | `var(--primary)`, `var(--danger)`, `var(--muted)` |
+| Spacing | `var(--spacing-{size})` | `var(--spacing-200)` = 0.5rem, `var(--spacing-400)` = 1rem |
+| Type sizes | `var(--type-size-{size})` | `var(--type-size-200)` (body), `var(--type-size-400)` (large) |
+| Shadows | `var(--shadow-{size})` | `var(--shadow-100)`, `var(--shadow-200)` |
+| Border radius | `var(--border-radius-{size})` | `var(--border-radius-200)` = 0.25rem |
+| Card tokens | `var(--card-{part})` | `var(--card-header-bg-color)`, `var(--card-body-bg-color)` |
+| Button tokens | `var(--btn-{variant}-{part})` | `var(--btn-primary-bg-color)`, `var(--btn-primary-hover-bg-color)` |
+
+```scss
+// CORRECT: Use theme tokens
+.my-component {
+    &__header {
+        color: var(--primary);
+        padding: var(--spacing-400);
+        font-size: var(--type-size-300);
+        border-radius: var(--border-radius-200);
+        box-shadow: var(--shadow-100);
+    }
+}
+
+// WRONG: Raw values
+.my-component {
+    &__header {
+        color: #3e72b0;
+        padding: 1rem;
+        font-size: 1.13rem;
+        border-radius: 0.25rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+}
+```
+
+---
+
 ## Bootstrap Replacement Map
 
 **Do NOT use Bootstrap classes.** Use the custom SCSS grid system:
