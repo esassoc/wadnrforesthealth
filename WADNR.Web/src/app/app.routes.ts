@@ -2,6 +2,7 @@ import { Routes } from "@angular/router";
 import { adminGuard } from "./shared/guards/admin.guard";
 import { authGuard } from "./shared/guards/auth.guard";
 import { elevatedAccessGuard } from "./shared/guards/elevated-access.guard";
+import { personDetailGuard } from "./shared/guards/person-detail.guard";
 import { pageContentManageGuard } from "./shared/guards/page-content-manage.guard";
 import { projectEditGuard } from "./shared/guards/project-edit.guard";
 import { UnsavedChangesGuard } from "./shared/guards/unsaved-changes.guard";
@@ -161,7 +162,7 @@ export const routes: Routes = [
     {
         path: `people/:${routeParams.personID}`,
         title: "User/Contact Detail",
-        canActivate: [authGuard],
+        canActivate: [personDetailGuard],
         loadComponent: () => import("./pages/people/person-detail/person-detail.component").then((m) => m.PersonDetailComponent),
     },
     {

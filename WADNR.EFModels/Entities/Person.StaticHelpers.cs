@@ -56,6 +56,14 @@ public static class People
             .AsNoTracking()
             .ToListAsync();
 
+        // Get GlobalIDs to determine full user status (matches legacy behavior)
+        var personGlobalIDs = await dbContext.People
+            .AsNoTracking()
+            .Where(p => p.GlobalID != null && p.GlobalID != "")
+            .Select(p => p.PersonID)
+            .ToListAsync();
+        var hasGlobalID = personGlobalIDs.ToHashSet();
+
         // Map roles to each person
         var roleLookup = Role.AllLookupDictionary;
         foreach (var person in people)
@@ -70,7 +78,7 @@ public static class People
             var supplementalRoles = roles.Where(r => !r!.IsBaseRole).ToList();
 
             person.RoleName = baseRole?.RoleDisplayName;
-            person.IsFullUser = baseRole != null && baseRole != Role.Unassigned;
+            person.IsFullUser = hasGlobalID.Contains(person.PersonID);
             person.SupplementalRoles = supplementalRoles.Any()
                 ? string.Join(", ", supplementalRoles.Select(r => r!.RoleDisplayName))
                 : null;
@@ -129,8 +137,8 @@ public static class People
             ? string.Join(", ", supplementalRoles.Select(r => r!.RoleDisplayName))
             : null;
 
-        // A "full user" has a base role that is not Unassigned
-        person.IsFullUser = baseRole != null && baseRole != Role.Unassigned;
+        // A "full user" has login credentials (GlobalID), matching legacy behavior
+        person.IsFullUser = !string.IsNullOrEmpty(person.GlobalID);
     }
 
     public static PersonDetail? GetByIDAsDetail(WADNRDbContext dbContext, int personID)
@@ -361,20 +369,16 @@ public static class People
 
     public static async Task DeleteContactAsync(WADNRDbContext dbContext, int personID)
     {
-        // Validate not a full user
-        var personRoleIDs = await dbContext.PersonRoles
-            .Where(pr => pr.PersonID == personID)
-            .Select(pr => pr.RoleID)
-            .ToListAsync();
+        // Validate not a full user (has login credentials)
+        var globalID = await dbContext.People
+            .AsNoTracking()
+            .Where(p => p.PersonID == personID)
+            .Select(p => p.GlobalID)
+            .SingleOrDefaultAsync();
 
-        var roleLookup = Role.AllLookupDictionary;
-        var baseRole = personRoleIDs
-            .Select(id => roleLookup.TryGetValue(id, out var r) ? r : null)
-            .FirstOrDefault(r => r?.IsBaseRole == true);
-
-        if (baseRole != null && baseRole != Role.Unassigned)
+        if (!string.IsNullOrEmpty(globalID))
         {
-            throw new InvalidOperationException("Cannot delete a full user. Only contacts (Unassigned role) can be deleted.");
+            throw new InvalidOperationException("Cannot delete a full user. Only contacts without login credentials can be deleted.");
         }
 
         // Delete related records

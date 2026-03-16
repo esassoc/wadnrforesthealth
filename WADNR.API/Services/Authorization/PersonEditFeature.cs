@@ -18,13 +18,9 @@ public class PersonEditFeature : BaseAuthorizationAttribute
 {
     private const int WadnrOrganizationID = 4704;
 
-    public PersonEditFeature() : base([
-        RoleEnum.Normal,
-        RoleEnum.ProjectSteward,
-        RoleEnum.Admin,
-        RoleEnum.EsaAdmin,
-        RoleEnum.CanAddEditUsersContactsOrganizations
-    ])
+    // Empty role list so BaseAuthorizationAttribute allows all authenticated users through
+    // to OnAuthorizationCore, where we check self-edit or Normal+ permissions.
+    public PersonEditFeature() : base([])
     {
     }
 
@@ -44,7 +40,7 @@ public class PersonEditFeature : BaseAuthorizationAttribute
             return; // Self-edit is always allowed
         }
 
-        // Otherwise, fall back to ContactManageFeature logic:
+        // Otherwise, require Normal+ or contact management permission:
         // Admin/EsaAdmin bypass
         if (person.BaseRole?.RoleID is (int)RoleEnum.Admin or (int)RoleEnum.EsaAdmin)
         {

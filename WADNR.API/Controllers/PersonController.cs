@@ -49,7 +49,7 @@ public class PersonController(
     }
 
     [HttpGet("{personID}")]
-    [NormalUserFeature]
+    [PersonViewFeature]
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<PersonDetail>> Get([FromRoute] int personID)
     {
@@ -61,7 +61,7 @@ public class PersonController(
     }
 
     [HttpGet("{personID}/projects")]
-    [NormalUserFeature]
+    [PersonViewFeature]
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<IEnumerable<ProjectForPersonDetailGridRow>>> ListProjects([FromRoute] int personID)
     {
@@ -73,7 +73,7 @@ public class PersonController(
     }
 
     [HttpGet("{personID}/agreements")]
-    [NormalUserFeature]
+    [PersonViewFeature]
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<IEnumerable<AgreementGridRow>>> ListAgreements([FromRoute] int personID)
     {
@@ -99,7 +99,7 @@ public class PersonController(
     }
 
     [HttpGet("{personID}/interaction-events")]
-    [NormalUserFeature]
+    [PersonViewFeature]
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<IEnumerable<InteractionEventGridRow>>> ListInteractionEvents([FromRoute] int personID)
     {
@@ -132,20 +132,13 @@ public class PersonController(
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<PersonDetail>> UpdateContact([FromRoute] int personID, [FromBody] PersonUpsertRequest request)
     {
-        var callingUserID = CallingUser.PersonID;
+        // Determine if target person is a full user (has login credentials)
+        var targetPerson = await DbContext.People.AsNoTracking()
+            .Where(p => p.PersonID == personID)
+            .Select(p => new { p.GlobalID })
+            .SingleOrDefaultAsync();
 
-        // Determine if target person is a full user
-        var personRoleIDs = await DbContext.PersonRoles
-            .Where(pr => pr.PersonID == personID)
-            .Select(pr => pr.RoleID)
-            .ToListAsync();
-
-        var roleLookup = Role.AllLookupDictionary;
-        var baseRole = personRoleIDs
-            .Select(id => roleLookup.TryGetValue(id, out var r) ? r : null)
-            .FirstOrDefault(r => r?.IsBaseRole == true);
-
-        var isFullUser = baseRole != null && baseRole != Role.Unassigned;
+        var isFullUser = !string.IsNullOrEmpty(targetPerson?.GlobalID);
 
         var updated = await People.UpdateContactAsync(DbContext, personID, request, isFullUser);
         return RequireNotNullThrowNotFound(updated, "Person", personID);
@@ -184,7 +177,7 @@ public class PersonController(
     }
 
     [HttpGet("{personID}/notifications")]
-    [NormalUserFeature]
+    [PersonViewFeature]
     [EntityNotFound(typeof(Person), "personID")]
     public async Task<ActionResult<IEnumerable<NotificationGridRow>>> ListNotifications([FromRoute] int personID)
     {
