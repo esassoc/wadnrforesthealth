@@ -194,6 +194,7 @@ public class ProgramController(
             {
                 pp.Project.ProjectID,
                 pp.Project.ProjectName,
+                pp.Project.FhtProjectNumber,
                 pp.Project.ProjectStageID,
                 pp.Project.ProjectTypeID,
                 TaxonomyBranchID = pp.Project.ProjectType.TaxonomyBranchID,
@@ -223,7 +224,8 @@ public class ProgramController(
                 ["TaxonomyTrunkID"] = p.TaxonomyTrunkID,
                 ["ProjectStageID"] = p.ProjectStageID,
                 ["ProjectStageColor"] = ProjectStage.AllLookupDictionary.TryGetValue(p.ProjectStageID, out var stage) ? stage.ProjectStageColor : "",
-                ["Info"] = p.ProjectName,
+                ["ProjectName"] = p.ProjectName,
+                ["FhtProjectNumber"] = p.FhtProjectNumber,
                 ["ProjectID"] = p.ProjectID,
                 ["TaxonomyBranchID"] = p.TaxonomyBranchID,
                 ["ProjectTypeID"] = p.ProjectTypeID,
