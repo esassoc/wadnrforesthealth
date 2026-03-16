@@ -104,7 +104,7 @@
                     &:focus,
                     &:hover {
                         border-color: #ced4da;
-                        background-color: #fff;
+                        background-color: var(--white);
                     }
                 }
 
@@ -140,7 +140,7 @@
 
                         &:hover {
                             border-color: #ced4da;
-                            background-color: #fff;
+                            background-color: var(--white);
                         }
                     }
 
@@ -148,7 +148,7 @@
                     &.ng-select-opened {
                         .ng-select-container {
                             border-color: #86b7fe;
-                            background-color: #fff;
+                            background-color: var(--white);
 
                             .ng-value-container {
                                 .ng-value {

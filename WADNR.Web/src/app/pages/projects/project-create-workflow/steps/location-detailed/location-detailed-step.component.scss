@@ -105,13 +105,13 @@
                 input[type="text"]:not(.ng-input input),
                 textarea {
                     border: 1px solid #ced4da;
-                    background-color: #fff;
+                    background-color: var(--white);
                     padding: 0.25rem 0.5rem;
                     color: #212529;
 
                     &:focus {
                         border-color: #86b7fe;
-                        background-color: #fff;
+                        background-color: var(--white);
                     }
                 }
 
@@ -126,7 +126,7 @@
                     .ng-select-container {
                         min-height: 31px;
                         border: 1px solid #ced4da;
-                        background-color: #fff;
+                        background-color: var(--white);
 
                         .ng-value-container {
                             .ng-value {
@@ -149,7 +149,7 @@
                     &.ng-select-opened {
                         .ng-select-container {
                             border-color: #86b7fe;
-                            background-color: #fff;
+                            background-color: var(--white);
                         }
                     }
 

@@ -188,7 +188,7 @@
         .btn-warning {
             background-color: #ec971f;
             border-color: #d58512;
-            color: #fff;
+            color: var(--white);
         }
     }
 
@@ -447,7 +447,7 @@
     .btn-warning {
         background-color: #d58512;
         border-color: #985e0d;
-        color: #fff;
+        color: var(--white);
         font-weight: 600;
     }
 }
@@ -470,7 +470,7 @@
         font-weight: 600;
 
         &:hover {
-            background: #fff;
+            background: var(--white);
 
             > a {
                 color: var(--brown-800);

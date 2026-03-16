@@ -52,7 +52,7 @@ simple-tree ::ng-deep {
             border-right: 4px solid var(--node-theme-color, rgba(0, 0, 0, 0.06));
             padding: 0.25rem 0.5rem;
             margin: 0.15rem 0;
-            background: #fff;
+            background: var(--white);
             background-clip: padding-box;
             position: relative;
             z-index: 2;

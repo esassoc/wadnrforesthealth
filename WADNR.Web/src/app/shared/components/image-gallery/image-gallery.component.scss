@@ -10,7 +10,7 @@
     border: 2px solid #ddd;
     border-radius: 4px;
     padding: 0.5rem;
-    background: #fff;
+    background: var(--white);
     transition: border-color 0.2s, box-shadow 0.2s;
     cursor: pointer;
 
@@ -54,7 +54,7 @@
 
             &:hover {
                 background: #0d6efd;
-                color: #fff;
+                color: var(--white);
             }
         }
 
@@ -63,7 +63,7 @@
 
             &:hover {
                 background: #dc3545;
-                color: #fff;
+                color: var(--white);
             }
         }
     }
@@ -97,7 +97,7 @@
         &:hover {
             opacity: 1 !important;
             color: #28a745;
-            background: #fff;
+            background: var(--white);
         }
     }
 }

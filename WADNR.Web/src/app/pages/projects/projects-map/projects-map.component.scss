@@ -83,7 +83,7 @@
     .share-popup {
         border-radius: 6px;
         padding: 10px;
-        background: #fff;
+        background: var(--white);
         border: 1px solid #e6e6e6;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
@@ -133,10 +133,10 @@
     ::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected,
     .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked {
         color: #222;
-        background-color: #fff;
+        background-color: var(--white);
     }
     .ng-select .ng-option {
-        background: #fff !important;
+        background: var(--white) !important;
         color: inherit;
         /* allow long labels to wrap instead of being truncated */
         white-space: normal !important;
@@ -169,7 +169,7 @@
         /* modern browsers */
         accent-color: #666 !important;
         /* fallback styling for browsers not supporting accent-color */
-        background-color: #fff !important;
+        background-color: var(--white) !important;
         border: 1px solid #cfcfcf !important;
     }
     .ng-select .ng-option-with-checkbox input[type="checkbox"]:checked {
@@ -208,7 +208,7 @@
         /* increase max width so the panel can be wider when opened */
         max-width: 440px;
         overflow: hidden;
-        background: #fff;
+        background: var(--white);
         border-left: 1px solid #e6e6e6;
         box-shadow: -2px 0 6px rgba(0, 0, 0, 0.06);
         transition: width 0.25s ease, opacity 0.25s ease;

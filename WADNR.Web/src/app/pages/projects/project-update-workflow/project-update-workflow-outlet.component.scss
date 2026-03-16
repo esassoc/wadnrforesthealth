@@ -29,17 +29,17 @@
 
     &.badge-secondary {
         background-color: var(--gray-500);
-        color: #fff;
+        color: var(--white);
     }
 
     &.badge-info {
         background-color: var(--info, #17a2b8);
-        color: #fff;
+        color: var(--white);
     }
 
     &.badge-success {
         background-color: var(--success, #28a745);
-        color: #fff;
+        color: var(--white);
     }
 
     &.badge-warning {

@@ -67,7 +67,7 @@
 
     .diff-section-header {
         background-color: var(--primary, #003366);
-        color: #fff;
+        color: var(--white);
         padding: 0.5rem 0.75rem;
         font-weight: 600;
         font-size: 0.9rem;
@@ -87,7 +87,7 @@
 
     .diff-badge-changed {
         background-color: rgba(255, 255, 255, 0.25);
-        color: #fff;
+        color: var(--white);
     }
 
     .diff-badge-unchanged {

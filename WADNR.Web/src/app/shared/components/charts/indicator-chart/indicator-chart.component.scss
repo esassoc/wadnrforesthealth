@@ -4,7 +4,7 @@
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --chart-tile-bg: #ffffff; /* your preferred color */
+    --chart-tile-bg: var(--white); /* your preferred color */
 
     .chart-header {
         display: flex;
@@ -140,7 +140,7 @@ iframe {
     position: relative;
     max-width: 90vw;
     max-height: 90vh;
-    background: #fff;
+    background: var(--white);
     padding: 12px;
     border-radius: 8px;
     display: flex;

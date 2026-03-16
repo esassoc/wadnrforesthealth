@@ -59,7 +59,7 @@ input:checked {
 
             & + .toggle {
                 border: 1px solid #dcdcdc;
-                background-color: #fff;
+                background-color: var(--white);
                 color: #b4b4b4;
 
                 &:hover {

@@ -6,7 +6,7 @@
 
 #filter-select-buttons {
     background-color: var(--primary);
-    color: #fff;
+    color: var(--white);
     border: 1px solid var(--secondary);
     border-radius: 5px;
     overflow: hidden;
@@ -43,7 +43,7 @@
 }
 
 #filter-options {
-    background-color: #fff;
+    background-color: var(--white);
     border: 1px solid var(--secondary);
     max-height: 125px;
     overflow: auto;

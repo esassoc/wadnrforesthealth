@@ -51,7 +51,7 @@
     cursor: pointer;
     inset: 0;
     border: 1px solid #3e72b0;
-    background-color: #ffffff;
+    background-color: var(--white);
     transition: 0.4s;
     color: #3e72b0;
     text-align: center;
@@ -81,7 +81,7 @@
 ::ng-deep .switch input:checked + .toggle .toggle-knob {
     transform: translateX(2.3rem) !important;
     /* White knob when ON for better visual parity with app toggle */
-    background-color: #ffffff !important;
+    background-color: var(--white) !important;
     border: 1px solid #3e72b0 !important;
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04) inset !important;
 }
