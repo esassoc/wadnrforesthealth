@@ -1,0 +1,6 @@
+WADNR Scalar has been deployed.
+
+{{- if .Values.ingress.enabled }}
+Access the API documentation at:
+  https://{{ (index .Values.ingress.hosts 0).host }}
+{{- end }}

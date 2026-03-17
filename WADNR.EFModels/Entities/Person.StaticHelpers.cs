@@ -240,7 +240,6 @@ public static class People
             Notes = request.Notes,
             IsActive = true,
             ReceiveSupportEmails = false,
-            WebServiceAccessToken = Guid.NewGuid(),
             CreateDate = DateTime.UtcNow,
             AddedByPersonID = addedByPersonID,
         };
@@ -544,7 +543,6 @@ public static class People
                 GlobalID = globalID,
                 CreateDate = DateTime.UtcNow,
                 IsActive = true,
-                WebServiceAccessToken = Guid.NewGuid(),
                 ReceiveSupportEmails = false,
             };
 
@@ -594,6 +592,23 @@ public static class People
         await dbContext.Entry(person).ReloadAsync();
 
         return await GetByIDAsDetailAsync(dbContext, person.PersonID);
+    }
+
+    public static async Task<string> GenerateApiKeyAsync(WADNRDbContext dbContext, int personID)
+    {
+        var person = await dbContext.People.SingleAsync(p => p.PersonID == personID);
+        person.ApiKey = Guid.NewGuid();
+        await dbContext.SaveChangesAsync();
+        return person.ApiKey.Value.ToString();
+    }
+
+    public static async Task<string?> GetApiKeyByPersonIDAsync(WADNRDbContext dbContext, int personID)
+    {
+        var apiKey = await dbContext.People
+            .Where(p => p.PersonID == personID)
+            .Select(p => p.ApiKey)
+            .SingleOrDefaultAsync();
+        return apiKey?.ToString();
     }
 
 }

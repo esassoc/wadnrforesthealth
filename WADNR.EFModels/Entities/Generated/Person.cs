@@ -43,7 +43,7 @@ public partial class Person
 
     public bool ReceiveSupportEmails { get; set; }
 
-    public Guid? WebServiceAccessToken { get; set; }
+    public Guid? ApiKey { get; set; }
 
     [StringLength(100)]
     [Unicode(false)]

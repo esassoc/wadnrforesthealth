@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.Agreement;
 
 namespace WADNR.EFModels.Entities;
 
@@ -157,5 +158,28 @@ public static class AgreementProjections
                 OrganizationID = x.OrganizationID.Value,
                 OrganizationName = x.OrganizationName ?? string.Empty
             }
+    };
+
+    public static readonly Expression<Func<Agreement, AgreementApiJson>> AsApiJson = x => new AgreementApiJson
+    {
+        AgreementID = x.AgreementID,
+        AgreementTypeID = x.AgreementTypeID,
+        AgreementTypeName = x.AgreementType.AgreementTypeName,
+        AgreementNumber = x.AgreementNumber,
+        StartDate = x.StartDate,
+        EndDate = x.EndDate,
+        AgreementAmount = x.AgreementAmount,
+        ExpendedAmount = x.ExpendedAmount,
+        BalanceAmount = x.BalanceAmount,
+        RegionID = x.DNRUplandRegionID,
+        RegionName = x.DNRUplandRegion != null ? x.DNRUplandRegion.DNRUplandRegionName : null,
+        FirstBillDueOn = x.FirstBillDueOn,
+        Notes = x.Notes,
+        AgreementTitle = x.AgreementTitle,
+        OrganizationID = x.OrganizationID,
+        OrganizationName = x.Organization.OrganizationName,
+        AgreementStatusID = x.AgreementStatusID,
+        AgreementStatusName = x.AgreementStatus != null ? x.AgreementStatus.AgreementStatusName : null,
+        AgreementFileResourceID = x.AgreementFileResourceID
     };
 }

@@ -6,6 +6,7 @@ using NetTopologySuite.Geometries;
 using System.Linq;
 using System.Linq.Expressions;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.Project;
 using WADNR.Models.DataTransferObjects.ProjectUpdate;
 
 namespace WADNR.EFModels.Entities;
@@ -28,6 +29,15 @@ public static class Projects
                 OrganizationName = po.Organization.DisplayName
             })
             .SingleOrDefault();
+
+    public static async Task<List<ProjectApiJson>> ListAsApiJsonAsync(WADNRDbContext dbContext)
+    {
+        return await dbContext.Projects
+            .AsNoTracking()
+            .Select(ProjectProjections.AsApiJson)
+            .OrderBy(x => x.ProjectName)
+            .ToListAsync();
+    }
 
     public static async Task<Project?> GetByIDWithTrackingAsync(WADNRDbContext dbContext, int projectID)
     {

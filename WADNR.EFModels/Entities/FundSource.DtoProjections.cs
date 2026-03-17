@@ -1,5 +1,7 @@
+using System.Linq;
 using System.Linq.Expressions;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.FundSource;
 
 namespace WADNR.EFModels.Entities;
 
@@ -90,5 +92,26 @@ public static class FundSourceProjections
         FundSourceID = x.FundSourceID,
         FundSourceNumber = x.FundSourceNumber,
         FundSourceName = x.FundSourceName
+    };
+
+    public static readonly Expression<Func<FundSource, FundSourceApiJson>> AsApiJson = x => new FundSourceApiJson
+    {
+        FundSourceID = x.FundSourceID,
+        FundSourceNumber = x.FundSourceNumber,
+        StartDate = x.StartDate,
+        EndDate = x.EndDate,
+        ConditionsAndRequirements = x.ConditionsAndRequirements,
+        ComplianceNotes = x.ComplianceNotes,
+        AwardedFunds = x.TotalAwardAmount,
+        CFDANumber = x.CFDANumber,
+        FundSourceName = x.FundSourceName,
+        FundSourceTypeID = x.FundSourceTypeID,
+        FundSourceTypeName = x.FundSourceType != null ? x.FundSourceType.FundSourceTypeName : null,
+        ShortName = x.ShortName,
+        FundSourceStatusID = x.FundSourceStatusID,
+        FundSourceStatusTypeName = null, // Resolved client-side via FundSourceStatus.AllLookupDictionary
+        OrganizationID = x.OrganizationID,
+        OrganizationName = x.Organization.OrganizationName,
+        FundSourceFileResourceIDs = x.FundSourceFileResources.Select(f => f.FileResourceID).ToList()
     };
 }

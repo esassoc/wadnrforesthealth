@@ -10599,6 +10599,52 @@
         }
       }
     },
+    "/people/{personID}/api-key": {
+      "get": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "GetApiKey_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "GenerateApiKey_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/priority-landscapes": {
       "get": {
         "tags": [

@@ -1,5 +1,7 @@
 using System.Linq.Expressions;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.InteractionEvent;
+using WADNR.Models.DataTransferObjects.Shared;
 
 namespace WADNR.EFModels.Entities;
 
@@ -47,5 +49,29 @@ public static class InteractionEventProjections
                 InteractionEventTypeID = x.InteractionEventType.InteractionEventTypeID,
                 InteractionEventTypeDisplayName = x.InteractionEventType.InteractionEventTypeDisplayName
             }
+        };
+
+    public static readonly Expression<Func<InteractionEvent, InteractionEventApiJson>> AsApiJson =
+        x => new InteractionEventApiJson
+        {
+            InteractionEventID = x.InteractionEventID,
+            InteractionEventTypeID = x.InteractionEventTypeID,
+            InteractionEventTypeName = x.InteractionEventType.InteractionEventTypeName,
+            StaffPersonID = x.StaffPersonID,
+            StaffPersonName = x.StaffPerson != null
+                ? x.StaffPerson.FirstName + " " + x.StaffPerson.LastName +
+                  (x.StaffPerson.Organization != null ? " (" + x.StaffPerson.Organization.OrganizationShortName + ")" : "")
+                : null,
+            InteractionEventTitle = x.InteractionEventTitle,
+            InteractionEventDescription = x.InteractionEventDescription,
+            InteractionEventDate = x.InteractionEventDate,
+            InteractionEventLocationSimple = x.InteractionEventLocationSimple != null ? new LegacyGeometryWrapper
+            {
+                Geometry = new LegacyGeometry
+                {
+                    CoordinateSystemId = x.InteractionEventLocationSimple.SRID,
+                    WellKnownText = x.InteractionEventLocationSimple.AsText()
+                }
+            } : null
         };
 }

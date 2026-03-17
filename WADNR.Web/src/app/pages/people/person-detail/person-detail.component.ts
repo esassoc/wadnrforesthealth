@@ -1,7 +1,7 @@
 import { AsyncPipe, DatePipe } from "@angular/common";
 import { Component, Input, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, finalize, forkJoin, map, Observable, shareReplay, switchMap } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, finalize, forkJoin, map, Observable, of, shareReplay, switchMap, tap } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 import { DialogService } from "@ngneat/dialog";
@@ -11,8 +11,10 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
+import { CopyToClipboardDirective } from "src/app/shared/directives/copy-to-clipboard.directive";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
+import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { AsyncConfirmModalComponent, AsyncConfirmModalData } from "src/app/shared/components/async-confirm-modal/async-confirm-modal.component";
 
 import { AuthenticationService } from "src/app/services/authentication.service";
@@ -36,7 +38,7 @@ import { PersonEditStewardshipAreasModalComponent, PersonEditStewardshipAreasMod
 @Component({
     selector: "person-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, DatePipe, RouterLink, BreadcrumbComponent, WADNRGridComponent, ButtonLoadingDirective, LoadingDirective, IconComponent],
+    imports: [PageHeaderComponent, AsyncPipe, DatePipe, RouterLink, BreadcrumbComponent, WADNRGridComponent, ButtonLoadingDirective, LoadingDirective, IconComponent, CopyToClipboardDirective],
     templateUrl: "./person-detail.component.html",
     styleUrls: ["./person-detail.component.scss"],
 })
@@ -60,6 +62,10 @@ export class PersonDetailComponent {
     public interactionEventsIsLoading$: Observable<boolean>;
     public notificationsIsLoading$: Observable<boolean>;
     public isDownloadingAgreements = signal(false);
+
+    public apiKey$: Observable<string | null>;
+    public canViewApiKey$: Observable<boolean>;
+    private refreshApiKey$ = new BehaviorSubject<void>(undefined);
 
     public canDownloadExcel$: Observable<boolean>;
     public canImpersonate$: Observable<boolean>;
@@ -90,6 +96,7 @@ export class PersonDetailComponent {
         private projectService: ProjectService,
         private authenticationService: AuthenticationService,
         private dialogService: DialogService,
+        private confirmService: ConfirmService,
         private utilityFunctions: UtilityFunctionsService,
         private router: Router
     ) {}
@@ -196,6 +203,29 @@ export class PersonDetailComponent {
 
         this.canEditInteractionEvents$ = this.authenticationService.currentUserSetObservable.pipe(
             map((user) => this.authenticationService.canEditInteractionEvents(user)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.canViewApiKey$ = userAndPerson$.pipe(
+            map(([person, currentUser]) => {
+                if (!currentUser || !person || !person.IsFullUser) return false;
+                // Target person must have a Normal+ base role (matches legacy ViewJsonApiLandingPageFeature)
+                const targetRoleID = person.BaseRole?.RoleID;
+                const hasApiAccess = targetRoleID === RoleEnum.Normal
+                    || targetRoleID === RoleEnum.ProjectSteward
+                    || targetRoleID === RoleEnum.Admin
+                    || targetRoleID === RoleEnum.EsaAdmin;
+                if (!hasApiAccess) return false;
+                const isAdmin = this.authenticationService.isUserAnAdministrator(currentUser);
+                const isSelf = person.PersonID === currentUser.PersonID;
+                return isSelf || isAdmin;
+            }),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.apiKey$ = combineLatest([this.personID$, this.refreshApiKey$]).pipe(
+            switchMap(([personID]) => this.personService.getApiKeyPerson(personID)),
+            map((response: any) => response?.ApiKey || null),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -334,6 +364,22 @@ export class PersonDetailComponent {
         this.utilityFunctions.downloadExcel(url, "person-agreements.xlsx")
             .pipe(finalize(() => this.isDownloadingAgreements.set(false)))
             .subscribe();
+    }
+
+    async generateApiKey(personID: number, hasExistingKey: boolean): Promise<void> {
+        if (hasExistingKey) {
+            const confirmed = await this.confirmService.confirm({
+                title: "Generate New API Key",
+                message: "Are you sure you want to generate a new API key? This will invalidate your current API key.",
+                buttonTextYes: "Generate",
+                buttonClassYes: "btn-primary",
+                buttonTextNo: "Cancel",
+            });
+            if (!confirmed) return;
+        }
+        this.personService.generateApiKeyPerson(personID).subscribe(() => {
+            this.refreshApiKey$.next();
+        });
     }
 
     hasRole(person: PersonDetail, roleID: number): boolean {

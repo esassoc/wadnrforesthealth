@@ -33,4 +33,10 @@
         color: var(--bs-secondary-color);
         font-style: italic;
     }
+
+    &__api-key-row {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-300);
+    }
 }

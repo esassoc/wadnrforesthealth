@@ -272,14 +272,16 @@ export const routes: Routes = [
     { path: "manage-page-content", title: "Manage Page Content", canActivate: [pageContentManageGuard], loadComponent: () => import("./pages/admin/manage-page-content/manage-page-content.component").then((m) => m.ManagePageContentComponent) },
     { path: "manage-custom-pages", title: "Manage Custom Pages", canActivate: [pageContentManageGuard], loadComponent: () => import("./pages/admin/manage-custom-pages/manage-custom-pages.component").then((m) => m.ManageCustomPagesComponent) },
     { path: "internal-setup-notes", title: "Internal Setup Notes", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/internal-setup-notes/internal-setup-notes.component").then((m) => m.InternalSetupNotesComponent) },
-    // TODO: Migrate from legacy - component showcase (admin). Consider Storybook instead.
-    { path: "style-guide", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "upload-excel-files", title: "Upload Excel Files / ETL", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/loa-upload/loa-upload.component").then((m) => m.LoaUploadComponent) },
     { path: "manage-find-your-forester", title: "Manage Find Your Forester", canActivate: [elevatedAccessGuard], loadComponent: () => import("./pages/find-your-forester/manage-find-your-forester/manage-find-your-forester.component").then((m) => m.ManageFindYourForesterComponent) },
     { path: "map-layers", title: "Manage External Map Layers", canActivate: [adminGuard], loadComponent: () => import("./pages/admin/map-layers/map-layers.component").then((m) => m.MapLayersComponent) },
     { path: "jobs", title: "Finance API Import Jobs", canActivate: [elevatedAccessGuard], loadComponent: () => import("./pages/admin/jobs/jobs.component").then((m) => m.JobsComponent) },
-    // TODO: Migrate from legacy - developer reference page. Swagger/OpenAPI may replace this.
-    { path: "json-apis", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
+    {
+        path: "json-apis",
+        title: "JSON APIs",
+        canActivate: [authGuard],
+        loadComponent: () => import("./pages/json-apis/json-apis.component").then((m) => m.JsonApisComponent),
+    },
     { path: "reports/projects", title: "Project Reports", canActivate: [authGuard], loadComponent: () => import("./pages/reports/project-reports/project-reports.component").then((m) => m.ProjectReportsComponent) },
     { path: "reports", title: "Manage Report Templates", canActivate: [adminGuard], loadComponent: () => import("./pages/reports/reports.component").then((m) => m.ReportsComponent) },
     {

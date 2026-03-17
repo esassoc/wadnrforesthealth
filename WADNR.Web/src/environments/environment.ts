@@ -3,6 +3,7 @@ export const environment = {
     staging: false,
     dev: true,
     mainAppApiUrl: "/api",
+    scalarApiUrl: "https://localhost:5612", // Direct to Scalar in Docker, bypasses proxy
     geoserverMapServiceUrl: "http://localhost:3280/geoserver/WADNRForestHealth",
     // datadogClientToken: "pub6bc5bcb39be6b4c926271a35cb8cb46a",
     auth0: {

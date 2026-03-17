@@ -2,11 +2,21 @@ using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.InteractionEvent;
 
 namespace WADNR.EFModels.Entities;
 
 public static class InteractionEvents
 {
+    public static async Task<List<InteractionEventApiJson>> ListAsApiJsonAsync(WADNRDbContext dbContext)
+    {
+        return await dbContext.InteractionEvents
+            .AsNoTracking()
+            .Select(InteractionEventProjections.AsApiJson)
+            .OrderBy(x => x.InteractionEventTitle)
+            .ToListAsync();
+    }
+
     public static async Task<List<InteractionEventGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
     {
         var entities = await dbContext.InteractionEvents

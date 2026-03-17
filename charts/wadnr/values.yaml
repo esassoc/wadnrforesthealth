@@ -9,6 +9,7 @@ global:
     api: "api-wadnr.esa-qa.sitkatech.com"
     web: "wadnr.esa-qa.sitkatech.com"
     geoserver: "geoserver-wadnr.esa-qa.sitkatech.com"
+    scalar: "scalar-wadnr.esa-qa.sitkatech.com"
     sitkacapture: "wadnr-sitkacapture"
   secrets:
     geoserverSqlServerPassword: "passwordhere"
@@ -266,6 +267,50 @@ sitkacapture:
     maxReplicas: 2
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
+  nodeSelector:
+    agentpool: appnodepool
+  tolerations: []
+  affinity: {}
+
+scalar:
+  replicaCount: 1
+  image:
+    repository: containersesaqa.azurecr.io/wadnr/scalar
+    pullPolicy: Always
+  nameOverride: ""
+  fullnameOverride: ""
+  namespace: h2o
+  resources:
+    requests:
+      memory: "512Mi"
+    limits:
+      memory: "2G"
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: ""
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    className: "azure-application-gateway"
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      acme.cert-manager.io/http01-edit-in-place: "true"
+      appgw.ingress.kubernetes.io/ssl-redirect: "true"
+      appgw.ingress.kubernetes.io/request-timeout: "300"
+      cert-manager.io/issue-temporary-certificate: "true"
+      appgw.ingress.kubernetes.io/connection-draining: "true"
+      appgw.ingress.kubernetes.io/connection-draining-timeout: "30"
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 80
   nodeSelector:
     agentpool: appnodepool
   tolerations: []

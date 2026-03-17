@@ -6,6 +6,26 @@ namespace WADNR.EFModels.Entities;
 
 public static class Invoices
 {
+    public static async Task<List<InvoiceApiJson>> ListAsApiJsonAsync(WADNRDbContext dbContext)
+    {
+        var items = await dbContext.Invoices
+            .AsNoTracking()
+            .Select(InvoiceProjections.AsApiJson)
+            .OrderBy(x => x.InvoiceIdentifyingName)
+            .ToListAsync();
+
+        // Resolve InvoiceStatus name from static lookup
+        foreach (var item in items)
+        {
+            if (InvoiceStatus.AllLookupDictionary.TryGetValue(item.InvoiceStatusID, out var status))
+            {
+                item.InvoiceStatusName = status.InvoiceStatusDisplayName;
+            }
+        }
+
+        return items;
+    }
+
     public static async Task<List<InvoiceGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
     {
         var invoices = await dbContext.Invoices

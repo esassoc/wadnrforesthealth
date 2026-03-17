@@ -1024,16 +1024,6 @@ export const pageRegistry: PageRegistryEntry[] = [
 
     // ── Not Yet Migrated ───────────────────────────────────────────────────────
     {
-        id: "style-guide",
-        name: "Style Guide",
-        area: "admin",
-        legacyPath: "/Home/StyleGuide",
-        modernPath: "/style-guide",
-        status: "not-yet-migrated",
-        auth: "admin",
-        pageType: "page",
-    },
-    {
         id: "json-apis",
         name: "JSON APIs",
         area: "admin",

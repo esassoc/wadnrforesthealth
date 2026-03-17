@@ -27,17 +27,13 @@ public partial class vLoaStageProjectFundSourceAllocation
 
     public int? FundSourceAllocationID { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? LetterDate { get; set; }
+    public DateOnly? LetterDate { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? ProjectExpirationDate { get; set; }
+    public DateOnly? ProjectExpirationDate { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? ApplicationDate { get; set; }
+    public DateOnly? ApplicationDate { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? DecisionDate { get; set; }
+    public DateOnly? DecisionDate { get; set; }
 
     public int LoaStageID { get; set; }
 

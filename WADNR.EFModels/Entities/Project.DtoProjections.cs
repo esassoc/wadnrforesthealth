@@ -1,6 +1,9 @@
 using System.Linq.Expressions;
+using NetTopologySuite.Geometries;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.Project;
 using WADNR.Models.DataTransferObjects.ProjectUpdate;
+using WADNR.Models.DataTransferObjects.Shared;
 
 namespace WADNR.EFModels.Entities;
 
@@ -796,5 +799,53 @@ public static class ProjectProjections
                 TagName = pt.Tag.TagName
             })
             .ToList()
+    };
+
+    public static readonly Expression<Func<Project, ProjectApiJson>> AsApiJson = x => new ProjectApiJson
+    {
+        ProjectID = x.ProjectID,
+        ProjectTypeID = x.ProjectTypeID,
+        ProjectTypeName = x.ProjectType.ProjectTypeName,
+        ProjectStageID = x.ProjectStageID,
+        ProjectStageName = x.ProjectStage.ProjectStageName,
+        ProjectName = x.ProjectName,
+        ProjectDescription = x.ProjectDescription,
+        CompletionDate = x.CompletionDate,
+        EstimatedTotalCost = x.EstimatedTotalCost,
+        ProjectLocationPoint = x.ProjectLocationPoint != null ? new LegacyGeometryWrapper
+        {
+            Geometry = new LegacyGeometry
+            {
+                CoordinateSystemId = x.ProjectLocationPoint.SRID,
+                WellKnownText = x.ProjectLocationPoint.AsText()
+            }
+        } : null,
+        IsFeatured = x.IsFeatured,
+        ProjectLocationNotes = x.ProjectLocationNotes,
+        PlannedDate = x.PlannedDate,
+        ProjectLocationSimpleTypeID = x.ProjectLocationSimpleTypeID,
+        ProjectLocationSimpleTypeName = x.ProjectLocationSimpleType.ProjectLocationSimpleTypeName,
+        PrimaryContactPersonID = x.ProjectPeople
+            .Where(pp => pp.ProjectPersonRelationshipTypeID == ProjectPersonRelationshipType.PrimaryContact.ProjectPersonRelationshipTypeID)
+            .Select(pp => (int?)pp.PersonID)
+            .FirstOrDefault(),
+        PrimaryContactPersonName = x.ProjectPeople
+            .Where(pp => pp.ProjectPersonRelationshipTypeID == ProjectPersonRelationshipType.PrimaryContact.ProjectPersonRelationshipTypeID)
+            .Select(pp => pp.Person.FirstName + " " + pp.Person.LastName)
+            .FirstOrDefault(),
+        ProjectApprovalStatusID = x.ProjectApprovalStatusID,
+        ProjectApprovalStatusName = x.ProjectApprovalStatus.ProjectApprovalStatusName,
+        ProposingPersonID = x.ProposingPersonID,
+        ProposingPersonName = x.ProposingPerson != null ? x.ProposingPerson.FirstName + " " + x.ProposingPerson.LastName : null,
+        ProposingDate = x.ProposingDate,
+        SubmissionDate = x.SubmissionDate,
+        ApprovalDate = x.ApprovalDate,
+        ReviewedByPersonID = x.ReviewedByPersonID,
+        ReviewedByPersonName = x.ReviewedByPerson != null ? x.ReviewedByPerson.FirstName + " " + x.ReviewedByPerson.LastName : null,
+        FocusAreaID = x.FocusAreaID,
+        NoExpendituresToReportExplanation = x.NoExpendituresToReportExplanation,
+        NoRegionsExplanation = x.NoRegionsExplanation,
+        NoPriorityLandscapesExplanation = x.NoPriorityLandscapesExplanation,
+        ExpirationDate = x.ExpirationDate
     };
 }

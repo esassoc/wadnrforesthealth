@@ -102,6 +102,27 @@
                                 }
                             }
                         </dl>
+
+                        @if (canViewApiKey$ | async) {
+                            @let apiKey = apiKey$ | async;
+                            <hr>
+                            <dl class="person-detail__kv-list">
+                                <dt>API Key</dt>
+                                <dd>
+                                    @if (apiKey) {
+                                        <span class="person-detail__api-key-row">
+                                            <span [copyToClipboard]="true">{{ apiKey }}</span>
+                                            <button class="btn btn-sm btn-secondary" (click)="generateApiKey(person.PersonID, true)">Regenerate</button>
+                                        </span>
+                                    } @else {
+                                        <span class="person-detail__api-key-row">
+                                            <span class="person-detail__text-muted">No API key generated.</span>
+                                            <button class="btn btn-sm btn-primary" (click)="generateApiKey(person.PersonID, false)">Generate</button>
+                                        </span>
+                                    }
+                                </dd>
+                            </dl>
+                        }
                     </div>
                 </div>
             </div>
@@ -189,6 +210,7 @@
                     </div>
 
                 }
+
             </div>
         </div>
 

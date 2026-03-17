@@ -223,6 +223,52 @@ public class PersonController(
         }
     }
 
+    [HttpGet("{personID}/api-key")]
+    [NormalUserFeature]
+    public async Task<ActionResult<object>> GetApiKey([FromRoute] int personID)
+    {
+        var gate = await CheckApiKeyGateAsync(personID);
+        if (gate != null) return gate;
+
+        var apiKey = await People.GetApiKeyByPersonIDAsync(DbContext, personID);
+        return Ok(new { ApiKey = apiKey });
+    }
+
+    [HttpPost("{personID}/api-key")]
+    [NormalUserFeature]
+    public async Task<ActionResult<object>> GenerateApiKey([FromRoute] int personID)
+    {
+        var gate = await CheckApiKeyGateAsync(personID);
+        if (gate != null) return gate;
+
+        var apiKey = await People.GenerateApiKeyAsync(DbContext, personID);
+        return Ok(new { ApiKey = apiKey });
+    }
+
+    /// <summary>
+    /// API key access: allow self or Admin/EsaAdmin, but only if the target person
+    /// has a Normal+ base role (matches legacy ViewJsonApiLandingPageFeature).
+    /// </summary>
+    private async Task<ActionResult?> CheckApiKeyGateAsync(int personID)
+    {
+        var callerBaseRoleID = CallingUser.BaseRole?.RoleID;
+        var isAdmin = callerBaseRoleID == (int)RoleEnum.Admin || callerBaseRoleID == (int)RoleEnum.EsaAdmin;
+        var isSelf = CallingUser.PersonID == personID;
+
+        if (!isSelf && !isAdmin) return Forbid();
+
+        var allowedRoleIDs = new[] { (int)RoleEnum.Normal, (int)RoleEnum.ProjectSteward, (int)RoleEnum.Admin, (int)RoleEnum.EsaAdmin };
+        var baseRoleIDs = Role.All.Where(r => r.IsBaseRole).Select(r => r.RoleID).ToList();
+        var targetBaseRoleID = await DbContext.PersonRoles
+            .Where(pr => pr.PersonID == personID && baseRoleIDs.Contains(pr.RoleID))
+            .Select(pr => pr.RoleID)
+            .FirstOrDefaultAsync();
+
+        if (!allowedRoleIDs.Contains(targetBaseRoleID)) return Forbid();
+
+        return null;
+    }
+
     /// <summary>
     /// Non-EsaAdmin users cannot access data for EsaAdmin-role persons.
     /// Returns Forbid if the gate applies, null otherwise.

@@ -1,0 +1,9 @@
+{{ if eq .Values.global.env.name "qa" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "scalar.fullname" . }}-qa-configmap
+data:
+  SECRET_PATH: "/app/secrets/wadnrScalarSecrets"
+  ASPNETCORE_ENVIRONMENT: "Staging"
+{{ end }}

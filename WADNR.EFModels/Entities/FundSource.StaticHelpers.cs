@@ -1,10 +1,42 @@
 using Microsoft.EntityFrameworkCore;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.FundSource;
 
 namespace WADNR.EFModels.Entities;
 
 public static class FundSources
 {
+    public static async Task<List<FundSourceApiJson>> ListAsApiJsonAsync(WADNRDbContext dbContext)
+    {
+        var items = await dbContext.FundSources
+            .AsNoTracking()
+            .Select(FundSourceProjections.AsApiJson)
+            .OrderBy(x => x.FundSourceNumber)
+            .ToListAsync();
+
+        // Resolve FundSourceStatus name from static lookup
+        foreach (var item in items)
+        {
+            if (FundSourceStatus.AllLookupDictionary.TryGetValue(item.FundSourceStatusID, out var status))
+            {
+                item.FundSourceStatusTypeName = status.FundSourceStatusName;
+            }
+        }
+
+        return items;
+    }
+
+    public static List<FundSourceStatusApiJson> ListStatusesAsApiJson()
+    {
+        return FundSourceStatus.All
+            .Select(x => new FundSourceStatusApiJson
+            {
+                FundSourceStatusID = x.FundSourceStatusID,
+                FundSourceStatusName = x.FundSourceStatusName
+            })
+            .ToList();
+    }
+
     public static async Task<List<FundSourceGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
     {
         var entities = await dbContext.FundSources

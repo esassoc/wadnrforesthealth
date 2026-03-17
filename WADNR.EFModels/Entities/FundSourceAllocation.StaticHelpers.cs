@@ -6,6 +6,36 @@ namespace WADNR.EFModels.Entities;
 
 public static class FundSourceAllocations
 {
+    public static async Task<List<FundSourceAllocationApiJson>> ListAsApiJsonAsync(WADNRDbContext dbContext)
+    {
+        var items = await dbContext.FundSourceAllocations
+            .AsNoTracking()
+            .Select(FundSourceAllocationProjections.AsApiJson)
+            .OrderBy(x => x.FundSourceAllocationName)
+            .ToListAsync();
+
+        // Resolve Division name from static lookup
+        foreach (var item in items.Where(i => i.DivisionID != null))
+        {
+            if (Division.AllLookupDictionary.TryGetValue(item.DivisionID!.Value, out var division))
+            {
+                item.DivisionName = division.DivisionDisplayName;
+            }
+        }
+
+        return items;
+    }
+
+    public static async Task<List<FundSourceAllocationProgramIndexProjectCodeApiJson>> ListProgramIndexProjectCodesAsApiJsonAsync(WADNRDbContext dbContext)
+    {
+        return await dbContext.FundSourceAllocationProgramIndexProjectCodes
+            .AsNoTracking()
+            .Select(FundSourceAllocationProjections.AsApiJsonProgramIndexProjectCode)
+            .OrderBy(x => x.ProgramIndexCode)
+            .ThenBy(x => x.ProjectCodeName)
+            .ToListAsync();
+    }
+
     public static async Task<List<FundSourceAllocationGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
     {
         var rows = await dbContext.FundSourceAllocations

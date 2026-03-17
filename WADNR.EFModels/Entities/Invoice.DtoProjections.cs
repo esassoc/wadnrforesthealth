@@ -112,4 +112,26 @@ public static class InvoiceProjections
             ? x.InvoiceFileResource.OriginalBaseFilename + "." + x.InvoiceFileResource.OriginalFileExtension
             : null
     };
+
+    public static readonly Expression<Func<Invoice, InvoiceApiJson>> AsApiJson = x => new InvoiceApiJson
+    {
+        InvoiceID = x.InvoiceID,
+        InvoiceIdentifyingName = x.InvoiceIdentifyingName,
+        RequestorName = x.InvoicePaymentRequest.Vendor != null ? x.InvoicePaymentRequest.Vendor.VendorName : null,
+        InvoiceDate = x.InvoiceDate,
+        PurchaseAuthority = x.InvoicePaymentRequest.PurchaseAuthority,
+        PaymentAmount = x.PaymentAmount,
+        PreparedByPersonID = x.InvoicePaymentRequest.PreparedByPersonID,
+        PreparedByPersonName = x.InvoicePaymentRequest.PreparedByPerson != null
+            ? x.InvoicePaymentRequest.PreparedByPerson.FirstName + " " + x.InvoicePaymentRequest.PreparedByPerson.LastName
+            : null,
+        InvoiceApprovalStatusID = x.InvoiceApprovalStatusID,
+        InvoiceApprovalStatusName = x.InvoiceApprovalStatus.InvoiceApprovalStatusName,
+        InvoiceApprovalStatusComment = x.InvoiceApprovalStatusComment,
+        PurchaseAuthorityIsLandownerCostShareAgreement = x.InvoicePaymentRequest.PurchaseAuthorityIsLandownerCostShareAgreement,
+        InvoiceMatchAmountTypeID = x.InvoiceMatchAmountTypeID,
+        MatchAmount = x.MatchAmount,
+        InvoiceStatusID = x.InvoiceStatusID,
+        InvoiceStatusName = null // Resolved client-side via InvoiceStatus.AllLookupDictionary
+    };
 }

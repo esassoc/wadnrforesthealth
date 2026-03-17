@@ -1,10 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.Agreement;
 
 namespace WADNR.EFModels.Entities;
 
 public static class Agreements
 {
+    public static async Task<List<AgreementApiJson>> ListAsApiJsonAsync(WADNRDbContext dbContext)
+    {
+        return await dbContext.Agreements
+            .AsNoTracking()
+            .Select(AgreementProjections.AsApiJson)
+            .OrderBy(x => x.AgreementNumber)
+            .ToListAsync();
+    }
+
     public static async Task<List<AgreementGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
     {
         var entities = await dbContext.Agreements

@@ -10,7 +10,7 @@ CREATE TABLE [dbo].[Person](
     [IsActive] [bit] NOT NULL,
     [OrganizationID] [int] NULL CONSTRAINT [FK_Person_Organization_OrganizationID] FOREIGN KEY REFERENCES [dbo].[Organization]([OrganizationID]),
     [ReceiveSupportEmails] [bit] NOT NULL,
-    [WebServiceAccessToken] [uniqueidentifier] NULL,
+    [ApiKey] [uniqueidentifier] NULL,
     [MiddleName] [varchar](100) NULL,
     [Notes] [varchar](500) NULL,
     [PersonAddress] [varchar](255) NULL,

@@ -37,6 +37,21 @@ services:
     volumes:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
 
+  wadnr.scalar:
+    build:
+      args:
+        source: .
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - SECRET_PATH=${SECRET_PATH_SCALAR}
+    ports:
+      - "5611:8080"
+      - "5612:8081"
+    volumes:
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
   wadnr.gdalapi:
     hostname: gdalapi
     environment:

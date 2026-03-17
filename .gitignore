@@ -59,3 +59,4 @@ obj
 .claude/settings.local.json
 .claude/migration/
 .claude/migration-logs/
+/WADNR.Scalar/appsecrets.json

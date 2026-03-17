@@ -272,4 +272,36 @@ public static class FundSourceAllocationProjections
             })
             .ToList()
     };
+
+    public static readonly Expression<Func<FundSourceAllocation, FundSourceAllocationApiJson>> AsApiJson = x => new FundSourceAllocationApiJson
+    {
+        FundSourceAllocationID = x.FundSourceAllocationID,
+        FundSourceAllocationName = x.FundSourceAllocationName,
+        FundSourceID = x.FundSourceID,
+        StartDate = x.StartDate,
+        EndDate = x.EndDate,
+        AllocationAmount = x.AllocationAmount,
+        FederalFundCodeID = x.FederalFundCodeID,
+        FederalFundCodeName = x.FederalFundCode != null ? x.FederalFundCode.FederalFundCodeAbbrev : null,
+        OrganizationID = x.OrganizationID,
+        OrganizationName = x.Organization != null ? x.Organization.OrganizationName : null,
+        RegionID = x.DNRUplandRegionID,
+        RegionName = x.DNRUplandRegion != null ? x.DNRUplandRegion.DNRUplandRegionName : null,
+        DivisionID = x.DivisionID,
+        DivisionName = null, // Resolved client-side via Division.AllLookupDictionary
+        FundSourceManagerID = x.FundSourceManagerID,
+        FundSourceManagerName = x.FundSourceManager != null ? x.FundSourceManager.FirstName + " " + x.FundSourceManager.LastName : null,
+        FundSourceAllocationFileResourceIDs = x.FundSourceAllocationFileResources.Select(f => f.FileResourceID).ToList()
+    };
+
+    public static readonly Expression<Func<FundSourceAllocationProgramIndexProjectCode, FundSourceAllocationProgramIndexProjectCodeApiJson>> AsApiJsonProgramIndexProjectCode =
+        x => new FundSourceAllocationProgramIndexProjectCodeApiJson
+        {
+            FundSourceAllocationProgramIndexProjectCodeID = x.FundSourceAllocationProgramIndexProjectCodeID,
+            FundSourceAllocationID = x.FundSourceAllocationID,
+            ProgramIndexID = x.ProgramIndexID,
+            ProgramIndexCode = x.ProgramIndex.ProgramIndexCode,
+            ProjectCodeID = x.ProjectCodeID,
+            ProjectCodeName = x.ProjectCode != null ? x.ProjectCode.ProjectCodeName : null
+        };
 }
