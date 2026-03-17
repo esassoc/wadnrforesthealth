@@ -606,7 +606,7 @@ ProjectFirmaMaps.Map.prototype.htmlPopupContents = function (allLayers) {
 
                 self.map.setView(latlng);
                 if (jQuery('#findYourForesterContainer').length > 0) {
-                    jQuery('#findYourForesterContainer').html(self.htmlPopupContents(allLayers));
+                    //jQuery('#findYourForesterContainer').html(self.htmlPopupContents(allLayers));
                 } else {
                     self.map.openPopup(L.popup({ maxWidth: 200, maxHeight: 250 }).setLatLng(latlng).setContent(self.htmlPopupContents(allLayers)).openOn(self.map));
                 }
