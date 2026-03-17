@@ -1,6 +1,6 @@
-
--- Created by GitHub Copilot in SSMS - review carefully before executing
-
+IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.fGetForesterWorkUnitsByPoint'))
+drop function dbo.fGetForesterWorkUnitsByPoint
+GO
 CREATE FUNCTION dbo.fGetForesterWorkUnitsByPoint
 (
     @Point GEOMETRY
@@ -18,7 +18,8 @@ RETURN
         p.LastName,
         p.Email,
         p.Phone,
-        fwu.ForesterWorkUnitName
+        fwu.ForesterWorkUnitName,
+        fr.SortOrder
     FROM 
         dbo.ForesterWorkUnit fwu
         INNER JOIN dbo.ForesterRole fr ON fwu.ForesterRoleID = fr.ForesterRoleID

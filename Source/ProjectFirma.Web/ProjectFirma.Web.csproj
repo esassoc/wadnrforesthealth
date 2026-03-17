@@ -125,6 +125,7 @@
     <Compile Include="Models\Generated\FederalFundCodePrimaryKey.Binding.cs" />
     <Compile Include="Models\Generated\fGetBoundingBoxForProjectIdList.Binding.cs" />
     <Compile Include="Models\Generated\fGetColumnNamesForTable.Binding.cs" />
+    <Compile Include="Models\Generated\fGetForesterWorkUnitsByPoint.Binding.cs" />
     <Compile Include="Models\Generated\fGetProjectDnrUploadRegion.Binding.cs" />
     <Compile Include="Models\Generated\fGetProjectPriorityLandscape.Binding.cs" />
     <Compile Include="Models\Generated\fGetUploadProgramCounty.Binding.cs" />
