@@ -26,7 +26,7 @@ namespace ProjectFirma.Web.Models
         /// <summary>
         /// Constructor for building a new object with MaximalConstructor required fields in preparation for insert into database
         /// </summary>
-        public fGetForesterWorkUnitsByPoint_Result(int foresterWorkUnitID, int foresterRoleID, string foresterRoleDisplayName, int? personID, string firstName, string lastName, string email, string phone, string foresterWorkUnitName) : this()
+        public fGetForesterWorkUnitsByPoint_Result(int foresterWorkUnitID, int foresterRoleID, string foresterRoleDisplayName, int? personID, string firstName, string lastName, string email, string phone, string foresterWorkUnitName, int sortOrder) : this()
         {
             this.ForesterWorkUnitID = foresterWorkUnitID;
             this.ForesterRoleID = foresterRoleID;
@@ -37,6 +37,7 @@ namespace ProjectFirma.Web.Models
             this.Email = email;
             this.Phone = phone;
             this.ForesterWorkUnitName = foresterWorkUnitName;
+            this.SortOrder = sortOrder;
         }
 
         /// <summary>
@@ -53,6 +54,7 @@ namespace ProjectFirma.Web.Models
             this.Email = fGetForesterWorkUnitsByPoint_Result.Email;
             this.Phone = fGetForesterWorkUnitsByPoint_Result.Phone;
             this.ForesterWorkUnitName = fGetForesterWorkUnitsByPoint_Result.ForesterWorkUnitName;
+            this.SortOrder = fGetForesterWorkUnitsByPoint_Result.SortOrder;
             CallAfterConstructor(fGetForesterWorkUnitsByPoint_Result);
         }
 
@@ -67,5 +69,6 @@ namespace ProjectFirma.Web.Models
         public string Email { get; set; }
         public string Phone { get; set; }
         public string ForesterWorkUnitName { get; set; }
+        public int SortOrder { get; set; }
     }
 }

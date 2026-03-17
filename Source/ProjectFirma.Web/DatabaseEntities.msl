@@ -2036,6 +2036,7 @@
           <ScalarProperty Name="Email" ColumnName="Email" />
           <ScalarProperty Name="Phone" ColumnName="Phone" />
           <ScalarProperty Name="ForesterWorkUnitName" ColumnName="ForesterWorkUnitName" />
+          <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
         </ComplexTypeMapping>
       </ResultMapping>
     </FunctionImportMapping>

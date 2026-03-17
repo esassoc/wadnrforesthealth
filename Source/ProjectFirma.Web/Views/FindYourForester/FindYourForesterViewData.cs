@@ -34,6 +34,7 @@ namespace ProjectFirma.Web.Views.FindYourForester
 
         public List<FindYourForesterQuestion> RootQuestions { get; }
         public string GeocodeAddressUrl { get; set; }
+        public string ForesterInformationUrl { get; set; }
         public Dictionary<int, string> ForesterRoleDefinitions { get; }
 
         public FindYourForesterViewData(Person currentPerson, MapInitJson mapInitJson, Models.FirmaPage firmaPage,
@@ -43,6 +44,7 @@ namespace ProjectFirma.Web.Views.FindYourForester
             MapInitJson = mapInitJson;
             RootQuestions = findYourForesterQuestions;
             GeocodeAddressUrl = SitkaRoute<ResultsController>.BuildUrlFromExpression(t => t.GeocodeAddress(null));
+            ForesterInformationUrl = SitkaRoute<ResultsController>.BuildUrlFromExpression(t => t.GetForesterInformation(0, 0));
             ForesterRoleDefinitions = foresterRoleDefinitions;
         }
 

@@ -18,7 +18,8 @@ RETURN
         p.LastName,
         p.Email,
         p.Phone,
-        fwu.ForesterWorkUnitName
+        fwu.ForesterWorkUnitName,
+        fr.SortOrder
     FROM 
         dbo.ForesterWorkUnit fwu
         INNER JOIN dbo.ForesterRole fr ON fwu.ForesterRoleID = fr.ForesterRoleID

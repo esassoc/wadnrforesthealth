@@ -263,6 +263,14 @@ namespace ProjectFirma.Web.Controllers
             projectTypeNodes.RemoveAll(x => !x.Children.Any());
         }
 
+        [HttpPost]
+        [ProjectLocationsViewFeature]
+        public JsonNetJObjectResult GetForesterInformation(double latitude, double longitude)
+        {
+            
+            return new JsonNetJObjectResult(GetForesterWorkUnitInformation(longitude, latitude));
+        }
+
 
         [HttpPost]
         [ProjectLocationsViewFeature]
@@ -280,8 +288,6 @@ namespace ProjectFirma.Web.Controllers
 
                 JObject joResponse = JObject.Parse(responseBody);
 
-                //var lat = msg.GeocodedAddress.Location.GcYCoord;
-                //var long = msg.GeocodedAddress.Location.GcXCoord;
                 // Extract latitude and longitude from the geocode response
                 var latitude = joResponse["GeocodedAddress"]?["Location"]?["GcYCoord"]?.Value<double>() ?? 0;
                 var longitude = joResponse["GeocodedAddress"]?["Location"]?["GcXCoord"]?.Value<double>() ?? 0;
@@ -291,35 +297,44 @@ namespace ProjectFirma.Web.Controllers
                     return new JsonNetJObjectResult(new { ErrorStatus = "Unable to extract coordinates from geocode response." });
                 }
 
-                // Create DbGeometry point from latitude and longitude
-                var point = System.Data.Entity.Spatial.DbGeometry.FromText($"POINT({longitude} {latitude})", 4326);
-
-                // Call the UDF to get forester work units by point
-                var foresterWorkUnits = HttpRequestStorage.DatabaseEntities.GetfGetForesterWorkUnitsByPoints(point).ToList();
-
-                // Map the results to ForesterWorkUnitSimple objects
-                var foresterWorkUnitSimples = foresterWorkUnits.Select(f => new ForesterWorkUnitSimple(
-                    f.ForesterWorkUnitID,
-                    f.ForesterRoleID,
-                    f.ForesterRoleDisplayName,
-                    f.PersonID,
-                    f.FirstName,
-                    f.LastName,
-                    f.Email,
-                    f.Phone,
-                    f.ForesterWorkUnitName
-                )).ToList();
-
-                // Create the FindYourForesterSimple object
-                var findYourForesterSimple = new FindYourForesterSimple(latitude, longitude, foresterWorkUnitSimples);
-
-                return new JsonNetJObjectResult(findYourForesterSimple);
+                return new JsonNetJObjectResult(GetForesterWorkUnitInformation(longitude, latitude));
             }
             catch (Exception e)
             {
                 Logger.Info("Error geocoding address on Project Map", e);
                 return new JsonNetJObjectResult(new { ErrorStatus = "There was an error geocoding the provided address." });
             }
+            
+            
+            
+
+        }
+
+        private FindYourForesterSimple GetForesterWorkUnitInformation(double longitude, double latitude)
+        {
+            // Create DbGeometry point from latitude and longitude
+            var point = System.Data.Entity.Spatial.DbGeometry.FromText($"POINT({longitude} {latitude})", 4326);
+
+            // Call the UDF to get forester work units by point
+            var foresterWorkUnits = HttpRequestStorage.DatabaseEntities.GetfGetForesterWorkUnitsByPoints(point).ToList();
+
+            // Map the results to ForesterWorkUnitSimple objects
+            var foresterWorkUnitSimples = foresterWorkUnits.OrderBy(x => x.SortOrder).Select(f => new ForesterWorkUnitSimple(
+                f.ForesterWorkUnitID,
+                f.ForesterRoleID,
+                f.ForesterRoleDisplayName,
+                f.PersonID,
+                f.FirstName,
+                f.LastName,
+                f.Email,
+                f.Phone,
+                f.ForesterWorkUnitName
+            )).ToList();
+
+            // Create the FindYourForesterSimple object
+            var findYourForesterSimple = new FindYourForesterSimple(latitude, longitude, foresterWorkUnitSimples);
+
+            return findYourForesterSimple;
         }
 
 

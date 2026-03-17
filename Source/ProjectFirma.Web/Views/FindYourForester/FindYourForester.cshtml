@@ -132,8 +132,30 @@
 
         findYourForesterFirmaMap.map.on('click', function (evt) {
 
+            $.ajax({
+                    method: "POST",
+                    url: "@ViewDataTyped.ForesterInformationUrl",
+                    data: { latitude: evt.latlng.lat, longitude: evt.latlng.lng }
+            }).done(msg => processForesterInformationResponse(msg));
+
             //populateForesterInformationAndDropMarker(evt.latlng, true);
         });
+
+        function processForesterInformationResponse(msg) {
+
+            if (!msg.ErrorStatus) {
+                var lat = msg.Latitude;
+                var long = msg.Longitude;
+                var foresterWorkUnits = msg.ForesterWorkUnits;
+
+                populateForesterInformationAndDropMarker({ lng: long, lat: lat }, foresterWorkUnits);
+                findYourForesterFirmaMap.map.flyTo([lat, long], 10, { duration: 1 });
+
+            } else {
+                console.log(msg.ErrorStatus);
+                alert(msg.ErrorStatus);
+            }
+        }
 
 
 
@@ -257,23 +279,7 @@
                     method: "POST",
                     url: "@ViewDataTyped.GeocodeAddressUrl",
                     data: { address: dataAddress }
-            })
-            .done(function (msg) {
-
-                if (!msg.ErrorStatus) {
-                    var lat = msg.Latitude;
-                    var long = msg.Longitude;
-                    var foresterWorkUnits = msg.ForesterWorkUnits;
-
-                    populateForesterInformationAndDropMarker({ lng: long, lat: lat }, foresterWorkUnits);
-                    findYourForesterFirmaMap.map.flyTo([lat, long], 12, { duration: 1 });
-
-                } else {
-                    console.log(msg.ErrorStatus);
-                    alert(msg.ErrorStatus);
-                }
-
-            });
+            }).done(msg => processForesterInformationResponse(msg));
 
         });
     });

@@ -5978,6 +5978,7 @@ warning 6002: The table/view 'WADNRForestHealthDB.dbo.vTotalTreatedAcresByProjec
           <Property Name="Email" Type="varchar" MaxLength="255" />
           <Property Name="Phone" Type="varchar" MaxLength="30" />
           <Property Name="ForesterWorkUnitName" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="SortOrder" Type="int" Nullable="false" />
         </RowType>
       </CollectionType>
     </ReturnType>

@@ -1146,6 +1146,7 @@
     <Property Name="Email" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
     <Property Name="Phone" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
     <Property Name="ForesterWorkUnitName" Type="String" Nullable="false" MaxLength="100" Unicode="false" FixedLength="false" />
+    <Property Name="SortOrder" Type="Int32" Nullable="false" />
   </ComplexType>
   <ComplexType Name="fGetProjectDnrUploadRegion_Result">
     <Property Name="number" Type="Int64" />
