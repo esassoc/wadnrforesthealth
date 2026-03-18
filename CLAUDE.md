@@ -170,3 +170,25 @@ Skills in `.claude/skills/` are invoked via `/skill-name`. They define step-by-s
 | `/crud-modal` | Create/Edit modal dialog forms |
 | `/add-scrollspy-toc` | Scrollspy Table of Contents sidebar |
 | `/check-migration-status` | MVC to Angular migration audit |
+
+---
+
+## LSP Usage
+
+Prefer the LSP tool over Grep/Glob for code navigation tasks:
+
+| Operation | Use Case |
+|-----------|----------|
+| `goToDefinition` | Find where a symbol (class, method, variable) is defined |
+| `findReferences` | Find all usages of a symbol across the codebase |
+| `hover` | Get type information and documentation for a symbol |
+| `documentSymbol` | List all symbols (classes, methods, properties) in a file |
+| `workspaceSymbol` | Search for symbols by name across the entire workspace |
+| `goToImplementation` | Find implementations of interfaces or abstract methods |
+| `incomingCalls` | Find all callers of a function/method |
+| `outgoingCalls` | Find all functions/methods called by a function |
+
+**When to use LSP vs Grep/Glob:**
+- **LSP**: Type-aware lookups, finding definitions, references, implementations, call hierarchies
+- **Grep**: Text pattern matching, searching comments/strings, regex searches
+- **Glob**: Finding files by name pattern
