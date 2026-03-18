@@ -357,6 +357,28 @@ export class AuthenticationService {
     }
 
     /**
+     * Checks if user can edit a specific program's GDB mappings.
+     * Matches backend ProgramAuthorization.CanEditProgram() logic.
+     * Admin/EsaAdmin can edit any program; CanEditProgram users must be assigned.
+     */
+    public canEditSpecificProgram(user: PersonDetail | null, programID: number): boolean {
+        if (!user) return false;
+
+        // Admin/EsaAdmin bypass all scoping
+        if (this.isUserAnAdministrator(user)) {
+            return true;
+        }
+
+        // Check if user has CanEditProgram supplemental role
+        if (!this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.CanEditProgram])) {
+            return false;
+        }
+
+        // CanEditProgram users must be assigned to this specific program
+        return user.AssignedPrograms?.some(p => p.ProgramID === programID) ?? false;
+    }
+
+    /**
      * Checks if user can create GIS bulk imports.
      * Matches [GisBulkImportFeature]: Admin, EsaAdmin, ProjectSteward.
      */

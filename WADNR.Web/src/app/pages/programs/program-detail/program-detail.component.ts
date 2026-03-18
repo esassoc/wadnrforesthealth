@@ -123,8 +123,11 @@ export class ProgramDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.canEditProgramMappings$ = this.authenticationService.currentUserSetObservable.pipe(
-            map(user => this.authenticationService.canEditProgramMappings(user)),
+        this.canEditProgramMappings$ = combineLatest([
+            this.authenticationService.currentUserSetObservable,
+            this.programID$
+        ]).pipe(
+            map(([user, programID]) => this.authenticationService.canEditSpecificProgram(user, programID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
