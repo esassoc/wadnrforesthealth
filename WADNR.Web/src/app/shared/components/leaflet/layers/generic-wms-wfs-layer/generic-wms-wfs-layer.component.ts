@@ -5,6 +5,7 @@ import { MapLayerBase } from "../map-layer-base.component";
 import { WfsService } from "src/app/shared/services/wfs.service";
 import { GroupByPipe } from "src/app/shared/pipes/group-by.pipe";
 import { MAP_SELECTED_COLOR } from "src/app/shared/models/map-colors";
+import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
 
 @Component({
     selector: "generic-wms-wfs-layer",
@@ -134,6 +135,8 @@ export class GenericWmsWfsLayerComponent extends MapLayerBase implements OnChang
             Object.keys(featuresGrouped).forEach((groupId) => {
                 const geoJson = L.geoJSON(featuresGrouped[groupId], {
                     style: this.selectedStyle,
+                    pointToLayer: (_feature: any, latlng: L.LatLng) =>
+                        L.marker(latlng, { icon: MarkerHelper.svgMarkerIcon(MAP_SELECTED_COLOR) }),
                 });
                 geoJson.addTo(this.wfsLayer);
                 // Zoom to bounds

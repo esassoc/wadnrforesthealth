@@ -11,6 +11,7 @@ import { GdbLayerApproval } from "src/app/shared/generated/model/gdb-layer-appro
 import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
+import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
 
 /**
  * Data passed into the modal when opened.
@@ -137,7 +138,8 @@ export class ImportGdbModalComponent {
                 return;
             }
             const geoJsonLayer = L.geoJSON(geoJsonData, {
-                style: () => ({ color, weight: 2, fillColor: color, fillOpacity: 0.2 })
+                style: () => ({ color, weight: 2, fillColor: color, fillOpacity: 0.2 }),
+                pointToLayer: (feature, latlng) => L.marker(latlng, { icon: MarkerHelper.svgMarkerIcon(color) })
             });
             geoJsonLayer.addTo(this.map);
             const bounds = geoJsonLayer.getBounds();
