@@ -133,6 +133,7 @@ export class ManageFindYourForesterComponent implements OnInit, OnDestroy {
             if (newRoleID !== this.selectedRoleID) {
                 this.selectedRoleID = newRoleID;
                 this.clearHighlights();
+                this.map?.closePopup();
                 this.selectedWorkUnits = [];
                 this.selectedRoleID$.next(newRoleID);
             }
