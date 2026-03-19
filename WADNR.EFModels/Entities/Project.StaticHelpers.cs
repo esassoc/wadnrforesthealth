@@ -741,6 +741,7 @@ public static class Projects
                 ProgramNames = string.Join(", ", p.ProjectPrograms
                     .Select(pp => pp.Program.IsDefaultProgramForImportOnly ? "(default)" : pp.Program.ProgramName)),
                 NonLeadImplementingOrganizations = string.Join(", ", p.ProjectOrganizations
+                    .Where(po => !po.RelationshipType.IsPrimaryContact)
                     .Select(po => po.Organization.OrganizationName
                         + (!string.IsNullOrWhiteSpace(po.Organization.OrganizationShortName)
                             ? " (" + po.Organization.OrganizationShortName + ")"
@@ -810,6 +811,7 @@ public static class Projects
                 ProgramNames = string.Join(", ", p.ProjectPrograms
                     .Select(pp => pp.Program.IsDefaultProgramForImportOnly ? "(default)" : pp.Program.ProgramName)),
                 NonLeadImplementingOrganizations = string.Join(", ", p.ProjectOrganizations
+                    .Where(po => !po.RelationshipType.IsPrimaryContact)
                     .Select(po => po.Organization.OrganizationName
                         + (!string.IsNullOrWhiteSpace(po.Organization.OrganizationShortName)
                             ? " (" + po.Organization.OrganizationShortName + ")"
