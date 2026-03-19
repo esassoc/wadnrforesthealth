@@ -39,6 +39,9 @@
         public string ArcGisUsfsDataUrl { get; set; }
         public string ArcGisUsfsNepaBoundaryDataUrl { get; set; }
 
+        // Scalar API Docs
+        public string ScalarApiUrl { get; set; }
+
         // Notifications
         public string WebsiteDisplayName { get; set; } = "WA DNR Forest Health Tracker";
 

@@ -18,6 +18,7 @@ export class SystemInfoDetail {
     PodName?: string | null;
     Version?: string | null;
     CompilationDateTime?: string;
+    ScalarApiUrl?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -31,6 +32,7 @@ export interface SystemInfoDetailForm {
     PodName?: FormControl<string>;
     Version?: FormControl<string>;
     CompilationDateTime?: FormControl<string>;
+    ScalarApiUrl?: FormControl<string>;
 }
 
 export class SystemInfoDetailFormControls { 
@@ -95,6 +97,16 @@ export class SystemInfoDetailFormControls {
         }
     );
     public static CompilationDateTime = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ScalarApiUrl = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

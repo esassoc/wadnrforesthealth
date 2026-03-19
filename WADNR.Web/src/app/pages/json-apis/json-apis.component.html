@@ -9,11 +9,13 @@
             <p>
                 The Forest Health Tracker provides a REST API for programmatic access to data. All endpoints return JSON and require authentication via an API key.
             </p>
-            <p>
-                <strong>Interactive documentation</strong> is available at the
-                <a [href]="scalarDocsUrl" target="_blank">Scalar API Reference <icon icon="ExternalLink"></icon></a>, where you can explore endpoints,
-                view schemas, and test requests directly in your browser.
-            </p>
+            @if (scalarDocsUrl$ | async; as scalarDocsUrl) {
+                <p>
+                    <strong>Interactive documentation</strong> is available at the
+                    <a [href]="scalarDocsUrl" target="_blank">Scalar API Reference <icon icon="ExternalLink"></icon></a>, where you can explore endpoints,
+                    view schemas, and test requests directly in your browser.
+                </p>
+            }
         </div>
     </div>
 

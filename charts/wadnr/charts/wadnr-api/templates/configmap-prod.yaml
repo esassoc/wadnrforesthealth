@@ -14,6 +14,7 @@ data:
   GDALAPIBaseUrl: "http://wadnr-gdalapi"
   SitkaCaptureServiceUrl: "http://{{ .Values.global.domains.sitkacapture }}"
   WebUrl: "https://{{ .Values.global.domains.web }}"
+  ScalarApiUrl: "https://{{ .Values.global.domains.scalarApi }}"
   # Finance API (DNR GIS)
   ProjectCodeJsonApiBaseUrl: "https://gis.dnr.wa.gov/site2/rest/services/Token_API_Services/Financial_Service/MapServer/2/query"
   ProgramIndexJsonApiBaseUrl: "https://gis.dnr.wa.gov/site2/rest/services/Token_API_Services/Financial_Service/MapServer/1/query"

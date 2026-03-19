@@ -35598,6 +35598,10 @@
           "CompilationDateTime": {
             "type": "string",
             "format": "date-time"
+          },
+          "ScalarApiUrl": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

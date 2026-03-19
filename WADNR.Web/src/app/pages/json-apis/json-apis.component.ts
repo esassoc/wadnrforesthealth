@@ -5,6 +5,7 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { CopyToClipboardDirective } from "src/app/shared/directives/copy-to-clipboard.directive";
 import { PersonService } from "src/app/shared/generated/api/person.service";
+import { SystemInfoService } from "src/app/shared/generated/api/system-info.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { environment } from "src/environments/environment";
@@ -18,7 +19,11 @@ import { environment } from "src/environments/environment";
 })
 export class JsonApisComponent {
     public apiBaseUrl = environment.mainAppApiUrl;
-    public scalarDocsUrl = ((environment as any).scalarApiUrl ?? environment.mainAppApiUrl.replace(/\/api$/, "")) + "/docs";
+
+    public scalarDocsUrl$: Observable<string | null> = this.systemInfoService.getSystemInfoSystemInfo().pipe(
+        map((info) => (info.ScalarApiUrl ? `${info.ScalarApiUrl}/docs` : null)),
+        shareReplay({ bufferSize: 1, refCount: true })
+    );
 
     public currentUser$ = this.authenticationService.currentUserSetObservable;
     public apiKey$: Observable<string | null>;
@@ -26,6 +31,7 @@ export class JsonApisComponent {
 
     constructor(
         private personService: PersonService,
+        private systemInfoService: SystemInfoService,
         private authenticationService: AuthenticationService,
         private confirmService: ConfirmService
     ) {

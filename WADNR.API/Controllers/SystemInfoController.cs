@@ -26,6 +26,7 @@ public class SystemInfoController(
         {
             Environment = environment.EnvironmentName,
             CurrentTimeUTC = DateTime.UtcNow.ToString("o"),
+            ScalarApiUrl = wadnrConfiguration.Value.ScalarApiUrl,
         };
 
         return Ok(systemInfo);

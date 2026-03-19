@@ -11,6 +11,7 @@ public class SystemInfoDetail
     public string PodName { get; set; }
     public string Version { get; set; }
     public DateTimeOffset CompilationDateTime { get; set; }
+    public string ScalarApiUrl { get; set; }
 
     public SystemInfoDetail()
     {
