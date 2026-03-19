@@ -11,7 +11,7 @@
         <h4 class="modal-title">Edit Map Extent</h4>
     </div>
     <div class="modal-body">
-        <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
         <p class="mb-2">
             Use the rectangle tool to draw a bounding box for the project's map extent.

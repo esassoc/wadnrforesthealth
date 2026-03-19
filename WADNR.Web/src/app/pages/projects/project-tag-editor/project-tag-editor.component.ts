@@ -149,7 +149,7 @@ export class ProjectTagEditorComponent extends BaseModal implements OnInit {
 
     save(): void {
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const request = new ProjectTagSaveRequest({
             TagIDs: this.selectedTags.map((t) => t.TagID),

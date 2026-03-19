@@ -12,7 +12,7 @@
         <h4 class="modal-title">Edit {{ config.title }}</h4>
     </div>
     <div class="modal-body">
-        <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
         <p class="mb-3">
             Select one or more {{ config.title | lowercase }} to associate with this project. You can select areas

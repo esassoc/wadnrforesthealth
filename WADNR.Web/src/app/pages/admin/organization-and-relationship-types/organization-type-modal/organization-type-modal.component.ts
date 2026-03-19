@@ -87,7 +87,7 @@ export class OrganizationTypeModalComponent extends BaseModal implements OnInit 
         }
 
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const dto = new OrganizationTypeUpsertRequest(this.form.value);
 

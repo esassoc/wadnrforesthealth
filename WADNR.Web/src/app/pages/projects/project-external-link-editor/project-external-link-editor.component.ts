@@ -92,7 +92,7 @@ export class ProjectExternalLinkEditorComponent extends BaseModal implements OnI
 
     save(): void {
         this.isSubmitting.set(true);
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const requestItems: ProjectExternalLinkItemRequest[] = this.externalLinks().map((link) => ({
             ProjectExternalLinkID: link.ProjectExternalLinkID || null,

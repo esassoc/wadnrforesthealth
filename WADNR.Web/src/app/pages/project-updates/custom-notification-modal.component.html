@@ -3,7 +3,7 @@
         <h4>Send Notification to Selected People</h4>
     </div>
     <div class="modal-body">
-        <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
         @if (selectedPeople.length === 0) {
             <p>No people selected to be notified.</p>

@@ -33,7 +33,7 @@ export interface AgreementContactModalInput {
                 <h3>{{ data.mode === "create" ? "Add Contact" : "Edit Contact" }}</h3>
             </div>
             <div class="modal-body" [loadingSpinner]="{ isLoading: !!(isLoadingLookups$ | async), loadingHeight: 150 }">
-                <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+                <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
                 @if (!(isLoadingLookups$ | async)) {
                 <form [formGroup]="form">
                     <div class="grid-12">

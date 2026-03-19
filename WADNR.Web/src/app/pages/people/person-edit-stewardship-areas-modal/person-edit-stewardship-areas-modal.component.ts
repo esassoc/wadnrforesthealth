@@ -59,7 +59,7 @@ export class PersonEditStewardshipAreasModalComponent extends BaseModal implemen
 
     save(): void {
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const rawValue = this.form.getRawValue();
         const request = {

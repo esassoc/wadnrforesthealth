@@ -29,7 +29,7 @@ interface NoteModalInput {
                 <h3>{{ data.mode === "create" ? "Add" : "Edit" }} {{ data.isInternal ? "Internal " : "" }}Note</h3>
             </div>
             <div class="modal-body">
-                <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+                <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
                 <form [formGroup]="form">
                     <form-field
                         [formControl]="form.controls.note"

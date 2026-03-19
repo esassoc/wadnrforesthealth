@@ -255,7 +255,7 @@ export class ProjectMapExtentEditorComponent extends BaseModal implements OnInit
     // --- Save ---
 
     save(): void {
-        this.localAlerts = [];
+        this.localAlerts.set([]);
         this.isSubmitting = true;
 
         const request: MapExtentSaveRequest = {

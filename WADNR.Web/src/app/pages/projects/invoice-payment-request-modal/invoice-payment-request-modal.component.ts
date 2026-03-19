@@ -133,7 +133,7 @@ export class InvoicePaymentRequestModalComponent extends BaseModal implements On
         }
 
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const dto = new InvoicePaymentRequestUpsertRequest({
             ProjectID: this.projectID,

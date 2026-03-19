@@ -100,7 +100,7 @@ export class ReportTemplateModalComponent extends BaseModal implements OnInit {
         }
 
         this.isSubmitting$.next(true);
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const { displayName, description, reportTemplateModelID } = this.form.getRawValue();
         const file = this.fileControl.value;

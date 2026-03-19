@@ -77,7 +77,7 @@ export class CustomPageModalComponent extends BaseModal implements OnInit {
         }
 
         this.isSubmitting.set(true);
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const dto = new CustomPageUpsertRequest({
             CustomPageDisplayName: this.form.controls.CustomPageDisplayName.value,

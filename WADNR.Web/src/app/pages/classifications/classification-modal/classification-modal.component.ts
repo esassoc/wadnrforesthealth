@@ -108,7 +108,7 @@ export class ClassificationModalComponent extends BaseModal implements OnInit {
         }
 
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const file = this.keyImageControl.value;
         if (file) {

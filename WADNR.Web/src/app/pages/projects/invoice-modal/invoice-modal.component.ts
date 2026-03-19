@@ -187,7 +187,7 @@ export class InvoiceModalComponent extends BaseModal implements OnInit {
         }
 
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const dto = new InvoiceUpsertRequest({
             InvoicePaymentRequestID: this.invoicePaymentRequestID,

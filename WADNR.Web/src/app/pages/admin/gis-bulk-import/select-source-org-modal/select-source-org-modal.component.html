@@ -3,7 +3,7 @@
     <h3>GIS Import/Update</h3>
 </div>
 <div class="modal-body" [loadingSpinner]="{ isLoading: !(sourceOrgs$ | async), loadingHeight: 100, opacity: 0 }">
-    <modal-alerts [alerts]="localAlerts"></modal-alerts>
+    <modal-alerts [alerts]="localAlerts()"></modal-alerts>
     @if (sourceOrgs$ | async) {
         <p>Select the source organization for your GIS upload:</p>
         <div class="grid-12">

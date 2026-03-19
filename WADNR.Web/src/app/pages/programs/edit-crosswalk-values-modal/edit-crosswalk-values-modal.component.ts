@@ -125,7 +125,7 @@ export class EditCrosswalkValuesModalComponent extends BaseModal implements OnIn
 
     save(): void {
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const allCrosswalks = this.visibleGroups.flatMap((group) =>
             group.rows

@@ -3,7 +3,7 @@
         <h3>Upload LOA {{ regionTitle }} Excel File</h3>
     </div>
     <div class="modal-body">
-        <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
         <p>Select an <strong>.xlsx</strong> Excel file containing LOA data for the <strong>{{ regionTitle }}</strong> region.</p>
         <p>The file should contain a "Master Data" sheet with the standard LOA column layout.</p>
         <form-field

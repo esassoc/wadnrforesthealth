@@ -28,7 +28,7 @@ export interface InteractionEventLocationModalData {
                 <h3>Edit Location</h3>
             </div>
             <div class="modal-body">
-                <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+                <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
                 <div class="grid-12">
                     <div class="g-col-4">
                         <p class="text-muted mb-2">Click on the map to place a point.</p>
@@ -128,7 +128,7 @@ export class InteractionEventLocationModalComponent extends BaseModal {
     }
 
     save(): void {
-        this.localAlerts = [];
+        this.localAlerts.set([]);
         const latitude = this.latitude();
         const longitude = this.longitude();
 

@@ -285,6 +285,12 @@ public static class People
         var person = await dbContext.People.FirstOrDefaultAsync(x => x.PersonID == personID);
         if (person == null) return null;
 
+        // Validate: BaseRoleID must be a valid base role
+        if (!Role.AllLookupDictionary.TryGetValue(request.BaseRoleID, out var baseRole) || !baseRole.IsBaseRole)
+        {
+            throw new InvalidOperationException("A valid base role is required.");
+        }
+
         // Validate: if Unassigned, no supplemental roles allowed
         if (request.BaseRoleID == (int)RoleEnum.Unassigned && request.SupplementalRoleIDs.Count > 0)
         {

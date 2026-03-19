@@ -119,7 +119,7 @@ export class ProjectRelationshipTypeModalComponent extends BaseModal implements 
         }
 
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const dto = new RelationshipTypeUpsertRequest({
             ...this.form.value,

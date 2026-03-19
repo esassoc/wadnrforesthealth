@@ -102,7 +102,7 @@ export class EditDefaultMappingsModalComponent extends BaseModal implements OnIn
 
     save(): void {
         this.isSubmitting.set(true);
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const request: GdbDefaultMappingUpsertRequest = {
             Mappings: this.visibleFields

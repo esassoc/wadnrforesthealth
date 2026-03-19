@@ -170,7 +170,7 @@ export class ProjectFundingEditorComponent extends BaseModal implements OnInit {
 
     save(): void {
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const raw = this.form.getRawValue();
 

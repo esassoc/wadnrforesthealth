@@ -97,7 +97,7 @@ export class PersonPrimaryContactOrgsModalComponent extends BaseModal implements
 
     save(): void {
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const selectedIDs = this.selectedOrganizations.map(o => o.OrganizationID);
 

@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
   <!-- modal-local alerts: show modal errors here and keep modal open on error -->
-  <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+  <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
   @if(projects?.length) {
     <div class="mb-3">
       <p>The following projects will be tagged:</p>

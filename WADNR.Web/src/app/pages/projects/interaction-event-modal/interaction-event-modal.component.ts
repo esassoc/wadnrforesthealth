@@ -190,7 +190,7 @@ export class InteractionEventModalComponent extends BaseModal implements OnInit 
         }
 
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const projectIDs = this.selectedProjects.map(p => p.Value as number);
         const contactIDs = this.selectedContacts.map(c => c.Value as number);

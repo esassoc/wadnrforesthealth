@@ -29,7 +29,7 @@ export interface BulkAssignModalData {
                 <h4>Manage Forester Assignments</h4>
             </div>
             <div class="modal-body" [loadingSpinner]="{ isLoading: !(people$ | async), loadingHeight: 200 }">
-                <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+                <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
                 @if (people$ | async) {
                     <p>Assign the following {{ data.roleDisplayName }} Forester Work Units:</p>

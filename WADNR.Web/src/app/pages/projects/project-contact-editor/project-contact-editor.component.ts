@@ -177,7 +177,7 @@ export class ProjectContactEditorComponent extends BaseModal implements OnInit {
 
     save(): void {
         this.isSubmitting.set(true);
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const requestItems: ProjectContactItemRequest[] = [];
 

@@ -140,7 +140,7 @@ export class UpdateTreatmentModalComponent extends BaseModal implements OnInit {
         }
 
         this.isSubmitting.set(true);
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const dto = new TreatmentUpdateUpsertRequest({
             ProjectLocationUpdateID: this.form.value.ProjectLocationUpdateID,

@@ -100,7 +100,7 @@ export class MapLayerModalComponent extends BaseModal implements OnInit {
         }
 
         this.isSubmitting$.next(true);
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const dto: ExternalMapLayerUpsertRequest = {
             DisplayName: this.form.controls.DisplayName.value!,

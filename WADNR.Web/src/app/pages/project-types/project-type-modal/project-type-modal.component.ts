@@ -81,7 +81,7 @@ export class ProjectTypeModalComponent extends BaseModal implements OnInit {
         }
 
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const formValue = this.form.getRawValue();
         const dto = new ProjectTypeUpsertRequest(formValue);

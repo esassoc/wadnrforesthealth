@@ -27,7 +27,7 @@ interface EditFileModalInput {
                 <h3>Edit File</h3>
             </div>
             <div class="modal-body">
-                <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+                <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
                 <div class="mb-3">
                     <label class="form-label fw-bold">Original Filename</label>
                     <div>{{ data.file.OriginalBaseFilename }}</div>

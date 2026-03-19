@@ -3,7 +3,7 @@
         <h4>Edit Project Update Configuration</h4>
     </div>
     <div class="modal-body">
-        <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
         <form [formGroup]="form">
             <h5>Kick-Off Reminders</h5>

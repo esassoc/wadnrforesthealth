@@ -3,7 +3,7 @@
         <h3>Edit Contributing Organizations for which {{ personFullName }} is a Contributing Organization Primary Contact</h3>
     </div>
     <div class="modal-body">
-        <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
         <form-field
             fieldLabel="Contributing Organization to Add"

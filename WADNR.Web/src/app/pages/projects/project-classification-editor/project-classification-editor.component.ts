@@ -121,7 +121,7 @@ export class ProjectClassificationEditorComponent extends BaseModal implements O
 
     save(): void {
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const classifications: { ProjectClassificationID?: number; ClassificationID: number; ProjectClassificationNotes: string | null }[] = [];
 

@@ -3,7 +3,7 @@
         <h4>Add Contact</h4>
     </div>
     <div class="modal-body">
-        <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
         <form-field
             [formControl]="form.controls.FirstName"

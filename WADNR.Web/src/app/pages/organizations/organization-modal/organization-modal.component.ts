@@ -171,7 +171,7 @@ export class OrganizationModalComponent extends BaseModal implements OnInit {
         }
 
         this.isSubmitting.set(true);
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const dto = new OrganizationUpsertRequest(this.form.value);
         const logoFile: File | null = this.logoFileControl.value;

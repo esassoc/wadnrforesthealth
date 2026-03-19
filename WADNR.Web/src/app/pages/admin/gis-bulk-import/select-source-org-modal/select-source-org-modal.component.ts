@@ -50,7 +50,7 @@ export class SelectSourceOrgModalComponent extends BaseModal implements OnInit {
         }
 
         this.isCreating = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         this.gisBulkImportService.createAttemptGisBulkImport({ GisUploadSourceOrganizationID: sourceOrgID }).subscribe({
             next: (detail) => {

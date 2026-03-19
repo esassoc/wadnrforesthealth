@@ -133,7 +133,7 @@ export class PersonEditContactModalComponent extends BaseModal implements OnInit
         }
 
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const rawValue = this.form.getRawValue();
         const request = {

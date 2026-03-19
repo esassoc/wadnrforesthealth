@@ -304,7 +304,7 @@ export class ProjectGeographicAreaEditorComponent extends BaseModal implements O
     // --- Save ---
 
     save(): void {
-        this.localAlerts = [];
+        this.localAlerts.set([]);
         const selectedIDs = this.selectedIDs;
         const explanation = this.form.value.noSelectionExplanation?.trim() ?? "";
 

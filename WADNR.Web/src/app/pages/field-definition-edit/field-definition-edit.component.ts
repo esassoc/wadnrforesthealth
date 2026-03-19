@@ -89,7 +89,7 @@ export class FieldDefinitionEditComponent extends BaseModal implements OnInit, A
 
     save(): void {
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const upsertRequest: FieldDefinitionDatumUpsertRequest = {
             FieldDefinitionDatumValue: this.customDefinition,

@@ -651,7 +651,7 @@ export class ProjectLocationDetailedEditorComponent extends BaseModal implements
     }
 
     save(): void {
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         if (!this.validateFeatures()) return;
 

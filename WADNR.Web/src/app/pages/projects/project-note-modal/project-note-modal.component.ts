@@ -93,7 +93,7 @@ export class ProjectNoteModalComponent extends BaseModal implements OnInit {
         }
 
         this.isSubmitting.set(true);
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         if (this.isCreateMode) {
             this.createNote();

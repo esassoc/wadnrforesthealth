@@ -31,7 +31,7 @@ export interface PriorityLandscapeEditModalData {
                 <h3>Edit Priority Landscape</h3>
             </div>
             <div class="modal-body">
-                <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+                <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
                 <form [formGroup]="form">
                     <form-field
@@ -113,7 +113,7 @@ export class PriorityLandscapeEditModalComponent extends BaseModal implements On
         }
 
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const dto = new PriorityLandscapeUpsertRequest({
             ...this.form.value,

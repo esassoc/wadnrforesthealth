@@ -27,7 +27,7 @@ interface BudgetLineItemsModalInput {
                 <h3>Edit Budget Line Items</h3>
             </div>
             <div class="modal-body">
-                <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+                <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
                 <table class="table">
                     <thead>
                         <tr>

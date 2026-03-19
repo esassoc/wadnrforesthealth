@@ -54,7 +54,7 @@ export class GenerateReportsModalComponent extends BaseModal implements OnInit {
         }
 
         this.isGenerating = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         this.reportTemplateService
             .generateReportsReportTemplate({

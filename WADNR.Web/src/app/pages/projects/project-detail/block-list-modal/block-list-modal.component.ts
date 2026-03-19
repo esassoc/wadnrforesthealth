@@ -51,7 +51,7 @@ export class BlockListModalComponent extends BaseModal implements OnInit {
     }
 
     save(): void {
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const gisId = this.form.value.ProjectGisIdentifier?.trim();
         const name = this.form.value.ProjectName?.trim();

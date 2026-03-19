@@ -181,7 +181,7 @@ export class ProjectOrganizationEditorComponent extends BaseModal implements OnI
 
     save(): void {
         this.isSubmitting.set(true);
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const requestItems: ProjectOrganizationItemRequest[] = [];
 

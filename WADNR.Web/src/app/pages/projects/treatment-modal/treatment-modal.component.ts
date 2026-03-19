@@ -146,7 +146,7 @@ export class TreatmentModalComponent extends BaseModal implements OnInit {
         }
 
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         if (this.isCreateMode) {
             this.createTreatment();

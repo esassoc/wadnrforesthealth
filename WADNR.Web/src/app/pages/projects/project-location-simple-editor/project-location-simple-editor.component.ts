@@ -209,7 +209,7 @@ export class ProjectLocationSimpleEditorComponent extends BaseModal implements O
     }
 
     save(): void {
-        this.localAlerts = [];
+        this.localAlerts.set([]);
         const lat = this.form.value.latitude;
         const lng = this.form.value.longitude;
 

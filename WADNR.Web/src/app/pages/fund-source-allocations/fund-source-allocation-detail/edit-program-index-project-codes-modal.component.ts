@@ -34,7 +34,7 @@ export interface EditProgramIndexProjectCodesModalData {
                 <h3>Edit Program Index / Project Codes</h3>
             </div>
             <div class="modal-body" [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 200 }">
-                <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+                <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
                 <p class="mb-3">Add or remove program index / project code pairs for this allocation.</p>
 
@@ -199,7 +199,7 @@ export class EditProgramIndexProjectCodesModalComponent extends BaseModal implem
 
     save(): void {
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const request = new FundSourceAllocationProgramIndexProjectCodeSaveRequest({
             Pairs: this.selectedPairs.map((p) => ({

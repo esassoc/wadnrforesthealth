@@ -44,7 +44,7 @@ export interface EditModalInput {
                 <h3>{{ data.mode === "create" ? "Create Fund Source Allocation" : "Edit Fund Source Allocation" }}</h3>
             </div>
             <div class="modal-body" [loadingSpinner]="{ isLoading: isLoadingLookups$ | async, loadingHeight: 200 }">
-                <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+                <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
                 <p>If you do not see the contact listed for Fund Source Manager, you can <a href="/people" target="_blank">Add a Contact</a></p>
                 @if (!(isLoadingLookups$ | async)) {
                 <form [formGroup]="form">

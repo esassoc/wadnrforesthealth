@@ -99,7 +99,7 @@ export class AddContactModalComponent extends BaseModal implements OnInit {
         }
 
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const request = {
             FirstName: this.form.value.FirstName,

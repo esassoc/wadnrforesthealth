@@ -51,7 +51,7 @@ export class LoaUploadModalComponent extends BaseModal {
             return;
         }
         this.isSubmitting.set(true);
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         this.loaUploadService.importFileLoaUpload(this.region, file).subscribe({
             next: (result) => {

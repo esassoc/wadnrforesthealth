@@ -41,7 +41,7 @@ export interface EditFundSourceModalInput {
                 <h3>{{ data.mode === "create" ? "Create a new Fund Source" : "Edit Fund Source" }}</h3>
             </div>
             <div class="modal-body" [loadingSpinner]="{ isLoading: !!(isLoadingLookups$ | async), loadingHeight: 200 }">
-                <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+                <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
                 @if (!(isLoadingLookups$ | async)) {
                 <p>Enter basic information about the Fund Source.</p>
                 <form [formGroup]="form">

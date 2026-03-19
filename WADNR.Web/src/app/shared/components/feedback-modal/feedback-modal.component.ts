@@ -77,7 +77,7 @@ export class FeedbackModalComponent extends BaseModal implements OnInit {
         if (this.form.invalid || this.isSubmitting) return;
 
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const dto: SupportRequestCreate = {
             SupportRequestTypeID: this.form.value.SupportRequestTypeID!,

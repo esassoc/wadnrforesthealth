@@ -4,7 +4,7 @@
         <h4 class="modal-title">Edit Detailed Location</h4>
     </div>
     <div class="modal-body" [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 300 }">
-        <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
         <p class="mb-3">
             Draw project location boundaries on the map using the polygon tool. Click a feature on the map or in the table to select it.

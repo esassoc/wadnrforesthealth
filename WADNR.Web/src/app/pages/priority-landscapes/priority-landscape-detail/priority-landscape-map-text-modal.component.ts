@@ -27,7 +27,7 @@ export interface PriorityLandscapeMapTextModalData {
                 <h3>Edit Above-Map Text</h3>
             </div>
             <div class="modal-body">
-                <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+                <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
                 <form [formGroup]="form">
                     <form-field
@@ -85,7 +85,7 @@ export class PriorityLandscapeMapTextModalComponent extends BaseModal implements
 
     save(): void {
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const dto = new PriorityLandscapeUpsertRequest({
             PriorityLandscapeName: this.priorityLandscape.PriorityLandscapeName,

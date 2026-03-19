@@ -4,7 +4,7 @@
 </div>
 @if (loadState$ | async; as state) {
     <div class="modal-body" [loadingSpinner]="{ isLoading: state.loading, loadingHeight: 200 }">
-        <modal-alerts [alerts]="localAlerts" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
         @if (!state.loading && !state.error) {
             <div class="tinyMCEFontColor">

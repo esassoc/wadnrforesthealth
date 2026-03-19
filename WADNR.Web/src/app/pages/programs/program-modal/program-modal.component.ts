@@ -168,7 +168,7 @@ export class ProgramModalComponent extends BaseModal implements OnInit {
         }
 
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const programFile = this.programFileControl.value;
         const geospatialFile = this.geospatialFileControl.value;

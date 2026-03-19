@@ -79,7 +79,7 @@ export class PageContentModalComponent extends BaseModal implements OnInit, Afte
 
     save(): void {
         this.isSubmitting = true;
-        this.localAlerts = [];
+        this.localAlerts.set([]);
 
         const dto = new FirmaPageUpsertRequest({
             FirmaPageContent: this.editedContent,
