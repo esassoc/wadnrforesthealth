@@ -414,8 +414,12 @@ export class ProjectDetailComponent implements OnDestroy {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.internalNotes$ = combineLatest([this.projectID$, this.refreshInternalNotes$.pipe(startWith(undefined))]).pipe(
-            switchMap(([projectID]) => this.projectService.listInternalNotesProject(projectID)),
+        this.internalNotes$ = combineLatest([this.project$, this.refreshInternalNotes$.pipe(startWith(undefined))]).pipe(
+            switchMap(([project]) =>
+                project.UserCanViewInternalNotes
+                    ? this.projectService.listInternalNotesProject(project.ProjectID)
+                    : of([])
+            ),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 

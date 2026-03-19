@@ -1009,7 +1009,7 @@ public static class Projects
         entity.UserCanEditProjectAsAdmin = entity.UserCanDirectEdit
             || callingUser.HasCanEditProgramRole();
 
-        entity.UserCanViewInternalNotes = entity.UserCanEditProjectAsAdmin;
+        entity.UserCanViewInternalNotes = entity.UserCanEditProjectAsAdmin && isApproved;
 
         entity.CanStartUpdate = entity.UserCanEdit && isApproved && !entity.HasExistingUpdateBatch;
     }
