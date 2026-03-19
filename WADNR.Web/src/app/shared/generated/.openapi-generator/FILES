@@ -126,6 +126,8 @@ model/field-definition-detail.ts
 model/file-resource-interaction-event-detail.ts
 model/file-resource-lookup-item.ts
 model/file-resource-priority-landscape-detail.ts
+model/find-your-forester-point-request.ts
+model/find-your-forester-point-result.ts
 model/find-your-forester-question-tree-node.ts
 model/firma-home-page-image-detail.ts
 model/firma-home-page-image-upsert-request.ts
@@ -137,6 +139,7 @@ model/focus-area-closeout-project-item.ts
 model/focus-area-detail.ts
 model/focus-area-grid-row.ts
 model/focus-area-upsert-request.ts
+model/forester-contact-result.ts
 model/forester-role-lookup-item.ts
 model/forester-work-unit-grid-row.ts
 model/fund-source-agreement-grid-row.ts

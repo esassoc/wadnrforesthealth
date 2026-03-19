@@ -36,6 +36,14 @@ public class FindYourForesterController(
         return Ok(roles);
     }
 
+    [HttpPost("by-point")]
+    [AllowAnonymous]
+    public async Task<ActionResult<FindYourForesterPointResult>> GetForestersByPoint([FromBody] FindYourForesterPointRequest request)
+    {
+        var result = await ForesterWorkUnits.ListByPointAsync(DbContext, request.Latitude, request.Longitude);
+        return Ok(result);
+    }
+
     [HttpGet("work-units/{foresterRoleID}")]
     [FindYourForesterManageFeature]
     public async Task<ActionResult<List<ForesterWorkUnitGridRow>>> ListWorkUnitsForRole([FromRoute] int foresterRoleID)

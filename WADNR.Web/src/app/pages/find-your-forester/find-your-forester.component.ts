@@ -12,7 +12,6 @@ import { FindYourForesterService } from "src/app/shared/generated/api/find-your-
 import { FindYourForesterQuestionTreeNode } from "src/app/shared/generated/model/find-your-forester-question-tree-node";
 import { ForesterRoleLookupItem } from "src/app/shared/generated/model/forester-role-lookup-item";
 import { MarkerHelper } from "src/app/shared/helpers/marker-helper";
-import { environment } from "src/environments/environment";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
 import { AlertService } from "src/app/shared/services/alert.service";
@@ -100,14 +99,7 @@ export class FindYourForesterComponent {
 
     onLocationFound(event: { lat: number; lng: number }): void {
         const latlng = L.latLng(event.lat, event.lng);
-
-        // Immediate UI feedback: marker, spinner, scroll — before flyTo animation
-        this.prepareForQuery(latlng);
-
-        // Wait for flyTo animation to complete so map bounds are correct for GetFeatureInfo
-        this.map.once("moveend", () => {
-            this.queryForestersAtPoint(latlng, true);
-        });
+        this.queryForestersAtPoint(latlng);
     }
 
     private prepareForQuery(point: L.LatLng): void {
@@ -123,85 +115,39 @@ export class FindYourForesterComponent {
         }
     }
 
-    private async queryForestersAtPoint(point: L.LatLng, skipPrepare = false): Promise<void> {
+    private queryForestersAtPoint(point: L.LatLng): void {
         if (!this.map) return;
 
-        // For map clicks, prepare UI immediately (search flow calls prepareForQuery before flyTo)
-        if (!skipPrepare) {
-            this.prepareForQuery(point);
-        }
+        this.prepareForQuery(point);
 
-        // Build GetFeatureInfo params common to all requests
-        const wmsUrl = environment.geoserverMapServiceUrl + "/wms";
-        const size = this.map.getSize();
-        const crs = this.map.options.crs!;
-        const sw = crs.project!(this.map.getBounds().getSouthWest());
-        const ne = crs.project!(this.map.getBounds().getNorthEast());
-        const bbox = `${sw.x},${sw.y},${ne.x},${ne.y}`;
-
-        // Convert latlng to container point for GetFeatureInfo
-        const containerPoint = this.map.latLngToContainerPoint(point);
-        const x = Math.round(containerPoint.x);
-        const y = Math.round(containerPoint.y);
-
-        const baseParams: Record<string, string> = {
-            service: "WMS",
-            version: "1.1.1",
-            request: "GetFeatureInfo",
-            layers: "WADNRForestHealth:FindYourForester",
-            query_layers: "WADNRForestHealth:FindYourForester",
-            styles: "",
-            bbox: bbox,
-            width: String(size.x),
-            height: String(size.y),
-            srs: crs.code!,
-            format: "image/png",
-            info_format: "application/json",
-            x: String(x),
-            y: String(y),
-            feature_count: "50",
-        };
-
-        // Query all active roles in parallel
-        const requests = this.activeRoles.map(async (role) => {
-            const params = { ...baseParams, cql_filter: `ForesterRoleID=${role.ForesterRoleID}` };
-            const urlParams = new URLSearchParams(params).toString();
-            try {
-                const response = await fetch(`${wmsUrl}?${urlParams}`);
-                const data = await response.json();
-                if (data.features && data.features.length > 0) {
-                    const props = data.features[0].properties;
-                    return {
-                        foresterRoleID: role.ForesterRoleID,
-                        foresterRoleDisplayName: props.ForesterRoleDisplayName || role.ForesterRoleDisplayName,
-                        firstName: props.FirstName || null,
-                        lastName: props.LastName || null,
-                        email: props.Email || null,
-                        phone: props.Phone || null,
-                        foresterRoleDefinition: props.ForesterRoleDefinition || null,
-                    } as ForesterContactInfo;
+        this.findYourForesterService.getForestersByPointFindYourForester({ Latitude: point.lat, Longitude: point.lng }).subscribe({
+            next: (result) => {
+                const infoMap = new Map<number, ForesterContactInfo>();
+                for (const contact of result.ForesterContacts) {
+                    infoMap.set(contact.ForesterRoleID, {
+                        foresterRoleID: contact.ForesterRoleID,
+                        foresterRoleDisplayName: contact.ForesterRoleDisplayName,
+                        firstName: contact.FirstName,
+                        lastName: contact.LastName,
+                        email: contact.Email,
+                        phone: contact.Phone,
+                        foresterRoleDefinition: contact.ForesterRoleDefinition,
+                    });
                 }
-            } catch {
-                // Silently skip failed requests
-            }
-            return null;
+
+                if (infoMap.size === 0) {
+                    this.alertService.pushAlert(new Alert("No foresters were found for this location. The location may be outside Washington State or outside of DNR-managed areas.", AlertContext.Warning));
+                }
+
+                this.foresterInfo.set(infoMap);
+                this.showAllContacts.set(false);
+                this.isQuerying.set(false);
+            },
+            error: () => {
+                this.isQuerying.set(false);
+                this.alertService.pushAlert(new Alert("An error occurred while searching for foresters. Please try again.", AlertContext.Danger));
+            },
         });
-
-        const results = await Promise.all(requests);
-        const infoMap = new Map<number, ForesterContactInfo>();
-        for (const result of results) {
-            if (result) {
-                infoMap.set(result.foresterRoleID, result);
-            }
-        }
-
-        if (infoMap.size === 0) {
-            this.alertService.pushAlert(new Alert("No foresters were found for this location. The location may be outside Washington State or outside of DNR-managed areas.", AlertContext.Warning));
-        }
-
-        this.foresterInfo.set(infoMap);
-        this.showAllContacts.set(false);
-        this.isQuerying.set(false);
     }
 
     getContactForRole(roleID: number | undefined): ForesterContactInfo | null {

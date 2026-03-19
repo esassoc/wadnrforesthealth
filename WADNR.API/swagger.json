@@ -3293,6 +3293,56 @@
         "x-anonymous": true
       }
     },
+    "/find-your-forester/by-point": {
+      "post": {
+        "tags": [
+          "FindYourForester"
+        ],
+        "operationId": "GetForestersByPoint_FindYourForester",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindYourForesterPointRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindYourForesterPointRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindYourForesterPointRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindYourForesterPointResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindYourForesterPointResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindYourForesterPointResult"
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
     "/find-your-forester/work-units/{foresterRoleID}": {
       "get": {
         "tags": [
@@ -25355,6 +25405,41 @@
         },
         "additionalProperties": false
       },
+      "FindYourForesterPointRequest": {
+        "type": "object",
+        "properties": {
+          "Latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "Longitude": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FindYourForesterPointResult": {
+        "type": "object",
+        "properties": {
+          "Latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "Longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "ForesterContacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ForesterContactResult"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FindYourForesterQuestionTreeNode": {
         "type": "object",
         "properties": {
@@ -25657,6 +25742,53 @@
           "PlannedFootprintAcres": {
             "type": "number",
             "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ForesterContactResult": {
+        "type": "object",
+        "properties": {
+          "ForesterWorkUnitID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ForesterRoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ForesterRoleDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "PersonID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "FirstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "LastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Email": {
+            "type": "string",
+            "nullable": true
+          },
+          "Phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "ForesterWorkUnitName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ForesterRoleDefinition": {
+            "type": "string",
             "nullable": true
           }
         },
