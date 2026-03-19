@@ -103,6 +103,9 @@
 
 <script type="text/javascript">
 
+    // Build forester role definitions lookup from server data
+    var foresterRoleDefinitions = @Html.Raw(JsonConvert.SerializeObject(ViewDataTyped.ForesterRoleDefinitions));
+
     function showHideFyfSidebarContent() {
         var hiddenChildren = jQuery('#findYourForesterContainer > div > span').filter(':hidden');
         if (hiddenChildren.length) {
@@ -118,7 +121,6 @@
     jQuery(function () {
 
 
-
         var findYourForesterFirmaMap = null;
         var mapInitJson = @Html.Raw(JObject.FromObject(ViewDataTyped.MapInitJson).ToString(Formatting.None));
         if (!findYourForesterFirmaMap) {
@@ -126,15 +128,38 @@
             findYourForesterFirmaMap = new ProjectFirmaMaps.Map(mapInitJson, null);
         }
 
-        findYourForesterFirmaMap.map.on('click', function (evt) {
-
-            populateForesterInformationAndDropMarker(evt.latlng, true);
-        });
-
         var geocodeMarker = L.marker();
 
+        findYourForesterFirmaMap.map.on('click', function (evt) {
 
-        function populateForesterInformationAndDropMarker(latlng, failRetry) {
+            $.ajax({
+                    method: "POST",
+                    url: "@ViewDataTyped.ForesterInformationUrl",
+                    data: { latitude: evt.latlng.lat, longitude: evt.latlng.lng }
+            }).done(msg => processForesterInformationResponse(msg));
+
+            //populateForesterInformationAndDropMarker(evt.latlng, true);
+        });
+
+        function processForesterInformationResponse(msg) {
+
+            if (!msg.ErrorStatus) {
+                var lat = msg.Latitude;
+                var long = msg.Longitude;
+                var foresterWorkUnits = msg.ForesterWorkUnits;
+
+                populateForesterInformationAndDropMarker({ lng: long, lat: lat }, foresterWorkUnits);
+                findYourForesterFirmaMap.map.flyTo([lat, long], 10, { duration: 1 });
+
+            } else {
+                console.log(msg.ErrorStatus);
+                alert(msg.ErrorStatus);
+            }
+        }
+
+
+
+        function populateForesterInformationAndDropMarker(latlng, foresterWorkUnits) {
 
             if (geocodeMarker != undefined) {
                 geocodeMarker.remove();
@@ -143,66 +168,104 @@
             //Add a marker to show where you clicked.
             geocodeMarker = L.marker(latlng).addTo(findYourForesterFirmaMap.map);
 
-            var ajaxCalls = findYourForesterFirmaMap.popupForWMSAndVectorLayers(findYourForesterFirmaMap.getWmsLayers(false), findYourForesterFirmaMap.getVectorLayers(false), latlng);
-            findYourForesterFirmaMap.carryOutPromises(ajaxCalls).then(results => {
-                jQuery('#outOfStateAddressError').hide();
-                jQuery('[data-forester-info-field]').text("");
-                if (!results.every(element => element === null))
-                {
-                    results.forEach(result => {
-                        if (result) {
-                            var foresterDefinitionList = jQuery('[data-forester-role-id="' + result.properties.ForesterRoleID + '"]');
-                            //check we have some data before updating
-                            if (result && result.properties && result.properties.FirstName) {
-                                foresterDefinitionList.find('[data-forester-name]').text(result.properties.FirstName + " " + result.properties.LastName);
-                                if (result.properties.Email) {
-                                    foresterDefinitionList.find('[data-forester-email]').text(result.properties.Email);
-                                } else {
-                                    foresterDefinitionList.find('[data-forester-email]').text("No email available");
-                                }
-                                if (result.properties.Phone) {
-                                    foresterDefinitionList.find('[data-forester-phone]').text(result.properties.Phone);
-                                } else {
-                                    foresterDefinitionList.find('[data-forester-phone]').text("No phone number available");
-                                }
+            jQuery('#outOfStateAddressError').hide();
+            // Clear the findYourForesterContainer and rebuild it with forester work units data
+            var container = jQuery('#findYourForesterContainer');
+            container.empty();
 
-                                foresterDefinitionList.find('[data-forester-container]').show();
-                                foresterDefinitionList.find('[data-forester-no-data]').hide();
-                                foresterDefinitionList.find('[data-forester-initial]').hide();
-                            } else {
-                                foresterDefinitionList.find('[data-forester-name]').text("");
-                                foresterDefinitionList.find('[data-forester-email]').text("");
-                                foresterDefinitionList.find('[data-forester-phone]').text("");
-                                foresterDefinitionList.find('[data-forester-container]').hide();
-                                foresterDefinitionList.find('[data-forester-no-data]').show();
-                                foresterDefinitionList.find('[data-forester-initial]').hide();
-                            }
+            if (foresterWorkUnits && foresterWorkUnits.length > 0) {
 
+                var contentDiv = jQuery('<div></div>');
+
+                foresterWorkUnits.forEach(function (result, index) {
+                    var roleInfo = foresterRoleDefinitions[result.ForesterRoleID] ||  '';
+                    var fullName = (result.FirstName || '') + ' ' + (result.LastName || '');
+                    fullName = fullName.trim();
+
+                    var spanHtml = '<span>';
+                    spanHtml += '<strong>' + result.ForesterRoleDisplayName + ' ';
+                    spanHtml += '<span tabindex="0" class="helpicon glyphicon glyphicon-question-sign" onmouseover="jQuery(this).popover(\'show\')" ';
+                    spanHtml += 'data-content="' + roleInfo.definition + '" ';
+                    spanHtml += 'data-html="true" data-toggle="popover" data-placement="top" data-trigger="hover focus"></span>';
+                    spanHtml += ':</strong> <br>';
+
+                    if (fullName) {
+                        spanHtml += fullName + '<br>';
+                    } else {
+                        spanHtml += 'No name available<br>';
+                    }
+
+                    if (result.Phone) {
+                        spanHtml += '<a href="tel:' + result.Phone + '">' + result.Phone + '</a> <br>';
+                    } else {
+                        spanHtml += 'No phone number available<br>';
+                    }
+
+                    if (result.Email) {
+                        spanHtml += '<a href="mailto:' + result.Email + '">' + result.Email + '</a> <br>';
+                    } else {
+                        spanHtml += 'No email available<br>';
+                    }
+
+                    spanHtml += '</span><br>';
+
+                    contentDiv.append(spanHtml);
+                });
+
+                // Add location span at the end
+                contentDiv.append('<span><strong>Location:</strong> ' + latlng.lat.toFixed(4) + ', ' + latlng.lng.toFixed(4) + '</span><br>');
+
+                container.append(contentDiv);
+
+                // Initialize popovers
+                container.find('[data-toggle="popover"]').popover();
+
+                // Add show more/less button if more than 6 spans
+                if (container.find('div > span').length > 6) {
+                    container.find('div > span').eq(5).after('<br/><button id="showHideFindYourForesterContent" onclick="showHideFyfSidebarContent();">see more</button>');
+                    container.find('div > span').slice(6).hide();
+                }
+
+
+                foresterWorkUnits.forEach(function (result) {
+                    var foresterDefinitionList = jQuery('[data-forester-role-id="' + result.ForesterRoleID + '"]');
+
+                    //check we have some data before updating
+                    if (result && result.FirstName) {
+                        foresterDefinitionList.find('[data-forester-name]').text(result.FirstName + " " + result.LastName);
+                        if (result.Email) {
+                            foresterDefinitionList.find('[data-forester-email]').text(result.Email);
+                        } else {
+                            foresterDefinitionList.find('[data-forester-email]').text("No email available");
+                        }
+                        if (result.Phone) {
+                            foresterDefinitionList.find('[data-forester-phone]').text(result.Phone);
+                        } else {
+                            foresterDefinitionList.find('[data-forester-phone]').text("No phone number available");
                         }
 
-                    });
-                } else {
-                    if (failRetry) {
-                        populateForesterInformationAndDropMarker(latlng, false);
+                        foresterDefinitionList.find('[data-forester-container]').show();
+                        foresterDefinitionList.find('[data-forester-no-data]').hide();
+                        foresterDefinitionList.find('[data-forester-initial]').hide();
                     } else {
-                        var allForesterDefinitionLists = jQuery('[data-forester-role-id]');
-                        jQuery('#outOfStateAddressError').show();
-                        allForesterDefinitionLists.find('[data-forester-name]').text("");
-                        allForesterDefinitionLists.find('[data-forester-email]').text("");
-                        allForesterDefinitionLists.find('[data-forester-phone]').text("");
-                        allForesterDefinitionLists.find('[data-forester-container]').hide();
-                        allForesterDefinitionLists.find('[data-forester-no-data]').show();
-                        allForesterDefinitionLists.find('[data-forester-initial]').hide();
+                        foresterDefinitionList.find('[data-forester-name]').text("");
+                        foresterDefinitionList.find('[data-forester-email]').text("");
+                        foresterDefinitionList.find('[data-forester-phone]').text("");
+                        foresterDefinitionList.find('[data-forester-container]').hide();
+                        foresterDefinitionList.find('[data-forester-no-data]').show();
+                        foresterDefinitionList.find('[data-forester-initial]').hide();
                     }
-                }
-
-                if (jQuery('#findYourForesterContainer > div > span').length > 6) {
-                    jQuery('#findYourForesterContainer > div > span').eq(5).after('<br/><button id="showHideFindYourForesterContent" onclick="showHideFyfSidebarContent();">see more</button>');
-                    jQuery('#findYourForesterContainer > div > span').slice(6).hide();
-
-                }
-
-            });
+                });
+            } else {
+                var allForesterDefinitionLists = jQuery('[data-forester-role-id]');
+                jQuery('#outOfStateAddressError').show();
+                allForesterDefinitionLists.find('[data-forester-name]').text("");
+                allForesterDefinitionLists.find('[data-forester-email]').text("");
+                allForesterDefinitionLists.find('[data-forester-phone]').text("");
+                allForesterDefinitionLists.find('[data-forester-container]').hide();
+                allForesterDefinitionLists.find('[data-forester-no-data]').show();
+                allForesterDefinitionLists.find('[data-forester-initial]').hide();
+            }
 
         }
 
@@ -216,20 +279,7 @@
                     method: "POST",
                     url: "@ViewDataTyped.GeocodeAddressUrl",
                     data: { address: dataAddress }
-            })
-            .done(function (msg) {
-                if (!msg.GeocodedAddress.Error) {
-                    var lat = msg.GeocodedAddress.Location.GcYCoord;
-                    var long = msg.GeocodedAddress.Location.GcXCoord;
-                    findYourForesterFirmaMap.map.flyTo([lat, long], 12, {duration: 1});
-                    window.setTimeout(populateForesterInformationAndDropMarker({ lng: long, lat: lat }, true), 1250);
-
-                } else {
-                    console.log(msg.GeocodedAddress.Error);
-                    alert(msg.GeocodedAddress.Error);
-                }
-
-            });
+            }).done(msg => processForesterInformationResponse(msg));
 
         });
     });

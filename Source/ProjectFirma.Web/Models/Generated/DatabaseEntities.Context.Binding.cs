@@ -10,6 +10,7 @@
 using System;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Spatial;
 using System.Linq;
 using CodeFirstStoreFunctions;
 using LtInfo.Common.DesignByContract;
@@ -187,6 +188,7 @@ namespace ProjectFirma.Web.Models
         public virtual DbSet<vTotalTreatedAcresByProject> vTotalTreatedAcresByProjects { get; set; }
         public virtual DbSet<fGetBoundingBoxForProjectIdList_Result> fGetBoundingBoxForProjectIdListResults { get; set; }
         public virtual DbSet<fGetColumnNamesForTable_Result> fGetColumnNamesForTableResults { get; set; }
+        public virtual DbSet<fGetForesterWorkUnitsByPoint_Result> fGetForesterWorkUnitsByPointResults { get; set; }
         public virtual DbSet<fGetProjectDnrUploadRegion_Result> fGetProjectDnrUploadRegionResults { get; set; }
         public virtual DbSet<fGetProjectPriorityLandscape_Result> fGetProjectPriorityLandscapeResults { get; set; }
         public virtual DbSet<fGetUploadProgramCounty_Result> fGetUploadProgramCountyResults { get; set; }
@@ -214,6 +216,18 @@ namespace ProjectFirma.Web.Models
             };
             return (this as System.Data.Entity.Infrastructure.IObjectContextAdapter).ObjectContext
                   .CreateQuery<fGetColumnNamesForTable_Result>("DatabaseEntities.fGetColumnNamesForTable(@psTableName)",psTableName);
+        }
+
+        [DbFunction("DatabaseEntities", "fGetForesterWorkUnitsByPoint")]
+        public virtual IQueryable<fGetForesterWorkUnitsByPoint_Result> GetfGetForesterWorkUnitsByPoints(DbGeometry pointParameter)
+        {
+            
+            var point = new System.Data.Entity.Core.Objects.ObjectParameter("point", typeof(DbGeometry))
+            {
+                Value = pointParameter
+            };
+            return (this as System.Data.Entity.Infrastructure.IObjectContextAdapter).ObjectContext
+                  .CreateQuery<fGetForesterWorkUnitsByPoint_Result>("DatabaseEntities.fGetForesterWorkUnitsByPoint(@Point)",point);
         }
 
         [DbFunction("DatabaseEntities", "fGetProjectDnrUploadRegion")]

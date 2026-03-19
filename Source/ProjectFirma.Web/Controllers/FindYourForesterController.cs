@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using LtInfo.Common.MvcResults;
 using ProjectFirma.Web.Common;
@@ -16,6 +17,7 @@ namespace ProjectFirma.Web.Controllers
         {
             var layerGeoJsons = new List<LayerGeoJson>();
             var layerVisibility = LayerInitialVisibility.Hide;
+            Dictionary<int, string> foresterRoleDefinitionDictionary = new Dictionary<int, string>();
             foreach (var role in ForesterRole.All.OrderBy(x => x.SortOrder))
             {
                 if (HttpRequestStorage.DatabaseEntities.ForesterWorkUnits.Any(x => x.ForesterRoleID == role.ForesterRoleID))
@@ -25,6 +27,13 @@ namespace ProjectFirma.Web.Controllers
 
                     layerGeoJsons.Add(tempLayer);
                 }
+
+                var fieldDefinition = role.GetFieldDefinition();
+                if (fieldDefinition != null)
+                {
+                    foresterRoleDefinitionDictionary.Add(role.ForesterRoleID, fieldDefinition.GetFieldDefinitionDescription().ToHtmlString());
+                }
+                
             }
 
             var mapInitJson = new MapInitJson("findYourForester", 10, layerGeoJsons, MapInitJson.GetExternalMapLayersForOtherMaps(), BoundingBox.MakeNewDefaultBoundingBox());
@@ -33,7 +42,7 @@ namespace ProjectFirma.Web.Controllers
             var rootQuestions =
                 HttpRequestStorage.DatabaseEntities.FindYourForesterQuestions.Where(x => !x.ParentQuestionID.HasValue).ToList();
 
-            var viewData = new FindYourForesterViewData(CurrentPerson, mapInitJson, firmaPage, rootQuestions);
+            var viewData = new FindYourForesterViewData(CurrentPerson, mapInitJson, firmaPage, rootQuestions, foresterRoleDefinitionDictionary);
             return RazorView<FindYourForester, FindYourForesterViewData>(viewData);
 
         }
@@ -47,6 +56,7 @@ namespace ProjectFirma.Web.Controllers
             var layerGeoJsons = new List<LayerGeoJson>();
             var layerVisibility = foresterRoleID.HasValue ? LayerInitialVisibility.Hide : LayerInitialVisibility.Show;
             var initialForesterRoleIdToLoad = 1;
+            ForesterRole.CommunityResilienceCoordinator.GetFieldDefinition();
             foreach (var role in ForesterRole.All.OrderBy(x => x.SortOrder))
             {
                 if (HttpRequestStorage.DatabaseEntities.ForesterWorkUnits.Any(x => x.ForesterRoleID == role.ForesterRoleID))

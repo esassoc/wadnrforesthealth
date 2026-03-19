@@ -19,9 +19,52 @@ Source code is available upon request via <support@sitkatech.com>.
 </license>
 -----------------------------------------------------------------------*/
 
+using System.Collections.Generic;
+
 namespace ProjectFirma.Web.Views.FindYourForester
 {
     public abstract class FindYourForester : LtInfo.Common.Mvc.TypedWebViewPage<FindYourForesterViewData>
     {
+    }
+
+    public class FindYourForesterSimple
+    {
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public List<ForesterWorkUnitSimple> ForesterWorkUnits { get; set; }
+
+        public FindYourForesterSimple(double latitude, double longitude, List<ForesterWorkUnitSimple> foresterWorkUnits)
+        {
+            Latitude = latitude;
+            Longitude = longitude;
+            ForesterWorkUnits = foresterWorkUnits;
+        }
+    }
+
+    public class ForesterWorkUnitSimple
+    {
+        public int ForesterWorkUnitID { get; set; }
+        public int ForesterRoleID { get; set; }
+        public string ForesterRoleDisplayName { get; set; }
+        public int? PersonID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string ForesterWorkUnitName { get; set; }
+
+        public ForesterWorkUnitSimple(int foresterWorkUnitID, int foresterRoleID, string foresterRoleDisplayName,
+            int? personID, string firstName, string lastName, string email, string phone, string foresterWorkUnitName)
+        {
+            ForesterWorkUnitID = foresterWorkUnitID;
+            ForesterRoleID = foresterRoleID;
+            ForesterRoleDisplayName = foresterRoleDisplayName;
+            PersonID = personID;
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+            Phone = phone;
+            ForesterWorkUnitName = foresterWorkUnitName;
+        }
     }
 }

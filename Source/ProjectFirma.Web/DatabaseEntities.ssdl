@@ -5964,6 +5964,25 @@ warning 6002: The table/view 'WADNRForestHealthDB.dbo.vTotalTreatedAcresByProjec
   <Function Name="fGetFiscalYearBienniumForDate" ReturnType="int" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="dateToCheck" Type="datetime" Mode="In" />
   </Function>
+  <Function Name="fGetForesterWorkUnitsByPoint" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Point" Type="geometry" Mode="In" />
+    <ReturnType>
+      <CollectionType>
+        <RowType>
+          <Property Name="ForesterWorkUnitID" Type="int" Nullable="false" />
+          <Property Name="ForesterRoleID" Type="int" Nullable="false" />
+          <Property Name="ForesterRoleDisplayName" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="PersonID" Type="int" />
+          <Property Name="FirstName" Type="varchar" MaxLength="100" />
+          <Property Name="LastName" Type="varchar" MaxLength="100" />
+          <Property Name="Email" Type="varchar" MaxLength="255" />
+          <Property Name="Phone" Type="varchar" MaxLength="30" />
+          <Property Name="ForesterWorkUnitName" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="SortOrder" Type="int" Nullable="false" />
+        </RowType>
+      </CollectionType>
+    </ReturnType>
+  </Function>
   <Function Name="fGetProjectDnrUploadRegion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="piGisUploadAttemptID" Type="int" Mode="In" />
     <Parameter Name="piGisMetadataAttributeID" Type="int" Mode="In" />
