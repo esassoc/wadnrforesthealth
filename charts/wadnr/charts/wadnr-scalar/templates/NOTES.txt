@@ -2,5 +2,5 @@ WADNR Scalar has been deployed.
 
 {{- if .Values.ingress.enabled }}
 Access the API documentation at:
-  https://{{ .Values.global.domains.scalar }}
+  https://{{ .Values.global.domains.scalarApi }}
 {{- end }}

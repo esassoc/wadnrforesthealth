@@ -59,4 +59,11 @@ obj
 .claude/settings.local.json
 .claude/migration/
 .claude/migration-logs/
+
+# Temporary directories (caused by misconfigured TEMP env var)
+/zybach/
+/Build/zybach/
 /WADNR.Scalar/appsecrets.json
+
+# Test environment config (contains connection strings)
+WADNR.API.Tests/environment.json

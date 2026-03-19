@@ -6,10 +6,10 @@ global:
     sqlUsername: "SqlAdministrator"
     sqlGeoserverUsername: "WADNRGeo"
   domains:
-    api: "api-wadnr.esa-qa.sitkatech.com"
+    api: "internalapi-wadnr.esa-qa.sitkatech.com"
     web: "wadnr.esa-qa.sitkatech.com"
     geoserver: "geoserver-wadnr.esa-qa.sitkatech.com"
-    scalar: "scalar-wadnr.esa-qa.sitkatech.com"
+    scalarApi: "api-wadnr.esa-qa.sitkatech.com"
     sitkacapture: "wadnr-sitkacapture"
   secrets:
     geoserverSqlServerPassword: "passwordhere"

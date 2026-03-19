@@ -29,9 +29,9 @@ spec:
   tls:
     - secretName: wadnr-scalar-tls
       hosts:
-        - {{ .Values.global.domains.scalar }}
+        - {{ .Values.global.domains.scalarApi }}
   rules:
-    - host: {{ .Values.global.domains.scalar }}
+    - host: {{ .Values.global.domains.scalarApi }}
       http:
         paths:
           - path: /

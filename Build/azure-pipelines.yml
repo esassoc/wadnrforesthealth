@@ -23,6 +23,7 @@ variables:
   domainApi: 'internalapi-wadnr.esa-$(Environment).sitkatech.com'
   domainWeb: 'wadnr.esa-$(Environment).sitkatech.com'
   domainGeoserver: 'geoserver-wadnr.esa-$(Environment).sitkatech.com'
+  domainScalarApi: 'api-wadnr.esa-$(Environment).sitkatech.com'
 resources:
   repositories:
   - repository: self
@@ -525,6 +526,7 @@ stages:
                 global.domains.api="$(domainApi)"
                 global.domains.geoserver="$(domainGeoserver)"
                 global.domains.web="$(domainWeb)"
+                global.domains.scalarApi="$(domainScalarApi)"
                 global.env.name="$(Environment)"
                 global.secrets.geoserverSqlServerPassword="$(SQL_GEOSERVER_PASSWORD)"
                 global.secrets.geoserverAdminPassword="$(GEOSERVER_ADMIN_PASSWORD)"
@@ -549,8 +551,10 @@ stages:
                 api.image.repository="$(kv-containerRegistry)/wadnr/api"
                 web.image.tag="$(Build.BuildNumber)-$(environment)"
                 gdalapi.image.tag="$(Build.BuildNumber)-$(environment)"
+                scalar.image.tag="$(Build.BuildNumber)-$(environment)"
                 web.image.repository="$(kv-containerRegistry)/wadnr/web"
                 geoserver.image.repository="$(kv-containerRegistry)/kartoza/geoserver"
                 gdalapi.image.repository="$(kv-containerRegistry)/wadnr/gdalapi"
+                scalar.image.repository="$(kv-containerRegistry)/wadnr/scalar"
                 sitkacapture.image.repository="$(kv-containerRegistry)/sitkacapture:latest"
               force: false
