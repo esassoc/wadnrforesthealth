@@ -609,9 +609,28 @@ public static class ProjectUpdateWorkflowProgress
     {
         if (projectLocs.Count != updateLocs.Count) return true;
 
-        var projNames = projectLocs.Select(l => l.ProjectLocationName).OrderBy(x => x).ToList();
-        var updateNames = updateLocs.Select(l => l.ProjectLocationUpdateName).OrderBy(x => x).ToList();
-        return !projNames.SequenceEqual(updateNames);
+        var projByName = projectLocs.OrderBy(l => l.ProjectLocationName).ToList();
+        var updateByName = updateLocs.OrderBy(l => l.ProjectLocationUpdateName).ToList();
+
+        if (!projByName.Select(l => l.ProjectLocationName).SequenceEqual(updateByName.Select(l => l.ProjectLocationUpdateName)))
+            return true;
+
+        for (int i = 0; i < projByName.Count; i++)
+        {
+            var proj = projByName[i];
+            var upd = updateByName[i];
+
+            if (proj.ProjectLocationTypeID != upd.ProjectLocationTypeID) return true;
+            if (proj.ProjectLocationNotes != upd.ProjectLocationUpdateNotes) return true;
+
+            var projGeom = proj.ProjectLocationGeometry;
+            var updGeom = upd.ProjectLocationUpdateGeometry;
+            if (projGeom == null && updGeom != null) return true;
+            if (projGeom != null && updGeom == null) return true;
+            if (projGeom != null && updGeom != null && !projGeom.EqualsTopologically(updGeom)) return true;
+        }
+
+        return false;
     }
 
     private static bool HasGeographicChanges(HashSet<int> projectIDs, HashSet<int> updateIDs, string? projectExplanation, string? updateExplanation)
@@ -655,6 +674,16 @@ public static class ProjectUpdateWorkflowProgress
 
         if (projectAllocations.Count != updateAllocations.Count) return true;
 
+        var projAllocs = projectAllocations
+            .OrderBy(a => a.ProjectFundSourceAllocationRequestID)
+            .Select(a => (a.TotalAmount, a.MatchAmount, a.PayAmount))
+            .ToList();
+        var updateAllocs = updateAllocations
+            .OrderBy(a => a.ProjectFundSourceAllocationRequestUpdateID)
+            .Select(a => (a.TotalAmount, a.MatchAmount, a.PayAmount))
+            .ToList();
+        if (!projAllocs.SequenceEqual(updateAllocs)) return true;
+
         return false;
     }
 
@@ -662,9 +691,12 @@ public static class ProjectUpdateWorkflowProgress
     {
         if (projectImages.Count != updateImages.Count) return true;
 
-        // Compare by file resource ID and key photo status
-        var projPhotos = projectImages.Select(i => (i.FileResourceID, i.IsKeyPhoto, i.Caption)).OrderBy(x => x.FileResourceID).ToList();
-        var updatePhotos = updateImages.Select(i => (i.FileResourceID ?? 0, i.IsKeyPhoto, i.Caption)).OrderBy(x => x.Item1).ToList();
+        var projPhotos = projectImages
+            .Select(i => (i.FileResourceID, i.IsKeyPhoto, i.Caption, i.Credit, i.ExcludeFromFactSheet, i.ProjectImageTimingID))
+            .OrderBy(x => x.FileResourceID).ToList();
+        var updatePhotos = updateImages
+            .Select(i => (i.FileResourceID ?? 0, i.IsKeyPhoto, i.Caption, i.Credit, i.ExcludeFromFactSheet, i.ProjectImageTimingID))
+            .OrderBy(x => x.Item1).ToList();
         return !projPhotos.SequenceEqual(updatePhotos);
     }
 

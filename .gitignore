@@ -67,3 +67,6 @@ obj
 
 # Test environment config (contains connection strings)
 WADNR.API.Tests/environment.json
+
+# Test results output
+TestResults/

@@ -47,7 +47,27 @@ public static class ProjectUpdateWorkflowSteps
         await dbContext.Database.ExecuteSqlInterpolatedAsync(
             $"EXEC dbo.pStartProjectUpdateBatch @ProjectID={projectID}, @CallingPersonID={callingPersonID}");
 
-        return await GetCurrentBatchAsync(dbContext, projectID);
+        var batch = await GetCurrentBatchAsync(dbContext, projectID);
+
+        // Log workflow state transition
+        if (batch != null)
+        {
+            dbContext.AuditLogs.Add(new AuditLog
+            {
+                PersonID = callingPersonID,
+                AuditLogDate = DateTime.UtcNow,
+                AuditLogEventTypeID = (int)AuditLogEventTypeEnum.Added,
+                TableName = "Project Update",
+                RecordID = batch.ProjectUpdateBatchID,
+                ColumnName = "Project Update record",
+                NewValue = "Created",
+                AuditDescription = "Project Update record: set to Created",
+                ProjectID = projectID
+            });
+            await dbContext.SaveChangesAsync();
+        }
+
+        return batch;
     }
 
     /// <summary>
@@ -1901,6 +1921,20 @@ public static class ProjectUpdateWorkflowSteps
             UpdatePersonID = callingPersonID
         });
 
+        // Log workflow state transition
+        dbContext.AuditLogs.Add(new AuditLog
+        {
+            PersonID = callingPersonID,
+            AuditLogDate = DateTime.UtcNow,
+            AuditLogEventTypeID = (int)AuditLogEventTypeEnum.Added,
+            TableName = "Project Update",
+            RecordID = batch.ProjectUpdateBatchID,
+            ColumnName = "Project Update record",
+            NewValue = "Submitted",
+            AuditDescription = "Project Update record: set to Submitted",
+            ProjectID = batch.ProjectID
+        });
+
         await dbContext.SaveChangesAsync();
 
         return new WorkflowStateTransitionResponse
@@ -1944,8 +1978,8 @@ public static class ProjectUpdateWorkflowSteps
         // Generate diff logs BEFORE committing changes (so we can compare update to current)
         await ProjectUpdateDiffs.GenerateAndStoreDiffsAsync(dbContext, batch);
 
-        // Commit all changes to the Project tables
-        await CommitChangesToProjectAsync(dbContext, batch);
+        // Commit all changes to the Project tables (includes audit logging in the stored procedure)
+        await CommitChangesToProjectAsync(dbContext, batch, callingPersonID);
 
         batch.ProjectUpdateStateID = (int)ProjectUpdateStateEnum.Approved;
         batch.LastUpdateDate = DateTime.UtcNow;
@@ -1958,6 +1992,20 @@ public static class ProjectUpdateWorkflowSteps
             ProjectUpdateStateID = (int)ProjectUpdateStateEnum.Approved,
             TransitionDate = DateTime.UtcNow,
             UpdatePersonID = callingPersonID
+        });
+
+        // Log workflow state transition
+        dbContext.AuditLogs.Add(new AuditLog
+        {
+            PersonID = callingPersonID,
+            AuditLogDate = DateTime.UtcNow,
+            AuditLogEventTypeID = (int)AuditLogEventTypeEnum.Added,
+            TableName = "Project Update",
+            RecordID = batch.ProjectUpdateBatchID,
+            ColumnName = "Project Update record",
+            NewValue = "Approved",
+            AuditDescription = "Project Update record: set to Approved",
+            ProjectID = batch.ProjectID
         });
 
         await dbContext.SaveChangesAsync();
@@ -2019,6 +2067,20 @@ public static class ProjectUpdateWorkflowSteps
             ProjectUpdateStateID = (int)ProjectUpdateStateEnum.Returned,
             TransitionDate = DateTime.UtcNow,
             UpdatePersonID = callingPersonID
+        });
+
+        // Log workflow state transition
+        dbContext.AuditLogs.Add(new AuditLog
+        {
+            PersonID = callingPersonID,
+            AuditLogDate = DateTime.UtcNow,
+            AuditLogEventTypeID = (int)AuditLogEventTypeEnum.Added,
+            TableName = "Project Update",
+            RecordID = batch.ProjectUpdateBatchID,
+            ColumnName = "Project Update record",
+            NewValue = "Returned",
+            AuditDescription = "Project Update record: set to Returned",
+            ProjectID = batch.ProjectID
         });
 
         await dbContext.SaveChangesAsync();
@@ -2604,11 +2666,12 @@ public static class ProjectUpdateWorkflowSteps
     /// <summary>
     /// Commits all changes from the Update tables to the Project tables.
     /// </summary>
-    private static async Task CommitChangesToProjectAsync(WADNRDbContext dbContext, ProjectUpdateBatch batch)
+    private static async Task CommitChangesToProjectAsync(WADNRDbContext dbContext, ProjectUpdateBatch batch, int callingPersonID)
     {
         // Execute stored procedure to merge all update data back to project tables in a single transaction
+        // The stored procedure includes audit logging for all changes since it bypasses EF
         await dbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"EXEC dbo.pCommitProjectUpdateToProject @ProjectUpdateBatchID={batch.ProjectUpdateBatchID}");
+            $"EXEC dbo.pCommitProjectUpdateToProject @ProjectUpdateBatchID={batch.ProjectUpdateBatchID}, @CallingPersonID={callingPersonID}");
     }
 
     #endregion

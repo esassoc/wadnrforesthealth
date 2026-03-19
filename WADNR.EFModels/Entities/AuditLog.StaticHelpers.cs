@@ -8,12 +8,25 @@ public static partial class AuditLogs
 {
     public static async Task<List<ProjectAuditLogGridRow>> ListForProjectAsGridRowAsync(WADNRDbContext dbContext, int projectID)
     {
+        var technicalColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "CreateDate", "UpdateDate", "CreatePersonID", "UpdatePersonID",
+            "ImportedFromTabularData", "ImportedFromGis",
+            "CreateGisUploadAttemptID", "UpdateGisUploadAttemptID",
+            "FileResourceID",                   // internal FK, not meaningful to users
+            "ArcGisObjectID", "ArcGisGlobalID", // GIS internal IDs
+            "ImportedFromGisUpload",            // GIS import flag
+            "TemporaryTreatmentCacheID"         // internal cache ref
+        };
+
         var logs = await dbContext.AuditLogs
             .AsNoTracking()
             .Where(a => a.ProjectID == projectID)
             .OrderByDescending(a => a.AuditLogDate)
             .Select(AuditLogProjections.AsProjectGridRow)
             .ToListAsync();
+
+        logs = logs.Where(l => !technicalColumns.Contains(l.ColumnName ?? "")).ToList();
 
         foreach (var log in logs)
         {
