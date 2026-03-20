@@ -4,7 +4,7 @@ import { Map as LeafletMap } from "leaflet";
 import * as L from "leaflet";
 import { ColDef, GetRowIdFunc, GridApi, SelectionChangedEvent, ValueGetterFunc } from "ag-grid-community";
 import { DialogService } from "@ngneat/dialog";
-import { BehaviorSubject, filter, shareReplay, Subject, switchMap, takeUntil, tap } from "rxjs";
+import { BehaviorSubject, filter, shareReplay, skip, Subject, switchMap, take, takeUntil, tap } from "rxjs";
 
 import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
@@ -40,6 +40,7 @@ export class ManageFindYourForesterComponent implements OnInit, OnDestroy {
     layerControl: any;
     private gridApi: GridApi;
     private highlightLayers = new Map<number, L.GeoJSON>();
+    private popupLatLng: L.LatLng | null = null;
 
     canManage = false;
     activeRoles: ForesterRoleLookupItem[] = [];
@@ -134,6 +135,7 @@ export class ManageFindYourForesterComponent implements OnInit, OnDestroy {
                 this.selectedRoleID = newRoleID;
                 this.clearHighlights();
                 this.map?.closePopup();
+                this.popupLatLng = null;
                 this.selectedWorkUnits = [];
                 this.selectedRoleID$.next(newRoleID);
             }
@@ -166,10 +168,33 @@ export class ManageFindYourForesterComponent implements OnInit, OnDestroy {
             .afterClosed$.pipe(takeUntil(this.destroy$))
             .subscribe((result) => {
                 if (result) {
-                    this.selectedRoleID$.next(this.selectedRoleID);
+                    const selectedIDs = this.selectedWorkUnits.map((wu) => wu.ForesterWorkUnitID);
+                    const savedPopupLatLng = this.popupLatLng;
+
+                    // Close stale popup and clear highlights
+                    this.map?.closePopup();
+                    this.popupLatLng = null;
                     this.clearHighlights();
-                    this.selectedWorkUnits = [];
-                    this.gridApi?.deselectAll();
+
+                    // Trigger data refresh
+                    this.selectedRoleID$.next(this.selectedRoleID);
+
+                    // After fresh data arrives, restore selection
+                    this.workUnits$.pipe(skip(1), take(1), takeUntil(this.destroy$)).subscribe(() => {
+                        const onRowDataUpdated = () => {
+                            this.gridApi.removeEventListener("rowDataUpdated", onRowDataUpdated);
+                            this.gridApi?.forEachNode((node) => {
+                                if (selectedIDs.includes(node.data?.ForesterWorkUnitID)) {
+                                    node.setSelected(true, false, "api");
+                                }
+                            });
+                            this.syncMapHighlightsFromGrid();
+                            if (savedPopupLatLng && this.map) {
+                                this.onMapClick({ latlng: savedPopupLatLng } as L.LeafletMouseEvent);
+                            }
+                        };
+                        this.gridApi?.addEventListener("rowDataUpdated", onRowDataUpdated);
+                    });
                 }
             });
     }
@@ -191,8 +216,8 @@ export class ManageFindYourForesterComponent implements OnInit, OnDestroy {
             srs: "EPSG:4326",
             format: "image/png",
             info_format: "application/json",
-            x: String(Math.round(this.map.layerPointToContainerPoint(e.layerPoint).x)),
-            y: String(Math.round(this.map.layerPointToContainerPoint(e.layerPoint).y)),
+            x: String(Math.round(this.map.latLngToContainerPoint(e.latlng).x)),
+            y: String(Math.round(this.map.latLngToContainerPoint(e.latlng).y)),
             cql_filter: `ForesterRoleID=${this.selectedRoleID}`,
         };
 
@@ -221,13 +246,15 @@ export class ManageFindYourForesterComponent implements OnInit, OnDestroy {
                     .setLatLng(e.latlng)
                     .setContent(`<forester-popup-custom-element ${attrs}></forester-popup-custom-element>`)
                     .openOn(this.map);
+                this.popupLatLng = e.latlng;
 
                 if (workUnitID && this.gridApi) {
-                    // Select the matching row in grid
+                    // Select the matching row in grid and scroll into view
                     this.gridApi.deselectAll();
                     this.gridApi.forEachNode((node) => {
                         if (node.data?.ForesterWorkUnitID === workUnitID) {
                             node.setSelected(true, false, "api");
+                            this.gridApi.ensureNodeVisible(node, "middle");
                         }
                     });
                     // Highlight the polygon
