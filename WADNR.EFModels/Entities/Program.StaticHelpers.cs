@@ -177,7 +177,7 @@ public static class Programs
             .AsNoTracking()
             .Where(pr => pr.RoleID == canEditProgramRoleID
                          && pr.Person.IsActive
-                         && pr.Person.PersonAllowedAuthenticators.Any())
+                         && pr.Person.GlobalID != null && pr.Person.GlobalID != "") // Full user check — see People.IsFullUserExpr
             .Select(pr => pr.PersonID)
             .Distinct()
             .ToListAsync();

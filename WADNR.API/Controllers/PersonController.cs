@@ -138,7 +138,7 @@ public class PersonController(
             .Select(p => new { p.GlobalID })
             .SingleOrDefaultAsync();
 
-        var isFullUser = !string.IsNullOrEmpty(targetPerson?.GlobalID);
+        var isFullUser = People.IsFullUser(targetPerson?.GlobalID);
 
         var updated = await People.UpdateContactAsync(DbContext, personID, request, isFullUser);
         return RequireNotNullThrowNotFound(updated, "Person", personID);

@@ -498,6 +498,25 @@ public class PersonControllerTests
 
     #endregion
 
+    #region IsFullUser Tests
+
+    [TestMethod]
+    public void IsFullUser_ReturnsTrueForNonEmptyGlobalID()
+    {
+        Assert.IsTrue(People.IsFullUser(Guid.NewGuid().ToString()));
+        Assert.IsTrue(People.IsFullUser("some-global-id"));
+    }
+
+    [TestMethod]
+    public void IsFullUser_ReturnsFalseForNullOrEmpty()
+    {
+        Assert.IsFalse(People.IsFullUser(null));
+        Assert.IsFalse(People.IsFullUser(""));
+        Assert.IsFalse(People.IsFullUser(string.Empty));
+    }
+
+    #endregion
+
     #region API Key Tests
 
     [TestMethod]

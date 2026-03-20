@@ -363,6 +363,120 @@ public class ProgramControllerTests
     }
 
     [TestMethod]
+    public async Task ListEligibleProgramEditors_IncludesFullUser_WithCanEditProgramRole()
+    {
+        // Arrange
+        var user = await PersonHelper.CreateUserAsync(AssemblySteps.DbContext, RoleEnum.Normal);
+        try
+        {
+            await PersonHelper.AddSupplementalRoleAsync(AssemblySteps.DbContext, user.PersonID, RoleEnum.CanEditProgram);
+
+            // Act
+            var editors = await Programs.ListEligibleProgramEditorsAsync(AssemblySteps.DbContext);
+
+            // Assert
+            Assert.IsTrue(editors.Any(e => e.PersonID == user.PersonID),
+                "Full user with CanEditProgram role should be eligible");
+        }
+        finally
+        {
+            var personEntity = await AssemblySteps.DbContext.People
+                .FirstOrDefaultAsync(p => p.PersonID == user.PersonID);
+            if (personEntity != null)
+            {
+                personEntity.GlobalID = null;
+                await AssemblySteps.DbContext.SaveChangesWithNoAuditingAsync();
+            }
+            await PersonHelper.DeletePersonAsync(AssemblySteps.DbContext, user.PersonID);
+        }
+    }
+
+    [TestMethod]
+    public async Task ListEligibleProgramEditors_ExcludesContact_WithCanEditProgramRole()
+    {
+        // Arrange - Create a contact (no GlobalID)
+        var contact = await PersonHelper.CreateContactAsync(AssemblySteps.DbContext);
+        try
+        {
+            await PersonHelper.AddSupplementalRoleAsync(AssemblySteps.DbContext, contact.PersonID, RoleEnum.CanEditProgram);
+
+            // Act
+            var editors = await Programs.ListEligibleProgramEditorsAsync(AssemblySteps.DbContext);
+
+            // Assert
+            Assert.IsFalse(editors.Any(e => e.PersonID == contact.PersonID),
+                "Contact without GlobalID should not be eligible even with CanEditProgram role");
+        }
+        finally
+        {
+            await PersonHelper.DeletePersonAsync(AssemblySteps.DbContext, contact.PersonID);
+        }
+    }
+
+    [TestMethod]
+    public async Task ListEligibleProgramEditors_ExcludesInactiveUser_WithCanEditProgramRole()
+    {
+        // Arrange
+        var user = await PersonHelper.CreateUserAsync(AssemblySteps.DbContext, RoleEnum.Normal);
+        try
+        {
+            await PersonHelper.AddSupplementalRoleAsync(AssemblySteps.DbContext, user.PersonID, RoleEnum.CanEditProgram);
+
+            // Set inactive
+            var personEntity = await AssemblySteps.DbContext.People
+                .FirstAsync(p => p.PersonID == user.PersonID);
+            personEntity.IsActive = false;
+            await AssemblySteps.DbContext.SaveChangesWithNoAuditingAsync();
+
+            // Act
+            var editors = await Programs.ListEligibleProgramEditorsAsync(AssemblySteps.DbContext);
+
+            // Assert
+            Assert.IsFalse(editors.Any(e => e.PersonID == user.PersonID),
+                "Inactive user should not be eligible");
+        }
+        finally
+        {
+            var personEntity = await AssemblySteps.DbContext.People
+                .FirstOrDefaultAsync(p => p.PersonID == user.PersonID);
+            if (personEntity != null)
+            {
+                personEntity.IsActive = true;
+                personEntity.GlobalID = null;
+                await AssemblySteps.DbContext.SaveChangesWithNoAuditingAsync();
+            }
+            await PersonHelper.DeletePersonAsync(AssemblySteps.DbContext, user.PersonID);
+        }
+    }
+
+    [TestMethod]
+    public async Task ListEligibleProgramEditors_ExcludesFullUser_WithoutCanEditProgramRole()
+    {
+        // Arrange - Create a full user with Normal role only (no CanEditProgram)
+        var user = await PersonHelper.CreateUserAsync(AssemblySteps.DbContext, RoleEnum.Normal);
+        try
+        {
+            // Act
+            var editors = await Programs.ListEligibleProgramEditorsAsync(AssemblySteps.DbContext);
+
+            // Assert
+            Assert.IsFalse(editors.Any(e => e.PersonID == user.PersonID),
+                "Full user without CanEditProgram role should not be eligible");
+        }
+        finally
+        {
+            var personEntity = await AssemblySteps.DbContext.People
+                .FirstOrDefaultAsync(p => p.PersonID == user.PersonID);
+            if (personEntity != null)
+            {
+                personEntity.GlobalID = null;
+                await AssemblySteps.DbContext.SaveChangesWithNoAuditingAsync();
+            }
+            await PersonHelper.DeletePersonAsync(AssemblySteps.DbContext, user.PersonID);
+        }
+    }
+
+    [TestMethod]
     public async Task UpdateEditors_AddsEditors_WhenValid()
     {
         // Arrange - Get a person with CanEditProgram role

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Security.Claims;
 using WADNR.Models.DataTransferObjects;
@@ -8,6 +9,17 @@ namespace WADNR.EFModels.Entities;
 
 public static class People
 {
+    /// <summary>
+    /// EF-translatable expression: a "full user" has a non-empty GlobalID (login credentials).
+    /// </summary>
+    public static readonly Expression<Func<Person, bool>> IsFullUserExpr =
+        p => p.GlobalID != null && p.GlobalID != "";
+
+    /// <summary>
+    /// In-memory check for full user status from a GlobalID string value.
+    /// </summary>
+    public static bool IsFullUser(string? globalID) => !string.IsNullOrEmpty(globalID);
+
     public static async Task<List<PersonLookupItem>> ListAsLookupItemAsync(WADNRDbContext dbContext, bool wadnrOnly = false)
     {
         const int wadnrOrganizationID = 4704;
@@ -59,7 +71,7 @@ public static class People
         // Get GlobalIDs to determine full user status (matches legacy behavior)
         var personGlobalIDs = await dbContext.People
             .AsNoTracking()
-            .Where(p => p.GlobalID != null && p.GlobalID != "")
+            .Where(People.IsFullUserExpr)
             .Select(p => p.PersonID)
             .ToListAsync();
         var hasGlobalID = personGlobalIDs.ToHashSet();
@@ -138,7 +150,7 @@ public static class People
             : null;
 
         // A "full user" has login credentials (GlobalID), matching legacy behavior
-        person.IsFullUser = !string.IsNullOrEmpty(person.GlobalID);
+        person.IsFullUser = People.IsFullUser(person.GlobalID);
     }
 
     public static PersonDetail? GetByIDAsDetail(WADNRDbContext dbContext, int personID)
@@ -381,7 +393,7 @@ public static class People
             .Select(p => p.GlobalID)
             .SingleOrDefaultAsync();
 
-        if (!string.IsNullOrEmpty(globalID))
+        if (People.IsFullUser(globalID))
         {
             throw new InvalidOperationException("Cannot delete a full user. Only contacts without login credentials can be deleted.");
         }
