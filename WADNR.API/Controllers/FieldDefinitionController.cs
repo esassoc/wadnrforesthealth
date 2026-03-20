@@ -31,8 +31,6 @@ public class FieldDefinitionController(
 
     [HttpGet("{fieldDefinitionID}")]
     [AllowAnonymous]
-    //MP 1/2/26 This doesn't work here because FieldDefinitionID is not the PK for FieldDefinitionDatum
-    //[EntityNotFound(typeof(FieldDefinitionDatum), "fieldDefinitionID")]
     public async Task<ActionResult<FieldDefinitionDatumDetail>> Get([FromRoute] int fieldDefinitionID)
     {
         var entity = await FieldDefinitionData.GetByFieldDefinitionAsDetailAsync(DbContext, fieldDefinitionID);
@@ -47,13 +45,14 @@ public class FieldDefinitionController(
         return Ok(new FieldDefinitionDatumDetail
         {
             FieldDefinitionID = fieldDefinitionID,
-            FieldDefinitionDatumValue = string.Empty,
+            FieldDefinitionDatumValue = fieldDefinition?.DefaultDefinition ?? string.Empty,
             FieldDefinition = fieldDefinition != null
                 ? new FieldDefinitionDetail
                 {
                     FieldDefinitionID = fieldDefinition.FieldDefinitionID,
                     FieldDefinitionName = fieldDefinition.FieldDefinitionName,
-                    FieldDefinitionDisplayName = fieldDefinition.FieldDefinitionDisplayName
+                    FieldDefinitionDisplayName = fieldDefinition.FieldDefinitionDisplayName,
+                    DefaultDefinition = fieldDefinition.DefaultDefinition
                 }
                 : new FieldDefinitionDetail
                 {

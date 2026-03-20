@@ -19,10 +19,28 @@ public static class FieldDefinitionData
         FieldDefinitionDatumUpsertRequest upsertRequest)
     {
         var fieldDefinitionDatum = await dbContext.FieldDefinitionData
-            .SingleAsync(x => x.FieldDefinitionID == fieldDefinitionID);
+            .SingleOrDefaultAsync(x => x.FieldDefinitionID == fieldDefinitionID);
 
-        fieldDefinitionDatum.FieldDefinitionDatumValue = upsertRequest.FieldDefinitionDatumValue;
-        fieldDefinitionDatum.FieldDefinitionLabel = upsertRequest.FieldDefinitionLabel;
+        if (fieldDefinitionDatum == null)
+        {
+            if (!FieldDefinition.AllLookupDictionary.ContainsKey(fieldDefinitionID))
+            {
+                return null;
+            }
+
+            fieldDefinitionDatum = new FieldDefinitionDatum
+            {
+                FieldDefinitionID = fieldDefinitionID,
+                FieldDefinitionDatumValue = upsertRequest.FieldDefinitionDatumValue,
+                FieldDefinitionLabel = upsertRequest.FieldDefinitionLabel,
+            };
+            dbContext.FieldDefinitionData.Add(fieldDefinitionDatum);
+        }
+        else
+        {
+            fieldDefinitionDatum.FieldDefinitionDatumValue = upsertRequest.FieldDefinitionDatumValue;
+            fieldDefinitionDatum.FieldDefinitionLabel = upsertRequest.FieldDefinitionLabel;
+        }
 
         await dbContext.SaveChangesAsync();
 
