@@ -6,14 +6,17 @@
 <div class="field-definition__wrapper">
     <ng-template #popTitle>
         <div class="field-definition__title flex-between">
-            <div class="mt-1">
-                {{ getLabelText() }}
+            <div class="mt-1">{{ getLabelText() }}</div>
+            <div class="flex">
+                @if (showEditButton()) {
+                <button type="button" class="btn btn-link" [hidden]="isEditing" (click)="enterEdit($event)">
+                    <i class="fa fa-pencil-square-o" attr.aria-label="Edit the definition for {{ getLabelText() }}"></i>
+                </button>
+                }
+                <button type="button" class="btn btn-link field-definition__close-btn" [hidden]="isEditing" (click)="closePopper()" aria-label="Close">
+                    <i class="fa fa-times"></i>
+                </button>
             </div>
-            @if (showEditButton()) {
-            <button type="button" class="btn btn-link" style="margin-left: auto" [hidden]="isEditing" (click)="enterEdit($event)">
-                <i class="fa fa-pencil-square-o" attr.aria-label="Edit the definition for {{ getLabelText() }}"></i>
-            </button>
-            }
         </div>
     </ng-template>
     <ng-template #popContent>
@@ -37,26 +40,15 @@
         </div>
         }
     </ng-template>
-    @if (!inline) { @if (showEditButton()) {
+    @if (!inline) {
     <span class="field-definition__label">
         <span class="field-definition__text">{{ getLabelText() }}</span>
         <span class="field-definition__icon">
-            <i class="fas fa-question-circle small" style="cursor: help" [popper]="popContent" [useBodyContainer]="useBodyContainer" [popperTitle]="popTitle"></i>
+            <i class="fas fa-question-circle small" style="cursor: help"
+               [popper]="popContent" [useBodyContainer]="useBodyContainer" [popperTitle]="popTitle"></i>
         </span>
     </span>
-    } @if (!showEditButton()) {
-    <span class="field-definition__label">
-        <span class="field-definition__text">{{ getLabelText() }}</span>
-        <span class="field-definition__icon">
-            <i
-                class="fas fa-question-circle small"
-                style="cursor: help"
-                [popper]="popContent"
-                [useBodyContainer]="useBodyContainer"
-                [popperTitle]="getLabelText()"></i>
-        </span>
-    </span>
-    } } @else {
+    } @else {
     <div class="field-definition__inline flex-start pt-2">
         <i class="fas fa-question-circle small"></i>
         <div>

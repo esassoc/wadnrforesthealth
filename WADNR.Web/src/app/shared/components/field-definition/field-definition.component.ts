@@ -24,6 +24,7 @@ export class FieldDefinitionComponent implements OnInit, AfterViewInit, OnDestro
     @Input() inline: boolean = false;
     @Input() useBodyContainer: boolean = true;
 
+    @ViewChild(PopperDirective) popperDirective: PopperDirective;
     @ViewChild("tinyMceEditor") tinyMceEditor: EditorComponent;
     public tinyMceConfig: object;
 
@@ -79,6 +80,13 @@ export class FieldDefinitionComponent implements OnInit, AfterViewInit, OnDestro
 
         this.editedContent = this.fieldDefinitionDatum.FieldDefinitionDatumValue;
         this.isEditing = true;
+    }
+
+    public closePopper(): void {
+        if (this.popperDirective) {
+            this.popperDirective.popperShown = false;
+            this.popperDirective.toggleDisplay();
+        }
     }
 
     public cancelEdit(): void {

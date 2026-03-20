@@ -63,7 +63,7 @@ public class PersonDetail
     public string? GlobalID { get; set; }
     public int? ImpersonatedPersonID { get; set; }
 
-    // Indicates if this person is a "full user" (has a non-Unassigned base role) vs a "contact"
+    // Indicates if this person is a "full user" (has login credentials via GlobalID) vs a "contact"
     public bool IsFullUser { get; set; }
 
     // Stewardship areas (for ProjectSteward role)
