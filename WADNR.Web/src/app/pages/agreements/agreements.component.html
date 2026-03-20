@@ -1,7 +1,7 @@
 <page-header pageTitle="Full Agreement List" [customRichTextTypeID]="customRichTextTypeID"></page-header>
 
 <div class="page-body">
-    <wadnr-grid [rowData]="agreements$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" downloadFileName="agreements" [gridTitle]="'Agreements'">
+    <wadnr-grid [rowData]="agreements$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" downloadFileName="agreements" fullscreenTitle="Agreements" [gridTitle]="'Agreements'">
         <div customGridActionsRight class="flex">
             @if (canDownloadExcel$ | async) {
             <button class="btn btn-sm btn-secondary" (click)="downloadExcel()" [buttonLoading]="isDownloading()">

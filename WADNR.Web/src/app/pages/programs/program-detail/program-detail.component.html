@@ -119,7 +119,8 @@
                         [rowData]="projects"
                         [columnDefs]="projectColumnDefs"
                         height="400px"
-                        downloadFileName="Program_Projects">
+                        downloadFileName="Program_Projects"
+                        fullscreenTitle="Program Projects">
                     </wadnr-grid>
                 } @else {
                     <p class="system-text">No Projects associated with this Program.</p>
@@ -147,7 +148,8 @@
                         [rowData]="blockListEntries"
                         [columnDefs]="blockListColumnDefs"
                         height="300px"
-                        downloadFileName="Program_BlockList">
+                        downloadFileName="Program_BlockList"
+                        fullscreenTitle="Project Import Block List">
                     </wadnr-grid>
                 } @else {
                     <p class="system-text">No entries in the block list for this program.</p>
@@ -175,7 +177,8 @@
                         [rowData]="notifications"
                         [columnDefs]="notificationColumnDefs"
                         height="300px"
-                        downloadFileName="Program_Notifications">
+                        downloadFileName="Program_Notifications"
+                        fullscreenTitle="Notifications">
                     </wadnr-grid>
                 } @else {
                     <p class="system-text">No notifications configured for this program.</p>

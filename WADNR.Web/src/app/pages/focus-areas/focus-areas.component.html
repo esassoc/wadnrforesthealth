@@ -11,6 +11,7 @@
             [rowData]="focusAreas$ | async"
             [columnDefs]="columnDefs"
             downloadFileName="focus-areas"
+            fullscreenTitle="Focus Areas"
             entityIDField="FocusAreaID"
             (gridReady)="onGridReady($event)"
             (onMapLoad)="handleMapReady($event)"

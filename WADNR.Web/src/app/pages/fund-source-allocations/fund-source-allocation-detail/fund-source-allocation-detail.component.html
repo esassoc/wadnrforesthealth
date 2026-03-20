@@ -332,6 +332,7 @@
                                 [rowData]="budgetVsActuals"
                                 height="250px"
                                 downloadFileName="budget-vs-actuals"
+                                fullscreenTitle="Budget vs Actuals"
                                 [pinnedTotalsRow]="{ fields: ['Budget', 'Expenditures', 'Difference'], label: 'Totals', labelField: 'CostTypeName' }">
                             </wadnr-grid>
                         } @else {
@@ -351,7 +352,7 @@
                     </div>
                     <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
                         @if (projects.length) {
-                            <wadnr-grid [columnDefs]="projectColumnDefs" [rowData]="projects" height="300px" downloadFileName="fund-source-allocation-projects" [pinnedTotalsRow]="{ fields: ['MatchAmount', 'PayAmount', 'TotalAmount'], label: 'Totals', labelField: 'ProjectName' }"> </wadnr-grid>
+                            <wadnr-grid [columnDefs]="projectColumnDefs" [rowData]="projects" height="300px" downloadFileName="fund-source-allocation-projects" fullscreenTitle="Funding by Project" [pinnedTotalsRow]="{ fields: ['MatchAmount', 'PayAmount', 'TotalAmount'], label: 'Totals', labelField: 'ProjectName' }"> </wadnr-grid>
                         } @else {
                             <p class="text-muted">No projects associated with this allocation.</p>
                         }
@@ -393,7 +394,7 @@
                             The source of record for the Expenditures listed below is the WA DNR financial system. The feed below is updated every 15 minutes.
                         </p>
                         @if (expenditures.length) {
-                            <wadnr-grid [columnDefs]="expenditureColumnDefs" [rowData]="expenditures" height="300px" downloadFileName="fund-source-allocation-expenditures">
+                            <wadnr-grid [columnDefs]="expenditureColumnDefs" [rowData]="expenditures" height="300px" downloadFileName="fund-source-allocation-expenditures" fullscreenTitle="Reported Expenditures">
                             </wadnr-grid>
                         } @else {
                             <p class="text-muted">No expenditures reported.</p>

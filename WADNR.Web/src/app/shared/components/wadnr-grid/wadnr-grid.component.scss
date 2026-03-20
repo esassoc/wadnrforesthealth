@@ -26,13 +26,31 @@
     }
 }
 
-.full-screen {
+.full-screen-btn--active {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+
+    .wadnr-grid__fullscreen-header {
+        display: flex;
+        align-items: center;
+        padding: var(--spacing-300) var(--spacing-400);
+        border-bottom: 1px solid rgba(var(--black-rgb), 0.1);
+        background-color: var(--card-header-bg-color);
+    }
+
+    .wadnr-grid__fullscreen-title {
+        font-size: var(--type-size-400);
+        font-weight: 600;
+        color: var(--primary);
+    }
+
     ag-grid-angular {
-        height: 92% !important;
+        flex: 1;
+        height: unset !important;
     }
 
     .wadnr-grid__footer {
-        height: 8% !important;
-        background-color: white;
+        flex-shrink: 0;
     }
 }

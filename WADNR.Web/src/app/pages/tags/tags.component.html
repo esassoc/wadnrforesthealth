@@ -7,5 +7,5 @@
             <button class="btn btn-sm btn-primary" (click)="openCreateTag()">Create New Tag</button>
         }
     </div>
-    <wadnr-grid [rowData]="tags$ | async" [columnDefs]="columnDefs" downloadFileName="tags" [sizeColumnsToFitGrid]="true"></wadnr-grid>
+    <wadnr-grid [rowData]="tags$ | async" [columnDefs]="columnDefs" downloadFileName="tags" fullscreenTitle="Tags" [sizeColumnsToFitGrid]="true"></wadnr-grid>
 </div>

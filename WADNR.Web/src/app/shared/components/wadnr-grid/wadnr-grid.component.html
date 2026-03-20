@@ -16,6 +16,11 @@
 }
 
 <div class="table-responsive" #gridContainer>
+    @if (isFullScreen) {
+        <div class="wadnr-grid__fullscreen-header">
+            <span class="wadnr-grid__fullscreen-title">{{ fullscreenTitle || gridTitle || downloadFileName }}</span>
+        </div>
+    }
     <ag-grid-angular
         [style.height]="height"
         [style.width]="width"
@@ -58,9 +63,10 @@
             @if (!hideFullscreenButton) {
             <div class="wadnr-grid__fullscreen-btn">
                 <full-screen-button
+                    #fullScreenBtn
                     [elementRef]="gridContainer"
                     [enterFullScreenTitleText]="fullscreenTitleText"
-                    (screenSizeChangedEvent)="handleScreenSizeChangedEvent()"></full-screen-button>
+                    (screenSizeChangedEvent)="handleScreenSizeChangedEvent(fullScreenBtn.isFullScreen)"></full-screen-button>
             </div>
             } @if (!hideDownloadButton) {
             <div>

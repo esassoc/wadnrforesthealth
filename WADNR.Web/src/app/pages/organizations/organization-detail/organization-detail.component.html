@@ -115,7 +115,7 @@
                             </div>
                         }
                         @if (programs.length > 0) {
-                            <wadnr-grid [rowData]="programs" [columnDefs]="programColumnDefs" height="300px" downloadFileName="Organization_Programs"> </wadnr-grid>
+                            <wadnr-grid [rowData]="programs" [columnDefs]="programColumnDefs" height="300px" downloadFileName="Organization_Programs" fullscreenTitle="Programs"> </wadnr-grid>
                         } @else {
                             <p class="org-detail__system-text">No Programs associated with this Contributing Organization.</p>
                         }
@@ -241,7 +241,7 @@
                     </ul>
                     @if (projects$ | async; as projects) {
                         @if (projects.length > 0) {
-                            <wadnr-grid [rowData]="projects" [columnDefs]="projectColumnDefs" [pinnedTotalsRow]="projectPinnedTotalsRow" height="300px" downloadFileName="Organization_Projects"> </wadnr-grid>
+                            <wadnr-grid [rowData]="projects" [columnDefs]="projectColumnDefs" [pinnedTotalsRow]="projectPinnedTotalsRow" height="300px" downloadFileName="Organization_Projects" fullscreenTitle="Projects"> </wadnr-grid>
                         } @else {
                             <p class="org-detail__system-text">No Projects associated with this Contributing Organization.</p>
                         }
@@ -260,7 +260,7 @@
                     <div class="card-body" [loadingSpinner]="{ isLoading: agreementsIsLoading$ | async, loadingHeight: 300 }">
                         <p>{{ organization.OrganizationName }} is associated with the following Agreements:</p>
                         @if (agreements.length > 0) {
-                            <wadnr-grid [rowData]="agreements" [columnDefs]="agreementColumnDefs" height="300px" downloadFileName="Organization_Agreements">
+                            <wadnr-grid [rowData]="agreements" [columnDefs]="agreementColumnDefs" height="300px" downloadFileName="Organization_Agreements" fullscreenTitle="Agreements">
                                 @if (canDownloadExcel$ | async) {
                                 <div customGridActionsRight class="flex">
                                     <button class="btn btn-sm btn-secondary" (click)="downloadAgreementExcel()" [buttonLoading]="isDownloadingAgreements()">
@@ -286,7 +286,7 @@
                             <span class="card-title">Pending Projects (Not Visible to the Public)</span>
                         </div>
                         <div class="card-body">
-                            <wadnr-grid [rowData]="pendingProjects" [columnDefs]="projectColumnDefs" [pinnedTotalsRow]="projectPinnedTotalsRow" height="300px" downloadFileName="Organization_PendingProjects"> </wadnr-grid>
+                            <wadnr-grid [rowData]="pendingProjects" [columnDefs]="projectColumnDefs" [pinnedTotalsRow]="projectPinnedTotalsRow" height="300px" downloadFileName="Organization_PendingProjects" fullscreenTitle="Pending Projects"> </wadnr-grid>
                         </div>
                     </div>
                 </div>

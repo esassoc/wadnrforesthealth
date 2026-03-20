@@ -1,7 +1,7 @@
 <page-header pageTitle="Invoices"></page-header>
 
 <div class="page-body">
-    <wadnr-grid [rowData]="invoices$ | async" [columnDefs]="columnDefs" downloadFileName="invoices">
+    <wadnr-grid [rowData]="invoices$ | async" [columnDefs]="columnDefs" downloadFileName="invoices" fullscreenTitle="Invoices">
         @if (canManage$ | async) {
         <div customGridActionsRight>
             <button class="btn btn-sm btn-primary" (click)="createNewInvoice()">

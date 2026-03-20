@@ -6,8 +6,8 @@
         <tag-checked-projects-button [selectedRows]="selectedRows" (tagged)="onTagged()"></tag-checked-projects-button>
         <button class="btn btn-sm btn-primary" (click)="openEditFeaturedProjects()">Add/Remove Featured Projects</button>
     </div>
-    <wadnr-grid [rowData]="featuredProjects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" downloadFileName="featured-projects" defaultRowSelection="multiRow" (selectionChanged)="onSelectionChanged($event)"></wadnr-grid>
+    <wadnr-grid [rowData]="featuredProjects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" downloadFileName="featured-projects" fullscreenTitle="Featured Projects" defaultRowSelection="multiRow" (selectionChanged)="onSelectionChanged($event)"></wadnr-grid>
     } @else {
-    <wadnr-grid [rowData]="featuredProjects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" downloadFileName="featured-projects"></wadnr-grid>
+    <wadnr-grid [rowData]="featuredProjects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" downloadFileName="featured-projects" fullscreenTitle="Featured Projects"></wadnr-grid>
     }
 </div>

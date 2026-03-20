@@ -20,7 +20,7 @@ export class ContextMenuRendererComponent implements AgRendererComponent {
     ) {}
 
     agInit(params: any): void {
-        if (params.value) {
+        if (params.value && !params.node?.rowPinned) {
             this.params = params;
             this.params.title = params.title || "Actions";
         }

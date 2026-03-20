@@ -22,6 +22,7 @@ export class HybridMapGridComponent implements OnInit, OnChanges {
     @Input() entityIDField: string = "";
     @Input() mapHeight: string = "500px";
     @Input() sizeColumnsToFitGrid: boolean = false;
+    @Input() fullscreenTitle: string = "";
 
     @Output() gridReady: EventEmitter<GridReadyEvent> = new EventEmitter();
     @Output() onMapLoad: EventEmitter<WADNRMapInitEvent> = new EventEmitter();

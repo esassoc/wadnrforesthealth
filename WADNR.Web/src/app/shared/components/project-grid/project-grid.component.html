@@ -1,4 +1,4 @@
-<wadnr-grid [rowData]="rowData" [columnDefs]="columnDefs" [downloadFileName]="downloadFileName" [defaultRowSelection]="showTagging ? 'multiRow' : undefined" (selectionChanged)="onSelectionChanged($event)">
+<wadnr-grid [rowData]="rowData" [columnDefs]="columnDefs" [downloadFileName]="downloadFileName" [fullscreenTitle]="fullscreenTitle" [defaultRowSelection]="showTagging ? 'multiRow' : undefined" (selectionChanged)="onSelectionChanged($event)">
     @if (showTagging || excelDownloadUrl) {
         <div customGridActionsRight class="flex">
             @if (showTagging) {

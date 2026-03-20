@@ -19,6 +19,7 @@ export class ProjectGridComponent implements OnInit {
     @Input() public downloadFileName: string = "projects";
     @Input() public excelDownloadUrl: string | null = null;
     @Input() public showTagging: boolean = false;
+    @Input() public fullscreenTitle: string = "Projects";
 
     @Output() public tagged = new EventEmitter<void>();
 

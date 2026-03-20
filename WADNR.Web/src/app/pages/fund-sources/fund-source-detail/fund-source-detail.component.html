@@ -159,7 +159,8 @@
                             [columnDefs]="budgetLineItemColumnDefs"
                             [rowData]="budgetLineItems"
                             height="350px"
-                            downloadFileName="fund-source-budget-line-items">
+                            downloadFileName="fund-source-budget-line-items"
+                            fullscreenTitle="Budget Line Items">
                         </wadnr-grid>
                     } @else {
                         <p class="text-muted">No budget line items for this fund source.</p>
@@ -183,7 +184,8 @@
                             [columnDefs]="projectColumnDefs"
                             [rowData]="projects"
                             height="300px"
-                            downloadFileName="fund-source-projects">
+                            downloadFileName="fund-source-projects"
+                            fullscreenTitle="Funding by Project">
                         </wadnr-grid>
                     } @else {
                         <p class="text-muted">No projects are associated with this fund source.</p>
@@ -207,7 +209,8 @@
                             [columnDefs]="agreementColumnDefs"
                             [rowData]="agreements"
                             height="350px"
-                            downloadFileName="fund-source-agreements">
+                            downloadFileName="fund-source-agreements"
+                            fullscreenTitle="Agreements">
                         </wadnr-grid>
                     } @else {
                         <p class="text-muted">No agreements are associated with this fund source.</p>

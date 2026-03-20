@@ -5,6 +5,7 @@
         [rowData]="fundSources$ | async"
         [columnDefs]="columnDefs"
         downloadFileName="fund-sources"
+        fullscreenTitle="Fund Sources"
         [gridTitle]="'Fund Sources'"
         [defaultRowSelection]="'singleRow'"
         (selectionChanged)="onFundSourceSelected($event)">
@@ -33,6 +34,7 @@
             [rowData]="allocations$ | async"
             [columnDefs]="allocationColumnDefs"
             downloadFileName="fund-source-allocations"
+            fullscreenTitle="Fund Source Allocations"
             [gridTitle]="allocationGridTitle"
             (gridReady)="onAllocationGridReady($event)">
             @if (canManage$ | async) {

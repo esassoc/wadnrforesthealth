@@ -578,7 +578,8 @@
                                             [rowData]="invoiceMap[pr.InvoicePaymentRequestID] || []"
                                             [columnDefs]="invoiceColumnDefs"
                                             height="240px"
-                                            [downloadFileName]="'Invoices_PR_' + pr.InvoicePaymentRequestID">
+                                            [downloadFileName]="'Invoices_PR_' + pr.InvoicePaymentRequestID"
+                                            fullscreenTitle="Invoices">
                                         </wadnr-grid>
                                     </div>
                                 }
@@ -635,7 +636,7 @@
                                 </label>
                             </div>
                             @if (!showFlattenedTreatments) {
-                                <wadnr-grid [rowData]="treatments" [columnDefs]="treatmentColumnDefs" height="400px" downloadFileName="Project_Treatments">
+                                <wadnr-grid [rowData]="treatments" [columnDefs]="treatmentColumnDefs" height="400px" downloadFileName="Project_Treatments" fullscreenTitle="Treatments">
                                     @if (perms.userCanManageTreatments) {
                                         <button customGridActionsRight class="btn btn-sm btn-primary" (click)="openAddTreatmentModal(project.ProjectID)">
                                             <i class="fa fa-plus"></i> Add Treatment
@@ -644,7 +645,7 @@
                                 </wadnr-grid>
                             } @else {
                                 @if (flattenedTreatments$ | async; as flattenedTreatments) {
-                                    <wadnr-grid [rowData]="flattenedTreatments" [columnDefs]="flattenedTreatmentColumnDefs" height="400px" downloadFileName="Project_Treatments_Flattened" [pinnedTotalsRow]="flattenedTreatmentTotalsConfig"> </wadnr-grid>
+                                    <wadnr-grid [rowData]="flattenedTreatments" [columnDefs]="flattenedTreatmentColumnDefs" height="400px" downloadFileName="Project_Treatments_Flattened" fullscreenTitle="Treatments (Flattened)" [pinnedTotalsRow]="flattenedTreatmentTotalsConfig"> </wadnr-grid>
                                 }
                             }
                         } @else {
@@ -669,7 +670,7 @@
                             </div>
                         }
                         @if (interactionEvents.length > 0) {
-                            <wadnr-grid [rowData]="interactionEvents" [columnDefs]="interactionEventColumnDefs" height="400px" downloadFileName="Project_InteractionEvents">
+                            <wadnr-grid [rowData]="interactionEvents" [columnDefs]="interactionEventColumnDefs" height="400px" downloadFileName="Project_InteractionEvents" fullscreenTitle="Interaction Events">
                             </wadnr-grid>
                         } @else {
                             <p class="system-text">No interaction events recorded for this project.</p>
@@ -755,7 +756,7 @@
                                 </div>
                             }
                             @if (documents.length > 0) {
-                                <wadnr-grid [rowData]="documents" [columnDefs]="documentColumnDefs" height="300px" downloadFileName="Project_Documents"></wadnr-grid>
+                                <wadnr-grid [rowData]="documents" [columnDefs]="documentColumnDefs" height="300px" downloadFileName="Project_Documents" fullscreenTitle="Documents"></wadnr-grid>
                             } @else {
                                 <p class="system-text">No documents uploaded for this project.</p>
                             }
@@ -778,7 +779,7 @@
                     </div>
                     @if (notes$ | async; as notes) {
                         @if (notes.length > 0) {
-                            <wadnr-grid [rowData]="notes" [columnDefs]="noteColumnDefs" height="300px" downloadFileName="Project_Notes"> </wadnr-grid>
+                            <wadnr-grid [rowData]="notes" [columnDefs]="noteColumnDefs" height="300px" downloadFileName="Project_Notes" fullscreenTitle="Public Notes"> </wadnr-grid>
                         } @else {
                             <p class="system-text">No notes recorded for this project.</p>
                         }
@@ -792,7 +793,7 @@
                         </div>
                         @if (internalNotes$ | async; as internalNotes) {
                             @if (internalNotes.length > 0) {
-                                <wadnr-grid [rowData]="internalNotes" [columnDefs]="internalNoteColumnDefs" height="300px" downloadFileName="Project_InternalNotes"></wadnr-grid>
+                                <wadnr-grid [rowData]="internalNotes" [columnDefs]="internalNoteColumnDefs" height="300px" downloadFileName="Project_InternalNotes" fullscreenTitle="Internal Notes"></wadnr-grid>
                             } @else {
                                 <p class="system-text">No internal notes recorded for this project.</p>
                             }
@@ -861,7 +862,7 @@
                         </div>
                         <div class="card-body">
                             @if (updateHistory.length > 0) {
-                                <wadnr-grid [rowData]="updateHistory" [columnDefs]="updateHistoryColumnDefs" height="300px" downloadFileName="Project_UpdateHistory"> </wadnr-grid>
+                                <wadnr-grid [rowData]="updateHistory" [columnDefs]="updateHistoryColumnDefs" height="300px" downloadFileName="Project_UpdateHistory" fullscreenTitle="Project Update History"> </wadnr-grid>
                             } @else {
                                 <p class="system-text">No update history for this project.</p>
                             }
@@ -877,7 +878,7 @@
                         </div>
                         <div class="card-body">
                             @if (notifications.length > 0) {
-                                <wadnr-grid [rowData]="notifications" [columnDefs]="notificationColumnDefs" height="300px" downloadFileName="Project_Notifications"> </wadnr-grid>
+                                <wadnr-grid [rowData]="notifications" [columnDefs]="notificationColumnDefs" height="300px" downloadFileName="Project_Notifications" fullscreenTitle="System Communications"> </wadnr-grid>
                             } @else {
                                 <p class="system-text">No system communications for this project.</p>
                             }
@@ -893,7 +894,7 @@
                         </div>
                         <div class="card-body">
                             @if (auditLogs.length > 0) {
-                                <wadnr-grid [rowData]="auditLogs" [columnDefs]="auditLogColumnDefs" height="300px" downloadFileName="Project_AuditLog"> </wadnr-grid>
+                                <wadnr-grid [rowData]="auditLogs" [columnDefs]="auditLogColumnDefs" height="300px" downloadFileName="Project_AuditLog" fullscreenTitle="Audit Log"> </wadnr-grid>
                             } @else {
                                 <p class="system-text">No audit log entries for this project.</p>
                             }

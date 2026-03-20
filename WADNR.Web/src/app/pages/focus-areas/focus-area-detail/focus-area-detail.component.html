@@ -106,7 +106,8 @@
                 [rowData]="projects$ | async"
                 [columnDefs]="(projectColumnDefs$ | async) ?? []"
                 [pinnedTotalsRow]="projectPinnedTotalsRow"
-                downloadFileName="focus-area-projects">
+                downloadFileName="focus-area-projects"
+                fullscreenTitle="Projects">
             </wadnr-grid>
         </div>
     </div>
@@ -128,7 +129,8 @@
             <wadnr-grid
                 [rowData]="focusArea.CloseoutProjects"
                 [columnDefs]="closeoutColumnDefs"
-                downloadFileName="focus-area-closeout-projects">
+                downloadFileName="focus-area-closeout-projects"
+                fullscreenTitle="Closeout Projects">
             </wadnr-grid>
         </div>
     </div>

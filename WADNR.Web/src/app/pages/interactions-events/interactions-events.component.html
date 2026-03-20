@@ -1,7 +1,7 @@
 <page-header pageTitle="Interactions/Events" [customRichTextTypeID]="customRichTextTypeID"></page-header>
 
 <div class="page-body">
-    <wadnr-grid [rowData]="interactionEvents$ | async" [columnDefs]="columnDefs" downloadFileName="interactions-events" [sizeColumnsToFitGrid]="true">
+    <wadnr-grid [rowData]="interactionEvents$ | async" [columnDefs]="columnDefs" downloadFileName="interactions-events" fullscreenTitle="Interactions/Events" [sizeColumnsToFitGrid]="true">
         @if (canEditInteractionEvents$ | async) {
         <div customGridActionsRight>
             <button class="btn btn-sm btn-primary" (click)="createNewInteractionEvent()">

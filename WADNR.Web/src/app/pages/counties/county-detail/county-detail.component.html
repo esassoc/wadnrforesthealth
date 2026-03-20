@@ -24,7 +24,7 @@
         <div class="card">
             <div class="card-header"><span class="card-title">Projects</span></div>
             <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
-                <wadnr-grid [rowData]="projects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" [downloadFileName]="'projects'"></wadnr-grid>
+                <wadnr-grid [rowData]="projects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" [downloadFileName]="'projects'" fullscreenTitle="Projects"></wadnr-grid>
             </div>
         </div>
     </div>

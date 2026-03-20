@@ -8,11 +8,7 @@
         </a>
     </div>
     }
-    <wadnr-grid
-        [rowData]="projects$ | async"
-        [columnDefs]="columnDefs"
-        [pinnedTotalsRow]="pinnedTotalsRow"
-        downloadFileName="pending-projects">
+    <wadnr-grid [rowData]="projects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" downloadFileName="pending-projects" fullscreenTitle="Pending Projects">
         @if (canDownloadExcel$ | async) {
         <div customGridActionsRight class="flex">
             <button class="btn btn-sm btn-secondary" (click)="downloadExcel()" [buttonLoading]="isDownloading()">

@@ -98,6 +98,7 @@ export class WADNRGridComponent implements OnInit, OnChanges {
     @Input() unsetHeaderGridActionWidth: boolean = false;
     @Input() showMultiRowSelectActions: boolean = true;
     @Input() gridTitle: string = "";
+    @Input() fullscreenTitle: string = "";
 
     private gridApi: GridApi;
     public gridLoaded: boolean = false;
@@ -111,6 +112,7 @@ export class WADNRGridComponent implements OnInit, OnChanges {
     public filteredRowsCount: number;
     public autoSizeStrategy: { type: "fitCellContents" | "fitGridWidth" };
 
+    public isFullScreen: boolean = false;
     public fullscreenTitleText = "Make grid full screen";
     private fontAwesomeIcons = iconOverrides({
         type: "font",
@@ -340,7 +342,8 @@ export class WADNRGridComponent implements OnInit, OnChanges {
         this.quickFilterText = "";
     }
 
-    public handleScreenSizeChangedEvent() {
+    public handleScreenSizeChangedEvent(isFullScreen: boolean) {
+        this.isFullScreen = isFullScreen;
         if (this.gridApi) {
             if (this.suppressColumnSizing) return;
             if (this.autoSizeStrategy?.type === "fitCellContents") {

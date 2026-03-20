@@ -103,7 +103,8 @@
                             [columnDefs]="personColumnDefs"
                             [rowData]="people"
                             height="250px"
-                            downloadFileName="vendor-users">
+                            downloadFileName="vendor-users"
+                            fullscreenTitle="Vendor Users">
                         </wadnr-grid>
                     } @else {
                         <p class="text-muted">No users belong to this vendor.</p>
@@ -126,7 +127,8 @@
                             [columnDefs]="organizationColumnDefs"
                             [rowData]="organizations"
                             height="250px"
-                            downloadFileName="vendor-organizations">
+                            downloadFileName="vendor-organizations"
+                            fullscreenTitle="Vendor Organizations">
                         </wadnr-grid>
                     } @else {
                         <p class="text-muted">No organizations belong to this vendor.</p>

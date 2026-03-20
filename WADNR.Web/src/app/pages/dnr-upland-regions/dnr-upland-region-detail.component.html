@@ -107,7 +107,7 @@
             <div class="card-header"><span class="card-title">Projects</span></div>
             <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
                 @if (projects$ | async; as projects) {
-                <wadnr-grid [rowData]="projects" [columnDefs]="projectColumnDefs" [pinnedTotalsRow]="projectPinnedTotalsRow" [downloadFileName]="'projects'"></wadnr-grid>
+                <wadnr-grid [rowData]="projects" [columnDefs]="projectColumnDefs" [pinnedTotalsRow]="projectPinnedTotalsRow" [downloadFileName]="'projects'" fullscreenTitle="Projects"></wadnr-grid>
                 }
             </div>
         </div>
@@ -122,7 +122,8 @@
                     [rowData]="fundSourceAllocations"
                     [columnDefs]="fundSourceAllocationColumnDefs"
                     [pinnedTotalsRow]="fundSourceAllocationPinnedTotalsRow"
-                    [downloadFileName]="'fund-source-allocations'"></wadnr-grid>
+                    [downloadFileName]="'fund-source-allocations'"
+                    fullscreenTitle="Fund Source Allocations"></wadnr-grid>
                 }
             </div>
         </div>

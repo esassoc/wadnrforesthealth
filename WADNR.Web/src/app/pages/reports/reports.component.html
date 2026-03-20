@@ -4,7 +4,8 @@
     <wadnr-grid
         [rowData]="reportTemplates$ | async"
         [columnDefs]="columnDefs"
-        downloadFileName="report-templates">
+        downloadFileName="report-templates"
+        fullscreenTitle="Report Templates">
         @if (isAdmin) {
             <div customGridActionsRight>
                 <button class="btn btn-sm btn-primary" (click)="openCreateModal()">

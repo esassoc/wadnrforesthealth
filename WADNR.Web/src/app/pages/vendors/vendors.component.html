@@ -1,7 +1,7 @@
 <page-header pageTitle="Vendors" [customRichTextTypeID]="customRichTextTypeID"></page-header>
 
 <div class="page-body">
-    <wadnr-grid [rowData]="vendors$ | async" [columnDefs]="columnDefs" downloadFileName="vendors">
+    <wadnr-grid [rowData]="vendors$ | async" [columnDefs]="columnDefs" downloadFileName="vendors" fullscreenTitle="Vendors">
         @if (canDownloadExcel$ | async) {
         <div customGridActionsRight>
             <button class="btn btn-sm btn-secondary" (click)="downloadExcel()" [buttonLoading]="isDownloading()">

@@ -253,7 +253,7 @@
                 </span>
             </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
-                <wadnr-grid [rowData]="projects$ | async" [columnDefs]="projectColumnDefs" [pinnedTotalsRow]="projectTotalsRow" downloadFileName="person-projects" [hideGlobalFilter]="true"></wadnr-grid>
+                <wadnr-grid [rowData]="projects$ | async" [columnDefs]="projectColumnDefs" [pinnedTotalsRow]="projectTotalsRow" downloadFileName="person-projects" fullscreenTitle="Projects" [hideGlobalFilter]="true"></wadnr-grid>
             </div>
         </div>
 
@@ -269,7 +269,7 @@
                 </span>
             </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: agreementsIsLoading$ | async, loadingHeight: 300 }">
-                <wadnr-grid [rowData]="agreements$ | async" [columnDefs]="agreementColumnDefs" [pinnedTotalsRow]="agreementTotalsRow" downloadFileName="person-agreements" [hideGlobalFilter]="true">
+                <wadnr-grid [rowData]="agreements$ | async" [columnDefs]="agreementColumnDefs" [pinnedTotalsRow]="agreementTotalsRow" downloadFileName="person-agreements" fullscreenTitle="Agreements" [hideGlobalFilter]="true">
                     @if (canDownloadExcel$ | async) {
                     <div customGridActionsRight class="flex">
                         <button class="btn btn-sm btn-secondary" (click)="downloadAgreementExcel()" [buttonLoading]="isDownloadingAgreements()">
@@ -298,6 +298,7 @@
                     [rowData]="interactionEvents$ | async"
                     [columnDefs]="interactionEventColumnDefs"
                     downloadFileName="person-interaction-events"
+                fullscreenTitle="Interaction Events"
                     [hideGlobalFilter]="true"></wadnr-grid>
             </div>
         </div>
@@ -313,6 +314,7 @@
                         [rowData]="notifications$ | async"
                         [columnDefs]="notificationColumnDefs"
                         downloadFileName="person-notifications"
+                fullscreenTitle="System Communications"
                         [hideGlobalFilter]="true"></wadnr-grid>
                 </div>
             </div>
