@@ -12,4 +12,6 @@ GO
 GO
 :r ".\0002 - Add FirmaPage for Classifications.sql"
 GO
+:r ".\0003 - Populate IsUser column on Person table.sql"
+GO
 

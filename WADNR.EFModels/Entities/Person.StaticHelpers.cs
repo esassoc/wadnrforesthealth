@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WADNR.Models.DataTransferObjects;
 using WADNR.Models.Helpers;
@@ -9,16 +7,6 @@ namespace WADNR.EFModels.Entities;
 
 public static class People
 {
-    /// <summary>
-    /// EF-translatable expression: a "full user" has a non-empty GlobalID (login credentials).
-    /// </summary>
-    public static readonly Expression<Func<Person, bool>> IsFullUserExpr =
-        p => p.GlobalID != null && p.GlobalID != "";
-
-    /// <summary>
-    /// In-memory check for full user status from a GlobalID string value.
-    /// </summary>
-    public static bool IsFullUser(string? globalID) => !string.IsNullOrEmpty(globalID);
 
     public static async Task<List<PersonLookupItem>> ListAsLookupItemAsync(WADNRDbContext dbContext, bool wadnrOnly = false)
     {
@@ -55,7 +43,6 @@ public static class People
 
     public static async Task<List<PersonGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
     {
-        // First, get the base data
         var people = await dbContext.People
             .AsNoTracking()
             .OrderBy(x => x.LastName)
@@ -67,14 +54,6 @@ public static class People
         var personRoles = await dbContext.PersonRoles
             .AsNoTracking()
             .ToListAsync();
-
-        // Get GlobalIDs to determine full user status (matches legacy behavior)
-        var personGlobalIDs = await dbContext.People
-            .AsNoTracking()
-            .Where(People.IsFullUserExpr)
-            .Select(p => p.PersonID)
-            .ToListAsync();
-        var hasGlobalID = personGlobalIDs.ToHashSet();
 
         // Map roles to each person
         var roleLookup = Role.AllLookupDictionary;
@@ -90,7 +69,6 @@ public static class People
             var supplementalRoles = roles.Where(r => !r!.IsBaseRole).ToList();
 
             person.RoleName = baseRole?.RoleDisplayName;
-            person.IsFullUser = hasGlobalID.Contains(person.PersonID);
             person.SupplementalRoles = supplementalRoles.Any()
                 ? string.Join(", ", supplementalRoles.Select(r => r!.RoleDisplayName))
                 : null;
@@ -148,9 +126,6 @@ public static class People
         person.SupplementalRoles = supplementalRoles.Any()
             ? string.Join(", ", supplementalRoles.Select(r => r!.RoleDisplayName))
             : null;
-
-        // A "full user" has login credentials (GlobalID), matching legacy behavior
-        person.IsFullUser = People.IsFullUser(person.GlobalID);
     }
 
     public static PersonDetail? GetByIDAsDetail(WADNRDbContext dbContext, int personID)
@@ -237,7 +212,7 @@ public static class People
         return await GetByIDAsDetailAsync(dbContext, personID);
     }
 
-    public static async Task<PersonDetail?> CreateContactAsync(WADNRDbContext dbContext, ContactUpsertRequest request, int addedByPersonID)
+    public static async Task<PersonDetail?> CreateAsync(WADNRDbContext dbContext, PersonUpsertRequest request, int addedByPersonID)
     {
         var person = new Person
         {
@@ -250,6 +225,7 @@ public static class People
             OrganizationID = request.OrganizationID,
             VendorID = request.VendorID,
             Notes = request.Notes,
+            IsUser = request.IsUser,
             IsActive = true,
             ReceiveSupportEmails = false,
             CreateDate = DateTime.UtcNow,
@@ -266,13 +242,13 @@ public static class People
         return await GetByIDAsDetailAsync(dbContext, person.PersonID);
     }
 
-    public static async Task<PersonDetail?> UpdateContactAsync(WADNRDbContext dbContext, int personID, PersonUpsertRequest request, bool isFullUser)
+    public static async Task<PersonDetail?> UpdateAsync(WADNRDbContext dbContext, int personID, PersonUpsertRequest request)
     {
         var person = await dbContext.People.FirstOrDefaultAsync(x => x.PersonID == personID);
         if (person == null) return null;
 
-        // Only update name/email for contacts (non-full-users); full users manage these via SSO
-        if (!isFullUser)
+        // Only update name/email for contacts (non-users); users manage these via SSO
+        if (!person.IsUser)
         {
             person.FirstName = request.FirstName;
             person.MiddleName = request.MiddleName;
@@ -384,18 +360,18 @@ public static class People
         return await GetByIDAsDetailAsync(dbContext, personID);
     }
 
-    public static async Task DeleteContactAsync(WADNRDbContext dbContext, int personID)
+    public static async Task DeleteAsync(WADNRDbContext dbContext, int personID)
     {
-        // Validate not a full user (has login credentials)
-        var globalID = await dbContext.People
+        // Validate not a user (only contacts can be deleted)
+        var isUser = await dbContext.People
             .AsNoTracking()
             .Where(p => p.PersonID == personID)
-            .Select(p => p.GlobalID)
+            .Select(p => p.IsUser)
             .SingleOrDefaultAsync();
 
-        if (People.IsFullUser(globalID))
+        if (isUser)
         {
-            throw new InvalidOperationException("Cannot delete a full user. Only contacts without login credentials can be deleted.");
+            throw new InvalidOperationException("Cannot delete a user. Only contacts can be deleted.");
         }
 
         // Delete related records
@@ -559,6 +535,7 @@ public static class People
             person = new Person
             {
                 GlobalID = globalID,
+                IsUser = true,
                 CreateDate = DateTime.UtcNow,
                 IsActive = true,
                 ReceiveSupportEmails = false,
@@ -587,6 +564,7 @@ public static class People
         if (!string.IsNullOrEmpty(globalID))
         {
             person.GlobalID = globalID;
+            person.IsUser = true;
         }
 
         if (!string.IsNullOrEmpty(firstName))

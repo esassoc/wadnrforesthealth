@@ -69,6 +69,8 @@ public partial class Person
     [Unicode(false)]
     public string? GlobalID { get; set; }
 
+    public bool IsUser { get; set; }
+
     public int? ImpersonatedPersonID { get; set; }
 
     [ForeignKey("AddedByPersonID")]

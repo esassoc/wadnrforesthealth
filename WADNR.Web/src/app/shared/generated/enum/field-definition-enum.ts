@@ -246,7 +246,8 @@ export enum FieldDefinitionEnum {
   FundSourceAllocationLikelyToUse = 532,
   FundSourceAllocationCompleted = 533,
   FundSourceAllocationPriority = 534,
-  LeadImplementerOrganization = 535
+  LeadImplementerOrganization = 535,
+  IsUser = 536
 }
 
 export const FieldDefinitions: LookupTableEntry[]  = [
@@ -490,6 +491,7 @@ export const FieldDefinitions: LookupTableEntry[]  = [
   { Name: "FundSourceAllocationLikelyToUse", DisplayName: "Likely To Use", Value: 532, SortOrder: 5320 },
   { Name: "FundSourceAllocationCompleted", DisplayName: "Completed", Value: 533, SortOrder: 5330 },
   { Name: "FundSourceAllocationPriority", DisplayName: "Priority", Value: 534, SortOrder: 5340 },
-  { Name: "LeadImplementerOrganization", DisplayName: "Lead Implementer", Value: 535, SortOrder: 5350 }
+  { Name: "LeadImplementerOrganization", DisplayName: "Lead Implementer", Value: 535, SortOrder: 5350 },
+  { Name: "IsUser", DisplayName: "Is User", Value: 536, SortOrder: 5360 }
 ];
 export const FieldDefinitionsAsSelectDropdownOptions = FieldDefinitions.map((x) => ({ Value: x.Value, Label: x.DisplayName, SortOrder: x.SortOrder } as SelectDropdownOption));

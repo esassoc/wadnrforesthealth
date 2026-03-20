@@ -13,9 +13,9 @@
             [searchable]="false"
             class="filter-dropdown">
         </form-field>
-        @if (canAddContact$ | async) {
-            <button class="btn btn-sm btn-primary" (click)="openAddContactModal()">
-                <span class="fas fa-plus"></span> Add Contact
+        @if (canAddPerson$ | async) {
+            <button class="btn btn-sm btn-primary" (click)="openAddPersonModal()">
+                <span class="fas fa-plus"></span> Create Person
             </button>
         }
     </div>

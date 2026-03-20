@@ -119,28 +119,20 @@ public class PersonController(
         return RequireNotNullThrowNotFound(updated, "Person", personID);
     }
 
-    [HttpPost("contacts")]
+    [HttpPost]
     [UserManageFeature]
-    public async Task<ActionResult<PersonDetail>> CreateContact([FromBody] ContactUpsertRequest request)
+    public async Task<ActionResult<PersonDetail>> Create([FromBody] PersonUpsertRequest request)
     {
-        var created = await People.CreateContactAsync(DbContext, request, CallingUser.PersonID);
+        var created = await People.CreateAsync(DbContext, request, CallingUser.PersonID);
         return Ok(created);
     }
 
     [HttpPut("{personID}")]
     [PersonEditFeature]
     [EntityNotFound(typeof(Person), "personID")]
-    public async Task<ActionResult<PersonDetail>> UpdateContact([FromRoute] int personID, [FromBody] PersonUpsertRequest request)
+    public async Task<ActionResult<PersonDetail>> Update([FromRoute] int personID, [FromBody] PersonUpsertRequest request)
     {
-        // Determine if target person is a full user (has login credentials)
-        var targetPerson = await DbContext.People.AsNoTracking()
-            .Where(p => p.PersonID == personID)
-            .Select(p => new { p.GlobalID })
-            .SingleOrDefaultAsync();
-
-        var isFullUser = People.IsFullUser(targetPerson?.GlobalID);
-
-        var updated = await People.UpdateContactAsync(DbContext, personID, request, isFullUser);
+        var updated = await People.UpdateAsync(DbContext, personID, request);
         return RequireNotNullThrowNotFound(updated, "Person", personID);
     }
 
@@ -210,11 +202,11 @@ public class PersonController(
     [HttpDelete("{personID}")]
     [UserManageFeature]
     [EntityNotFound(typeof(Person), "personID")]
-    public async Task<ActionResult> DeleteContact([FromRoute] int personID)
+    public async Task<ActionResult> Delete([FromRoute] int personID)
     {
         try
         {
-            await People.DeleteContactAsync(DbContext, personID);
+            await People.DeleteAsync(DbContext, personID);
             return NoContent();
         }
         catch (InvalidOperationException ex)

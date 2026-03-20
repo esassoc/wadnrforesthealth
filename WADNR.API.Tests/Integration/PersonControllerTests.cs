@@ -92,13 +92,13 @@ public class PersonControllerTests
     #region Create Contact Tests
 
     [TestMethod]
-    public async Task CreateContact_CreatesContact_WhenValid()
+    public async Task CreatePerson_CreatesPerson_WhenValid()
     {
         // Arrange
         var uniqueSuffix = DateTime.UtcNow.Ticks % 1000000;
         var org = await AssemblySteps.DbContext.Organizations.FirstAsync();
 
-        var request = new ContactUpsertRequest
+        var request = new PersonUpsertRequest
         {
             FirstName = $"TestFirst{uniqueSuffix}",
             LastName = $"TestLast{uniqueSuffix}",
@@ -110,13 +110,14 @@ public class PersonControllerTests
         try
         {
             // Act
-            var created = await People.CreateContactAsync(
+            var created = await People.CreateAsync(
                 AssemblySteps.DbContext, request, AssemblySteps.TestAdminPersonID);
 
             // Assert
             Assert.IsNotNull(created);
             Assert.AreEqual(request.FirstName, created.FirstName);
             Assert.AreEqual(request.LastName, created.LastName);
+            Assert.IsFalse(created.IsUser, "Created person should default to contact (IsUser = false)");
             createdID = created.PersonID;
         }
         finally
@@ -133,7 +134,7 @@ public class PersonControllerTests
     #region Update Contact Tests
 
     [TestMethod]
-    public async Task UpdateContact_UpdatesContact_WhenValid()
+    public async Task UpdatePerson_UpdatesPerson_WhenValid()
     {
         // Arrange
         var original = await People.GetByIDAsDetailAsync(AssemblySteps.DbContext, _testPersonID);
@@ -150,8 +151,8 @@ public class PersonControllerTests
         };
 
         // Act
-        var updated = await People.UpdateContactAsync(
-            AssemblySteps.DbContext, _testPersonID, request, isFullUser: false);
+        var updated = await People.UpdateAsync(
+            AssemblySteps.DbContext, _testPersonID, request);
 
         // Assert
         Assert.IsNotNull(updated);
@@ -159,7 +160,7 @@ public class PersonControllerTests
     }
 
     [TestMethod]
-    public async Task UpdateContact_ReturnsNull_WhenNotExists()
+    public async Task UpdatePerson_ReturnsNull_WhenNotExists()
     {
         // Arrange
         var request = new PersonUpsertRequest
@@ -170,8 +171,8 @@ public class PersonControllerTests
         };
 
         // Act
-        var result = await People.UpdateContactAsync(
-            AssemblySteps.DbContext, 999999, request, isFullUser: false);
+        var result = await People.UpdateAsync(
+            AssemblySteps.DbContext, 999999, request);
 
         // Assert
         Assert.IsNull(result);
@@ -182,14 +183,14 @@ public class PersonControllerTests
     #region Delete Contact Tests
 
     [TestMethod]
-    public async Task DeleteContact_DeletesContact_WhenExists()
+    public async Task DeletePerson_DeletesContact_WhenExists()
     {
         // Arrange - Create a new contact specifically for deletion
         var toDelete = await PersonHelper.CreateContactAsync(AssemblySteps.DbContext);
         var deleteID = toDelete.PersonID;
 
         // Act
-        await People.DeleteContactAsync(AssemblySteps.DbContext, deleteID);
+        await People.DeleteAsync(AssemblySteps.DbContext, deleteID);
 
         // Assert
         var retrieved = await PersonHelper.GetByIDAsync(AssemblySteps.DbContext, deleteID);
@@ -197,9 +198,9 @@ public class PersonControllerTests
     }
 
     [TestMethod]
-    public async Task DeleteContact_ThrowsException_WhenIsFullUser()
+    public async Task DeletePerson_ThrowsException_WhenIsUser()
     {
-        // Arrange - Create a full user (has login)
+        // Arrange - Create a user (has IsUser = true)
         var user = await PersonHelper.CreateUserAsync(
             AssemblySteps.DbContext, RoleEnum.Normal);
         var userID = user.PersonID;
@@ -208,16 +209,17 @@ public class PersonControllerTests
         {
             // Act & Assert
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
-                await People.DeleteContactAsync(AssemblySteps.DbContext, userID));
+                await People.DeleteAsync(AssemblySteps.DbContext, userID));
         }
         finally
         {
-            // Clean up - need to remove the GlobalID first to delete
+            // Clean up - need to clear IsUser and GlobalID to delete
             var personEntity = await AssemblySteps.DbContext.People
                 .FirstOrDefaultAsync(p => p.PersonID == userID);
             if (personEntity != null)
             {
                 personEntity.GlobalID = null;
+                personEntity.IsUser = false;
                 await AssemblySteps.DbContext.SaveChangesWithNoAuditingAsync();
                 await PersonHelper.DeletePersonAsync(AssemblySteps.DbContext, userID);
             }
@@ -498,21 +500,41 @@ public class PersonControllerTests
 
     #endregion
 
-    #region IsFullUser Tests
+    #region IsUser Tests
 
     [TestMethod]
-    public void IsFullUser_ReturnsTrueForNonEmptyGlobalID()
+    public async Task CreatePerson_AsUser_SetsIsUserTrue()
     {
-        Assert.IsTrue(People.IsFullUser(Guid.NewGuid().ToString()));
-        Assert.IsTrue(People.IsFullUser("some-global-id"));
-    }
+        // Arrange
+        var uniqueSuffix = DateTime.UtcNow.Ticks % 1000000;
+        var org = await AssemblySteps.DbContext.Organizations.FirstAsync();
 
-    [TestMethod]
-    public void IsFullUser_ReturnsFalseForNullOrEmpty()
-    {
-        Assert.IsFalse(People.IsFullUser(null));
-        Assert.IsFalse(People.IsFullUser(""));
-        Assert.IsFalse(People.IsFullUser(string.Empty));
+        var request = new PersonUpsertRequest
+        {
+            FirstName = $"TestUser{uniqueSuffix}",
+            LastName = $"TestLast{uniqueSuffix}",
+            Email = $"testuser{uniqueSuffix}@example.com",
+            OrganizationID = org.OrganizationID,
+            IsUser = true,
+        };
+
+        int createdID = 0;
+        try
+        {
+            var created = await People.CreateAsync(
+                AssemblySteps.DbContext, request, AssemblySteps.TestAdminPersonID);
+
+            Assert.IsNotNull(created);
+            Assert.IsTrue(created.IsUser, "Person created with IsUser=true should be a user");
+            createdID = created.PersonID;
+        }
+        finally
+        {
+            if (createdID > 0)
+            {
+                await PersonHelper.DeletePersonAsync(AssemblySteps.DbContext, createdID);
+            }
+        }
     }
 
     #endregion

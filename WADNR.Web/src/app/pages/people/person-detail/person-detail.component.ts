@@ -31,7 +31,7 @@ import { RoleEnum } from "src/app/shared/generated/enum/role-enum";
 import { environment } from "src/environments/environment";
 
 import { PersonPrimaryContactOrgsModalComponent, PersonPrimaryContactOrgsModalData } from "../person-primary-contact-orgs-modal/person-primary-contact-orgs-modal.component";
-import { PersonEditContactModalComponent, PersonEditContactModalData } from "../person-edit-contact-modal/person-edit-contact-modal.component";
+import { EditPersonModalComponent, EditPersonModalData } from "../edit-person-modal/edit-person-modal.component";
 import { PersonEditRolesModalComponent, PersonEditRolesModalData } from "../person-edit-roles-modal/person-edit-roles-modal.component";
 import { PersonEditStewardshipAreasModalComponent, PersonEditStewardshipAreasModalData } from "../person-edit-stewardship-areas-modal/person-edit-stewardship-areas-modal.component";
 
@@ -152,7 +152,7 @@ export class PersonDetailComponent {
                 if (!currentUser || !person) return false;
                 const isAdmin = this.authenticationService.isUserAnAdministrator(currentUser);
                 const isNotSelf = person.PersonID !== currentUser.PersonID;
-                return isAdmin && isNotSelf && person.IsFullUser;
+                return isAdmin && isNotSelf && person.IsUser;
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
@@ -187,7 +187,7 @@ export class PersonDetailComponent {
             map(([person, currentUser]) => {
                 if (!currentUser || !person) return false;
                 const isNotSelf = person.PersonID !== currentUser.PersonID;
-                return this.authenticationService.canManageUsersContactsOrganizations(currentUser) && person.IsFullUser && isNotSelf;
+                return this.authenticationService.canManageUsersContactsOrganizations(currentUser) && person.IsUser && isNotSelf;
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
@@ -196,7 +196,7 @@ export class PersonDetailComponent {
             map(([person, currentUser]) => {
                 if (!currentUser || !person) return false;
                 const isNotSelf = person.PersonID !== currentUser.PersonID;
-                return this.authenticationService.canDeleteContacts(currentUser) && !person.IsFullUser && isNotSelf;
+                return this.authenticationService.canDeleteContacts(currentUser) && !person.IsUser && isNotSelf;
             }),
             shareReplay({ bufferSize: 1, refCount: true })
         );
@@ -208,7 +208,7 @@ export class PersonDetailComponent {
 
         this.canViewApiKey$ = userAndPerson$.pipe(
             map(([person, currentUser]) => {
-                if (!currentUser || !person || !person.IsFullUser) return false;
+                if (!currentUser || !person || !person.IsUser) return false;
                 // Target person must have a Normal+ base role (matches legacy ViewJsonApiLandingPageFeature)
                 const targetRoleID = person.BaseRole?.RoleID;
                 const hasApiAccess = targetRoleID === RoleEnum.Normal
@@ -416,12 +416,12 @@ export class PersonDetailComponent {
         });
     }
 
-    openEditContact(person: PersonDetail): void {
-        const dialogRef = this.dialogService.open(PersonEditContactModalComponent, {
+    openEditPerson(person: PersonDetail): void {
+        const dialogRef = this.dialogService.open(EditPersonModalComponent, {
             data: {
                 person,
-                isFullUser: person.IsFullUser,
-            } as PersonEditContactModalData,
+                isUser: person.IsUser,
+            } as EditPersonModalData,
             width: "600px",
         });
 
@@ -533,7 +533,7 @@ export class PersonDetailComponent {
                 message: `Are you sure you want to permanently delete ${person.FullName}? This action cannot be undone.`,
                 buttonTextYes: "Delete",
                 buttonClassYes: "btn-danger",
-                actionFn: () => this.personService.deleteContactPerson(person.PersonID),
+                actionFn: () => this.personService.deletePerson(person.PersonID),
             } as AsyncConfirmModalData,
             width: "500px",
         });

@@ -9915,6 +9915,53 @@
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "Create_Person",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/people/lookup": {
@@ -10039,7 +10086,7 @@
         "tags": [
           "Person"
         ],
-        "operationId": "UpdateContact_Person",
+        "operationId": "Update_Person",
         "parameters": [
           {
             "name": "personID",
@@ -10097,7 +10144,7 @@
         "tags": [
           "Person"
         ],
-        "operationId": "DeleteContact_Person",
+        "operationId": "Delete_Person",
         "parameters": [
           {
             "name": "personID",
@@ -10322,55 +10369,6 @@
             "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/PersonPrimaryContactOrganizationsUpdateRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/PersonDetail"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PersonDetail"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PersonDetail"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/people/contacts": {
-      "post": {
-        "tags": [
-          "Person"
-        ],
-        "operationId": "CreateContact_Person",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ContactUpsertRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ContactUpsertRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ContactUpsertRequest"
               }
             }
           }
@@ -24296,66 +24294,6 @@
         },
         "additionalProperties": false
       },
-      "ContactUpsertRequest": {
-        "required": [
-          "FirstName"
-        ],
-        "type": "object",
-        "properties": {
-          "FirstName": {
-            "maxLength": 100,
-            "minLength": 0,
-            "type": "string"
-          },
-          "LastName": {
-            "maxLength": 100,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "Email": {
-            "maxLength": 255,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "Phone": {
-            "maxLength": 30,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "MiddleName": {
-            "maxLength": 100,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "PersonAddress": {
-            "maxLength": 255,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "OrganizationID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "VendorID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "Notes": {
-            "maxLength": 500,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "Coordinate": {
         "type": "object",
         "properties": {
@@ -30188,7 +30126,7 @@
             "format": "int32",
             "nullable": true
           },
-          "IsFullUser": {
+          "IsUser": {
             "type": "boolean"
           },
           "StewardRegions": {
@@ -30289,7 +30227,7 @@
           "IsActive": {
             "type": "boolean"
           },
-          "IsFullUser": {
+          "IsUser": {
             "type": "boolean"
           },
           "PrimaryContactOrganizationCount": {
@@ -30478,6 +30416,9 @@
             "minLength": 0,
             "type": "string",
             "nullable": true
+          },
+          "IsUser": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

@@ -46,6 +46,7 @@ public static class PersonProjections
             .ToList(),
         GlobalID = x.GlobalID,
         ImpersonatedPersonID = x.ImpersonatedPersonID,
+        IsUser = x.IsUser,
         StewardRegions = x.PersonStewardRegions.Select(sr => new StewardshipAreaItem
         {
             ID = sr.DNRUplandRegionID,
@@ -91,7 +92,7 @@ public static class PersonProjections
         Phone = x.Phone,
         LastActivityDate = x.LastActivityDate,
         IsActive = x.IsActive,
-        // IsFullUser is resolved client-side in ListAsGridRowAsync
+        IsUser = x.IsUser,
         PrimaryContactOrganizationCount = x.Organizations.Count,
         CreateDate = x.CreateDate,
         AddedByPersonID = x.AddedByPersonID,

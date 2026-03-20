@@ -19,6 +19,7 @@ CREATE TABLE [dbo].[Person](
     [IsProgramManager] [bit] NULL,
     [CreatedAsPartOfBulkImport] [bit] NULL,
     [GlobalID] VARCHAR(100) NULL,
+    [IsUser] [bit] NOT NULL CONSTRAINT [DF_Person_IsUser] DEFAULT(0),
     [ImpersonatedPersonID] [int] NULL CONSTRAINT [FK_Person_Person_ImpersonatedPersonID_PersonID] FOREIGN KEY REFERENCES [dbo].[Person]([PersonID]),
 )
 GO

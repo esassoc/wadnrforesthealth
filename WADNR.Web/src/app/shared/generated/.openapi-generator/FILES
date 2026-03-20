@@ -88,7 +88,6 @@ model/classification-system-lookup-item.ts
 model/classification-system-with-classifications.ts
 model/classification-upsert-request.ts
 model/classification-with-project-count.ts
-model/contact-upsert-request.ts
 model/coordinate-sequence-factory.ts
 model/coordinate-sequence.ts
 model/coordinate.ts

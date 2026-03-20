@@ -1,15 +1,16 @@
 <div class="modal">
     <div class="modal-header">
-        <h4>Edit Contact</h4>
+        <h4>{{ form.value.IsUser ? "Add User" : "Add Contact" }}</h4>
     </div>
     <div class="modal-body">
         <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
-        @if (isFullUser) {
-            <div class="alert alert-info">
-                Some fields are sourced from SAW/ADFS, cannot be edited, and are shown for reference only.
-            </div>
-        }
+        <form-field
+            [formControl]="form.controls.IsUser"
+            fieldLabel="Add as user"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+        <p class="add-person-modal__toggle-hint text-muted mt-0 mb-3">Users can be assigned roles, projects, and agreements. Contacts are reference records only.</p>
 
         <form-field
             [formControl]="form.controls.FirstName"
@@ -20,9 +21,9 @@
 
         <form-field
             [formControl]="form.controls.MiddleName"
-            fieldLabel="Middle Name"
+            fieldLabel="Middle Name or Initial"
             [type]="FormFieldType.Text"
-            placeholder="Middle name">
+            placeholder="Middle name or initial">
         </form-field>
 
         <form-field
@@ -34,9 +35,16 @@
 
         <form-field
             [formControl]="form.controls.Email"
-            fieldLabel="Email"
+            fieldLabel="Email Address"
             [type]="FormFieldType.Text"
             placeholder="Email address">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.PersonAddress"
+            fieldLabel="Mailing Address"
+            [type]="FormFieldType.Text"
+            placeholder="Mailing address">
         </form-field>
 
         <form-field
@@ -51,16 +59,9 @@
 
         <form-field
             [formControl]="form.controls.Phone"
-            fieldLabel="Phone"
+            fieldLabel="Phone Number"
             [type]="FormFieldType.Text"
             placeholder="Phone number">
-        </form-field>
-
-        <form-field
-            [formControl]="form.controls.PersonAddress"
-            fieldLabel="Mailing Address"
-            [type]="FormFieldType.Text"
-            placeholder="Mailing address">
         </form-field>
 
         <div class="form-field">

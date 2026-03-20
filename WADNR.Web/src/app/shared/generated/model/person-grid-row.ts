@@ -23,7 +23,7 @@ export class PersonGridRow {
     RoleName?: string | null;
     SupplementalRoles?: string | null;
     IsActive?: boolean;
-    IsFullUser?: boolean;
+    IsUser?: boolean;
     PrimaryContactOrganizationCount?: number;
     CreateDate?: string;
     AddedByPersonID?: number | null;
@@ -47,7 +47,7 @@ export interface PersonGridRowForm {
     RoleName?: FormControl<string>;
     SupplementalRoles?: FormControl<string>;
     IsActive?: FormControl<boolean>;
-    IsFullUser?: FormControl<boolean>;
+    IsUser?: FormControl<boolean>;
     PrimaryContactOrganizationCount?: FormControl<number>;
     CreateDate?: FormControl<string>;
     AddedByPersonID?: FormControl<number>;
@@ -176,7 +176,7 @@ export class PersonGridRowFormControls {
             ],
         }
     );
-    public static IsFullUser = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+    public static IsUser = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

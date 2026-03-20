@@ -63,8 +63,8 @@ public class PersonDetail
     public string? GlobalID { get; set; }
     public int? ImpersonatedPersonID { get; set; }
 
-    // Indicates if this person is a "full user" (has login credentials via GlobalID) vs a "contact"
-    public bool IsFullUser { get; set; }
+    // Indicates if this person is a user vs a contact
+    public bool IsUser { get; set; }
 
     // Stewardship areas (for ProjectSteward role)
     public List<StewardshipAreaItem> StewardRegions { get; set; } = new();

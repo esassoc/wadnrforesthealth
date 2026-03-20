@@ -24,7 +24,6 @@ export * from './classification-system-lookup-item';
 export * from './classification-system-with-classifications';
 export * from './classification-upsert-request';
 export * from './classification-with-project-count';
-export * from './contact-upsert-request';
 export * from './coordinate';
 export * from './coordinate-sequence';
 export * from './coordinate-sequence-factory';

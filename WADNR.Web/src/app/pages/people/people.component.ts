@@ -13,7 +13,7 @@ import { AuthenticationService } from "src/app/services/authentication.service";
 
 import { PersonService } from "src/app/shared/generated/api/person.service";
 import { PersonGridRow } from "src/app/shared/generated/model/person-grid-row";
-import { AddContactModalComponent } from "./add-contact-modal/add-contact-modal.component";
+import { AddPersonModalComponent } from "./add-person-modal/add-person-modal.component";
 
 enum PeopleFilter {
     AllActiveUsersAndContacts = "AllActiveUsersAndContacts",
@@ -40,7 +40,7 @@ export class PeopleComponent {
     ];
     public people$: Observable<PersonGridRow[]>;
     public columnDefs: ColDef<PersonGridRow>[];
-    public canAddContact$: Observable<boolean>;
+    public canAddPerson$: Observable<boolean>;
 
     private refreshData$ = new BehaviorSubject<void>(undefined);
 
@@ -73,6 +73,12 @@ export class PeopleComponent {
                 CustomDropdownFilterField: "IsActive",
                 ValueFormatter: (params: any) => (params.value ? "Yes" : "No"),
             }),
+            this.utilityFunctions.createBasicColumnDef("Is User?", "IsUser", {
+                CustomDropdownFilterField: "IsUser",
+                ValueFormatter: (params: any) => (params.value ? "Yes" : "No"),
+                FieldDefinitionType: "IsUser",
+                FieldDefinitionLabelOverride: "Is User?",
+            }),
             this.utilityFunctions.createBasicColumnDef("Contributing Organization Primary Contact for Organizations", "PrimaryContactOrganizationCount"),
             this.utilityFunctions.createDateColumnDef("Added On", "CreateDate", "M/d/yyyy"),
             this.utilityFunctions.createLinkColumnDef("Added By", "AddedByPersonName", "AddedByPersonID", {
@@ -94,22 +100,22 @@ export class PeopleComponent {
                     case PeopleFilter.AllActiveUsersAndContacts:
                         return people.filter((p) => p.IsActive);
                     case PeopleFilter.AllActiveUsers:
-                        return people.filter((p) => p.IsActive && p.IsFullUser);
+                        return people.filter((p) => p.IsActive && p.IsUser);
                     case PeopleFilter.AllContacts:
-                        return people.filter((p) => !p.IsFullUser);
+                        return people.filter((p) => !p.IsUser);
                     case PeopleFilter.AllUsersAndContacts:
                         return people;
                 }
             })
         );
 
-        this.canAddContact$ = this.authenticationService.currentUserSetObservable.pipe(
+        this.canAddPerson$ = this.authenticationService.currentUserSetObservable.pipe(
             map((user) => this.authenticationService.canManageUsersContactsOrganizations(user))
         );
     }
 
-    openAddContactModal(): void {
-        const dialogRef = this.dialogService.open(AddContactModalComponent, {
+    openAddPersonModal(): void {
+        const dialogRef = this.dialogService.open(AddPersonModalComponent, {
             width: "500px",
         });
 

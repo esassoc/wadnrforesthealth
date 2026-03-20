@@ -251,7 +251,8 @@ using (values
 (532, N'FundSourceAllocationLikelyToUse', N'Likely To Use', N'Placeholder definition for Fund Source Allocation Likely To Use'),
 (533, N'FundSourceAllocationCompleted', N'Completed', N'Placeholder definition for Fund Source Allocation Completed'),
 (534, N'FundSourceAllocationPriority', N'Priority', N'Placeholder definition for Fund Source Allocation Priority'),
-(535, N'LeadImplementerOrganization', N'Lead Implementer', N'Placeholder definition for Lead Implementer')
+(535, N'LeadImplementerOrganization', N'Lead Implementer', N'Placeholder definition for Lead Implementer'),
+(536, N'IsUser', N'Is User', N'Indicates whether this person is a registered user who can log in and be assigned roles, or a contact-only record.')
 ) as Source (FieldDefinitionID, FieldDefinitionName, FieldDefinitionDisplayName, DefaultDefinition)
 on Target.FieldDefinitionID = Source.FieldDefinitionID
 when matched then

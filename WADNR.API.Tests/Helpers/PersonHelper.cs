@@ -56,7 +56,8 @@ public static class PersonHelper
             OrganizationID = organizationID ?? (await dbContext.Organizations.FirstAsync()).OrganizationID,
             IsActive = true,
             CreateDate = DateTime.UtcNow,
-            GlobalID = Guid.NewGuid().ToString(), // Has a GlobalID = full user
+            GlobalID = Guid.NewGuid().ToString(),
+            IsUser = true, // User (not a contact)
         };
 
         dbContext.People.Add(person);

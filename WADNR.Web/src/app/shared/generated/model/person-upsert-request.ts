@@ -20,6 +20,7 @@ export class PersonUpsertRequest {
     OrganizationID?: number | null;
     VendorID?: number | null;
     Notes?: string | null;
+    IsUser?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -35,6 +36,7 @@ export interface PersonUpsertRequestForm {
     OrganizationID?: FormControl<number>;
     VendorID?: FormControl<number>;
     Notes?: FormControl<string>;
+    IsUser?: FormControl<boolean>;
 }
 
 export class PersonUpsertRequestFormControls { 
@@ -140,6 +142,16 @@ export class PersonUpsertRequestFormControls {
             [
                 Validators.minLength(0),
                 Validators.maxLength(500),
+            ],
+        }
+    );
+    public static IsUser = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
             ],
         }
     );

@@ -20,7 +20,7 @@
         </div>
     </ng-template>
 
-    @if (!person.IsFullUser) {
+    @if (!person.IsUser) {
         <div class="alert alert-info">
             {{ person.FullName }} is a contact and does not have a user account in the system.
         </div>
@@ -34,7 +34,7 @@
                     <div class="card-header flex-between">
                         <span class="card-title">Basics</span>
                         @if (canEditBasics$ | async) {
-                            <button class="card-header-edit-link" (click)="openEditContact(person)" title="Edit Basics">
+                            <button class="card-header-edit-link" (click)="openEditPerson(person)" title="Edit Basics">
                                 <icon icon="Edit"></icon>
                             </button>
                         }
@@ -83,7 +83,7 @@
                             }
 
                             @if (canEditBasics$ | async) {
-                                @if (person.IsFullUser) {
+                                @if (person.IsUser) {
                                     <dt>Last Activity</dt>
                                     <dd>{{ person.LastActivityDate | date: "M/d/yyyy h:mm a" }}</dd>
                                 }
@@ -129,7 +129,7 @@
 
             <!-- Right Column: Roles, Stewardship, Programs, Orgs -->
             <div class="g-col-6">
-                @if (person.IsFullUser && (canViewRoles$ | async)) {
+                @if (person.IsUser && (canViewRoles$ | async)) {
                     <div class="card">
                         <div class="card-header flex-between">
                             <span class="card-title">Roles</span>
@@ -215,7 +215,7 @@
         </div>
 
         <!-- Contributing Organization Primary Contact For Organizations -->
-        @if (person.IsFullUser) {
+        @if (person.IsUser) {
             <div class="card mt-3">
                 <div class="card-header flex-between">
                     <span class="card-title">Organizations for which {{ person.FullName }} is a Contributing Organization Primary Contact</span>
@@ -245,7 +245,7 @@
         <div class="card mt-3">
             <div class="card-header">
                 <span class="card-title">
-                    @if (person.IsFullUser) {
+                    @if (person.IsUser) {
                         Projects for which {{ person.FullName }} is a Contributing Organization Primary Contact
                     } @else {
                         Projects for which {{ person.FullName }} is a Contact
@@ -261,7 +261,7 @@
         <div class="card mt-3">
             <div class="card-header">
                 <span class="card-title">
-                    @if (person.IsFullUser) {
+                    @if (person.IsUser) {
                         Agreements for which {{ person.FullName }} is a Contributing Organization Primary Contact
                     } @else {
                         Agreements for which {{ person.FullName }} is a Contact
@@ -303,7 +303,7 @@
         </div>
 
         <!-- System Communications Grid -->
-        @if (person.IsFullUser) {
+        @if (person.IsUser) {
             <div class="card mt-3">
                 <div class="card-header">
                     <span class="card-title">System Communications ({{ person.NotificationCount }})</span>

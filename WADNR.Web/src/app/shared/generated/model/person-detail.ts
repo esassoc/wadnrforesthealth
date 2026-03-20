@@ -48,7 +48,7 @@ export class PersonDetail {
     Authenticators?: Array<string> | null;
     GlobalID?: string | null;
     ImpersonatedPersonID?: number | null;
-    IsFullUser?: boolean;
+    IsUser?: boolean;
     StewardRegions?: Array<StewardshipAreaItem> | null;
     StewardOrganizations?: Array<StewardshipAreaItem> | null;
     StewardTaxonomyBranches?: Array<StewardshipAreaItem> | null;
@@ -92,7 +92,7 @@ export interface PersonDetailForm {
     Authenticators?: FormControl<Array<string>>;
     GlobalID?: FormControl<string>;
     ImpersonatedPersonID?: FormControl<number>;
-    IsFullUser?: FormControl<boolean>;
+    IsUser?: FormControl<boolean>;
     StewardRegions?: FormControl<Array<StewardshipAreaItem>>;
     StewardOrganizations?: FormControl<Array<StewardshipAreaItem>>;
     StewardTaxonomyBranches?: FormControl<Array<StewardshipAreaItem>>;
@@ -430,7 +430,7 @@ export class PersonDetailFormControls {
             ],
         }
     );
-    public static IsFullUser = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+    public static IsUser = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

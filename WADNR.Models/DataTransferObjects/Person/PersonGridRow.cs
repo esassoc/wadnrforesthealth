@@ -14,7 +14,7 @@ public class PersonGridRow
     public string? RoleName { get; set; }
     public string? SupplementalRoles { get; set; }
     public bool IsActive { get; set; }
-    public bool IsFullUser { get; set; }
+    public bool IsUser { get; set; }
     public int PrimaryContactOrganizationCount { get; set; }
     public DateTimeOffset CreateDate { get; set; }
     public int? AddedByPersonID { get; set; }

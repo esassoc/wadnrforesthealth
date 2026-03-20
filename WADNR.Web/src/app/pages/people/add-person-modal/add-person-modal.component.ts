@@ -18,23 +18,18 @@ import { VendorService } from "src/app/shared/generated/api/vendor.service";
 import { PersonDetail } from "src/app/shared/generated/model/person-detail";
 import { VendorLookupItem } from "src/app/shared/generated/model/vendor-lookup-item";
 
-export interface PersonEditContactModalData {
-    person: PersonDetail;
-    isFullUser: boolean;
-}
-
 @Component({
-    selector: "person-edit-contact-modal",
+    selector: "add-person-modal",
     standalone: true,
     imports: [ReactiveFormsModule, FormFieldComponent, ModalAlertsComponent, ButtonLoadingDirective, NgSelectModule, AsyncPipe],
-    templateUrl: "./person-edit-contact-modal.component.html",
+    templateUrl: "./add-person-modal.component.html",
+    styleUrl: "./add-person-modal.component.scss",
 })
-export class PersonEditContactModalComponent extends BaseModal implements OnInit {
-    public ref: DialogRef<PersonEditContactModalData, PersonDetail | null> = inject(DialogRef);
+export class AddPersonModalComponent extends BaseModal implements OnInit {
+    public ref: DialogRef<void, PersonDetail | null> = inject(DialogRef);
 
     public FormFieldType = FormFieldType;
     public isSubmitting = false;
-    public isFullUser = false;
     public organizationOptions: { Value: number; Label: string; disabled: boolean }[] = [];
 
     // Vendor typeahead
@@ -43,9 +38,10 @@ export class PersonEditContactModalComponent extends BaseModal implements OnInit
     public vendorLoading = false;
 
     public form = new FormGroup({
+        IsUser: new FormControl<boolean>(false),
         FirstName: new FormControl<string>("", { validators: [Validators.required, Validators.maxLength(100)] }),
         MiddleName: new FormControl<string>("", { validators: [Validators.maxLength(100)] }),
-        LastName: new FormControl<string>("", { validators: [Validators.maxLength(100)] }),
+        LastName: new FormControl<string>("", { validators: [Validators.required, Validators.maxLength(100)] }),
         Email: new FormControl<string>("", { validators: [Validators.maxLength(255)] }),
         Phone: new FormControl<string>("", { validators: [Validators.maxLength(30)] }),
         PersonAddress: new FormControl<string>("", { validators: [Validators.maxLength(255)] }),
@@ -64,47 +60,19 @@ export class PersonEditContactModalComponent extends BaseModal implements OnInit
     }
 
     ngOnInit(): void {
-        const data = this.ref.data;
-        this.isFullUser = data.isFullUser;
-
-        this.form.patchValue({
-            FirstName: data.person.FirstName ?? "",
-            MiddleName: data.person.MiddleName ?? "",
-            LastName: data.person.LastName ?? "",
-            Email: data.person.Email ?? "",
-            Phone: data.person.Phone ?? "",
-            PersonAddress: data.person.PersonAddress ?? "",
-            VendorID: data.person.VendorID ?? null,
-            Notes: data.person.Notes ?? "",
-        });
-
-        if (this.isFullUser) {
-            this.form.controls.FirstName.disable();
-            this.form.controls.MiddleName.disable();
-            this.form.controls.LastName.disable();
-            this.form.controls.Email.disable();
-        }
-
         this.organizationService.listLookupOrganization().subscribe((orgs) => {
             this.organizationOptions = orgs.map((o) => ({
                 Value: o.OrganizationID,
                 Label: o.OrganizationName,
                 disabled: false,
             }));
-            this.form.controls.OrganizationID.setValue(data.person.OrganizationID ?? null);
         });
 
         this.initVendorTypeahead();
     }
 
     private initVendorTypeahead(): void {
-        const data = this.ref.data;
-        const initial$: Observable<VendorLookupItem[]> = data.person.VendorID != null
-            ? of([{
-                VendorID: data.person.VendorID,
-                DisplayName: data.person.VendorName,
-            } as VendorLookupItem])
-            : of([]);
+        const initial$ = of<VendorLookupItem[]>([]);
 
         const search$ = this.vendorSearch$.pipe(
             distinctUntilChanged(),
@@ -135,22 +103,23 @@ export class PersonEditContactModalComponent extends BaseModal implements OnInit
         this.isSubmitting = true;
         this.localAlerts.set([]);
 
-        const rawValue = this.form.getRawValue();
         const request = {
-            FirstName: rawValue.FirstName,
-            MiddleName: rawValue.MiddleName || null,
-            LastName: rawValue.LastName || null,
-            Email: rawValue.Email || null,
-            Phone: rawValue.Phone || null,
-            PersonAddress: rawValue.PersonAddress || null,
-            OrganizationID: rawValue.OrganizationID || null,
-            VendorID: rawValue.VendorID || null,
-            Notes: rawValue.Notes || null,
+            IsUser: this.form.value.IsUser ?? false,
+            FirstName: this.form.value.FirstName,
+            MiddleName: this.form.value.MiddleName || null,
+            LastName: this.form.value.LastName || null,
+            Email: this.form.value.Email || null,
+            Phone: this.form.value.Phone || null,
+            PersonAddress: this.form.value.PersonAddress || null,
+            OrganizationID: this.form.value.OrganizationID || null,
+            VendorID: this.form.value.VendorID || null,
+            Notes: this.form.value.Notes || null,
         };
 
-        this.personService.updateContactPerson(this.ref.data.person.PersonID, request).subscribe({
+        this.personService.createPerson(request).subscribe({
             next: (result) => {
-                this.pushGlobalSuccess("Contact updated successfully.");
+                const label = this.form.value.IsUser ? "User" : "Contact";
+                this.pushGlobalSuccess(`${label} created successfully.`);
                 this.ref.close(result);
             },
             error: (err) => {
