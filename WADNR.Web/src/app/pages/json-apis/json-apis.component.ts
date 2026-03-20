@@ -8,7 +8,7 @@ import { PersonService } from "src/app/shared/generated/api/person.service";
 import { SystemInfoService } from "src/app/shared/generated/api/system-info.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
-import { environment } from "src/environments/environment";
+
 
 @Component({
     selector: "json-apis",
@@ -18,8 +18,6 @@ import { environment } from "src/environments/environment";
     styleUrl: "./json-apis.component.scss",
 })
 export class JsonApisComponent {
-    public apiBaseUrl = environment.mainAppApiUrl;
-
     public scalarDocsUrl$: Observable<string | null> = this.systemInfoService.getSystemInfoSystemInfo().pipe(
         map((info) => (info.ScalarApiUrl ? `${info.ScalarApiUrl}/docs` : null)),
         shareReplay({ bufferSize: 1, refCount: true })
