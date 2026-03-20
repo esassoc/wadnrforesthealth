@@ -15,8 +15,8 @@
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
     <PackageReference Include="NetTopologySuite.IO.GeoJSON4STJ" Version="4.0.0" />
-    <PackageReference Include="Scalar.AspNetCore" Version="2.11.1" />
-    <PackageReference Include="Scalar.AspNetCore.Microsoft" Version="2.11.1" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.13.13" />
+    <PackageReference Include="Scalar.AspNetCore.Microsoft" Version="2.13.13" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
   </ItemGroup>
 

@@ -100,6 +100,10 @@ builder.Services.AddOpenApi(options =>
                 "To use this API, you will need an API key. Log in to the Forest Health Tracker, navigate to your profile, " +
                 "and generate an API key. Pass the key in the `x-api-key` header with every request.",
         };
+
+        // Use relative server URL so Scalar test requests inherit the current page's scheme/host (HTTPS)
+        document.Servers = [new OpenApiServer { Url = "/" }];
+
         return Task.CompletedTask;
     });
 
@@ -159,6 +163,10 @@ app.MapScalarApiReference("/docs", options =>
     options.AddPreferredSecuritySchemes("ApiKeyScheme");
     options.DefaultHttpClient =
         new KeyValuePair<ScalarTarget, ScalarClient>(ScalarTarget.CSharp, ScalarClient.HttpClient);
+
+    // Provide placeholder so code snippets include the x-api-key header
+    options.AddApiKeyAuthentication("ApiKeyScheme", scheme =>
+        scheme.WithName("x-api-key").WithValue("YOUR_API_KEY_HERE"));
 });
 
 app.Run();
