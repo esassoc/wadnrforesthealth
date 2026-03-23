@@ -2,13 +2,31 @@
     height: 20rem;
 
     & > * + * {
-        margin-top: 1.5rem;
+        margin-top: var(--spacing-500);
     }
 }
 
 .customRichTextContent {
-    & > div > * + * {
-        margin-top: 1.5rem;
+    font-size: var(--type-size-200);
+    line-height: 1.25em;
+
+    & > * + * {
+        margin-top: var(--spacing-500);
+    }
+
+    // Restore paragraph spacing stripped by normalize
+    p {
+        margin-bottom: var(--spacing-300);
+    }
+
+    // Restore list margins stripped by normalize
+    ol,
+    ul {
+        margin-bottom: var(--spacing-300);
+    }
+
+    a {
+        text-decoration: none;
     }
 }
 
@@ -16,7 +34,7 @@
 .ck-editor__editable {
     ol,
     ul {
-        padding-left: 1.5rem;
+        padding-left: var(--spacing-600);
     }
 
     ol {
@@ -27,12 +45,16 @@
         list-style-type: disc;
     }
 
+    ul ul {
+        list-style-type: circle;
+    }
+
+    ul ul ul {
+        list-style-type: square;
+    }
+
     li {
         padding: 0;
         margin: 0;
-
-        & + li {
-            padding-top: 1rem;
-        }
     }
 }

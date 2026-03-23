@@ -9,7 +9,7 @@
         </div>
       }
       @if (!(isEmptyContent$ | async)) {
-        <div [innerHtml]="customRichTextContent$ | async"></div>
+        <div class="customRichTextContent" [innerHtml]="customRichTextContent$ | async"></div>
       }
       @if (isEmptyContent$ | async) {
         <div class="custom-rich-text__empty-space"></div>
