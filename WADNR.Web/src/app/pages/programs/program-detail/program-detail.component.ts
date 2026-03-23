@@ -180,11 +180,13 @@ export class ProgramDetailComponent {
                 FieldDefinitionType: "ProjectIdentifier",
             }),
             this.utilityFunctions.createLinkColumnDef("FHT Project Number", "FhtProjectNumber", "ProjectID", {
-                InRouterLink: "/projects/fact-sheet/",
+                InRouterLink: "/projects/",
+                InRouterLinkSuffix: "fact-sheet",
                 FieldDefinitionType: "FhtProjectNumber",
             }),
             this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", {
-                InRouterLink: "/projects/fact-sheet/",
+                InRouterLink: "/projects/",
+                InRouterLinkSuffix: "fact-sheet",
                 FieldDefinitionType: "ProjectName",
             }),
             this.utilityFunctions.createBasicColumnDef("Project Type", "ProjectTypeName", {

@@ -7,7 +7,7 @@ import { IconComponent } from "../../icon/icon.component";
     selector: "icon-link-renderer",
     template: `
         @if (params?.value) {
-            <a [routerLink]="[params.inRouterLink, params.value]" [title]="params.title ?? ''">
+            <a [routerLink]="params.inRouterLinkSuffix ? [params.inRouterLink, params.value, params.inRouterLinkSuffix] : [params.inRouterLink, params.value]" [title]="params.title ?? ''">
                 <icon [icon]="params.iconName"></icon>
             </a>
         }

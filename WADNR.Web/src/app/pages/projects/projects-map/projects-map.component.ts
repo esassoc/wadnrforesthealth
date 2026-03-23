@@ -610,7 +610,7 @@ export class ProjectsMapComponent implements OnInit, AfterViewChecked {
                         const projId = p?.ProjectID;
 
                         const parts: any[] = [];
-                        parts.push({ text: projName, routerLink: ["/projects/fact-sheet", projId] });
+                        parts.push({ text: projName, routerLink: ["/projects", projId, "fact-sheet"] });
 
                         return {
                             title: projName,

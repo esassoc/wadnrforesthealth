@@ -3,7 +3,7 @@
     <div class="featured-carousel__slide" [@slide]="dir()" [attr.aria-live]="hasMany ? 'polite' : 'off'" [attr.id]="ariaSlideId()">
         <!-- Title (full-width, above columns) -->
         <div class="featured-carousel__title">
-            <a [routerLink]="['/projects/fact-sheet', p.ProjectNumber]" class="featured-carousel__title-link">
+            <a [routerLink]="['/projects', p.ProjectID, 'fact-sheet']" class="featured-carousel__title-link">
                 {{ p.ProjectName }}
             </a>
         </div>
@@ -41,7 +41,7 @@
                 </div>
 
                 <div class="featured-carousel__more">
-                    <a [routerLink]="['/projects/fact-sheet', p.ProjectNumber]">View More</a>
+                    <a [routerLink]="['/projects', p.ProjectID, 'fact-sheet']">View More</a>
                 </div>
             </div>
         </div>

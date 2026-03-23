@@ -20,6 +20,7 @@ export class LinkRendererComponent implements AgRendererComponent {
             href?: string;
         };
         inRouterLink?: string;
+        inRouterLinkSuffix?: string;
         cssClasses?: string;
     };
 

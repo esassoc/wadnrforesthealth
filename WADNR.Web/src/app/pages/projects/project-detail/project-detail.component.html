@@ -36,7 +36,7 @@
 
             <!-- View Fact Sheet button -->
             @if (project.CanViewFactSheet) {
-                <a [routerLink]="['/projects/fact-sheet', project.ProjectID]" class="btn btn-primary btn-sm">
+                <a [routerLink]="['/projects', project.ProjectID, 'fact-sheet']" class="btn btn-primary btn-sm">
                     <i class="fa fa-file-text"></i> View Fact Sheet
                 </a>
             }

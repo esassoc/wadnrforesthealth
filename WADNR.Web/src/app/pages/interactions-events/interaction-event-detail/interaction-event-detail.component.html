@@ -51,7 +51,7 @@
                     <div class="g-col-8">
                         @if (vm.projects.length) { @for (project of vm.projects; track project.ProjectID) {
                         <div>
-                            <a [routerLink]="['/projects/fact-sheet', project.ProjectID]">{{ project.ProjectName || "—" }}</a>
+                            <a [routerLink]="['/projects', project.ProjectID, 'fact-sheet']">{{ project.ProjectName || "—" }}</a>
                         </div>
                         } } @else { <em>No projects associated with this Interaction/Event.</em> }
                     </div>

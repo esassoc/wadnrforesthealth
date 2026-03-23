@@ -64,7 +64,8 @@ export class FeaturedProjectsComponent implements OnInit {
                 valueGetter: (params) => params.data?.ProjectID,
                 cellRenderer: IconLinkRendererComponent,
                 cellRendererParams: {
-                    inRouterLink: "/projects/fact-sheet",
+                    inRouterLink: "/projects",
+                    inRouterLinkSuffix: "fact-sheet",
                     iconName: "Search",
                     title: "Fact Sheet",
                 },

@@ -165,7 +165,7 @@
                     <div class="g-col-12">
                         @if (projects$ | async; as projects) { @if (projects.length) { @for (project of projects; track project.ProjectID) {
                         <div>
-                            <a [routerLink]="['/projects/fact-sheet', project.ProjectID]">{{ project.ProjectName || "—" }}</a>
+                            <a [routerLink]="['/projects', project.ProjectID, 'fact-sheet']">{{ project.ProjectName || "—" }}</a>
                         </div>
                         } } @else {
                         <em>No projects associated with this agreement.</em>

@@ -513,6 +513,7 @@ export class UtilityFunctionsService {
             cellRenderer: LinkRendererComponent,
             cellRendererParams: {
                 inRouterLink: linkColumnDefParams?.InRouterLink,
+                inRouterLinkSuffix: linkColumnDefParams?.InRouterLinkSuffix,
                 inRouterLinkHandler: linkColumnDefParams?.InRouterLinkHandler,
                 isExternalUrl: linkColumnDefParams?.IsExternalUrl,
                 requiresAuth: linkColumnDefParams?.RequiresAuth,
@@ -806,6 +807,8 @@ export interface LtinfoColumnDefParams {
 export interface LinkColumnDefParams extends LtinfoColumnDefParams {
     Width?: number;
     InRouterLink?: string;
+    /** Optional suffix segment appended after the link value (e.g. "fact-sheet" produces /prefix/123/fact-sheet). */
+    InRouterLinkSuffix?: string;
     /** Optional per-row router link builder. If provided it will be called with the renderer params to produce the inRouterLink string. */
     InRouterLinkHandler?: (params: any) => string;
     IsExternalUrl?: boolean;

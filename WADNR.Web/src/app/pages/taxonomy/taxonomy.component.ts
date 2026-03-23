@@ -50,7 +50,7 @@ export class TaxonomyComponent {
                 const nameText = proj.ProjectName;
 
                 const parts: any[] = [];
-                parts.push({ text: nameText, routerLink: ["/projects/fact-sheet", proj.ProjectID] });
+                parts.push({ text: nameText, routerLink: ["/projects", proj.ProjectID, "fact-sheet"] });
 
                 return {
                     title: nameText,
@@ -78,7 +78,7 @@ export class TaxonomyComponent {
         // if the node contains a project DTO with ProjectID, navigate to project detail
         const proj = feature as any;
         if (proj && proj.ProjectID) {
-            this.router.navigate([`/projects/fact-sheet/${proj.ProjectID}`]);
+            this.router.navigate(["/projects", proj.ProjectID, "fact-sheet"]);
             return;
         }
         // otherwise no-op for non-project taxonomy nodes
