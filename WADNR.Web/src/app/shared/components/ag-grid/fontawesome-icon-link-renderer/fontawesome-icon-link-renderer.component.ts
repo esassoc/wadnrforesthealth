@@ -4,7 +4,7 @@ import { RouterLink } from "@angular/router";
 import { NgIf } from "@angular/common";
 
 @Component({
-    selector: "qanat-fontawesome-icon-link-renderer",
+    selector: "wadnr-fontawesome-icon-link-renderer",
     templateUrl: "./fontawesome-icon-link-renderer.component.html",
     styleUrls: ["./fontawesome-icon-link-renderer.component.scss"],
     imports: [NgIf, RouterLink],

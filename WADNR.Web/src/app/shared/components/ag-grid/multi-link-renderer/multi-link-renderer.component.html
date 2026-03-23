@@ -1,5 +1,5 @@
 @for (link of params.value.links; track link; let isLast = $last) { @if (link.LinkDisplay) { @if (link.LinkValue) {
-<a [routerLink]="[params.inRouterLink, link.LinkValue]" [className]="params.cssClasses"> {{ link.LinkDisplay }}{{ isLast ? "" : ", " }} </a>
+<a [routerLink]="[params.inRouterLink, link.LinkValue]" [className]="params.cssClasses || ''"> {{ link.LinkDisplay }}{{ isLast ? "" : ", " }} </a>
 } @else {
-<span [className]="params.cssClasses"> {{ link.LinkDisplay }}{{ isLast ? "" : ", " }} </span>
+<span [className]="params.cssClasses || ''"> {{ link.LinkDisplay }}{{ isLast ? "" : ", " }} </span>
 } } }

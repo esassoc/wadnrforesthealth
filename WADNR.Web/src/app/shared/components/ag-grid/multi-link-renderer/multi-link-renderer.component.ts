@@ -4,7 +4,7 @@ import { RouterLink } from "@angular/router";
 import { AuthenticationService } from "src/app/services/authentication.service";
 
 @Component({
-    selector: "qanat-multi-link-renderer",
+    selector: "wadnr-multi-link-renderer",
     templateUrl: "./multi-link-renderer.component.html",
     styleUrls: ["./multi-link-renderer.component.scss"],
     imports: [RouterLink],

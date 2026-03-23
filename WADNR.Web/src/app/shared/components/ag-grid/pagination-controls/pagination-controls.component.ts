@@ -12,7 +12,7 @@ import { AsyncPipe } from "@angular/common";
 export class PaginationControlsComponent implements OnInit {
     @Input() grid: AgGridAngular;
 
-    public paginationValues$: Observable<QanatPaginationValues>;
+    public paginationValues$: Observable<PaginationValues>;
 
     public ngOnInit(): void {
         // Since combineLatest will only emit when all observables have emitted at least once, we need to start with a null value
@@ -26,7 +26,7 @@ export class PaginationControlsComponent implements OnInit {
                     totalPages: this.grid.api.paginationGetTotalPages(),
                     onFirstPage: this.grid.api.paginationGetCurrentPage() == 0,
                     onLastPage: this.grid.api.paginationGetCurrentPage() + 1 == this.grid.api.paginationGetTotalPages(),
-                } as QanatPaginationValues;
+                } as PaginationValues;
             })
         );
     }
@@ -48,7 +48,7 @@ export class PaginationControlsComponent implements OnInit {
     }
 }
 
-export interface QanatPaginationValues {
+export interface PaginationValues {
     currentPage: number;
     totalPages: number;
     onFirstPage: boolean;

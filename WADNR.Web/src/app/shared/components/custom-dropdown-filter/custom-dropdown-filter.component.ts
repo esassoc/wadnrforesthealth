@@ -5,7 +5,7 @@ import { FormsModule } from "@angular/forms";
 import { NgClass } from "@angular/common";
 
 @Component({
-    selector: "qanat-custom-dropdown-filter",
+    selector: "wadnr-custom-dropdown-filter",
     templateUrl: "./custom-dropdown-filter.component.html",
     styleUrls: ["./custom-dropdown-filter.component.scss"],
     imports: [FormsModule, NgClass],

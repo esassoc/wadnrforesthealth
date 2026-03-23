@@ -73,7 +73,7 @@ export class LeafletHelperService {
 
     public createDivIcon(color: string, dash: boolean = false) {
         return L.divIcon({
-            className: "riparis-div-icon",
+            className: "wadnr-div-icon",
             html: `<svg width="100%" viewbox="0 0 30 42">
               <path fill="${color}" stroke="#fff" stroke-width="1.5" ${dash ? 'stroke-dasharray="4"' : ""}
                     d="M15 3
@@ -102,7 +102,7 @@ export class LeafletHelperService {
         const childCount = cluster.getChildCount();
 
         // currently we aren't using these small medium large sizes, but keeping because it doesn't hurt
-        let c = " riparis-cluster-";
+        let c = " wadnr-cluster-";
         if (childCount < 10) {
             c += "small";
         } else if (childCount < 100) {
@@ -113,7 +113,7 @@ export class LeafletHelperService {
 
         return new L.DivIcon({
             html: "<div><span>" + childCount + "</span></div>",
-            className: "marker-cluster riparis-cluster" + c,
+            className: "marker-cluster wadnr-cluster" + c,
             iconSize: new L.Point(40, 40),
         });
     }

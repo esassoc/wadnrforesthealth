@@ -1,11 +1,11 @@
 @if(params.value?.LinkDisplay){ @if(params.inRouterLink && params.value?.LinkValue){
-<a [className]="params.cssClasses" [routerLink]="params.inRouterLinkSuffix ? [params.inRouterLink + params.value.LinkValue, params.inRouterLinkSuffix] : [params.inRouterLink + params.value.LinkValue]" [queryParams]="params.value.queryParams">
+<a [className]="params.cssClasses || ''" [routerLink]="params.inRouterLinkSuffix ? [params.inRouterLink + params.value.LinkValue, params.inRouterLinkSuffix] : [params.inRouterLink + params.value.LinkValue]" [queryParams]="params.value.queryParams">
     {{ params.value.LinkDisplay }}
 </a>
 } @else if(params.value?.href){
-<a [className]="params.cssClasses" [href]="params.value.href">
+<a [className]="params.cssClasses || ''" [href]="params.value.href">
     {{ params.value.LinkDisplay }}
 </a>
 } @else {
-<span [className]="params.cssClasses">{{ params.value.LinkDisplay }}</span>
+<span [className]="params.cssClasses || ''">{{ params.value.LinkDisplay }}</span>
 } }

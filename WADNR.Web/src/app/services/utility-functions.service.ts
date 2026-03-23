@@ -189,18 +189,18 @@ export class UtilityFunctionsService {
             },
         };
 
-        this.applyDefaultLtinfoColumnDefParams(colDef, joinedParams);
+        this.applyDefaultColumnDefParams(colDef, joinedParams);
         return colDef;
     }
 
-    public createBasicColumnDef(headerName: string, fieldName: string, colDefParams?: LtinfoColumnDefParams): ColDef {
+    public createBasicColumnDef(headerName: string, fieldName: string, colDefParams?: ColumnDefParams): ColDef {
         const colDef: ColDef = {
             field: fieldName,
             headerName: headerName,
             valueGetter: (params) => this.defaultValueGetter(params, fieldName),
         };
 
-        this.applyDefaultLtinfoColumnDefParams(colDef, colDefParams);
+        this.applyDefaultColumnDefParams(colDef, colDefParams);
         return colDef;
     }
 
@@ -313,7 +313,7 @@ export class UtilityFunctionsService {
             };
         }
 
-        this.applyDefaultLtinfoColumnDefParams(decimalColDef, decimalColumnDefParams);
+        this.applyDefaultColumnDefParams(decimalColDef, decimalColumnDefParams);
         return decimalColDef;
     }
 
@@ -380,7 +380,7 @@ export class UtilityFunctionsService {
             };
         }
 
-        this.applyDefaultLtinfoColumnDefParams(colDef, currencyColumnDefParams);
+        this.applyDefaultColumnDefParams(colDef, currencyColumnDefParams);
         return colDef;
     }
 
@@ -442,11 +442,11 @@ export class UtilityFunctionsService {
             };
         }
 
-        this.applyDefaultLtinfoColumnDefParams(colDef, percentColumnDefParams);
+        this.applyDefaultColumnDefParams(colDef, percentColumnDefParams);
         return colDef;
     }
 
-    public createYearColumnDef(headerName: string, fieldName: string, colDefParams?: LtinfoColumnDefParams): ColDef {
+    public createYearColumnDef(headerName: string, fieldName: string, colDefParams?: ColumnDefParams): ColDef {
         const colDef: ColDef = {
             headerName: headerName,
             valueGetter: (params) => this.decimalValueGetter(params, fieldName, false),
@@ -455,7 +455,7 @@ export class UtilityFunctionsService {
             cellStyle: { "justify-content": "flex-end" },
         };
 
-        this.applyDefaultLtinfoColumnDefParams(colDef, colDefParams);
+        this.applyDefaultColumnDefParams(colDef, colDefParams);
         return colDef;
     }
 
@@ -473,7 +473,7 @@ export class UtilityFunctionsService {
     /**
      * Create a phone column definition that formats phone numbers using PhonePipe
      */
-    public createPhoneColumnDef(headerName: string, fieldName: string, colDefParams?: LtinfoColumnDefParams): ColDef {
+    public createPhoneColumnDef(headerName: string, fieldName: string, colDefParams?: ColumnDefParams): ColDef {
         const colDef: ColDef = {
             headerName: headerName,
             field: fieldName,
@@ -484,7 +484,7 @@ export class UtilityFunctionsService {
             },
         };
 
-        this.applyDefaultLtinfoColumnDefParams(colDef, colDefParams);
+        this.applyDefaultColumnDefParams(colDef, colDefParams);
         return colDef;
     }
 
@@ -520,7 +520,7 @@ export class UtilityFunctionsService {
             },
         };
 
-        this.applyDefaultLtinfoColumnDefParams(colDef, linkColumnDefParams);
+        this.applyDefaultColumnDefParams(colDef, linkColumnDefParams);
         return colDef;
     }
 
@@ -540,7 +540,7 @@ export class UtilityFunctionsService {
             comparator: this.linkRendererComparator,
             cellRenderer: LinkRendererComponent,
         };
-        this.applyDefaultLtinfoColumnDefParams(colDef, linkColumnDefParams);
+        this.applyDefaultColumnDefParams(colDef, linkColumnDefParams);
         return colDef;
     }
 
@@ -584,7 +584,7 @@ export class UtilityFunctionsService {
             },
         };
 
-        this.applyDefaultLtinfoColumnDefParams(colDef, multiLinkColumnDefParams);
+        this.applyDefaultColumnDefParams(colDef, multiLinkColumnDefParams);
         return colDef;
     }
 
@@ -620,7 +620,7 @@ export class UtilityFunctionsService {
             sort: dateColumnDefParams?.Sort,
         };
 
-        this.applyDefaultLtinfoColumnDefParams(dateColDef, dateColumnDefParams);
+        this.applyDefaultColumnDefParams(dateColDef, dateColumnDefParams);
         return dateColDef;
     }
 
@@ -631,11 +631,11 @@ export class UtilityFunctionsService {
             valueFormatter: (params) => this.booleanValueGetter(params.value),
             filter: true,
         };
-        this.applyDefaultLtinfoColumnDefParams(colDef, linkColumnDefParams);
+        this.applyDefaultColumnDefParams(colDef, linkColumnDefParams);
         return colDef;
     }
 
-    public createDaysPassedColumnDef(headerName: string, dateFieldName: string, colDefParams?: LtinfoColumnDefParams) {
+    public createDaysPassedColumnDef(headerName: string, dateFieldName: string, colDefParams?: ColumnDefParams) {
         const colDef: ColDef = {
             field: "Days Open",
             valueGetter: (params) => {
@@ -652,11 +652,11 @@ export class UtilityFunctionsService {
             filter: "agNumberColumnFilter",
         };
 
-        this.applyDefaultLtinfoColumnDefParams(colDef, colDefParams);
+        this.applyDefaultColumnDefParams(colDef, colDefParams);
         return colDef;
     }
 
-    public applyDefaultLtinfoColumnDefParams(colDef: ColDef, params: LtinfoColumnDefParams) {
+    public applyDefaultColumnDefParams(colDef: ColDef, params: ColumnDefParams) {
         if (!params) {
             return;
         }
@@ -782,7 +782,7 @@ export class UtilityFunctionsService {
     }
 }
 
-export interface LtinfoColumnDefParams {
+export interface ColumnDefParams {
     Width?: number;
     MinWidth?: number;
     MaxWidth?: number;
@@ -804,7 +804,7 @@ export interface LtinfoColumnDefParams {
     CellRenderer?: any;
 }
 
-export interface LinkColumnDefParams extends LtinfoColumnDefParams {
+export interface LinkColumnDefParams extends ColumnDefParams {
     Width?: number;
     InRouterLink?: string;
     /** Optional suffix segment appended after the link value (e.g. "fact-sheet" produces /prefix/123/fact-sheet). */
@@ -818,14 +818,14 @@ export interface LinkColumnDefParams extends LtinfoColumnDefParams {
     RequiresAuth?: boolean;
 }
 
-export interface MultiLinkColumnDefParams extends LtinfoColumnDefParams {
+export interface MultiLinkColumnDefParams extends ColumnDefParams {
     InRouterLink?: string;
     InRouterLinkHandler?: (params: any) => string;
     /** When true, links will only render as hyperlinks if user is authenticated. Otherwise renders as plain text. */
     RequiresAuth?: boolean;
 }
 
-export interface JoinedListColumnDefParams extends LtinfoColumnDefParams {
+export interface JoinedListColumnDefParams extends ColumnDefParams {
     /** String used to join values when a list is encountered (default: ", ") */
     Delimiter?: string;
     /** Remove duplicates before joining (default: false) */
@@ -834,7 +834,7 @@ export interface JoinedListColumnDefParams extends LtinfoColumnDefParams {
     SortValues?: boolean;
 }
 
-export interface DecimalColumnDefParams extends LtinfoColumnDefParams {
+export interface DecimalColumnDefParams extends ColumnDefParams {
     MinDecimalPlacesToDisplay?: number;
     MaxDecimalPlacesToDisplay?: number;
     ZeroFillNullValues?: boolean;
@@ -846,7 +846,7 @@ export interface CurrencyColumnDefParams extends DecimalColumnDefParams {
     CurrencySymbol?: string;
 }
 
-export interface DateColumnDefParams extends LtinfoColumnDefParams {
+export interface DateColumnDefParams extends ColumnDefParams {
     Sort?: SortDirection;
 }
 

@@ -28,24 +28,6 @@
                 </div>
             </li>
             }  -->
-            <!-- @if (isLTInfoAdministrator() || isClimateResilienceAdministrator()) {
-            <li class="nav-item dropdown" routerLinkActive="active" [dropdownToggle]="manageToggle">
-                <a class="dropdown-toggle nav-link" role="button" aria-haspopup="true" aria-expanded="false"> Manage LT Info </a>
-                <div #manageToggle class="dropdown-menu dropdown-menu-right">
-                    @if (isLTInfoAdministrator()) {
-                    <a href="{{ pageContentIndexUrl() }}" class="dropdown-item">Page Content</a>
-                    <a href="{{ fieldDefinitionIndexUrl() }}" class="dropdown-item">Labels and Definitions</a>
-                    <div class="dropdown-divider"></div>
-                    }
-                    <a href="{{ usersListUrl() }}" class="dropdown-item">Users</a>
-                    <a href="{{ roleIndexUrl() }}" class="dropdown-item">Roles</a>
-                    @if (isLTInfoAdministrator()) {
-                    <div class="dropdown-divider"></div>
-                    <a href="{{ projectUpdateManageUrl() }}" class="dropdown-item">Project Updates</a>
-                    }
-                </div>
-            </li>
-            }  -->
             @if (showTestingWarning()) {
             <li class="nav-item qa-warning">
                 <div class="nav-link">
