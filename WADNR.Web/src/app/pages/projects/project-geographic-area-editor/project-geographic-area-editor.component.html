@@ -111,10 +111,10 @@
         </form>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
         <button type="button" class="btn btn-primary" (click)="save()" [disabled]="isSubmitting">
             {{ isSubmitting ? "Saving..." : "Save" }}
         </button>
+        <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
     </div>
     }
 }
