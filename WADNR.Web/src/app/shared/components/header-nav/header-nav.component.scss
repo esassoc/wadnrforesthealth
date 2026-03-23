@@ -469,7 +469,13 @@
         padding: var(--spacing-400);
         font-weight: 600;
 
-        &:hover {
+        > a {
+            margin: calc(-1 * var(--spacing-400));
+            padding: var(--spacing-400);
+        }
+
+        &:hover,
+        &:has(> a.active) {
             background: var(--white);
 
             > a {

@@ -1,4 +1,4 @@
-import { Directive, Input, ElementRef, HostListener, HostBinding, Renderer2, OnDestroy } from "@angular/core";
+import { Directive, Input, ElementRef, HostListener, Renderer2, OnDestroy } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 
@@ -13,7 +13,7 @@ export class DropdownToggleDirective implements OnDestroy {
     @Input() dropdownToggle: any;
     @Input() dropdownToggleFixed: boolean = false;
 
-    @HostBinding("class.active") showMenu: boolean = false;
+    showMenu: boolean = false;
 
     @HostListener("click", ["$event"]) onClick(event) {
         this.showMenu = !this.showMenu;
@@ -46,15 +46,18 @@ export class DropdownToggleDirective implements OnDestroy {
             this.showMenu = show;
         }
         if (this.showMenu) {
+            this.renderer.addClass(this.el.nativeElement, this.classString);
             this.renderer.addClass(this.dropdownToggle, this.classString);
             if (this.dropdownToggleFixed) {
                 this.positionFixedMenu();
                 this.addScrollListener();
             }
         } else {
+            this.renderer.removeClass(this.el.nativeElement, this.classString);
             if (this.dropdownToggle) {
                 this.renderer.removeClass(this.dropdownToggle, this.classString);
             }
+            this.el.nativeElement.blur();
             this.removeScrollListener();
         }
     }
