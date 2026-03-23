@@ -13,11 +13,11 @@
 
 :root {
     /* palette */
-    --blue-lighter: #e7f0fb;
-    --blue-light: #7fa9d6;
-    --blue-default: #1f5fa3;
-    --blue-dark: #023467;
-    --blue-darker: #01224a;
+    --blue-lighter: #edf3f9;
+    --blue-light: #7aa5ce;
+    --blue-default: #003366;
+    --blue-dark: #002952;
+    --blue-darker: #001f3d;
 
     --teal-lighter: #eff5f7;
     --teal-light: #cce0e7;
@@ -70,17 +70,17 @@
     --tan: #f4f3ef;
 
     /* numeric palette shades */
-    --blue-50: #e8f0fb;
-    --blue-100: #d3e2f7;
-    --blue-200: #a9c6ed;
-    --blue-300: #7aa6e0;
-    --blue-400: #4f86d3;
-    --blue-500: #2f6fbe;
-    --blue-600: #1f5fa3;
-    --blue-700: #174a82;
-    --blue-800: #023467;
-    --blue-900: #012a57;
-    --blue-950: #01224a;
+    --blue-50: #edf3f9;
+    --blue-100: #d6e3f0;
+    --blue-200: #a8c4df;
+    --blue-300: #7aa5ce;
+    --blue-400: #4d86bd;
+    --blue-500: #1f66a8;
+    --blue-600: #004d8c;
+    --blue-700: #003d70;
+    --blue-800: #003366;
+    --blue-900: #002952;
+    --blue-950: #001f3d;
 
     --brown-50: #fcf3e6;
     --brown-100: #f7e7cf;
@@ -132,8 +132,8 @@
 
     --orange: var(--wadnr-orange);
 
-    --primary: #3e72b0;
-    --primary-rgb: 62, 114, 176;
+    --primary: var(--blue-800);
+    --primary-rgb: 0, 51, 102;
     --secondary: #5a9cb0;
     --secondary-rgb: 90, 156, 176;
     --muted: #dee2e6;
@@ -210,8 +210,8 @@
     --btn-primary-bg-color: var(--primary);
     --btn-primary-border-color: var(--primary);
     --btn-primary-text-color: var(--white);
-    --btn-primary-hover-bg-color: #305d8e;
-    --btn-primary-hover-border-color: #305d8e;
+    --btn-primary-hover-bg-color: var(--blue-900);
+    --btn-primary-hover-border-color: var(--blue-900);
 
     --btn-secondary-bg-color: #7a8190;
     --btn-secondary-border-color: #7a8190;

@@ -4,7 +4,7 @@
     /* sizes & colors */
     --h: 42px; /* crumb height */
     --slant: 10px; /* width of arrow tip */
-    --blue: #6b9bb8;
+    --blue: var(--blue-600);
     --bg: #f1f3f5; /* light gray for bar */
     --text: #1f2a37;
 }
