@@ -170,6 +170,8 @@ Skills in `.claude/skills/` are invoked via `/skill-name`. They define step-by-s
 | `/crud-modal` | Create/Edit modal dialog forms |
 | `/add-scrollspy-toc` | Scrollspy Table of Contents sidebar |
 | `/check-migration-status` | MVC to Angular migration audit |
+| `/csharp-test-coverage` | Run C# tests with coverage, report uncovered lines per class |
+| `/audit-a11y` | WCAG 2.2 AA accessibility audit (Playwright axe-core + ESLint template rules) |
 
 ---
 
