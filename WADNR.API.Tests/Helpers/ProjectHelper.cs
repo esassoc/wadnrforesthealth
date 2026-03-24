@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 using WADNR.EFModels.Entities;
 
 namespace WADNR.API.Tests.Helpers;
@@ -112,6 +113,80 @@ public static class ProjectHelper
             });
             await dbContext.SaveChangesWithNoAuditingAsync();
         }
+
+        return project;
+    }
+
+    /// <summary>
+    /// Creates a draft project using existing lookup data from the database.
+    /// Needed for create-workflow transition tests.
+    /// </summary>
+    public static async Task<Project> CreateDraftProjectWithValidLookupsAsync(
+        WADNRDbContext dbContext,
+        int createPersonID)
+    {
+        var projectType = await dbContext.ProjectTypes.FirstAsync();
+        var personExists = await dbContext.People.AnyAsync(p => p.PersonID == createPersonID);
+        int? proposingPersonID = personExists
+            ? createPersonID
+            : (await dbContext.People.FirstOrDefaultAsync())?.PersonID;
+
+        var projectNumber = $"TST{DateTime.UtcNow.Ticks % 1000000:000000}";
+
+        var project = new Project
+        {
+            ProjectTypeID = projectType.ProjectTypeID,
+            ProjectStageID = (int)ProjectStageEnum.Planned,
+            ProjectName = $"Test Draft Project {projectNumber}",
+            ProjectDescription = "Test draft project for create-workflow testing",
+            ProjectLocationSimpleTypeID = 1,
+            ProjectLocationPoint = new Point(-120.5, 47.5) { SRID = 4326 },
+            ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.Draft,
+            FhtProjectNumber = projectNumber,
+            ProposingPersonID = proposingPersonID,
+            ProposingDate = DateTime.UtcNow,
+            PlannedDate = DateOnly.FromDateTime(DateTime.Today),
+        };
+
+        dbContext.Projects.Add(project);
+        await dbContext.SaveChangesWithNoAuditingAsync();
+
+        return project;
+    }
+
+    /// <summary>
+    /// Creates a pending-approval project (submitted for review) using existing lookup data.
+    /// Needed for approve/return/reject workflow transition tests.
+    /// </summary>
+    public static async Task<Project> CreatePendingApprovalProjectWithValidLookupsAsync(
+        WADNRDbContext dbContext,
+        int createPersonID)
+    {
+        var projectType = await dbContext.ProjectTypes.FirstAsync();
+        var personExists = await dbContext.People.AnyAsync(p => p.PersonID == createPersonID);
+        int? proposingPersonID = personExists
+            ? createPersonID
+            : (await dbContext.People.FirstOrDefaultAsync())?.PersonID;
+
+        var projectNumber = $"TST{DateTime.UtcNow.Ticks % 1000000:000000}";
+
+        var project = new Project
+        {
+            ProjectTypeID = projectType.ProjectTypeID,
+            ProjectStageID = (int)ProjectStageEnum.Planned,
+            ProjectName = $"Test Pending Project {projectNumber}",
+            ProjectDescription = "Test pending project for workflow testing",
+            ProjectLocationSimpleTypeID = 1,
+            ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.PendingApproval,
+            FhtProjectNumber = projectNumber,
+            ProposingPersonID = proposingPersonID,
+            ProposingDate = DateTime.UtcNow,
+            SubmissionDate = DateTime.UtcNow,
+            PlannedDate = DateOnly.FromDateTime(DateTime.Today),
+        };
+
+        dbContext.Projects.Add(project);
+        await dbContext.SaveChangesWithNoAuditingAsync();
 
         return project;
     }
