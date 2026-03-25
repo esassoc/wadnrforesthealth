@@ -514,3 +514,178 @@ Uses `m/mt/mr/mb/ml/mx/my` and `p/pt/pr/pb/pl/px/py` with levels 1–6:
 | `fill` | `flex: 1` |
 | `ai-fs` | `align-items: flex-start` |
 | `ai-fe` | `align-items: flex-end` |
+
+---
+
+## WCAG 2.2 AA Accessibility
+
+All new and modified components must meet WCAG 2.2 AA. The subsections below cover the patterns that caused real violations in this project.
+
+### Color Contrast
+
+AA requires **4.5:1** for normal text and **3:1** for large text (18px+ or 14px+ bold).
+
+**Safe tokens on white (`#fff`) and card-body (`#f7f7f7`) backgrounds:**
+
+| Token | Hex | Ratio on white | Ratio on #f7f7f7 | Safe? |
+|-------|-----|----------------|-------------------|-------|
+| `--gray-600` | `#656565` | 5.18:1 | 4.69:1 | Yes |
+| `--gray-700` | `#4a4a4a` | 7.21:1 | 6.53:1 | Yes |
+| `--gray-800` | `#333333` | 10.69:1 | 9.68:1 | Yes |
+| `--gray-900` | `#1a1a1a` | 15.39:1 | 13.94:1 | Yes |
+| `--primary` | `#3e72b0` | 4.56:1 | 4.13:1 | Yes (white), borderline (card bg) |
+| `--gray-default` | `#767676` | 4.54:1 | **3.95:1** | **No on card bg** |
+
+**White text on colored backgrounds** — always verify the ratio:
+- `--btn-secondary-bg-color` (`#6b7280`) = 5.14:1 with white text ✓
+- `--btn-primary-bg-color` — check before changing
+
+**Never use `opacity` to communicate disabled state** — it compounds with already-marginal contrast and produces unpredictable ratios.
+
+```scss
+// CORRECT: Solid color with verified contrast
+.form-field__input:disabled {
+    background-color: var(--gray-200);
+    color: var(--gray-900);
+}
+
+.text-muted {
+    color: var(--gray-600);
+}
+
+// WRONG: Opacity produces unverifiable contrast
+.form-field__input:disabled {
+    opacity: 0.7;
+}
+```
+
+### Disabled & Muted States
+
+- **Disabled controls**: use `background-color: var(--gray-200)` + `color: var(--gray-900)` — never `opacity`
+- **Muted text**: use `var(--gray-600)` which passes 4.5:1 on both white and card backgrounds
+- **Placeholder text**: use `var(--gray-600)` — the global `_field.scss` and ng-select overrides already set this
+
+```scss
+// CORRECT: Disabled button with solid colors
+.btn:disabled {
+    background-color: var(--gray-200);
+    color: var(--gray-900);
+    cursor: not-allowed;
+}
+
+// WRONG: Opacity-based disabled state
+.btn:disabled {
+    opacity: 0.65;
+}
+```
+
+### Form Labels & Inputs
+
+**Always use `<form-field>`** — it handles `<label for>`, `aria-labelledby`, `aria-label`, sr-only labels, and required indicators automatically.
+
+If raw HTML is unavoidable, every `<input>`, `<select>`, `<textarea>` MUST have either a `<label [for]="id">` or `[attr.aria-label]`.
+
+```html
+<!-- CORRECT: form-field handles labeling automatically -->
+<form-field
+  [label]="'Project Name'"
+  [required]="true"
+  [control]="form.controls.projectName"
+  fieldType="text">
+</form-field>
+
+<!-- CORRECT: Raw HTML with explicit label -->
+<label for="searchInput">Search projects</label>
+<input id="searchInput" type="text" />
+
+<!-- CORRECT: ng-select with ariaLabel -->
+<ng-select [ariaLabel]="'Select a program'" [items]="programs" ...></ng-select>
+
+<!-- WRONG: Input with no associated label -->
+<input type="text" placeholder="Search..." />
+```
+
+**Radio groups**: wrap in `<div role="radiogroup" [attr.aria-labelledby]="labelId">`.
+
+### Interactive Elements
+
+Clickable elements MUST be `<button>` or `<a>` — never `<div (click)>` or `<span (click)>`.
+
+If a non-semantic element must be clickable (rare): add `tabindex="0"`, `role="button"`, `(keydown.enter)`, and `(keydown.space)`.
+
+```html
+<!-- CORRECT: Semantic button -->
+<button class="btn btn-primary" (click)="doAction()">Action</button>
+
+<!-- CORRECT: Link navigation -->
+<a [routerLink]="['/projects', project.projectID]">{{ project.name }}</a>
+
+<!-- WRONG: Non-semantic clickable div -->
+<div class="clickable-card" (click)="doAction()">Click me</div>
+```
+
+- Never use `tabindex` > 0
+- Never remove `:focus` outline without providing a visible alternative (e.g., `box-shadow`)
+
+### Icons
+
+```html
+<!-- CORRECT: Decorative icon inside a button with text — hide from AT -->
+<button class="btn btn-primary" (click)="save()">
+  <icon icon="Save" aria-hidden="true"></icon> Save
+</button>
+
+<!-- CORRECT: Icon-only button — label on the button itself -->
+<button class="btn btn-secondary" (click)="edit()" [attr.aria-label]="'Edit ' + entity.name">
+  <icon icon="Edit" aria-hidden="true"></icon>
+</button>
+
+<!-- CORRECT: Standalone meaningful icon — label on the icon -->
+<icon icon="Warning" role="img" [attr.aria-label]="'Warning: incomplete data'"></icon>
+
+<!-- WRONG: Icon-only button with no accessible name -->
+<button class="btn btn-secondary" (click)="edit()">
+  <icon icon="Edit"></icon>
+</button>
+```
+
+### Modals
+
+`@ngneat/dialog` handles `role="dialog"`, `aria-modal`, and focus trapping automatically.
+
+- The modal header `<h4>` serves as the dialog label — always include one
+- See [Modal Template Structure](#modal-template-structure) for the required wrapper and button order
+
+### Images & Maps
+
+- All `<img>` tags need `[alt]` — decorative images use `alt=""`
+- `<wadnr-map>` accepts `[mapAriaLabel]` — always provide a descriptive label
+
+```html
+<!-- CORRECT: Informative image -->
+<img [src]="photo.url" [alt]="photo.caption || 'Project photo'" />
+
+<!-- CORRECT: Decorative image -->
+<img src="assets/divider.svg" alt="" />
+
+<!-- CORRECT: Map with descriptive label -->
+<wadnr-map [mapAriaLabel]="'Project locations in ' + county.name"></wadnr-map>
+
+<!-- WRONG: Missing alt -->
+<img [src]="photo.url" />
+```
+
+### Dynamic Content
+
+- Use `aria-live="polite"` for regions that update asynchronously (toast messages, search results, status changes)
+- Use `aria-live="assertive"` only for urgent errors
+- The `[loadingSpinner]` directive already handles loading announcements — don't roll custom spinners
+
+```html
+<!-- CORRECT: Live region for async updates -->
+<div aria-live="polite">
+  @if (searchResults$ | async; as results) {
+    <span>{{ results.length }} results found</span>
+  }
+</div>
+```

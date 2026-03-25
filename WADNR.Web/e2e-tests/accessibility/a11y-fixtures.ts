@@ -32,4 +32,33 @@ export async function checkA11y(page: Page, pageName: string, testInfo: TestInfo
     return results;
 }
 
+/**
+ * Run an axe-core WCAG 2.2 AA scan scoped to an open modal dialog.
+ * Scans only the `.ngneat-dialog-content` container to avoid double-counting page-level violations.
+ */
+export async function checkModalA11y(page: Page, modalName: string, testInfo: TestInfo) {
+    const results = await new AxeBuilder({ page })
+        .include(".ngneat-dialog-content")
+        .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+        .analyze();
+
+    await testInfo.attach(`axe-results-${modalName}`, {
+        body: JSON.stringify(results, null, 2),
+        contentType: "application/json",
+    });
+
+    const violations = results.violations;
+    if (violations.length > 0) {
+        const summary = violations.map((v) => {
+            const nodes = v.nodes.length;
+            return `  [${v.impact}] ${v.id}: ${v.help} (${nodes} element${nodes > 1 ? "s" : ""})`;
+        });
+        console.log(`\n${modalName}: ${violations.length} violation(s)\n${summary.join("\n")}`);
+    } else {
+        console.log(`${modalName}: No violations`);
+    }
+
+    return results;
+}
+
 export { test, expect };

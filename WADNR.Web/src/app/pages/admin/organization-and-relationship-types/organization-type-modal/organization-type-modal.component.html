@@ -29,6 +29,7 @@
             </form-field>
             <input type="color"
                 class="org-type-modal__color-picker"
+                aria-label="Legend Color picker"
                 [value]="form.controls.LegendColor.value || '#000000'"
                 (input)="form.controls.LegendColor.setValue($any($event.target).value)">
         </div>

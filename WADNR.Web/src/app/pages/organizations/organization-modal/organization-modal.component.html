@@ -43,7 +43,7 @@
         </form-field>
 
         <div class="form-field">
-            <label class="field-label">Vendor</label>
+            <label class="field-label" for="vendor-select">Vendor</label>
             <ng-select
                 class="custom"
                 [items]="vendorResults$ | async"
@@ -57,7 +57,9 @@
                 dropdownPosition="auto"
                 typeToSearchText="Type to search vendors..."
                 placeholder="Search Vendor Name or Statewide Vendor Number"
-                appendTo="#dropdown-host">
+                appendTo="#dropdown-host"
+                labelForId="vendor-select"
+                aria-label="Vendor">
             </ng-select>
         </div>
 

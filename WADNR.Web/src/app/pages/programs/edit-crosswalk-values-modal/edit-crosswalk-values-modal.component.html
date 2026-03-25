@@ -35,10 +35,10 @@
     <h4>{{ group.label }}</h4>
     <div class="grid-12 mb-2 ai-fe crosswalk-modal__add-row">
         <div class="g-col-4">
-            <form-field [formControl]="group.newSourceValue" [type]="FormFieldType.Text" label="Source Value" placeholder="Source value"></form-field>
+            <form-field [formControl]="group.newSourceValue" [type]="FormFieldType.Text" fieldLabel="Source Value" [srOnlyLabel]="true" placeholder="Source value"></form-field>
         </div>
         <div class="g-col-6">
-            <form-field [formControl]="group.newMappedValue" [type]="FormFieldType.Select" [formInputOptions]="group.options" label="Mapped to FHT Value" placeholder="Select mapped value"></form-field>
+            <form-field [formControl]="group.newMappedValue" [type]="FormFieldType.Select" [formInputOptions]="group.options" fieldLabel="Mapped to FHT Value" [srOnlyLabel]="true" placeholder="Select mapped value"></form-field>
         </div>
         <div class="g-col-2">
             <button class="btn btn-sm btn-primary" (click)="addRow(group)" [disabled]="!canAdd(group)">Add</button>

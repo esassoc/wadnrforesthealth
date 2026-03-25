@@ -49,7 +49,7 @@ export class CustomPageContentModalComponent extends BaseModal implements OnInit
     }
 
     ngAfterViewChecked(): void {
-        this.tinyMceConfig = TinyMCEHelpers.DefaultInitConfig(this.tinyMceEditor);
+        this.tinyMceConfig = TinyMCEHelpers.DefaultInitConfig(this.tinyMceEditor, null, "Custom page content editor");
     }
 
     save(): void {

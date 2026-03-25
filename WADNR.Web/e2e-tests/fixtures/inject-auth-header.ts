@@ -1,4 +1,4 @@
-import { Page } from "@playwright/test";
+import { APIRequestContext, Page } from "@playwright/test";
 
 const TEST_AUTH_HEADER = "X-E2E-User-GlobalID";
 
@@ -29,5 +29,23 @@ export async function setupTestAuth(page: Page, globalID: string) {
             [TEST_AUTH_HEADER]: globalID,
         };
         await route.continue({ headers });
+    });
+}
+
+/**
+ * Clears any DB-persisted impersonation on the test user.
+ *
+ * Impersonation is stored on the Person record (ImpersonatedPersonID), so it
+ * leaks across browser sessions — including into Playwright tests. This call
+ * ensures the test user is always themselves, not whoever a developer was
+ * impersonating in their browser.
+ *
+ * Uses the standalone Playwright APIRequestContext (not the page) so the call
+ * doesn't trigger the page-level API error monitor. A 403 is expected when
+ * the user isn't currently impersonating — it's silently ignored.
+ */
+export async function clearImpersonation(request: APIRequestContext, globalID: string) {
+    await request.post("/impersonation/stop", {
+        headers: { [TEST_AUTH_HEADER]: globalID },
     });
 }

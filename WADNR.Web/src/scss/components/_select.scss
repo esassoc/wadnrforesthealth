@@ -7,6 +7,10 @@
             input[type="text"] {
                 max-height: 36px;
             }
+
+            .ng-placeholder {
+                color: var(--gray-600); // #656565 — 5.92:1 on white, 5.51:1 on #f7f7f7, passes WCAG AA
+            }
         }
     }
 }

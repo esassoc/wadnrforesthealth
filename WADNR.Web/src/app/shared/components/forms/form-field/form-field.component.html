@@ -1,6 +1,6 @@
 <div class="field">
     @if (fieldDefinitionName) {
-        <span class="form-field__definition-container" [class.required]="formControl | isRequired">
+        <span class="form-field__definition-container" [id]="labelId" [class.required]="formControl | isRequired">
             <field-definition [fieldDefinition]="fieldDefinitionName" [labelOverride]="fieldDefinitionLabelOverride"></field-definition>
         </span>
     }
@@ -9,12 +9,12 @@
             <!-- Text -->
             @case (FormFieldType.Text) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <div class="form-field__label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.sr-only]="srOnlyLabel" [for]="inputId" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
-                    </div>
+                    </label>
                 }
                 <div class="form-field__units-wrapper">
-                    <input [mask]="mask" type="text" [placeholder]="placeholder" [formControl]="formControl" [name]="name" />
+                    <input [id]="inputId" [attr.aria-labelledby]="fieldDefinitionName ? labelId : null" [mask]="mask" type="text" [placeholder]="placeholder" [formControl]="formControl" [name]="name" />
                     @if (units) {
                         <span class="form-field__units">{{ units }}</span>
                     }
@@ -23,12 +23,12 @@
             <!-- Number -->
             @case (FormFieldType.Number) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <div class="form-field__label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.sr-only]="srOnlyLabel" [for]="inputId" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
-                    </div>
+                    </label>
                 }
                 <div class="form-field__units-wrapper">
-                    <input type="number" [placeholder]="placeholder" [formControl]="formControl" [mask]="mask" [name]="name" />
+                    <input [id]="inputId" [attr.aria-labelledby]="fieldDefinitionName ? labelId : null" type="number" [placeholder]="placeholder" [formControl]="formControl" [mask]="mask" [name]="name" />
                     @if (units) {
                         <span class="form-field__units">{{ units }}</span>
                     }
@@ -37,12 +37,14 @@
             <!-- Currency -->
             @case (FormFieldType.Currency) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <div class="form-field__label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.sr-only]="srOnlyLabel" [for]="inputId" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
-                    </div>
+                    </label>
                 }
                 <div class="form-field__units-wrapper">
                     <input
+                        [id]="inputId"
+                        [attr.aria-labelledby]="fieldDefinitionName ? labelId : null"
                         type="text"
                         [placeholder]="placeholder"
                         [value]="currencyDisplayValue"
@@ -59,31 +61,31 @@
             <!-- Textarea -->
             @case (FormFieldType.Textarea) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <div class="form-field__label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.sr-only]="srOnlyLabel" [for]="inputId" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
-                    </div>
+                    </label>
                 }
-                <textarea [placeholder]="placeholder" [formControl]="formControl" [name]="name"></textarea>
+                <textarea [id]="inputId" [attr.aria-labelledby]="fieldDefinitionName ? labelId : null" [placeholder]="placeholder" [formControl]="formControl" [name]="name"></textarea>
             }
             <!-- RTE -->
             @case (FormFieldType.RTE) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <div class="form-field__label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.sr-only]="srOnlyLabel" [for]="inputId" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
-                    </div>
+                    </label>
                 }
-                <editor #tinyMceEditor [init]="tinyMceEditor | tinyMceConfig" [formControl]="formControl"></editor>
+                <editor [id]="inputId" #tinyMceEditor [init]="tinyMceEditor | tinyMceConfig: ariaLabelText" [formControl]="formControl"></editor>
             }
             <!-- Toggle -->
             @case (FormFieldType.Toggle) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <label class="form-field__label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.sr-only]="srOnlyLabel" [for]="inputId" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </label>
                 }
                 <div class="switch-container" [style.minHeight]="toggleHeight">
                     <label class="switch">
-                        <input type="checkbox" [formControl]="formControl" [name]="name" />
+                        <input [id]="inputId" [attr.aria-label]="fieldDefinitionName ? ariaLabelText : null" type="checkbox" [formControl]="formControl" [name]="name" />
                         <span class="toggle" [attr.check-true]="toggleTrue" [attr.check-false]="toggleFalse"></span>
                     </label>
                 </div>
@@ -91,34 +93,36 @@
             <!-- Check -->
             @case (FormFieldType.Check) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <label class="form-field__label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.sr-only]="srOnlyLabel" [for]="inputId" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </label>
                 }
                 <label class="form-field__check-label">
-                    <input type="checkbox" [formControl]="formControl" [name]="name" />
+                    <input [id]="inputId" type="checkbox" [formControl]="formControl" [name]="name" />
                     {{ checkLabel }}
                 </label>
             }
             <!-- Date -->
             @case (FormFieldType.Date) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <label class="form-field__label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.sr-only]="srOnlyLabel" [for]="inputId" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </label>
                 }
-                <input type="date" [formControl]="formControl" [name]="name" />
+                <input [id]="inputId" [attr.aria-labelledby]="fieldDefinitionName ? labelId : null" type="date" [formControl]="formControl" [name]="name" />
             }
             <!-- Select -->
             @case (FormFieldType.Select) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <label class="form-field__label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.sr-only]="srOnlyLabel" [for]="inputId" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </label>
                 }
                 @if (formInputOptions) {
                     <ng-select
                         class="custom"
+                        [labelForId]="inputId"
+                        [ariaLabel]="fieldDefinitionName ? ariaLabelText : null"
                         [items]="formInputOptions"
                         [formControl]="formControl"
                         [multiple]="multiple"
@@ -143,11 +147,13 @@
             <!-- Radio -->
             @case (FormFieldType.Radio) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <label class="form-field__label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.sr-only]="srOnlyLabel" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
                     </label>
                 }
-                <div class="form-field__radio-options">
+                <div class="form-field__radio-options" role="radiogroup"
+                    [attr.aria-labelledby]="fieldDefinitionName ? labelId : null"
+                    [attr.aria-label]="!fieldDefinitionName && fieldLabel ? fieldLabel : null">
                     @for (formInputOption of formInputOptions; track formInputOption) {
                         <label>
                             <input type="radio" [formControl]="formControl" [name]="name" [value]="formInputOption.Value" />
@@ -159,9 +165,9 @@
             <!-- File -->
             @case (FormFieldType.File) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <div class="form-field__label" [class.required]="formControl | isRequired">
+                    <label class="form-field__label" [class.sr-only]="srOnlyLabel" [for]="inputId" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
-                    </div>
+                    </label>
                 }
                 @if (multiple) {
                     <div class="form-field__multi-file-list">
@@ -175,6 +181,7 @@
                         }
                     </div>
                     <input
+                        [id]="inputId"
                         type="file"
                         #fileUploadField
                         multiple
@@ -187,6 +194,7 @@
                 } @else {
                     <div class="custom-file-upload">
                         <input
+                            [id]="inputId"
                             type="file"
                             #fileUploadField
                             (change)="onFileChange($event)"
@@ -211,9 +219,9 @@
         }
     } @else {
         @if (!fieldDefinitionName && fieldLabel) {
-            <div class="form-field__label" [class.required]="formControl | isRequired">
+            <label class="form-field__label" [class.required]="formControl | isRequired">
                 {{ fieldLabel }}
-            </div>
+            </label>
         }
         <div>
             <span>{{ formControl.getRawValue() }}</span>

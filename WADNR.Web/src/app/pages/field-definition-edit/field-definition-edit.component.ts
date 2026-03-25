@@ -84,7 +84,7 @@ export class FieldDefinitionEditComponent extends BaseModal implements OnInit, A
     }
 
     ngAfterViewChecked(): void {
-        this.tinyMceConfig = TinyMCEHelpers.DefaultInitConfig(this.tinyMceEditor);
+        this.tinyMceConfig = TinyMCEHelpers.DefaultInitConfig(this.tinyMceEditor, null, "Custom Definition");
     }
 
     save(): void {

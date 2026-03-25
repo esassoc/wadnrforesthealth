@@ -37,6 +37,8 @@
                                         <form-field
                                             [formControl]="obt.formControl"
                                             [type]="FormFieldType.Select"
+                                            [fieldLabel]="obt.relationshipType.RelationshipTypeName"
+                                            [srOnlyLabel]="true"
                                             [formInputOptions]="vm.allOrganizationOptions"
                                             [placeholder]="'Select a ' + obt.relationshipType.RelationshipTypeName + '...'"
                                             [readOnly]="state.saving"
@@ -55,6 +57,8 @@
                                         <form-field
                                             [formControl]="obt.formControl"
                                             [type]="FormFieldType.Select"
+                                            [fieldLabel]="obt.relationshipType.RelationshipTypeName"
+                                            [srOnlyLabel]="true"
                                             [formInputOptions]="obt.availableOrganizationOptions"
                                             [placeholder]="'Add a ' + obt.relationshipType.RelationshipTypeName + '...'"
                                             [readOnly]="state.saving"

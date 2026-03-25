@@ -35,6 +35,8 @@
                                         <form-field
                                             [formControl]="cbt.formControl"
                                             [type]="FormFieldType.Select"
+                                            [fieldLabel]="cbt.relationshipType.DisplayName"
+                                            [srOnlyLabel]="true"
                                             [formInputOptions]="vm.allPeopleOptions"
                                             [placeholder]="'Select a ' + cbt.relationshipType.DisplayName + '...'"
                                             [readOnly]="state.saving"
@@ -54,6 +56,8 @@
                                         <form-field
                                             [formControl]="cbt.formControl"
                                             [type]="FormFieldType.Select"
+                                            [fieldLabel]="cbt.relationshipType.DisplayName"
+                                            [srOnlyLabel]="true"
                                             [formInputOptions]="cbt.availablePeopleOptions"
                                             [placeholder]="'Add a ' + cbt.relationshipType.DisplayName + '...'"
                                             [readOnly]="state.saving"

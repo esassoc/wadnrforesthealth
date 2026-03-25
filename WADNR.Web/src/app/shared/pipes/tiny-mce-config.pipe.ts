@@ -10,7 +10,7 @@ import TinyMCEHelpers from "../helpers/tiny-mce-helpers";
  * Used for the TinyMCE editor component to prevent the editor from being re-initialized on every change detection cycle.
  */
 export class TinyMceConfigPipe implements PipeTransform {
-    transform(editor: EditorComponent): unknown {
-        return TinyMCEHelpers.DefaultInitConfig(editor);
+    transform(editor: EditorComponent, ariaLabel?: string): unknown {
+        return TinyMCEHelpers.DefaultInitConfig(editor, null, ariaLabel);
     }
 }

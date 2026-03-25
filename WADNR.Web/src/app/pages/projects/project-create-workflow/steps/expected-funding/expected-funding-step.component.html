@@ -23,7 +23,7 @@
                             <field-definition fieldDefinition="EstimatedTotalCost"></field-definition>
                         </div>
                         <div class="funding-step__form-input">
-                            <form-field [formControl]="estimatedTotalCostControl" [type]="FormFieldType.Currency" [readOnly]="state.saving" placeholder="$0.00"> </form-field>
+                            <form-field [formControl]="estimatedTotalCostControl" [type]="FormFieldType.Currency" [readOnly]="state.saving" placeholder="$0.00" fieldLabel="Estimated Total Cost" [srOnlyLabel]="true"> </form-field>
                         </div>
                     </div>
 
@@ -50,7 +50,7 @@
                             <field-definition fieldDefinition="FundSourceNote" labelOverride="Notes about Project Funding"></field-definition>
                         </div>
                         <div class="funding-step__form-input">
-                            <form-field [formControl]="fundingSourceNotesControl" [type]="FormFieldType.Textarea" [readOnly]="state.saving"> </form-field>
+                            <form-field [formControl]="fundingSourceNotesControl" [type]="FormFieldType.Textarea" [readOnly]="state.saving" fieldLabel="Notes about Project Funding" [srOnlyLabel]="true"> </form-field>
                         </div>
                     </div>
 
@@ -65,6 +65,8 @@
                             [formInputOptions]="availableAllocationOptions"
                             placeholder="Select a WA DNR Fund Source Allocation to Add"
                             [readOnly]="state.saving"
+                            fieldLabel="WA DNR Fund Source Allocation to Add"
+                            [srOnlyLabel]="true"
                             (change)="onAllocationSelect($event)">
                         </form-field>
                         <p class="funding-step__help-text">WA DNR Fund Source Allocation not listed? <a href="javascript:void(0);" (click)="openMissingAllocationModal()">Contact support</a></p>
@@ -95,7 +97,7 @@
                                         </td>
                                         <td>{{ ar.fundSourceAllocationName }}</td>
                                         <td>
-                                            <form-field [formControl]="ar.amountControl" [type]="FormFieldType.Currency" [readOnly]="state.saving" placeholder="$0.00"> </form-field>
+                                            <form-field [formControl]="ar.amountControl" [type]="FormFieldType.Currency" [readOnly]="state.saving" placeholder="$0.00" fieldLabel="Total Amount" [srOnlyLabel]="true"> </form-field>
                                         </td>
                                     </tr>
                                 }

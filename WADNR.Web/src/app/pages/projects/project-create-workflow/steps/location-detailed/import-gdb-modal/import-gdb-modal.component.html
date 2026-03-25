@@ -39,7 +39,9 @@
                         <td class="text-center align-middle">
                             <form-field
                                 [formControl]="layer.shouldImportControl"
-                                [type]="FormFieldType.Check">
+                                [type]="FormFieldType.Check"
+                                fieldLabel="Import"
+                                [srOnlyLabel]="true">
                             </form-field>
                         </td>
                         <td class="align-middle">{{ layer.featureClassName }}</td>
@@ -50,7 +52,9 @@
                                 <form-field
                                     [formControl]="layer.selectedPropertyControl"
                                     [type]="FormFieldType.Select"
-                                    [formInputOptions]="layer.propertyOptions">
+                                    [formInputOptions]="layer.propertyOptions"
+                                    fieldLabel="Name Property"
+                                    [srOnlyLabel]="true">
                                 </form-field>
                             } @else {
                                 <span class="text-muted">No properties</span>

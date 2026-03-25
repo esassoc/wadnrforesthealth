@@ -45,7 +45,7 @@
             }
         </div>
     </div> -->
-    <div [id]="mapID" [style.height]="mapHeight" [style.cursor]="cursorStyle">
+    <div [id]="mapID" [style.height]="mapHeight" [style.cursor]="cursorStyle" role="application" [attr.aria-label]="mapAriaLabel || 'Interactive map'">
         @if (showLegend) {
         <div class="wadnr-map__legend leaflet-control-layers leaflet-control-layers-expanded" [id]="legendID">
             <a class="leaflet-control-layers-toggle">

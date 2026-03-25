@@ -58,7 +58,7 @@
 
             &:disabled {
                 & + .option__label {
-                    color: #aaa;
+                    color: var(--gray-600);
                     font-style: italic;
                     pointer-events: none;
                 }
@@ -79,7 +79,7 @@
 
             &:disabled {
                 & + .option__label {
-                    color: #aaa;
+                    color: var(--gray-600);
                     font-style: italic;
                     pointer-events: none;
                 }

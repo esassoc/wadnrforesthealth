@@ -6,8 +6,8 @@ export default class TinyMCEHelpers {
      * @param overrideConfig
      * @returns
      */
-    public static DefaultInitConfig(editorComponent: EditorComponent = null, overrideConfig: object = null): object {
-        let config = {
+    public static DefaultInitConfig(editorComponent: EditorComponent = null, overrideConfig: object = null, ariaLabel?: string): object {
+        let config: any = {
             base_url: "/tinymce", // Root for resources
             suffix: ".min", // Suffix to use when loading resources
             license_key: "gpl",
@@ -19,6 +19,7 @@ export default class TinyMCEHelpers {
             file_picker_types: "image",
             images_file_types: "jpg,svg,webp,gif",
             promotion: false,
+            resize: false,
             // This is from the TinyMCE documentation on how to handle image uploads
             file_picker_callback: (cb, value, meta) => {
                 const input = document.createElement("input");
@@ -48,6 +49,21 @@ export default class TinyMCEHelpers {
                 input.click();
             },
         };
+
+        if (ariaLabel) {
+            config.iframe_aria_text = ariaLabel;
+            const existingSetup = config.setup;
+            config.setup = (ed: any) => {
+                existingSetup?.(ed);
+                ed.on("init", () => {
+                    ed.getBody()?.setAttribute("aria-label", ariaLabel);
+                    const iframe = ed.iframeElement;
+                    if (iframe) {
+                        iframe.setAttribute("title", ariaLabel);
+                    }
+                });
+            };
+        }
 
         let resultConfig = this.OverrideConfig(config, overrideConfig);
         return resultConfig;

@@ -60,7 +60,7 @@ input:checked {
             & + .toggle {
                 border: 1px solid var(--gray-200);
                 background-color: var(--white);
-                color: #b4b4b4;
+                color: var(--gray-600);
 
                 &:hover {
                     pointer-events: none;
@@ -68,7 +68,7 @@ input:checked {
                 }
 
                 &:before {
-                    background-color: #b4b4b4;
+                    background-color: var(--gray-600);
                 }
             }
         }
@@ -97,7 +97,7 @@ input:checked {
         &.toggle-orange {
             border: 1px solid var(--gray-light);
             background-color: var(--gray-light);
-            color: var(--gray-default);
+            color: var(--gray-600);
             &:before {
                 background-color: var(--white);
             }

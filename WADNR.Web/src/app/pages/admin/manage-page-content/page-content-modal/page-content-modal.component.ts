@@ -74,7 +74,7 @@ export class PageContentModalComponent extends BaseModal implements OnInit, Afte
     }
 
     ngAfterViewChecked(): void {
-        this.tinyMceConfig = TinyMCEHelpers.DefaultInitConfig(this.tinyMceEditor);
+        this.tinyMceConfig = TinyMCEHelpers.DefaultInitConfig(this.tinyMceEditor, null, "Page content editor");
     }
 
     save(): void {

@@ -37,6 +37,7 @@
             </form-field>
             <input type="color"
                 class="classification-modal__color-picker"
+                aria-label="Theme Color picker"
                 [value]="form.controls.ThemeColor.value || '#000000'"
                 (input)="form.controls.ThemeColor.setValue($any($event.target).value)">
         </div>

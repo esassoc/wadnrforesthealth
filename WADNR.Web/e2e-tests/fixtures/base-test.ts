@@ -1,5 +1,5 @@
 import { test as base, expect, Page } from "@playwright/test";
-import { setupTestAuth } from "./inject-auth-header";
+import { setupTestAuth, clearImpersonation } from "./inject-auth-header";
 import { testUsers } from "./test-users";
 
 /**
@@ -30,8 +30,9 @@ export const test = base.extend<{ authedPage: Page; publicPage: Page }>({
      * A page with test auth configured and API error monitoring.
      * Automatically fails the test if any API request returned 4xx/5xx.
      */
-    authedPage: async ({ page }, use) => {
+    authedPage: async ({ page, request }, use) => {
         await setupTestAuth(page, testUsers.admin);
+        await clearImpersonation(request, testUsers.admin);
         const errors = attachApiErrorMonitor(page);
         await use(page);
         expect(errors, `API errors during test:\n${errors.join("\n")}`).toHaveLength(0);

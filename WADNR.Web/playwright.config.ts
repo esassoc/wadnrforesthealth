@@ -61,6 +61,7 @@ export default defineConfig({
     {
       name: "accessibility",
       testMatch: "accessibility/*.a11y.spec.ts",
+      fullyParallel: false,
       use: {
         ...devices["Desktop Chrome"],
         channel: "chrome",

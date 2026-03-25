@@ -29,6 +29,18 @@ import { NgSelectModule } from "@ng-select/ng-select";
     imports: [NgxMaskDirective, FormsModule, ReactiveFormsModule, EditorComponent, FieldDefinitionComponent, InputErrorsComponent, RequiredPipe, TinyMceConfigPipe, NgSelectModule],
 })
 export class FormFieldComponent implements OnInit, OnDestroy {
+    private static _nextId = 0;
+    public inputId = `ff-${FormFieldComponent._nextId++}`;
+    public labelId = `ff-lbl-${FormFieldComponent._nextId - 1}`;
+
+    /** Resolved label text for components that need aria-label instead of aria-labelledby (ng-select, TinyMCE). */
+    get ariaLabelText(): string | null {
+        if (this.fieldDefinitionLabelOverride) return this.fieldDefinitionLabelOverride;
+        if (this.fieldDefinitionName) return this.fieldDefinitionName;
+        if (this.fieldLabel) return this.fieldLabel;
+        return null;
+    }
+
     public FormFieldType = FormFieldType;
     @Output() change = new EventEmitter<any>();
     @Input() formControl: FormControl;
@@ -56,6 +68,7 @@ export class FormFieldComponent implements OnInit, OnDestroy {
     @Input() appendTo: string = "#dropdown-host";
 
     @Input() readOnly: boolean = false;
+    @Input() srOnlyLabel: boolean = false;
 
     /**
      * comma separated list of file types: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#accept

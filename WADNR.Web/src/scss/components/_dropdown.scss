@@ -166,7 +166,7 @@
                 font-size: 0.75rem;
 
                 @include desktop-small {
-                    color: var(--gray-500);
+                    color: var(--gray-600);
                 }
             }
 
@@ -221,7 +221,7 @@
                 font-size: 12px;
 
                 @include desktop-small {
-                    color: var(--gray-500);
+                    color: var(--gray-600);
                 }
             }
         }

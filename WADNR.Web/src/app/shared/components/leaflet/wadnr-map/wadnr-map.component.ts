@@ -40,6 +40,7 @@ export class WADNRMapComponent implements OnInit, AfterViewInit, OnChanges, OnDe
     @Input() showLegend: boolean = false;
     @Input() legendPosition: ControlPosition = "topleft";
     @Input() disableMapInteraction: boolean = false; // disables all interaction when true
+    @Input() mapAriaLabel: string;
     /** When true, the layers control starts closed (collapsed). */
     @Input() collapseLayerControlOnLoad: boolean = true;
     /** Overlay group names that should use radio buttons (mutually exclusive selection). */
@@ -109,6 +110,9 @@ export class WADNRMapComponent implements OnInit, AfterViewInit, OnChanges, OnDe
                 position: "topleft",
             })
         );
+
+        // Patch Leaflet controls with aria-labels for accessibility
+        this.patchLeafletControlAriaLabels();
 
         // if interactions are disabled, remove the zoom control UI if Leaflet added it
         if (this.disableMapInteraction && this.map && this.map.zoomControl) {
@@ -259,6 +263,21 @@ export class WADNRMapComponent implements OnInit, AfterViewInit, OnChanges, OnDe
     //     );
     //     this.clearSearch();
     // }
+
+    private patchLeafletControlAriaLabels(): void {
+        const container = document.getElementById(this.mapID);
+        if (!container) return;
+
+        const patchEl = (selector: string, label: string) => {
+            const el = container.querySelector(selector);
+            if (el) el.setAttribute("aria-label", label);
+        };
+
+        patchEl(".leaflet-control-zoom-in", "Zoom in");
+        patchEl(".leaflet-control-zoom-out", "Zoom out");
+        patchEl(".leaflet-control-fullscreen-button", "Toggle fullscreen");
+        patchEl(".leaflet-control-layers-toggle", "Map layers");
+    }
 
     private createLegendItems(): LegendItem[] {
         const legendItems = [];

@@ -140,21 +140,21 @@
     &__item.inactive {
         .reorderable__order {
             span {
-                border: 2px solid rgba(var(--black-rgb), 0.25);
-                color: rgba(var(--black-rgb), 0.25);
+                border: 2px solid rgba(var(--black-rgb), 0.58);
+                color: rgba(var(--black-rgb), 0.58);
             }
         }
 
         .reorderable__title {
-            color: rgba(var(--black-rgb), 0.4);
+            color: rgba(var(--black-rgb), 0.58);
 
             input {
-                color: rgba(var(--black-rgb), 0.4);
+                color: rgba(var(--black-rgb), 0.58);
             }
 
             .fas,
             .fa {
-                color: rgba(var(--black-rgb), 0.25);
+                color: rgba(var(--black-rgb), 0.58);
             }
         }
     }

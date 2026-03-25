@@ -1008,8 +1008,7 @@ public static class Projects
             || (callingUser.SupplementalRoleList?.Any(r =>
                 r.RoleID == (int)RoleEnum.CanManageFundSourcesAndAgreements) ?? false);
 
-        entity.UserCanEditProjectAsAdmin = entity.UserCanDirectEdit
-            || callingUser.HasCanEditProgramRole();
+        entity.UserCanEditProjectAsAdmin = ProjectAuthorization.CanEditAsAdmin(callingUser, authData, stewardshipAreaTypeID);
 
         entity.UserCanViewInternalNotes = entity.UserCanEditProjectAsAdmin && isApproved;
 

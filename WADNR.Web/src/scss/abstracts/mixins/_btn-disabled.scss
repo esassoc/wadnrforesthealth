@@ -1,17 +1,16 @@
 @mixin btn-disabled {
     &.disabled,
     &:disabled {
-        opacity: 0.6;
-        background: var(--gray-light);
+        background: var(--gray-200);
         border: 1px solid var(--gray-default);
         text-shadow: unset;
-        color: var(--gray-dark);
+        color: var(--gray-900);
 
         &:hover {
             cursor: not-allowed;
-            background: var(--gray-light);
+            background: var(--gray-200);
             pointer-events: none;
-            color: var(--gray-dark);
+            color: var(--gray-900);
         }
     }
 }

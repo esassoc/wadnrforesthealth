@@ -41,6 +41,7 @@
 
         <div class="field">
             <field-definition fieldDefinition="Vendor"></field-definition>
+            <label for="vendor-select" class="sr-only">Vendor</label>
             <ng-select
                 class="custom"
                 [items]="vendorSearchResults$ | async"
@@ -53,7 +54,9 @@
                 loadingText="Searching..."
                 bindLabel="DisplayName"
                 bindValue="VendorID"
-                placeholder="Vendor Name or Number">
+                placeholder="Vendor Name or Number"
+                labelForId="vendor-select"
+                aria-label="Vendor">
             </ng-select>
         </div>
 

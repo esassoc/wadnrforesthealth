@@ -78,6 +78,8 @@
                                         [formControl]="getFeatureControls(feature).name"
                                         [type]="FormFieldType.Text"
                                         placeholder="Enter name"
+                                        fieldLabel="Name"
+                                        [srOnlyLabel]="true"
                                         maxlength="100">
                                     </form-field>
                                 </td>
@@ -90,7 +92,9 @@
                                     <form-field
                                         [formControl]="getFeatureControls(feature).type"
                                         [type]="FormFieldType.Select"
-                                        [formInputOptions]="locationTypeOptions">
+                                        [formInputOptions]="locationTypeOptions"
+                                        fieldLabel="Type"
+                                        [srOnlyLabel]="true">
                                     </form-field>
                                 </td>
                                 <td (click)="$event.stopPropagation()">
@@ -98,6 +102,8 @@
                                         [formControl]="getFeatureControls(feature).notes"
                                         [type]="FormFieldType.Textarea"
                                         placeholder="Optional notes"
+                                        fieldLabel="Notes"
+                                        [srOnlyLabel]="true"
                                         maxlength="255">
                                     </form-field>
                                 </td>
