@@ -28,7 +28,7 @@
             @if (canCreateGisUpload$ | async) {
                 <button class="btn btn-primary home-index__action-btn" (click)="openGisImportModal()">GIS Import/Update</button>
             }
-            <a class="btn btn-primary home-index__action-btn" routerLink="/my-projects" [queryParams]="{ filter: 'requiring-update' }">Update Project</a>
+            <a class="btn btn-primary home-index__action-btn" routerLink="/projects/my" [queryParams]="{ filter: 'requiring-update' }">Update Project</a>
             }
 
             <!-- Project map -->

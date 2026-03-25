@@ -434,6 +434,7 @@
     <Build Include="dbo\Procs\dbo.pCommitProjectUpdateToProject.sql" />
     <Build Include="dbo\Procs\dbo.pStartProjectUpdateBatch.sql" />
     <None Include="Scripts\ReleaseScripts\0003 - Populate IsUser column on Person table.sql" />
+    <None Include="Scripts\ReleaseScripts\0004 - Update RTE links to new Angular routes.sql" />
   </ItemGroup>
   <UsingTask TaskName="ScriptDeploymentGenerator" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>

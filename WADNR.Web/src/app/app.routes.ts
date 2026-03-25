@@ -264,9 +264,9 @@ export const routes: Routes = [
         canActivate: [adminGuard],
         loadComponent: () => import("./pages/admin/organization-and-relationship-types/organization-and-relationship-types.component").then((m) => m.OrganizationAndRelationshipTypesComponent),
     },
-    { path: "my-projects", title: "My Projects", canActivate: [authGuard], loadComponent: () => import("./pages/my-projects/my-projects.component").then((m) => m.MyProjectsComponent) },
-    { path: "pending-projects", title: "Pending Projects", canActivate: [authGuard], loadComponent: () => import("./pages/pending-projects/pending-projects.component").then((m) => m.PendingProjectsComponent) },
-    { path: "featured-projects", title: "Featured Projects", canActivate: [adminGuard], loadComponent: () => import("./pages/featured-projects/featured-projects.component").then((m) => m.FeaturedProjectsComponent) },
+    { path: "projects/my", title: "My Projects", canActivate: [authGuard], loadComponent: () => import("./pages/my-projects/my-projects.component").then((m) => m.MyProjectsComponent) },
+    { path: "projects/pending", title: "Pending Projects", canActivate: [authGuard], loadComponent: () => import("./pages/pending-projects/pending-projects.component").then((m) => m.PendingProjectsComponent) },
+    { path: "projects/featured", title: "Featured Projects", canActivate: [adminGuard], loadComponent: () => import("./pages/featured-projects/featured-projects.component").then((m) => m.FeaturedProjectsComponent) },
     { path: "project-updates", title: "Project Updates", canActivate: [adminGuard], loadComponent: () => import("./pages/project-updates/project-updates.component").then((m) => m.ProjectUpdatesComponent) },
     { path: "homepage-configuration", title: "Homepage Configuration", canActivate: [adminGuard], loadComponent: () => import("./pages/homepage-configuration/homepage-configuration.component").then((m) => m.HomepageConfigurationComponent) },
     { path: "manage-page-content", title: "Manage Page Content", canActivate: [pageContentManageGuard], loadComponent: () => import("./pages/admin/manage-page-content/manage-page-content.component").then((m) => m.ManagePageContentComponent) },
@@ -296,6 +296,84 @@ export const routes: Routes = [
             { path: "validate-metadata", loadComponent: () => import("./pages/admin/gis-bulk-import/steps/validate-metadata/validate-metadata-step.component").then((m) => m.ValidateMetadataStepComponent) },
         ],
     },
+    { path: "login", loadComponent: () => import("./pages/login/login.component").then((m) => m.LoginComponent) },
+    { path: "support", loadComponent: () => import("./pages/support/support.component").then((m) => m.SupportComponent) },
+
+    // ============================================================
+    // Legacy MVC route redirects
+    // These catch old bookmarks/links and redirect to new Angular routes.
+    //
+    // TODO: Remove these legacy redirects after May 1, 2026.
+    // By then, users should have updated their bookmarks and
+    // any cached/indexed links should have been refreshed.
+    // ============================================================
+    ...[
+        // Non-standard routes
+        { path: "ProgramInfo/ClassificationSystem/11", data: { redirectTo: "/projects-by-theme" } },
+        { path: "ProgramInfo/Taxonomy", data: { redirectTo: "/projects-by-type" } },
+        { path: "Results/ProjectMap", data: { redirectTo: "/projects/map" } },
+        { path: "Project/FeaturedList", data: { redirectTo: "/projects/featured" } },
+        { path: "Project/MyProjects", data: { redirectTo: "/projects/my" } },
+        { path: "Project/Pending", data: { redirectTo: "/projects/pending" } },
+        { path: "FindYourForester/Manage", data: { redirectTo: "/manage-find-your-forester" } },
+        { path: "FindYourForester", data: { redirectTo: "/find-your-forester" } },
+        { path: "Home/ManageHomePageImages", data: { redirectTo: "/homepage-configuration" } },
+        { path: "Home/InternalSetupNotes", data: { redirectTo: "/internal-setup-notes" } },
+        // Entity detail routes
+        { path: "Project/FactSheet/:id", data: { redirectTo: "/projects/:id/fact-sheet" } },
+        { path: "Project/Detail/:id", data: { redirectTo: "/projects/:id" } },
+        { path: "Agreement/Detail/:id", data: { redirectTo: "/agreements/:id" } },
+        { path: "FundSourceAllocation/Detail/:id", data: { redirectTo: "/fund-source-allocations/:id" } },
+        { path: "FundSource/Detail/:id", data: { redirectTo: "/fund-sources/:id" } },
+        { path: "Program/Detail/:id", data: { redirectTo: "/programs/:id" } },
+        { path: "Organization/Detail/:id", data: { redirectTo: "/organizations/:id" } },
+        { path: "InteractionEvent/Detail/:id", data: { redirectTo: "/interactions-events/:id" } },
+        { path: "Tag/Detail/:id", data: { redirectTo: "/tags/:id" } },
+        { path: "County/Detail/:id", data: { redirectTo: "/counties/:id" } },
+        { path: "PriorityLandscape/Detail/:id", data: { redirectTo: "/priority-landscapes/:id" } },
+        { path: "DNRUplandRegion/Detail/:id", data: { redirectTo: "/dnr-upland-regions/:id" } },
+        { path: "FocusArea/Detail/:id", data: { redirectTo: "/focus-areas/:id" } },
+        { path: "Classification/Detail/:id", data: { redirectTo: "/classifications/:id" } },
+        { path: "User/Detail/:id", data: { redirectTo: "/people/:id" } },
+        { path: "Person/Detail/:id", data: { redirectTo: "/people/:id" } },
+        // Entity index routes
+        { path: "Project/Index", data: { redirectTo: "/projects" } },
+        { path: "Project", data: { redirectTo: "/projects" } },
+        { path: "Agreement/Index", data: { redirectTo: "/agreements" } },
+        { path: "Agreement", data: { redirectTo: "/agreements" } },
+        { path: "FundSource/Index", data: { redirectTo: "/fund-sources" } },
+        { path: "FundSource", data: { redirectTo: "/fund-sources" } },
+        { path: "Program/Index", data: { redirectTo: "/programs" } },
+        { path: "Program", data: { redirectTo: "/programs" } },
+        { path: "Organization/Index", data: { redirectTo: "/organizations" } },
+        { path: "Organization", data: { redirectTo: "/organizations" } },
+        { path: "InteractionEvent/Index", data: { redirectTo: "/interactions-events" } },
+        { path: "InteractionEvent", data: { redirectTo: "/interactions-events" } },
+        { path: "Tag/Index", data: { redirectTo: "/tags" } },
+        { path: "Tag", data: { redirectTo: "/tags" } },
+        { path: "County/Index", data: { redirectTo: "/counties" } },
+        { path: "County", data: { redirectTo: "/counties" } },
+        { path: "PriorityLandscape/Index", data: { redirectTo: "/priority-landscapes" } },
+        { path: "PriorityLandscape", data: { redirectTo: "/priority-landscapes" } },
+        { path: "DNRUplandRegion/Index", data: { redirectTo: "/dnr-upland-regions" } },
+        { path: "DNRUplandRegion", data: { redirectTo: "/dnr-upland-regions" } },
+        { path: "FocusArea/Index", data: { redirectTo: "/focus-areas" } },
+        { path: "FocusArea", data: { redirectTo: "/focus-areas" } },
+        { path: "FieldDefinition/Index", data: { redirectTo: "/labels-and-definitions" } },
+        // File resource
+        { path: "FileResource/DisplayResource/:id", data: { redirectTo: "/api/file-resources/:id", externalRedirect: true } },
+        // Custom page vanity URLs: /About/{vanityUrl} -> /{vanityUrl}
+        { path: "About/:vanityUrl", data: { redirectTo: "/:vanityUrl" } },
+        // Old sub-routes now nested under /projects/
+        { path: "my-projects", data: { redirectTo: "/projects/my" } },
+        { path: "pending-projects", data: { redirectTo: "/projects/pending" } },
+        { path: "featured-projects", data: { redirectTo: "/projects/featured" } },
+    ].map((r) => ({
+        path: r.path,
+        data: r.data,
+        loadComponent: () => import("./pages/legacy-redirect/legacy-redirect.component").then((m) => m.LegacyRedirectComponent),
+    })),
+
     { path: "not-found", loadComponent: () => import("./shared/pages").then((m) => m.NotFoundComponent) },
     { path: "**", loadComponent: () => import("./shared/components/custom-page/custom-page.component").then((m) => m.CustomPageComponent) },
 ];

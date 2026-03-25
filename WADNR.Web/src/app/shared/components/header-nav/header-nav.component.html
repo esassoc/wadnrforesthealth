@@ -74,7 +74,7 @@
                         <li><a routerLink="/tags" class="dropdown-item">Project Tags</a></li>
                         @if (currentUser$ | async; as currentUserForPending) {
                             @if (!isUnassigned(currentUserForPending)) {
-                            <li><a routerLink="/pending-projects" class="dropdown-item">Pending Projects</a></li>
+                            <li><a routerLink="/projects/pending" class="dropdown-item">Pending Projects</a></li>
                             }
                         }
                         <li class="divider"></li>
@@ -148,7 +148,7 @@
                             <li><a routerLink="/people" class="dropdown-item">Users and Contacts</a></li>
                             }
                             @if (isAdmin(currentUserForManage)) {
-                            <li><a routerLink="/featured-projects" class="dropdown-item">Featured Projects</a></li>
+                            <li><a routerLink="/projects/featured" class="dropdown-item">Featured Projects</a></li>
                             <li><a routerLink="/project-updates" class="dropdown-item">Project Updates</a></li>
                             <li><a routerLink="/homepage-configuration" class="dropdown-item">Homepage Configuration</a></li>
                             }

@@ -14,4 +14,6 @@ GO
 GO
 :r ".\0003 - Populate IsUser column on Person table.sql"
 GO
+:r ".\0004 - Update RTE links to new Angular routes.sql"
+GO
 
