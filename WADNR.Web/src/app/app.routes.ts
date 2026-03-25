@@ -360,6 +360,8 @@ export const routes: Routes = [
         { path: "FocusArea/Index", data: { redirectTo: "/focus-areas" } },
         { path: "FocusArea", data: { redirectTo: "/focus-areas" } },
         { path: "FieldDefinition/Index", data: { redirectTo: "/labels-and-definitions" } },
+        // Admin routes
+        { path: "ExcelUpload/ManageExcelUploadsAndEtl", data: { redirectTo: "/upload-excel-files" } },
         // File resource
         { path: "FileResource/DisplayResource/:id", data: { redirectTo: "/api/file-resources/:id", externalRedirect: true } },
         // Custom page vanity URLs: /About/{vanityUrl} -> /{vanityUrl}

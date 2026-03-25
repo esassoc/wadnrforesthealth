@@ -41,9 +41,11 @@ BEGIN
         ('/Project/MyProjects', '/projects/my'),
         ('/Project/Pending', '/projects/pending'),
         ('/FindYourForester/Manage', '/manage-find-your-forester'),
+        ('/FindYourForester/Index', '/find-your-forester'),
         ('/FindYourForester/', '/find-your-forester'),
         ('/Home/ManageHomePageImages', '/homepage-configuration'),
         ('/Home/InternalSetupNotes', '/internal-setup-notes'),
+        ('/ExcelUpload/ManageExcelUploadsAndEtl', '/upload-excel-files'),
         ('/Account/Login', '/login'),
         ('/Help/Support', '/support'),
         ('/FileResource/DisplayResource/', '/api/file-resources/');
