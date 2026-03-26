@@ -3,9 +3,11 @@ import { AsyncPipe } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ColDef } from "ag-grid-community";
 import { BehaviorSubject, combineLatest, map, Observable, switchMap } from "rxjs";
+import { DialogService } from "@ngneat/dialog";
 
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
+import { AsyncConfirmModalComponent, AsyncConfirmModalData } from "src/app/shared/components/async-confirm-modal/async-confirm-modal.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
@@ -34,6 +36,7 @@ export class MyProjectsComponent implements OnInit {
         private projectService: ProjectService,
         private utilityFunctions: UtilityFunctionsService,
         private authenticationService: AuthenticationService,
+        private dialogService: DialogService,
         private route: ActivatedRoute,
         private router: Router
     ) {}
@@ -129,12 +132,34 @@ export class MyProjectsComponent implements OnInit {
         }
     }
 
+    private beginOrEditUpdate(row: ProjectUpdateStatusGridRow): void {
+        if (row.ProjectUpdateStateID) {
+            this.router.navigate(["/projects", row.ProjectID, "update"]);
+        } else {
+            const data: AsyncConfirmModalData = {
+                title: "Starting project update",
+                message:
+                    "To make changes to the project you must start a Project update.\nThe reviewer will then receive your update and either approve or return your Project update request.",
+                buttonTextYes: "Create project update",
+                buttonClassYes: "btn-primary",
+                actionFn: () => this.projectService.startUpdateBatchProject(row.ProjectID),
+            };
+            this.dialogService
+                .open(AsyncConfirmModalComponent, { data, size: "md" })
+                .afterClosed$.subscribe((result) => {
+                    if (result) {
+                        this.router.navigate(["/projects", row.ProjectID, "update"]);
+                    }
+                });
+        }
+    }
+
     private createColumnDefs(): ColDef<ProjectUpdateStatusGridRow>[] {
         return [
             this.utilityFunctions.createActionsColumnDef((params) => {
                 const row = params.data as ProjectUpdateStatusGridRow;
                 const label = row.ProjectUpdateStateID ? "Edit Update" : "Begin Update";
-                return [{ ActionName: label, ActionHandler: () => this.router.navigate(["/projects", row.ProjectID, "update"]), ActionIcon: "fa fa-pencil" }];
+                return [{ ActionName: label, ActionHandler: () => this.beginOrEditUpdate(row), ActionIcon: "fa fa-pencil" }];
             }),
             this.utilityFunctions.createBasicColumnDef("Update Status", "ProjectUpdateStateName", {
                 CustomDropdownFilterField: "ProjectUpdateStateName",
