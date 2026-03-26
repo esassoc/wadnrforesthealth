@@ -6,7 +6,7 @@
 <div class="field-definition__wrapper">
     <ng-template #popTitle>
         <div class="field-definition__title flex-between">
-            <div class="mt-1">{{ getLabelText() }}</div>
+            <div>{{ getLabelText() }}</div>
             <div class="flex">
                 @if (showEditButton()) {
                 <button type="button" class="btn btn-link" [hidden]="isEditing" (click)="enterEdit($event)">
@@ -20,17 +20,13 @@
         </div>
     </ng-template>
     <ng-template #popContent>
-        @if (!isEditing) { @if (showEditButton()) {
-        <div>
+        @if (!isEditing) {
             @if (!emptyContent) {
             <div [innerHtml]="fieldDefinitionDatum.FieldDefinitionDatumValue"></div>
-            } @if (emptyContent) {
+            } @else {
             <div class="hoverEmptySpace"></div>
             }
-        </div>
-        } @if (!showEditButton()) {
-        <div [innerHtml]="fieldDefinitionDatum.FieldDefinitionDatumValue"></div>
-        } } @if (isEditing) {
+        } @if (isEditing) {
         <div>
             <editor #tinyMceEditor [init]="tinyMceConfig" [(ngModel)]="editedContent"></editor>
             <div class="field-definition__editor-buttons">

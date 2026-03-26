@@ -87,7 +87,7 @@
                 </div>
                 <div class="card-body">
                     @if (organization.FundSourceAllocations && organization.FundSourceAllocations.length > 0) {
-                        <ul>
+                        <ul class="org-detail__fund-source-list">
                             @for (allocation of organization.FundSourceAllocations; track allocation.FundSourceAllocationID) {
                                 <li>
                                     <a [routerLink]="['/fund-source-allocations', allocation.FundSourceAllocationID]">{{ allocation.FundSourceAllocationName }}</a>

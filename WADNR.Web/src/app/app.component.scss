@@ -2,10 +2,11 @@
 
 .app__footer {
     height: 300px;
-    background-color: var(--blue-800);
+    background-color: var(--wadnr-footer);
     background-image: url("../assets/img/dnr-footer-img.jpg");
     background-repeat: no-repeat;
     background-position: top center;
+    background-size: cover;
     font-size: var(--type-size-100);
     color: var(--blue-300);
     padding: var(--spacing-600);

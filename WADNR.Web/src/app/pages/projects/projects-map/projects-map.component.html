@@ -7,12 +7,12 @@
             <div class="projects-map__controls-row projects-map__controls-row--primary">
                 <div class="projects-map__control-group projects-map__control-group--inline">
                     <label for="color-by-select"><strong>Color Projects by:</strong></label>
-                    <ng-select #colorBySelect class="lt-panel-w-280" [items]="colorByOptions" bindLabel="Label" bindValue="Value" formControlName="colorBy" [clearable]="false" (open)="onDropdownOpen(colorBySelect)" labelForId="color-by-select" aria-label="Color projects by"> </ng-select>
+                    <ng-select #colorBySelect class="custom lt-panel-w-280" [items]="colorByOptions" bindLabel="Label" bindValue="Value" formControlName="colorBy" [clearable]="false" (open)="onDropdownOpen(colorBySelect)" labelForId="color-by-select" aria-label="Color projects by"> </ng-select>
                 </div>
 
                 <div class="projects-map__control-group projects-map__control-group--inline">
                     <label for="filter-type-select"><strong>Filter Projects by:</strong></label>
-                    <ng-select #filterTypeSelect class="lt-panel-w-320" [items]="filterTypeOptions" bindLabel="Label" bindValue="Value" formControlName="filterType" [clearable]="false" (open)="onDropdownOpen(filterTypeSelect)" labelForId="filter-type-select" aria-label="Filter projects by">
+                    <ng-select #filterTypeSelect class="custom lt-panel-w-320" [items]="filterTypeOptions" bindLabel="Label" bindValue="Value" formControlName="filterType" [clearable]="false" (open)="onDropdownOpen(filterTypeSelect)" labelForId="filter-type-select" aria-label="Filter projects by">
                         <ng-template ng-option-tmp let-item="item" let-index="index" let-active="active" let-selected="selected">
                             <!-- Render a thin divider for items flagged as dividers (Value starts with __divider_) -->
                             @if(!(item?.Value && ('' + item.Value).startsWith('__divider_'))) {
@@ -27,7 +27,7 @@
                 <div class="projects-map__control-group projects-map__control-group--values projects-map__control-group--inline">
                     @if (filterValueOptions$ | async; as filterValueOptions) {
                     <label for="filter-values-select" class="sr-only">Filter by values</label>
-                    <ng-select #filterValuesSelect class="lt-panel-w-540" [items]="filterValueOptions" bindLabel="Label" bindValue="Value" [compareWith]="compareFilterValues" multiple formControlName="filterValues" [closeOnSelect]="false" [searchable]="false" [clearOnBackspace]="false" (open)="onDropdownOpen(filterValuesSelect)" labelForId="filter-values-select" aria-label="Filter by values">
+                    <ng-select #filterValuesSelect class="custom lt-panel-w-540" [items]="filterValueOptions" bindLabel="Label" bindValue="Value" [compareWith]="compareFilterValues" multiple formControlName="filterValues" [closeOnSelect]="false" [searchable]="false" [clearOnBackspace]="false" (open)="onDropdownOpen(filterValuesSelect)" labelForId="filter-values-select" aria-label="Filter by values">
                         <ng-template ng-header-tmp>
                             <div class="projects-map__select-header-actions">
                                 <button type="button" class="btn btn-link" (click)="selectAllFilterValues(); $event.stopPropagation()">Select all</button>

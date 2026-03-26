@@ -43,13 +43,14 @@
 
 .ng-select.custom {
     .ng-select-container {
-        height: 3rem;
+        height: var(--spacing-600);
+        min-height: var(--spacing-600);
         border-color: var(--gray-200);
     }
 
     .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
-        height: 3rem;
-        line-height: 2.25rem;
+        height: var(--spacing-600);
+        line-height: var(--spacing-500);
     }
 
     .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
@@ -65,8 +66,8 @@
         display: inline-block;
         width: unset;
         .ng-clear {
-            font-size: 24px;
-            top: 3px;
+            font-size: 20px;
+            top: 1px;
             position: relative;
         }
     }
@@ -77,15 +78,15 @@
         width: unset;
 
         .ng-arrow {
-            top: 2px;
+            top: 1px;
             position: relative;
-            border-width: 7px 6px 2.5px;
+            border-width: 6px 5px 2px;
         }
     }
 
     &.small {
         .ng-select-container {
-            height: 1rem;
+            height: var(--spacing-500);
         }
 
         .ng-value {
@@ -95,7 +96,7 @@
 }
 
 .ng-select.custom.ng-select-opened > .ng-select-container .ng-arrow {
-    border-width: 0 6px 7px;
+    border-width: 0 5px 6px;
     top: 0;
 }
 

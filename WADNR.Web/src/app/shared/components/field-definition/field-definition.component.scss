@@ -32,8 +32,11 @@
     }
 
     &__title {
+        flex-wrap: nowrap;
+
         .btn-link {
-            padding-right: 0;
+            padding: var(--spacing-100);
+            line-height: 1;
         }
     }
 

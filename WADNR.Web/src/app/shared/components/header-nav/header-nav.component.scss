@@ -3,7 +3,7 @@
 .main-nav {
     color: white;
     height: 91px;
-    background-color: #003d6b;
+    background-color: var(--wadnr-header);
     display: grid;
 
     &__explorer {

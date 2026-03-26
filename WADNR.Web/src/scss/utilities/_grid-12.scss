@@ -12,6 +12,7 @@
     & > * {
         grid-column: 1 / -1;
         min-width: 0px;
+        overflow-wrap: anywhere;
     }
 
     @for $i from 1 through 12 {
