@@ -211,6 +211,9 @@ export class SimpleTreeComponent implements OnInit, OnChanges {
         node: SimpleTreeNode;
         depth: number;
         hasChildren: boolean;
+        ariaLevel: number;
+        ariaSetSize: number;
+        ariaPosInSet: number;
         rootId?: string | null;
         rootThemeColor?: string | null;
         isGroupStart?: boolean;
@@ -220,6 +223,9 @@ export class SimpleTreeComponent implements OnInit, OnChanges {
             node: SimpleTreeNode;
             depth: number;
             hasChildren: boolean;
+            ariaLevel: number;
+            ariaSetSize: number;
+            ariaPosInSet: number;
             rootId?: string | null;
             rootThemeColor?: string | null;
             isGroupStart?: boolean;
@@ -232,9 +238,11 @@ export class SimpleTreeComponent implements OnInit, OnChanges {
             if (!items || items.length === 0) {
                 return;
             }
-            for (const n of items) {
+            const setSize = items.length;
+            for (let idx = 0; idx < items.length; idx++) {
+                const n = items[idx];
                 const hasChildren = !!(n.children && n.children.length);
-                out.push({ node: n, depth, hasChildren });
+                out.push({ node: n, depth, hasChildren, ariaLevel: depth + 1, ariaSetSize: setSize, ariaPosInSet: idx + 1 });
                 if (hasChildren && this.isExpanded(n.key)) {
                     walk(n.children, depth + 1);
                 }

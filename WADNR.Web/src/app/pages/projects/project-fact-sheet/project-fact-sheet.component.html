@@ -144,8 +144,8 @@
 
                     <!-- Lightbox modal: uses selectedImage on the component -->
                     @if(selectedImage) {
-                    <div class="fact-sheet__lightbox-backdrop" (click)="closeImage()" role="button" aria-label="Close image">
-                        <div class="fact-sheet__lightbox-content" (click)="$event.stopPropagation()">
+                    <div class="fact-sheet__lightbox-backdrop" (click)="closeImage()" (keydown.enter)="closeImage()" (keydown.escape)="closeImage()" tabindex="0" role="button" aria-label="Close image">
+                        <div class="fact-sheet__lightbox-content" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" role="presentation">
                             <button class="fact-sheet__lightbox-close" (click)="closeImage()" aria-label="Close">×</button>
                             <button class="fact-sheet__lightbox-prev" (click)="$event.stopPropagation(); prevImage()" aria-label="Previous image">‹</button>
                             <img [src]="photoUrl(selectedImage.FileResourceGuid)" [alt]="selectedImage.Caption || 'Photo'" />

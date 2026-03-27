@@ -15,6 +15,33 @@ a {
     }
 }
 
+// WCAG 2.2 AA: Links in text blocks must be distinguishable by more than color alone.
+// Add underline to inline links within content areas (paragraphs, cards, rich text, etc.)
+// while excluding buttons, nav links, grid links, and other interactive elements.
+.card-body,
+.page-body,
+.custom-rich-text,
+.customRichTextContent,
+.inline-help,
+.modal-body,
+.home-index__richtext {
+    a:not(.btn):not(.nav-link):not(.dropdown-item):not(.dropdown-toggle) {
+        text-decoration: underline;
+
+        &:hover,
+        &:focus {
+            text-decoration: underline;
+        }
+    }
+
+}
+
+// Leaflet map controls have their own link styling — never underline
+.leaflet-container a,
+[class*="leaflet-control"] a {
+    text-decoration: none !important;
+}
+
 button {
     font-family: var(--ptsans);
 }

@@ -8,7 +8,7 @@
     }
 
     &__field-hint {
-        color: #999;
+        color: var(--gray-600);
         font-style: italic;
         font-size: 0.9em;
         display: flex;

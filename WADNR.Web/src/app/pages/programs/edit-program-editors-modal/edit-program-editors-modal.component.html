@@ -20,13 +20,13 @@
 
             <hr />
 
-            <label class="field-label">Program Editors</label>
+            <span class="field-label">Program Editors</span>
             @if (selectedEditors.length > 0) {
                 <ul class="editor-list">
                     @for (editor of sortedEditors; track editor.PersonID) {
                         <li>
-                            <a href="javascript:void(0)" (click)="removeEditor(editor.PersonID)" title="Remove" class="text-danger" style="text-decoration: none;">
-                                <icon [icon]="'Delete'"></icon>
+                            <a href="javascript:void(0)" (click)="removeEditor(editor.PersonID)" title="Remove" aria-label="Remove" class="text-danger" style="text-decoration: none;">
+                                <icon [icon]="'Delete'" aria-hidden="true"></icon>
                             </a>
                             {{ editor.DisplayName }}
                         </li>

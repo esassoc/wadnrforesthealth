@@ -90,6 +90,15 @@ ag-grid-angular {
         overflow: hidden;
         text-overflow: ellipsis;
 
+        // WCAG 2.2 AA target-size: ensure links/buttons inside cells meet 24x24px minimum
+        a,
+        button:not(.ag-header-cell-menu-button) {
+            min-height: 24px;
+            min-width: 24px;
+            display: inline-flex;
+            align-items: center;
+        }
+
         &:focus-within {
             outline: none !important;
             border: none !important;

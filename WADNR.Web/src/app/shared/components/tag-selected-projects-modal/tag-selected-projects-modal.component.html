@@ -22,8 +22,10 @@
       @if (tags.length) {
         <ul class="tag-projects-modal__suggestions">
           @for (tag of tags; track tag.TagID) {
-            <li (click)="selectTag(tag.TagName)">
-              {{ tag.TagName }} <span class="text-muted">({{ tag.ProjectCount }} projects)</span>
+            <li>
+              <button type="button" class="tag-projects-modal__suggestion-btn" (click)="selectTag(tag.TagName)">
+                {{ tag.TagName }} <span class="text-muted">({{ tag.ProjectCount }} projects)</span>
+              </button>
             </li>
           }
         </ul>

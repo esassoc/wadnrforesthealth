@@ -73,7 +73,7 @@
                                         </button>
                                     }
                                 </td>
-                                <td (click)="$event.stopPropagation()">
+                                <td (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
                                     <form-field
                                         [formControl]="getFeatureControls(feature).name"
                                         [type]="FormFieldType.Text"
@@ -88,7 +88,7 @@
                                         {{ feature.shapeType }}
                                     </span>
                                 </td>
-                                <td (click)="$event.stopPropagation()">
+                                <td (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
                                     <form-field
                                         [formControl]="getFeatureControls(feature).type"
                                         [type]="FormFieldType.Select"
@@ -97,7 +97,7 @@
                                         [srOnlyLabel]="true">
                                     </form-field>
                                 </td>
-                                <td (click)="$event.stopPropagation()">
+                                <td (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
                                     <form-field
                                         [formControl]="getFeatureControls(feature).notes"
                                         [type]="FormFieldType.Textarea"

@@ -148,11 +148,11 @@
                                         {{ file.DisplayName }} <icon [icon]="'Download'"></icon>
                                     </a>
                                     @if (isAdmin$ | async) {
-                                        <a href="#" class="ml-2" (click)="openEditFileModal(vm.priorityLandscape.PriorityLandscapeID, file); $event.preventDefault()" title="Edit file">
-                                            <icon [icon]="'Edit'"></icon>
+                                        <a href="#" class="ml-2" (click)="openEditFileModal(vm.priorityLandscape.PriorityLandscapeID, file); $event.preventDefault()" title="Edit file" aria-label="Edit file">
+                                            <icon [icon]="'Edit'" aria-hidden="true"></icon>
                                         </a>
-                                        <a href="#" class="text-danger ml-1" (click)="deleteFile(vm.priorityLandscape.PriorityLandscapeID, file.PriorityLandscapeFileResourceID!); $event.preventDefault()" title="Delete file">
-                                            <icon [icon]="'Delete'"></icon>
+                                        <a href="#" class="text-danger ml-1" (click)="deleteFile(vm.priorityLandscape.PriorityLandscapeID, file.PriorityLandscapeFileResourceID!); $event.preventDefault()" title="Delete file" aria-label="Delete file">
+                                            <icon [icon]="'Delete'" aria-hidden="true"></icon>
                                         </a>
                                     }
                                 </div>

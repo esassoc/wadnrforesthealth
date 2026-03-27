@@ -4,16 +4,21 @@
             <div
                 class="image-gallery__item"
                 [class.image-gallery__item--key-photo]="image.isKeyPhoto"
-                (click)="openPreview(image)">
+                (click)="openPreview(image)"
+                (keydown.enter)="openPreview(image)"
+                (keydown.space)="$event.preventDefault(); openPreview(image)"
+                tabindex="0"
+                role="button"
+                [attr.aria-label]="'Preview ' + (image.caption || 'photo')">
                 <!-- Photo Icons (edit/delete) -->
                 @if (canEdit) {
                     <div class="image-gallery__icons">
-                        <span class="image-gallery__icon--edit" (click)="edit.emit(image); $event.stopPropagation()" title="Edit">
-                            <icon icon="Edit"></icon>
-                        </span>
-                        <span class="image-gallery__icon--delete" (click)="delete.emit(image); $event.stopPropagation()" title="Delete">
-                            <icon icon="Delete"></icon>
-                        </span>
+                        <button type="button" class="image-gallery__icon--edit" (click)="edit.emit(image); $event.stopPropagation()" [attr.aria-label]="'Edit ' + (image.caption || 'photo')">
+                            <icon icon="Edit" aria-hidden="true"></icon>
+                        </button>
+                        <button type="button" class="image-gallery__icon--delete" (click)="delete.emit(image); $event.stopPropagation()" [attr.aria-label]="'Delete ' + (image.caption || 'photo')">
+                            <icon icon="Delete" aria-hidden="true"></icon>
+                        </button>
                     </div>
                 }
 
@@ -23,9 +28,9 @@
                         <icon icon="Key"></icon>
                     </div>
                 } @else if (canEdit) {
-                    <div class="image-gallery__key-icon image-gallery__key-icon--settable" title="Set as Key Photo" (click)="setKeyPhoto.emit(image); $event.stopPropagation()">
-                        <icon icon="Key"></icon>
-                    </div>
+                    <button type="button" class="image-gallery__key-icon image-gallery__key-icon--settable" title="Set as Key Photo" (click)="setKeyPhoto.emit(image); $event.stopPropagation()" [attr.aria-label]="'Set ' + (image.caption || 'photo') + ' as key photo'">
+                        <icon icon="Key" aria-hidden="true"></icon>
+                    </button>
                 }
 
                 <!-- Photo Thumbnail -->

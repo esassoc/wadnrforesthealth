@@ -35,7 +35,7 @@
             <h4 class="home-index__sidebar-heading">Project Map</h4>
             <custom-rich-text [customRichTextTypeID]="homeMapInfoTypeID"></custom-rich-text>
 
-            <a routerLink="/projects/map" class="home-index__map-link">
+            <a routerLink="/projects/map" class="home-index__map-link" aria-label="View full project map">
                 <wadnr-map [mapHeight]="'400px'" [disableMapInteraction]="true" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
                     @if (mapIsReady) {
                     <project-locations-simple-layer

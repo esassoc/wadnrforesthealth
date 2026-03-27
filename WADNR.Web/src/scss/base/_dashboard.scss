@@ -310,12 +310,12 @@
             }
 
             &.disabled {
-                color: #aaa;
+                color: var(--gray-600);
 
                 &:hover {
                     cursor: default;
                     background: unset;
-                    color: #aaa;
+                    color: var(--gray-600);
                 }
             }
 

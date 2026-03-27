@@ -147,9 +147,9 @@
             <!-- Radio -->
             @case (FormFieldType.Radio) {
                 @if (!fieldDefinitionName && fieldLabel) {
-                    <label class="form-field__label" [class.sr-only]="srOnlyLabel" [class.required]="formControl | isRequired">
+                    <span class="form-field__label" [class.sr-only]="srOnlyLabel" [class.required]="formControl | isRequired">
                         {{ fieldLabel }}
-                    </label>
+                    </span>
                 }
                 <div class="form-field__radio-options" role="radiogroup"
                     [attr.aria-labelledby]="fieldDefinitionName ? labelId : null"
@@ -219,9 +219,9 @@
         }
     } @else {
         @if (!fieldDefinitionName && fieldLabel) {
-            <label class="form-field__label" [class.required]="formControl | isRequired">
+            <span class="form-field__label" [class.required]="formControl | isRequired">
                 {{ fieldLabel }}
-            </label>
+            </span>
         }
         <div>
             <span>{{ formControl.getRawValue() }}</span>

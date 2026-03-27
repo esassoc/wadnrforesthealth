@@ -7,8 +7,8 @@ import { IconComponent } from "../../icon/icon.component";
     selector: "icon-link-renderer",
     template: `
         @if (params?.value) {
-            <a [routerLink]="params.inRouterLinkSuffix ? [params.inRouterLink, params.value, params.inRouterLinkSuffix] : [params.inRouterLink, params.value]" [title]="params.title ?? ''">
-                <icon [icon]="params.iconName"></icon>
+            <a [routerLink]="params.inRouterLinkSuffix ? [params.inRouterLink, params.value, params.inRouterLinkSuffix] : [params.inRouterLink, params.value]" [title]="params.title ?? ''" [attr.aria-label]="params.title || params.iconName || 'Link'">
+                <icon [icon]="params.iconName" aria-hidden="true"></icon>
             </a>
         }
     `,

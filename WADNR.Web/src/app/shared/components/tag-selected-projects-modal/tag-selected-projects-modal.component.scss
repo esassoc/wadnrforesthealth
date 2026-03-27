@@ -9,12 +9,23 @@
         overflow-y: auto;
 
         li {
-            padding: 0.4rem var(--spacing-300);
-            cursor: pointer;
+            padding: 0;
+        }
+    }
 
-            &:hover {
-                background-color: var(--hover-bg, #f0f0f0);
-            }
+    &__suggestion-btn {
+        display: block;
+        width: 100%;
+        padding: 0.4rem var(--spacing-300);
+        border: none;
+        background: none;
+        cursor: pointer;
+        text-align: left;
+        font: inherit;
+        color: inherit;
+
+        &:hover {
+            background-color: var(--hover-bg, #f0f0f0);
         }
     }
 }

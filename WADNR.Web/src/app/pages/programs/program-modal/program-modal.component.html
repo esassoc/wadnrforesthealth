@@ -22,7 +22,7 @@
 
         @if (lockedOrganizationName) {
             <div class="form-field">
-                <label class="field-label">Parent Organization</label>
+                <span class="field-label">Parent Organization</span>
                 <div>{{ lockedOrganizationName }}</div>
             </div>
         } @else {
@@ -68,7 +68,7 @@
 
         @if (existingProgramFileName && !programFileControl.value) {
             <div class="existing-file">
-                <label class="field-label">Current Program File</label>
+                <span class="field-label">Current Program File</span>
                 <div><a [href]="getFileUrl(existingProgramFileUrl)" target="_blank">{{ existingProgramFileName }}</a></div>
             </div>
         }
@@ -81,7 +81,7 @@
 
         @if (existingGeospatialFileName && !geospatialFileControl.value) {
             <div class="existing-file">
-                <label class="field-label">Current Example Geospatial Data File</label>
+                <span class="field-label">Current Example Geospatial Data File</span>
                 <div><a [href]="getFileUrl(existingGeospatialFileUrl)" target="_blank">{{ existingGeospatialFileName }}</a></div>
             </div>
         }

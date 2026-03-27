@@ -19,6 +19,12 @@
         a {
             cursor: pointer;
         }
+
+        button.wadnr-map__legend-toggle {
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
     }
 
     &__legend-item {

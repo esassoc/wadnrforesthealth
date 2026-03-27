@@ -16,12 +16,12 @@
                 @for (image of images; track image.FirmaHomePageImageID) {
                     <div class="homepage-config__photo">
                         <div class="homepage-config__photo-icons">
-                            <span class="homepage-config__icon--edit" (click)="openEditImageModal(image)" title="Edit">
-                                <icon [icon]="'Edit'"></icon>
-                            </span>
-                            <span class="homepage-config__icon--delete" (click)="deleteImage(image)" title="Delete">
-                                <icon [icon]="'Delete'"></icon>
-                            </span>
+                            <button type="button" class="homepage-config__icon--edit" (click)="openEditImageModal(image)" [attr.aria-label]="'Edit ' + image.Caption">
+                                <icon [icon]="'Edit'" aria-hidden="true"></icon>
+                            </button>
+                            <button type="button" class="homepage-config__icon--delete" (click)="deleteImage(image)" [attr.aria-label]="'Delete ' + image.Caption">
+                                <icon [icon]="'Delete'" aria-hidden="true"></icon>
+                            </button>
                         </div>
                         <div class="homepage-config__thumbnail">
                             <img [src]="getImageUrl(image)" [alt]="image.Caption" />

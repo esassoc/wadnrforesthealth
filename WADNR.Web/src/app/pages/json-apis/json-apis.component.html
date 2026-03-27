@@ -29,7 +29,7 @@
             @if (currentUser$ | async; as user) {
                 @let apiKey = apiKey$ | async;
                 <div class="json-apis__api-key-section">
-                    <label>Your API Key</label>
+                    <span class="field-label">Your API Key</span>
                     @if (apiKey) {
                         <div class="json-apis__api-key-row">
                             <code [copyToClipboard]="true">{{ apiKey }}</code>

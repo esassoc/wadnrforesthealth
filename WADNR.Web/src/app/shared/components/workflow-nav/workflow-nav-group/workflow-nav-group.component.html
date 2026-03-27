@@ -1,4 +1,4 @@
-<li class="workflow-nav-group" [class.expanded]="expanded" [class.collapsed]="!expanded">
+<div class="workflow-nav-group" [class.expanded]="expanded" [class.collapsed]="!expanded">
     <button
         type="button"
         class="workflow-nav-group__header"
@@ -12,7 +12,7 @@
             <icon [icon]="expanded ? 'AngleUp' : 'AngleDown'" class="workflow-nav-group__expand-icon"></icon>
         }
     </button>
-    <ul class="workflow-nav-group__items" [class.workflow-nav-group__items--hidden]="!expanded">
+    <div class="workflow-nav-group__items" [class.workflow-nav-group__items--hidden]="!expanded">
         <ng-content></ng-content>
-    </ul>
-</li>
+    </div>
+</div>

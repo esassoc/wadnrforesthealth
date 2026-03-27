@@ -1,3 +1,3 @@
-<a class="btn btn-primary btn-icon" (click)="isFullScreen ? exitFullScreen() : enterFullScreen()" title="{{ !isFullScreen ? enterFullScreenTitleText : exitFullScreenTitleText }}">
-    <icon [icon]="!isFullScreen ? 'EnterFullScreen' : 'ExitFullScreen'"></icon>
-</a>
+<button type="button" class="btn btn-primary btn-icon" (click)="isFullScreen ? exitFullScreen() : enterFullScreen()" [attr.aria-label]="!isFullScreen ? enterFullScreenTitleText : exitFullScreenTitleText" [title]="!isFullScreen ? enterFullScreenTitleText : exitFullScreenTitleText">
+    <icon [icon]="!isFullScreen ? 'EnterFullScreen' : 'ExitFullScreen'" aria-hidden="true"></icon>
+</button>

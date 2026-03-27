@@ -25,12 +25,12 @@
                                 @for (doc of vm.documents; track doc.ProjectDocumentID) {
                                     <div class="docs-notes-step__item">
                                         <div class="docs-notes-step__item-actions">
-                                            <span class="docs-notes-step__action-icon" (click)="openEditDocumentModal(doc, vm.documentTypes)" title="Edit">
-                                                <icon icon="Edit"></icon>
-                                            </span>
-                                            <span class="docs-notes-step__action-icon docs-notes-step__action-icon--delete" (click)="deleteDocument(doc)" title="Delete">
-                                                <icon icon="Delete"></icon>
-                                            </span>
+                                            <button type="button" class="docs-notes-step__action-icon" (click)="openEditDocumentModal(doc, vm.documentTypes)" aria-label="Edit document">
+                                                <icon icon="Edit" aria-hidden="true"></icon>
+                                            </button>
+                                            <button type="button" class="docs-notes-step__action-icon docs-notes-step__action-icon--delete" (click)="deleteDocument(doc)" aria-label="Delete document">
+                                                <icon icon="Delete" aria-hidden="true"></icon>
+                                            </button>
                                         </div>
                                         <div class="docs-notes-step__item-content">
                                             <div class="docs-notes-step__item-title">
@@ -83,12 +83,12 @@
                                 @for (note of vm.notes; track note.ProjectNoteID) {
                                     <div class="docs-notes-step__item">
                                         <div class="docs-notes-step__item-actions">
-                                            <span class="docs-notes-step__action-icon" (click)="openEditNoteModal(note)" title="Edit">
-                                                <icon icon="Edit"></icon>
-                                            </span>
-                                            <span class="docs-notes-step__action-icon docs-notes-step__action-icon--delete" (click)="deleteNote(note)" title="Delete">
-                                                <icon icon="Delete"></icon>
-                                            </span>
+                                            <button type="button" class="docs-notes-step__action-icon" (click)="openEditNoteModal(note)" aria-label="Edit note">
+                                                <icon icon="Edit" aria-hidden="true"></icon>
+                                            </button>
+                                            <button type="button" class="docs-notes-step__action-icon docs-notes-step__action-icon--delete" (click)="deleteNote(note)" aria-label="Delete note">
+                                                <icon icon="Delete" aria-hidden="true"></icon>
+                                            </button>
                                         </div>
                                         <div class="docs-notes-step__item-content">
                                             <div class="docs-notes-step__item-meta">

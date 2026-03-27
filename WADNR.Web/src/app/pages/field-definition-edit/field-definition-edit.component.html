@@ -16,20 +16,20 @@
             </form-field>
 
             <div class="mb-3">
-                <label class="field-label">Custom Definition</label>
+                <span class="field-label" id="custom-definition-label">Custom Definition</span>
                 <div class="tinyMCEFontColor">
                     <editor #tinyMceEditor [init]="tinyMceConfig" [(ngModel)]="customDefinition"></editor>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label class="field-label">Default Label</label>
+                <span class="field-label">Default Label</span>
                 <div class="form-control-plaintext">{{ defaultLabel }}</div>
             </div>
 
             @if (defaultDefinition) {
                 <div>
-                    <label class="field-label">Default Definition</label>
+                    <span class="field-label">Default Definition</span>
                     <div [innerHTML]="defaultDefinition"></div>
                 </div>
             }

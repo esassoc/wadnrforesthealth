@@ -35,16 +35,21 @@
                                     [class.photos-step__item--key-photo]="photo.IsKeyPhoto"
                                     [class.photos-step__item--selected]="isSelectingKeyPhoto && selectedKeyPhotoID === photo.ProjectImageUpdateID"
                                     [class.photos-step__item--clickable]="isSelectingKeyPhoto"
-                                    (click)="selectPhoto(photo)">
+                                    (click)="selectPhoto(photo)"
+                                    (keydown.enter)="selectPhoto(photo)"
+                                    (keydown.space)="$event.preventDefault(); selectPhoto(photo)"
+                                    tabindex="0"
+                                    role="button"
+                                    [attr.aria-label]="'Select photo ' + (photo.Caption || '')">
                                     <!-- Photo Icons -->
                                     <div class="photos-step__icons">
                                         @if (!isSelectingKeyPhoto) {
-                                            <span class="photos-step__icon--edit" (click)="openEditPhotoModal(photo, vm.timingOptions); $event.stopPropagation()" title="Edit">
-                                                <icon icon="Edit"></icon>
-                                            </span>
-                                            <span class="photos-step__icon--delete" (click)="deletePhoto(photo); $event.stopPropagation()" title="Delete">
-                                                <icon icon="Delete"></icon>
-                                            </span>
+                                            <button type="button" class="photos-step__icon--edit" (click)="openEditPhotoModal(photo, vm.timingOptions); $event.stopPropagation()" aria-label="Edit photo">
+                                                <icon icon="Edit" aria-hidden="true"></icon>
+                                            </button>
+                                            <button type="button" class="photos-step__icon--delete" (click)="deletePhoto(photo); $event.stopPropagation()" aria-label="Delete photo">
+                                                <icon icon="Delete" aria-hidden="true"></icon>
+                                            </button>
                                         }
                                     </div>
                                     <!-- Key Photo Icon (right side) -->

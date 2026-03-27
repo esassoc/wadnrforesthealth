@@ -27,13 +27,13 @@
 
         <hr />
 
-        <label class="field-label">Supplemental Roles</label>
+        <span class="field-label">Supplemental Roles</span>
         @if (selectedSupplementalRoles.length > 0) {
             <ul class="editor-list">
                 @for (role of sortedSupplementalRoles; track role.RoleID) {
                     <li>
-                        <a href="javascript:void(0)" (click)="removeSupplementalRole(role.RoleID)" title="Remove" class="text-danger" style="text-decoration: none">
-                            <icon [icon]="'Delete'"></icon>
+                        <a href="javascript:void(0)" (click)="removeSupplementalRole(role.RoleID)" title="Remove" aria-label="Remove" class="text-danger" style="text-decoration: none">
+                            <icon [icon]="'Delete'" aria-hidden="true"></icon>
                         </a>
                         {{ role.DisplayName }}
                     </li>

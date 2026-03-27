@@ -46,8 +46,8 @@
             @for (tag of selectedTags; track tag.TagID) {
                 <span class="btn btn-sm btn-tag">
                     {{ tag.TagName }}
-                    <a href="#" class="ms-1 text-danger" (click)="removeTag(tag.TagID); $event.preventDefault()" [class.disabled]="isSubmitting" title="Remove">
-                        <icon icon="Delete"></icon>
+                    <a href="#" class="ms-1 text-danger" (click)="removeTag(tag.TagID); $event.preventDefault()" [class.disabled]="isSubmitting" title="Remove" aria-label="Remove">
+                        <icon icon="Delete" aria-hidden="true"></icon>
                     </a>
                 </span>
             }

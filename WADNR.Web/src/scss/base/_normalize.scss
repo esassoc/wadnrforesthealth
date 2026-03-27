@@ -51,7 +51,7 @@ a {
     text-decoration: none;
 }
 a:focus {
-    outline: none;
+    outline: revert;
 }
 a:hover,
 a:active {

@@ -19,8 +19,8 @@
                 <div class="g-col-5">
                     <!-- Location Type Selection -->
                     <div class="mb-3">
-                        <label class="field-label">Location Type</label>
-                        <div class="radio-options">
+                        <span class="field-label" id="location-type-label">Location Type</span>
+                        <div class="radio-options" role="radiogroup" aria-labelledby="location-type-label">
                             @for (option of locationTypeOptions; track option.Value) {
                                 <label class="radio-label" [class.disabled]="isSubmitting">
                                     <input

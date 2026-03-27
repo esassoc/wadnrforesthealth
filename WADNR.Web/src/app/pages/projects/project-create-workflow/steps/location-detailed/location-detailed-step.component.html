@@ -100,16 +100,16 @@
                                                 </button>
                                             }
                                         </td>
-                                        <td (click)="$event.stopPropagation()">
+                                        <td (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
                                             <form-field [formControl]="getFeatureControls(feature).name" [type]="FormFieldType.Text" fieldLabel="Name" [srOnlyLabel]="true" placeholder="Enter name" maxlength="100"></form-field>
                                         </td>
                                         <td class="align-middle">
                                             <span class="location-detailed-step__shape-badge location-detailed-step__shape-badge--{{ feature.shapeType | lowercase }}">{{ feature.shapeType }}</span>
                                         </td>
-                                        <td (click)="$event.stopPropagation()">
+                                        <td (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
                                             <form-field [formControl]="getFeatureControls(feature).type" [type]="FormFieldType.Select" fieldLabel="Type" [srOnlyLabel]="true" [formInputOptions]="locationTypeOptions"></form-field>
                                         </td>
-                                        <td (click)="$event.stopPropagation()">
+                                        <td (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
                                             <form-field [formControl]="getFeatureControls(feature).notes" [type]="FormFieldType.Textarea" fieldLabel="Notes" [srOnlyLabel]="true" placeholder="Optional notes" maxlength="255"></form-field>
                                         </td>
                                     </tr>

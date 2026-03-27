@@ -66,8 +66,9 @@
                         class="text-danger"
                         (click)="removeContact(contact.Value); $event.preventDefault()"
                         [class.disabled]="isSubmitting"
-                        title="Remove">
-                        <icon icon="Delete"></icon>
+                        title="Remove"
+                        aria-label="Remove">
+                        <icon icon="Delete" aria-hidden="true"></icon>
                     </a>
                     <span>{{ contact.Label }}</span>
                 </li>
@@ -95,8 +96,9 @@
                         class="text-danger"
                         (click)="removeProject(project.Value); $event.preventDefault()"
                         [class.disabled]="isSubmitting"
-                        title="Remove">
-                        <icon icon="Delete"></icon>
+                        title="Remove"
+                        aria-label="Remove">
+                        <icon icon="Delete" aria-hidden="true"></icon>
                     </a>
                     <span>{{ project.Label }}</span>
                 </li>

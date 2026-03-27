@@ -158,7 +158,7 @@
 
             <!-- Programs multi-select -->
             <div class="g-col-12">
-                <label class="field-label">Programs</label>
+                <span class="field-label">Programs</span>
                 <div class="grid-12" style="align-items: end;">
                     <div class="g-col-8">
                         <form-field
@@ -178,8 +178,8 @@
                         @for (program of selectedPrograms; track program.ProgramID) {
                             <span class="btn btn-sm btn-tag">
                                 {{ program.ProgramName }}
-                                <a href="#" class="ml-1 text-danger" (click)="removeProgram(program.ProgramID); $event.preventDefault()" title="Remove">
-                                    <icon icon="Delete"></icon>
+                                <a href="#" class="ml-1 text-danger" (click)="removeProgram(program.ProgramID); $event.preventDefault()" title="Remove" aria-label="Remove">
+                                    <icon icon="Delete" aria-hidden="true"></icon>
                                 </a>
                             </span>
                         }

@@ -64,7 +64,7 @@
 
                     <!-- WA DNR Fund Source Allocation to Add -->
                     <div class="funding-step__allocation-section mb-3">
-                        <label class="funding-step__section-label"><strong>WA DNR Fund Source Allocation to Add:</strong></label>
+                        <span class="funding-step__section-label"><strong>WA DNR Fund Source Allocation to Add:</strong></span>
                         <form-field
                             [formControl]="allocationToAddControl"
                             [type]="FormFieldType.Select"
@@ -121,7 +121,7 @@
 
                     <!-- Summary Section -->
                     <div class="funding-step__summary-section">
-                        <label class="funding-step__section-label"><strong>Summary of Total Project Costs and Funding:</strong></label>
+                        <span class="funding-step__section-label"><strong>Summary of Total Project Costs and Funding:</strong></span>
                         <div class="funding-step__summary-row">
                             <div class="funding-step__summary-label"><field-definition fieldDefinition="EstimatedTotalCost"></field-definition>:</div>
                             <div class="funding-step__summary-value">{{ estimatedTotalCostControl.value ?? 0 | currency }}</div>

@@ -633,8 +633,8 @@
                         <h4>Treatments</h4>
                         @if (treatments.length > 0) {
                             <div style="margin-bottom: 8px;">
-                                <label>
-                                    <input type="checkbox" [(ngModel)]="showFlattenedTreatments" />
+                                <label for="flatten-treatments-checkbox">
+                                    <input type="checkbox" id="flatten-treatments-checkbox" [(ngModel)]="showFlattenedTreatments" />
                                     Display Flattened By Treatment Area
                                 </label>
                             </div>

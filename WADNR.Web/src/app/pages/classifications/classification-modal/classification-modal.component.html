@@ -44,7 +44,7 @@
 
         @if (existingImageGUID && !keyImageControl.value) {
         <div class="classification-modal__existing-image">
-            <label class="classification-modal__field-label">Current Key Image</label>
+            <span class="classification-modal__field-label">Current Key Image</span>
             <img [src]="apiUrl + '/file-resources/' + existingImageGUID" alt="Current key image" class="classification-modal__image-preview">
         </div>
         }

@@ -24,6 +24,9 @@
         border-radius: 4px;
         color: var(--text-secondary, #6c757d);
         transition: background-color 0.15s, color 0.15s;
+        border: none;
+        background: none;
+        padding: 0;
 
         &:hover {
             background: var(--bg-hover-dark, var(--muted));

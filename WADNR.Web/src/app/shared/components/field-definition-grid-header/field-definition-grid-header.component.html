@@ -1,4 +1,4 @@
-<div (click)="onSortRequested($event)" class="flex-between">
+<div (click)="onSortRequested($event)" (keydown.enter)="onSortRequested($event)" (keydown.space)="$event.preventDefault(); onSortRequested($event)" tabindex="0" role="button" class="flex-between">
     <div #header class="field-def-header__label">
         <field-definition [fieldDefinition]="params.fieldDefinitionType" [labelOverride]="params.labelOverride" [inline]="false" [useBodyContainer]="true"></field-definition>
     </div>

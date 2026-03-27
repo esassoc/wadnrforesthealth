@@ -30,8 +30,11 @@
             [attr.data-key]="item.node.key"
             [style.--node-theme-color]="item.rootThemeColor"
             role="treeitem"
-            [attr.aria-expanded]="item.hasChildren ? (isExpanded(item.node.key) ? 'true' : 'false') : null">
-            <div class="simple-tree__header" tabindex="0" (click)="onNodeClick(item.node)" (keydown)="onKeyDown($event, item.node)" [style.padding-left.px]="item.depth * 18">
+            [attr.aria-expanded]="item.hasChildren ? (isExpanded(item.node.key) ? 'true' : 'false') : null"
+            [attr.aria-level]="item.ariaLevel"
+            [attr.aria-setsize]="item.ariaSetSize"
+            [attr.aria-posinset]="item.ariaPosInSet">
+            <div class="simple-tree__header" tabindex="0" role="button" (click)="onNodeClick(item.node)" (keydown)="onKeyDown($event, item.node)" [style.padding-left.px]="item.depth * 18">
                 @if (item.hasChildren) {
                 <button type="button" class="simple-tree__toggler" (click)="$event.stopPropagation(); toggleExpand(item.node.key)" aria-label="Toggle">
                     <span>{{ isExpanded(item.node.key) ? "-" : "+" }}</span>
@@ -103,8 +106,11 @@
             [attr.data-key]="item.node.key"
             [style.--node-theme-color]="item.rootThemeColor"
             role="treeitem"
-            [attr.aria-expanded]="item.hasChildren ? (isExpanded(item.node.key) ? 'true' : 'false') : null">
-            <div class="simple-tree__header" tabindex="0" (click)="onNodeClick(item.node)" (keydown)="onKeyDown($event, item.node)" [style.padding-left.px]="item.depth * 18">
+            [attr.aria-expanded]="item.hasChildren ? (isExpanded(item.node.key) ? 'true' : 'false') : null"
+            [attr.aria-level]="item.ariaLevel"
+            [attr.aria-setsize]="item.ariaSetSize"
+            [attr.aria-posinset]="item.ariaPosInSet">
+            <div class="simple-tree__header" tabindex="0" role="button" (click)="onNodeClick(item.node)" (keydown)="onKeyDown($event, item.node)" [style.padding-left.px]="item.depth * 18">
                 @if (item.hasChildren) {
                 <button type="button" class="simple-tree__toggler" (click)="$event.stopPropagation(); toggleExpand(item.node.key)" aria-label="Toggle">
                     <span>{{ isExpanded(item.node.key) ? "-" : "+" }}</span>

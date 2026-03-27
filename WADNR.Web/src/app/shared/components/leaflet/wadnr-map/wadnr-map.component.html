@@ -48,9 +48,9 @@
     <div [id]="mapID" [style.height]="mapHeight" [style.cursor]="cursorStyle" role="application" [attr.aria-label]="mapAriaLabel || 'Interactive map'">
         @if (showLegend) {
         <div class="wadnr-map__legend leaflet-control-layers leaflet-control-layers-expanded" [id]="legendID">
-            <a class="leaflet-control-layers-toggle">
-                <icon icon="MapLegend" (click)="legendToggle()"></icon>
-            </a>
+            <button type="button" class="leaflet-control-layers-toggle wadnr-map__legend-toggle" (click)="legendToggle()" aria-label="Toggle map legend">
+                <icon icon="MapLegend" aria-hidden="true"></icon>
+            </button>
             <div class="leaflet-control-layers-list">
                 @for (legendItem of legendItems; track legendItem) {
                 <div class="wadnr-map__legend-item">

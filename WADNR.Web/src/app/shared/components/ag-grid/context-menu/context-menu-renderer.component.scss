@@ -4,6 +4,11 @@
     &__trigger {
         font-size: 0.75rem;
         padding-inline: var(--spacing-200);
+        min-height: 24px;
+        min-width: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
     &__dropdown {

@@ -61,8 +61,8 @@
         }
     </div>
     } @if(selectedImage) {
-    <div class="indicator-chart__lightbox-backdrop" (click)="closeImage()" role="button" aria-label="Close image">
-        <div class="indicator-chart__lightbox-content" (click)="$event.stopPropagation()">
+    <div class="indicator-chart__lightbox-backdrop" (click)="closeImage()" (keydown.enter)="closeImage()" (keydown.escape)="closeImage()" tabindex="0" role="button" aria-label="Close image">
+        <div class="indicator-chart__lightbox-content" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()"  role="presentation">
             <button class="indicator-chart__lightbox-close" (click)="closeImage()" aria-label="Close">×</button>
             <img [src]="selectedImage.src" [alt]="selectedImage.alt || 'Image'" />
         </div>

@@ -8,10 +8,13 @@
     &__button {
         border: none;
         background-color: transparent;
-        color: var(--gray-default);
+        color: var(--gray-600);
+        min-height: 24px;
+        min-width: 24px;
 
         &:disabled {
-            color: var(--gray-light);
+            color: var(--gray-300);
+            cursor: not-allowed;
         }
     }
 

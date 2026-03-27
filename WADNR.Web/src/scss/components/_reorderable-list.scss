@@ -104,7 +104,7 @@
         i {
             display: block;
             font-size: 1rem !important;
-            color: rgba(var(--black-rgb), 0.5);
+            color: var(--gray-600);
             transition: all 200ms ease;
         }
 
@@ -124,7 +124,7 @@
         i {
             display: block;
             font-size: var(--type-size-200);
-            color: rgba(var(--black-rgb), 0.5);
+            color: var(--gray-600);
             transition: all 200ms ease;
         }
 

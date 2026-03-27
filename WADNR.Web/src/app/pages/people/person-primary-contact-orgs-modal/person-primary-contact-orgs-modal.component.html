@@ -16,13 +16,13 @@
 
         <hr />
 
-        <label class="field-label">Contributing Organizations</label>
+        <span class="field-label">Contributing Organizations</span>
         @if (selectedOrganizations.length > 0) {
             <ul class="editor-list">
                 @for (org of sortedOrganizations; track org.OrganizationID) {
                     <li>
-                        <a href="javascript:void(0)" (click)="removeOrganization(org.OrganizationID)" title="Remove" class="text-danger" style="text-decoration: none">
-                            <icon [icon]="'Delete'"></icon>
+                        <a href="javascript:void(0)" (click)="removeOrganization(org.OrganizationID)" title="Remove" aria-label="Remove" class="text-danger" style="text-decoration: none">
+                            <icon [icon]="'Delete'" aria-hidden="true"></icon>
                         </a>
                         {{ getDisplayName(org) }}
                     </li>
