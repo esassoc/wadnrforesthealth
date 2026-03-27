@@ -16,4 +16,6 @@ GO
 GO
 :r ".\0004 - Update RTE links to new Angular routes.sql"
 GO
+:r ".\0005 - Strip returnUrl query params from CustomPage content.sql"
+GO
 
