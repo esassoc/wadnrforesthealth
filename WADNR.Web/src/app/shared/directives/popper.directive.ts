@@ -69,6 +69,7 @@ export class PopperDirective {
     private popperInstance: Instance;
     public popperShown: boolean = false;
     private popperComponentRef: ComponentRef<PopperComponent>;
+    private resizeObserver: ResizeObserver;
 
     constructor(
         private readonly el: ElementRef,
@@ -104,6 +105,14 @@ export class PopperDirective {
         this.popperComponentRef = this.createPopperComponentAtViewRef(viewRef);
         this.popperInstance = createPopper(this.el.nativeElement, this.popperComponentRef.location.nativeElement, this.popperOptions);
         this.popperService.pushPopperInstance(this.popperInstance);
+
+        this.resizeObserver = new ResizeObserver(() => {
+            if (this.popperShown) {
+                this.popperInstance.update();
+            }
+        });
+        this.resizeObserver.observe(this.popperComponentRef.location.nativeElement);
+
         this.toggleDisplay();
     }
 
@@ -117,6 +126,7 @@ export class PopperDirective {
     }
 
     ngOnDestroy(): void {
+        this.resizeObserver.disconnect();
         this.popperService.removePopperInstance(this.popperInstance);
         this.popperInstance.destroy();
         this.popperComponentRef.destroy();
