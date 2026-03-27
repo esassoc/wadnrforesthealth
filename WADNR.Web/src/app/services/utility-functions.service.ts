@@ -683,9 +683,15 @@ export class UtilityFunctionsService {
             colDef.filterParams = {
                 field: params.CustomDropdownFilterField,
                 columnContainsMultipleValues: params.ColumnContainsMultipleValues,
+                multiValueSeparator: params.CustomDropdownFilterFieldSeparator,
                 filterPopup: true,
             };
             colDef.floatingFilter = false;
+
+            if (params.CustomDropdownFilterFieldSeparator && !colDef.valueFormatter) {
+                const sep = params.CustomDropdownFilterFieldSeparator;
+                colDef.valueFormatter = (p) => p.value ? p.value.replaceAll(sep, ", ") : "";
+            }
         }
 
         if (params.Width) {
@@ -794,6 +800,7 @@ export interface ColumnDefParams {
     UseCustomDropdownFilter?: boolean; // use to enable CustomDropdownFilter without specifying a field
     CustomDropdownFilterField?: string;
     ColumnContainsMultipleValues?: boolean;
+    CustomDropdownFilterFieldSeparator?: string;
     ValueGetter?: ValueGetterFunc;
     FilterValueGetter?: ValueGetterFunc;
     ValueFormatter?: ValueFormatterFunc;

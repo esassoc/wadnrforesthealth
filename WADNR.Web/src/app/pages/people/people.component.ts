@@ -68,7 +68,11 @@ export class PeopleComponent {
             this.utilityFunctions.createBasicColumnDef("Base Role", "RoleName", {
                 CustomDropdownFilterField: "RoleName",
             }),
-            this.utilityFunctions.createBasicColumnDef("Supplemental Role(s)", "SupplementalRoles"),
+            this.utilityFunctions.createBasicColumnDef("Supplemental Role(s)", "SupplementalRoles", {
+                CustomDropdownFilterField: "SupplementalRoles",
+                ColumnContainsMultipleValues: true,
+                CustomDropdownFilterFieldSeparator: " | ",
+            }),
             this.utilityFunctions.createBasicColumnDef("Active?", "IsActive", {
                 CustomDropdownFilterField: "IsActive",
                 ValueFormatter: (params: any) => (params.value ? "Yes" : "No"),
@@ -84,7 +88,10 @@ export class PeopleComponent {
             this.utilityFunctions.createLinkColumnDef("Added By", "AddedByPersonName", "AddedByPersonID", {
                 InRouterLink: "/people/",
             }),
-            this.utilityFunctions.createBasicColumnDef("Authentication Methods", "AuthenticationMethods"),
+            this.utilityFunctions.createBasicColumnDef("Authentication Methods", "AuthenticationMethods", {
+                CustomDropdownFilterField: "AuthenticationMethods",
+                ColumnContainsMultipleValues: true,
+            }),
         ];
 
         const allPeople$ = this.refreshData$.pipe(

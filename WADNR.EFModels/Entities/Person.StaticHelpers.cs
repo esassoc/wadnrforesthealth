@@ -70,7 +70,7 @@ public static class People
 
             person.RoleName = baseRole?.RoleDisplayName;
             person.SupplementalRoles = supplementalRoles.Any()
-                ? string.Join(", ", supplementalRoles.Select(r => r!.RoleDisplayName))
+                ? string.Join(" | ", supplementalRoles.Select(r => r!.RoleDisplayName))
                 : null;
         }
 
@@ -124,7 +124,7 @@ public static class People
             .ToList();
 
         person.SupplementalRoles = supplementalRoles.Any()
-            ? string.Join(", ", supplementalRoles.Select(r => r!.RoleDisplayName))
+            ? string.Join(" | ", supplementalRoles.Select(r => r!.RoleDisplayName))
             : null;
     }
 

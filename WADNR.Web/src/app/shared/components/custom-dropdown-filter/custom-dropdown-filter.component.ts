@@ -15,6 +15,7 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
     field: string;
     dropdownValues = [];
     columnContainsMultipleValues: boolean = false;
+    multiValueSeparator: string = ",";
 
     state = {
         selectAll: true,
@@ -30,6 +31,9 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
             this.field = params.colDef.filterParams.field;
             //MP 1/8/26 This is mostly just an optional override, but we can probably get rid of it at some point. The function is array-aware.
             this.columnContainsMultipleValues = params.colDef.filterParams.columnContainsMultipleValues;
+            if (params.colDef.filterParams.multiValueSeparator) {
+                this.multiValueSeparator = params.colDef.filterParams.multiValueSeparator;
+            }
         }
 
         this.initFilter();
@@ -224,9 +228,9 @@ export class CustomDropdownFilterComponent implements AgFilterComponent {
         if (Array.isArray(value)) {
             return value;
         }
-        // Split comma-separated strings into individual values
-        if (typeof value === "string" && value.includes(",")) {
-            return value.split(",").map((v) => v.trim()).filter((v) => v.length > 0);
+        // Split delimited strings into individual values
+        if (typeof value === "string" && value.includes(this.multiValueSeparator)) {
+            return value.split(this.multiValueSeparator).map((v) => v.trim()).filter((v) => v.length > 0);
         }
         return [value];
     }
