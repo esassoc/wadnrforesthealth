@@ -2733,8 +2733,9 @@
     <Reference Include="SharpDocx, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\NuGetPackages\SharpDocx.2.2.0\lib\net45\SharpDocx.dll</HintPath>
     </Reference>
-    <Reference Include="Sustainsys.Saml2, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\NuGetPackages\Sustainsys.Saml2.2.7.0\lib\net47\Sustainsys.Saml2.dll</HintPath>
+    <Reference Include="Sustainsys.Saml2, Version=2.9.2.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\NuGetPackages\Sustainsys.Saml2.2.9.2\lib\net47\Sustainsys.Saml2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Sustainsys.Saml2.Owin, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\NuGetPackages\Sustainsys.Saml2.Owin.2.7.0\lib\net461\Sustainsys.Saml2.Owin.dll</HintPath>
