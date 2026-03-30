@@ -7,11 +7,6 @@ test.describe("Authenticated list pages", () => {
         await expect(page.locator(".ag-row").first()).toBeVisible({ timeout: 30000 });
     });
 
-    test("/roles renders with content", async ({ authedPage: page }) => {
-        await page.goto("/roles");
-        await expect(page.getByRole("heading", { name: "Roles" })).toBeVisible();
-    });
-
     test("/agreements renders with grid data", async ({ authedPage: page }) => {
         await page.goto("/agreements");
         await expect(page.getByRole("heading", { name: "Agreements" })).toBeVisible();

@@ -77,15 +77,6 @@ test.describe("Detail pages - visual regression", () => {
         });
     });
 
-    test("Role detail", async ({ page }) => {
-        await page.goto(`/roles/${testData.roleID}`);
-        await waitForPageStable(page);
-        await expect(page).toHaveScreenshot("detail-role.png", {
-            ...DEFAULT_SCREENSHOT_OPTIONS,
-            mask: getGridBodyMasks(page),
-        });
-    });
-
     test("Person detail", async ({ page }) => {
         await page.goto(`/people/${testData.personID}`);
         await waitForPageStable(page);

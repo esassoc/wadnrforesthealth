@@ -6,12 +6,6 @@ import { test, expect } from "../fixtures/base-test";
  */
 
 test.describe("Admin user can access guarded routes", () => {
-    test("/roles renders heading (adminGuard)", async ({ authedPage: page }) => {
-        await page.goto("/roles");
-        await expect(page.locator("h2.page-title")).toBeVisible({ timeout: 15000 });
-        await expect(page.locator("h2.page-title")).toContainText("Roles");
-    });
-
     test("/project-types renders heading (adminGuard)", async ({ authedPage: page }) => {
         await page.goto("/project-types");
         await expect(page.locator("h2.page-title")).toBeVisible({ timeout: 15000 });

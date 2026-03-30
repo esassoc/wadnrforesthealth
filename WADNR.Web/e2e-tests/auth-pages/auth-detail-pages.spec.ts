@@ -17,8 +17,4 @@ test.describe("Authenticated detail pages", () => {
         await expect(page.locator(".card").first()).toBeVisible({ timeout: 15000 });
     });
 
-    test("Role detail loads", async ({ authedPage: page }) => {
-        await page.goto(`/roles/${testData.roleID}`);
-        await expect(page.locator("main, .page-header, .card").first()).toBeVisible({ timeout: 15000 });
-    });
 });

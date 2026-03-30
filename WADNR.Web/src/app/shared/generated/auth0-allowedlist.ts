@@ -271,8 +271,6 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/relationship-types/[^/]+$"),
     new RegExp("^/report-templates/[^/]+$"),
     new RegExp("^/report-templates/by-model/[^/]+$"),
-    new RegExp("^/roles/[^/]+$"),
-    new RegExp("^/roles/[^/]+/people$"),
     new RegExp("^/user-claims/[^/]+$"),
     new RegExp("^/vendors/[^/]+$"),
     new RegExp("^/vendors/[^/]+/organizations$"),

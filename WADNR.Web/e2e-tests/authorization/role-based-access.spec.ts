@@ -23,7 +23,6 @@ test.beforeEach(({ }, testInfo) => {
 
 test.describe("Normal user cannot access admin routes", () => {
     const adminRoutes = [
-        "/roles",
         "/project-types",
         "/project-themes",
         "/upload-excel-files",

@@ -115,8 +115,6 @@ export const authedRoutes: A11yRoute[] = [
 // Admin pages (adminGuard)
 // ────────────────────────────────────────────────────────────────────
 export const adminRoutes: A11yRoute[] = [
-    { name: "Roles List", path: "/roles", auth: "admin", waitFor: ".page-body" },
-    { name: "Role Detail", path: `/roles/${testData.roleID}`, auth: "admin", waitFor: ".card" },
     { name: "Labels and Definitions", path: "/labels-and-definitions", auth: "admin", waitFor: ".ag-row", timeout: 30000 },
     // Field Definition Edit excluded: requires CanManagePageContent supplemental role
     // { name: "Field Definition Edit", path: `/labels-and-definitions/1`, auth: "admin", waitFor: ".modal" },

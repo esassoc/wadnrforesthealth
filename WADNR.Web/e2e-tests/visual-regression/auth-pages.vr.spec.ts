@@ -83,12 +83,6 @@ test.describe("Authenticated pages - visual regression", () => {
         });
     });
 
-    test("Roles", async ({ page }) => {
-        await page.goto("/roles");
-        await waitForPageStable(page);
-        await expect(page).toHaveScreenshot("roles.png", DEFAULT_SCREENSHOT_OPTIONS);
-    });
-
     test("People", async ({ page }) => {
         await page.goto("/people");
         await waitForPageStable(page);

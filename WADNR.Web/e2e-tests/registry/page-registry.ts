@@ -776,27 +776,6 @@ export const pageRegistry: PageRegistryEntry[] = [
 
     // ── Admin: People & Roles ──────────────────────────────────────────────────
     {
-        id: "roles-list",
-        name: "Roles List",
-        area: "admin",
-        legacyPath: "/Role/Index",
-        modernPath: "/roles",
-        status: "migrated",
-        auth: "admin",
-        pageType: "page",
-    },
-    {
-        id: "role-detail",
-        name: "Role Detail",
-        area: "admin",
-        legacyPath: "/Role/Detail/{roleID}",
-        modernPath: "/roles/{roleID}",
-        status: "migrated",
-        auth: "admin",
-        tokens: ["roleID"],
-        pageType: "page",
-    },
-    {
         id: "people-list",
         name: "People List",
         area: "admin",

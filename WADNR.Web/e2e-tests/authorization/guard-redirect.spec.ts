@@ -34,7 +34,6 @@ test.describe("authGuard routes redirect anonymous users to /", () => {
 
 test.describe("adminGuard routes redirect anonymous users to /", () => {
     const adminGuardRoutes = [
-        "/roles",
         "/project-types",
         "/project-themes",
         "/upload-excel-files",
