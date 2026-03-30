@@ -1,1 +1,0 @@
-delete from dbo.ProjectLocation where ProjectLocationID = 1
