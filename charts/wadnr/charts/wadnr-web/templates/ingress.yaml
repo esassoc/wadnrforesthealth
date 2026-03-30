@@ -30,6 +30,9 @@ spec:
     - secretName: wadnr-web-tls
       hosts:
         - {{ .Values.global.domains.web }}
+  {{ if eq .Values.global.env.name "prod" }}
+        - foresthealthtracker.dnr.wa.gov
+  {{- end }}
   rules:
     - host: {{ .Values.global.domains.web }}
       http:
@@ -46,4 +49,21 @@ spec:
               serviceName: {{ $fullName }}
               servicePort: {{ $svcPort }}
               {{- end }}
+  {{ if eq .Values.global.env.name "prod" }}
+    - host: foresthealthtracker.dnr.wa.gov
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $svcPort }}
+              {{- else }}
+              serviceName: {{ $fullName }}
+              servicePort: {{ $svcPort }}
+              {{- end }}
+  {{- end }}
 {{- end }}
