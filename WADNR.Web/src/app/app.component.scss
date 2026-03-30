@@ -8,7 +8,7 @@
     background-position: top center;
     background-size: cover;
     font-size: var(--type-size-100);
-    color: var(--blue-300);
+    color: var(--white);
     padding: var(--spacing-600);
     bottom: 0;
     z-index: 3;
@@ -21,7 +21,7 @@
         }
 
         a {
-            text-decoration: none;
+            text-decoration: underline;
         }
     }
 
