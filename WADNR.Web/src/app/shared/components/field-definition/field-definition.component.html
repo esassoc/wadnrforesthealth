@@ -1,0 +1,59 @@
+@if (isLoading) {
+<div class="field-definition__loading">
+    <span class="fa fa-spinner loading-spinner"></span>
+</div>
+} @if (!isLoading) {
+<div class="field-definition__wrapper">
+    <ng-template #popTitle>
+        <div class="field-definition__title flex-between">
+            <div>{{ getLabelText() }}</div>
+            <div class="flex">
+                @if (showEditButton()) {
+                <button type="button" class="btn btn-link" [hidden]="isEditing" (click)="enterEdit($event)">
+                    <i class="fa fa-pencil-square-o" attr.aria-label="Edit the definition for {{ getLabelText() }}"></i>
+                </button>
+                }
+                <button type="button" class="btn btn-link field-definition__close-btn" [hidden]="isEditing" (click)="closePopper()" aria-label="Close">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template #popContent>
+        @if (!isEditing) {
+            @if (!emptyContent) {
+            <div [innerHtml]="fieldDefinitionDatum.FieldDefinitionDatumValue"></div>
+            } @else {
+            <div class="hoverEmptySpace"></div>
+            }
+        } @if (isEditing) {
+        <div>
+            <editor #tinyMceEditor [init]="tinyMceConfig" [(ngModel)]="editedContent"></editor>
+            <div class="field-definition__editor-buttons">
+                <button type="button" class="btn btn-sm btn-primary mt-1 mr-1 mb-1" (click)="saveEdit()">Save</button>
+                <button type="button" class="btn btn-sm btn-secondary mt-1 mb-1" (click)="cancelEdit()">Cancel</button>
+            </div>
+        </div>
+        }
+    </ng-template>
+    @if (!inline) {
+    <span class="field-definition__label">
+        <span class="field-definition__text">{{ getLabelText() }}</span>
+        <span class="field-definition__icon">
+            <i class="fas fa-question-circle small" style="cursor: help"
+               [popper]="popContent" [useBodyContainer]="useBodyContainer" [popperTitle]="popTitle"></i>
+        </span>
+    </span>
+    } @else {
+    <div class="field-definition__inline flex-start pt-2">
+        <i class="fas fa-question-circle small"></i>
+        <div>
+            <span [innerHtml]="fieldDefinitionDatum.FieldDefinitionDatumValue"></span>
+            @if (showEditButton()) {
+            <em class="field-definition__edit-button" [popper]="popContent" [useBodyContainer]="useBodyContainer" [popperTitle]="popTitle" (click)="enterEdit($event)"> (edit) </em>
+            }
+        </div>
+    </div>
+    }
+</div>
+}

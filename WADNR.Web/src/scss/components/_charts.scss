@@ -1,0 +1,158 @@
+.scrubber_group {
+    cursor: ew-resize;
+    filter: grayscale(1);
+}
+
+#vg-tooltip-element {
+    font-size: 14px;
+}
+
+.vstack-tooltip {
+    font-family: var(--app-font-family, Arial, sans-serif);
+    font-size: 13px;
+    color: var(--app-text-color, #333);
+    background: var(--app-card-bg, #fff);
+    border: 1px solid var(--app-border-color, rgba(0, 0, 0, 0.08));
+    padding: 8px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    max-width: 320px;
+    line-height: 1.3;
+}
+
+.vstack-tooltip .vstack-tooltip-inner p {
+    margin: 0 0 6px 0;
+    font-weight: 600;
+}
+
+.vstack-tooltip .vstack-tooltip-total {
+    margin-top: 6px;
+    font-weight: 700;
+    border-top: 1px solid rgba(0, 0, 0, 0.04);
+    padding-top: 6px;
+}
+
+/* Breakdown row: label left, value right */
+.vstack-tooltip .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+}
+
+.vstack-tooltip .breakdown-label {
+    flex: 1 1 auto;
+    text-align: left;
+}
+
+.vstack-tooltip .breakdown-value {
+    flex: 0 0 auto;
+    text-align: right;
+    min-width: 56px;
+}
+
+/* separator specifically before total row */
+.vstack-tooltip .breakdown-total-sep {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    margin-top: 6px;
+    padding-top: 6px;
+}
+
+.swatches {
+    display: flex;
+    gap: 4px; /* even denser gap */
+    align-items: center;
+    margin-right: 4px;
+    flex-wrap: wrap; /* allow legend items to wrap to next line */
+    width: 100%;
+}
+
+.legend-swatch {
+    width: 14px; /* further smaller swatch */
+    height: 14px;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.swatch-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    background: transparent;
+    padding: 1px 3px; /* tighter padding */
+    cursor: pointer;
+}
+
+.swatch-btn.disabled {
+    opacity: 0.45;
+}
+
+.swatch-label {
+    display: none;
+    font-size: 11px;
+    color: var(--app-text-color, #333);
+    /* keep labels to a single line and truncate with ellipsis; full value shown on hover via title */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px; /* wider labels to show more text before truncating */
+}
+
+/* Show labels on larger screens */
+@media (min-width: 640px) {
+    .swatch-label {
+        display: inline-block;
+    }
+}
+
+/* Wrap legend when many items */
+.chartLegend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px; /* reduced gap for denser layout */
+    align-items: center;
+}
+
+/* Ensure legend stays inside the chart tile and wraps as needed */
+.chartLegend,
+.chartLegend .swatches {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.swatch-btn:focus {
+    outline: 2px solid var(--app-focus-color, #2b6cb0);
+    outline-offset: 2px;
+}
+
+/* Chart title and spacing */
+.chart-title {
+    margin: 0 0 8px 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Slight padding inside the embedded chart area */
+.chartSection {
+    padding: 6px 6px 0 6px;
+}
+
+.chart-tile {
+    /* configurable chart tile background */
+    background: var(--chart-tile-bg, #f3f4f6); /* slightly lighter gray */
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+/* Ensure chart-tile stretches full width in small screens */
+@media (max-width: 640px) {
+    .card-body.grid-12 {
+        grid-template-columns: 1fr;
+    }
+    .g-col-6.chart-tile {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}

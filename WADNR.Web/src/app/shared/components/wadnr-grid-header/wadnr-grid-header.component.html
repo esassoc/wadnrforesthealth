@@ -1,0 +1,54 @@
+<div class="grid-header flex-between">
+    <div class="grid-header__actions flex" [style]="unsetHeaderGridActionWidth ? 'width: unset;' : ''">
+        <div class="grid-header__filter">
+            @if (!hideGlobalFilter) {
+            <div class="field">
+                <input
+                    type="text"
+                    name="quickFilterText"
+                    [(ngModel)]="quickFilterText"
+                    (ngModelChange)="onQuickFilterTextChanged()"
+                    placeholder="Search grid..."
+                    [disabled]="disableGlobalFilter" />
+            </div>
+            }
+        </div>
+
+        @if (leftAlignClearFiltersButton) {
+        <div class="grid-header__clear-filters">
+            <wadnr-clear-grid-filters-button [grid]="grid" (filtersCleared)="onFiltersCleared()"></wadnr-clear-grid-filters-button>
+        </div>
+        }
+
+        <ng-content select="[customGridActionsLeft]"></ng-content>
+    </div>
+
+    <div #centerSection class="grid-header__actions flex-center" [style]="unsetHeaderGridActionWidth ? 'width: unset;' : ''" [hidden]="!hasCenterContent">
+        <ng-content select="[customGridActionsCenter]"></ng-content>
+    </div>
+
+    <div class="grid-header__actions flex-end" [style]="unsetHeaderGridActionWidth ? 'width: unset;' : ''">
+        @if (multiSelectEnabled && showMultiRowSelectActions) { @if (selectedRowsCount > 0) {
+        <span class="grid-header__selection-info"> {{ selectedRowsCount }} of {{ rowDataCount }} Selected </span>
+        }
+        <button class="btn btn-sm btn-secondary" (click)="onSelectAll()" [class.disabled]="allRowsSelected">
+            Select All @if (anyFilterPresent) {
+            <span>(filtered)</span>
+            }
+        </button>
+        <button class="btn btn-sm btn-secondary" (click)="onDeselectAll()" [class.disabled]="selectedRowsCount < 1">
+            Deselect All @if (anyFilterPresent) {
+            <span>(filtered)</span>
+            }
+        </button>
+        }
+
+        <ng-content select="[customGridActionsRight]"></ng-content>
+
+        @if (!leftAlignClearFiltersButton) {
+        <div class="grid-header__clear-filters">
+            <wadnr-clear-grid-filters-button [grid]="grid" (filtersCleared)="onFiltersCleared()"></wadnr-clear-grid-filters-button>
+        </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,56 @@
+@use "/src/scss/abstracts" as *;
+
+.wadnr-grid {
+    &__footer {
+        padding: var(--spacing-400);
+        border: 1px solid rgba(var(--black-rgb), 0.1);
+        border-top: none;
+        border-radius: 0 0 var(--spacing-200) var(--spacing-200);
+        gap: 1em;
+        font-size: var(--type-size-200);
+    }
+
+    &__row-count {
+        text-align: right;
+    }
+
+    &__filtered-count {
+        color: var(--gray-600);
+        font-size: var(--type-size-100);
+        font-style: italic;
+        padding-top: var(--spacing-050);
+    }
+
+    &__fullscreen-btn {
+        padding-right: var(--spacing-200);
+    }
+}
+
+.full-screen-btn--active {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+
+    .wadnr-grid__fullscreen-header {
+        display: flex;
+        align-items: center;
+        padding: var(--spacing-300) var(--spacing-400);
+        border-bottom: 1px solid rgba(var(--black-rgb), 0.1);
+        background-color: var(--card-header-bg-color);
+    }
+
+    .wadnr-grid__fullscreen-title {
+        font-size: var(--type-size-400);
+        font-weight: 600;
+        color: var(--white);
+    }
+
+    ag-grid-angular {
+        flex: 1;
+        height: unset !important;
+    }
+
+    .wadnr-grid__footer {
+        flex-shrink: 0;
+    }
+}

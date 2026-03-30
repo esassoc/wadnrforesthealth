@@ -1,0 +1,48 @@
+<page-header pageTitle="JSON APIs"></page-header>
+
+<div class="page-body">
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">API Documentation</span>
+        </div>
+        <div class="card-body">
+            <p>
+                The Forest Health Tracker provides a REST API for programmatic access to data. All endpoints return JSON and require authentication via an API key.
+            </p>
+            @if (scalarDocsUrl$ | async; as scalarDocsUrl) {
+                <p>
+                    <strong>Interactive documentation</strong> is available at the
+                    <a [href]="scalarDocsUrl" target="_blank">Scalar API Reference <icon icon="ExternalLink"></icon></a>, where you can explore endpoints,
+                    view schemas, and test requests directly in your browser.
+                </p>
+            }
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header">
+            <span class="card-title">Authentication</span>
+        </div>
+        <div class="card-body">
+            <p>All API requests must include your API key in the <code>x-api-key</code> HTTP header.</p>
+
+            @if (currentUser$ | async; as user) {
+                @let apiKey = apiKey$ | async;
+                <div class="json-apis__api-key-section">
+                    <span class="field-label">Your API Key</span>
+                    @if (apiKey) {
+                        <div class="json-apis__api-key-row">
+                            <code [copyToClipboard]="true">{{ apiKey }}</code>
+                            <button class="btn btn-sm btn-secondary" (click)="generateApiKey(user.PersonID, true)">Regenerate</button>
+                        </div>
+                    } @else {
+                        <div class="json-apis__api-key-row">
+                            <span class="json-apis__text-muted">No API key generated.</span>
+                            <button class="btn btn-sm btn-primary" (click)="generateApiKey(user.PersonID, false)">Generate</button>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

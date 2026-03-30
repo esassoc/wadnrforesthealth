@@ -1,0 +1,44 @@
+@use "/src/scss/abstracts" as *;
+
+.grid-header {
+    align-items: center;
+    border: 1px solid var(--gray-light);
+    border-radius: var(--spacing-100);
+    padding: var(--spacing-200);
+    margin-bottom: var(--spacing-200);
+    background-color: var(--gray-lighter);
+
+    &__filter {
+        justify-self: flex-start;
+        width: 15rem;
+
+        input {
+            font-size: var(--type-size-200);
+            padding: var(--spacing-200);
+            height: 2rem;
+        }
+    }
+
+    &__selection-info {
+        font-style: italic;
+        font-size: var(--type-size-200);
+        padding-right: var(--spacing-100);
+    }
+
+    &__clear-filters {
+        border-left: 1px solid var(--gray-light);
+        padding-left: var(--spacing-200);
+
+        &:first-child {
+            border: none;
+        }
+    }
+
+    &__actions {
+        flex: 1;
+
+        &[hidden] {
+            display: none !important;
+        }
+    }
+}

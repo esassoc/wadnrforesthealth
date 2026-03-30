@@ -1,0 +1,219 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit Basics</h3>
+</div>
+<div class="modal-body" [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 200 }">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <div class="grid-12">
+            <!-- Project Type -->
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="$any(form.controls.projectTypeID)"
+                    fieldLabel="Project Type"
+                    [type]="FormFieldType.Select"
+                    [formInputOptions]="projectTypeOptions"
+                    placeholder="Select Project Type..."
+                    [readOnly]="isSubmitting()">
+                </form-field>
+                <p class="small text-muted mt-1"><em>Warning: Changing the Project Type may delete previously entered data that doesn't apply to a different Project Type.</em></p>
+            </div>
+            <div class="g-col-6"></div>
+
+            <!-- Project Name -->
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="$any(form.controls.projectName)"
+                    fieldLabel="Project Name"
+                    [type]="FormFieldType.Text"
+                    placeholder="Enter project name..."
+                    [readOnly]="isSubmitting()">
+                </form-field>
+                @if (editData.IsProjectNameImported) {
+                    <p class="small text-muted mt-1">{{ editData.ImportedFieldWarningMessage }}</p>
+                }
+            </div>
+            <div class="g-col-6"></div>
+
+            <!-- DNR LOA Focus Area -->
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="$any(form.controls.focusAreaID)"
+                    fieldLabel="DNR LOA Focus Area"
+                    [type]="FormFieldType.Select"
+                    [formInputOptions]="focusAreaOptions"
+                    placeholder="Select Focus Area..."
+                    [readOnly]="isSubmitting()">
+                </form-field>
+            </div>
+            <div class="g-col-6"></div>
+
+            <!-- Project Description -->
+            <div class="g-col-12">
+                <form-field
+                    [formControl]="$any(form.controls.projectDescription)"
+                    fieldLabel="Project Description"
+                    [type]="FormFieldType.Textarea"
+                    placeholder="Enter project description..."
+                    [readOnly]="isSubmitting()">
+                </form-field>
+                <small class="text-muted">{{ descriptionCharCount }} / 4000 characters</small>
+            </div>
+
+            <!-- Project Stage -->
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="$any(form.controls.projectStageID)"
+                    fieldLabel="Project Stage"
+                    [type]="FormFieldType.Select"
+                    [formInputOptions]="projectStageOptions"
+                    placeholder="Select Project Stage..."
+                    [readOnly]="isSubmitting()">
+                </form-field>
+                @if (editData.IsProjectStageImported) {
+                    <p class="small text-muted mt-1">{{ editData.ImportedFieldWarningMessage }}</p>
+                }
+            </div>
+            <div class="g-col-6"></div>
+
+            <!-- Estimated Total Cost -->
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="$any(form.controls.estimatedTotalCost)"
+                    fieldLabel="Estimated Total Cost"
+                    [type]="FormFieldType.Number"
+                    placeholder="Enter amount..."
+                    [readOnly]="isSubmitting()">
+                </form-field>
+            </div>
+            <div class="g-col-6"></div>
+
+            <!-- Project Initiation Date -->
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="$any(form.controls.plannedDate)"
+                    fieldLabel="Project Initiation Date"
+                    [type]="FormFieldType.Date"
+                    [readOnly]="isSubmitting()">
+                </form-field>
+                @if (editData.IsProjectInitiationDateImported) {
+                    <p class="small text-muted mt-1">{{ editData.ImportedFieldWarningMessage }}</p>
+                }
+            </div>
+            <div class="g-col-6"></div>
+
+            <!-- Expiration Date -->
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="$any(form.controls.expirationDate)"
+                    fieldLabel="Expiration Date"
+                    [type]="FormFieldType.Date"
+                    [readOnly]="isSubmitting()">
+                </form-field>
+            </div>
+            <div class="g-col-6"></div>
+
+            <!-- Completion Date -->
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="$any(form.controls.completionDate)"
+                    fieldLabel="Completion Date"
+                    [type]="FormFieldType.Date"
+                    [readOnly]="isSubmitting()">
+                </form-field>
+                @if (editData.IsCompletionDateImported) {
+                    <p class="small text-muted mt-1">{{ editData.ImportedFieldWarningMessage }}</p>
+                }
+            </div>
+            <div class="g-col-6"></div>
+
+            <!-- Program Identifier -->
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="$any(form.controls.projectGisIdentifier)"
+                    fieldLabel="Program Identifier"
+                    [type]="FormFieldType.Text"
+                    placeholder="Enter identifier..."
+                    [readOnly]="isSubmitting()">
+                </form-field>
+                @if (editData.IsProjectIdentifierImported) {
+                    <p class="small text-muted mt-1">{{ editData.ImportedFieldWarningMessage }}</p>
+                }
+            </div>
+            <div class="g-col-6"></div>
+
+            <!-- Lead Implementer Organization -->
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="$any(form.controls.leadImplementerOrganizationID)"
+                    fieldLabel="Lead Implementer Organization"
+                    [type]="FormFieldType.Select"
+                    [formInputOptions]="organizationOptions"
+                    placeholder="Select Organization..."
+                    [readOnly]="isSubmitting()">
+                </form-field>
+            </div>
+            <div class="g-col-6"></div>
+
+            <!-- Programs multi-select -->
+            <div class="g-col-12">
+                <span class="field-label">Programs</span>
+                <div class="grid-12" style="align-items: end;">
+                    <div class="g-col-8">
+                        <form-field
+                            [formControl]="$any(form.controls.programToAdd)"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="availableProgramOptions"
+                            placeholder="Select program to add..."
+                            [readOnly]="isSubmitting()">
+                        </form-field>
+                    </div>
+                    <div class="g-col-4">
+                        <button type="button" class="btn btn-primary btn-sm" (click)="addProgram()" [disabled]="isSubmitting() || !form.controls.programToAdd.value">Add</button>
+                    </div>
+                </div>
+                @if (selectedPrograms.length > 0) {
+                    <div class="tags-list mt-2">
+                        @for (program of selectedPrograms; track program.ProgramID) {
+                            <span class="btn btn-sm btn-tag">
+                                {{ program.ProgramName }}
+                                <a href="#" class="ml-1 text-danger" (click)="removeProgram(program.ProgramID); $event.preventDefault()" title="Remove" aria-label="Remove">
+                                    <icon icon="Delete" aria-hidden="true"></icon>
+                                </a>
+                            </span>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Percentage Match -->
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="$any(form.controls.percentageMatch)"
+                    fieldLabel="Percentage Match"
+                    [type]="FormFieldType.Number"
+                    placeholder="Enter percentage..."
+                    [readOnly]="isSubmitting()">
+                </form-field>
+            </div>
+            <div class="g-col-6"></div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [buttonLoading]="isSubmitting()"
+        [disabled]="isSubmitting() || form.invalid">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting()">
+        Cancel
+    </button>
+</div>
+</div>

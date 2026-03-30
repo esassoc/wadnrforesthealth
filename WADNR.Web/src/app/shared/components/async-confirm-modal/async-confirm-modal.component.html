@@ -1,0 +1,17 @@
+<div class="modal">
+    <div class="modal-header">
+        <h4>{{ data.title }}</h4>
+    </div>
+    <div class="modal-body">
+        <p>{{ data.message }}</p>
+    </div>
+    <div class="modal-footer">
+        <button [class]="'btn ' + (data.buttonClassYes ?? 'btn-primary')"
+                (click)="execute()" [buttonLoading]="isLoading" [disabled]="isLoading">
+            {{ data.buttonTextYes }}
+        </button>
+        <button class="btn btn-outline-secondary" (click)="cancel()" [disabled]="isLoading">
+            {{ data.buttonTextNo ?? "Cancel" }}
+        </button>
+    </div>
+</div>

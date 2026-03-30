@@ -1,0 +1,132 @@
+@use "/src/scss/abstracts" as *;
+
+input:checked {
+    & + .toggle {
+        border: 1px solid var(--primary);
+        background: var(--primary);
+        color: var(--white);
+        text-align: center;
+
+        &:before {
+            transform: translateX(3rem);
+            background-color: var(--white);
+        }
+
+        &[check-true]:after {
+            content: attr(check-true);
+        }
+
+        &:after {
+            content: "On";
+            right: auto;
+            left: 1rem;
+        }
+    }
+
+    &.secondary + .toggle {
+        border: 1px solid var(--secondary);
+        background: var(--secondary);
+    }
+
+    & + .toggle.toggle-orange {
+        border: 1px solid var(--orange-default);
+        background-color: var(--orange-default);
+        color: var(--white);
+    }
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 5rem;
+    height: 2rem;
+
+    p {
+        padding-top: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+
+        &:disabled {
+            &:hover {
+                pointer-events: none;
+                cursor: default;
+            }
+
+            & + .toggle {
+                border: 1px solid var(--gray-200);
+                background-color: var(--white);
+                color: var(--gray-600);
+
+                &:hover {
+                    pointer-events: none;
+                    cursor: default;
+                }
+
+                &:before {
+                    background-color: var(--gray-600);
+                }
+            }
+        }
+
+        &.secondary + .toggle {
+            border: 1px solid var(--secondary);
+
+            &::before {
+                background-color: var(--secondary);
+            }
+        }
+    }
+
+    .toggle {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        border: 1px solid var(--primary);
+        background-color: var(--white);
+        transition: 0.4s;
+        color: var(--primary);
+
+        text-align: center;
+        border-radius: var(--border-radius-700);
+
+        &.toggle-orange {
+            border: 1px solid var(--gray-light);
+            background-color: var(--gray-light);
+            color: var(--gray-600);
+            &:before {
+                background-color: var(--white);
+            }
+        }
+
+        &:before {
+            position: absolute;
+            content: "";
+            height: 1.5rem;
+            width: 1.5rem;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--primary);
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+        &[check-false]:after {
+            content: attr(check-false);
+        }
+        &:after {
+            display: block;
+            content: "Off";
+            position: absolute;
+            top: 0.5875rem;
+            right: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: var(--type-size-150);
+            transition: all 150ms ease;
+        }
+    }
+}

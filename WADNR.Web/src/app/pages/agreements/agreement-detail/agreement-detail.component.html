@@ -1,0 +1,197 @@
+@if (agreement$ | async; as agreement) {
+<breadcrumb [items]="[{ label: 'Agreements', url: '/agreements' }, { label: agreement.AgreementTitle || 'Agreement' }]" [linkLast]="false"></breadcrumb>
+
+<page-header pageTitle="{{ agreement.AgreementTitle || 'Agreement' }}">
+</page-header>
+
+<div class="grid-12">
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header flex-between">
+                <span class="card-title">Agreement Basics</span>
+                @if (canManageAgreements$ | async) {
+                    <div>
+                        <button class="card-header-edit-link" (click)="openEditModal(agreement)" title="Edit Agreement Basics">
+                            <icon icon="Edit"></icon>
+                        </button>
+                    </div>
+                }
+            </div>
+            <div class="card-body">
+                <div class="grid-12 mb-2">
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="AgreementTitle"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.AgreementTitle || "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="AgreementNumber"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.AgreementNumber || "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="Organization" labelOverride="Contributing Organization"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">
+                        @if (agreement.ContributingOrganization?.OrganizationID) {
+                        <a [routerLink]="['/organizations', agreement.ContributingOrganization?.OrganizationID]">{{
+                            agreement.ContributingOrganization?.OrganizationName || "—"
+                        }}</a>
+                        } @else {
+                        {{ agreement.ContributingOrganization?.OrganizationName || "—" }}
+                        }
+                    </div>
+
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="AgreementStartDate"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.StartDate | date : "M/d/yyyy" }}</div>
+
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="AgreementEndDate"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.EndDate | date : "M/d/yyyy" }}</div>
+
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="AgreementStatus"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.AgreementStatus?.AgreementStatusName || "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="AgreementType"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.AgreementType?.AgreementTypeName || "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="ProgramIndex"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.ProgramIndices || "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="ProjectCode"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.ProjectCodes || "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="AgreementAmount"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.AgreementAmount | currency }}</div>
+
+                    <div class="g-col-4">
+                        <strong>Expended Amount</strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.ExpendedAmount != null ? (agreement.ExpendedAmount | currency) : "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong>Balance Amount</strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.BalanceAmount != null ? (agreement.BalanceAmount | currency) : "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong>DNR Upland Region</strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.DNRUplandRegion?.DNRUplandRegionName || "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong>First Bill Due On</strong>
+                    </div>
+                    <div class="g-col-8">{{ agreement.FirstBillDueOn ? (agreement.FirstBillDueOn | date : "M/d/yyyy") : "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="AgreementNotes"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8 copy" [innerHTML]="sanitizeHtml(agreement.Notes)"></div>
+
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="FileResource" labelOverride="Agreement File"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">
+                        @if (agreement.FileResource?.FileResourceGUID) {
+                        <a [href]="documentUrl(agreement.FileResource?.FileResourceGUID)" target="_blank" rel="noopener noreferrer">
+                            {{ agreement.FileResource?.OriginalCompleteFileName || "Download" }}
+                        </a>
+                        } @else { No documents uploaded yet. }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header flex-between">
+                <span class="card-title">WA DNR Fund Source Allocations Associated to This Agreement</span>
+                @if (canManageAgreements$ | async) {
+                    @if (fundSourceAllocations$ | async; as fsAllocations) {
+                        <button class="card-header-edit-link" (click)="openFundSourceAllocationsModal(agreement.AgreementID, fsAllocations)" title="Edit Fund Source Allocations">
+                            <icon icon="Edit"></icon>
+                        </button>
+                    }
+                }
+            </div>
+            <div class="card-body" [loadingSpinner]="{ isLoading: fundSourceAllocationsIsLoading$ | async, loadingHeight: 120 }">
+                <div class="grid-12">
+                    <div class="g-col-12"><strong>WA DNR Fund Source Allocations</strong></div>
+                    <div class="g-col-12">
+                        @if (fundSourceAllocations$ | async; as fundSourceAllocations) { @if (fundSourceAllocations.length) { @for (allocation of fundSourceAllocations; track
+                        allocation.FundSourceAllocationID) {
+                        <div>
+                            <a [routerLink]="['/fund-source-allocations', allocation.FundSourceAllocationID]">{{ allocation.FundSourceAllocationName }}</a>
+                        </div>
+                        } } @else {
+                        <em>No fund source allocations associated with this agreement.</em>
+                        } }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header flex-between">
+                <span class="card-title">Projects Associated to This Agreement</span>
+                @if (canManageAgreements$ | async) {
+                    @if (projects$ | async; as projectsList) {
+                        <button class="card-header-edit-link" (click)="openProjectsModal(agreement.AgreementID, projectsList)" title="Edit Projects">
+                            <icon icon="Edit"></icon>
+                        </button>
+                    }
+                }
+            </div>
+            <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 120 }">
+                <div class="grid-12">
+                    <div class="g-col-12"><strong>Projects</strong></div>
+                    <div class="g-col-12">
+                        @if (projects$ | async; as projects) { @if (projects.length) { @for (project of projects; track project.ProjectID) {
+                        <div>
+                            <a [routerLink]="['/projects', project.ProjectID, 'fact-sheet']">{{ project.ProjectName || "—" }}</a>
+                        </div>
+                        } } @else {
+                        <em>No projects associated with this agreement.</em>
+                        } }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Agreement Contacts</span>
+            </div>
+            <div class="card-body" [loadingSpinner]="{ isLoading: contactsIsLoading$ | async, loadingHeight: 300 }">
+                @if (canManageAgreements$ | async) {
+                    <div class="flex-end mb-2">
+                        <button class="btn btn-sm btn-primary" (click)="openContactModal(agreement.AgreementID, 'create')">Add Contact</button>
+                    </div>
+                }
+                <wadnr-grid [rowData]="contacts$ | async" [columnDefs]="contactColumnDefs$ | async" downloadFileName="agreement-contacts" fullscreenTitle="Agreement Contacts" [sizeColumnsToFitGrid]="true"></wadnr-grid>
+            </div>
+        </div>
+    </div>
+</div>
+} @else {
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
+}

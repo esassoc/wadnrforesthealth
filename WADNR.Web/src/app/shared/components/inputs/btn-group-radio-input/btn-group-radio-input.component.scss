@@ -1,0 +1,17 @@
+@use "/src/scss/abstracts" as *;
+
+.button-group {
+    gap: 0.25em;
+
+    &__item {
+        padding: var(--spacing-300) var(--spacing-400) 0.75em;
+        icon {
+            padding-right: var(--spacing-100);
+        }
+
+        &:disabled {
+            pointer-events: none;
+            background-color: var(--gray-100);
+        }
+    }
+}

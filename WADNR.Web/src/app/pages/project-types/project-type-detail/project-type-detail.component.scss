@@ -1,0 +1,9 @@
+.project-type-detail {
+    &__legend-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--spacing-300);
+        flex-wrap: wrap;
+    }
+}

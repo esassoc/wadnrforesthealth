@@ -1,0 +1,7 @@
+@if (params && !params.isSpan) {
+<a [routerLink]="[params.inRouterLink, params.value]" [attr.aria-label]="params.title ?? params.fontawesomeIconName">
+    <span class="fas fa-{{ params.fontawesomeIconName }}" aria-hidden="true"></span>
+</a>
+} @else {
+<span class="fas fa-{{ params.fontawesomeIconName }}" style="cursor: pointer" aria-hidden="true"></span>
+}

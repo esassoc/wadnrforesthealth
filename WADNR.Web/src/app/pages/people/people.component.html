@@ -1,0 +1,24 @@
+<page-header pageTitle="Users and Contacts"></page-header>
+
+<div class="page-body">
+    <div class="flex-between ai-fe mb-3">
+        <form-field
+            [formControl]="filterControl"
+            fieldLabel="Show"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="filterOptions"
+            formInputOptionLabel="Label"
+            formInputOptionValue="Value"
+            [clearable]="false"
+            [searchable]="false"
+            class="filter-dropdown">
+        </form-field>
+        @if (canAddPerson$ | async) {
+            <button class="btn btn-sm btn-primary" (click)="openAddPersonModal()">
+                <span class="fas fa-plus"></span> Create Person
+            </button>
+        }
+    </div>
+
+    <wadnr-grid [rowData]="people$ | async" [columnDefs]="columnDefs" downloadFileName="users-and-contacts" fullscreenTitle="Users and Contacts"></wadnr-grid>
+</div>

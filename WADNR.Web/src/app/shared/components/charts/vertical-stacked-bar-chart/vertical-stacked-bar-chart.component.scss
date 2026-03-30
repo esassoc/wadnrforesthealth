@@ -1,0 +1,199 @@
+/* Tooltip breakdown separator — programmatic classes, keep in ::ng-deep */
+::ng-deep .breakdown-sep {
+    border-top: 3px solid rgba(0, 0, 0, 0.08);
+    margin: 6px 0;
+}
+
+::ng-deep .breakdown-total-sep .breakdown-row {
+    font-weight: 700;
+}
+
+::ng-deep .breakdown-label-bold {
+    font-weight: 700;
+}
+
+.v-bar-chart {
+    &__section {
+        // wrapper around chart + legend
+    }
+
+    &__controls {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 6px;
+    }
+
+    &__cumulative-toggle {
+        background: transparent;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+
+        &[aria-pressed="true"] {
+            background: rgba(0, 0, 0, 0.04);
+            font-weight: 700;
+        }
+    }
+
+    &__switch-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    &__toggle-text {
+        margin-left: 6px;
+        font-size: 0.82rem; /* smaller */
+        line-height: 1;
+    }
+
+    &__legend {
+        padding: var(--spacing-200) 0;
+    }
+
+    &__swatches {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-200);
+        justify-content: center;
+    }
+
+    &__swatch-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-200);
+        padding: var(--spacing-100) var(--spacing-300);
+        background: transparent;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--border-radius-200);
+        cursor: pointer;
+        transition: opacity 0.15s ease, background-color 0.15s ease;
+
+        &:hover {
+            background-color: var(--gray-100);
+        }
+
+        &--disabled {
+            opacity: 0.35;
+        }
+    }
+
+    &__swatch-color {
+        width: 14px;
+        height: 14px;
+        border-radius: 2px;
+        flex-shrink: 0;
+    }
+
+    &__swatch-label {
+        font-size: var(--type-size-100);
+        color: var(--gray-700);
+        white-space: nowrap;
+    }
+}
+
+/* Reuse global toggle styles locally so the inline checkbox matches the reusable toggle */
+::ng-deep .switch {
+    position: relative;
+    display: inline-block;
+    width: 3.6rem !important; /* force slightly smaller */
+    height: 1.4rem !important; /* force slightly smaller */
+}
+
+::ng-deep .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+::ng-deep .switch .toggle {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    border: 1px solid var(--primary);
+    background-color: var(--white);
+    transition: 0.4s;
+    color: var(--primary);
+    text-align: center;
+    border-radius: var(--border-radius-700);
+}
+
+/* Hide pseudo-element text to avoid overlap; we'll use explicit knob */
+::ng-deep .switch .toggle:after {
+    display: none !important;
+}
+::ng-deep .switch .toggle:before {
+    display: none !important;
+}
+
+::ng-deep .switch .toggle-knob {
+    position: absolute;
+    height: 1rem !important;
+    width: 1rem !important;
+    left: 2px !important;
+    bottom: 2px !important;
+    background-color: var(--primary);
+    transition: transform 0.18s ease !important;
+    border-radius: 50%;
+}
+
+/* move explicit knob to the right when checked; adjusted for the smaller container */
+::ng-deep .switch input:checked + .toggle .toggle-knob {
+    transform: translateX(2.3rem) !important;
+    /* White knob when ON for better visual parity with app toggle */
+    background-color: var(--white) !important;
+    border: 1px solid var(--primary) !important;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04) inset !important;
+}
+
+::ng-deep .switch .toggle:after {
+    display: block;
+    content: "Off";
+    position: absolute;
+    top: 0.7rem;
+    right: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.64rem; /* smaller */
+    transition: all 150ms ease;
+}
+
+::ng-deep .switch input:checked + .toggle:after {
+    content: "On";
+    left: 0.6rem;
+    right: auto;
+}
+
+/* Tooltip styles moved from inline styles in the component TS file */
+::ng-deep .vstack-tooltip {
+    position: fixed;
+    pointer-events: none;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 8px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    display: none;
+    /* baseline anchor for transform positioning */
+    left: 0;
+    top: 0;
+    transform: translate(0px, 0px);
+    will-change: transform;
+}
+
+::ng-deep .vstack-tooltip .vstack-tooltip-inner {
+    /* inner container styles; allow markup like .breakdown-row to inherit font sizes */
+    color: #111;
+    font-size: 13px;
+}
+
+/* small responsive padding to avoid tooltip touching viewport edges */
+@media (max-width: 480px) {
+    ::ng-deep .vstack-tooltip {
+        padding: 6px;
+        font-size: 12px;
+    }
+}

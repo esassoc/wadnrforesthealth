@@ -1,0 +1,111 @@
+@if (projectType$ | async; as projectType) {
+<breadcrumb [items]="[{ label: 'Projects by Type', url: '/projects-by-type' }, { label: projectType.ProjectTypeName }]" [linkLast]="false"></breadcrumb>
+<page-header pageTitle="{{ projectType.ProjectTypeName }}"> </page-header>
+<div class="grid-12">
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">
+                    @if (isAdmin$ | async) {
+                    <a href="javascript:void(0)" (click)="openEditModal(projectType)" title="Edit Project Type" style="color: inherit">
+                        <i class="fa fa-edit" style="transform: none"></i>
+                    </a>
+                    }
+                    Basics
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="ProjectType"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ projectType.ProjectTypeName || "—" }}</div>
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="LimitVisibilityToAdmin"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ projectType.LimitVisibilityToAdmin ? "Yes" : "No" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><field-definition fieldDefinition="ProjectTypeDescription"></field-definition></span>
+            </div>
+            <div class="card-body">
+                @if (projectType.ProjectTypeDescription) {
+                <div [innerHTML]="projectType.ProjectTypeDescription"></div>
+                } @else {
+                <span>—</span>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Project Type Projects Map</span></div>
+            <div class="card-body">
+                <span>To zoom, hold down Shift and drag a rectangle.</span>
+                <div class="project-type-detail__legend-row">
+                    <project-stage-map-legend />
+                </div>
+
+                <div class="map-area" [loadingSpinner]="{ isLoading: !mapIsReady || !(projectPoints$ | async), loadingHeight: 450 }">
+                    <wadnr-map [mapHeight]="mapHeight" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
+                        @if(mapIsReady) {
+                        <project-locations-simple-layer
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [projectPoints]="projectPoints$ | async"
+                            [colorByPropertyName]="'ProjectStageID'"
+                            [legendColorsToUse]="legendColorsToUse"
+                            [filterPropertyName]="''"
+                            [filterPropertyValues]="[]"
+                            [clusterPoints]="false"
+                            [renderAsCircleMarkers]="true"
+                            [showDetailedPopup]="false">
+                        </project-locations-simple-layer>
+                        <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
+                        <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                            [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"
+                            [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Simple)'" [wmsStyle]="'location_simple'"
+                            [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                        </generic-wms-wfs-layer>
+                        <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                            [wmsLayerName]="'WADNRForestHealth:ProjectLocationDetailed'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationDetailed'"
+                            [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Detailed)'" [wmsStyle]="'location_detailed'"
+                            [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                        </generic-wms-wfs-layer>
+                        <priority-landscapes-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                        <dnr-upland-regions-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
+                        <counties-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></counties-layer>
+                        }
+                    </wadnr-map>
+                </div>
+                <span>
+                    Some Projects operate over larger areas and are not represented on the map, but are listed in the Project grid below. A
+                    <a href="/projects/map?filterType=ProjectTypeID&filterValues={{ projectType.ProjectTypeID }}">full-screen, filterable version of this map</a> is also available.
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Projects</span></div>
+            <div class="card-body">
+                @if (isAdmin$ | async) {
+                <div class="flex-end mb-2">
+                    <tag-checked-projects-button [selectedRows]="selectedRows" (tagged)="onTagged()"></tag-checked-projects-button>
+                </div>
+                <wadnr-grid [rowData]="projects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" [downloadFileName]="'projects'" fullscreenTitle="Projects" defaultRowSelection="multiRow" (selectionChanged)="onSelectionChanged($event)"></wadnr-grid>
+                } @else {
+                <wadnr-grid [rowData]="projects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" [downloadFileName]="'projects'" fullscreenTitle="Projects"></wadnr-grid>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+} @else {
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
+}

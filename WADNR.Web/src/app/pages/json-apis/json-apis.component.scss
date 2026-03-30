@@ -1,0 +1,29 @@
+.json-apis {
+    &__api-key-section {
+        margin: var(--spacing-400) 0;
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: var(--spacing-200);
+        }
+    }
+
+    &__api-key-row {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-300);
+
+        code {
+            padding: var(--spacing-200) var(--spacing-300);
+            background: var(--gray-100);
+            border-radius: var(--border-radius-200);
+            font-family: monospace;
+        }
+    }
+
+    &__text-muted {
+        color: var(--gray-600);
+        font-style: italic;
+    }
+}

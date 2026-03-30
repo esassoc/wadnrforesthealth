@@ -1,0 +1,149 @@
+<div class="simple-tree__root" [class.simple-tree--top-level-border-enabled]="showTopLevelBorder || topLevelBorder">
+    <div class="simple-tree__search">
+        <div class="simple-tree__search-actions">
+            <button type="button" class="btn btn-sm btn-primary" (click)="expandAll()">Expand All</button>
+            <button type="button" class="btn btn-sm btn-primary" (click)="collapseAll()">Collapse All</button>
+        </div>
+        <div class="simple-tree__search-input-wrapper field">
+            <input type="text" placeholder="Search..." [(ngModel)]="searchTerm" aria-label="Search tree" />
+            @if (searchTerm) {
+            <button type="button" class="btn btn-secondary simple-tree__search-clear" (click)="searchTerm = ''" aria-label="Clear search" title="Clear search">&times;</button>
+            }
+        </div>
+        @if (searchTerm) {
+        <span class="simple-tree__search-matches">({{ totalMatches }} {{ totalMatches === 1 ? 'match' : 'matches' }})</span>
+        }
+    </div>
+
+    <!-- top-level mode switch -->
+    @if (mode === 'badge') { @if ((!searchTerm && nodes && nodes.length) || (searchTerm && totalMatches > 0)) {
+    <ul class="simple-tree" role="tree">
+        @for (item of visibleNodes; track item.node.key) {
+        <li
+            class="simple-tree__node"
+            [class.simple-tree__node--top-level-border]="(showTopLevelBorder || topLevelBorder) && item.depth === 0"
+            [class.simple-tree__node--root-group]="item.rootId"
+            [class.simple-tree__group-start]="item.isGroupStart"
+            [class.simple-tree__group-end]="item.isGroupEnd"
+            [attr.data-root-id]="item.rootId"
+            [attr.data-depth]="item.depth"
+            [attr.data-key]="item.node.key"
+            [style.--node-theme-color]="item.rootThemeColor"
+            role="treeitem"
+            [attr.aria-expanded]="item.hasChildren ? (isExpanded(item.node.key) ? 'true' : 'false') : null"
+            [attr.aria-level]="item.ariaLevel"
+            [attr.aria-setsize]="item.ariaSetSize"
+            [attr.aria-posinset]="item.ariaPosInSet">
+            <div class="simple-tree__header" tabindex="0" role="button" (click)="onNodeClick(item.node)" (keydown)="onKeyDown($event, item.node)" [style.padding-left.px]="item.depth * 18">
+                @if (item.hasChildren) {
+                <button type="button" class="simple-tree__toggler" (click)="$event.stopPropagation(); toggleExpand(item.node.key)" aria-label="Toggle">
+                    <span>{{ isExpanded(item.node.key) ? "-" : "+" }}</span>
+                </button>
+                } @else {
+                <span class="simple-tree__toggler-spacer"></span>
+                }
+
+                <!-- title: prefer titleParts for mixed links/text, otherwise fall back to routerLink/href/title -->
+                @if (item.node.titleParts && item.node.titleParts.length) {
+                <span class="simple-tree__title" [class.simple-tree__leaf]="!item.hasChildren" [class.simple-tree__match]="searchTerm && item.node.count">
+                    @for (part of item.node.titleParts; track part.text) { @if (part.routerLink) {
+                    <a [routerLink]="part.routerLink" [attr.class]="part.additionalCssClasses?.join(' ')" (click)="$event.stopPropagation()">
+                        {{ part.text }} @if (part.icon) { <span class="simple-tree__part-icon"><icon [icon]="part.icon"></icon></span> }
+                    </a>
+                    } @else if (part.href) {
+                    <a [href]="part.href" [attr.target]="part.target" [attr.class]="part.additionalCssClasses?.join(' ')" (click)="$event.stopPropagation()">
+                        {{ part.text }} @if (part.icon) { <span class="simple-tree__part-icon"><icon [icon]="part.icon"></icon></span> }
+                    </a>
+                    } @else {
+                    <span [attr.class]="part.additionalCssClasses?.join(' ')">
+                        {{ part.text }} @if (part.icon) { <span class="simple-tree__part-icon"><icon [icon]="part.icon"></icon></span> }
+                    </span>
+                    } }
+                </span>
+                } @else if (item.node.routerLink) {
+                <a
+                    class="simple-tree__title"
+                    [class.simple-tree__leaf]="!item.hasChildren"
+                    [class.simple-tree__match]="searchTerm && item.node.count"
+                    [routerLink]="item.node.routerLink"
+                    (click)="$event.stopPropagation()">
+                    {{ item.node.title }}
+                </a>
+                } @else if (item.node.href) {
+                <a
+                    class="simple-tree__title"
+                    [class.simple-tree__leaf]="!item.hasChildren"
+                    [class.simple-tree__match]="searchTerm && item.node.count"
+                    [href]="item.node.href"
+                    [attr.target]="item.node.target"
+                    (click)="$event.stopPropagation()">
+                    {{ item.node.title }}
+                </a>
+                } @else {
+                <span class="simple-tree__title" [class.simple-tree__leaf]="!item.hasChildren" [class.simple-tree__match]="searchTerm && item.node.count">
+                    {{ item.node.title }}
+                </span>
+                }
+                <span class="simple-tree__title-spacer"> </span>
+                @if (item.hasChildren && item.node.count) { <span class="simple-tree__badge">{{ item.node.count }}</span> }
+            </div>
+        </li>
+        }
+    </ul>
+    } @else {
+    <div class="simple-tree__empty">No matching projects</div>
+    } } @else { @if (displayNodes && displayNodes.length) {
+    <ul class="simple-tree" role="tree">
+        @for (item of visibleNodes; track item.node.key) {
+        <li
+            class="simple-tree__node"
+            [class.simple-tree__node--top-level-border]="(showTopLevelBorder || topLevelBorder) && item.depth === 0"
+            [class.simple-tree__node--root-group]="item.rootId"
+            [class.simple-tree__group-start]="item.isGroupStart"
+            [class.simple-tree__group-end]="item.isGroupEnd"
+            [attr.data-root-id]="item.rootId"
+            [attr.data-depth]="item.depth"
+            [attr.data-key]="item.node.key"
+            [style.--node-theme-color]="item.rootThemeColor"
+            role="treeitem"
+            [attr.aria-expanded]="item.hasChildren ? (isExpanded(item.node.key) ? 'true' : 'false') : null"
+            [attr.aria-level]="item.ariaLevel"
+            [attr.aria-setsize]="item.ariaSetSize"
+            [attr.aria-posinset]="item.ariaPosInSet">
+            <div class="simple-tree__header" tabindex="0" role="button" (click)="onNodeClick(item.node)" (keydown)="onKeyDown($event, item.node)" [style.padding-left.px]="item.depth * 18">
+                @if (item.hasChildren) {
+                <button type="button" class="simple-tree__toggler" (click)="$event.stopPropagation(); toggleExpand(item.node.key)" aria-label="Toggle">
+                    <span>{{ isExpanded(item.node.key) ? "-" : "+" }}</span>
+                </button>
+                } @else {
+                <span class="simple-tree__toggler-spacer"></span>
+                } @if (item.node.titleParts && item.node.titleParts.length) {
+                <span class="simple-tree__title" [class.simple-tree__leaf]="!item.hasChildren" [class.simple-tree__match]="searchTerm && item.node.count">
+                    @if(item.hasChildren && item.node.count) { <span class="simple-tree__badge">{{ item.node.count }}</span> } @for (part of item.node.titleParts; track part.text)
+                    { @if (part.routerLink) {
+                    <a [routerLink]="part.routerLink" [attr.class]="part.additionalCssClasses?.join(' ')" (click)="$event.stopPropagation()">
+                        {{ part.text }} @if (part.icon) { <span class="simple-tree__part-icon"><icon [icon]="part.icon"></icon></span> }
+                    </a>
+                    } @else if (part.href) {
+                    <a [href]="part.href" [attr.target]="part.target" [attr.class]="part.additionalCssClasses?.join(' ')" (click)="$event.stopPropagation()">
+                        {{ part.text }} @if (part.icon) { <span class="simple-tree__part-icon"><icon [icon]="part.icon"></icon></span> }
+                    </a>
+                    } @else {
+                    <span [attr.class]="part.additionalCssClasses?.join(' ')">
+                        {{ part.text }} @if (part.icon) { <span class="simple-tree__part-icon"><icon [icon]="part.icon"></icon></span> }
+                    </span>
+                    } }
+                </span>
+                } @else {
+                <span class="simple-tree__title" [class.simple-tree__leaf]="!item.hasChildren" [class.simple-tree__match]="searchTerm && item.node.count">
+                    {{ item.node.title }}
+                </span>
+                } @if (item.hasChildren && item.node.count) { <span class="simple-tree__badge">{{ item.node.count }}</span> }
+            </div>
+        </li>
+        }
+    </ul>
+    } @else {
+    <div class="simple-tree__empty">No projects</div>
+    } }
+</div>

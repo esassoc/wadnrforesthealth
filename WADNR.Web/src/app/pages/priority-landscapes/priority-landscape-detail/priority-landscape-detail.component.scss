@@ -1,0 +1,9 @@
+@use "/src/scss/abstracts" as *;
+
+.file-resources {
+    &__display {
+        display: grid;
+        gap: 0rem;
+        margin-bottom: var(--spacing-300);
+    }
+}

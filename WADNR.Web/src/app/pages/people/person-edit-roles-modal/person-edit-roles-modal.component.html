@@ -1,0 +1,53 @@
+<div class="modal">
+    <div class="modal-header">
+        <h4>Edit Roles</h4>
+    </div>
+    <div class="modal-body">
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+        <form-field
+            [formControl]="form.controls.BaseRoleID"
+            fieldLabel="Base Role"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="baseRoleOptions"
+            formInputOptionLabel="Label"
+            formInputOptionValue="Value"
+            placeholder="Select a base role">
+        </form-field>
+
+        <form-field
+            fieldLabel="Supplemental Role to Add"
+            [type]="FormFieldType.Select"
+            [formControl]="supplementalSelectControl"
+            [formInputOptions]="availableSupplementalOptions"
+            formInputOptionLabel="Label"
+            formInputOptionValue="Value"
+            placeholder="Select a supplemental role...">
+        </form-field>
+
+        <hr />
+
+        <span class="field-label">Supplemental Roles</span>
+        @if (selectedSupplementalRoles.length > 0) {
+            <ul class="editor-list">
+                @for (role of sortedSupplementalRoles; track role.RoleID) {
+                    <li>
+                        <a href="javascript:void(0)" (click)="removeSupplementalRole(role.RoleID)" title="Remove" aria-label="Remove" class="text-danger" style="text-decoration: none">
+                            <icon [icon]="'Delete'" aria-hidden="true"></icon>
+                        </a>
+                        {{ role.DisplayName }}
+                    </li>
+                }
+            </ul>
+        } @else {
+            <p class="system-text">No supplemental roles assigned.</p>
+        }
+
+        <form-field [formControl]="form.controls.ReceiveSupportEmails" fieldLabel="Receive Support Emails" [type]="FormFieldType.Toggle" [toggleTrue]="'Yes'" [toggleFalse]="'No'">
+        </form-field>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="save()" [buttonLoading]="isSubmitting" [disabled]="isSubmitting || form.invalid">Save</button>
+        <button class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
+    </div>
+</div>

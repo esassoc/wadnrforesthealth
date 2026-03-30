@@ -1,0 +1,72 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>{{ modalTitle }}</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.DisplayName"
+            fieldLabel="Display Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter display name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.LayerUrl"
+            fieldLabel="Url"
+            [type]="FormFieldType.Text"
+            placeholder="Enter layer URL">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.LayerDescription"
+            fieldLabel="Internal Layer Description"
+            [type]="FormFieldType.Textarea"
+            placeholder="Enter description">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.FeatureNameField"
+            fieldLabel="Field to use as source for feature names"
+            [type]="FormFieldType.Text"
+            placeholder="Enter feature name field">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.DisplayOnProjectMap"
+            fieldLabel="Display on Project Map?"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.DisplayOnPriorityLandscape"
+            fieldLabel="Display on Priority Landscape Maps?"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.DisplayOnAllOthers"
+            fieldLabel="Display on All Other Maps?"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.IsActive"
+            fieldLabel="Is Active?"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.IsTiledMapService"
+            fieldLabel="Is a Tiled Map Service?"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" (click)="save()" [disabled]="isSubmitting$ | async" [buttonLoading]="isSubmitting$ | async">Save</button>
+    <button class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting$ | async">Cancel</button>
+</div>
+</div>

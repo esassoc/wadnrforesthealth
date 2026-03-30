@@ -1,0 +1,17 @@
+<layer>
+  <name>County</name>
+  <id>LayerInfoImpl--7ded52f2:173e52b17fe:-7f9d</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--7ded52f2:173e52b17fe:-7f9a</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--7ded52f2:173e52b17fe:-7f9e</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateCreated>2020-08-13 23:20:15.731 UTC</dateCreated>
+  <dateModified>2020-08-14 00:12:49.871 UTC</dateModified>
+</layer>

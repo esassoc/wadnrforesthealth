@@ -1,0 +1,31 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit: {{ pageName }}</h3>
+</div>
+@if (loadState$ | async; as state) {
+    <div class="modal-body" [loadingSpinner]="{ isLoading: state.loading, loadingHeight: 200 }">
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+        @if (!state.loading && !state.error) {
+            <div class="tinyMCEFontColor">
+                <editor #tinyMceEditor [init]="tinyMceConfig" [(ngModel)]="editedContent"></editor>
+            </div>
+        }
+    </div>
+    <div class="modal-footer">
+        <button
+            class="btn btn-primary"
+            (click)="save()"
+            [disabled]="isSubmitting || state.loading || state.error"
+            [buttonLoading]="isSubmitting">
+            Save
+        </button>
+        <button
+            class="btn btn-secondary"
+            (click)="cancel()"
+            [disabled]="isSubmitting">
+            Cancel
+        </button>
+    </div>
+}
+</div>

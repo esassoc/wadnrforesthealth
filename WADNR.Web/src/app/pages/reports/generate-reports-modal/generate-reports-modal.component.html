@@ -1,0 +1,41 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Generate Reports</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form-field
+        [formControl]="templateControl"
+        fieldLabel="Report Template"
+        [type]="FormFieldType.Select"
+        [formInputOptions]="templateOptions"
+        placeholder="Select a template">
+    </form-field>
+
+    <p class="mt-3">
+        This report will be generated for the following {{ modelLabel }}s ({{ selectedItems.length }} selected):
+    </p>
+    <div style="max-height: 300px; overflow-y: auto;">
+        <ul>
+            @for (item of selectedItems; track item.id) {
+                <li>{{ item.name }}</li>
+            }
+        </ul>
+    </div>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="generate()"
+        [disabled]="isGenerating || !templateControl.value">
+        {{ isGenerating ? 'Generating...' : 'Generate' }}
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isGenerating">
+        Cancel
+    </button>
+</div>
+</div>

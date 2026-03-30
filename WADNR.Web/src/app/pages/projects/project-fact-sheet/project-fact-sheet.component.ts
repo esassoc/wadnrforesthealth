@@ -1,0 +1,291 @@
+import { Component, OnInit, OnDestroy, Input, SimpleChanges, HostListener, signal } from "@angular/core";
+import { AlertDisplayComponent } from "src/app/shared/components/alert-display/alert-display.component";
+import { CommonModule, AsyncPipe } from "@angular/common";
+import { RouterLink } from "@angular/router";
+import { ProjectService } from "src/app/shared/generated/api/project.service";
+import { Observable, of } from "rxjs";
+import { switchMap, catchError, shareReplay, map, tap } from "rxjs/operators";
+import { ProjectImageTimings } from "src/app/shared/generated/enum/project-image-timing-enum";
+import { environment } from "src/environments/environment";
+import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
+import { getFileResourceUrlFromBase } from "src/app/shared/utils/file-resource-utils";
+import { CapturePostData } from "src/app/shared/generated/model/capture-post-data";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
+import { Title } from "@angular/platform-browser";
+import { ProjectFactSheet } from "src/app/shared/generated/model/project-fact-sheet";
+import { BoundingBoxDto } from "src/app/shared/models/bounding-box-dto";
+import { SitkaCaptureService } from "src/app/shared/generated/api/sitka-capture.service";
+import { ClassificationLookupItem } from "src/app/shared/generated/model/classification-lookup-item";
+import * as L from "leaflet";
+import { WADNRMapComponent, WADNRMapInitEvent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
+import { ProjectLocationsAsReferenceLayersComponent } from "src/app/shared/components/leaflet/orchestrators/project-locations-as-reference-layers/project-locations-as-reference-layers.component";
+import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
+import { ProjectImageGridRow } from "src/app/shared/generated/model/models";
+
+@Component({
+    selector: "project-fact-sheet",
+    standalone: true,
+    templateUrl: "./project-fact-sheet.component.html",
+    styleUrls: ["./project-fact-sheet.component.scss"],
+    imports: [AlertDisplayComponent, CommonModule, AsyncPipe, RouterLink, ButtonLoadingDirective, WADNRMapComponent, ProjectLocationsAsReferenceLayersComponent, CountiesLayerComponent, PriorityLandscapesLayerComponent, DNRUplandRegionsLayerComponent, GenericWmsWfsLayerComponent, ExternalMapLayersComponent],
+})
+export class ProjectFactSheetComponent implements OnInit, OnDestroy {
+    @Input() public projectID?: number | null;
+    public project$!: Observable<ProjectFactSheet>;
+    public images$!: Observable<Array<ProjectImageGridRow>>;
+    public keyPhoto$!: Observable<ProjectImageGridRow | null>;
+    public groupedImages$!: Observable<Array<{ timingId: number; timingName: string; images: ProjectImageGridRow[] }>>;
+    public projectThemes$!: Observable<Array<ClassificationLookupItem>>;
+    public projectBoundingBox$!: Observable<BoundingBoxDto | undefined>;
+
+    public selectedImage?: ProjectImageGridRow | null = null;
+    // flat list of images displayed in the Photos section (excludes key photo)
+    public displayedImages: ProjectImageGridRow[] = [];
+    public selectedIndex: number = -1;
+    public today: Date = new Date();
+
+    public isLoadingPdf = signal(false);
+    public isPrintMode = false;
+    public OverlayMode = OverlayMode;
+
+    public map?: L.Map;
+    public layerControl?: any;
+    private resizeObserver?: ResizeObserver;
+
+    constructor(
+        private projectService: ProjectService,
+        private sitkaCaptureService: SitkaCaptureService,
+        private titleService: Title,
+        private sanitizer: DomSanitizer
+    ) {}
+
+    ngOnInit(): void {
+        // Detect capture/print mode before anything renders so layout is correct from the start
+        this.handlePrintMode();
+
+        this.loadData(this.projectID ?? null);
+    }
+
+    public handleMapReady(event: WADNRMapInitEvent) {
+        this.map = event.map;
+        this.layerControl = event.layerControl;
+
+        // Observe the map container so Leaflet re-renders tiles when container size changes
+        const container = this.map.getContainer();
+        this.resizeObserver = new ResizeObserver(() => this.map?.invalidateSize());
+        this.resizeObserver.observe(container);
+    }
+
+    ngOnDestroy() {
+        this.resizeObserver?.disconnect();
+        document.body.classList.remove("map-layers-ready");
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes["projectID"] && !changes["projectID"].firstChange) {
+            this.loadData(this.projectID ?? null);
+        }
+    }
+
+    private loadData(projectID?: number | null): void {
+        this.project$ = this.projectService.getForFactSheetProject(projectID).pipe(
+            tap((p) => {
+                if (p) {
+                    this.titleService.setTitle(`WADNR | ${p.ProjectName} | Fact Sheet`);
+                }
+            }),
+            shareReplay(1)
+        );
+
+        this.projectBoundingBox$ = this.project$.pipe(
+            map(project => {
+                const bb = project?.DefaultBoundingBox;
+                if (!bb) return undefined;
+                return new BoundingBoxDto({ Left: bb.Left, Bottom: bb.Bottom, Right: bb.Right, Top: bb.Top });
+            })
+        );
+
+        // wire images$ to load when project is available
+        this.images$ = this.project$.pipe(
+            switchMap((p) => this.projectService.listImagesProject(p.ProjectID).pipe(catchError(() => of([] as Array<ProjectImageGridRow>)))),
+            shareReplay(1)
+        );
+
+        // wire projectThemes$ to load when project is available
+        this.projectThemes$ = this.project$.pipe(
+            switchMap((p) => this.projectService.listClassificationsProject(p.ProjectID).pipe(catchError(() => of([])))),
+            shareReplay(1)
+        );
+
+        this.keyPhoto$ = this.images$.pipe(
+            map((images) => {
+                if (!images || images.length === 0) {
+                    return null;
+                }
+                const key = images.find((i) => !!i.IsKeyPhoto);
+                return key ?? images[0];
+            }),
+            shareReplay(1)
+        );
+
+        this.groupedImages$ = this.images$.pipe(
+            map((images) => {
+                const imgs = images || [];
+                // determine the key photo (IsKeyPhoto or first)
+                const keyPhoto = imgs.find((i) => !!i.IsKeyPhoto) ?? imgs[0];
+                // filter out excluded and the key photo itself so it isn't duplicated
+                const filtered = imgs.filter((i) => !i.ExcludeFromFactSheet && i.ProjectImageID !== keyPhoto?.ProjectImageID);
+                const groups: { [k: number]: ProjectImageGridRow[] } = {};
+                for (const img of filtered) {
+                    const key = img.ProjectImageTimingID ?? 0;
+                    groups[key] = groups[key] || [];
+                    groups[key].push(img);
+                }
+                // Convert to array with timing name resolution
+                const result = Object.keys(groups).map((k) => ({
+                    timingId: Number(k),
+                    timingName: ProjectImageTimings.find((t) => t.Value === Number(k))?.DisplayName ?? "Other",
+                    images: groups[Number(k)].sort((a, b) => {
+                        // key photo first
+                        if (a.IsKeyPhoto && !b.IsKeyPhoto) {
+                            return -1;
+                        }
+                        if (!a.IsKeyPhoto && b.IsKeyPhoto) {
+                            return 1;
+                        }
+                        // then by SortOrder if available
+                        // const sa = a.SortOrder ?? 0;
+                        // const sb = b.SortOrder ?? 0;
+                        // return sa - sb;
+                    }),
+                }));
+                // Custom order: Before (2) -> During (3) -> After (1) -> Unknown (4)
+                const order = [2, 3, 1, 4];
+                result.sort((x, y) => {
+                    const xi = order.indexOf(x.timingId);
+                    const yi = order.indexOf(y.timingId);
+                    const xiSafe = xi === -1 ? order.length : xi;
+                    const yiSafe = yi === -1 ? order.length : yi;
+                    return xiSafe - yiSafe;
+                });
+                // update displayedImages flat list for keyboard navigation
+                const flat: ProjectImageGridRow[] = [];
+                for (const g of result) {
+                    flat.push(...g.images);
+                }
+                this.displayedImages = flat;
+                return result;
+            }),
+            shareReplay(1)
+        );
+    }
+
+    public handlePrintMode() {
+        this.isPrintMode = window.matchMedia("print").matches || navigator.userAgent.includes("HeadlessChrome"); // PDF generation services often use this
+
+        // Listen for print events
+        window.addEventListener("beforeprint", () => (this.isPrintMode = true));
+        window.addEventListener("afterprint", () => (this.isPrintMode = false));
+
+        // Listen for media query changes
+        const printMediaQuery = window.matchMedia("print");
+        printMediaQuery.addEventListener("change", (e) => (this.isPrintMode = e.matches));
+    }
+
+    public getMapHeight(): string {
+        return this.isPrintMode ? "350px" : "480px";
+    }
+
+    public onMapLayersReady() {
+        document.body.classList.add("map-layers-ready");
+    }
+
+    // Build a file resource URL from a file-resource GUID string.
+    // Caller should pass the FileResourceGuid value (string) from the DTO.
+
+    public photoUrl(fileResourceGuid?: string | null): SafeResourceUrl | null {
+        return getFileResourceUrlFromBase(environment.mainAppApiUrl, this.sanitizer, fileResourceGuid);
+    }
+
+    public openImage(img: ProjectImageGridRow) {
+        this.selectedImage = img;
+        // adjust selectedIndex to match the flattened displayedImages array
+        const idx = this.displayedImages.findIndex((i) => i.ProjectImageID === img.ProjectImageID);
+        this.selectedIndex = idx;
+    }
+
+    public closeImage() {
+        this.selectedImage = null;
+        this.selectedIndex = -1;
+    }
+
+    // navigate next/prev within displayedImages
+    public nextImage() {
+        if (!this.displayedImages || this.displayedImages.length === 0) {
+            return;
+        }
+        if (this.selectedIndex < this.displayedImages.length - 1) {
+            this.selectedIndex++;
+        } else {
+            this.selectedIndex = 0; // wrap
+        }
+        this.selectedImage = this.displayedImages[this.selectedIndex];
+    }
+
+    public prevImage() {
+        if (!this.displayedImages || this.displayedImages.length === 0) {
+            return;
+        }
+        if (this.selectedIndex > 0) {
+            this.selectedIndex--;
+        } else {
+            this.selectedIndex = this.displayedImages.length - 1; // wrap
+        }
+        this.selectedImage = this.displayedImages[this.selectedIndex];
+    }
+
+    // Keyboard handler for Esc, ArrowLeft, ArrowRight
+    @HostListener("window:keydown", ["$event"])
+    public onKeydown(event: KeyboardEvent) {
+        if (!this.selectedImage) {
+            return;
+        }
+        if (event.key === "Escape") {
+            this.closeImage();
+            return;
+        }
+        if (event.key === "ArrowRight") {
+            event.preventDefault();
+            this.nextImage();
+            return;
+        }
+        if (event.key === "ArrowLeft") {
+            event.preventDefault();
+            this.prevImage();
+            return;
+        }
+    }
+
+    public downloadFactSheetPdf(projectName: string | null | undefined) {
+        this.isLoadingPdf.set(true);
+        var requestDto = { url: window.location.href, waitForSelector: ".map-layers-ready" } as any as CapturePostData;
+        this.sitkaCaptureService.generatePdfSitkaCapture(requestDto).subscribe({
+            next: (blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = `${projectName}-fact-sheet.pdf`;
+                link.click();
+                window.URL.revokeObjectURL(url);
+
+                this.isLoadingPdf.set(false);
+            },
+            error: () => this.isLoadingPdf.set(false),
+        });
+    }
+}

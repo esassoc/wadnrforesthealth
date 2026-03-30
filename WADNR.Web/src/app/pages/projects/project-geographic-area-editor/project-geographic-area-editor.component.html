@@ -1,0 +1,121 @@
+<div class="modal">
+@if (isLoading$ | async) {
+    <div class="modal-header">
+        <h4 class="modal-title">Edit {{ config.title }}</h4>
+    </div>
+    <div class="modal-body">
+        <div class="text-center p-4">Loading...</div>
+    </div>
+} @else {
+    @if ({ available: availableOptions$ | async, selected: selectedItems$ | async }; as state) {
+    <div class="modal-header">
+        <h4 class="modal-title">Edit {{ config.title }}</h4>
+    </div>
+    <div class="modal-body">
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+        <p class="mb-3">
+            Select one or more {{ config.title | lowercase }} to associate with this project. You can select areas
+            by clicking on the map or searching by name. If your project is not associated with any
+            {{ config.title | lowercase }}, please provide an explanation in the Notes field.
+        </p>
+
+        <form [formGroup]="form">
+            <div class="grid-12">
+                <!-- Left Column: Form Controls -->
+                <div class="g-col-5">
+                    <!-- Searchable Dropdown -->
+                    <div class="mb-3">
+                        <form-field
+                            [formControl]="$any(form.controls.itemToAdd)"
+                            [fieldLabel]="'Search by ' + (config.title | lowercase) + ' name'"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="state.available"
+                            [placeholder]="'Search by ' + (config.title | lowercase) + ' name...'"
+                            [readOnly]="isSubmitting"
+                            (change)="onDropdownSelect($event)">
+                        </form-field>
+                    </div>
+
+                    <!-- Selected Items List -->
+                    <div class="geo-area-editor__selected-section mb-3">
+                        @if (state.selected && state.selected.length > 0) {
+                            <div class="geo-area-editor__selected-header">{{ config.title }}</div>
+                            <ul class="geo-area-editor__selected-list">
+                                @for (item of state.selected; track item.ID) {
+                                    <li class="geo-area-editor__selected-item">
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-link text-danger"
+                                            (click)="removeItem(item.ID)"
+                                            [disabled]="isSubmitting"
+                                            title="Remove">
+                                            <icon icon="Delete"></icon>
+                                        </button>
+                                        <span>{{ item.DisplayName }}</span>
+                                    </li>
+                                }
+                            </ul>
+                        } @else {
+                            <div class="geo-area-editor__no-selection">
+                                No {{ config.title | lowercase }} selected for this Project, provide an explanation
+                                in the Notes field or select an area.
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="mb-3">
+                        <form-field
+                            [formControl]="$any(form.controls.noSelectionExplanation)"
+                            fieldLabel="Notes"
+                            [type]="FormFieldType.Textarea"
+                            placeholder=""
+                            [readOnly]="isSubmitting">
+                        </form-field>
+                    </div>
+                </div>
+
+                <!-- Right Column: Map -->
+                <div class="g-col-7">
+                    <div class="geo-area-editor__map-container" [class.geo-area-editor__map-container--saving]="isSubmitting">
+                        <wadnr-map [boundingBox]="ref.data.boundingBox" (onMapLoad)="handleMapLoad($event)">
+                            @if (mapIsReady) {
+                                <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
+                                <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                                    [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"
+                                    [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Simple)'" [wmsStyle]="'location_simple'"
+                                    [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                                </generic-wms-wfs-layer>
+                                <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                                    [wmsLayerName]="'WADNRForestHealth:ProjectLocationDetailed'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationDetailed'"
+                                    [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Detailed)'" [wmsStyle]="'location_detailed'"
+                                    [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                                </generic-wms-wfs-layer>
+                                <priority-landscapes-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                                <dnr-upland-regions-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
+                                <counties-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></counties-layer>
+                            }
+                        </wadnr-map>
+                        <div class="geo-area-editor__map-caption text-muted mt-1">
+                            Simple and/or Detailed Project location (for reference)
+                        </div>
+                        @if (isSubmitting) {
+                            <div class="geo-area-editor__map-overlay">
+                                <span>Saving...</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="save()" [disabled]="isSubmitting">
+            {{ isSubmitting ? "Saving..." : "Save" }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
+    </div>
+    }
+}
+</div>

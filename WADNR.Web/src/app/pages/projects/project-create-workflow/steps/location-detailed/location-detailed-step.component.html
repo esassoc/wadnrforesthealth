@@ -1,0 +1,163 @@
+@if ({ vm: vm$ | async, _f: features$ | async, _sel: selectedFeatureId$ | async }; as state) {
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Detailed Location</span>
+        </div>
+        <div class="card-body">
+            <p class="mb-3">
+                Draw project location boundaries on the map using the polygon tool. Click a feature on the map or in the table to select it. Use the edit button to modify vertices,
+                or the delete button to remove features.
+            </p>
+
+            <div class="mb-3">
+                <button type="button" class="btn btn-sm btn-outline-primary" (click)="openImportGdbModal()"><i class="fas fa-file-import"></i> Import GDB File</button>
+            </div>
+
+            <!-- Map (always rendered so Leaflet initializes in parallel with API call) -->
+            <div class="location-detailed-step__map-container mb-3">
+                <wadnr-map [mapHeight]="'400px'" (onMapLoad)="handleMapLoad($event)">
+                    @if (mapIsReady()) {
+                        <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
+                        <generic-wms-wfs-layer
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'"
+                            [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"
+                            [identifierProperty]="'ProjectID'"
+                            [overlayLabel]="'All Project Locations (Simple)'"
+                            [wmsStyle]="'location_simple'"
+                            [displayOnLoad]="false"
+                            [fitBoundsOnWmsAddToControl]="false"
+                            [addToLayerControl]="true">
+                        </generic-wms-wfs-layer>
+                        <generic-wms-wfs-layer
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [wmsLayerName]="'WADNRForestHealth:ProjectLocationDetailed'"
+                            [wfsFeatureType]="'WADNRForestHealth:ProjectLocationDetailed'"
+                            [identifierProperty]="'ProjectID'"
+                            [overlayLabel]="'All Project Locations (Detailed)'"
+                            [wmsStyle]="'location_detailed'"
+                            [displayOnLoad]="false"
+                            [fitBoundsOnWmsAddToControl]="false"
+                            [addToLayerControl]="true">
+                        </generic-wms-wfs-layer>
+                        <priority-landscapes-layer
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [mode]="OverlayMode.ReferenceOnly"
+                            [displayOnLoad]="false"
+                            [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                        <dnr-upland-regions-layer
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [mode]="OverlayMode.ReferenceOnly"
+                            [displayOnLoad]="false"
+                            [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
+                        <counties-layer
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [mode]="OverlayMode.ReferenceOnly"
+                            [displayOnLoad]="false"
+                            [fitBoundsOnWmsAddToControl]="false"></counties-layer>
+                    }
+                </wadnr-map>
+            </div>
+
+            <!-- Features Table -->
+            <div [loadingSpinner]="{ isLoading: state.vm.isLoading, loadingHeight: 100 }">
+                @if (visibleFeatures.length > 0) {
+                    <div class="mb-3">
+                        <h5>Locations</h5>
+                        <table class="table table-sm location-detailed-step__features-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%"></th>
+                                    <th style="width: 25%">Name</th>
+                                    <th style="width: 10%">Shape</th>
+                                    <th style="width: 18%">Type</th>
+                                    <th style="width: 42%">Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (feature of visibleFeatures; track feature.leafletId) {
+                                    <tr
+                                        [class.location-detailed-step__features-table--selected]="selectedFeatureId$.value === feature.leafletId"
+                                        [class.location-detailed-step__features-table--modified]="feature.isModified || feature.isNew"
+                                        (click)="selectFeature(feature)">
+                                        <td class="text-center align-middle">
+                                            @if (feature.hasTreatments || feature.isFromArcGis) {
+                                                <span class="text-muted fw-bold" [title]="feature.hasTreatments ? 'Has associated Treatments' : 'Imported from ArcGIS'">
+                                                    {{ feature.hasTreatments ? '*' : '**' }}
+                                                </span>
+                                            } @else {
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-link text-danger p-0"
+                                                    (click)="deleteFeature(feature); $event.stopPropagation()"
+                                                    title="Delete location">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            }
+                                        </td>
+                                        <td (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
+                                            <form-field [formControl]="getFeatureControls(feature).name" [type]="FormFieldType.Text" fieldLabel="Name" [srOnlyLabel]="true" placeholder="Enter name" maxlength="100"></form-field>
+                                        </td>
+                                        <td class="align-middle">
+                                            <span class="location-detailed-step__shape-badge location-detailed-step__shape-badge--{{ feature.shapeType | lowercase }}">{{ feature.shapeType }}</span>
+                                        </td>
+                                        <td (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
+                                            <form-field [formControl]="getFeatureControls(feature).type" [type]="FormFieldType.Select" fieldLabel="Type" [srOnlyLabel]="true" [formInputOptions]="locationTypeOptions"></form-field>
+                                        </td>
+                                        <td (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
+                                            <form-field [formControl]="getFeatureControls(feature).notes" [type]="FormFieldType.Textarea" fieldLabel="Notes" [srOnlyLabel]="true" placeholder="Optional notes" maxlength="255"></form-field>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <div class="small text-muted mt-1">
+                            <div>* Project locations associated with Treatments cannot be deleted or have their Location Type changed.</div>
+                            <div>** Geometries from ArcGIS are not editable, but you may add or edit the notes field.</div>
+                        </div>
+                    </div>
+                } @else if (!state.vm.isLoading) {
+                    <div class="alert alert-info">
+                        <em>No locations defined. Use the polygon draw control on the map to add location boundaries.</em>
+                    </div>
+                }
+
+                <!-- Deleted Features (for restore) -->
+                @if (deletedFeatures.length > 0) {
+                    <div class="mb-3">
+                        <h6 class="text-muted">Deleted Locations (will be removed on save)</h6>
+                        <table class="table table-sm location-detailed-step__deleted-table">
+                            <tbody>
+                                @for (feature of deletedFeatures; track feature.leafletId) {
+                                    <tr class="location-detailed-step__deleted-table--deleted">
+                                        <td>
+                                            <span class="text-decoration-line-through">{{ feature.ProjectLocationName }}</span>
+                                            <span class="text-muted ms-2">({{ feature.ProjectLocationTypeName }})</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <button type="button" class="btn btn-sm btn-link p-0" (click)="restoreFeature(feature)" title="Restore location">Restore</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="card-footer">
+            <workflow-step-actions [isSaving]="isSaving" (save)="onSave(false)" (saveAndContinue)="onSave(true)"> </workflow-step-actions>
+        </div>
+    </div>
+} @else {
+    <div class="card">
+        <div class="card-body">
+            <div class="text-center p-4">Loading...</div>
+        </div>
+    </div>
+}

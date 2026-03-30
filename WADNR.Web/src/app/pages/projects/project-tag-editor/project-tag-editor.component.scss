@@ -1,0 +1,56 @@
+.tag-combobox {
+    position: relative;
+
+    &__dropdown {
+        position: absolute;
+        z-index: 1050;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        background: var(--white, #fff);
+        border: 1px solid var(--gray-200, #ced4da);
+        border-top: none;
+        border-radius: 0 0 var(--border-radius-200) var(--border-radius-200);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    &__option {
+        height: 3rem;
+        line-height: 3rem;
+        padding: 0 var(--spacing-300);
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:hover {
+            background: var(--blue-50, #eff6ff);
+            color: var(--blue-700, #1d4ed8);
+        }
+
+        &--create {
+            border-top: 1px solid var(--gray-200, #e5e7eb);
+            font-weight: 500;
+            color: var(--primary, #0d6efd);
+
+            i {
+                margin-right: var(--spacing-100);
+            }
+
+            &:hover {
+                color: var(--blue-700, #1d4ed8);
+            }
+        }
+    }
+
+    &__creating {
+        padding: var(--spacing-200) var(--spacing-300);
+        font-size: var(--type-size-200, 0.875rem);
+        color: var(--gray-700, #495057);
+
+        i {
+            margin-right: var(--spacing-100);
+            color: var(--primary, #0d6efd);
+        }
+    }
+}

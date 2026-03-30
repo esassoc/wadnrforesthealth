@@ -1,0 +1,14 @@
+<wadnr-grid [rowData]="rowData" [columnDefs]="columnDefs" [downloadFileName]="downloadFileName" [fullscreenTitle]="fullscreenTitle" [defaultRowSelection]="showTagging ? 'multiRow' : undefined" (selectionChanged)="onSelectionChanged($event)">
+    @if (showTagging || excelDownloadUrl) {
+        <div customGridActionsRight class="flex">
+            @if (showTagging) {
+                <tag-checked-projects-button [selectedRows]="selectedRows" (tagged)="onTagged()"></tag-checked-projects-button>
+            }
+            @if (excelDownloadUrl) {
+                <button class="btn btn-sm btn-secondary" (click)="onDownloadExcel()" [buttonLoading]="isDownloading()">
+                    <span class="fas fa-download"></span> Download Full Database
+                </button>
+            }
+        </div>
+    }
+</wadnr-grid>

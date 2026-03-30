@@ -1,0 +1,914 @@
+@if (project$ | async; as project) {
+@if (permissions$ | async; as perms) {
+    <breadcrumb [items]="[{ label: 'Projects', url: '/projects' }, { label: project.ProjectName || 'Project' }]" [linkLast]="false"></breadcrumb>
+    <page-header pageTitle="{{ project.ProjectName }}" [templateRight]="headerButtons"></page-header>
+
+    <ng-template #headerButtons>
+        <div class="project-detail__header-actions">
+            <!-- Block List buttons (admin only, when project has programs) -->
+            @if (canShowBlockListButton(project, perms)) {
+                @if (!project.ExistsInImportBlockList) {
+                    <button class="btn btn-secondary btn-sm" (click)="addToBlockList(project)">
+                        <i class="fa fa-ban"></i> Add to Block List
+                    </button>
+                } @else {
+                    <button class="btn btn-warning btn-sm" (click)="removeFromBlockList(project)">
+                        <i class="fa fa-exclamation-triangle"></i> Remove from Block List
+                    </button>
+                }
+            }
+
+            <!-- Update Project button (for approved projects) -->
+            @if (canShowUpdateProjectButton(project, perms)) {
+                <button class="btn btn-primary btn-sm" (click)="navigateToUpdateWorkflow(project)">
+                    <i class="fa fa-edit"></i>
+                    {{ getUpdateProjectButtonText(project) }}
+                </button>
+            }
+
+            <!-- Edit Pending Project button -->
+            @if (perms.userCanEdit && isPendingProject(project) && !isRejected(project)) {
+                <a [routerLink]="['/projects/edit', project.ProjectID, 'basics']" class="btn btn-primary btn-sm">
+                    <i class="fa fa-edit"></i>
+                    {{ project.ProjectApprovalStatusID === ProjectApprovalStatusEnum.PendingApproval ? 'Review Pending Project' : 'Edit Pending Project' }}
+                </a>
+            }
+
+            <!-- View Fact Sheet button -->
+            @if (project.CanViewFactSheet) {
+                <a [routerLink]="['/projects', project.ProjectID, 'fact-sheet']" class="btn btn-primary btn-sm">
+                    <i class="fa fa-file-text"></i> View Fact Sheet
+                </a>
+            }
+
+            <!-- Download Financial Assistance Approval Letter -->
+            @if (canShowApprovalLetter(project, perms)) {
+                <button class="btn btn-primary btn-sm" (click)="downloadApprovalLetter(project)">
+                    <i class="fa fa-envelope"></i> Download Financial Assistance Approval Letter
+                </button>
+            }
+        </div>
+    </ng-template>
+
+    <!-- Pending Project Alert -->
+    @if (isPendingProject(project)) {
+        <div class="alert" [class.alert-info]="!isRejected(project)" [class.alert-danger]="isRejected(project)">
+            @if (isRejected(project)) {
+                <p>This Project was rejected and can no longer be edited. It can be deleted, or preserved for archival purposes.</p>
+            } @else {
+                <p>This Project is pending. Any edits to this Project must be made using the Add New Project workflow.</p>
+            }
+            @if (perms.userCanApprove && project.ProjectApprovalStatusID === ProjectApprovalStatusEnum.PendingApproval) {
+                <div class="project-detail__alert-actions">
+                    <button class="btn btn-success" (click)="approveProject()">Approve</button>
+                    <button class="btn btn-warning" (click)="returnProject()">Return</button>
+                    <button class="btn btn-danger" (click)="rejectProject()">Reject</button>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- Project Stage Breadcrumb -->
+    @if (project.ProjectStage) {
+        <div class="project-detail__stage-breadcrumb">
+            <span class="project-detail__stage-item" [class.project-detail__stage-item--current]="project.ProjectStage.ProjectStageID === 2">Planned</span>
+            <span class="project-detail__stage-item" [class.project-detail__stage-item--current]="project.ProjectStage.ProjectStageID === 3">Implementation</span>
+            <span class="project-detail__stage-item" [class.project-detail__stage-item--current]="project.ProjectStage.ProjectStageID === 4">Completed</span>
+        </div>
+    }
+
+    <div class="project-detail__dashboard-layout">
+        <!-- TOC Sidebar -->
+        <aside class="project-detail__toc-sidebar" appScrollSpySticky contentSelector=".project-detail__content-area" [topOffset]="80">
+            <nav class="project-detail__toc-nav">
+                <h3 class="project-detail__toc-heading">Contents</h3>
+                @for (section of getVisibleSections(perms); track section.id) {
+                    @if (section.children) {
+                        <!-- Parent with children -->
+                        <a class="project-detail__toc-link project-detail__toc-parent-link"
+                           [class.active]="activeParentId() === section.id"
+                           (click)="scrollToParent(section)">
+                            {{ section.label }}
+                        </a>
+                        @if (activeParentId() === section.id) {
+                            @for (child of section.children; track child.id) {
+                                <a class="project-detail__toc-link project-detail__toc-child-link"
+                                   [class.active]="activeChildId() === child.id"
+                                   (click)="scrollToSection(child.id)">
+                                    {{ child.label }}
+                                </a>
+                            }
+                        }
+                    } @else {
+                        <!-- Leaf -->
+                        <a class="project-detail__toc-link"
+                           [class.active]="activeParentId() === section.id"
+                           (click)="scrollToSection(section.id)">
+                            {{ section.label }}
+                        </a>
+                    }
+                }
+            </nav>
+        </aside>
+
+        <!-- Content Area -->
+        <div class="project-detail__content-area">
+
+            <!-- ==================== Project Overview group ==================== -->
+
+            <!-- Basics Card -->
+            <div class="card" id="card-basics">
+                <div class="card-header flex-between">
+                    <span class="card-title">Basics</span>
+                    @if (perms.userCanDirectEdit) {
+                        <button class="card-header-edit-link" (click)="openEditBasicsModal(project)" title="Edit Basics">
+                            <icon icon="Edit"></icon>
+                        </button>
+                    }
+                </div>
+                <div class="card-body">
+                    <div class="grid-12">
+                        <div class="g-col-4 field-label"><field-definition fieldDefinition="ProjectStage"></field-definition></div>
+                        <div class="g-col-8">{{ project.ProjectStage?.ProjectStageName || "—" }}</div>
+
+                        <div class="g-col-4 field-label"><field-definition fieldDefinition="ProjectInitiationDate"></field-definition></div>
+                        <div class="g-col-8">{{ project.PlannedDate | localDate }}</div>
+
+                        <div class="g-col-4 field-label"><field-definition fieldDefinition="CompletionDate"></field-definition></div>
+                        <div class="g-col-8">{{ project.CompletionDate | localDate }}</div>
+
+                        <div class="g-col-4 field-label"><field-definition fieldDefinition="LeadImplementerOrganization"></field-definition></div>
+                        <div class="g-col-8">
+                            @if (project.LeadImplementer) {
+                                <a [routerLink]="['/organizations', project.LeadImplementer.OrganizationID]">{{ project.LeadImplementer.OrganizationName }}</a>
+                            } @else {
+                                —
+                            }
+                        </div>
+
+                        <div class="g-col-12"><hr /></div>
+
+                        <div class="g-col-4 field-label"><field-definition fieldDefinition="ProjectDescription"></field-definition></div>
+                        <div class="g-col-8">{{ project.ProjectDescription || "—" }}</div>
+
+                        <div class="g-col-4 field-label"><field-definition fieldDefinition="ExpirationDate"></field-definition></div>
+                        <div class="g-col-8">{{ project.ExpirationDate | localDate }}</div>
+
+                        <div class="g-col-4 field-label"><field-definition fieldDefinition="FocusArea" labelOverride="DNR LOA Focus Area"></field-definition></div>
+                        <div class="g-col-8">{{ project.FocusAreaName || "—" }}</div>
+
+                        <div class="g-col-4 field-label"><field-definition fieldDefinition="Program"></field-definition></div>
+                        <div class="g-col-8">
+                            @if (project.Programs && project.Programs.length > 0) {
+                                @for (program of project.Programs; track program.ProgramID; let last = $last) {
+                                    <a [routerLink]="['/programs', program.ProgramID]">{{ program.ProgramName }}</a>
+                                    @if (!last) {
+                                        ,
+                                    }
+                                }
+                            } @else {
+                                —
+                            }
+                        </div>
+
+                        <div class="g-col-4 field-label"><field-definition fieldDefinition="PercentageMatch"></field-definition></div>
+                        <div class="g-col-8">{{ formatPercentage(project.PercentageMatch) }}</div>
+
+                        @if (project.ProjectGisIdentifier) {
+                            <div class="g-col-4 field-label"><field-definition fieldDefinition="ProjectIdentifier" labelOverride="Program Identifier"></field-definition></div>
+                            <div class="g-col-8">{{ project.ProjectGisIdentifier }}</div>
+                        }
+
+                        <div class="g-col-4 field-label"><field-definition fieldDefinition="FhtProjectNumber"></field-definition></div>
+                        <div class="g-col-8">{{ project.FhtProjectNumber || "—" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Card -->
+            <div class="card" id="card-location">
+                <div class="card-header flex-between">
+                    <span class="card-title">Location</span>
+                    @if (perms.userCanDirectEdit) {
+                        <div class="project-detail__dropdown">
+                            <button class="card-header-edit-link" [dropdownToggle]="locationEditMenu" #locationDropdown="dropdownToggleName" title="Edit Location">
+                                <icon icon="Edit"></icon>
+                            </button>
+                            <ul #locationEditMenu class="project-detail__dropdown-menu">
+                                <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditLocationSimpleModal(project)">Simple (Point)</a></li>
+                                <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditLocationDetailedModal(project)">Detailed (Geometries)</a></li>
+                                <li><hr class="project-detail__dropdown-divider" /></li>
+                                <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditPriorityLandscapesModal(project)">Priority Landscapes</a></li>
+                                <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditDnrUplandRegionsModal(project)">DNR Upland Regions</a></li>
+                                <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditCountiesModal(project)">Counties</a></li>
+                                <li><hr class="project-detail__dropdown-divider" /></li>
+                                <li><a href="javascript:void(0);" class="dropdown-item" (click)="locationDropdown.toggleMenu(false); openEditMapExtentModal(project)">Map Extent</a></li>
+                            </ul>
+                        </div>
+                    }
+                </div>
+                <div class="card-body">
+                    <div class="grid-12">
+                        <!-- Left Column: Map -->
+                        <div class="g-col-6">
+                            @if (project.HasLocationData) {
+                                <div [loadingSpinner]="{ isLoading: locationLayersIsLoading$ | async, loadingHeight: 400 }">
+                                    @if (locationLayers$ | async; as locationLayers) {
+                                        <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" [showLegend]="false" [collapseLayerControlOnLoad]="true" [boundingBox]="projectBoundingBox$ | async" (onMapLoad)="handleMapReady($event)">
+                                            @if (mapIsReady()) {
+                                                @for (layer of locationLayers; track layer.LayerName) {
+                                                    <generic-feature-collection-layer
+                                                        [map]="map"
+                                                        [layerControl]="layerControl"
+                                                        [featureCollection]="layer.Features"
+                                                        [layerName]="layer.LayerName"
+                                                        [layerColor]="layer.LayerColor"
+                                                        [displayOnLoad]="true">
+                                                    </generic-feature-collection-layer>
+                                                }
+                                                <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
+                                                <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                                                    [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"
+                                                    [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Simple)'" [wmsStyle]="'location_simple'"
+                                                    [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                                                </generic-wms-wfs-layer>
+                                                <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                                                    [wmsLayerName]="'WADNRForestHealth:ProjectLocationDetailed'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationDetailed'"
+                                                    [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Detailed)'" [wmsStyle]="'location_detailed'"
+                                                    [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                                                </generic-wms-wfs-layer>
+                                                <priority-landscapes-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                                                <dnr-upland-regions-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
+                                                <counties-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></counties-layer>
+                                            }
+                                        </wadnr-map>
+                                    }
+                                </div>
+                            } @else {
+                                <p class="system-text">No location data available for this project.</p>
+                            }
+                        </div>
+
+                        <!-- Right Column: Geographic Info -->
+                        <div class="g-col-6 project-detail__location-info">
+                            @if (project.Latitude != null && project.Longitude != null) {
+                                <div class="project-detail__subsection-header">
+                                    <h5 class="project-detail__card-subsection-heading">Location Information</h5>
+                                </div>
+                                <ul class="project-detail__list-unstyled">
+                                    <li>Latitude: {{ project.Latitude | number:'1.0-4' }}</li>
+                                    <li>Longitude: {{ project.Longitude | number:'1.0-4' }}</li>
+                                </ul>
+                            }
+
+                            <div class="project-detail__subsection-header mt-3">
+                                <h5 class="project-detail__card-subsection-heading">Counties</h5>
+                            </div>
+                            @if (project.Counties && project.Counties.length > 0) {
+                                <ul class="project-detail__list-unstyled">
+                                    @for (county of project.Counties; track county.CountyID) {
+                                        <li><a [routerLink]="['/counties', county.CountyID]">{{ county.CountyName }}</a></li>
+                                    }
+                                </ul>
+                            } @else {
+                                <p class="text-muted mb-3">—</p>
+                            }
+
+                            <div class="project-detail__subsection-header mt-3">
+                                <h5 class="project-detail__card-subsection-heading">Priority Landscapes</h5>
+                            </div>
+                            @if (project.PriorityLandscapes && project.PriorityLandscapes.length > 0) {
+                                <ul class="project-detail__list-unstyled">
+                                    @for (pl of project.PriorityLandscapes; track pl.PriorityLandscapeID) {
+                                        <li><a [routerLink]="['/priority-landscapes', pl.PriorityLandscapeID]">{{ pl.PriorityLandscapeName }}</a></li>
+                                    }
+                                </ul>
+                            } @else {
+                                <p class="text-muted mb-3">—</p>
+                            }
+
+                            <div class="project-detail__subsection-header mt-3">
+                                <h5 class="project-detail__card-subsection-heading">DNR Upland Region</h5>
+                            </div>
+                            @if (project.Regions && project.Regions.length > 0) {
+                                <ul class="project-detail__list-unstyled">
+                                    @for (region of project.Regions; track region.DNRUplandRegionID) {
+                                        <li><a [routerLink]="['/dnr-upland-regions', region.DNRUplandRegionID]">{{ region.DNRUplandRegionName }}</a></li>
+                                    }
+                                </ul>
+                            } @else {
+                                <p class="text-muted mb-3">—</p>
+                            }
+
+                            @if (project.ProjectLocationNotes) {
+                                <div class="project-detail__subsection-header mt-3">
+                                    <h5 class="project-detail__card-subsection-heading">Location Notes</h5>
+                                </div>
+                                <p>{{ project.ProjectLocationNotes }}</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tags Card -->
+            <div class="card" id="card-tags">
+                <div class="card-header flex-between">
+                    <span class="card-title">Tags</span>
+                    @if (perms.userCanDirectEdit && perms.userIsAdmin) {
+                        <button class="card-header-edit-link" (click)="openEditTagsModal(project)" title="Edit Tags">
+                            <icon icon="Edit"></icon>
+                        </button>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (project.Tags && project.Tags.length > 0) {
+                        <div class="project-detail__tags-list">
+                            @for (tag of project.Tags; track tag.TagID) {
+                                <a [routerLink]="['/tags', tag.TagID]" class="btn btn-sm project-detail__btn-tag">{{ tag.TagName }}</a>
+                            }
+                        </div>
+                    } @else {
+                        <p class="system-text">No tags assigned to this project.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Organizations Card -->
+            <div class="card" id="card-organizations">
+                <div class="card-header flex-between">
+                    <span class="card-title">Contributing Organizations</span>
+                    @if (perms.userCanDirectEdit) {
+                        <button class="card-header-edit-link" (click)="openEditOrganizationsModal(project)" title="Edit Organizations">
+                            <icon icon="Edit"></icon>
+                        </button>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (project.Organizations && project.Organizations.length > 0) {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%"><field-definition fieldDefinition="ProjectRelationshipType"></field-definition></th>
+                                    <th><field-definition fieldDefinition="Organization" labelOverride="Contributing Organization"></field-definition></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (group of getOrganizationsByRelationshipType(project.Organizations); track group.relationshipType) {
+                                    <tr>
+                                        <td>{{ group.organizations.length > 1 ? group.relationshipType + "s" : group.relationshipType }}</td>
+                                        <td>
+                                            <ul class="project-detail__list-unstyled">
+                                                @for (org of group.organizations; track org.ProjectOrganizationID) {
+                                                    <li>
+                                                        <a [routerLink]="['/organizations', org.OrganizationID]">{{ org.OrganizationName }}</a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    } @else {
+                        <p class="system-text">No organizations set for this project.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Contacts Card -->
+            <div class="card" id="card-contacts">
+                <div class="card-header flex-between">
+                    <span class="card-title">Contacts</span>
+                    @if (perms.userCanDirectEdit) {
+                        <button class="card-header-edit-link" (click)="openEditContactsModal(project)" title="Edit Contacts">
+                            <icon icon="Edit"></icon>
+                        </button>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (perms.userIsLoggedIn) {
+                        <div class="flex-end mb-2">
+                            <button class="btn btn-sm btn-secondary" (click)="requestPrimaryContactChange()">
+                                Request Primary Contact Change
+                            </button>
+                        </div>
+                    }
+                    @if (project.People && project.People.length > 0) {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%"><field-definition fieldDefinition="ContactRelationshipType"></field-definition></th>
+                                    <th><field-definition fieldDefinition="Contact"></field-definition></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (group of getPeopleByRelationshipType(project.People); track group.relationshipType) {
+                                    <tr>
+                                        <td>{{ group.people.length > 1 ? group.relationshipType + "s" : group.relationshipType }}</td>
+                                        <td>
+                                            <ul class="project-detail__list-unstyled">
+                                                @for (person of group.people; track person.ProjectPersonID) {
+                                                    <li><a [routerLink]="['/people', person.PersonID]">{{ person.PersonFullName }}</a></li>
+                                                }
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    } @else {
+                        <p class="system-text">No contacts set for this project.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- ==================== Funding group ==================== -->
+
+            <!-- Funding Card -->
+            <div class="card" id="card-funding">
+                <div class="card-header flex-between">
+                    <span class="card-title">Project Funding</span>
+                    @if (perms.userCanDirectEdit) {
+                        <button class="card-header-edit-link" (click)="openEditFundingModal(project)" title="Edit Funding">
+                            <icon icon="Edit"></icon>
+                        </button>
+                    }
+                </div>
+                <div class="card-body">
+                    <div class="grid-12">
+                        @if (project.EstimatedTotalCost) {
+                            <div class="g-col-3 field-label">Estimated Total Cost</div>
+                            <div class="g-col-9">{{ formatCurrency(project.EstimatedTotalCost) }}</div>
+                        }
+
+                        <div class="g-col-3 field-label"><field-definition fieldDefinition="FundingSource" labelOverride="Source of Funds"></field-definition></div>
+                        <div class="g-col-9">
+                            @if (project.FundingSources && project.FundingSources.length > 0) {
+                                {{ project.FundingSources.join(", ") }}
+                            } @else {
+                                —
+                            }
+                        </div>
+
+                        <div class="g-col-3 field-label"><field-definition fieldDefinition="FundingSourceNote" labelOverride="Notes about Project Funding"></field-definition></div>
+                        <div class="g-col-9">{{ project.FundingSourceNotes || "None entered" }}</div>
+                    </div>
+
+                    <hr />
+
+                    @if (project.FundSourceAllocationRequests && project.FundSourceAllocationRequests.length > 0) {
+                        <p>
+                            The table below shows the identified fund source allocations contributing to the project cost. This may not be a comprehensive list of all project
+                            funding sources, nor an estimate of the full project cost.
+                        </p>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th><field-definition fieldDefinition="FundSourceAllocation" labelOverride="WA DNR Fund Source Allocation"></field-definition></th>
+                                    <th style="text-align: right"><field-definition fieldDefinition="ProjectFundSourceAllocationRequestTotalAmount"></field-definition></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (request of project.FundSourceAllocationRequests; track request.ProjectFundSourceAllocationRequestID) {
+                                    <tr>
+                                        <td>{{ request.FundSourceName }} - <a [routerLink]="['/fund-source-allocations', request.FundSourceAllocationID]">{{ request.FundSourceAllocationName }}</a></td>
+                                        <td style="text-align: right">{{ formatCurrency(request.TotalAmount) }}</td>
+                                    </tr>
+                                }
+                                <tr class="project-detail__totals-row">
+                                    <th style="text-align: right">Total</th>
+                                    <th style="text-align: right">{{ formatCurrency(getFundingTotals(project.FundSourceAllocationRequests).total) }}</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    } @else {
+                        <p class="system-text">No Fund Source Allocation identified for this Project.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Invoices Card -->
+            @if (perms.userCanEdit) {
+                <div class="card" id="card-invoices">
+                    <div class="card-header">
+                        <span class="card-title">Invoices</span>
+                    </div>
+                    <div class="card-body">
+                        @if (perms.userCanDirectEdit) {
+                            <div style="text-align: right; margin-bottom: 1rem;">
+                                <button class="btn btn-primary btn-sm" (click)="openAddPaymentRequestModal(project.ProjectID)">
+                                    <i class="fa fa-plus"></i> Add Invoice Payment Request
+                                </button>
+                            </div>
+                        }
+
+                        @if (paymentRequests$ | async; as paymentRequests) {
+                            @if (invoicesByPaymentRequest$ | async; as invoiceMap) {
+                                @if (paymentRequests.length === 0) {
+                                    <p class="system-text">No payment requests recorded for this project.</p>
+                                }
+                                @for (pr of paymentRequests; track pr.InvoicePaymentRequestID) {
+                                    <div class="payment-request-card" style="border: 1px solid #ddd; border-radius: 4px; padding: 1rem; margin-bottom: 1.5rem;">
+                                        @if (perms.userCanDirectEdit) {
+                                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.25rem; margin-bottom: 0.5rem;">
+                                                <button class="btn btn-primary btn-sm" (click)="openAddInvoiceModal(pr.InvoicePaymentRequestID)">
+                                                    <i class="fa fa-plus"></i> Create New Invoice
+                                                </button>
+                                                <button class="btn btn-primary btn-sm" (click)="downloadInvoicePaymentRequest(project, pr)">
+                                                    <i class="fa fa-envelope"></i> Download Invoice Payment Request
+                                                </button>
+                                            </div>
+                                        }
+
+                                        <!-- Payment Request Detail Fields -->
+                                        <div class="grid-12" style="margin-bottom: 0.75rem;">
+                                            <!-- Left column: Vendor info -->
+                                            <div class="g-col-5">
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-5" style="text-align: right; padding-right: 0.5rem;"><field-definition fieldDefinition="Vendor" labelOverride="Vendor Name"></field-definition></div>
+                                                    <div class="g-col-7">{{ pr.VendorName }}</div>
+                                                </div>
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-5" style="font-weight: bold; text-align: right; padding-right: 0.5rem;">Vendor Address</div>
+                                                    <div class="g-col-7">{{ pr.VendorAddress }}</div>
+                                                </div>
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-5" style="text-align: right; padding-right: 0.5rem;"><field-definition fieldDefinition="StatewideVendorNumber" labelOverride="Vendor ID"></field-definition></div>
+                                                    <div class="g-col-7">{{ pr.VendorStatewideVendorNumber }}</div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Middle column: Purchase Authority & DUNS -->
+                                            <div class="g-col-3">
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-6" style="text-align: right; padding-right: 0.5rem;"><field-definition fieldDefinition="PurchaseAuthority"></field-definition></div>
+                                                    <div class="g-col-6">{{ getPurchaseAuthorityDisplay(pr) }}</div>
+                                                </div>
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-6" style="text-align: right; padding-right: 0.5rem;"><field-definition fieldDefinition="DUNS"></field-definition></div>
+                                                    <div class="g-col-6">{{ pr.Duns }}</div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Right column: Prepared By, Phone, Date -->
+                                            <div class="g-col-4">
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-5" style="text-align: right; padding-right: 0.5rem;"><field-definition fieldDefinition="PreparedByPerson" labelOverride="Prepared By"></field-definition></div>
+                                                    <div class="g-col-7">{{ pr.PreparedByPersonFullName }}</div>
+                                                </div>
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-5" style="font-weight: bold; text-align: right; padding-right: 0.5rem;">Phone</div>
+                                                    <div class="g-col-7">{{ pr.PreparedByPersonPhone }}</div>
+                                                </div>
+                                                <div class="grid-12" style="margin-bottom: 0.25rem;">
+                                                    <div class="g-col-5" style="font-weight: bold; text-align: right; padding-right: 0.5rem;">Date</div>
+                                                    <div class="g-col-7">{{ pr.InvoicePaymentRequestDate | date:'M/d/yyyy' }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Notes row -->
+                                        @if (pr.Notes) {
+                                            <div class="grid-12" style="margin-bottom: 0.75rem;">
+                                                <div class="g-col-2" style="font-weight: bold; text-align: right; padding-right: 0.5rem;">Notes</div>
+                                                <div class="g-col-10">{{ pr.Notes }}</div>
+                                            </div>
+                                        }
+
+                                        <!-- Invoice grid for this payment request -->
+                                        <wadnr-grid
+                                            [rowData]="invoiceMap[pr.InvoicePaymentRequestID] || []"
+                                            [columnDefs]="invoiceColumnDefs"
+                                            height="240px"
+                                            [downloadFileName]="'Invoices_PR_' + pr.InvoicePaymentRequestID"
+                                            fullscreenTitle="Invoices">
+                                        </wadnr-grid>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Associated Agreements Card (inside funding, no TOC entry) -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Agreements Associated to this Project</span>
+                </div>
+                <div class="card-body">
+                    @if (project.Agreements && project.Agreements.length > 0) {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Agreement</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (agreement of project.Agreements; track agreement.AgreementID) {
+                                    <tr>
+                                        <td>
+                                            <a [routerLink]="['/agreements', agreement.AgreementID]">
+                                                {{ agreement.AgreementNumber ? agreement.AgreementNumber + " - " : "" }}{{ agreement.AgreementTitle }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    } @else {
+                        <p class="system-text">No Agreements associated with this project.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- ==================== Activities (leaf) ==================== -->
+            @if (treatments$ | async; as treatments) {
+                <div class="card" id="card-activities">
+                    <div class="card-header">
+                        <span class="card-title">Activities</span>
+                    </div>
+                    <div class="card-body">
+                        <h4>Treatments</h4>
+                        @if (treatments.length > 0) {
+                            <div style="margin-bottom: 8px;">
+                                <label for="flatten-treatments-checkbox">
+                                    <input type="checkbox" id="flatten-treatments-checkbox" [(ngModel)]="showFlattenedTreatments" />
+                                    Display Flattened By Treatment Area
+                                </label>
+                            </div>
+                            @if (!showFlattenedTreatments) {
+                                <wadnr-grid [rowData]="treatments" [columnDefs]="treatmentColumnDefs" height="400px" downloadFileName="Project_Treatments" fullscreenTitle="Treatments">
+                                    @if (perms.userCanManageTreatments) {
+                                        <button customGridActionsRight class="btn btn-sm btn-primary" (click)="openAddTreatmentModal(project.ProjectID)">
+                                            <i class="fa fa-plus"></i> Add Treatment
+                                        </button>
+                                    }
+                                </wadnr-grid>
+                            } @else {
+                                @if (flattenedTreatments$ | async; as flattenedTreatments) {
+                                    <wadnr-grid [rowData]="flattenedTreatments" [columnDefs]="flattenedTreatmentColumnDefs" height="400px" downloadFileName="Project_Treatments_Flattened" fullscreenTitle="Treatments (Flattened)" [pinnedTotalsRow]="flattenedTreatmentTotalsConfig"> </wadnr-grid>
+                                }
+                            }
+                        } @else {
+                            <p class="system-text">No treatments recorded for this project.</p>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- ==================== Interaction Events (leaf) ==================== -->
+            @if (interactionEvents$ | async; as interactionEvents) {
+                <div class="card" id="card-interaction-events">
+                    <div class="card-header">
+                        <span class="card-title">Project Interactions/Events</span>
+                    </div>
+                    <div class="card-body">
+                        @if (perms.userCanDirectEdit) {
+                            <div class="flex-end mb-2">
+                                <button class="btn btn-sm btn-primary" (click)="openAddInteractionEventModal(project.ProjectID)">
+                                    <i class="fa fa-plus"></i> Add Interaction/Event
+                                </button>
+                            </div>
+                        }
+                        @if (interactionEvents.length > 0) {
+                            <wadnr-grid [rowData]="interactionEvents" [columnDefs]="interactionEventColumnDefs" height="400px" downloadFileName="Project_InteractionEvents" fullscreenTitle="Interaction Events">
+                            </wadnr-grid>
+                        } @else {
+                            <p class="system-text">No interaction events recorded for this project.</p>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- ==================== Project Themes (leaf) ==================== -->
+            @if (classificationsBySystem$ | async; as classificationsBySystem) {
+                <div class="card" id="card-classifications">
+                    <div class="card-header">
+                        <span class="card-title"><field-definition fieldDefinition="Classification" labelOverride="Project Themes"></field-definition></span>
+                    </div>
+                    <div class="card-body">
+                        @if (perms.userCanDirectEdit) {
+                            <div class="flex-end mb-2">
+                                <button class="btn btn-sm btn-primary" (click)="openEditClassificationsModal(project)">
+                                    <i class="fa fa-pencil"></i> Edit
+                                </button>
+                            </div>
+                        }
+                        @if (classificationsBySystem.length > 0) {
+                            @for (system of classificationsBySystem; track system.classificationSystemID) {
+                                @for (batch of batchItems(system.items, 3); track $index) {
+                                    <div class="project-detail__classification-row grid-12">
+                                        @for (item of batch; track item.ClassificationID) {
+                                            <div class="g-col-4">
+                                                <a class="project-detail__classification-name" [routerLink]="['/classifications', item.ClassificationID]">{{ item.ClassificationName }}</a>
+                                                @if (item.ProjectClassificationNotes) {
+                                                    <div class="project-detail__classification-notes">{{ item.ProjectClassificationNotes }}</div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            }
+                        } @else {
+                            <p class="system-text">No project themes assigned to this project.</p>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- ==================== Project Details group ==================== -->
+
+            <!-- Cost Share Card (always visible, matching legacy behavior) -->
+            <div class="card" id="card-cost-share">
+                <div class="card-header">
+                    <span class="card-title">Cost Share</span>
+                </div>
+                <div class="card-body">
+                    <ul class="project-detail__list-unstyled">
+                        <li>
+                            <a [href]="blankCostShareUrl" target="_blank">
+                                <i class="fa fa-file-pdf-o"></i> Blank Cost Share Agreement
+                            </a>
+                        </li>
+                        @if (perms.userCanViewCostSharePDFs) {
+                            @for (landowner of getLandowners(project); track landowner.ProjectPersonID) {
+                                <li>
+                                    <a href="javascript:void(0);" (click)="downloadCostSharePdf(landowner)">
+                                        <i class="fa fa-file-pdf-o"></i> Cost Share Agreement for {{ landowner.PersonFullName }}
+                                    </a>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Documents Card -->
+            @if (isAuthenticated) {
+                @if (documents$ | async; as documents) {
+                    <div class="card" id="card-documents">
+                        <div class="card-header">
+                            <span class="card-title">Documents</span>
+                        </div>
+                        <div class="card-body">
+                            @if (perms.userCanEditProjectAsAdmin) {
+                                <div class="flex-end mb-2">
+                                    <button class="btn btn-sm btn-primary" (click)="openAddDocumentModal(project.ProjectID)">Add Document</button>
+                                </div>
+                            }
+                            @if (documents.length > 0) {
+                                <wadnr-grid [rowData]="documents" [columnDefs]="documentColumnDefs" height="300px" downloadFileName="Project_Documents" fullscreenTitle="Documents"></wadnr-grid>
+                            } @else {
+                                <p class="system-text">No documents uploaded for this project.</p>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+
+            <!-- Notes Card (Public + Internal in one card) -->
+            <div class="card" id="card-notes">
+                <div class="card-header">
+                    <span class="card-title">Notes</span>
+                </div>
+                <div class="card-body">
+                    <div class="project-detail__subsection-header">
+                        <h4 class="project-detail__card-subsection-heading">Public Notes</h4>
+                        @if (perms.userCanEditProjectAsAdmin) {
+                            <button class="btn btn-sm btn-primary" (click)="openAddNoteModal(project.ProjectID)">Add Note</button>
+                        }
+                    </div>
+                    @if (notes$ | async; as notes) {
+                        @if (notes.length > 0) {
+                            <wadnr-grid [rowData]="notes" [columnDefs]="noteColumnDefs" height="300px" downloadFileName="Project_Notes" fullscreenTitle="Public Notes"> </wadnr-grid>
+                        } @else {
+                            <p class="system-text">No notes recorded for this project.</p>
+                        }
+                    }
+
+                    @if (perms.userCanViewInternalNotes) {
+                        <hr />
+                        <div class="project-detail__subsection-header">
+                            <h4 class="project-detail__card-subsection-heading">Internal Notes</h4>
+                            <button class="btn btn-sm btn-primary" (click)="openAddInternalNoteModal(project.ProjectID)">Add Internal Note</button>
+                        </div>
+                        @if (internalNotes$ | async; as internalNotes) {
+                            @if (internalNotes.length > 0) {
+                                <wadnr-grid [rowData]="internalNotes" [columnDefs]="internalNoteColumnDefs" height="300px" downloadFileName="Project_InternalNotes" fullscreenTitle="Internal Notes"></wadnr-grid>
+                            } @else {
+                                <p class="system-text">No internal notes recorded for this project.</p>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+
+            <!-- External Links Card -->
+            @if (externalLinks$ | async; as externalLinks) {
+                <div class="card" id="card-external-links">
+                    <div class="card-header flex-between">
+                        <span class="card-title">External Links</span>
+                        @if (perms.userCanDirectEdit) {
+                            <button class="card-header-edit-link" (click)="openEditExternalLinksModal(project)" title="Edit External Links">
+                                <icon icon="Edit"></icon>
+                            </button>
+                        }
+                    </div>
+                    <div class="card-body">
+                        @if (externalLinks.length > 0) {
+                            <ul class="project-detail__external-links-list">
+                                @for (link of externalLinks; track link.ProjectExternalLinkID) {
+                                    <li>
+                                        <a [href]="link.ExternalLinkUrl" target="_blank" rel="noopener noreferrer">{{ link.ExternalLinkLabel }}</a>
+                                    </li>
+                                }
+                            </ul>
+                        } @else {
+                            <p class="system-text">No external links for this project.</p>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- ==================== Photos (leaf) ==================== -->
+            @if (images$ | async; as images) {
+                <div class="card" id="card-photos">
+                    <div class="card-header">
+                        <span class="card-title">Photos</span>
+                    </div>
+                    <div class="card-body">
+                        @if (perms.userCanDirectEdit) {
+                            <div class="flex-end mb-2">
+                                <button class="btn btn-sm btn-primary" (click)="openAddImageModal(project.ProjectID)">Add Photo</button>
+                            </div>
+                        }
+                        <image-gallery
+                            [images]="mapToGalleryItems(images)"
+                            [canEdit]="perms.userCanDirectEdit"
+                            (edit)="openEditImageModal($event)"
+                            (delete)="deleteImage($event)"
+                            (setKeyPhoto)="setKeyPhoto($event)">
+                        </image-gallery>
+                    </div>
+                </div>
+            }
+
+            <!-- ==================== Administrative (Admin only) ==================== -->
+            @if (perms.userIsAdmin) {
+                <!-- Update History Card -->
+                @if (updateHistory$ | async; as updateHistory) {
+                    <div class="card" id="card-update-history">
+                        <div class="card-header">
+                            <span class="card-title">Project Update History</span>
+                        </div>
+                        <div class="card-body">
+                            @if (updateHistory.length > 0) {
+                                <wadnr-grid [rowData]="updateHistory" [columnDefs]="updateHistoryColumnDefs" height="300px" downloadFileName="Project_UpdateHistory" fullscreenTitle="Project Update History"> </wadnr-grid>
+                            } @else {
+                                <p class="system-text">No update history for this project.</p>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- System Communications Card -->
+                @if (notifications$ | async; as notifications) {
+                    <div class="card" id="card-notifications">
+                        <div class="card-header">
+                            <span class="card-title">System Communications</span>
+                        </div>
+                        <div class="card-body">
+                            @if (notifications.length > 0) {
+                                <wadnr-grid [rowData]="notifications" [columnDefs]="notificationColumnDefs" height="300px" downloadFileName="Project_Notifications" fullscreenTitle="System Communications"> </wadnr-grid>
+                            } @else {
+                                <p class="system-text">No system communications for this project.</p>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Audit Log Card -->
+                @if (auditLogs$ | async; as auditLogs) {
+                    <div class="card" id="card-audit-log">
+                        <div class="card-header">
+                            <span class="card-title">Audit Log</span>
+                        </div>
+                        <div class="card-body">
+                            @if (auditLogs.length > 0) {
+                                <wadnr-grid [rowData]="auditLogs" [columnDefs]="auditLogColumnDefs" height="300px" downloadFileName="Project_AuditLog" fullscreenTitle="Audit Log"> </wadnr-grid>
+                            } @else {
+                                <p class="system-text">No audit log entries for this project.</p>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+
+        </div>
+    </div>
+}
+} @else {
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
+}

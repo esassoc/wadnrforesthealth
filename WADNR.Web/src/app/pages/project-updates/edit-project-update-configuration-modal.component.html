@@ -1,0 +1,83 @@
+<div class="modal">
+    <div class="modal-header">
+        <h4>Edit Project Update Configuration</h4>
+    </div>
+    <div class="modal-body">
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+        <form [formGroup]="form">
+            <h5>Kick-Off Reminders</h5>
+
+            <form-field
+                fieldLabel="Enable Project Update Reminders"
+                [type]="FormFieldType.Toggle"
+                [formControl]="form.controls.enableProjectUpdateReminders">
+            </form-field>
+
+            @if (form.controls.enableProjectUpdateReminders.value) {
+                <form-field
+                    fieldLabel="Project Update Kick-Off Date"
+                    [type]="FormFieldType.Date"
+                    [formControl]="form.controls.projectUpdateKickOffDate">
+                </form-field>
+
+                <form-field
+                    fieldLabel="Kick-Off Email Intro Content"
+                    [type]="FormFieldType.RTE"
+                    [formControl]="form.controls.projectUpdateKickOffIntroContent">
+                </form-field>
+            }
+
+            <hr />
+            <h5>Periodic Reminders</h5>
+
+            <form-field
+                fieldLabel="Send Periodic Reminders"
+                [type]="FormFieldType.Toggle"
+                [formControl]="form.controls.sendPeriodicReminders">
+            </form-field>
+
+            @if (form.controls.sendPeriodicReminders.value) {
+                <form-field
+                    fieldLabel="Reminder Interval (days)"
+                    [type]="FormFieldType.Number"
+                    [formControl]="form.controls.projectUpdateReminderInterval"
+                    placeholder="7 - 365">
+                </form-field>
+
+                <form-field
+                    fieldLabel="Reminder Email Intro Content"
+                    [type]="FormFieldType.RTE"
+                    [formControl]="form.controls.projectUpdateReminderIntroContent">
+                </form-field>
+            }
+
+            <hr />
+            <h5>Close-Out Notification</h5>
+
+            <form-field
+                fieldLabel="Send Close-Out Notification"
+                [type]="FormFieldType.Toggle"
+                [formControl]="form.controls.sendCloseOutNotification">
+            </form-field>
+
+            @if (form.controls.sendCloseOutNotification.value) {
+                <form-field
+                    fieldLabel="Project Update Close-Out Date"
+                    [type]="FormFieldType.Date"
+                    [formControl]="form.controls.projectUpdateCloseOutDate">
+                </form-field>
+
+                <form-field
+                    fieldLabel="Close-Out Email Intro Content"
+                    [type]="FormFieldType.RTE"
+                    [formControl]="form.controls.projectUpdateCloseOutIntroContent">
+                </form-field>
+            }
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="save()" [disabled]="isSubmitting()" [buttonLoading]="isSubmitting()">Save</button>
+        <button class="btn btn-secondary" (click)="ref.close(false)" [disabled]="isSubmitting()">Cancel</button>
+    </div>
+</div>

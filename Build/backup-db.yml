@@ -1,0 +1,54 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+
+variables:
+  spokeKeyVaultName: 'aks-spoke-kv-esa-prod'
+  databaseName: 'WADNRDB'
+  qaStorageAccountName: 'wadnrappqa'
+
+jobs:
+- job: BackupDB
+  displayName: 'Backup Production DB'
+  pool:
+    vmImage: 'windows-latest'
+    demands:
+    - sqlpackage
+    - azureps
+
+  steps:
+  - checkout: none
+
+  - task: AzureKeyVault@2
+    inputs:
+      azureSubscription: "$(AzureServiceConnection)"
+      KeyVaultName: '$(spokeKeyVaultName)'
+      SecretsFilter: '*'
+      RunAsPreJob: true
+      
+  - task: SqlAzureDacpacDeployment@1
+    name: export
+    displayName: 'Export Production DB'
+    inputs:
+      azureSubscription: '$(AzureServiceConnection)' #Should be Prod Service Connection
+      ServerName: '$(kv-dbServerName).database.windows.net'
+      DatabaseName: '$(databaseName)'
+      SqlUsername: '$(kv-sqlAdministratorUsername)'
+      SqlPassword: '$(kv-sqlAdministratorPassword)'
+      DeploymentAction: Export
+
+  - publish: '$(export.SqlDeploymentOutputFile)'
+    artifact: bacpac
+
+  - task: AzureFileCopy@6
+    displayName: 'Copy BacPac to QA Blob storage'
+    inputs:
+      SourcePath: '$(export.SqlDeploymentOutputFile)'
+      azureSubscription: '$(AzureQAServiceConnection)' #Should be QA Service Connection
+      Destination: 'AzureBlob'
+      storage: '$(qaStorageAccountName)'
+      ContainerName: 'prod-backup'
+

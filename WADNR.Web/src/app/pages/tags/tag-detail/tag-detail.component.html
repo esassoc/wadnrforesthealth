@@ -1,0 +1,52 @@
+@if (tag$ | async; as tag) {
+<breadcrumb [items]="[{ label: 'Tags', url: '/tags' }, { label: tag.TagName }]" [linkLast]="false"></breadcrumb>
+<page-header pageTitle="{{ tag.TagName }}"> </page-header>
+
+<div class="grid-12">
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">
+                    @if (isAdmin) {
+                    <a href="javascript:void(0)" (click)="openEditTag(tag)" title="Edit Tag" style="color: inherit">
+                        <i class="fa fa-edit" style="transform: none"></i>
+                    </a>
+                    }
+                    Basics
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="TagName"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ tag.TagName || "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="TagDescription"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ tag.TagDescription || "—" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Projects</span></div>
+            <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
+                @if (isAdmin) {
+                <div class="flex-end mb-2">
+                    <tag-checked-projects-button [selectedRows]="selectedRows" (tagged)="onTagged()"></tag-checked-projects-button>
+                </div>
+                <wadnr-grid [rowData]="projects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" [downloadFileName]="'projects'" fullscreenTitle="Projects" defaultRowSelection="multiRow" (selectionChanged)="onSelectionChanged($event)"></wadnr-grid>
+                } @else {
+                <wadnr-grid [rowData]="projects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" [downloadFileName]="'projects'" fullscreenTitle="Projects"></wadnr-grid>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+} @else {
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
+}

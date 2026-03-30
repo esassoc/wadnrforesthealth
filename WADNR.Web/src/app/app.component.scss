@@ -1,0 +1,59 @@
+@use "/src/scss/abstracts" as *;
+
+.app__footer {
+    height: 300px;
+    background-color: var(--wadnr-footer);
+    background-image: url("../assets/img/dnr-footer-img.jpg");
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: cover;
+    font-size: var(--type-size-100);
+    color: var(--blue-300);
+    padding: var(--spacing-600);
+    bottom: 0;
+    z-index: 3;
+
+    .app__credits {
+        text-align: center;
+
+        @include desktop-small {
+            grid-column: 4 / span 6;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    }
+
+    .copy-3 {
+        line-height: 1.5em;
+        font-size: var(--type-size-050);
+    }
+
+    .app__ck {
+        a {
+            color: unset;
+        }
+    }
+
+    .app__btn-outline {
+        color: var(--white);
+        border-color: var(--white);
+
+        &:hover {
+            background: var(--white);
+            color: var(--primary);
+        }
+    }
+}
+
+custom-rich-text a {
+    color: var(--white);
+}
+
+.app__system-info {
+    display: flex;
+    gap: var(--spacing-600);
+    color: var(--white);
+    justify-content: center;
+}

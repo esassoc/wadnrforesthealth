@@ -1,0 +1,205 @@
+@use "/src/scss/abstracts" as *;
+
+.reorderable {
+    counter-reset: reorderable-list;
+    border: 1px solid rgba(var(--black-rgb), 0.05);
+    border-radius: var(--border-radius-200);
+
+    &__item {
+        counter-increment: reorderable-list;
+        display: flex;
+        align-items: stretch;
+        background: var(--white);
+
+        & + .reorderable__item {
+            border-top: 1px solid rgba(var(--black-rgb), 0.05);
+        }
+
+        & > * {
+            padding: 1rem;
+
+            @include desktop-medium {
+                padding: 1rem 1.5rem;
+            }
+            &:last-child {
+                border-left: 1px solid rgba(var(--black-rgb), 0.05);
+            }
+        }
+    }
+
+    &__order {
+        border-right: 1px solid rgba(var(--black-rgb), 0.05);
+        display: grid;
+        align-items: center;
+
+        span {
+            display: block;
+            text-align: center;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+            line-height: 0.95rem;
+
+            font-weight: 900;
+            font-size: var(--type-size-050);
+
+            @include desktop-medium {
+                font-size: var(--type-size-150);
+                width: 1.5rem;
+                height: 1.5rem;
+                line-height: 1.45rem;
+            }
+
+            &:before {
+                content: counter(reorderable-list);
+            }
+        }
+    }
+
+    &__label {
+        display: grid;
+        align-items: center;
+        flex: 1;
+    }
+
+    &__title {
+        font-size: var(--type-size-300);
+        font-weight: normal;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        @include desktop-medium {
+            flex-direction: row;
+        }
+
+        .fas,
+        .fa {
+            color: var(--primary);
+        }
+
+        input[type="text"] {
+            height: 2.5rem;
+            line-height: 1em;
+            padding: 0.5rem;
+            font-size: var(--type-size-200);
+            border: 1px solid rgba(var(--black-rgb), 0.1);
+            border-radius: 4px;
+            width: 100%;
+            max-width: 20rem;
+        }
+    }
+
+    &__status {
+        display: grid;
+        align-items: center;
+    }
+
+    &__close {
+        display: grid;
+        align-items: center;
+
+        i {
+            display: block;
+            font-size: 1rem !important;
+            color: var(--gray-600);
+            transition: all 200ms ease;
+        }
+
+        &:hover {
+            cursor: pointer;
+            i {
+                color: var(--red-default);
+            }
+        }
+    }
+
+    &__handle {
+        display: grid;
+        align-items: center;
+        border-left: 1px solid rgba(var(--black-rgb), 0.05);
+
+        i {
+            display: block;
+            font-size: var(--type-size-200);
+            color: var(--gray-600);
+            transition: all 200ms ease;
+        }
+
+        &:hover {
+            cursor: move;
+
+            i {
+                color: rgba(var(--black-rgb), 0.75);
+            }
+        }
+    }
+
+    &__item.inactive {
+        .reorderable__order {
+            span {
+                border: 2px solid rgba(var(--black-rgb), 0.58);
+                color: rgba(var(--black-rgb), 0.58);
+            }
+        }
+
+        .reorderable__title {
+            color: rgba(var(--black-rgb), 0.58);
+
+            input {
+                color: rgba(var(--black-rgb), 0.58);
+            }
+
+            .fas,
+            .fa {
+                color: rgba(var(--black-rgb), 0.58);
+            }
+        }
+    }
+
+    .switch {
+        width: 7rem;
+        .toggle {
+            &:after {
+                content: "Inactive";
+                font-size: var(--type-size-100);
+                top: 0.6875rem;
+            }
+        }
+
+        input:checked {
+            & + .toggle {
+                &:before {
+                    transform: translateX(5rem);
+                }
+
+                &:after {
+                    content: "Active";
+                }
+            }
+        }
+    }
+
+    .field {
+        label.small {
+            display: block;
+            font-size: var(--type-size-050);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            padding-bottom: 0.25rem;
+        }
+
+        input[type="text"] {
+            max-width: unset;
+        }
+
+        select {
+            height: 2.5rem;
+            background: var(--white);
+            font-size: var(--type-size-200);
+        }
+    }
+}

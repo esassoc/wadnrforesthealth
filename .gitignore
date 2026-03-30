@@ -1,9 +1,6 @@
 # /Batch/
 /Batch
 
-# /Build/
-/Build
-
 # /Source/
 /Source/.vs/
 /Source/Corral.v12.suo
@@ -13,9 +10,16 @@
 /Source/**/bin/
 /Source/**/obj/
 
-# /Source/LtInfo.Common/
-/Source/LtInfo.Common/LtInfo.Common.csproj.user
-/Source/LtInfo.Common/LtInfo.Common.csproj.DotSettings.user
+/WADNR/WADNR.Common/*.user
+WADNR.GeoServer/data_dir/security/*
+WADNR.GeoServer/data_dir/.updatepassword.lock
+WADNR.GeoServer/data_dir/geoserver-environment.properties
+WADNR.GeoServer/data_dir/s3.properties
+WADNR.GeoServer/data_dir/controlflow.properties
+WADNR.GeoServer/data_dir/logs/geoserver.log.1
+#WADNR.GeoServer/data_dir/gwc-layers
+WADNR.GeoServer/data_dir/logs
+WADNR.GeoServer/data_dir/gwc/diskquota_pagestore_hsql/*
 
 # /Source/LtInfo.Common/HealthMonitor/
 
@@ -26,9 +30,43 @@
 /.vs/wadnrforesthealth/v16/*.suo
 
 *.vshistory
-*.user
 *.vs
 /**/bin/
 /**/obj/
 *.dbmdl
 *.jfm
+
+*.env
+/.dockerignore
+/*.user
+*.user
+*.cache
+/WADNR.Database/*.jfm
+bin
+obj
+/Build/temp
+/WADNR.API/appsecrets.json
+/Build/secrets.ini
+/WADNR.API/dotnet-tools.json
+/node_modules/.bin
+/node_modules
+/bun.lock
+/package-lock.json
+/package.json
+/WADNR.GeoServer/data_dir/gwc/diskquota_page_store_hsql
+
+# Claude Code local files (not shared across machines)
+.claude/settings.local.json
+.claude/migration/
+.claude/migration-logs/
+
+# Temporary directories (caused by misconfigured TEMP env var)
+/zybach/
+/Build/zybach/
+/WADNR.Scalar/appsecrets.json
+
+# Test environment config (contains connection strings)
+WADNR.API.Tests/environment.json
+
+# Test results output
+TestResults/

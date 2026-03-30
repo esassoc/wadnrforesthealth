@@ -1,0 +1,101 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Import GDB File</h3>
+</div>
+
+<div class="modal-body">
+    @if (errorMessage$ | async; as errorMessage) {
+        <div class="alert alert-danger">{{ errorMessage }}</div>
+    }
+
+    @if ((step$ | async) === 'upload') {
+        <p>Upload a zipped File Geodatabase (.gdb.zip) to import location boundaries.</p>
+
+        <form-field
+            [formControl]="fileControl"
+            fieldLabel="GDB File (.zip)"
+            [type]="FormFieldType.File"
+            uploadFileAccepts=".zip">
+        </form-field>
+
+    }
+
+    @if ((step$ | async) === 'review') {
+        <p>Select the layers to import and choose which property to use as the location name.</p>
+
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th style="width: 5%">Import</th>
+                    <th style="width: 30%">Layer Name</th>
+                    <th style="width: 15%">Type</th>
+                    <th style="width: 15%">Features</th>
+                    <th style="width: 35%">Name Property</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (layer of layers; track layer.featureClassName) {
+                    <tr>
+                        <td class="text-center align-middle">
+                            <form-field
+                                [formControl]="layer.shouldImportControl"
+                                [type]="FormFieldType.Check"
+                                fieldLabel="Import"
+                                [srOnlyLabel]="true">
+                            </form-field>
+                        </td>
+                        <td class="align-middle">{{ layer.featureClassName }}</td>
+                        <td class="align-middle">{{ layer.featureType }}</td>
+                        <td class="text-end align-middle">{{ layer.featureCount }}</td>
+                        <td>
+                            @if (layer.propertyOptions.length > 0) {
+                                <form-field
+                                    [formControl]="layer.selectedPropertyControl"
+                                    [type]="FormFieldType.Select"
+                                    [formInputOptions]="layer.propertyOptions"
+                                    fieldLabel="Name Property"
+                                    [srOnlyLabel]="true">
+                                </form-field>
+                            } @else {
+                                <span class="text-muted">No properties</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <wadnr-map class="mt-3"
+            [mapHeight]="'350px'"
+            [selectedTileLayer]="'Terrain'"
+            [showLegend]="false"
+            (onMapLoad)="handleMapReady($event)">
+        </wadnr-map>
+
+    }
+</div>
+
+<div class="modal-footer">
+    @if ((step$ | async) === 'upload') {
+        <button type="button"
+                class="btn btn-primary"
+                (click)="upload()"
+                [disabled]="!fileControl.value || (isUploading$ | async)"
+                [buttonLoading]="isUploading$ | async">
+            Upload
+        </button>
+    }
+
+    @if ((step$ | async) === 'review') {
+        <button type="button"
+                class="btn btn-primary"
+                (click)="approve()"
+                [disabled]="isApproving$ | async"
+                [buttonLoading]="isApproving$ | async">
+            Import Selected Layers
+        </button>
+    }
+
+    <button type="button" class="btn btn-outline-secondary" (click)="cancel()" [disabled]="(isUploading$ | async) || (isApproving$ | async)">Cancel</button>
+</div>
+</div>

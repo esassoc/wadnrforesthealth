@@ -1,0 +1,5 @@
+{
+  "sqlConnectionString": "<YOUR_SQL_SERVER_CONNECTION_STRING>",
+  "testAdminPersonID": "<PERSON_ID_WITH_ADMIN_ROLE>",
+  "testNormalPersonID": "<PERSON_ID_WITH_NORMAL_ROLE>"
+}

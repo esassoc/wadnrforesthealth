@@ -1,0 +1,50 @@
+@if (images.length > 0) {
+    <div class="image-gallery">
+        @for (image of images; track image.imageID) {
+            <div
+                class="image-gallery__item"
+                [class.image-gallery__item--key-photo]="image.isKeyPhoto"
+                (click)="openPreview(image)"
+                (keydown.enter)="openPreview(image)"
+                (keydown.space)="$event.preventDefault(); openPreview(image)"
+                tabindex="0"
+                role="button"
+                [attr.aria-label]="'Preview ' + (image.caption || 'photo')">
+                <!-- Photo Icons (edit/delete) -->
+                @if (canEdit) {
+                    <div class="image-gallery__icons">
+                        <button type="button" class="image-gallery__icon--edit" (click)="edit.emit(image); $event.stopPropagation()" [attr.aria-label]="'Edit ' + (image.caption || 'photo')">
+                            <icon icon="Edit" aria-hidden="true"></icon>
+                        </button>
+                        <button type="button" class="image-gallery__icon--delete" (click)="delete.emit(image); $event.stopPropagation()" [attr.aria-label]="'Delete ' + (image.caption || 'photo')">
+                            <icon icon="Delete" aria-hidden="true"></icon>
+                        </button>
+                    </div>
+                }
+
+                <!-- Key Photo Icon (right side) -->
+                @if (image.isKeyPhoto) {
+                    <div class="image-gallery__key-icon" title="Key Photo">
+                        <icon icon="Key"></icon>
+                    </div>
+                } @else if (canEdit) {
+                    <button type="button" class="image-gallery__key-icon image-gallery__key-icon--settable" title="Set as Key Photo" (click)="setKeyPhoto.emit(image); $event.stopPropagation()" [attr.aria-label]="'Set ' + (image.caption || 'photo') + ' as key photo'">
+                        <icon icon="Key" aria-hidden="true"></icon>
+                    </button>
+                }
+
+                <!-- Photo Thumbnail -->
+                <div class="image-gallery__thumbnail">
+                    <img [src]="getPhotoUrl(image)" [alt]="image.caption || 'Photo'" />
+                </div>
+
+                <!-- Photo Caption -->
+                @if (image.caption) {
+                    <div class="image-gallery__caption">{{ image.caption }}</div>
+                }
+            </div>
+        }
+    </div>
+} @else {
+    <p class="system-text">No photos uploaded for this project.</p>
+}

@@ -1,0 +1,16 @@
+<div class="p-2">
+    <div class="dropdown-filter__toggle mb-2">
+        <input type="radio" name="select-all" id="select" [checked]="state.selectAll" (change)="onSelectAll()" />
+        <label for="select">Select All</label>
+        <input type="radio" name="select-all" id="deselect" [checked]="state.deselectAll" (change)="onDeselectAll()" />
+        <label for="deselect">Deselect All</label>
+    </div>
+    <div class="dropdown-filter__options pt-2 pl-2 pb-2 pr-2">
+        @for (element of getDropdownValues(); track element) {
+        <div>
+            <input type="checkbox" id="{{ getOptionKey(element) }}" name="{{ getOptionKey(element) }}" [(ngModel)]="state.filterOptions[getOptionKey(element)]" (ngModelChange)="updateFilter()" checked />
+            <label for="{{ getOptionKey(element) }}" class="ml-2" [ngClass]="{ 'dropdown-filter__blank-option': isBlankOption(element) }">{{ getOptionLabel(element) }}</label>
+        </div>
+        }
+    </div>
+</div>

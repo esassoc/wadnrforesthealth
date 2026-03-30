@@ -1,0 +1,8 @@
+@use "/src/scss/abstracts" as *;
+
+.workflow-help {
+    background: var(--blue-100);
+    padding: var(--spacing-400);
+    border: 1px solid var(--blue-light);
+    border-radius: var(--spacing-100);
+}

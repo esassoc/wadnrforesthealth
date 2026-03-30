@@ -1,0 +1,137 @@
+.simple-tree {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+
+    &__root {
+        padding: var(--spacing-200);
+    }
+
+    &__search {
+        margin-bottom: var(--spacing-300);
+        padding-bottom: var(--spacing-300);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-200);
+    }
+
+    &__search-actions {
+        display: inline-flex;
+        gap: var(--spacing-200);
+        flex: 0 0 auto;
+    }
+
+    &__search-input-wrapper {
+        flex: 0 0 auto;
+        width: 40ch;
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding-right: 1.75rem; /* room for clear button */
+        }
+    }
+
+    &__search-clear {
+        position: absolute;
+        right: 4px;
+        padding: 0.1rem 0.4rem;
+        font-size: 0.8rem;
+        line-height: 1.3;
+    }
+
+    &__search-matches {
+        flex: 0 0 auto;
+        font-size: 0.85rem;
+        color: #555;
+        white-space: nowrap;
+    }
+
+    &__node {
+        margin: 0.2rem 0;
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        gap: var(--spacing-200);
+        /* ensure header content doesn't overflow the container */
+        min-width: 0;
+    }
+
+    &__toggler {
+        background: transparent;
+        border: none;
+        padding: 0 var(--spacing-100);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 22px;
+        flex: 0 0 auto;
+        width: 1.5rem;
+        text-align: center;
+    }
+
+    &__toggler-spacer {
+        flex: 0 0 auto;
+        width: 1.5rem;
+    }
+
+    &__title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 14px;
+    }
+
+    &__part-icon {
+        display: inline-flex;
+        margin-left: var(--spacing-100);
+    }
+
+    &__badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #0056b3;
+        color: var(--white);
+        border-radius: 999px;
+        padding: 0 8px;
+        font-size: 0.75rem;
+        line-height: 1.6;
+        margin-left: auto; /* push badge to far right */
+    }
+
+    &__match {
+        font-weight: 700;
+        color: #0b54a0;
+    }
+
+    &__leaf {
+        color: #222;
+    }
+
+    &__children {
+        list-style: none;
+        padding-left: 1.1rem;
+        margin: var(--spacing-100) 0 0 0;
+    }
+
+    &__empty {
+        color: #666;
+        font-style: italic;
+    }
+
+    /* When top-level borders are enabled, add extra spacing between top-level groups */
+    &--top-level-border-enabled .simple-tree__node.simple-tree__group-end[data-depth="0"] {
+        margin-bottom: var(--spacing-400); /* increased gap after a top-level group */
+    }
+
+    &--top-level-border-enabled .simple-tree__node.simple-tree__group-start[data-depth="0"] {
+        margin-top: var(--spacing-200); /* small gap before a top-level group */
+    }
+}

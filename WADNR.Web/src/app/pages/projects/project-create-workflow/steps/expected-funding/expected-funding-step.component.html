@@ -1,0 +1,141 @@
+@if (vm$ | async; as vm) {
+    @if ({ saving: isSaving$ | async }; as state) {
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Expected Funding</span>
+            </div>
+            <div class="card-body">
+                @if (vm.isLoading) {
+                    <div class="text-center p-4">Loading...</div>
+                } @else {
+                    <p class="mb-3">
+                        Enter the expected funding for your Project. You may enter WA DNR Fund Source Allocations. For each WA DNR Fund Source Allocation, provide the amount of
+                        funding that has been secured, and the amount that is targeted but not yet secured. If the amount of secured or unsecured funding is unknown, you can leave
+                        the amounts blank.
+                    </p>
+                    <p class="mb-3">The Unfunded Need is the difference between the Project's Estimated Total Cost and the Secured Funding.</p>
+
+                    <hr />
+
+                    <!-- Estimated Total Cost -->
+                    <div class="funding-step__form-row mb-3">
+                        <div class="funding-step__form-label">
+                            <field-definition fieldDefinition="EstimatedTotalCost"></field-definition>
+                        </div>
+                        <div class="funding-step__form-input">
+                            <form-field [formControl]="estimatedTotalCostControl" [type]="FormFieldType.Currency" [readOnly]="state.saving" placeholder="$0.00" fieldLabel="Estimated Total Cost" [srOnlyLabel]="true"> </form-field>
+                        </div>
+                    </div>
+
+                    <!-- Source of Funds Checkboxes -->
+                    <div class="funding-step__form-row mb-3">
+                        <div class="funding-step__form-label">
+                            <field-definition fieldDefinition="FundSource" labelOverride="Source of Funds"></field-definition>
+                        </div>
+                        <div class="funding-step__form-input">
+                            <div class="funding-step__checkbox-grid">
+                                @for (cb of vm.fundingSourceCheckboxes; track cb.id) {
+                                    <label class="funding-step__checkbox-label">
+                                        <input type="checkbox" [checked]="cb.checked" (change)="toggleFundingSource(cb)" [disabled]="state.saving" />
+                                        {{ cb.name }}
+                                    </label>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notes about Project Funding -->
+                    <div class="funding-step__form-row mb-3">
+                        <div class="funding-step__form-label">
+                            <field-definition fieldDefinition="FundSourceNote" labelOverride="Notes about Project Funding"></field-definition>
+                        </div>
+                        <div class="funding-step__form-input">
+                            <form-field [formControl]="fundingSourceNotesControl" [type]="FormFieldType.Textarea" [readOnly]="state.saving" fieldLabel="Notes about Project Funding" [srOnlyLabel]="true"> </form-field>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- WA DNR Fund Source Allocation to Add -->
+                    <div class="funding-step__allocation-section mb-3">
+                        <span class="funding-step__section-label"><strong>WA DNR Fund Source Allocation to Add:</strong></span>
+                        <form-field
+                            [formControl]="allocationToAddControl"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="availableAllocationOptions"
+                            placeholder="Select a WA DNR Fund Source Allocation to Add"
+                            [readOnly]="state.saving"
+                            fieldLabel="WA DNR Fund Source Allocation to Add"
+                            [srOnlyLabel]="true"
+                            (change)="onAllocationSelect($event)">
+                        </form-field>
+                        <p class="funding-step__help-text">WA DNR Fund Source Allocation not listed? <a href="javascript:void(0);" (click)="openMissingAllocationModal()">Contact support</a></p>
+                    </div>
+
+                    <!-- Allocations Table -->
+                    @if (allocationRequests.length > 0) {
+                        <table class="table funding-step__allocation-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px"></th>
+                                    <th>WA DNR Fund Source Allocation</th>
+                                    <th style="width: 180px; text-align: right">Total Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (ar of allocationRequests; track ar.fundSourceAllocationID) {
+                                    <tr>
+                                        <td>
+                                            <a
+                                                href="#"
+                                                class="text-danger"
+                                                (click)="removeAllocation(ar.fundSourceAllocationID); $event.preventDefault()"
+                                                [class.disabled]="state.saving"
+                                                title="Remove">
+                                                <icon icon="Delete"></icon>
+                                            </a>
+                                        </td>
+                                        <td>{{ ar.fundSourceAllocationName }}</td>
+                                        <td>
+                                            <form-field [formControl]="ar.amountControl" [type]="FormFieldType.Currency" [readOnly]="state.saving" placeholder="$0.00" fieldLabel="Total Amount" [srOnlyLabel]="true"> </form-field>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="2">Total</th>
+                                    <th class="text-right">{{ getTotalAmount() | currency }}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    }
+
+                    <hr />
+
+                    <!-- Summary Section -->
+                    <div class="funding-step__summary-section">
+                        <span class="funding-step__section-label"><strong>Summary of Total Project Costs and Funding:</strong></span>
+                        <div class="funding-step__summary-row">
+                            <div class="funding-step__summary-label"><field-definition fieldDefinition="EstimatedTotalCost"></field-definition>:</div>
+                            <div class="funding-step__summary-value">{{ estimatedTotalCostControl.value ?? 0 | currency }}</div>
+                        </div>
+                        <div class="funding-step__summary-row">
+                            <div class="funding-step__summary-label"><field-definition fieldDefinition="ProjectFundSourceAllocationRequestTotalAmount"></field-definition>:</div>
+                            <div class="funding-step__summary-value">{{ getTotalAmount() | currency }}</div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="card-footer d-flex justify-content-end">
+                <workflow-step-actions [isSaving]="state.saving" (save)="onSave(false)" (saveAndContinue)="onSave(true)"> </workflow-step-actions>
+            </div>
+        </div>
+    }
+} @else {
+    <div class="card">
+        <div class="card-body">
+            <div class="text-center p-4">Loading...</div>
+        </div>
+    </div>
+}

@@ -1,0 +1,27 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit Page Content</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <div class="tinyMCEFontColor">
+        <editor #tinyMceEditor [init]="tinyMceConfig" [(ngModel)]="editedContent"></editor>
+    </div>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [buttonLoading]="isSubmitting()"
+        [disabled]="isSubmitting()">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting()">
+        Cancel
+    </button>
+</div>
+</div>

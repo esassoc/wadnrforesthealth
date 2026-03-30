@@ -1,0 +1,75 @@
+@use "/src/scss/abstracts" as *;
+
+.field-definition {
+    &__loading {
+        text-align: center;
+    }
+
+    &__wrapper {
+        display: inline-block;
+    }
+
+    &__label {
+        display: inline-flex;
+        align-items: center;
+        font-size: var(--type-size-200);
+        line-height: 1.4;
+        color: var(--color-text);
+    }
+
+    &__text {
+        font-weight: bold;
+    }
+
+    &__icon {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    &__inline {
+        align-items: start;
+        column-gap: 0.8rem;
+    }
+
+    &__title {
+        flex-wrap: nowrap;
+
+        .btn-link {
+            padding: var(--spacing-100);
+            line-height: 1;
+        }
+    }
+
+    &__close-btn {
+        color: var(--color-text);
+        padding-left: 0.25rem;
+    }
+
+    &__edit-button {
+        cursor: pointer;
+        color: var(--primary);
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.fa-question-circle {
+    color: var(--secondary);
+}
+
+::ng-deep .popover-body {
+    padding: var(--spacing-500) !important;
+
+    ul {
+        li {
+            list-style: disc;
+        }
+    }
+    ol {
+        li {
+            list-style: decimal;
+        }
+    }
+}

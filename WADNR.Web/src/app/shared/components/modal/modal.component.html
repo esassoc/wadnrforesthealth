@@ -1,0 +1,16 @@
+<dialog
+    #dialog
+    class="modal-dialog"
+    [class.modal-dialog--small]="modalSize == ModalSizeEnum.Small"
+    [class.modal-dialog--medium]="modalSize == ModalSizeEnum.Medium"
+    [class.modal-dialog--large]="modalSize == ModalSizeEnum.Large"
+    [class.modal-dialog--extra-large]="modalSize == ModalSizeEnum.ExtraLarge"
+    [class.not-top-layer]="!topLayer"
+    [class.modal-dialog--overflow-visible]="overflowVisible"
+    [class.primary]="modalTheme == ModalThemeEnum.Primary"
+    [class.light]="modalTheme == ModalThemeEnum.Light">
+    <ng-container #vc>
+        <ng-content></ng-content>
+        <ng-template [ngTemplateOutlet]="context"></ng-template>
+    </ng-container>
+</dialog>

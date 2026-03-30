@@ -1,0 +1,30 @@
+.popover {
+    max-width: 400px;
+    border-radius: var(--border-radius-200);
+
+    &-override {
+        font-size: var(--type-size-200);
+
+        h3.popover-header {
+            background-color: #dfdfdf;
+            padding: 0.25em 0.5em;
+
+            .btn {
+                line-height: 1;
+            }
+        }
+
+        .popover-body {
+            padding: 0.25em 0.5em;
+        }
+
+        field-definition-grid-header {
+            width: 100%;
+        }
+
+        .ck.ck-balloon-panel.ck-balloon-panel_visible {
+            //to account for in popover case
+            z-index: 1061;
+        }
+    }
+}

@@ -1,0 +1,73 @@
+:host {
+    display: block;
+
+    /* sizes & colors */
+    --h: 42px; /* crumb height */
+    --slant: 10px; /* width of arrow tip */
+    --blue: var(--blue-600);
+    --bg: #f1f3f5; /* light gray for bar */
+    --text: #1f2a37;
+}
+
+.breadcrumb {
+    display: inline-flex;
+    overflow: hidden;
+    font-weight: 700;
+    background: var(--bg);
+    text-transform: uppercase;
+    font-size: 14px;
+
+    &__item {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        height: var(--h);
+        padding: 0 24px;
+        text-decoration: none;
+        color: var(--text);
+        background: transparent;
+        transition: filter 0.18s ease;
+
+        /* remove framework separators */
+        &::before {
+            content: none !important;
+        }
+
+        /* FIRST crumb (blue pill + arrow) */
+        &:first-child {
+            background: var(--blue);
+            color: var(--white);
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                right: calc(-1 * var(--slant));
+                width: 0;
+                height: 0;
+                border-top: calc(var(--h) / 2) solid transparent;
+                border-bottom: calc(var(--h) / 2) solid transparent;
+                border-left: var(--slant) solid var(--blue);
+            }
+
+            &:not(.breadcrumb__item--active):hover {
+                filter: brightness(0.88);
+            }
+        }
+
+        /* Other crumbs */
+        &:not(:first-child) {
+            padding-left: calc(24px + var(--slant));
+
+            &:not(.breadcrumb__item--active):hover {
+                cursor: pointer;
+                filter: brightness(0.94);
+            }
+        }
+
+        /* Active (last) crumb */
+        &--active {
+            pointer-events: none;
+        }
+    }
+}

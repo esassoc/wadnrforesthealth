@@ -1,0 +1,42 @@
+.person-detail {
+    &__header-actions {
+        align-items: stretch;
+
+        .btn {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    &__kv-list {
+        display: grid;
+        grid-template-columns: minmax(140px, auto) 1fr;
+        gap: var(--spacing-200) var(--spacing-400);
+        margin: 0;
+
+        dt {
+            font-weight: 600;
+            color: var(--bs-secondary-color);
+        }
+
+        dd {
+            margin: 0;
+        }
+    }
+
+    &__list-unstyled {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    &__text-muted {
+        color: var(--bs-secondary-color);
+        font-style: italic;
+    }
+
+    &__api-key-row {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-300);
+    }
+}

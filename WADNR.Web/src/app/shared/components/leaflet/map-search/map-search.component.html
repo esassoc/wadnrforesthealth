@@ -1,0 +1,22 @@
+<h4>{{ legendText }}</h4>
+
+<div class="map-search__row">
+    <form-field
+        class="map-search__field"
+        [formControl]="addressCtrl"
+        [fieldLabel]="labelText"
+        [placeholder]="placeholder"
+        [type]="FormFieldType.Text"
+        [name]="'mapSearchAddress'"
+        [horizontal]="true"
+        (keyup.enter)="zoomToAddress()"></form-field>
+
+    @let isSearching = (isSearching$ | async) ?? false;
+    <button type="button" class="btn btn-sm btn-secondary map-search__button" (click)="zoomToAddress()" [disabled]="isSearching">
+        {{ isSearching ? "Searching..." : buttonText }}
+    </button>
+</div>
+
+@if (errorMessage) {
+<div class="map-search__error" role="alert">{{ errorMessage }}</div>
+}

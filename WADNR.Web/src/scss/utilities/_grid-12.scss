@@ -1,0 +1,25 @@
+@use "/src/scss/abstracts" as *;
+
+.grid-12 {
+    display: grid;
+    gap: 1rem;
+    align-items: start;
+
+    @include desktop-small {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    & > * {
+        grid-column: 1 / -1;
+        min-width: 0px;
+        overflow-wrap: anywhere;
+    }
+
+    @for $i from 1 through 12 {
+        & > .g-col-#{$i} {
+            @include desktop-small {
+                grid-column: span $i;
+            }
+        }
+    }
+}

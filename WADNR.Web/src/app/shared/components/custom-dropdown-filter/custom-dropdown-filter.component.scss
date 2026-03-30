@@ -1,0 +1,65 @@
+@use "/src/scss/abstracts" as *;
+
+.dropdown-filter {
+    &__toggle {
+        background-color: var(--primary);
+        color: var(--white);
+        border: 1px solid var(--secondary);
+        border-radius: 5px;
+        overflow: hidden;
+        font-weight: bold;
+        display: flex;
+        flex-wrap: wrap;
+
+        input {
+            display: none;
+        }
+
+        label {
+            padding: 5px;
+            margin: 0;
+            min-height: 27px;
+            height: 27px;
+            flex: 1 0 auto;
+            min-width: max-content;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        label[for="select"] {
+            border-right: 1px solid var(--secondary);
+        }
+
+        label:hover {
+            color: var(--wadnr-orange);
+        }
+
+        input:checked + label {
+            background-color: var(--muted);
+            color: var(--black);
+            font-weight: bold;
+        }
+    }
+
+    &__options {
+        background-color: var(--white);
+        border: 1px solid var(--secondary);
+        max-height: 125px;
+        overflow: auto;
+
+        div {
+            display: flex;
+            align-items: center;
+
+            label {
+                cursor: pointer;
+
+                &.dropdown-filter__blank-option {
+                    font-style: italic;
+                }
+            }
+        }
+    }
+}

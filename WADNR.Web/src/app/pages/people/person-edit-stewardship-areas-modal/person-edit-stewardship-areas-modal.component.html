@@ -1,0 +1,27 @@
+<div class="modal">
+    <div class="modal-header">
+        <h4>Edit Assigned Project Stewardship Areas</h4>
+    </div>
+    <div class="modal-body">
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+        <form-field
+            [formControl]="form.controls.RegionIDs"
+            fieldLabel="DNR Upland Regions"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="regionOptions"
+            formInputOptionLabel="Label"
+            formInputOptionValue="Value"
+            [multiple]="true"
+            placeholder="Select regions">
+        </form-field>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="save()" [buttonLoading]="isSubmitting" [disabled]="isSubmitting">
+            Save
+        </button>
+        <button class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">
+            Cancel
+        </button>
+    </div>
+</div>

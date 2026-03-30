@@ -1,0 +1,63 @@
+.sort-order-modal {
+    &__instructions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-400);
+        gap: var(--spacing-400);
+    }
+
+    &__list {
+        border: 1px solid rgba(black, 0.15);
+        border-radius: var(--border-radius-200);
+        overflow: hidden;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-300);
+        padding: 0.625rem var(--spacing-300);
+        border-bottom: 1px solid rgba(black, 0.1);
+        background: white;
+        cursor: move;
+        user-select: none;
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    &__drag-handle {
+        color: rgba(black, 0.35);
+    }
+}
+
+.cdk-drag-preview {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-300);
+    padding: 0.625rem var(--spacing-300);
+    background: white;
+    border: 1px solid rgba(black, 0.15);
+    border-radius: var(--border-radius-200);
+    box-shadow: 0 4px 12px rgba(black, 0.15);
+    font-size: inherit;
+
+    .sort-order-modal__drag-handle {
+        color: rgba(black, 0.35);
+    }
+}
+
+.cdk-drag-placeholder {
+    background: rgba(black, 0.05);
+    border-bottom: 1px solid rgba(black, 0.1);
+}
+
+.cdk-drag-animating {
+    transition: transform 200ms ease;
+}
+
+.sort-order-modal__list.cdk-drop-list-dragging .sort-order-modal__item:not(.cdk-drag-placeholder) {
+    transition: transform 200ms ease;
+}

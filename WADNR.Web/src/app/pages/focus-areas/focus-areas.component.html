@@ -1,0 +1,37 @@
+<page-header pageTitle="DNR LOA Focus Areas" [customRichTextTypeID]="customRichTextTypeID"></page-header>
+
+<div class="page-body mt-3">
+    @if (canManageFocusAreas) {
+        <div class="flex-end mb-2">
+            <button class="btn btn-primary" (click)="openCreateModal()"><i class="fa fa-plus"></i> Create New Focus Area</button>
+        </div>
+    }
+    <div [loadingSpinner]="{ isLoading, loadingHeight: 400 }">
+        <hybrid-map-grid
+            [rowData]="focusAreas$ | async"
+            [columnDefs]="columnDefs"
+            downloadFileName="focus-areas"
+            fullscreenTitle="Focus Areas"
+            entityIDField="FocusAreaID"
+            (gridReady)="onGridReady($event)"
+            (onMapLoad)="handleMapReady($event)"
+            [selectedValue]="selectedFocusAreaID"
+            (selectedValueChange)="onSelectedFocusAreaIDChanged($event)">
+            <generic-feature-collection-layer
+                [map]="map"
+                [layerControl]="layerControl"
+                layerName="Focus Areas"
+                layerColor="#3388ff"
+                identifierProperty="FocusAreaID"
+                [selectedIDs]="selectedFocusAreaID ? [selectedFocusAreaID] : null"
+                (selectedIDsChange)="onSelectedFocusAreaIDChanged($event)"
+                [featureCollection]="focusAreaLocations$ | async">
+            </generic-feature-collection-layer>
+            <external-map-layers
+                [map]="map"
+                [layerControl]="layerControl"
+                context="other">
+            </external-map-layers>
+        </hybrid-map-grid>
+    </div>
+</div>

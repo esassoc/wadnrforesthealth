@@ -14,6 +14,7 @@
 **/azds.yaml
 **/bin
 **/charts
+!WADNR.Web/src/app/shared/components/charts
 **/docker-compose*
 **/Dockerfile*
 **/node_modules

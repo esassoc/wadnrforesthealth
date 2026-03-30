@@ -1,0 +1,42 @@
+:host {
+    display: block;
+}
+
+:host-context(.map-legend-row) .stage-legend {
+    margin-top: var(--spacing-200);
+}
+
+.stage-legend {
+    margin-top: var(--spacing-300);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-300);
+    flex-wrap: wrap;
+
+    h4 {
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    &__list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-200);
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-200);
+        padding: 0.15rem var(--spacing-100);
+        border-radius: 4px;
+    }
+
+    &__label {
+        font-size: 0.88rem;
+        color: var(--gray-900);
+    }
+}

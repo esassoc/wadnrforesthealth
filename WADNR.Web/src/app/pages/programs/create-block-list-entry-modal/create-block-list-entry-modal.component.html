@@ -1,0 +1,46 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>New Block List Entry</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <p class="system-text">You must provide at least a Project Name or Project GIS Identifier.</p>
+
+    <form-field
+        fieldLabel="Project Name"
+        [type]="FormFieldType.Text"
+        [formControl]="form.controls.projectName"
+        placeholder="Enter project name...">
+    </form-field>
+
+    <form-field
+        fieldLabel="Project GIS Identifier"
+        [type]="FormFieldType.Text"
+        [formControl]="form.controls.projectGisIdentifier"
+        placeholder="Enter project GIS identifier...">
+    </form-field>
+
+    <form-field
+        fieldLabel="Notes"
+        [type]="FormFieldType.Textarea"
+        [formControl]="form.controls.notes"
+        placeholder="Enter notes about why this should be blocked from import...">
+    </form-field>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="!isFormValid || isSubmitting()"
+        [buttonLoading]="isSubmitting()">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting()">
+        Cancel
+    </button>
+</div>
+</div>

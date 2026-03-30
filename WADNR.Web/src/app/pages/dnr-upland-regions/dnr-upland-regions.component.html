@@ -1,0 +1,26 @@
+<page-header pageTitle="DNR Upland Regions" [customRichTextTypeID]="customRichTextTypeID"></page-header>
+
+<div class="page-body mt-3">
+    <div [loadingSpinner]="{ isLoading, loadingHeight: 400 }">
+        <hybrid-map-grid
+            [rowData]="dnrUplandRegions$ | async"
+            [columnDefs]="columnDefs"
+            [sizeColumnsToFitGrid]="true"
+            downloadFileName="dnr-upland-regions"
+            fullscreenTitle="DNR Upland Regions"
+            entityIDField="DNRUplandRegionID"
+            (gridReady)="onGridReady($event)"
+            (onMapLoad)="handleMapReady($event)"
+            [selectedValue]="selectedDNRUplandRegionID"
+            (selectedValueChange)="onSelectedDNRUplandRegionIDChanged($event)">
+            <dnr-upland-regions-layer
+                [map]="map"
+                [layerControl]="layerControl"
+                [mode]="OverlayMode.ReferenceWithInteractivity"
+                [selectedIDs]="selectedDNRUplandRegionID ? [selectedDNRUplandRegionID] : null"
+                (selectedIDsChange)="onSelectedDNRUplandRegionIDChanged($event, true)">
+            </dnr-upland-regions-layer>
+            <external-map-layers [map]="map" [layerControl]="layerControl" [displayOnLoad]="false"></external-map-layers>
+        </hybrid-map-grid>
+    </div>
+</div>

@@ -1,0 +1,92 @@
+.location-simple-step {
+    &__map-container {
+        border: 1px solid var(--muted);
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+        z-index: 0;
+
+        wadnr-map {
+            display: block;
+            height: 100%;
+            width: 100%;
+        }
+
+        &--saving {
+            pointer-events: none;
+        }
+    }
+
+    &__map-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+
+        span {
+            background: white;
+            padding: var(--spacing-200) var(--spacing-400);
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+        }
+    }
+
+    &__radio-options {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-200);
+    }
+
+    &__radio-label {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-200);
+        cursor: pointer;
+
+        input[type="radio"] {
+            margin: 0;
+        }
+
+        &--disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+    }
+
+    &__location-info {
+        margin-top: var(--spacing-500);
+    }
+
+    &__location-info-header {
+        font-weight: 600;
+        margin-bottom: var(--spacing-300);
+        font-size: 1rem;
+    }
+
+    &__location-info-loading {
+        color: #666;
+        font-style: italic;
+        margin-bottom: var(--spacing-200);
+    }
+
+    &__location-info-row {
+        display: flex;
+        margin-bottom: var(--spacing-100);
+    }
+
+    &__location-info-label {
+        min-width: 140px;
+        font-weight: 500;
+    }
+
+    &__location-info-value {
+        color: #333;
+    }
+}

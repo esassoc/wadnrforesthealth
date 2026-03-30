@@ -1,0 +1,118 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>{{ modalTitle }}</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <div class="grid-12">
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="form.controls.TreatmentTypeID"
+                    fieldLabel="Treatment Type"
+                    [type]="FormFieldType.Select"
+                    [formInputOptions]="treatmentTypeOptions"
+                    placeholder="Select treatment type">
+                </form-field>
+            </div>
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="form.controls.TreatmentDetailedActivityTypeID"
+                    fieldLabel="Detailed Activity Type"
+                    [type]="FormFieldType.Select"
+                    [formInputOptions]="treatmentDetailedActivityTypeOptions"
+                    placeholder="Select activity type">
+                </form-field>
+            </div>
+        </div>
+
+        <div class="grid-12">
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="form.controls.ProjectLocationUpdateID"
+                    fieldLabel="Treatment Area"
+                    [type]="FormFieldType.Select"
+                    [formInputOptions]="treatmentAreaOptions"
+                    placeholder="Select treatment area">
+                </form-field>
+            </div>
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="form.controls.TreatmentCodeID"
+                    fieldLabel="Treatment Code"
+                    [type]="FormFieldType.Select"
+                    [formInputOptions]="treatmentCodeOptions"
+                    placeholder="Select treatment code (optional)">
+                </form-field>
+            </div>
+        </div>
+
+        <div class="grid-12">
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="form.controls.TreatmentStartDate"
+                    fieldLabel="Start Date"
+                    [type]="FormFieldType.Date">
+                </form-field>
+            </div>
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="form.controls.TreatmentEndDate"
+                    fieldLabel="End Date"
+                    [type]="FormFieldType.Date">
+                </form-field>
+            </div>
+        </div>
+
+        <div class="grid-12">
+            <div class="g-col-4">
+                <form-field
+                    [formControl]="form.controls.TreatmentFootprintAcres"
+                    fieldLabel="Footprint Acres"
+                    [type]="FormFieldType.Number"
+                    placeholder="0.00">
+                </form-field>
+            </div>
+            <div class="g-col-4">
+                <form-field
+                    [formControl]="form.controls.TreatmentTreatedAcres"
+                    fieldLabel="Treated Acres"
+                    [type]="FormFieldType.Number"
+                    placeholder="0.00 (optional)">
+                </form-field>
+            </div>
+            <div class="g-col-4">
+                <form-field
+                    [formControl]="form.controls.CostPerAcre"
+                    fieldLabel="Cost Per Acre"
+                    [type]="FormFieldType.Number"
+                    placeholder="0.00 (optional)">
+                </form-field>
+            </div>
+        </div>
+
+        <form-field
+            [formControl]="form.controls.TreatmentNotes"
+            fieldLabel="Notes"
+            [type]="FormFieldType.Textarea"
+            placeholder="Enter notes (optional, max 2000 characters)">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting()"
+        [buttonLoading]="isSubmitting()">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting()">
+        Cancel
+    </button>
+</div>
+</div>

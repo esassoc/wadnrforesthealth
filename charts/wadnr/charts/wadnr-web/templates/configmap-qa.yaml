@@ -1,0 +1,14 @@
+{{ if eq .Values.global.env.name "qa" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "web.fullname" . }}-qa-configmap
+data:
+  ASPNETCORE_ENVIRONMENT: "Staging"
+  production: "false"
+  staging: "true"
+  dev: "false"
+  mainAppApiUrl: "https://{{ .Values.global.domains.api }}"
+  createAccountRedirectUrl: "https://{{ .Values.global.domains.web }}/create-user-callback"
+  geoserverMapServiceUrl: "https://{{ .Values.global.domains.geoserver }}/geoserver/WADNRForestHealth"
+{{ end }}

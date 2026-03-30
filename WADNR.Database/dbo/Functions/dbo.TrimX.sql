@@ -1,0 +1,8 @@
+﻿
+CREATE FUNCTION dbo.TrimX(@str VARCHAR(MAX)) RETURNS VARCHAR(MAX)
+AS
+BEGIN
+RETURN dbo.LTrimX(dbo.RTrimX(@str))
+END
+
+GO

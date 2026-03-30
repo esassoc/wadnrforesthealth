@@ -1,0 +1,18 @@
+services:
+  wadnr.api:
+    image: wadnr/api
+    build:
+      context: ..
+      dockerfile: WADNR.API/Dockerfile
+
+  wadnr.scalar:
+    image: wadnr/scalar
+    build:
+      context: ..
+      dockerfile: WADNR.Scalar/Dockerfile
+
+  wadnr.gdalapi:
+    image: wadnr/gdalapi
+    build:
+      context: ..
+      dockerfile: WADNR.GDALAPI/Dockerfile

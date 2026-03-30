@@ -1,0 +1,111 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>{{ modalTitle }}</h3>
+</div>
+<div class="modal-body" [loadingSpinner]="{ isLoading, loadingHeight: 300 }">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.ProgramName"
+            fieldLabel="Program Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter program name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ProgramShortName"
+            fieldLabel="Program Short Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter short name">
+        </form-field>
+
+        @if (lockedOrganizationName) {
+            <div class="form-field">
+                <span class="field-label">Parent Organization</span>
+                <div>{{ lockedOrganizationName }}</div>
+            </div>
+        } @else {
+            <form-field
+                [formControl]="form.controls.OrganizationID"
+                fieldLabel="Parent Organization"
+                [type]="FormFieldType.Select"
+                [formInputOptions]="organizationOptions"
+                formInputOptionLabel="Label"
+                formInputOptionValue="Value"
+                placeholder="Select organization">
+            </form-field>
+        }
+
+        <form-field
+            [formControl]="form.controls.ProgramPrimaryContactPersonID"
+            fieldLabel="Primary Contact"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="personOptions"
+            formInputOptionLabel="Label"
+            formInputOptionValue="Value"
+            placeholder="Select primary contact">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ProgramIsActive"
+            fieldLabel="Is Active"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.IsDefaultProgramForImportOnly"
+            fieldLabel="Is Default for Bulk Import Only"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ProgramNotes"
+            fieldLabel="Program Notes"
+            [type]="FormFieldType.Textarea"
+            placeholder="Enter program notes">
+        </form-field>
+
+        @if (existingProgramFileName && !programFileControl.value) {
+            <div class="existing-file">
+                <span class="field-label">Current Program File</span>
+                <div><a [href]="getFileUrl(existingProgramFileUrl)" target="_blank">{{ existingProgramFileName }}</a></div>
+            </div>
+        }
+
+        <form-field
+            [formControl]="programFileControl"
+            fieldLabel="Program File Upload"
+            [type]="FormFieldType.File">
+        </form-field>
+
+        @if (existingGeospatialFileName && !geospatialFileControl.value) {
+            <div class="existing-file">
+                <span class="field-label">Current Example Geospatial Data File</span>
+                <div><a [href]="getFileUrl(existingGeospatialFileUrl)" target="_blank">{{ existingGeospatialFileName }}</a></div>
+            </div>
+        }
+
+        <form-field
+            [formControl]="geospatialFileControl"
+            fieldLabel="Program Example Geospatial Data File Upload"
+            [type]="FormFieldType.File">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isLoading || isSubmitting"
+        [buttonLoading]="isSubmitting">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

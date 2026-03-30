@@ -1,0 +1,42 @@
+<page-header pageTitle="Home Page Images">
+    <p class="help-text">
+        Upload images to display in the homepage carousel. Images should have centered focal points for the best display on different screen sizes. Use Sort Order to control the
+        display sequence.
+    </p>
+</page-header>
+
+<div class="page-body">
+    <div class="flex-end mb-3">
+        <button class="btn btn-sm btn-primary" (click)="openAddImageModal()"><icon [icon]="'Upload'"></icon> Add Photo</button>
+    </div>
+
+    @if (images$ | async; as images) {
+        @if (images.length > 0) {
+            <div class="homepage-config__gallery">
+                @for (image of images; track image.FirmaHomePageImageID) {
+                    <div class="homepage-config__photo">
+                        <div class="homepage-config__photo-icons">
+                            <button type="button" class="homepage-config__icon--edit" (click)="openEditImageModal(image)" [attr.aria-label]="'Edit ' + image.Caption">
+                                <icon [icon]="'Edit'" aria-hidden="true"></icon>
+                            </button>
+                            <button type="button" class="homepage-config__icon--delete" (click)="deleteImage(image)" [attr.aria-label]="'Delete ' + image.Caption">
+                                <icon [icon]="'Delete'" aria-hidden="true"></icon>
+                            </button>
+                        </div>
+                        <div class="homepage-config__thumbnail">
+                            <img [src]="getImageUrl(image)" [alt]="image.Caption" />
+                        </div>
+                        <div class="homepage-config__caption">{{ image.Caption }}</div>
+                        @if (image.ContentLength) {
+                            <div class="homepage-config__file-size">({{ formatFileSize(image.ContentLength) }})</div>
+                        }
+                    </div>
+                }
+            </div>
+        } @else {
+            <p class="system-text">No photos available. Click "Add Photo" to upload an image.</p>
+        }
+    } @else {
+        <div class="loading-placeholder" style="min-height: 200px"></div>
+    }
+</div>

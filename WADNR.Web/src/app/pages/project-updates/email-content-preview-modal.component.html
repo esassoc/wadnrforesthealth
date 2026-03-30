@@ -1,0 +1,13 @@
+<div class="modal">
+    <div class="modal-header">
+        <h4>Preview {{ emailTypeLabel }} Email</h4>
+    </div>
+    <div class="modal-body" [loadingSpinner]="{ isLoading: isLoading(), loadingHeight: 200 }">
+        @if (previewHtml()) {
+            <div class="email-preview" [innerHTML]="previewHtml()"></div>
+        }
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="ref.close()">Close</button>
+    </div>
+</div>

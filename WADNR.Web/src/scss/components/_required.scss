@@ -1,0 +1,16 @@
+@use "/src/scss/abstracts" as *;
+
+.required {
+    &::after {
+        display: inline;
+        content: " *";
+        color: var(--red-default);
+        font-weight: bold;
+        margin-left: 2px;
+    }
+
+    &-note {
+        border-top: 1px solid rgba(var(--black-rgb), 0.05);
+        padding-top: 1rem;
+    }
+}

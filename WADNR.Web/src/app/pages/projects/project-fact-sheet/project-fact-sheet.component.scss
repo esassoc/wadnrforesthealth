@@ -1,0 +1,306 @@
+@use "/src/scss/abstracts" as *;
+
+.fact-sheet {
+    --card-header-bg-color: var(--gray-100);
+    --card-title-text-color: var(--primary);
+    --card-header-border-color: var(--gray-100);
+    --card-footer-border-color: var(--gray-100);
+    --card-body-bg-color: var(--gray-100);
+
+    &__section-header {
+        background-color: var(--primary);
+        color: var(--white);
+        padding: var(--spacing-400);
+        margin: var(--spacing-300) 0;
+        font-size: var(--type-size-300);
+        font-weight: bold;
+
+        &--project-type {
+            margin-top: 0;
+            padding: 5px 5px 5px 25px;
+        }
+    }
+
+    &__header-logo-area {
+        height: 100%;
+        border-right: 3px solid var(--primary);
+        padding-bottom: var(--spacing-800);
+    }
+
+    &__header-panel {
+        .grid-12 {
+            gap: var(--spacing-200);
+        }
+    }
+
+    &__project-name {
+        // styled via inline [style.color] in template
+    }
+
+    &__description {
+        // project description text
+    }
+
+    &__system-text {
+        // loading/system text
+    }
+
+    &__caption-text {
+        // key photo caption
+    }
+
+    &__map-area {
+        // map container
+    }
+
+    /* Photo grid used on the project fact sheet */
+    &__photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 14px;
+        align-items: start;
+    }
+
+    &__photo-group-heading {
+        padding: var(--spacing-200) 0;
+        border-bottom: 1px solid var(--gray-200);
+        margin-bottom: var(--spacing-300);
+        font-size: var(--type-size-200);
+        font-weight: bold;
+        color: var(--gray-900);
+    }
+
+    &__photo-thumb {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+        img {
+            width: 100%;
+            max-height: 180px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        figcaption {
+            margin-top: 6px;
+            font-size: 0.85rem;
+            color: #555;
+        }
+    }
+
+    &__key-photo {
+        img {
+            width: 100%;
+            max-height: 340px;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+    }
+
+    /* Lightbox modal */
+    &__lightbox-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+    }
+
+    &__lightbox-content {
+        position: relative;
+        max-width: 90vw;
+        max-height: 90vh;
+        background: var(--white);
+        padding: 12px;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+    }
+
+    &__lightbox-close {
+        position: absolute;
+        top: 6px;
+        right: 8px;
+        background: transparent;
+        border: none;
+        font-size: 22px;
+        color: #333;
+        cursor: pointer;
+    }
+
+    &__lightbox-prev,
+    &__lightbox-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        width: 44px;
+        height: 60px;
+        font-size: 28px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        color: #222;
+    }
+
+    &__lightbox-prev {
+        left: 8px;
+    }
+
+    &__lightbox-next {
+        right: 8px;
+    }
+
+    &__lightbox-caption {
+        margin-top: 8px;
+        color: #333;
+    }
+
+    &__no-print {
+        // hidden in print
+    }
+
+    &__only-print {
+        display: none;
+    }
+}
+
+@media (min-width: 1200px) {
+    .fact-sheet {
+        &__photo-grid {
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 18px;
+        }
+
+        &__photo-thumb img {
+            max-height: 220px;
+        }
+    }
+}
+
+// Shared print/capture styles extracted to a mixin
+@mixin fact-sheet-print-layout {
+    .fact-sheet__no-print {
+        display: none;
+    }
+
+    .fact-sheet__only-print {
+        display: block;
+    }
+
+    .fact-sheet {
+        --card-header-bg-color: var(--white);
+        --card-header-border-color: var(--white);
+        --card-footer-border-color: var(--white);
+        --card-body-bg-color: var(--white);
+
+        font-size: 12px;
+
+        .fact-sheet__section-header {
+            font-size: var(--font-size);
+        }
+
+        h1 {
+            font-size: 18px;
+            color: var(--primary);
+        }
+
+        h4 {
+            color: var(--primary);
+        }
+
+        .fact-sheet__header-logo-area {
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+
+        // Scale map height for the narrower PDF page width
+        wadnr-map .map-wrapper > div {
+            height: 350px !important;
+        }
+
+        // Reduce pie chart height for print
+        pie-chart {
+            height: 300px !important;
+
+            // Target the chart container
+            .chart-container,
+            svg {
+                height: 300px !important;
+                max-height: 300px !important;
+            }
+        }
+
+        .card {
+            border-color: var(--white);
+        }
+
+        .grid-12 {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 10px;
+        }
+
+        .g-col-2 {
+            grid-column: span 2;
+        }
+        .g-col-3 {
+            grid-column: span 3;
+        }
+        .g-col-5 {
+            grid-column: span 5;
+        }
+        .g-col-6 {
+            grid-column: span 6;
+        }
+        .g-col-7 {
+            grid-column: span 7;
+        }
+        .g-col-9 {
+            grid-column: span 9;
+        }
+        .g-col-10 {
+            grid-column: span 10;
+        }
+        .g-col-12 {
+            grid-column: span 12;
+        }
+
+        // Prevent breaking inside grid items
+        .g-col-3,
+        .g-col-6,
+        .g-col-7,
+        .g-col-9 {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+    }
+}
+
+// Ctrl+P / browser print
+@media print {
+    @include fact-sheet-print-layout;
+}
+
+// HeadlessChrome capture — apply print layout from page load so the map
+// initializes at the correct narrow dimensions (no resize needed).
+.fact-sheet--capture-mode {
+    max-width: 7.5in;
+    @include fact-sheet-print-layout;
+}

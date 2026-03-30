@@ -1,0 +1,29 @@
+<div [loadingSpinner]="{ isLoading }" class="h-bar-chart">
+  <div [id]="chartID" style="width: 100%"></div>
+  <hr />
+  <div class="h-bar-chart__chart-legend">
+    <div class="h-bar-chart__pie-icon">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M15.9967 3.32084e-07C19.475 -0.000708113 22.8589 1.13211 25.6357 3.22688C28.4125 5.32166 30.4311 8.26428 31.3857 11.6091C32.3402 14.9539 32.1788 18.5186 30.9259 21.7635C29.6729 25.0083 27.3967 27.7564 24.4419 29.5917L16 16L15.9967 3.32084e-07Z"
+          fill="#CDF57A" />
+        <path
+          d="M24.4284 29.6001C22.3257 30.9032 19.9496 31.701 17.4866 31.9308C15.0237 32.1606 12.541 31.8163 10.2335 30.9247C7.92611 30.0332 5.85683 28.6188 4.18824 26.7927C2.51965 24.9665 1.29721 22.7783 0.616943 20.4L16 16L24.4284 29.6001Z"
+          fill="#9EBBD7" />
+        <path
+          d="M0.612514 20.3848C-0.0653722 18.0058 -0.182427 15.5021 0.270546 13.0702C0.723519 10.6384 1.73418 8.34469 3.22314 6.36933C4.71209 4.39398 6.63879 2.79076 8.85186 1.68563C11.0649 0.580503 13.5041 0.00355794 15.9778 0.00012207L16 16.0001L0.612514 20.3848Z"
+          fill="#9ED7C2" />
+      </svg>
+    </div>
+    <div class="h-bar-chart__legend">
+      @for (keyValuePair of colorRange | defaultOrderKeyvalue; track keyValuePair) {
+        <div>
+          <i [style.background]="keyValuePair.value"></i> <strong>{{ keyValuePair.key }}</strong>
+          <span class="h-bar-chart__legend-extra"
+            >{{ getTotalValueForGroup(keyValuePair.key) | number: "1.0-1" }} acres ({{ getTotalPercentageForGroup(keyValuePair.key) | percent: "1.0-1" }})</span
+            >
+          </div>
+        }
+      </div>
+    </div>
+  </div>

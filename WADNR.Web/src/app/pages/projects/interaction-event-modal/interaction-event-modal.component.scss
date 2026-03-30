@@ -1,0 +1,31 @@
+.interaction-event-modal {
+    &__selected-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    &__selected-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-200);
+        padding: var(--spacing-100) 0;
+
+        a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+
+            &.disabled {
+                pointer-events: none;
+                opacity: 0.5;
+            }
+        }
+    }
+
+    &__required-note {
+        font-style: italic;
+        color: #666;
+        font-size: 0.875rem;
+    }
+}

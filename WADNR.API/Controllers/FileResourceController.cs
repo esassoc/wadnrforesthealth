@@ -1,0 +1,117 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System;
+using System.IO;
+using System.Net;
+using System.Threading.Tasks;
+using WADNR.API.Services;
+using WADNR.EFModels.Entities;
+
+namespace WADNR.API.Controllers;
+
+[ApiController]
+[Route("file-resources")]
+public class FileResourceController(
+    WADNRDbContext dbContext,
+    ILogger<FileResourceController> logger,
+    IOptions<WADNRConfiguration> configuration,
+    FileService fileService)
+    : SitkaController<FileResourceController>(dbContext, logger, configuration)
+{
+    [HttpGet("{fileResourceGuidAsString}")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(FileStreamResult), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> DownloadFileResource(string fileResourceGuidAsString)
+    {
+        var fileResource = await FileResources.GetByGUIDStringAsync(DbContext, fileResourceGuidAsString);
+
+        if (fileResource != null)
+        {
+            var fileStream = await fileService.GetFileStreamFromBlobStorage(fileResource.FileResourceGUID.ToString());
+            if (fileStream != null)
+            {
+                var fileName = fileResource.OriginalBaseFilename;
+                var fileExtension = fileResource.OriginalFileExtension;
+                return DisplayFile(fileName, fileExtension, fileStream);
+            }
+        }
+
+        // Unhappy path - return an HTTP 404
+        // ---------------------------------
+        var message = $"File resource not found in database. It may have been deleted.";
+        logger.LogError(message);
+        return NotFound(message);
+    }
+
+    private IActionResult DisplayFile(string fileName, string fileExtension, Stream fileStream)
+    {
+        var contentDisposition = new System.Net.Mime.ContentDisposition
+        {
+            FileName = $"{fileName}.{fileExtension}",
+            Inline = false
+        };
+        Response.Headers.Add("Content-Disposition", contentDisposition.ToString());
+
+        var provider = new FileExtensionContentTypeProvider();
+        if (!provider.TryGetContentType(contentDisposition.FileName, out var contentType))
+        {
+            contentType = "application/octet-stream";
+        }
+
+        return File(fileStream, contentType, contentDisposition.FileName);
+    }
+
+    [HttpGet("GetWithApiKey/{fileResourceGuidAsString}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> DisplayResourceWithApiKey([FromRoute] string fileResourceGuidAsString,
+        [FromQuery] string apiKey)
+    {
+        //if (apiKey != _ltInfoConfiguration.LTInfoApiKey)
+        //{
+        //    return new UnauthorizedResult();
+        //}
+
+        //var isStringAGuid = Guid.TryParse(fileResourceGuidAsString, out var fileResourceInfoGuid);
+        //if (isStringAGuid)
+        //{
+        //    var fileResourceInfo = _dbContext.FileResourceInfos.Include(x => x.FileResourceMimeType).Include(x => x.FileResourceData).SingleOrDefault(x => x.FileResourceInfoGUID == fileResourceInfoGuid);
+
+        //    byte[] byteArray = fileResourceInfo.GetFileResourceDatum().Data;
+        //    return new FileContentResult(byteArray, "application/octet-stream");
+        //}
+        //// Unhappy path - return an HTTP 404
+        //// ---------------------------------
+        //var message = $"File Resource {fileResourceGuidAsString} Not Found in database. It may have been deleted.";
+        //_logger.LogError(message);
+        //return NotFound(message);
+
+        if (apiKey != Configuration.WadnrApiKey)
+        {
+            return new UnauthorizedResult();
+        }
+
+        var isStringAGuid = Guid.TryParse(fileResourceGuidAsString, out var fileResourceInfoGuid);
+        if (isStringAGuid)
+        {
+            var fileResource = await FileResources.GetByGUIDAsync(DbContext, fileResourceInfoGuid);
+
+            var fileStream = await fileService.GetFileStreamFromBlobStorage(fileResource.FileResourceGUID.ToString());
+            if (fileStream != null)
+            {
+                var fileName = fileResource.OriginalBaseFilename;
+                var fileExtension = fileResource.OriginalFileExtension;
+                return DisplayFile(fileName, fileExtension, fileStream);
+            }
+        }
+
+        // Unhappy path - return an HTTP 404
+        // ---------------------------------
+        var message = $"File Resource {fileResourceGuidAsString} Not Found in database. It may have been deleted.";
+        Logger.LogError(message);
+        return NotFound(message);
+
+    }
+}

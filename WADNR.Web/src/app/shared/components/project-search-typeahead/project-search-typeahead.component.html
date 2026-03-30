@@ -1,0 +1,46 @@
+<input
+    #typeaheadInput
+    type="search"
+    [formControl]="searchControl"
+    placeholder="Project Name or Description"
+    (input)="onInput()"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+    autocomplete="off"
+    class="main-nav__search-input" />
+<button class="main-nav__search-button" type="button" aria-label="Search">
+    <i class="fa fa-search" aria-hidden="true"></i>
+</button>
+
+<ng-template #dropdownTemplate>
+    @if (searchState$ | async; as state) {
+        <div class="project-search__dropdown" (mousedown)="$event.preventDefault()">
+            @if (state.isLoading) {
+                <div class="project-search__message">
+                    <span class="spinner-border spinner-border-sm"></span> Searching...
+                </div>
+            } @else if (state.results.length > 0) {
+                <ul class="project-search__results">
+                    @for (option of state.results; track option.ProjectID; let i = $index) {
+                        <li [class.active]="i === activeIndex"
+                            (click)="selectOption(option)"
+                            (mouseenter)="setActiveIndex(i)">
+                            <div class="project-search__result-name">{{ option.ProjectName }}</div>
+                            <div class="project-search__result-meta">
+                                @if (option.ProjectStageName) {
+                                    <span class="project-search__result-stage">{{ option.ProjectStageName }}</span>
+                                }
+                                @if (option.ProjectTypeName) {
+                                    <span class="project-search__result-type">{{ option.ProjectTypeName }}</span>
+                                }
+                            </div>
+                        </li>
+                    }
+                </ul>
+                <div class="project-search__count">Showing {{ state.results.length }} result{{ state.results.length !== 1 ? 's' : '' }}</div>
+            } @else {
+                <div class="project-search__message">No results found</div>
+            }
+        </div>
+    }
+</ng-template>

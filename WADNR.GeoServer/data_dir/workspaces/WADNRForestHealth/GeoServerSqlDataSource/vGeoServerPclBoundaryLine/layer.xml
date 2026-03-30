@@ -1,0 +1,17 @@
+<layer>
+  <name>vGeoServerPclBoundaryLine</name>
+  <id>LayerInfoImpl--211a5870:1800b538690:-7ffe</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--211a5870:1800b538690:-6cc7</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--211a5870:1800b538690:-7fff</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateCreated>2022-04-08 22:46:55.317 UTC</dateCreated>
+  <dateModified>2022-04-08 22:50:32.557 UTC</dateModified>
+</layer>

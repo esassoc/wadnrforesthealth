@@ -1,0 +1,58 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit Crosswalk Values</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts()"></modal-alerts>
+    <p>Map source values from GIS data to system values.</p>
+
+    @for (group of alwaysGroups; track group.fieldDefinitionID; let last = $last) {
+        <ng-container *ngTemplateOutlet="fieldGroupTemplate; context: { $implicit: group }"></ng-container>
+        @if (!last || notFlattenedGroups.length > 0) {
+            <hr />
+        }
+    }
+
+    @if (notFlattenedGroups.length > 0) {
+        <div class="crosswalk-modal__container">
+            <strong>Import is NOT Flattened fields</strong>
+            @for (group of notFlattenedGroups; track group.fieldDefinitionID; let last = $last) {
+                <ng-container *ngTemplateOutlet="fieldGroupTemplate; context: { $implicit: group }"></ng-container>
+                @if (!last) {
+                    <hr />
+                }
+            }
+        </div>
+    }
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" (click)="save()" [buttonLoading]="isSubmitting">Save</button>
+    <button class="btn btn-secondary" (click)="ref.close(null)">Cancel</button>
+</div>
+</div>
+
+<ng-template #fieldGroupTemplate let-group>
+    <h4>{{ group.label }}</h4>
+    <div class="grid-12 mb-2 ai-fe crosswalk-modal__add-row">
+        <div class="g-col-4">
+            <form-field [formControl]="group.newSourceValue" [type]="FormFieldType.Text" fieldLabel="Source Value" [srOnlyLabel]="true" placeholder="Source value"></form-field>
+        </div>
+        <div class="g-col-6">
+            <form-field [formControl]="group.newMappedValue" [type]="FormFieldType.Select" [formInputOptions]="group.options" fieldLabel="Mapped to FHT Value" [srOnlyLabel]="true" placeholder="Select mapped value"></form-field>
+        </div>
+        <div class="g-col-2">
+            <button class="btn btn-sm btn-primary" (click)="addRow(group)" [disabled]="!canAdd(group)">Add</button>
+        </div>
+    </div>
+    @for (row of group.rows; track $index) {
+        <div class="flex mb-1">
+            <button class="btn btn-sm btn-danger mr-2" (click)="removeRow(group, $index)" title="Remove">
+                <span class="fa fa-trash"></span>
+            </button>
+            <span>{{ row.sourceValue }} =&gt; {{ row.mappedValue }}</span>
+        </div>
+    }
+    @if (group.rows.length === 0) {
+        <p class="text-muted">No crosswalk values configured.</p>
+    }
+</ng-template>

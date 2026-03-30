@@ -1,0 +1,30 @@
+.org-type-modal {
+    &__color-field {
+        display: flex;
+        align-items: flex-end;
+
+        form-field {
+            flex: 1;
+            min-width: 0;
+
+            ::ng-deep input {
+                border-top-right-radius: 0 !important;
+                border-bottom-right-radius: 0 !important;
+                border-right: none !important;
+            }
+        }
+    }
+
+    &__color-picker {
+        width: 2.5rem;
+        height: 2rem;
+        flex-shrink: 0;
+        padding: var(--spacing-050);
+        border: 1px solid rgba(black, 0.2);
+        border-left: none;
+        border-top-right-radius: var(--border-radius-200);
+        border-bottom-right-radius: var(--border-radius-200);
+        cursor: pointer;
+        background: none;
+    }
+}

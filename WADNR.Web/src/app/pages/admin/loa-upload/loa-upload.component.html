@@ -1,0 +1,64 @@
+<page-header pageTitle="Upload Loa Tabular Data"></page-header>
+@if (dashboard$ | async; as dashboard) {
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Upload LOA Excel Files</span>
+        </div>
+        <div class="card-body">
+            <p>Upload LOA data from Excel spreadsheets for the Northeast and Southeast regions.</p>
+
+            <div class="grid-12">
+                <div class="g-col-6">
+                    <h4>Northeast Region</h4>
+                    <p><strong>Last Upload:</strong> {{ formatImport(dashboard.LatestNortheastImport) }}</p>
+                    <button class="btn btn-primary" (click)="openUploadModal('northeast')">
+                        Upload Northeast File
+                    </button>
+                </div>
+
+                <div class="g-col-6">
+                    <h4>Southeast Region</h4>
+                    <p><strong>Last Upload:</strong> {{ formatImport(dashboard.LatestSoutheastImport) }}</p>
+                    <button class="btn btn-primary" (click)="openUploadModal('southeast')">
+                        Upload Southeast File
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header">
+            <span class="card-title">Publishing Processing</span>
+        </div>
+        <div class="card-body">
+            <p>Publishing processing imports staged LOA data into projects, funding allocations, and forester contacts for both regions.</p>
+
+            <div class="grid-12">
+                <div class="g-col-6">
+                    <h4>Northeast Processing</h4>
+                    <p><strong>Last Processed:</strong> {{ formatProcessing(dashboard.LatestNortheastImport) }}</p>
+                </div>
+
+                <div class="g-col-6">
+                    <h4>Southeast Processing</h4>
+                    <p><strong>Last Processed:</strong> {{ formatProcessing(dashboard.LatestSoutheastImport) }}</p>
+                </div>
+            </div>
+
+            @if (dashboard.PublishingProcessingIsNeeded) {
+                <p class="mt-3"><strong>** Publishing Processing is needed **</strong></p>
+            } @else {
+                <p class="mt-3"><strong>Publishing Processing appears to be up-to-date</strong></p>
+            }
+
+            <button class="btn btn-primary mt-2" (click)="publish()" [buttonLoading]="isPublishing()" [disabled]="isPublishing()">
+                Do Publishing Processing
+            </button>
+        </div>
+    </div>
+} @else {
+    <div class="text-center p-5">
+        <i class="fas fa-spinner fa-spin fa-2x"></i>
+    </div>
+}

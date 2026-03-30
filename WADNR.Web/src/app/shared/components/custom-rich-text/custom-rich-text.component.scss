@@ -1,0 +1,47 @@
+.custom-rich-text {
+    &__edit-btn {
+        position: absolute;
+        right: 5px;
+        top: -10px;
+        z-index: 1;
+
+        a.btn-rio {
+            background-color: gray;
+            color: white;
+        }
+    }
+
+    &__empty-space {
+        width: 100%;
+        height: 100%;
+    }
+
+    &__content {
+        background-color: inherit;
+        transition: all 100ms ease-out;
+        min-height: 20rem;
+        border: 2px dashed transparent;
+        border-radius: 8px;
+
+        &--editable:hover {
+            background-color: #d3d3d3;
+            background-color: rgba(211, 211, 211, 0.2);
+            border: 2px dashed rgba(#354968, 0.5);
+        }
+
+        &--editable .custom-rich-text__edit-btn {
+            visibility: hidden;
+            opacity: 0;
+            transition: all 100ms ease-out;
+        }
+
+        &--editable:hover .custom-rich-text__edit-btn {
+            visibility: visible;
+            opacity: 1;
+        }
+    }
+
+    &__editor {
+        color: var(--black);
+    }
+}

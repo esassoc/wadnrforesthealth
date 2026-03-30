@@ -1,0 +1,86 @@
+<div class="modal">
+@if (isLoading$ | async) {
+    <div class="modal-header">
+        <h4 class="modal-title">Edit Map Extent</h4>
+    </div>
+    <div class="modal-body">
+        <div class="text-center p-4">Loading...</div>
+    </div>
+} @else {
+    <div class="modal-header">
+        <h4 class="modal-title">Edit Map Extent</h4>
+    </div>
+    <div class="modal-body">
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+        <p class="mb-2">
+            Use the rectangle tool to draw a bounding box for the project's map extent.
+            The extent determines the default map view when viewing this project.
+        </p>
+
+        <div class="grid-12">
+            <!-- Left Column: Extent Info -->
+            <div class="g-col-4">
+                @if (hasExtent) {
+                    <div class="mb-3">
+                        <h5 class="mb-2"><strong>Bounding Box</strong></h5>
+                        <div class="grid-12 mb-1">
+                            <div class="g-col-4 field-label">North</div>
+                            <div class="g-col-8">{{ north | number: "1.4-4" }}</div>
+                        </div>
+                        <div class="grid-12 mb-1">
+                            <div class="g-col-4 field-label">South</div>
+                            <div class="g-col-8">{{ south | number: "1.4-4" }}</div>
+                        </div>
+                        <div class="grid-12 mb-1">
+                            <div class="g-col-4 field-label">East</div>
+                            <div class="g-col-8">{{ east | number: "1.4-4" }}</div>
+                        </div>
+                        <div class="grid-12 mb-1">
+                            <div class="g-col-4 field-label">West</div>
+                            <div class="g-col-8">{{ west | number: "1.4-4" }}</div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="clearExtent()" [disabled]="isSubmitting">
+                        Clear Extent
+                    </button>
+                } @else {
+                    <div class="text-muted">
+                        No map extent defined. Use the rectangle draw tool on the map to define a bounding box.
+                    </div>
+                }
+            </div>
+
+            <!-- Right Column: Map -->
+            <div class="g-col-8">
+                <div style="height: 400px">
+                    <wadnr-map [boundingBox]="ref.data.boundingBox" (onMapLoad)="handleMapLoad($event)">
+                        @if (mapIsReady) {
+                            <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
+                            <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                                [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"
+                                [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Simple)'" [wmsStyle]="'location_simple'"
+                                [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                            </generic-wms-wfs-layer>
+                            <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                                [wmsLayerName]="'WADNRForestHealth:ProjectLocationDetailed'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationDetailed'"
+                                [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Detailed)'" [wmsStyle]="'location_detailed'"
+                                [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                            </generic-wms-wfs-layer>
+                            <priority-landscapes-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                            <dnr-upland-regions-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
+                            <counties-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></counties-layer>
+                        }
+                    </wadnr-map>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="save()" [disabled]="isSubmitting">
+            {{ isSubmitting ? "Saving..." : "Save" }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
+    </div>
+}
+</div>

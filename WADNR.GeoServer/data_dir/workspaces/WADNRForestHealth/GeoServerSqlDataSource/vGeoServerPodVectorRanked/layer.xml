@@ -1,0 +1,16 @@
+<layer>
+  <name>vGeoServerPodVectorRanked</name>
+  <id>LayerInfoImpl--6fb7a615:180261407e3:-7ffc</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--1323792d:17ffb74513e:-7ffd</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--6fb7a615:180261407e3:-7ffd</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateCreated>2022-04-14 03:21:58.177 UTC</dateCreated>
+</layer>
