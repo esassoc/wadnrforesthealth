@@ -18,29 +18,31 @@ GNU Affero General Public License <http://www.gnu.org/licenses/> for more detail
 Source code is available upon request via <support@sitkatech.com>.
 </license>
 -----------------------------------------------------------------------*/
+using LtInfo.Common;
+using LtInfo.Common.Mvc;
+using LtInfo.Common.MvcResults;
+using Newtonsoft.Json.Linq;
+using ProjectFirma.Web.Common;
+using ProjectFirma.Web.Models;
+using ProjectFirma.Web.Security;
+using ProjectFirma.Web.Views.FindYourForester;
+using ProjectFirma.Web.Views.Map;
+using ProjectFirma.Web.Views.Results;
+using ProjectFirma.Web.Views.Shared.ProjectLocationControls;
+using ProjectFirma.Web.Views.Shared.SortOrder;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.ServiceModel;
+using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Windows.Interop;
 using System.Xml;
 using System.Xml.Linq;
-using ProjectFirma.Web.Security;
-using ProjectFirma.Web.Common;
-using ProjectFirma.Web.Models;
-using ProjectFirma.Web.Views.Map;
-using ProjectFirma.Web.Views.Results;
-using ProjectFirma.Web.Views.Shared.ProjectLocationControls;
-using LtInfo.Common;
-using LtInfo.Common.Mvc;
-using LtInfo.Common.MvcResults;
-using ProjectFirma.Web.Views.Shared.SortOrder;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
 namespace ProjectFirma.Web.Controllers
 {
@@ -261,13 +263,21 @@ namespace ProjectFirma.Web.Controllers
             projectTypeNodes.RemoveAll(x => !x.Children.Any());
         }
 
+        [HttpPost]
+        [ProjectLocationsViewFeature]
+        public JsonNetJObjectResult GetForesterInformation(double latitude, double longitude)
+        {
+            
+            return new JsonNetJObjectResult(GetForesterWorkUnitInformation(longitude, latitude));
+        }
+
 
         [HttpPost]
         [ProjectLocationsViewFeature]
         public JsonNetJObjectResult GeocodeAddress(string address)
         {
 
-            var url = "https://wamas.watech.wa.gov/resources/web/api/Wamas/v1/Singleline?address=" + address;
+            var url = "https://wamaspublic.watech.wa.gov/resources/web/api/Wamas/v1/Singleline?address=" + address;
 
             try
             {
@@ -278,13 +288,53 @@ namespace ProjectFirma.Web.Controllers
 
                 JObject joResponse = JObject.Parse(responseBody);
 
-                return new JsonNetJObjectResult(joResponse);
+                // Extract latitude and longitude from the geocode response
+                var latitude = joResponse["GeocodedAddress"]?["Location"]?["GcYCoord"]?.Value<double>() ?? 0;
+                var longitude = joResponse["GeocodedAddress"]?["Location"]?["GcXCoord"]?.Value<double>() ?? 0;
+
+                if (latitude == 0 || longitude == 0)
+                {
+                    return new JsonNetJObjectResult(new { ErrorStatus = "Unable to extract coordinates from geocode response." });
+                }
+
+                return new JsonNetJObjectResult(GetForesterWorkUnitInformation(longitude, latitude));
             }
             catch (Exception e)
             {
                 Logger.Info("Error geocoding address on Project Map", e);
                 return new JsonNetJObjectResult(new { ErrorStatus = "There was an error geocoding the provided address." });
             }
+            
+            
+            
+
+        }
+
+        private FindYourForesterSimple GetForesterWorkUnitInformation(double longitude, double latitude)
+        {
+            // Create DbGeometry point from latitude and longitude
+            var point = System.Data.Entity.Spatial.DbGeometry.FromText($"POINT({longitude} {latitude})", 4326);
+
+            // Call the UDF to get forester work units by point
+            var foresterWorkUnits = HttpRequestStorage.DatabaseEntities.GetfGetForesterWorkUnitsByPoints(point).ToList();
+
+            // Map the results to ForesterWorkUnitSimple objects
+            var foresterWorkUnitSimples = foresterWorkUnits.OrderBy(x => x.SortOrder).Select(f => new ForesterWorkUnitSimple(
+                f.ForesterWorkUnitID,
+                f.ForesterRoleID,
+                f.ForesterRoleDisplayName,
+                f.PersonID,
+                f.FirstName,
+                f.LastName,
+                f.Email,
+                f.Phone,
+                f.ForesterWorkUnitName
+            )).ToList();
+
+            // Create the FindYourForesterSimple object
+            var findYourForesterSimple = new FindYourForesterSimple(latitude, longitude, foresterWorkUnitSimples);
+
+            return findYourForesterSimple;
         }
 
 

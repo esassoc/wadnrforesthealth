@@ -42,6 +42,17 @@ WHERE plwest.PriorityLandscapeName not in (select PriorityLandscapeName from dbo
 
 
 
+select PriorityLandscapeID into #tmpPriorityLandscapesToDelete from dbo.PriorityLandscape as pl where pl.PriorityLandscapeCategoryID = 1 and pl.PriorityLandscapeName not in (select PriorityLandscapeName from dbo.PriorityLandscapeEastTemp as pl2)
+
+
+insert into #tmpPriorityLandscapesToDelete(PriorityLandscapeID) select PriorityLandscapeID from dbo.PriorityLandscape as pl where pl.PriorityLandscapeCategoryID = 2 and pl.PriorityLandscapeName not in (select PriorityLandscapeName from dbo.PriorityLandscapeWestTemp as pl2)
+
+
+delete from dbo.ProjectPriorityLandscapeUpdate where PriorityLandscapeID in (select PriorityLandscapeID from #tmpPriorityLandscapesToDelete)
+delete from dbo.ProjectPriorityLandscape where PriorityLandscapeID in (select PriorityLandscapeID from #tmpPriorityLandscapesToDelete)
+delete from dbo.PriorityLandscapeFileResource where PriorityLandscapeID in (select PriorityLandscapeID from #tmpPriorityLandscapesToDelete)
+delete from dbo.PriorityLandscape where PriorityLandscapeID in (select PriorityLandscapeID from #tmpPriorityLandscapesToDelete)
+
 
 drop table dbo.PriorityLandscapeEastTemp
 go
