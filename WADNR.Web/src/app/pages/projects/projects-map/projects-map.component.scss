@@ -1,0 +1,311 @@
+.projects-map {
+    &__map-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        project-map,
+        wadnr-map,
+        .leaflet-container {
+            border-radius: 8px;
+        }
+    }
+
+    &__map-legend-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--spacing-300);
+        flex-wrap: wrap;
+
+        .projects-map__no-simple-location-toggle {
+            margin-top: var(--spacing-200);
+            margin-left: auto;
+            text-align: right;
+        }
+    }
+
+    &__map-controls {
+        // semantic wrapper for controls
+    }
+
+    &__controls-row {
+        display: flex;
+        gap: var(--spacing-400);
+        align-items: center;
+        flex-wrap: wrap;
+
+        &--primary {
+            align-items: flex-start;
+        }
+
+        &--secondary {
+            margin-top: var(--spacing-200);
+            align-items: center;
+        }
+    }
+
+    &__control-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 200px;
+
+        &--inline {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: var(--spacing-200);
+
+            label {
+                white-space: nowrap;
+                margin: 0;
+                flex: 0 0 auto;
+            }
+
+            ng-select {
+                flex: 1 1 200px;
+                min-width: 160px;
+                max-width: 320px;
+            }
+        }
+
+        &--values {
+            min-width: 320px;
+            flex: 0 0 320px;
+        }
+
+        &--toggles {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-200);
+        }
+    }
+
+    &__no-simple-location-toggle {
+        font-size: 0.9rem;
+        padding: 0.25rem 0.5rem;
+        color: #0066cc;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        text-decoration: underline;
+
+        &:hover {
+            color: #004a99;
+        }
+    }
+
+    &__share-popup {
+        border-radius: 6px;
+        padding: 10px;
+        background: var(--white);
+        border: 1px solid #e6e6e6;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    &__filter-select-with-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-200);
+    }
+
+    &__filter-select-actions {
+        display: flex;
+        gap: var(--spacing-100);
+    }
+
+    /* ng-select header actions inside dropdown */
+    &__select-header-actions {
+        display: flex;
+        gap: var(--spacing-200);
+        padding: var(--spacing-100) var(--spacing-200);
+
+        .btn-link {
+            font-size: 0.85rem;
+            padding: 0.15rem 0.4rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+        }
+    }
+
+    &__option-with-checkbox {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-200);
+    }
+
+    /* Stronger, more specific rules to override other checkbox sizing in the app */
+    .ng-select .ng-option .projects-map__option-with-checkbox input[type="checkbox"],
+    .ng-select .projects-map__option-with-checkbox input[type="checkbox"] {
+        -webkit-appearance: checkbox;
+        appearance: checkbox;
+        box-sizing: border-box;
+        width: 16px !important;
+        height: 16px !important;
+        min-width: 16px;
+        min-height: 16px;
+        margin: 0;
+        padding: 0;
+    }
+
+    ::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected,
+    .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked {
+        color: #222;
+        background-color: var(--white);
+    }
+    .ng-select .ng-option {
+        background: var(--white) !important;
+        color: inherit;
+        /* allow long labels to wrap instead of being truncated */
+        white-space: normal !important;
+        word-break: break-word !important;
+        overflow-wrap: anywhere !important;
+    }
+    .ng-select .ng-option.active,
+    .ng-select .ng-option:hover {
+        background: var(--card-body-bg-color) !important;
+    }
+
+    /* allow the dropdown panel to expand to fit content when necessary */
+    .ng-select .ng-dropdown-panel {
+        min-width: 0 !important;
+        max-width: none !important;
+        width: auto !important;
+        white-space: normal !important;
+    }
+
+    /* ensure option label within ng-select templates wraps */
+    .ng-select .ng-option .ng-option-label,
+    .ng-select .ng-value .ng-value-label {
+        white-space: normal !important;
+        word-break: break-word !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    /* Remove the default blue accent for checkboxes and use a subtle neutral color when checked */
+    .ng-select .projects-map__option-with-checkbox input[type="checkbox"] {
+        /* modern browsers */
+        accent-color: #666 !important;
+        /* fallback styling for browsers not supporting accent-color */
+        background-color: var(--white) !important;
+        border: 1px solid #cfcfcf !important;
+    }
+    .ng-select .projects-map__option-with-checkbox input[type="checkbox"]:checked {
+        background-color: #666 !important;
+        border-color: #666 !important;
+    }
+
+    /* Sliding no-simple-location side panel styles */
+    &__map-and-list {
+        display: flex;
+        /* reduce gap so panel and map sit closer */
+        gap: var(--spacing-200);
+        align-items: stretch;
+        position: relative;
+        /* allow children to shrink so internal overflow works correctly */
+        min-height: 0;
+        /* ensure the map area determines the height for the row so the panel matches it */
+        align-items: flex-start;
+    }
+
+    &__map-area {
+        flex: 1 1 auto;
+        transition: margin-right 0.25s ease;
+
+        /* avoid adding a large extra margin; let the panel sit next to the map so spacing is controlled by flex gap */
+        &--with-list {
+            margin-right: 0;
+        }
+    }
+
+    &__side-panel {
+        position: relative;
+        width: 0;
+        /* increase max width so the panel can be wider when opened */
+        max-width: 440px;
+        overflow: hidden;
+        background: var(--white);
+        border-left: 1px solid #e6e6e6;
+        box-shadow: -2px 0 6px rgba(0, 0, 0, 0.06);
+        transition: width 0.25s ease, opacity 0.25s ease;
+        opacity: 0;
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        /* ensure the panel doesn't grow beyond the flex parent's height when children overflow */
+        min-height: 0;
+        /* make the panel match the height of the map-area row */
+        height: auto;
+        align-self: stretch;
+        max-height: 830px;
+
+        &--open {
+            width: 400px;
+            opacity: 1;
+        }
+    }
+
+    &__side-panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-200) var(--spacing-300);
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 14px;
+    }
+
+    &__side-panel-body {
+        padding: var(--spacing-200) var(--spacing-300);
+        /* take available panel height and scroll internally when content exceeds it */
+        flex: 1 1 auto;
+        max-height: 100%;
+        overflow: auto;
+        min-height: 0;
+    }
+
+    &__side-panel-empty {
+        // empty state text
+    }
+
+    &__side-panel-close {
+        font-size: 1.25rem;
+        line-height: 1;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    &__no-simple-location-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__no-simple-location-list-item {
+        padding: var(--spacing-200) 0;
+        border-bottom: 1px solid #f3f3f3;
+    }
+
+    &__tree-container {
+        // tree wrapper
+    }
+
+    @media (max-width: 800px) {
+        .projects-map__side-panel {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            z-index: 20;
+            width: 0;
+
+            &--open {
+                width: 92%;
+                max-width: 500px;
+            }
+        }
+
+        .projects-map__map-area--with-list {
+            margin-right: 0;
+        }
+    }
+}

@@ -1,0 +1,115 @@
+.taxonomy {
+    &__title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: var(--spacing-400);
+    }
+
+    &__tree {
+        max-width: 800px;
+    }
+}
+
+// Reserve a consistent right-side slot so the Map button aligns
+// even when count badges have different widths (or are missing).
+$taxonomy-badge-slot-width: 4.25rem;
+
+simple-tree ::ng-deep {
+    .simple-tree {
+        &__header {
+            position: relative;
+            padding-right: $taxonomy-badge-slot-width;
+        }
+
+        &__badge {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 0 !important;
+        }
+
+        &__title {
+            display: flex;
+            width: 100%;
+            flex: 1 1 auto;
+            min-width: 0;
+
+            a {
+                display: flex;
+                align-items: center;
+                min-width: 0;
+            }
+
+            a.map-btn {
+                flex: 0 0 auto;
+                margin-left: auto;
+            }
+        }
+    }
+    div.simple-tree--top-level-border-enabled {
+        // per-item borders: left/right on every grouped item, top on group-start, bottom on group-end
+        .simple-tree__node--root-group {
+            border-left: 4px solid var(--node-theme-color, rgba(0, 0, 0, 0.06));
+            border-right: 4px solid var(--node-theme-color, rgba(0, 0, 0, 0.06));
+            padding: var(--spacing-100) var(--spacing-200);
+            margin: 0.15rem 0;
+            background: var(--white);
+            background-clip: padding-box;
+            position: relative;
+            z-index: 2;
+        }
+
+        .simple-tree__group-start.simple-tree__node--root-group {
+            border-top: 4px solid var(--node-theme-color, rgba(0, 0, 0, 0.06));
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.02) inset;
+        }
+
+        .simple-tree__group-end.simple-tree__node--root-group {
+            border-bottom: 4px solid var(--node-theme-color, rgba(0, 0, 0, 0.06));
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        // Map button styling — uses theme color from CSS custom property
+        .simple-tree__node--root-group .map-btn {
+            background-color: var(--node-theme-color, var(--primary));
+            color: var(--white);
+            border: 1px solid var(--node-theme-color, var(--primary));
+            filter: brightness(1);
+            margin-left: auto;
+            text-decoration: none;
+
+            &:hover {
+                filter: brightness(0.85);
+            }
+        }
+
+        // collapse gaps between adjacent grouped nodes for a seamless box
+        .simple-tree__node--root-group + .simple-tree__node--root-group {
+            /* overlap by the border thickness to remove the visible seam */
+            margin-top: -4px;
+        }
+
+        // add a subtle 1px dotted inner separator between grouped items
+        .simple-tree__node--root-group + .simple-tree__node--root-group::before {
+            content: "";
+            position: absolute;
+            top: -2px; /* position over the overlap area */
+            left: 0.5rem;
+            right: 0.5rem;
+            height: 1px;
+            border-bottom: 1px dotted var(--node-theme-color, rgba(0, 0, 0, 0.12));
+            opacity: 0.32;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        // hover highlight for group start
+        .simple-tree__group-start.simple-tree__node--root-group:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+    }
+}

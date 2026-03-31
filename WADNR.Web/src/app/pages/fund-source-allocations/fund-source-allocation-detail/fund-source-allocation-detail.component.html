@@ -1,0 +1,526 @@
+@if (fundSourceAllocation$ | async; as allocation) {
+    <breadcrumb
+        [items]="[{ label: 'Fund Source Allocations', url: '/fund-sources' }, { label: allocation.FundSourceAllocationName || 'Allocation' }]"
+        [linkLast]="false"></breadcrumb>
+    <page-header [pageTitle]="allocation.FundSourceAllocationName"> </page-header>
+
+    <div class="page-body grid-12">
+        <!-- LEFT COLUMN: Basics -->
+        <div class="g-col-5">
+            <div class="card">
+                <div class="card-header flex-between">
+                    <span class="card-title">Basics</span>
+                    @if (canManageFundSources$ | async) {
+                        <button class="card-header-edit-link" (click)="openEditModal(allocation)" title="Edit Basics">
+                                <icon icon="Edit"></icon>
+                            </button>
+                    }
+                </div>
+                <div class="card-body">
+                    <!-- 1. Allocation Name -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceAllocationName" labelOverride="Allocation Name"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.FundSourceAllocationName || "\u2014" }}</div>
+                    </div>
+
+                    <!-- 2. Contributing Organization -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="Organization" labelOverride="Contributing Organization"></field-definition></div>
+                        <div class="allocation-detail__field-value">
+                            @if (allocation.OrganizationID) {
+                                <a [routerLink]="['/organizations', allocation.OrganizationID]">{{ allocation.OrganizationName }}</a>
+                            } @else {
+                                &mdash;
+                            }
+                        </div>
+                    </div>
+
+                    <!-- 3. Fund Source Manager -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceManager"></field-definition></div>
+                        <div class="allocation-detail__field-value">
+                            @if (allocation.FundSourceManagerID) {
+                                <person-link [personID]="allocation.FundSourceManagerID" [displayText]="allocation.FundSourceManagerName"></person-link>
+                            } @else {
+                                &mdash;
+                            }
+                        </div>
+                    </div>
+
+                    <!-- 4. Program Manager -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="ProgramManager"></field-definition></div>
+                        <div class="allocation-detail__field-value">
+                            @if (allocation.ProgramManagers?.length) {
+                                @for (person of allocation.ProgramManagers; track person.PersonID; let last = $last) {
+                                    <person-link [personID]="person.PersonID" [displayText]="person.FullName"></person-link>
+                                    @if (!last) {
+                                        <span>, </span>
+                                    }
+                                }
+                            } @else {
+                                &mdash;
+                            }
+                        </div>
+                    </div>
+
+                    <!-- 5. Status -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceStatus"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.FundSourceStatusName || "\u2014" }}</div>
+                    </div>
+
+                    <!-- 6. Type -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceType"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.FundSourceTypeName || "\u2014" }}</div>
+                    </div>
+
+                    <!-- 7. Fund Source Number -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceNumber"></field-definition></div>
+                        <div class="allocation-detail__field-value">
+                            @if (allocation.FundSourceID) {
+                                <a [routerLink]="['/fund-sources', allocation.FundSourceID]">{{ allocation.FundSourceNumber }}</a>
+                            } @else {
+                                {{ allocation.FundSourceNumber || "\u2014" }}
+                            }
+                        </div>
+                    </div>
+
+                    <!-- 8. Program Index - Project Code -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="ProgramIndexProjectCode"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ formatPipc(allocation) }}</div>
+                    </div>
+
+                    <!-- 9. Federal Assistance Listing -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="CFDA" labelOverride="Federal Assistance Listing"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.CFDANumber || "\u2014" }}</div>
+                    </div>
+
+                    <!-- 10. Division -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="Division"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.DivisionName || "\u2014" }}</div>
+                    </div>
+
+                    <!-- 11. DNR Upland Region -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="DNRUplandRegion"></field-definition></div>
+                        <div class="allocation-detail__field-value">
+                            @if (allocation.DNRUplandRegionID) {
+                                <a [routerLink]="['/dnr-upland-regions', allocation.DNRUplandRegionID]">{{ allocation.DNRUplandRegionName }}</a>
+                            } @else {
+                                &mdash;
+                            }
+                        </div>
+                    </div>
+
+                    <!-- 12. Allocation Amount -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="AllocationAmount"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ formatCurrency(allocation.AllocationAmount) }}</div>
+                    </div>
+
+                    <!-- 13. Allocation Current Balance -->
+                    @if (isUserLoggedIn$ | async) {
+                        <div class="allocation-detail__field-row">
+                            <div class="allocation-detail__field-label">
+                                <field-definition fieldDefinition="FundSourceAllocationCurrentBalance" labelOverride="Allocation Current Balance"></field-definition>
+                            </div>
+                            <div class="allocation-detail__field-value">{{ formatCurrency(allocationCurrentBalance$ | async) }}</div>
+                        </div>
+                    }
+
+                    <!-- 14. Start Date -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceStartDate"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.StartDate | localDate }}</div>
+                    </div>
+
+                    <!-- 15. End Date -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceEndDate"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.EndDate | localDate }}</div>
+                    </div>
+
+                    <!-- 16. Federal Job Code -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FederalFundCode" labelOverride="Federal Job Code"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.FederalFundCodeName || "\u2014" }}</div>
+                    </div>
+
+                    <!-- 17. Priority -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceAllocationPriority"></field-definition></div>
+                        <div class="allocation-detail__field-value">
+                            @if (allocation.FundSourceAllocationPriorityName) {
+                                <span [style.color]="allocation.FundSourceAllocationPriorityColor">{{ allocation.FundSourceAllocationPriorityName }}</span>
+                            } @else {
+                                &mdash;
+                            }
+                        </div>
+                    </div>
+
+                    <!-- 18. Fund FSPs? -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceAllocationFundFSPs"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ formatBoolean(allocation.HasFundFSPs) }}</div>
+                    </div>
+
+                    <!-- 19. Source -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceAllocationSource"></field-definition></div>
+                        <div class="allocation-detail__field-value">{{ allocation.FundSourceAllocationSourceName || "\u2014" }}</div>
+                    </div>
+
+                    <!-- 20. Likely To Use -->
+                    <div class="allocation-detail__field-row">
+                        <div class="allocation-detail__field-label"><field-definition fieldDefinition="FundSourceAllocationLikelyToUse"></field-definition></div>
+                        <div class="allocation-detail__field-value">
+                            @if (allocation.LikelyToUse === true) {
+                                @if (allocation.LikelyToUsePeople?.length) {
+                                    @for (person of allocation.LikelyToUsePeople; track person.PersonID; let last = $last) {
+                                        <person-link [personID]="person.PersonID" [displayText]="person.FullName"></person-link>
+                                        @if (!last) {
+                                            <span>, </span>
+                                        }
+                                    }
+                                } @else {
+                                    &mdash;
+                                }
+                            } @else if (allocation.LikelyToUse === false) {
+                                Contractual Only
+                            } @else {
+                                N/A
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Files + Expenditures by Year -->
+        <div class="g-col-7">
+            <!-- FILES -->
+            @if (files$ | async; as files) {
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Files</span>
+                    </div>
+                    <div class="card-body" [loadingSpinner]="{ isLoading: filesIsLoading$ | async, loadingHeight: 300 }">
+                        @if (canManageFundSources$ | async) {
+                            <div class="flex-end mb-2">
+                                <button class="btn btn-sm btn-primary" (click)="openFileModal(allocation.FundSourceAllocationID)">Add File(s)</button>
+                            </div>
+                        }
+                        @if (files.length) {
+                            @for (file of files; track file.FundSourceAllocationFileResourceID) {
+                                <div class="allocation-detail__file">
+                                    <div class="allocation-detail__file-main">
+                                        <a [href]="apiUrl + '/file-resources/' + file.FileResourceGUID" target="_blank">{{ file.DisplayName || file.OriginalBaseFilename }}</a>
+                                        <span class="allocation-detail__file-meta">({{ file.FileResourceMimeTypeName }}) &mdash; {{ file.CreateDate | localDate }}</span>
+                                        @if (canManageFundSources$ | async) {
+                                            <span class="allocation-detail__file-actions">
+                                                <a
+                                                    href="#"
+                                                    class="ml-2"
+                                                    (click)="openEditFileModal(allocation.FundSourceAllocationID, file); $event.preventDefault()"
+                                                    title="Edit file">
+                                                    <icon [icon]="'Edit'"></icon>
+                                                </a>
+                                                <a
+                                                    href="#"
+                                                    class="text-danger ml-1"
+                                                    (click)="deleteFile(allocation.FundSourceAllocationID, file.FundSourceAllocationFileResourceID); $event.preventDefault()"
+                                                    title="Delete file">
+                                                    <icon [icon]="'Delete'"></icon>
+                                                </a>
+                                            </span>
+                                        }
+                                    </div>
+                                    @if (file.Description) {
+                                        <div class="allocation-detail__file-description">{{ file.Description }}</div>
+                                    }
+                                </div>
+                            }
+                        } @else {
+                            <p class="text-muted">No files associated with this WA DNR Fund Source Allocation.</p>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- EXPENDITURES BY YEAR -->
+            @if (expenditureSummary$ | async; as summary) {
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <span class="card-title">WA DNR Fund Source Allocation Expenditures by Year</span>
+                    </div>
+                    <div class="card-body" [loadingSpinner]="{ isLoading: expenditureSummaryIsLoading$ | async, loadingHeight: 300 }">
+                        @if (summary.length) {
+                            <pie-chart [chartData]="getChartData(summary)"></pie-chart>
+                        } @else {
+                            <p class="text-muted">No expenditures to report for this WA DNR Fund Source Allocation.</p>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- ALLOCATION BUDGET LINE ITEMS -->
+        <div class="g-col-12">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Allocation Budget Line Items</span>
+                </div>
+                <div class="card-body" [loadingSpinner]="{ isLoading: budgetLineItemsIsLoading$ | async, loadingHeight: 300 }">
+                    @if (budgetLineItemSaveAlert(); as saveAlert) {
+                        <alert [alert]="saveAlert" (closed)="budgetLineItemSaveAlert.set(null)">
+                            {{ saveAlert.message }}
+                        </alert>
+                    }
+                    @if (budgetLineItemRows.length) {
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Cost Type</th>
+                                    <th>Amount</th>
+                                    <th>Note</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (item of budgetLineItemRows; track item.costTypeID) {
+                                    <tr>
+                                        <th scope="row">{{ item.costTypeName }}</th>
+                                        <td (focusout)="onBudgetLineItemBlur()">
+                                            <form-field [formControl]="item.amount"
+                                                [type]="FormFieldType.Currency"
+                                                [readOnly]="!canManageFundSourcesSync">
+                                            </form-field>
+                                        </td>
+                                        <td (focusout)="onBudgetLineItemBlur()">
+                                            <form-field [formControl]="item.note"
+                                                [type]="FormFieldType.Text"
+                                                [readOnly]="!canManageFundSourcesSync">
+                                            </form-field>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    } @else {
+                        <p class="text-muted">No budget line items.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- BUDGET VS ACTUALS -->
+        @if (budgetVsActuals$ | async; as budgetVsActuals) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Budget vs Actuals</span>
+                    </div>
+                    <div class="card-body" [loadingSpinner]="{ isLoading: budgetVsActualsIsLoading$ | async, loadingHeight: 300 }">
+                        @if (budgetVsActuals.length) {
+                            <wadnr-grid
+                                [columnDefs]="budgetVsActualsColumnDefs"
+                                [rowData]="budgetVsActuals"
+                                height="250px"
+                                downloadFileName="budget-vs-actuals"
+                                fullscreenTitle="Budget vs Actuals"
+                                [pinnedTotalsRow]="{ fields: ['Budget', 'Expenditures', 'Difference'], label: 'Totals', labelField: 'CostTypeName' }">
+                            </wadnr-grid>
+                        } @else {
+                            <p class="text-muted">No budget or expenditure data.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- FUNDING BY PROJECT -->
+        @if (projects$ | async; as projects) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Funding by Project</span>
+                    </div>
+                    <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
+                        @if (projects.length) {
+                            <wadnr-grid [columnDefs]="projectColumnDefs" [rowData]="projects" height="300px" downloadFileName="fund-source-allocation-projects" fullscreenTitle="Funding by Project" [pinnedTotalsRow]="{ fields: ['MatchAmount', 'PayAmount', 'TotalAmount'], label: 'Totals', labelField: 'ProjectName' }"> </wadnr-grid>
+                        } @else {
+                            <p class="text-muted">No projects associated with this allocation.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- AGREEMENTS -->
+        @if (agreements$ | async; as agreements) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Agreements Associated to this WA DNR Fund Source Allocation</span>
+                    </div>
+                    <div class="card-body" [loadingSpinner]="{ isLoading: agreementsIsLoading$ | async, loadingHeight: 300 }">
+                        @if (agreements.length) {
+                            @for (agreement of agreements; track agreement.AgreementID) {
+                                <a [routerLink]="['/agreements', agreement.AgreementID]">{{ agreement.AgreementTitle }}</a
+                                ><br />
+                            }
+                        } @else {
+                            <p class="text-muted">There are no Agreements associated to this WA DNR Fund Source Allocation</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- REPORTED EXPENDITURES -->
+        @if (expenditures$ | async; as expenditures) {
+            <div class="g-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Reported Expenditures</span>
+                    </div>
+                    <div class="card-body" [loadingSpinner]="{ isLoading: expendituresIsLoading$ | async, loadingHeight: 300 }">
+                        <p class="text-muted mb-2">
+                            The source of record for the Expenditures listed below is the WA DNR financial system. The feed below is updated every 15 minutes.
+                        </p>
+                        @if (expenditures.length) {
+                            <wadnr-grid [columnDefs]="expenditureColumnDefs" [rowData]="expenditures" height="300px" downloadFileName="fund-source-allocation-expenditures" fullscreenTitle="Reported Expenditures">
+                            </wadnr-grid>
+                        } @else {
+                            <p class="text-muted">No expenditures reported.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- NOTES -->
+        <div class="g-col-12">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Notes</span>
+                </div>
+                <div class="card-body">
+                    <!-- Public Notes -->
+                    <div class="flex-between mb-2">
+                        <h4 class="mb-0">Public Notes</h4>
+                        @if (canManageFundSources$ | async) {
+                            <button class="btn btn-sm btn-primary" (click)="openNoteModal(allocation.FundSourceAllocationID, false)">Add Note</button>
+                        }
+                    </div>
+                    @if (notes$ | async; as notes) {
+                        @if (notes.length) {
+                            @for (note of notes; track note.FundSourceAllocationNoteID) {
+                                <div class="allocation-detail__note">
+                                    <div class="allocation-detail__note-header">
+                                        @if (canManageFundSources$ | async) {
+                                            <a
+                                                href="#"
+                                                (click)="
+                                                    openNoteModal(allocation.FundSourceAllocationID, false, 'edit', note.FundSourceAllocationNoteID, note.Note);
+                                                    $event.preventDefault()
+                                                "
+                                                title="Edit"
+                                                ><i class="fa fa-pencil-square-o"></i
+                                            ></a>
+                                            <a
+                                                href="#"
+                                                class="text-danger ml-1"
+                                                (click)="deleteNote(note.FundSourceAllocationNoteID, false); $event.preventDefault()"
+                                                title="Delete"
+                                                ><i class="fa fa-trash"></i
+                                            ></a>
+                                        }
+                                        <span class="ml-2">Created: {{ formatDateTime(note.CreatedDate) }} {{ note.CreatedByPersonName }}</span>
+                                    </div>
+                                    <div class="allocation-detail__note-body">Note: {{ note.Note }}</div>
+                                </div>
+                            }
+                        } @else {
+                            <p class="text-muted">No Notes entered.</p>
+                        }
+                    }
+
+                    @if (canManageFundSources$ | async) {
+                        <hr />
+
+                        <!-- Internal Notes -->
+                        <div class="flex-between mb-2">
+                            <h4 class="mb-0">Internal Notes</h4>
+                            <button class="btn btn-sm btn-primary" (click)="openNoteModal(allocation.FundSourceAllocationID, true)">Add Note</button>
+                        </div>
+                        @if (internalNotes$ | async; as internalNotes) {
+                            @if (internalNotes.length) {
+                                @for (note of internalNotes; track note.FundSourceAllocationNoteInternalID) {
+                                    <div class="allocation-detail__note">
+                                        <div class="allocation-detail__note-header">
+                                            <a
+                                                href="#"
+                                                (click)="
+                                                    openNoteModal(allocation.FundSourceAllocationID, true, 'edit', note.FundSourceAllocationNoteInternalID, note.Note);
+                                                    $event.preventDefault()
+                                                "
+                                                title="Edit"
+                                                ><i class="fa fa-pencil-square-o"></i
+                                            ></a>
+                                            <a
+                                                href="#"
+                                                class="text-danger ml-1"
+                                                (click)="deleteNote(note.FundSourceAllocationNoteInternalID, true); $event.preventDefault()"
+                                                title="Delete"
+                                                ><i class="fa fa-trash"></i
+                                            ></a>
+                                            <span class="ml-2">Created: {{ formatDateTime(note.CreatedDate) }} {{ note.CreatedByPersonName }}</span>
+                                        </div>
+                                        <div class="allocation-detail__note-body">Note: {{ note.Note }}</div>
+                                    </div>
+                                }
+                            } @else {
+                                <p class="text-muted">No Notes entered.</p>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- ALLOCATION AMOUNT CHANGE LOG -->
+        @if (canManageFundSources$ | async) {
+            @if (changeLogs$ | async; as changeLogs) {
+                <div class="g-col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Allocation Amount Change Log</span>
+                        </div>
+                        <div class="card-body">
+                            @if (changeLogs.length) {
+                                @for (log of changeLogs; track log.FundSourceAllocationChangeLogID) {
+                                    <div class="allocation-detail__change-log">
+                                        <div>Created: {{ formatDateTime(log.ChangeDate) }} {{ log.ChangePersonName }}</div>
+                                        <div>Old Amount: {{ formatCurrency(log.OldValue) }}</div>
+                                        <div>New Amount: {{ formatCurrency(log.NewValue) }}</div>
+                                        @if (log.Note) {
+                                            <div>Note: {{ log.Note }}</div>
+                                        }
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+} @else {
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
+}

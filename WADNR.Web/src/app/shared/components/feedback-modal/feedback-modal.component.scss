@@ -1,0 +1,78 @@
+// Feedback modal styles
+
+// Label width for horizontal alignment
+$label-width: 120px;
+
+.feedback-modal {
+    &__form {
+        // Read-only field styling (Name, Email)
+        .field.horizontal {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-400);
+
+            .field-label {
+                flex: 0 0 $label-width;
+                text-align: left;
+                padding-right: var(--spacing-200);
+                font-weight: bold;
+                font-size: var(--type-size-200, 0.875rem);
+
+                &.required::after {
+                    content: " *";
+                    color: var(--danger, #dc3545);
+                }
+            }
+
+            .field-value {
+                flex: 1;
+                padding-top: var(--spacing-200); // Align vertically with input text
+                padding-left: var(--spacing-300); // Match input field's internal padding
+            }
+        }
+
+        // Override form-field horizontal layout to match
+        form-field {
+            display: block;
+            margin-bottom: var(--spacing-400);
+
+            // Target the horizontal form-field inner .field
+            ::ng-deep .field {
+                .field-label,
+                .field-definition-container {
+                    flex: 0 0 $label-width !important;
+                    text-align: left;
+                    margin-right: var(--spacing-200) !important;
+                }
+            }
+        }
+    }
+
+    &__chars-remaining {
+        text-align: right;
+        color: var(--gray-600, #6c757d);
+        font-size: 0.875rem;
+        margin-top: calc(-1 * var(--spacing-200));
+        margin-bottom: var(--spacing-400);
+    }
+
+    &__required-note {
+        font-size: 0.875rem;
+        color: var(--gray-600, #6c757d);
+    }
+
+    &__required-indicator {
+        color: var(--danger, #dc3545);
+    }
+
+    &__actions {
+        display: flex;
+        gap: var(--spacing-200);
+    }
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

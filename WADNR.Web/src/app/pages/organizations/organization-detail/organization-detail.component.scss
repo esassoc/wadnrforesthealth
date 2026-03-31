@@ -1,0 +1,20 @@
+.org-detail {
+    &__field-label {
+        font-weight: bold;
+        text-align: right;
+    }
+
+    &__system-text {
+        color: #6c757d;
+        font-style: italic;
+    }
+
+    &__wrap-text {
+        word-break: break-all;
+    }
+
+    &__fund-source-list {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+}

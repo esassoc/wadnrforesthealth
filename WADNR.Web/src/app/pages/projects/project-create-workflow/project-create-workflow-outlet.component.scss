@@ -1,0 +1,17 @@
+@use "/src/scss/abstracts" as *;
+@use "/src/scss/components/workflow-outlet";
+
+.workflow-footer {
+    &__status {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: var(--spacing-200);
+
+        &-label {
+            width: 100%;
+            text-align: right;
+        }
+    }
+}

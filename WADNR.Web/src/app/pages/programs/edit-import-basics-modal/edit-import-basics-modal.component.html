@@ -1,0 +1,61 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit Import Basics</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts()"></modal-alerts>
+    <div class="grid-12">
+        <div class="g-col-6">
+            <form-field [formControl]="projectTypeDefaultName" fieldLabel="Project Type Default Name" [type]="FormFieldType.Text"></form-field>
+        </div>
+        <div class="g-col-6">
+            <form-field [formControl]="treatmentTypeDefaultName" fieldLabel="Treatment Type Default Name" [type]="FormFieldType.Text"></form-field>
+        </div>
+        <div class="g-col-6">
+            <form-field [formControl]="projectStageDefaultID" fieldLabel="Default Project Stage" [type]="FormFieldType.Select" [formInputOptions]="projectStageOptions" placeholder="Select project stage"></form-field>
+        </div>
+        <div class="g-col-6">
+            <form-field [formControl]="defaultLeadImplementerOrganizationID" fieldLabel="Default Lead Implementer" [type]="FormFieldType.Select" [formInputOptions]="organizationOptions" placeholder="Select organization"></form-field>
+        </div>
+        <div class="g-col-6">
+            <form-field [formControl]="relationshipTypeForDefaultOrganizationID" fieldLabel="Relationship Type for Default Org" [type]="FormFieldType.Select" [formInputOptions]="relationshipTypeOptions" placeholder="Select relationship type"></form-field>
+        </div>
+        <div class="g-col-12">
+            <form-field [formControl]="projectDescriptionDefaultText" fieldLabel="Project Description Default Text" [type]="FormFieldType.Textarea"></form-field>
+        </div>
+        <div class="g-col-6">
+            <form-field [formControl]="importIsFlattened" fieldLabel="Import Is Flattened" [type]="FormFieldType.Check"></form-field>
+        </div>
+        <div class="g-col-6">
+            <form-field [formControl]="adjustProjectTypeBasedOnTreatmentTypes" fieldLabel="Adjust Project Type Based on Treatment Types" [type]="FormFieldType.Check"></form-field>
+        </div>
+        <div class="g-col-6">
+            <form-field [formControl]="dataDeriveProjectStage" fieldLabel="Derive Project Stage from Data" [type]="FormFieldType.Check"></form-field>
+        </div>
+        <div class="g-col-6">
+            <form-field [formControl]="importAsDetailedLocationInsteadOfTreatments" fieldLabel="Import as Detailed Location Instead of Treatments" [type]="FormFieldType.Check"></form-field>
+        </div>
+        <div class="g-col-6">
+            <form-field [formControl]="importAsDetailedLocationInAdditionToTreatments" fieldLabel="Import as Detailed Location in Addition to Treatments" [type]="FormFieldType.Check"></form-field>
+        </div>
+        <div class="g-col-6">
+            <form-field [formControl]="applyStartDateToProject" fieldLabel="Apply Start Date to Project" [type]="FormFieldType.Check"></form-field>
+        </div>
+        <div class="g-col-6">
+            <form-field [formControl]="applyCompletedDateToProject" fieldLabel="Apply Completed Date to Project" [type]="FormFieldType.Check"></form-field>
+        </div>
+        <div class="g-col-6">
+            <form-field [formControl]="applyStartDateToTreatments" fieldLabel="Apply Start Date to Treatments" [type]="FormFieldType.Check"></form-field>
+        </div>
+        <div class="g-col-6">
+            <form-field [formControl]="applyEndDateToTreatments" fieldLabel="Apply End Date to Treatments" [type]="FormFieldType.Check"></form-field>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" (click)="save()" [disabled]="isSubmitting()" [buttonLoading]="isSubmitting()">
+        Save
+    </button>
+    <button class="btn btn-secondary" (click)="ref.close(null)">Cancel</button>
+</div>
+</div>

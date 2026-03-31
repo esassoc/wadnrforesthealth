@@ -1,0 +1,17 @@
+<layer>
+  <name>vGeoServerPclVectorRanked</name>
+  <id>LayerInfoImpl--6fb7a615:180261407e3:-7ffe</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl-7a9e0996:18053408dc8:-30c6</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--6fb7a615:180261407e3:-7fff</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateCreated>2022-04-14 03:21:07.871 UTC</dateCreated>
+  <dateModified>2022-04-23 00:04:58.569 UTC</dateModified>
+</layer>

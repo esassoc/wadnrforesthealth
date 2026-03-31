@@ -1,0 +1,26 @@
+<page-header pageTitle="Counties" [customRichTextTypeID]="customRichTextTypeID"></page-header>
+
+<div class="page-body mt-3">
+    <div [loadingSpinner]="{ isLoading, loadingHeight: 400 }">
+        <hybrid-map-grid
+            [rowData]="counties$ | async"
+            [columnDefs]="columnDefs"
+            [sizeColumnsToFitGrid]="true"
+            downloadFileName="counties"
+            fullscreenTitle="Counties"
+            entityIDField="CountyID"
+            (gridReady)="onGridReady($event)"
+            (onMapLoad)="handleMapReady($event)"
+            [selectedValue]="selectedCountyID"
+            (selectedValueChange)="onSelectedCountyIDChanged($event)">
+            <counties-layer
+                [map]="map"
+                [layerControl]="layerControl"
+                [mode]="OverlayMode.ReferenceWithInteractivity"
+                [selectedIDs]="selectedCountyID ? [selectedCountyID] : null"
+                (selectedIDsChange)="onSelectedCountyIDChanged($event, true)">
+            </counties-layer>
+            <external-map-layers [map]="map" [layerControl]="layerControl" [displayOnLoad]="false"></external-map-layers>
+        </hybrid-map-grid>
+    </div>
+</div>

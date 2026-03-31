@@ -1,0 +1,38 @@
+@use "sass:color";
+
+:host {
+    display: flex;
+}
+
+.note {
+    background: var(--yellow-light);
+    padding: 0.5em 1em;
+    border-radius: 8px;
+    display: inline-block;
+    width: 100%;
+
+    &--default {
+        background: var(--yellow-light);
+    }
+
+    &--danger {
+        /* use CSS color-mix to lighten the CSS variable --red-default; fallback to the variable if unsupported */
+        background: color-mix(in srgb, var(--red-default) 80%, white 20%);
+        background: var(--red-default);
+    }
+
+    &--info {
+        background: var(--teal-lighter);
+        border: 1px solid var(--teal-light);
+        color: var(--teal-darker);
+    }
+
+    &--warning {
+        background: var(--yellow-light);
+        border: 1px solid var(--yellow-dark);
+    }
+
+    &--success {
+        background: var(--green-light);
+    }
+}

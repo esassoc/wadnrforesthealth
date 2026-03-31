@@ -1,0 +1,69 @@
+@use "/src/scss/abstracts" as *;
+@use "/src/scss/components/workflow-outlet";
+
+// Update-specific styles
+.alert {
+    margin-bottom: var(--spacing-400);
+    padding: var(--spacing-400);
+    border-radius: var(--border-radius-200);
+
+    &.alert-info {
+        background-color: var(--info-bg, #d1ecf1);
+        border: 1px solid var(--info-border, #bee5eb);
+        color: var(--info-text, #0c5460);
+    }
+
+    &.alert-warning {
+        background-color: var(--warning-bg, #fff3cd);
+        border: 1px solid var(--warning-border, #ffeeba);
+        color: var(--warning-text, #856404);
+    }
+}
+
+.workflow-footer {
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-200);
+    }
+}
+
+.workflow-footer__badge {
+    display: inline-block;
+    padding: 0.25em 0.5em;
+    font-size: 0.875em;
+    font-weight: 600;
+    border-radius: var(--border-radius-200);
+
+    &--secondary {
+        background-color: var(--gray-600);
+        color: var(--white);
+    }
+
+    &--info {
+        background-color: var(--info, #17a2b8);
+        color: var(--white);
+    }
+
+    &--success {
+        background-color: var(--success, #28a745);
+        color: var(--white);
+    }
+
+    &--warning {
+        background-color: var(--warning, #ffc107);
+        color: #212529;
+    }
+}
+
+.workflow-footer__loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    color: var(--gray-600);
+}
+
+.me-2 {
+    margin-right: var(--spacing-200);
+}

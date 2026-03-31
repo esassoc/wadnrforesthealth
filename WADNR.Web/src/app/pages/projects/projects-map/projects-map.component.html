@@ -1,0 +1,156 @@
+<page-header pageTitle="Project Map" [customRichTextTypeID]="customRichTextTypeID"></page-header>
+
+<div class="page-body projects-map">
+    @if (domains$ | async; as domains) {
+    <form [formGroup]="form">
+        <div class="projects-map__map-controls">
+            <div class="projects-map__controls-row projects-map__controls-row--primary">
+                <div class="projects-map__control-group projects-map__control-group--inline">
+                    <label for="color-by-select"><strong>Color Projects by:</strong></label>
+                    <ng-select #colorBySelect class="custom lt-panel-w-280" [items]="colorByOptions" bindLabel="Label" bindValue="Value" formControlName="colorBy" [clearable]="false" (open)="onDropdownOpen(colorBySelect)" labelForId="color-by-select" aria-label="Color projects by"> </ng-select>
+                </div>
+
+                <div class="projects-map__control-group projects-map__control-group--inline">
+                    <label for="filter-type-select"><strong>Filter Projects by:</strong></label>
+                    <ng-select #filterTypeSelect class="custom lt-panel-w-320" [items]="filterTypeOptions" bindLabel="Label" bindValue="Value" formControlName="filterType" [clearable]="false" (open)="onDropdownOpen(filterTypeSelect)" labelForId="filter-type-select" aria-label="Filter projects by">
+                        <ng-template ng-option-tmp let-item="item" let-index="index" let-active="active" let-selected="selected">
+                            <!-- Render a thin divider for items flagged as dividers (Value starts with __divider_) -->
+                            @if(!(item?.Value && ('' + item.Value).startsWith('__divider_'))) {
+                            <span class="ng-option-label">{{ item.Label }}</span>
+                            } @else {
+                            <div class="ng-option-divider" aria-hidden="true"></div>
+                            }
+                        </ng-template>
+                    </ng-select>
+                </div>
+
+                <div class="projects-map__control-group projects-map__control-group--values projects-map__control-group--inline">
+                    @if (filterValueOptions$ | async; as filterValueOptions) {
+                    <label for="filter-values-select" class="sr-only">Filter by values</label>
+                    <ng-select #filterValuesSelect class="custom lt-panel-w-540" [items]="filterValueOptions" bindLabel="Label" bindValue="Value" [compareWith]="compareFilterValues" multiple formControlName="filterValues" [closeOnSelect]="false" [searchable]="false" [clearOnBackspace]="false" (open)="onDropdownOpen(filterValuesSelect)" labelForId="filter-values-select" aria-label="Filter by values">
+                        <ng-template ng-header-tmp>
+                            <div class="projects-map__select-header-actions">
+                                <button type="button" class="btn btn-link" (click)="selectAllFilterValues(); $event.stopPropagation()">Select all</button>
+                                <button type="button" class="btn btn-link" (click)="deselectAllFilterValues(); $event.stopPropagation()">Deselect all</button>
+                            </div>
+                        </ng-template>
+                        <ng-template ng-option-tmp let-item="item" let-item$="item$">
+                            <div class="projects-map__option-with-checkbox">
+                                <input type="checkbox" [checked]="item$.selected" aria-hidden="true" tabindex="-1" />
+                                <span class="ng-option-label">{{ item.Label }}</span>
+                            </div>
+                        </ng-template>
+                        <ng-template ng-multi-label-tmp let-items="items">{{ items.length }} of {{ filterValueOptions.length }} selected</ng-template>
+                    </ng-select>
+                    }
+                </div>
+                <div class="projects-map__control-group projects-map__control-group--inline" style="position: relative">
+                    <a role="button" class="btn btn-link projects-map__no-simple-location-toggle" (click)="toggleSharePopup()">Link to this map</a>
+                    @if(showSharePopup) {
+                    <div
+                        class="projects-map__share-popup"
+                        style="
+                            position: absolute;
+                            top: 28px;
+                            left: 0;
+                            z-index: 1000;
+                            background: #fff;
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                            width: 620px;
+                        ">
+                        <div style="display: flex; align-items: center">
+                            <input type="text" readonly [value]="shareUrl" aria-label="Share URL" class="lt-panel-w-420" style="flex: 1; margin-right: 8px" />
+                            <button type="button" class="btn btn-primary" (click)="copyShareUrl()">Copy</button>
+                            <button type="button" class="btn btn-secondary" (click)="toggleSharePopup()" style="margin-left: 8px">Close</button>
+                        </div>
+                        @if(copySuccess) {
+                        <div style="color: green; margin-top: 6px">Copied!</div>
+                        }
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <div class="projects-map__controls-row projects-map__controls-row--secondary">
+                <div class="projects-map__control-group projects-map__control-group--inline projects-map__control-group--toggles">
+                    <label for="cluster-checkbox"><strong>Cluster Project Locations</strong></label>
+                    <input type="checkbox" id="cluster-checkbox" formControlName="cluster" />
+                </div>
+            </div>
+
+            <div class="projects-map__controls-row projects-map__controls-row--secondary">
+                <map-search *ngIf="mapIsReady" [map]="map"></map-search>
+            </div>
+        </div>
+    </form>
+    <div class="projects-map__map-and-list" [loadingSpinner]="{ isLoading: !(projectPoints$ | async) }">
+        <div class="projects-map__map-area" [class.projects-map__map-area--with-list]="showProjectWithNoSimpleLocationList">
+            <div class="projects-map__map-legend-row">
+                <project-stage-map-legend />
+
+                <button
+                    type="button"
+                    class="btn btn-link projects-map__no-simple-location-toggle"
+                    (click)="toggleProjectsWithNoSimpleLocationList()"
+                    aria-expanded="{{ showProjectWithNoSimpleLocationList }}">
+                    {{ showProjectWithNoSimpleLocationList ? "Hide Projects with no Simple Location" : "Show Projects with no Simple Location" }}
+                </button>
+            </div>
+
+            <wadnr-map [mapHeight]="mapHeight" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
+                @if(mapIsReady) {
+                <project-locations-simple-layer
+                    [map]="map"
+                    [layerControl]="layerControl"
+                    [projectPoints]="projectPoints$ | async"
+                    [colorByPropertyName]="form.get('colorBy')?.value"
+                    [legendColorsToUse]="legendColorsToUse"
+                    [filterPropertyName]="currentFilterPropertyName"
+                    [filterPropertyValues]="selectedFilterValues"
+                    [clusterPoints]="form.get('cluster')?.value ?? cluster"
+                    [renderAsCircleMarkers]="true">
+                </project-locations-simple-layer>
+                <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'project-map'" [displayOnLoad]="false"></external-map-layers>
+                <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                    [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"
+                    [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Simple)'" [wmsStyle]="'location_simple'"
+                    [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                </generic-wms-wfs-layer>
+                <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                    [wmsLayerName]="'WADNRForestHealth:ProjectLocationDetailed'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationDetailed'"
+                    [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Detailed)'" [wmsStyle]="'location_detailed'"
+                    [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                </generic-wms-wfs-layer>
+                <priority-landscapes-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                <dnr-upland-regions-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
+                <counties-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></counties-layer>
+                }
+            </wadnr-map>
+        </div>
+
+        <!-- Sliding side panel for no-simple-location projects (replaces old aside.no-simple-location-list) -->
+        <aside
+            class="projects-map__side-panel"
+            [class.projects-map__side-panel--open]="showProjectWithNoSimpleLocationList"
+            aria-hidden="{{ !showProjectWithNoSimpleLocationList }}">
+            <div class="projects-map__side-panel-header">Some Projects do not have a simple location and are not represented by a point on the map, but are listed here.</div>
+
+            <div class="projects-map__side-panel-body">
+                @if (noSimpleLocationTree$ | async; as treeNodes) {
+                <div class="projects-map__tree-container">
+                    <simple-tree [nodes]="treeNodes" [initialExpandedDepth]="1"></simple-tree>
+                </div>
+                } @else {
+                <div class="projects-map__side-panel-empty">No no-simple-location projects found.</div>
+                }
+            </div>
+        </aside>
+    </div>
+    } @else {
+    <div class="projects-map__map-controls">
+        <p>Loading filter lists...</p>
+    </div>
+    }
+</div>

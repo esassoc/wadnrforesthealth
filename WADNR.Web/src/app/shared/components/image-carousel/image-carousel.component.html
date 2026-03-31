@@ -1,0 +1,41 @@
+@if (images?.length > 0) {
+<div class="carousel" [style.--carousel-height]="height" (mouseenter)="pause()" (mouseleave)="resume()">
+    <div class="carousel__viewport">
+        @for (image of images; track image.FileResourceGUID; let i = $index) {
+        <div
+            class="carousel__slide"
+            [class.active]="i === currentSlide()"
+            [style.background-image]="getSlideBackgroundUrl(image)">
+            @if (image.Caption) {
+            <div class="carousel__caption">
+                <p>{{ image.Caption }}</p>
+            </div>
+            }
+        </div>
+        }
+    </div>
+
+    @if (hasMultiple) {
+    <button type="button" class="carousel__nav carousel__nav--prev" (click)="prevSlide()" aria-label="Previous">
+        <span class="carousel__chevron">&#8249;</span>
+    </button>
+    <button type="button" class="carousel__nav carousel__nav--next" (click)="nextSlide()" aria-label="Next">
+        <span class="carousel__chevron">&#8250;</span>
+    </button>
+
+    <div class="carousel__dots">
+        @for (image of images; track image.FileResourceGUID; let i = $index) {
+        <button
+            type="button"
+            class="carousel__dot"
+            [class.active]="i === currentSlide()"
+            (click)="goToSlide(i)"
+            [attr.aria-label]="'Go to slide ' + (i + 1)">
+        </button>
+        }
+    </div>
+    }
+</div>
+} @else {
+<em class="text-muted">{{ noImagesMessage }}</em>
+}

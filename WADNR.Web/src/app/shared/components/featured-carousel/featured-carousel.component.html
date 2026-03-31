@@ -1,0 +1,58 @@
+<div class="featured-carousel__wrap eip-overview-bg" aria-roledescription="carousel" (mouseenter)="pause()" (mouseleave)="resume()">
+    @if (projects?.length) { @let p = projects[index()];
+    <div class="featured-carousel__slide" [@slide]="dir()" [attr.aria-live]="hasMany ? 'polite' : 'off'" [attr.id]="ariaSlideId()">
+        <!-- Title (full-width, above columns) -->
+        <div class="featured-carousel__title">
+            <a [routerLink]="['/projects', p.ProjectID, 'fact-sheet']" class="featured-carousel__title-link">
+                {{ p.ProjectName }}
+            </a>
+        </div>
+
+        <!-- Two-column body: photo (left) | meta (right) -->
+        <div class="featured-carousel__body" [class.featured-carousel__body--no-photo]="!p.KeyPhotoFileResourceGuid">
+            @if (p.KeyPhotoFileResourceGuid) {
+            <div class="featured-carousel__media">
+                <div class="featured-carousel__photo" [style.--imgRadius.px]="imageRadius">
+                    <img [src]="photoUrl(p.KeyPhotoFileResourceGuid)!" [alt]="p.KeyPhotoCaption || p.ProjectName" />
+                </div>
+
+                @if(p.KeyPhotoCaption) {
+                <div class="featured-carousel__caption">{{ p.KeyPhotoCaption }}</div>
+                }
+            </div>
+            }
+
+            <div class="featured-carousel__meta">
+                <dl class="grid-12">
+                    <dt class="g-col-4">Project Number</dt>
+                    <dd class="g-col-8">{{ p.ProjectNumber }}</dd>
+                    <dt class="g-col-4">Action Priority</dt>
+                    <dd class="g-col-8">{{ p.ActionPriority }}</dd>
+                    <dt class="g-col-4">Implementers</dt>
+                    <dd class="g-col-8">{{ p.Implementers }}</dd>
+                    <dt class="g-col-4">Stage</dt>
+                    <dd class="g-col-8">{{ p.Stage }}</dd>
+                    <dt class="g-col-4">Duration</dt>
+                    <dd class="g-col-8">{{ p.Duration }}</dd>
+                </dl>
+
+                <div class="featured-carousel__desc">
+                    {{ p.ProjectDescription }}
+                </div>
+
+                <div class="featured-carousel__more">
+                    <a [routerLink]="['/projects', p.ProjectID, 'fact-sheet']">View More</a>
+                </div>
+            </div>
+        </div>
+
+        @if(hasMany) {
+        <div class="featured-carousel__dots">
+            @for (proj of projects; track proj.ProjectID; let i = $index) {
+            <button type="button" class="featured-carousel__dot" [class.active]="i === index()" (click)="go(i)" [attr.aria-label]="'Go to slide ' + (i + 1)">•</button>
+            }
+        </div>
+        }
+    </div>
+    }
+</div>

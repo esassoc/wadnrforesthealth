@@ -1,0 +1,45 @@
+@use "/src/scss/abstracts" as *;
+
+.workflow-nav-item {
+    a:hover .workflow-nav-item__icon--complete {
+        color: var(--white);
+    }
+
+    &__icon--complete {
+        color: var(--green-default);
+    }
+
+    &__icon--info {
+        color: var(--teal-default);
+    }
+
+    &__link {
+        display: flex;
+        align-items: center;
+
+        &--disabled {
+            pointer-events: none;
+            cursor: default;
+        }
+
+        &--active {
+            background: var(--secondary);
+            color: var(--white);
+            font-weight: bold;
+
+            icon {
+                color: var(--white);
+            }
+
+            .workflow-nav-item__changes-flag {
+                color: var(--white);
+            }
+        }
+    }
+
+    &__changes-flag {
+        color: var(--amber, #f59e0b);
+        margin-left: auto;
+        flex-shrink: 0;
+    }
+}

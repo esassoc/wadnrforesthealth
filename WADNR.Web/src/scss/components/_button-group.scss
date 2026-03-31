@@ -1,0 +1,37 @@
+@use "/src/scss/abstracts" as *;
+
+.button-group {
+    display: flex;
+    border-bottom: 1px solid var(--gray-200);
+    margin-bottom: var(--spacing-400);
+
+    &__item {
+        display: inline-flex;
+        padding: 0.75rem 1rem 0.25em;
+        color: var(--primary);
+        background-color: var(--white);
+        font-weight: bold;
+        transition: all 200ms ease;
+        border-top-left-radius: var(--border-radius-200);
+        border-top-right-radius: var(--border-radius-200);
+        border: 1px solid var(--primary);
+        border-bottom: none;
+        appearance: none;
+
+        &:hover {
+            cursor: pointer;
+            color: var(--white);
+            background-color: var(--primary);
+        }
+
+        &.active {
+            background: var(--primary);
+            color: var(--white);
+            cursor: pointer;
+
+            &:hover {
+                color: var(--white);
+            }
+        }
+    }
+}

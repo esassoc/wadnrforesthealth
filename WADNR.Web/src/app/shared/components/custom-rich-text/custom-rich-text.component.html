@@ -1,0 +1,30 @@
+<div [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 100 }">
+  @if (!(isEditing$ | async)) {
+    <div class="custom-rich-text__content" [class.custom-rich-text__content--editable]="canEdit$ | async" style="position: relative; min-height: 3rem">
+      @if (canEdit$ | async) {
+        <div class="custom-rich-text__edit-btn">
+          <div style="transform: translate3d(-10px, 20px, 0)">
+            <button type="button" class="btn btn-secondary" (click)="enterEdit()">Edit</button>
+          </div>
+        </div>
+      }
+      @if (!(isEmptyContent$ | async)) {
+        <div class="customRichTextContent" [innerHtml]="customRichTextContent$ | async"></div>
+      }
+      @if (isEmptyContent$ | async) {
+        <div class="custom-rich-text__empty-space"></div>
+      }
+    </div>
+  } @else {
+    <div>
+      <div class="custom-rich-text__editor">
+        <editor #tinyMceEditor [init]="tinyMceConfig" [(ngModel)]="editedContent"></editor>
+      </div>
+      <div class="flex-end">
+        <button type="button" class="btn btn-secondary mt-1 mr-2" (click)="saveEdit()">Save</button>
+        <button type="button" class="btn btn-secondary-outline mt-1" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </div>
+  }
+
+</div>

@@ -1,0 +1,49 @@
+@if (gridRef) {
+<wadnr-grid-header [grid]="gridRef" [rowDataCount]="rowData?.length" [leftAlignClearFiltersButton]="true" [disableGlobalFilter]="selectedPanel === 'Map'">
+    <div customGridActionsCenter>
+        <div class="hybrid-map-grid__toggle hybrid-map-grid__toggle-bar">
+            <button class="hybrid-map-grid__toggle-btn btn-sm" [class.active]="selectedPanel === 'Grid'" (click)="toggleSelectedPanel('Grid')">
+                <icon icon="BulletedList"></icon>
+                Grid
+            </button>
+            <button class="hybrid-map-grid__toggle-btn btn-sm" [class.active]="selectedPanel === 'Hybrid'" (click)="toggleSelectedPanel('Hybrid')">
+                <icon icon="Layout"></icon>
+                Hybrid
+            </button>
+            <button class="hybrid-map-grid__toggle-btn btn-sm" [class.active]="selectedPanel === 'Map'" (click)="toggleSelectedPanel('Map')">
+                <icon icon="VerticalMap"></icon>
+                Map
+            </button>
+        </div>
+    </div>
+    <div customGridActionsRight>
+        <ng-content select="[headerActions]"></ng-content>
+    </div>
+</wadnr-grid-header>
+}
+
+<div class="hybrid-map-grid__container mt-3">
+    <div [class.g-col-6]="selectedPanel === 'Hybrid'" [class.g-col-12]="selectedPanel === 'Grid'" [class.hybrid-map-grid__panel--hidden]="selectedPanel === 'Map'">
+        <wadnr-grid
+            [height]="mapHeight"
+            [rowData]="rowData"
+            [columnDefs]="columnDefs"
+            [overrideDefaultGridHeader]="true"
+            defaultRowSelection="singleRow"
+            (gridReady)="onGridReady($event)"
+            (gridRefReady)="onGridRefReady($event)"
+            (selectionChanged)="onGridSelectionChanged()"
+            [downloadFileName]="downloadFileName"
+            [fullscreenTitle]="fullscreenTitle"
+            [colIDsToExclude]=""
+            [sizeColumnsToFitGrid]="sizeColumnsToFitGrid"></wadnr-grid>
+    </div>
+
+    <div [class.g-col-6]="selectedPanel === 'Hybrid'" [class.g-col-12]="selectedPanel === 'Map'" [class.hybrid-map-grid__panel--hidden]="selectedPanel === 'Grid'">
+        <wadnr-map [mapHeight]="mapHeight" (onMapLoad)="handleMapReady($event)">
+            @if (mapIsReady) {
+            <ng-content select="[mapLayers]"></ng-content>
+            }
+        </wadnr-map>
+    </div>
+</div>

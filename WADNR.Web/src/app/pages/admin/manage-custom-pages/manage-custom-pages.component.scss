@@ -1,0 +1,12 @@
+.manage-custom-pages {
+    &__button-row {
+        text-align: right;
+        margin-bottom: var(--spacing-100);
+    }
+
+    &__preview-heading {
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: var(--spacing-400);
+    }
+}

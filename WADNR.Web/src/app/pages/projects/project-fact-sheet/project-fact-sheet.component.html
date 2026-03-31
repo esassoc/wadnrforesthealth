@@ -1,0 +1,167 @@
+@if(project$ | async; as project) {
+<div [class.fact-sheet--capture-mode]="isPrintMode" style="padding: 15px 0 15px 0">
+    <div class="grid-12 fact-sheet__no-print">
+        <div class="g-col-12" style="text-align: right">
+            <a class="btn btn-primary" [routerLink]="['/projects', project?.ProjectID]">Project Details</a>
+            <a class="btn btn-primary ml-2" (click)="downloadFactSheetPdf(project.ProjectName)" [class.disabled]="isLoadingPdf()" [buttonLoading]="isLoadingPdf()">Print to PDF</a>
+        </div>
+
+        <app-alert-display></app-alert-display>
+    </div>
+    <div class="fact-sheet">
+        <div class="row section">
+            <div class="grid-12">
+                <div class="g-col-2 fact-sheet__header-logo-area" [style.border-right-color]="project?.ProjectType?.ThemeColor">
+                    <img src="assets/logos/wadnr-logo_fact-sheet.png" alt="WADNR Logo" />
+                </div>
+                <div class="g-col-10 fact-sheet__header-panel">
+                    <div class="grid-12">
+                        <h1 class="fact-sheet__project-name" [style.color]="project?.ProjectType?.ThemeColor">{{ project?.ProjectName }}</h1>
+
+                        @if(project.ProjectType) {
+                        <div class="g-col-3"><strong>Project Type</strong></div>
+                        <div class="g-col-9">{{ project.ProjectType.ProjectTypeName }}</div>
+                        }
+
+                        <div class="g-col-3"><strong>Lead Implementer</strong></div>
+                        <div class="g-col-9">{{ project?.LeadImplementer.OrganizationName || "—" }}</div>
+
+                        <div class="g-col-3"><strong>Primary Contact</strong></div>
+                        <div class="g-col-9">{{ project.PrimaryContact?.FullName }} ({{ project.PrimaryContact?.Email }})</div>
+
+                        <div class="g-col-3"><strong>Project Stage</strong></div>
+                        <div class="g-col-9">{{ project?.ProjectStage.ProjectStageName || "—" }}</div>
+
+                        <div class="g-col-3"><strong>Duration</strong></div>
+                        <div class="g-col-9">{{ project?.Duration || "—" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-12">
+                <div class="g-col-12">
+                    <div class="fact-sheet__section-header fact-sheet__section-header--project-type" [style.backgroundColor]="project?.ProjectType?.ThemeColor">
+                        {{ project?.ProjectType.ProjectTypeName }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row section">
+                <div class="grid-12">
+                    <div class="g-col-7">
+                        <div class="grid-12">
+                            <div class="g-col-12">
+                                <div class="fact-sheet__description">{{ project?.ProjectDescription }}</div>
+                            </div>
+                            <div class="g-col-12">
+                                <h4 [style.color]="project?.ProjectType?.ThemeColor">Project Themes</h4>
+                                @if(projectThemes$ | async; as themes) { @if(themes && themes.length > 0) {
+                                <ul>
+                                    @for (t of themes; track t) {
+                                    <li>{{ t.DisplayName }}</li>
+                                    }
+                                </ul>
+                                } @else {
+                                <div><em>No project themes provided</em></div>
+                                } } @else {
+                                <div class="fact-sheet__system-text">Loading project themes…</div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="g-col-5">
+                        @if(keyPhoto$ | async; as key) {
+                        <div class="fact-sheet__key-photo">
+                            <img class="img-responsive eipRoundedImg" [src]="photoUrl(key.FileResourceGuid)" [alt]="key.Caption || project.ProjectName" />
+                            <span class="fact-sheet__caption-text">{{ key.Caption }}</span>
+                        </div>
+                        } @else {
+                        <div><em>No Key Photo provided for this Project</em></div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-12">
+                <div class="g-col-6 fact-sheet__map-area">
+                    <h4 [style.color]="project?.ProjectType?.ThemeColor">Location</h4>
+                    <wadnr-map
+                        [mapHeight]="getMapHeight()"
+                        [selectedTileLayer]="'Terrain'"
+                        [disableMapInteraction]="false"
+                        [showLegend]="false"
+                        [collapseLayerControlOnLoad]="true"
+                        [boundingBox]="projectBoundingBox$ | async"
+                        (onMapLoad)="handleMapReady($event)">
+                        @if (map) {
+                        <project-locations-as-reference-layers
+                            [projectID]="project.ProjectID"
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [displayOnLoad]="true"
+                            [fitBoundsOnLoad]="true"
+                            (allLayersReady)="onMapLayersReady()">
+                        </project-locations-as-reference-layers>
+                        <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
+                        <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                            [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"
+                            [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Simple)'" [wmsStyle]="'location_simple'"
+                            [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                        </generic-wms-wfs-layer>
+                        <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                            [wmsLayerName]="'WADNRForestHealth:ProjectLocationDetailed'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationDetailed'"
+                            [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Detailed)'" [wmsStyle]="'location_detailed'"
+                            [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                        </generic-wms-wfs-layer>
+                        <priority-landscapes-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                        <dnr-upland-regions-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
+                        <counties-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></counties-layer>
+                        }
+                    </wadnr-map>
+                </div>
+            </div>
+
+            <div class="section" style="page-break-before: always; margin-top: 24px">
+                <h4 [style.color]="project?.ProjectType?.ThemeColor">Photos</h4>
+                <div class="g-col-12">
+                    @if(groupedImages$ | async; as groups) { @if(groups && groups.length > 0) { @for (group of groups; track group.timingId) {
+                    <h5 class="fact-sheet__photo-group-heading">{{ group.timingName }} ({{ group.images.length }})</h5>
+                    <div class="fact-sheet__photo-grid">
+                        @for (img of group.images; track img.ProjectImageID) {
+                        <figure class="fact-sheet__photo-thumb">
+                            <a (click)="$event.preventDefault(); openImage(img)" href="#" role="button" aria-label="Open photo">
+                                <img [src]="photoUrl(img.FileResourceGuid)" [alt]="img.Caption || 'Photo'" loading="lazy" />
+                            </a>
+                            <figcaption>{{ img.Caption }}</figcaption>
+                        </figure>
+                        }
+                    </div>
+                    } } @else {
+                    <p><em>No additional photos available for this project.</em></p>
+                    } } @else {
+                    <p class="fact-sheet__system-text">Loading photos…</p>
+                    }
+
+                    <!-- Lightbox modal: uses selectedImage on the component -->
+                    @if(selectedImage) {
+                    <div class="fact-sheet__lightbox-backdrop" (click)="closeImage()" (keydown.enter)="closeImage()" (keydown.escape)="closeImage()" tabindex="0" role="button" aria-label="Close image">
+                        <div class="fact-sheet__lightbox-content" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" role="presentation">
+                            <button class="fact-sheet__lightbox-close" (click)="closeImage()" aria-label="Close">×</button>
+                            <button class="fact-sheet__lightbox-prev" (click)="$event.stopPropagation(); prevImage()" aria-label="Previous image">‹</button>
+                            <img [src]="photoUrl(selectedImage.FileResourceGuid)" [alt]="selectedImage.Caption || 'Photo'" />
+                            <button class="fact-sheet__lightbox-next" (click)="$event.stopPropagation(); nextImage()" aria-label="Next image">›</button>
+                            <div class="fact-sheet__lightbox-caption">{{ selectedImage.Caption }}</div>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <div class="fact-sheet__only-print" style="text-align: right">
+                <hr />
+                Project Fact Sheet Data as of {{ today | date : "shortDate" }}
+            </div>
+        </div>
+    </div>
+</div>
+}

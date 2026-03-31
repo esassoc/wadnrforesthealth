@@ -1,0 +1,85 @@
+@use "/src/scss/abstracts" as *;
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 600;
+}
+
+.page-title {
+    font-weight: 600;
+    font-size: var(--type-size-700);
+    padding-bottom: 0.5rem;
+    color: var(--brown-800);
+
+    @include desktop-small-max {
+        font-size: var(--type-size-400);
+    }
+
+    .module-title svg {
+        width: 24px;
+        height: 24px;
+
+        path {
+            fill: var(--primary);
+        }
+
+        &.svg-stroke {
+            path {
+                stroke: var(--primary);
+            }
+
+            &.fill-none {
+                path {
+                    fill: none;
+                }
+            }
+        }
+    }
+    small {
+        font-size: var(--type-size-300);
+    }
+}
+
+.section-title {
+    font-weight: 700;
+    font-size: var(--type-size-400);
+    padding-bottom: 0.5rem;
+
+    @include desktop-small {
+        font-size: var(--type-size-500);
+    }
+
+    &.small {
+        font-size: var(--type-size-300);
+
+        @include desktop-small {
+            font-size: var(--type-size-400);
+        }
+    }
+
+    &.primary {
+        color: var(--primary);
+    }
+    &.underline {
+        border-bottom: 2px solid var(--tan);
+        margin-bottom: 1rem;
+    }
+}
+
+.module-title {
+    font-size: var(--type-size-200);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: bold;
+    padding-bottom: 0.5rem;
+    color: var(--primary);
+
+    &.underline {
+        border-bottom: 2px solid var(--primary);
+        margin-bottom: 1rem;
+    }
+}

@@ -1,0 +1,82 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>{{ modalTitle }}</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.RelationshipTypeName"
+            fieldLabel="Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter relationship type name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.CanStewardProjects"
+            fieldLabel="Can Steward?"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.IsPrimaryContact"
+            fieldLabel="Serves as Primary Contact?"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.CanOnlyBeRelatedOnceToAProject"
+            fieldLabel="Must be Related to Once?"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ShowOnFactSheet"
+            fieldLabel="Show on Fact Sheet?"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ReportInAccomplishmentsDashboard"
+            fieldLabel="Report in Accomplishments Dashboard?"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.RelationshipTypeDescription"
+            fieldLabel="Relationship Type Description"
+            [type]="FormFieldType.Textarea"
+            placeholder="Enter description">
+        </form-field>
+    </form>
+
+    <hr>
+    <p class="mb-3">Select which Contributing Organization Types can be associated to a Project with this Project Relationship Type</p>
+    <div class="grid-12">
+        @for (opt of orgTypeCheckboxes; track opt.id) {
+            <div class="g-col-6">
+                <form-field
+                    [formControl]="opt.control"
+                    [type]="FormFieldType.Check"
+                    [checkLabel]="opt.label">
+                </form-field>
+            </div>
+        }
+    </div>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [buttonLoading]="isSubmitting">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

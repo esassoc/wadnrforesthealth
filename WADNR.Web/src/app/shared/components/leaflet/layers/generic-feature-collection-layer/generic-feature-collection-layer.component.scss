@@ -1,0 +1,40 @@
+.feature-layer {
+    &__legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    &__swatch {
+        width: 14px;
+        height: 14px;
+        border-radius: 2px;
+        border: 2px solid rgba(0, 0, 0, 0.25);
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    &__swatch-fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: inherit;
+    }
+
+    &__marker {
+        position: relative;
+        height: 14px;
+        width: auto;
+        display: block;
+    }
+
+    &__title {
+        line-height: 1;
+    }
+}

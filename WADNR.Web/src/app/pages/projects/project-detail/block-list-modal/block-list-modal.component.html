@@ -1,0 +1,48 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Add to Import Block List</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <p>Adding this project to the block list will prevent it from being overwritten by future GIS imports. At least one of Project GIS Identifier or Project Name is required.</p>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.ProjectGisIdentifier"
+            fieldLabel="Project GIS Identifier"
+            [type]="FormFieldType.Text"
+            placeholder="Enter GIS identifier">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ProjectName"
+            fieldLabel="Project Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter project name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.Notes"
+            fieldLabel="Notes"
+            [type]="FormFieldType.Textarea"
+            placeholder="Enter notes (optional)">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [buttonLoading]="isSubmitting()"
+        [disabled]="isSubmitting()">
+        Add to Block List
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting()">
+        Cancel
+    </button>
+</div>
+</div>

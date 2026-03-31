@@ -1,0 +1,102 @@
+.classifications {
+    &__grid {
+        --tile-gap: var(--spacing-400);
+        --tile-size: 18rem;
+
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--tile-gap);
+
+        max-width: calc((var(--tile-size) * 3) + (var(--tile-gap) * 2));
+        margin-inline: auto;
+
+        @media (max-width: 992px) {
+            --tile-size: 16rem;
+            max-width: calc((var(--tile-size) * 2) + var(--tile-gap));
+        }
+
+        @media (max-width: 576px) {
+            --tile-size: 100%;
+            max-width: 100%;
+        }
+    }
+
+    &__tile {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--border-radius-300);
+        box-shadow: var(--shadow-100);
+        text-decoration: none;
+        overflow: hidden;
+
+        height: 180px;
+        width: var(--tile-size);
+        flex: 0 1 var(--tile-size);
+        max-width: 100%;
+
+        &:hover {
+            .classifications__hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    &__content {
+        padding: var(--spacing-400);
+        text-align: center;
+        color: var(--white);
+    }
+
+    &__title {
+        font-size: var(--type-size-300);
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    &__count {
+        margin-top: var(--spacing-200);
+        font-size: var(--type-size-150);
+        font-weight: 600;
+        line-height: 1.2;
+        color: var(--white);
+    }
+
+    &__hover {
+        position: absolute;
+        inset: 0;
+        padding: var(--spacing-400);
+        background: rgba(var(--black-rgb), 0.6);
+        color: var(--white);
+
+        opacity: 0;
+        pointer-events: none;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+        &-title {
+            font-size: var(--type-size-300);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        &-description {
+            margin-top: var(--spacing-300);
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            word-break: break-word;
+
+            display: -webkit-box;
+            line-clamp: 6;
+            -webkit-line-clamp: 6;
+            -webkit-box-orient: vertical;
+        }
+    }
+}

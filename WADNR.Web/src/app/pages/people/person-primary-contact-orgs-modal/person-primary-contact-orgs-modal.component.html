@@ -1,0 +1,39 @@
+<div class="modal">
+    <div class="modal-header">
+        <h3>Edit Contributing Organizations for which {{ personFullName }} is a Contributing Organization Primary Contact</h3>
+    </div>
+    <div class="modal-body">
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+        <form-field
+            fieldLabel="Contributing Organization to Add"
+            [type]="FormFieldType.Select"
+            [formControl]="orgSelectControl"
+            [formInputOptions]="availableOptions"
+            placeholder="Search for an organization..."
+            appendTo="body">
+        </form-field>
+
+        <hr />
+
+        <span class="field-label">Contributing Organizations</span>
+        @if (selectedOrganizations.length > 0) {
+            <ul class="editor-list">
+                @for (org of sortedOrganizations; track org.OrganizationID) {
+                    <li>
+                        <a href="javascript:void(0)" (click)="removeOrganization(org.OrganizationID)" title="Remove" aria-label="Remove" class="text-danger" style="text-decoration: none">
+                            <icon [icon]="'Delete'" aria-hidden="true"></icon>
+                        </a>
+                        {{ getDisplayName(org) }}
+                    </li>
+                }
+            </ul>
+        } @else {
+            <p class="system-text">No contributing organizations assigned.</p>
+        }
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="save()" [disabled]="isSubmitting" [buttonLoading]="isSubmitting">Save</button>
+        <button class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
+    </div>
+</div>

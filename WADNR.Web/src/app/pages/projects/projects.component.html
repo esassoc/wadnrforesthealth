@@ -1,0 +1,23 @@
+<page-header pageTitle="Full Project List" [customRichTextTypeID]="customRichTextTypeID" [templateRight]="headerButtons"></page-header>
+
+<ng-template #headerButtons>
+    <div class="flex gap-2">
+        @if (canCreateProject$ | async) {
+            @if (canCreateGisUpload$ | async) {
+                <button class="btn btn-primary" (click)="openGisImportModal()">
+                    <span class="fas fa-upload"></span> GIS Import/Update
+                </button>
+            }
+            <a class="btn btn-primary" [routerLink]="['/projects/new']">
+                <span class="fas fa-plus"></span> Add Project
+            </a>
+            <a class="btn btn-primary" [routerLink]="['/projects/my']" [queryParams]="{ filter: 'requiring-update' }">
+                <icon icon="Edit"></icon> Update Project
+            </a>
+        }
+    </div>
+</ng-template>
+
+<div class="page-body">
+    <project-grid [rowData]="projects$ | async" [showTagging]="(isAdmin$ | async) ?? false" [excelDownloadUrl]="(canDownloadExcel$ | async) ? excelDownloadUrl : null" (tagged)="onTagged()"></project-grid>
+</div>

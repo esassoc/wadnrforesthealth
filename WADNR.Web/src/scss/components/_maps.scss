@@ -1,0 +1,30 @@
+@use "/src/scss/abstracts" as *;
+
+.map-wrapper {
+    margin: 2rem 0 2rem 0;
+}
+
+.wadnr-cluster {
+    color: var(--white);
+    background-color: rgba(var(--primary-rgb), 0.6);
+    div {
+        background-color: rgba(var(--primary-rgb), 0.6);
+    }
+}
+
+#UpdateParcelsMap {
+    cursor: pointer;
+}
+
+.hover-feature {
+    transition: all 0.1s;
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
+.wadnr-div-icon {
+    svg {
+        transform: rotate(180deg);
+    }
+}

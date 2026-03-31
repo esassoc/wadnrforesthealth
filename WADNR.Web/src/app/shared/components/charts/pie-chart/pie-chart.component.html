@@ -1,0 +1,29 @@
+<div [loadingSpinner]="{ isLoading }" class="pie-chart__section">
+    <div [id]="chartID" class="pie-chart__root" [style.height.px]="height">
+        @if (centerTotal !== null) {
+        <div class="pie-chart__center-overlay">
+            <div class="pie-chart__center-value">{{ centerTotalFormatted }}</div>
+        </div>
+        }
+    </div>
+
+    @if(showLegend) {
+    <div class="pie-chart__legend-wrapper">
+        <div class="pie-chart__swatches" role="list">
+            <div class="pie-chart__legend">
+                @for (kv of colors | defaultOrderKeyvalue; track kv) {
+                <div class="pie-chart__legend-row">
+                    <button type="button" class="pie-chart__swatch" [style.background]="kv.value" (click)="toggleGroup(kv.key)">
+                        <span class="pie-chart__swatch-inner" [class.pie-chart__swatch-inner--disabled]="hiddenGroups.has(kv.key)"></span>
+                    </button>
+                    <button class="pie-chart__legend-label" (click)="toggleGroup(kv.key)">
+                        <span class="pie-chart__legend-text">{{ kv.key }}:</span>
+                        <span class="pie-chart__legend-value">{{ formatLegendValue(legendValues.get(kv.key)) }}</span>
+                    </button>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+    }
+</div>

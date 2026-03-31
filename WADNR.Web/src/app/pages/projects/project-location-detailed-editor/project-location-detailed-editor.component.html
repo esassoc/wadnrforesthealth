@@ -1,0 +1,158 @@
+<div class="modal">
+    @if ({ visible: visibleFeatures$ | async, deleted: deletedFeatures$ | async, _sel: selectedFeatureId$ | async }; as state) {
+    <div class="modal-header">
+        <h4 class="modal-title">Edit Detailed Location</h4>
+    </div>
+    <div class="modal-body" [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 300 }">
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+        <p class="mb-3">
+            Draw project location boundaries on the map using the polygon tool. Click a feature on the map or in the table to select it.
+            Use the edit button to modify vertices, or the delete button to remove features.
+        </p>
+
+        <div class="mb-3">
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="openImportGdbModal()" [disabled]="isSubmitting">
+                <i class="fas fa-file-import"></i> Import GDB File
+            </button>
+        </div>
+
+        <!-- Map -->
+        <div class="location-editor__map-container mb-3">
+            <wadnr-map [mapHeight]="'400px'" [boundingBox]="ref.data.boundingBox" (onMapLoad)="handleMapLoad($event)">
+                @if (mapIsReady()) {
+                    <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
+                    <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                        [wmsLayerName]="'WADNRForestHealth:ProjectLocationSimple'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationSimple'"
+                        [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Simple)'" [wmsStyle]="'location_simple'"
+                        [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                    </generic-wms-wfs-layer>
+                    <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                        [wmsLayerName]="'WADNRForestHealth:ProjectLocationDetailed'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationDetailed'"
+                        [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Detailed)'" [wmsStyle]="'location_detailed'"
+                        [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+                    </generic-wms-wfs-layer>
+                    <priority-landscapes-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                    <dnr-upland-regions-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
+                    <counties-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></counties-layer>
+                }
+            </wadnr-map>
+        </div>
+
+        <!-- Features Table -->
+        @if (state.visible && state.visible.length > 0) {
+            <div class="mb-3">
+                <h5>Locations</h5>
+                <table class="table table-sm location-editor__features-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%"></th>
+                            <th style="width: 25%">Name</th>
+                            <th style="width: 10%">Shape</th>
+                            <th style="width: 18%">Type</th>
+                            <th style="width: 42%">Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (feature of state.visible; track feature.leafletId) {
+                            <tr [class.location-editor__features-table--selected]="selectedFeatureId$.value === feature.leafletId"
+                                [class.location-editor__features-table--modified]="feature.isModified || feature.isNew"
+                                (click)="selectFeature(feature)">
+                                <td>
+                                    @if (feature.hasTreatments) {
+                                        <strong class="text-muted" title="Has associated Treatments">*</strong>
+                                    } @else if (feature.isFromArcGis) {
+                                        <strong class="text-muted" title="Imported from ArcGIS">**</strong>
+                                    } @else {
+                                        <button type="button"
+                                                class="btn btn-sm text-danger location-editor__action-btn"
+                                                (click)="deleteFeature(feature); $event.stopPropagation()"
+                                                [disabled]="isSubmitting"
+                                                title="Delete location">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    }
+                                </td>
+                                <td (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
+                                    <form-field
+                                        [formControl]="getFeatureControls(feature).name"
+                                        [type]="FormFieldType.Text"
+                                        placeholder="Enter name"
+                                        fieldLabel="Name"
+                                        [srOnlyLabel]="true"
+                                        maxlength="100">
+                                    </form-field>
+                                </td>
+                                <td>
+                                    <span class="location-editor__shape-badge location-editor__shape-badge--{{ feature.shapeType | lowercase }}">
+                                        {{ feature.shapeType }}
+                                    </span>
+                                </td>
+                                <td (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
+                                    <form-field
+                                        [formControl]="getFeatureControls(feature).type"
+                                        [type]="FormFieldType.Select"
+                                        [formInputOptions]="locationTypeOptions"
+                                        fieldLabel="Type"
+                                        [srOnlyLabel]="true">
+                                    </form-field>
+                                </td>
+                                <td (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
+                                    <form-field
+                                        [formControl]="getFeatureControls(feature).notes"
+                                        [type]="FormFieldType.Textarea"
+                                        placeholder="Optional notes"
+                                        fieldLabel="Notes"
+                                        [srOnlyLabel]="true"
+                                        maxlength="255">
+                                    </form-field>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="small text-muted mt-1">
+                    <div>* Project locations associated with Treatments cannot be deleted or have their Location Type changed.</div>
+                    <div>** Geometries from ArcGIS are not editable, but you may add or edit the notes field.</div>
+                </div>
+            </div>
+        } @else {
+            <div class="alert alert-info">
+                <em>No locations defined. Use the polygon draw control on the map to add location boundaries.</em>
+            </div>
+        }
+
+        <!-- Deleted Features (for restore) -->
+        @if (state.deleted && state.deleted.length > 0) {
+            <div class="mb-3">
+                <h6 class="text-muted">Deleted Locations (will be removed on save)</h6>
+                <table class="table table-sm location-editor__deleted-table">
+                    <tbody>
+                        @for (feature of state.deleted; track feature.leafletId) {
+                            <tr class="location-editor__deleted-table--deleted">
+                                <td>
+                                    <span class="location-editor__deleted-name">{{ feature.ProjectLocationName }}</span>
+                                    <span class="text-muted ml-2">({{ feature.ProjectLocationTypeName }})</span>
+                                </td>
+                                <td class="location-editor__deleted-actions">
+                                    <button type="button"
+                                            class="btn btn-sm location-editor__action-btn"
+                                            (click)="restoreFeature(feature)"
+                                            [disabled]="isSubmitting"
+                                            title="Restore location">
+                                        Restore
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="save()" [disabled]="isSubmitting" [buttonLoading]="isSubmitting">Save</button>
+        <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
+    </div>
+    }
+</div>

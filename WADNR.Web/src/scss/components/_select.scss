@@ -1,0 +1,112 @@
+@use "/src/scss/abstracts" as *;
+
+.ng-select {
+    .ng-select-container {
+        .ng-value-container {
+            height: 100%;
+            input[type="text"] {
+                max-height: 36px;
+            }
+
+            .ng-placeholder {
+                color: var(--gray-600); // #656565 — 5.92:1 on white, 5.51:1 on #f7f7f7, passes WCAG AA
+            }
+        }
+    }
+}
+
+.ng-select-multiple.custom ::ng-deep {
+    .ng-select-container .ng-value-container .ng-value {
+        background: var(--blue-50);
+        border: 1px solid var(--blue-200);
+        color: var(--blue-700);
+        border-radius: var(--spacing-100);
+    }
+
+    .ng-select-container .ng-value-container .ng-value .ng-value-label {
+        padding: var(--spacing-200);
+        padding-top: 10px;
+        padding-left: 0;
+        font-weight: 600;
+    }
+
+    .ng-select-container .ng-value-container .ng-value .ng-value-icon {
+        padding: var(--spacing-200);
+        padding-top: 10px;
+        border-right: unset;
+
+        &:hover {
+            background: var(--blue-100);
+        }
+    }
+}
+
+.ng-select.custom {
+    .ng-select-container {
+        height: var(--spacing-600);
+        min-height: var(--spacing-600);
+        border-color: var(--gray-200);
+    }
+
+    .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+        height: var(--spacing-600);
+        line-height: var(--spacing-500);
+    }
+
+    .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+        &.ng-option-selected,
+        &:hover {
+            background: var(--blue-50);
+            color: var(--blue-700);
+        }
+    }
+
+    .ng-clear-wrapper {
+        padding-inline: var(--spacing-200);
+        display: inline-block;
+        width: unset;
+        .ng-clear {
+            font-size: 20px;
+            top: 1px;
+            position: relative;
+        }
+    }
+
+    .ng-arrow-wrapper {
+        padding-inline: var(--spacing-300);
+        display: inline-block;
+        width: unset;
+
+        .ng-arrow {
+            top: 1px;
+            position: relative;
+            border-width: 6px 5px 2px;
+        }
+    }
+
+    &.small {
+        .ng-select-container {
+            height: var(--spacing-500);
+        }
+
+        .ng-value {
+            top: 1px;
+        }
+    }
+}
+
+.ng-select.custom.ng-select-opened > .ng-select-container .ng-arrow {
+    border-width: 0 5px 6px;
+    top: 0;
+}
+
+#dropdown-host {
+    position: fixed;
+    inset: 0;
+    z-index: 1060;
+    pointer-events: none;
+
+    > .ng-dropdown-panel {
+        pointer-events: auto;
+    }
+}

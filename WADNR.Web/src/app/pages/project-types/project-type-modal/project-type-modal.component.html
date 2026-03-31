@@ -1,0 +1,57 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>{{ title }}</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.ProjectTypeName"
+            fieldLabel="Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter project type name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ProjectTypeDescription"
+            fieldDefinitionName="ProjectTypeDescription"
+            [type]="FormFieldType.RTE">
+        </form-field>
+
+        <div class="project-type-modal__color-field">
+            <form-field
+                [formControl]="form.controls.ThemeColor"
+                fieldLabel="Theme Color"
+                [type]="FormFieldType.Text"
+                placeholder="#RRGGBB">
+            </form-field>
+            <input type="color"
+                class="project-type-modal__color-picker"
+                aria-label="Theme Color picker"
+                [value]="form.controls.ThemeColor.value || '#000000'"
+                (input)="form.controls.ThemeColor.setValue($any($event.target).value)">
+        </div>
+
+        <form-field
+            [formControl]="form.controls.LimitVisibilityToAdmin"
+            fieldDefinitionName="LimitVisibilityToAdmin"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [buttonLoading]="isSubmitting">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

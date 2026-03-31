@@ -1,0 +1,16 @@
+<layer>
+  <name>PriorityLandscape</name>
+  <id>LayerInfoImpl--5e86fdc9:1673789eb66:-7e4e</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--1d17c31c:1812b2711a9:-7f44</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--5e86fdc9:1673789eb66:-7e4f</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateModified>2022-06-03 21:38:25.450 UTC</dateModified>
+</layer>

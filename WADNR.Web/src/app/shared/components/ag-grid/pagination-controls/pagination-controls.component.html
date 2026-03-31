@@ -1,0 +1,17 @@
+@if (paginationValues$ | async; as paginationValues) {
+  <div class="pagination-controls">
+    <button (click)="goToFirstPage()" class="pagination-controls__button" [disabled]="paginationValues.onFirstPage" aria-label="First page">
+      <i class="fas fa-angle-double-left"></i>
+    </button>
+    <button (click)="goToPreviousPage()" class="pagination-controls__button" [disabled]="paginationValues.onFirstPage" aria-label="Previous page">
+      <i class="fas fa-angle-left"></i>
+    </button>
+    <div class="pagination-controls__text">Page {{ paginationValues.currentPage }} of {{ paginationValues.totalPages }}</div>
+    <button (click)="goToNextPage()" class="pagination-controls__button" [disabled]="paginationValues.onLastPage" aria-label="Next page">
+      <i class="fas fa-angle-right"></i>
+    </button>
+    <button (click)="goToLastPage()" class="pagination-controls__button" [disabled]="paginationValues.onLastPage" aria-label="Last page">
+      <i class="fas fa-angle-double-right"></i>
+    </button>
+  </div>
+}

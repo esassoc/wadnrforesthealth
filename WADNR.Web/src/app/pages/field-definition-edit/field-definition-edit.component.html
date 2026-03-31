@@ -1,0 +1,54 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit Definition: {{ fieldDefinitionDisplayName }}</h3>
+</div>
+@if (loadState$ | async; as state) {
+    <div class="modal-body" [loadingSpinner]="{ isLoading: state.loading, loadingHeight: 200 }">
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+        @if (!state.loading && !state.error) {
+            <form-field
+                [formControl]="customLabelControl"
+                [fieldLabel]="'Custom Label'"
+                [placeholder]="'Leave blank to use default label'"
+                [type]="FormFieldType.Text"
+                [name]="'customLabel'">
+            </form-field>
+
+            <div class="mb-3">
+                <span class="field-label" id="custom-definition-label">Custom Definition</span>
+                <div class="tinyMCEFontColor">
+                    <editor #tinyMceEditor [init]="tinyMceConfig" [(ngModel)]="customDefinition"></editor>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <span class="field-label">Default Label</span>
+                <div class="form-control-plaintext">{{ defaultLabel }}</div>
+            </div>
+
+            @if (defaultDefinition) {
+                <div>
+                    <span class="field-label">Default Definition</span>
+                    <div [innerHTML]="defaultDefinition"></div>
+                </div>
+            }
+        }
+    </div>
+    <div class="modal-footer">
+        <button
+            class="btn btn-primary"
+            (click)="save()"
+            [disabled]="isSubmitting || state.loading || state.error"
+            [buttonLoading]="isSubmitting">
+            Save
+        </button>
+        <button
+            class="btn btn-secondary"
+            (click)="cancel()"
+            [disabled]="isSubmitting">
+            Cancel
+        </button>
+    </div>
+}
+</div>

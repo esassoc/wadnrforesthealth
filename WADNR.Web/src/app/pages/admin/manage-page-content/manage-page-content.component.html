@@ -1,0 +1,32 @@
+<page-header pageTitle="Manage Page Content"></page-header>
+
+<div class="page-body">
+    <p>Use this page to update the page content and introductory text that appears at the top of various pages within this system. Select a page to view its current introductory text. You can also edit the text in place throughout the site by using the Edit button that appears when you hover over content that is customizable.</p>
+
+    <div class="grid-12">
+        <div class="g-col-7">
+            <wadnr-grid
+                [rowData]="firmaPages$ | async"
+                [columnDefs]="columnDefs"
+                [gridOptions]="gridOptions"
+                downloadFileName="firma-pages"
+                fullscreenTitle="Page Content"
+                [sizeColumnsToFitGrid]="true">
+            </wadnr-grid>
+        </div>
+        <div class="g-col-5">
+            <h3 class="manage-page-content__preview-heading">{{ selectedPage?.FirmaPageTypeDisplayName ?? 'Page Content' }}</h3>
+            @if (previewContent$ | async; as preview) {
+                @if (preview.loading) {
+                    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 200 }"></div>
+                } @else if (preview.html) {
+                    <div [innerHtml]="preview.html"></div>
+                } @else if (selectedPage) {
+                    <p class="text-muted">No content yet.</p>
+                }
+            } @else {
+                <p class="text-muted">Select a page to preview its content.</p>
+            }
+        </div>
+    </div>
+</div>

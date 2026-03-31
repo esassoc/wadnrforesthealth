@@ -1,0 +1,16 @@
+<layer>
+  <name>ProjectLocationDetailed</name>
+  <id>LayerInfoImpl--f5b9b65:16896bef86c:-7fea</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--7ecbdf1b:168863672ab:-7da5</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--f5b9b65:16896bef86c:-7feb</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateModified>2024-11-04 23:06:42.226 UTC</dateModified>
+</layer>

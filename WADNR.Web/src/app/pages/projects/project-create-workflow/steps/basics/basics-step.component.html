@@ -1,0 +1,141 @@
+@if (vm$ | async; as vm) {
+    @if ({ saving: isSaving$ | async, programs: selectedPrograms$ | async, availablePrograms: availableProgramOptions$ | async, canAdd: canAddProgram$ | async }; as state) {
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Project Basics</span>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <custom-rich-text [customRichTextTypeID]="FirmaPageTypeEnum.ProjectCreateInstructions"></custom-rich-text>
+            </div>
+
+            <form [formGroup]="form">
+                <div class="grid-12">
+                    <div class="g-col-12">
+                        <form-field [formControl]="$any(form.controls.projectName)" fieldDefinitionName="ProjectName" [type]="FormFieldType.Text" placeholder="Enter project name">
+                        </form-field>
+                    </div>
+
+                    <div class="g-col-6">
+                        <form-field
+                            [formControl]="$any(form.controls.projectTypeID)"
+                            fieldDefinitionName="ProjectType"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="vm.projectTypeOptions"
+                            placeholder="Select Project Type...">
+                        </form-field>
+                    </div>
+
+                    <div class="g-col-6">
+                        <form-field
+                            [formControl]="$any(form.controls.projectStageID)"
+                            fieldDefinitionName="ProjectStage"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="projectStageOptions"
+                            placeholder="Select Project Stage...">
+                        </form-field>
+                    </div>
+
+                    <div class="g-col-6">
+                        <form-field [formControl]="$any(form.controls.plannedDate)" fieldDefinitionName="PlannedDate" [type]="FormFieldType.Date"> </form-field>
+                    </div>
+
+                    <div class="g-col-6">
+                        <form-field [formControl]="$any(form.controls.completionDate)" fieldDefinitionName="CompletionDate" [type]="FormFieldType.Date"> </form-field>
+                    </div>
+
+                    <div class="g-col-6">
+                        <form-field
+                            [formControl]="$any(form.controls.leadImplementerOrganizationID)"
+                            fieldDefinitionName="LeadImplementerOrganization"
+                            [type]="FormFieldType.Select"
+                            [formInputOptions]="vm.organizationOptions"
+                            placeholder="Select Lead Implementer...">
+                        </form-field>
+                    </div>
+
+                    <!-- Additional Optional Basic Data Fields -->
+                    <div class="g-col-12">
+                        <details class="basics-step__optional-section">
+                            <summary class="basics-step__optional-toggle">Additional Optional Basic Data Fields</summary>
+                            <div class="basics-step__optional-content grid-12">
+                                <div class="g-col-12">
+                                    <form-field
+                                        [formControl]="$any(form.controls.projectDescription)"
+                                        fieldDefinitionName="ProjectDescription"
+                                        [type]="FormFieldType.Textarea"
+                                        placeholder="Enter project description">
+                                    </form-field>
+                                </div>
+
+                                <div class="g-col-6">
+                                    <form-field [formControl]="$any(form.controls.expirationDate)" fieldDefinitionName="ExpirationDate" [type]="FormFieldType.Date"> </form-field>
+                                </div>
+
+                                <div class="g-col-6">
+                                    <form-field
+                                        [formControl]="$any(form.controls.focusAreaID)"
+                                        fieldLabel="DNR LOA Focus Area"
+                                        [type]="FormFieldType.Select"
+                                        [formInputOptions]="vm.focusAreaOptions"
+                                        placeholder="Choose one">
+                                    </form-field>
+                                </div>
+
+                                <div class="g-col-6">
+                                    <form-field
+                                        [formControl]="$any(form.controls.programToAdd)"
+                                        fieldLabel="Program to Add"
+                                        [type]="FormFieldType.Select"
+                                        [formInputOptions]="state.availablePrograms"
+                                        placeholder="Select a Program to Add"
+                                        (change)="onProgramSelect($event, vm.programOptions)">
+                                    </form-field>
+                                </div>
+
+                                <div class="g-col-6">
+                                    <form-field [formControl]="$any(form.controls.percentageMatch)" fieldLabel="Percentage Match" [type]="FormFieldType.Number" placeholder="">
+                                    </form-field>
+                                </div>
+
+                                <!-- Programs List -->
+                                <div class="g-col-12">
+                                    <span class="field-label">Programs</span>
+                                    @if (state.programs && state.programs.length > 0) {
+                                        <ul class="basics-step__program-list">
+                                            @for (program of state.programs; track program.ProgramID) {
+                                                <li class="basics-step__program-item">
+                                                    <button type="button" class="btn btn-sm btn-link text-danger" (click)="removeProgram(program.ProgramID)" title="Remove">
+                                                        <icon icon="Delete"></icon>
+                                                    </button>
+                                                    <span>{{ program.ProgramName }}</span>
+                                                </li>
+                                            }
+                                        </ul>
+                                    } @else {
+                                        <div class="text-muted">No programs added.</div>
+                                    }
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-footer">
+            <workflow-step-actions
+                [isSaving]="state.saving"
+                [continueButtonText]="vm.isNewProject ? 'Create Project & Continue' : 'Save & Continue'"
+                (save)="onSave(false)"
+                (saveAndContinue)="onSave(true)">
+            </workflow-step-actions>
+        </div>
+    </div>
+    }
+} @else {
+    <div class="card">
+        <div class="card-body">
+            <div class="text-center p-4">Loading...</div>
+        </div>
+    </div>
+}

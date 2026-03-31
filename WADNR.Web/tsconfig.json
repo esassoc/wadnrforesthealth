@@ -1,0 +1,27 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "baseUrl": "./",
+        "outDir": "./dist/out-tsc",
+        "esModuleInterop": true,
+        "sourceMap": true,
+        "declaration": false,
+        "moduleResolution": "bundler",
+        "experimentalDecorators": true,
+        "importHelpers": true,
+        "target": "ES2022",
+        "module": "ES2022",
+        "typeRoots": [
+          "node_modules/@types",
+          "src/typings"
+        ],
+        "useDefineForClassFields": false,
+        "skipLibCheck": true
+    },
+    "angularCompilerOptions": {
+        "strictTemplates": true,
+        "features": {
+            "animations": true
+        }
+    }
+}

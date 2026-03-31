@@ -1,0 +1,75 @@
+@use "/src/scss/abstracts" as *;
+:host {
+    margin: -13px -24px -13px -20px;
+    display: flex;
+}
+
+:host.project-popup--compact {
+    /* Let Leaflet's popup content padding/margins size the bubble.
+         We only ensure our content has no fixed width and is centered. */
+    margin: 0;
+    display: inline-block;
+
+    .project-popup__wrapper {
+        width: auto;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .project-popup__title--compact {
+        border-bottom: 0;
+        padding-bottom: 0;
+        display: inline-flex;
+        font-weight: 700;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+}
+
+.project-popup {
+    &__wrapper {
+        width: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0rem;
+        padding: 16px;
+        & > * {
+            font-family: var(--lexend);
+            font-size: 12px;
+        }
+    }
+
+    &__title {
+        border-bottom: 1px solid rgba(var(--black-rgb), 0.05);
+        padding-bottom: var(--spacing-400);
+
+        &--compact {
+            border-bottom: none;
+            padding-bottom: 0;
+            display: inline-flex;
+            font-weight: 700;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+    }
+
+    &__body {
+        .grid-12 {
+            column-gap: var(--spacing-200);
+            row-gap: var(--spacing-100);
+        }
+
+        dt,
+        dd {
+            font-size: var(--type-size-100);
+
+            field-definition {
+                font-size: var(--type-size-100);
+            }
+
+            padding: 0;
+            margin: 0;
+        }
+    }
+}

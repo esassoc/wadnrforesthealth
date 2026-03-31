@@ -1,0 +1,18 @@
+<div class="workflow-nav-group" [class.expanded]="expanded" [class.collapsed]="!expanded">
+    <button
+        type="button"
+        class="workflow-nav-group__header"
+        (click)="toggleExpanded()"
+        [attr.aria-expanded]="expanded">
+        @if (complete) {
+            <icon icon="StepComplete" class="workflow-nav-group__status-icon workflow-nav-group__status-icon--complete"></icon>
+        }
+        <span class="workflow-nav-group__title">{{ title }}</span>
+        @if (!hasActiveChild) {
+            <icon [icon]="expanded ? 'AngleUp' : 'AngleDown'" class="workflow-nav-group__expand-icon"></icon>
+        }
+    </button>
+    <div class="workflow-nav-group__items" [class.workflow-nav-group__items--hidden]="!expanded">
+        <ng-content></ng-content>
+    </div>
+</div>

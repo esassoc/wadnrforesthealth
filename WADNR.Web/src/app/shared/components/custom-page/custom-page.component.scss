@@ -1,0 +1,41 @@
+:host ::ng-deep .copy a {
+    text-decoration: none;
+}
+
+.custom-page {
+    &__edit-btn {
+        position: absolute;
+        right: 5px;
+        top: -10px;
+        z-index: 1;
+    }
+
+    &__content {
+        background-color: inherit;
+        transition: all 100ms ease-out;
+        min-height: 3rem;
+        border: 2px dashed transparent;
+        border-radius: 8px;
+
+        &--editable:hover {
+            background-color: #d3d3d3;
+            background-color: rgba(211, 211, 211, 0.2);
+            border: 2px dashed rgba(#354968, 0.5);
+        }
+
+        &--editable .custom-page__edit-btn {
+            visibility: hidden;
+            opacity: 0;
+            transition: all 100ms ease-out;
+        }
+
+        &--editable:hover .custom-page__edit-btn {
+            visibility: visible;
+            opacity: 1;
+        }
+    }
+
+    &__editor {
+        color: var(--black);
+    }
+}

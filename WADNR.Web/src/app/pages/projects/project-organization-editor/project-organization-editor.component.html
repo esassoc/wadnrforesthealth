@@ -1,0 +1,105 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit Organizations</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <div [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 200 }">
+    @if (!(isLoading$ | async)) {
+        <p class="mb-3">
+            Select the Organizations that are associated with your Project. The Lead Implementer relationship is required,
+            can have only one organization associated, and is marked with a required symbol (<span class="text-danger">*</span>).
+            Other relationship types can apply to any number of organizations and are not required.
+        </p>
+
+        @if (organizationsByType.length > 0) {
+            @for (obt of organizationsByType; track obt.relationshipType.RelationshipTypeID) {
+                <hr>
+                <div class="relationship-type-section">
+                    <div class="relationship-type-label">
+                        <strong>{{ obt.relationshipType.RelationshipTypeName }}</strong>
+                        @if (obt.relationshipType.IsPrimaryContact) {
+                            <span class="text-danger">*</span>
+                        }
+                    </div>
+
+                    @if (obt.canOnlyBeRelatedOnce) {
+                        <div class="grid-12 mt-2">
+                            <div class="g-col-8">
+                                <form-field
+                                    [formControl]="obt.formControl"
+                                    [type]="FormFieldType.Select"
+                                    [formInputOptions]="allOrganizationOptions"
+                                    [placeholder]="'Select a ' + obt.relationshipType.RelationshipTypeName + '...'"
+                                    [readOnly]="isSubmitting()"
+                                    (change)="onSingleSelectChange($event, obt)">
+                                </form-field>
+                            </div>
+                            @if (obt.fieldDefinitionName) {
+                                <div class="g-col-4 field-definition-hint">
+                                    <field-definition [fieldDefinition]="obt.fieldDefinitionName" [inline]="true"></field-definition>
+                                </div>
+                            }
+                        </div>
+                    } @else {
+                        <div class="grid-12 mt-2">
+                            <div class="g-col-8">
+                                <form-field
+                                    [formControl]="obt.formControl"
+                                    [type]="FormFieldType.Select"
+                                    [formInputOptions]="obt.availableOrganizationOptions"
+                                    [placeholder]="'Add a ' + obt.relationshipType.RelationshipTypeName + '...'"
+                                    [readOnly]="isSubmitting()"
+                                    (change)="onMultiSelectChange($event, obt)">
+                                </form-field>
+                                @if (obt.selectedOrganizations.length > 0) {
+                                    <ul class="selected-organizations-list mt-2">
+                                        @for (org of obt.selectedOrganizations; track org.OrganizationID) {
+                                            <li class="selected-organization-item">
+                                                <a href="#"
+                                                    class="text-danger"
+                                                    (click)="removeOrganization(obt, org.OrganizationID); $event.preventDefault()"
+                                                    [class.disabled]="isSubmitting()"
+                                                    title="Remove">
+                                                    <icon icon="Delete"></icon>
+                                                </a>
+                                                <span>{{ org.OrganizationName }}</span>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                            @if (obt.fieldDefinitionName) {
+                                <div class="g-col-4 field-definition-hint">
+                                    <field-definition [fieldDefinition]="obt.fieldDefinitionName" [inline]="true"></field-definition>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        } @else {
+            <div class="alert alert-info">
+                No relationship types are available.
+            </div>
+        }
+    }
+    </div>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting() || (isLoading$ | async)"
+        [buttonLoading]="isSubmitting()">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting()">
+        Cancel
+    </button>
+</div>
+</div>

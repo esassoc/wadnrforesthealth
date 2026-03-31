@@ -1,0 +1,41 @@
+.treatments-step {
+    &__header {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-100);
+        }
+    }
+}
+
+// Grid action icons (inside ag-grid cell renderer)
+:host ::ng-deep {
+    .action-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+        border-radius: 4px;
+        color: var(--text-secondary, #6c757d);
+        transition: background-color 0.15s, color 0.15s;
+        border: none;
+        background: none;
+        padding: 0;
+
+        &:hover {
+            background: var(--bg-hover-dark, var(--muted));
+            color: var(--primary, #0d6efd);
+        }
+
+        svg {
+            width: 16px;
+            height: 16px;
+        }
+    }
+}

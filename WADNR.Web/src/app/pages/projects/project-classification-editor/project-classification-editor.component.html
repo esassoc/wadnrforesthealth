@@ -1,0 +1,55 @@
+<div class="modal">
+    <div class="modal-header">
+        <h3>Edit Project Themes</h3>
+    </div>
+    <div class="modal-body" [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 200 }">
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+        <p class="mb-3">
+            Click the checkboxes below to associate this Project with one or more Project Themes.
+        </p>
+
+        @for (system of classificationSystems; track system.ClassificationSystemID; let last = $last) {
+            <div class="classification-editor__section">
+                @for (classification of system.Classifications; track classification.ClassificationID) {
+                    <div class="classification-editor__row grid-12 mb-3">
+                        <div class="g-col-6">
+                            <label class="classification-editor__label">
+                                <input type="checkbox"
+                                    [checked]="isSelected(classification.ClassificationID)"
+                                    (change)="toggleSelection(classification.ClassificationID)"
+                                    [disabled]="isSubmitting">
+                                <span class="classification-editor__name">{{ classification.DisplayName }}</span>
+                            </label>
+                            @if (classification.ClassificationDescription) {
+                                <div class="classification-editor__description"
+                                    [innerHTML]="classification.ClassificationDescription">
+                                </div>
+                            }
+                        </div>
+                        <div class="g-col-6">
+                            <form-field
+                                [formControl]="getNotesControl(classification.ClassificationID)"
+                                [type]="FormFieldType.Textarea"
+                                [placeholder]="'Select the ' + system.ClassificationSystemName + ' and describe how it applies to the Project.'">
+                            </form-field>
+                        </div>
+                    </div>
+                }
+            </div>
+            @if (!last) {
+                <hr>
+            }
+        }
+
+        @if (classificationSystems.length === 0) {
+            <div class="alert alert-info">
+                <em>No classification systems are configured.</em>
+            </div>
+        }
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="save()" [buttonLoading]="isSubmitting">Save</button>
+        <button class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
+    </div>
+</div>

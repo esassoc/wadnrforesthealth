@@ -1,0 +1,79 @@
+@if (classificationDetailPageData$ | async; as vm) {
+<breadcrumb [items]="[{ label: 'Projects By Theme', url: '/projects-by-theme' }, { label: vm.classification.DisplayName || '—' }]" [linkLast]="false"></breadcrumb>
+<page-header pageTitle="{{ vm.classification.DisplayName || '—' }}"> </page-header>
+<div class="grid-12">
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header flex-between">
+                <span class="card-title">Basics</span>
+                @if (isAdmin$ | async) {
+                    <button class="card-header-edit-link" (click)="openEditModal(vm.classification)" title="Edit Basics">
+                        <icon icon="Edit"></icon>
+                    </button>
+                }
+            </div>
+            <div class="card-body">
+                <div class="grid-12">
+                    <div class="g-col-4">
+                        <strong><field-definition fieldDefinition="ClassificationName" labelOverride="Theme Name"></field-definition></strong>
+                    </div>
+                    <div class="g-col-8">{{ vm.classification.DisplayName || "—" }}</div>
+
+                    <div class="g-col-4">
+                        <strong>Theme Color</strong>
+                    </div>
+                    <div class="g-col-8">
+                        <span class="classification-detail__color-row">
+                            <span
+                                class="classification-detail__color-swatch"
+                                [style.backgroundColor]="vm.classification.ThemeColor || 'transparent'"
+                                [attr.aria-label]="'Theme color swatch: ' + (vm.classification.ThemeColor || 'none')"></span>
+                            <span>{{ vm.classification.ThemeColor ?? "—" }}</span>
+                        </span>
+                    </div>
+
+                    <div class="g-col-4">
+                        <strong>Goal Statement</strong>
+                    </div>
+                    <div class="g-col-8">{{ vm.classification.GoalStatement || "—" }}</div>
+
+                    @if (vm.classification.KeyImageFileResourceGUID) {
+                    <div class="g-col-4">
+                        <strong>Key Image</strong>
+                    </div>
+                    <div class="g-col-8">
+                        <img [src]="apiUrl + '/file-resources/' + vm.classification.KeyImageFileResourceGUID" alt="Key image" class="classification-detail__key-image">
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Description</span>
+            </div>
+            <div class="card-body">
+                @if (vm.classification.ClassificationDescription) {
+                <div [innerHTML]="vm.classification.ClassificationDescription"></div>
+                } @else {
+                <span>—</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Projects</span></div>
+            <div class="card-body">
+                <wadnr-grid [rowData]="vm.projects" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" [downloadFileName]="'projects'" fullscreenTitle="Projects"></wadnr-grid>
+            </div>
+        </div>
+    </div>
+</div>
+} @else {
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
+}

@@ -1,0 +1,63 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>{{ modalTitle }}</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        @if (isCreateMode) {
+            <form-field
+                [formControl]="fileControl"
+                fieldLabel="Image File"
+                [type]="FormFieldType.File"
+                [uploadFileAccepts]="allowedFileExtensions">
+            </form-field>
+        }
+
+        <form-field
+            [formControl]="form.controls.Caption"
+            fieldLabel="Caption"
+            [type]="FormFieldType.Text"
+            placeholder="Enter photo caption">
+        </form-field>
+        <p class="project-image-modal__help-text">Be concise yet still descriptive. Thumbnails above will display alphabetically by caption.</p>
+
+        <form-field
+            [formControl]="form.controls.Credit"
+            fieldLabel="Credit"
+            [type]="FormFieldType.Text"
+            placeholder="Enter photo credit">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ProjectImageTimingID"
+            fieldLabel="Timing"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="timingDropdownOptions"
+            placeholder="Select timing (optional)">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.ExcludeFromFactSheet"
+            fieldLabel="Exclude from Fact Sheet"
+            [type]="FormFieldType.Check">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting()"
+        [buttonLoading]="isSubmitting()">
+        {{ isCreateMode ? 'Upload' : 'Save' }}
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting()">
+        Cancel
+    </button>
+</div>
+</div>

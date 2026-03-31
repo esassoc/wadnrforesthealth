@@ -1,0 +1,49 @@
+.organizations-step {
+    &__relationship-section {
+        margin-bottom: var(--spacing-200);
+    }
+
+    &__relationship-label {
+        margin-bottom: var(--spacing-100);
+    }
+
+    &__field-hint {
+        color: var(--gray-600);
+        font-style: italic;
+        font-size: 0.9em;
+        display: flex;
+        align-items: center;
+
+        ::ng-deep .field-definition__inline {
+            padding-top: 0 !important;
+
+            .fa-question-circle {
+                display: none;
+            }
+        }
+    }
+
+    &__selected-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    &__selected-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-200);
+        padding: var(--spacing-100) 0;
+
+        a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+
+            &.disabled {
+                pointer-events: none;
+                opacity: 0.5;
+            }
+        }
+    }
+}

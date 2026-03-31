@@ -1,0 +1,6 @@
+<page-header pageTitle="Project Types" [customRichTextTypeID]="customRichTextTypeID"></page-header>
+
+<div class="page-body">
+    <div class="taxonomy__title">Project Type > Project</div>
+    <simple-tree class="taxonomy__tree" [nodes]="nodes$ | async" (select)="onSelect($event)" [topLevelBorder]="true" mode="filter"></simple-tree>
+</div>

@@ -1,0 +1,53 @@
+<div class="modal">
+    <div class="modal-header">
+        <h4>Send Notification to Selected People</h4>
+    </div>
+    <div class="modal-body">
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+        @if (selectedPeople.length === 0) {
+            <p>No people selected to be notified.</p>
+        } @else {
+            <form [formGroup]="form">
+                <div class="flex-end mb-3">
+                    <button class="btn btn-sm btn-secondary" (click)="sendPreview()" [disabled]="isSendingPreview()" [buttonLoading]="isSendingPreview()">
+                        Send Test Email
+                    </button>
+                </div>
+
+                <div class="grid-12 mb-2">
+                    <div class="g-col-2"><strong>To:</strong></div>
+                    <div class="g-col-10" style="max-height: 60px; overflow-y: auto;">{{ recipientEmails }}</div>
+                </div>
+
+                <form-field
+                    fieldLabel="Subject"
+                    [type]="FormFieldType.Text"
+                    [formControl]="form.controls.subject"
+                    [required]="true">
+                </form-field>
+
+                <form-field
+                    fieldLabel="Message"
+                    [type]="FormFieldType.RTE"
+                    [formControl]="form.controls.notificationContent">
+                </form-field>
+
+                <div class="mt-3" style="max-height: 200px; overflow-y: auto;">
+                    <div class="mb-2">Notifying {{ selectedPeople.length }} {{ selectedPeople.length === 1 ? 'person' : 'people' }}:</div>
+                    <ul>
+                        @for (person of selectedPeople; track person.PersonID) {
+                            <li>{{ person.PersonName }} ({{ person.OrganizationName }})</li>
+                        }
+                    </ul>
+                </div>
+            </form>
+        }
+    </div>
+    <div class="modal-footer">
+        @if (selectedPeople.length > 0) {
+            <button class="btn btn-primary" (click)="send()" [disabled]="isSubmitting() || form.invalid" [buttonLoading]="isSubmitting()">Send</button>
+        }
+        <button class="btn btn-secondary" (click)="ref.close(false)" [disabled]="isSubmitting()">Cancel</button>
+    </div>
+</div>

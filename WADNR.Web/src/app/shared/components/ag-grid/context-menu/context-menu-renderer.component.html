@@ -1,0 +1,31 @@
+@if (params && !params.hidden) {
+  <div class="context-menu">
+    <a class="btn btn-primary-outline btn-small context-menu__trigger" [dropdownToggle]="contextMenu" [dropdownToggleFixed]="true"
+       [attr.aria-label]="params.title + ' actions menu'">
+      {{ params.title }}
+      <icon icon="CaretDown"></icon>
+    </a>
+    <div>
+      <div #contextMenu class="context-menu__dropdown" aria-labelledby="menu-dropdown">
+        @for (action of params.value; track action) {
+          @if (action.ActionHandler) {
+            <button (click)="action.ActionHandler()" [attr.aria-label]="action.ActionName">
+              @if (action.ActionIcon) {
+                <span [class]="action.ActionIcon"></span>
+              }
+              {{ action.ActionName }}
+            </button>
+          }
+          @if (!action.ActionHandler) {
+            <a [routerLink]="[action.ActionLink]" [attr.aria-label]="action.ActionName">
+              @if (action.ActionIcon) {
+                <span [class]="action.ActionIcon"></span>
+              }
+              {{ action.ActionName }}
+            </a>
+          }
+        }
+      </div>
+    </div>
+  </div>
+}

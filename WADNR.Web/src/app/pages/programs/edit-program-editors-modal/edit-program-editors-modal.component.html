@@ -1,0 +1,56 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit Program Editors</h3>
+</div>
+<div class="modal-body" [loadingSpinner]="{ isLoading: isLoading(), loadingHeight: 200 }">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    @if (!isLoading()) {
+        @if (eligiblePeople.length === 0) {
+            <p>Please add the "Program Editor" role to users to see them in this list.</p>
+        } @else {
+            <form-field
+                fieldLabel="User to Add"
+                [type]="FormFieldType.Select"
+                [formControl]="editorSelectControl"
+                [formInputOptions]="availableOptions"
+                placeholder="Search for a user..."
+                >
+            </form-field>
+
+            <hr />
+
+            <span class="field-label">Program Editors</span>
+            @if (selectedEditors.length > 0) {
+                <ul class="editor-list">
+                    @for (editor of sortedEditors; track editor.PersonID) {
+                        <li>
+                            <a href="javascript:void(0)" (click)="removeEditor(editor.PersonID)" title="Remove" aria-label="Remove" class="text-danger" style="text-decoration: none;">
+                                <icon [icon]="'Delete'" aria-hidden="true"></icon>
+                            </a>
+                            {{ editor.DisplayName }}
+                        </li>
+                    }
+                </ul>
+            } @else {
+                <p class="system-text">No editors assigned.</p>
+            }
+        }
+    }
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isLoading() || isSubmitting()"
+        [buttonLoading]="isSubmitting()">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting()">
+        Cancel
+    </button>
+</div>
+</div>

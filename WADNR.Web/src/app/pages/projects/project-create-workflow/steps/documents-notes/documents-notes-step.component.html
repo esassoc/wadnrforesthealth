@@ -1,0 +1,120 @@
+@if (vm$ | async; as vm) {
+    <div class="card">
+            <div class="card-header">
+                <span class="card-title">Documents & Notes</span>
+            </div>
+            <div class="card-body">
+                @if (vm.isLoading) {
+                    <div class="text-center p-4">Loading...</div>
+                } @else {
+                    <p class="mb-3">
+                        Manage documents and notes associated with this project.
+                    </p>
+
+                    <!-- Documents Section -->
+                    <div class="docs-notes-step__section mb-4">
+                        <div class="docs-notes-step__section-header">
+                            <h5>Documents</h5>
+                            <button class="btn btn-primary btn-sm" (click)="openAddDocumentModal(vm.documentTypes)">
+                                <icon icon="Upload"></icon> Add Document
+                            </button>
+                        </div>
+
+                        @if (vm.documents.length > 0) {
+                            <div class="docs-notes-step__item-list">
+                                @for (doc of vm.documents; track doc.ProjectDocumentID) {
+                                    <div class="docs-notes-step__item">
+                                        <div class="docs-notes-step__item-actions">
+                                            <button type="button" class="docs-notes-step__action-icon" (click)="openEditDocumentModal(doc, vm.documentTypes)" aria-label="Edit document">
+                                                <icon icon="Edit" aria-hidden="true"></icon>
+                                            </button>
+                                            <button type="button" class="docs-notes-step__action-icon docs-notes-step__action-icon--delete" (click)="deleteDocument(doc)" aria-label="Delete document">
+                                                <icon icon="Delete" aria-hidden="true"></icon>
+                                            </button>
+                                        </div>
+                                        <div class="docs-notes-step__item-content">
+                                            <div class="docs-notes-step__item-title">
+                                                <a [href]="getDocumentDownloadUrl(doc)" target="_blank">
+                                                    <icon icon="File"></icon> {{ doc.DisplayName }}
+                                                </a>
+                                            </div>
+                                            <dl class="docs-notes-step__item-details">
+                                                <div class="docs-notes-step__detail-row">
+                                                    <dt>Uploaded On</dt>
+                                                    <dd>{{ doc.UploadDate | date:'short' }}</dd>
+                                                </div>
+                                                <div class="docs-notes-step__detail-row">
+                                                    <dt>File Type</dt>
+                                                    <dd>{{ doc.FileExtension | uppercase }}</dd>
+                                                </div>
+                                                @if (doc.DocumentTypeName) {
+                                                    <div class="docs-notes-step__detail-row">
+                                                        <dt>Document Type</dt>
+                                                        <dd>{{ doc.DocumentTypeName }}</dd>
+                                                    </div>
+                                                }
+                                                @if (doc.Description) {
+                                                    <div class="docs-notes-step__detail-row">
+                                                        <dt>Description</dt>
+                                                        <dd>{{ doc.Description }}</dd>
+                                                    </div>
+                                                }
+                                            </dl>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        } @else {
+                            <p class="docs-notes-step__empty-message"><em>No documents associated with this Project.</em></p>
+                        }
+                    </div>
+
+                    <!-- Notes Section -->
+                    <div class="docs-notes-step__section">
+                        <div class="docs-notes-step__section-header">
+                            <h5>Notes</h5>
+                            <button class="btn btn-primary btn-sm" (click)="openAddNoteModal()">
+                                <icon icon="ChatBubble"></icon> Add Note
+                            </button>
+                        </div>
+
+                        @if (vm.notes.length > 0) {
+                            <div class="docs-notes-step__item-list">
+                                @for (note of vm.notes; track note.ProjectNoteID) {
+                                    <div class="docs-notes-step__item">
+                                        <div class="docs-notes-step__item-actions">
+                                            <button type="button" class="docs-notes-step__action-icon" (click)="openEditNoteModal(note)" aria-label="Edit note">
+                                                <icon icon="Edit" aria-hidden="true"></icon>
+                                            </button>
+                                            <button type="button" class="docs-notes-step__action-icon docs-notes-step__action-icon--delete" (click)="deleteNote(note)" aria-label="Delete note">
+                                                <icon icon="Delete" aria-hidden="true"></icon>
+                                            </button>
+                                        </div>
+                                        <div class="docs-notes-step__item-content">
+                                            <div class="docs-notes-step__item-meta">
+                                                Created: {{ note.CreateDate | date:'short' }}
+                                                @if (note.CreatedByPersonName) {
+                                                    by {{ note.CreatedByPersonName }}
+                                                }
+                                            </div>
+                                            <div class="docs-notes-step__note-text">
+                                                {{ note.Note }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        } @else {
+                            <p class="docs-notes-step__empty-message"><em>No Notes entered.</em></p>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+} @else {
+    <div class="card">
+        <div class="card-body">
+            <div class="text-center p-4">Loading...</div>
+        </div>
+    </div>
+}

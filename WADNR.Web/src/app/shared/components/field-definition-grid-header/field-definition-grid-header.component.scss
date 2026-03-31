@@ -1,0 +1,29 @@
+@use "/src/scss/abstracts" as *;
+
+:host {
+    width: 100%;
+}
+
+.field-def-header {
+    &__label {
+        // margin-left: 5px;
+    }
+
+    &__filter-indicator {
+        color: var(--wadnr-orange);
+        font-size: var(--font-size);
+    }
+
+    &__hidden {
+        display: none;
+    }
+
+    &__sort-buttons {
+        margin: 0 5px;
+    }
+
+    &__filter-button {
+        margin-right: 6px;
+        font-size: 0.6rem;
+    }
+}

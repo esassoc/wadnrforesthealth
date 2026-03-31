@@ -1,0 +1,85 @@
+.fund-source-detail {
+    &__field-row {
+        display: flex;
+        padding: 4px 0;
+        border-bottom: 1px solid #eee;
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    &__field-label {
+        flex: 0 0 200px;
+        font-weight: 600;
+        padding-right: 12px;
+    }
+
+    &__field-value {
+        flex: 1;
+        min-width: 0;
+        word-break: break-word;
+    }
+
+    &__file {
+        padding: 6px 0;
+
+        & + & {
+            border-top: 1px solid #eee;
+        }
+
+        &-main {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        &-meta {
+            color: var(--gray-600);
+            font-size: 0.9em;
+        }
+
+        &-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        &-description {
+            margin-top: 2px;
+            color: #666;
+            font-size: 0.9em;
+            padding-left: 4px;
+        }
+    }
+
+    &__note {
+        padding: 8px 0;
+
+        & + & {
+            border-top: 1px solid #eee;
+        }
+
+        &-header {
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        &-body {
+            margin-top: 4px;
+        }
+    }
+
+    h4 {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .text-muted {
+        color: var(--gray-600);
+        font-style: italic;
+    }
+}

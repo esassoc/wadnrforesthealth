@@ -1,0 +1,38 @@
+<page-header [pageTitle]="pageTitle"></page-header>
+<div class="page-body">
+    <div class="mb-3">
+        <span class="mr-2"><strong>Show:</strong></span>
+        <label class="mr-3">
+            <input type="radio" name="filter" [checked]="activeFilter === 'requiring-update'" (change)="setFilter('requiring-update')" class="mr-1" />
+            My Projects Requiring an Update
+        </label>
+        <label class="mr-3">
+            <input type="radio" name="filter" [checked]="activeFilter === 'recently-submitted'" (change)="setFilter('recently-submitted')" class="mr-1" />
+            My Recently Submitted Projects
+        </label>
+        <label class="mr-3">
+            <input type="radio" name="filter" [checked]="activeFilter === null" (change)="setFilter(null)" class="mr-1" />
+            All My Projects
+        </label>
+        @if (isAdmin) {
+            <label class="mr-3">
+                <input type="radio" name="filter" [checked]="activeFilter === 'submitted-projects'" (change)="setFilter('submitted-projects')" class="mr-1" />
+                Submitted Projects
+            </label>
+            <label class="mr-3">
+                <input type="radio" name="filter" [checked]="activeFilter === 'all-projects'" (change)="setFilter('all-projects')" class="mr-1" />
+                All Projects
+            </label>
+        }
+    </div>
+    <p class="mb-3">
+        <strong>Why these Projects?</strong> Projects appear here if they are your Projects
+        or you are the Project Steward for the Organization they belong to.
+    </p>
+    <wadnr-grid
+        [rowData]="filteredProjects$ | async"
+        [columnDefs]="columnDefs"
+        downloadFileName="my-projects"
+        fullscreenTitle="My Projects">
+    </wadnr-grid>
+</div>

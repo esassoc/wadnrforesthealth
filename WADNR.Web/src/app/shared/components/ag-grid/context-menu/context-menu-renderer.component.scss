@@ -1,0 +1,50 @@
+@use "/src/scss/abstracts" as *;
+
+.context-menu {
+    &__trigger {
+        font-size: 0.75rem;
+        padding-inline: var(--spacing-200);
+        min-height: 24px;
+        min-width: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__dropdown {
+        display: none;
+        position: fixed;
+        background: white;
+        padding: var(--spacing-300);
+        box-shadow: var(--shadow-100);
+        border-radius: var(--border-radius-200);
+        border: 1px solid rgba(var(--primary-rgb), 1);
+        z-index: 9999;
+
+        &.active {
+            display: grid;
+            min-width: 8rem;
+        }
+
+        button,
+        a {
+            font-size: var(--type-size-150);
+            display: inline-block;
+            padding: 0;
+            border: none;
+            text-align: left;
+            color: var(--gray-900);
+            background: none;
+            appearance: none;
+            line-height: 1.5em !important;
+
+            & + * {
+                margin-top: var(--spacing-200);
+            }
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}

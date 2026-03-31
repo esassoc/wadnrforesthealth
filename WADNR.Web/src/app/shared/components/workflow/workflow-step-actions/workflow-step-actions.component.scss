@@ -1,0 +1,38 @@
+.workflow-step-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-200);
+    padding-top: 0;
+
+    &__buttons-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--spacing-400);
+        flex-wrap: wrap;
+        border: none;
+    }
+
+    &__left {
+        display: flex;
+        gap: var(--spacing-200);
+        flex-wrap: wrap;
+    }
+
+    &__right {
+        display: flex;
+        gap: var(--spacing-200);
+        flex-wrap: wrap;
+    }
+
+    &__required-note {
+        font-size: var(--type-size-100);
+        border: none;
+        border-top: none;
+    }
+
+    &__required-indicator {
+        color: var(--red-default);
+        font-weight: bold;
+    }
+}

@@ -1,0 +1,15 @@
+<layer>
+  <name>ProjectLocationSimple</name>
+  <id>LayerInfoImpl--f5b9b65:16896bef86c:-7ff5</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--7ecbdf1b:168863672ab:-7da6</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--f5b9b65:16896bef86c:-7ff6</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+</layer>

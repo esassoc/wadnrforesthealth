@@ -1,0 +1,27 @@
+<div class="project-popup__wrapper" [loadingSpinner]="{ isLoading, loadingHeight: 225 }">
+    @if (project$ | async; as project) { @if (!showDetails) {
+    <a class="project-popup__title project-popup__title--compact" [routerLink]="['/projects', project.ProjectID]">{{ project.ProjectName }}</a>
+    } @else {
+    <a class="project-popup__title" [routerLink]="['/projects', project.ProjectID]">{{ project.ProjectName }}</a>
+    <div class="project-popup__body">
+        <dl class="grid-12">
+            <dt class="g-col-6">Duration</dt>
+            <dd class="g-col-6">{{ project.Duration }}</dd>
+            <dt class="g-col-6">Project Stage</dt>
+            <dd class="g-col-6">{{ project.ProjectStage.ProjectStageName }}</dd>
+            <dt class="g-col-6">Project Type</dt>
+            <dd class="g-col-6">{{ project.ProjectType.ProjectTypeName }}</dd>
+            <dt class="g-col-6">Lead Implementer Organization</dt>
+            <dd class="g-col-6">
+                <a routerLink="organizations/{{ project.LeadImplementer.OrganizationID }}">{{ project.LeadImplementer.OrganizationName }}</a>
+            </dd>
+            <dt class="g-col-6">Project Themes</dt>
+            <dd class="g-col-6">{{ project.Classifications | commaJoin : "DisplayName" }}</dd>
+        </dl>
+        <div>
+            For Project information & results, see the
+            <a [routerLink]="['/projects', project.ProjectID]">Project Detail page</a>
+        </div>
+    </div>
+    } }
+</div>

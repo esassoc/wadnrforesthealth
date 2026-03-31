@@ -1,0 +1,91 @@
+.leaflet-control a {
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+        text-decoration: none;
+    }
+}
+
+.leaflet-control-layers label {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-100);
+}
+
+.leaflet-control-layers-close {
+    color: #0078a8 !important;
+    border: none;
+    background: none;
+    cursor: pointer;
+    float: right;
+    display: none;
+}
+
+.leaflet-control-layers-selector {
+    margin: 0;
+    top: 0;
+}
+
+input.leaflet-control-layers-selector + span {
+    vertical-align: text-top;
+}
+
+.leaflet-control-layers-expanded .leaflet-control-layers-close {
+    display: block;
+}
+
+.leaflet-control-layers-close-button {
+    cursor: pointer;
+}
+
+// for the get action boundaries
+.selecting-location .leaflet-interactive.boundary {
+    cursor: crosshair !important;
+}
+
+.treatment-bmp-cluster {
+    background-color: #b8b8b8;
+    opacity: 0.7 !important;
+    background-clip: padding-box;
+    border-radius: 20px;
+}
+
+.treatment-bmp-cluster div {
+    background-color: #737373;
+    color: #161616;
+    font-weight: 900;
+    width: 30px;
+    height: 30px;
+    margin-left: 5px;
+    margin-top: 5px;
+    text-align: center;
+    border-radius: 15px;
+    font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+.treatment-bmp-cluster span {
+    line-height: 30px;
+}
+
+.road-segment-cluster {
+    background-color: #b8b8b8;
+    opacity: 0.7 !important;
+    background-clip: padding-box;
+    border-radius: 20px;
+}
+
+.road-segment-cluster div {
+    background-color: #737373;
+    color: #161616;
+    font-weight: 900;
+    width: 30px;
+    height: 30px;
+    margin-left: 5px;
+    margin-top: 5px;
+    text-align: center;
+    border-radius: 15px;
+    font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+.road-segment-cluster span {
+    line-height: 30px;
+}

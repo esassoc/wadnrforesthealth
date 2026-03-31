@@ -1,0 +1,42 @@
+<page-header pageTitle="Priority Landscapes" [customRichTextTypeID]="customRichTextTypeID"></page-header>
+
+<div class="page-body mt-3">
+    <div [loadingSpinner]="{ isLoading, loadingHeight: 400 }">
+        <hybrid-map-grid
+            [rowData]="priorityLandscapes$ | async"
+            [columnDefs]="columnDefs"
+            downloadFileName="priority-landscapes"
+            entityIDField="PriorityLandscapeID"
+            (gridReady)="onGridReady($event)"
+            (onMapLoad)="handleMapReady($event)"
+            [selectedValue]="selectedPriorityLandscapeID"
+            (selectedValueChange)="onSelectedPriorityLandscapeIDChanged($event)">
+            <priority-landscapes-layer
+                [map]="map"
+                [layerControl]="layerControl"
+                [mode]="OverlayMode.ReferenceWithInteractivity"
+                [categoryFilter]="'East'"
+                [overlayLabelOverride]="'20-Year Forest Health Strategic Plan: Eastern WA Priority Landscapes'"
+                [fitBoundsOnWmsAddToControl]="false"
+                [selectedIDs]="selectedPriorityLandscapeID ? [selectedPriorityLandscapeID] : null"
+                (selectedIDsChange)="onSelectedPriorityLandscapeIDChanged($event, true)">
+            </priority-landscapes-layer>
+            <priority-landscapes-layer
+                [map]="map"
+                [layerControl]="layerControl"
+                [mode]="OverlayMode.ReferenceWithInteractivity"
+                [categoryFilter]="'West'"
+                [overlayLabelOverride]="'Western WA Forest Health Priority Landscapes'"
+                [fitBoundsOnWmsAddToControl]="false"
+                [selectedIDs]="selectedPriorityLandscapeID ? [selectedPriorityLandscapeID] : null"
+                (selectedIDsChange)="onSelectedPriorityLandscapeIDChanged($event, true)">
+            </priority-landscapes-layer>
+            <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'priority-landscape'" [displayOnLoad]="false"></external-map-layers>
+            <generic-wms-wfs-layer [map]="map" [layerControl]="layerControl"
+                [wmsLayerName]="'WADNRForestHealth:ProjectLocationDetailed'" [wfsFeatureType]="'WADNRForestHealth:ProjectLocationDetailed'"
+                [identifierProperty]="'ProjectID'" [overlayLabel]="'All Project Locations (Detailed)'" [wmsStyle]="'location_detailed'"
+                [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false" [addToLayerControl]="true">
+            </generic-wms-wfs-layer>
+        </hybrid-map-grid>
+    </div>
+</div>

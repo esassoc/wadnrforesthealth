@@ -1,0 +1,76 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Edit Tags</h3>
+</div>
+<div class="modal-body" [loadingSpinner]="{ isLoading: isLoading$ | async, loadingHeight: 200 }">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <p class="mb-3">
+        Add or remove tags for this project. Type to search existing tags or create new ones.
+    </p>
+
+    <div class="field tag-combobox mb-3">
+        <div class="field-label">Add Tag</div>
+        <input
+            type="text"
+            [formControl]="searchControl"
+            (input)="onSearchInput()"
+            (focus)="onSearchFocus()"
+            (blur)="onSearchBlur()"
+            placeholder="Search or create a tag..."
+            autocomplete="off"
+            [readOnly]="isSubmitting || isCreating" />
+        @if (showDropdown && (filteredTags.length > 0 || canCreateTag)) {
+            <div class="tag-combobox__dropdown">
+                @for (tag of filteredTags; track tag.TagID) {
+                    <div class="tag-combobox__option" (mousedown)="addExistingTag(tag)">
+                        {{ tag.TagName }}
+                    </div>
+                }
+                @if (canCreateTag) {
+                    <div class="tag-combobox__option tag-combobox__option--create" (mousedown)="createAndAddTag()">
+                        <i class="fas fa-plus"></i> Create "{{ searchText }}"
+                    </div>
+                }
+            </div>
+        }
+        @if (isCreating) {
+            <div class="tag-combobox__creating">
+                <i class="fas fa-spinner fa-spin"></i> Creating "{{ creatingTagName }}"...
+            </div>
+        }
+    </div>
+
+    @if (selectedTags.length > 0) {
+        <div class="tags-list mt-3">
+            @for (tag of selectedTags; track tag.TagID) {
+                <span class="btn btn-sm btn-tag">
+                    {{ tag.TagName }}
+                    <a href="#" class="ms-1 text-danger" (click)="removeTag(tag.TagID); $event.preventDefault()" [class.disabled]="isSubmitting" title="Remove" aria-label="Remove">
+                        <icon icon="Delete" aria-hidden="true"></icon>
+                    </a>
+                </span>
+            }
+        </div>
+    } @else {
+        <div class="alert alert-info mt-3">
+            <em>No tags have been assigned to this project.</em>
+        </div>
+    }
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting"
+        [buttonLoading]="isSubmitting">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

@@ -1,0 +1,89 @@
+@if (this.gridTitle != null && this.gridTitle !== '') {
+<h2 class="grid-title">{{ gridTitle }}</h2>
+} @if (!overrideDefaultGridHeader && gridLoaded) {
+<wadnr-grid-header
+    [grid]="gridref"
+    [rowDataCount]="rowData?.length"
+    [hideGlobalFilter]="hideGlobalFilter"
+    [disableGlobalFilter]="disableGlobalFilter"
+    [multiSelectEnabled]="multiSelectEnabled"
+    [showMultiRowSelectActions]="showMultiRowSelectActions"
+    [unsetHeaderGridActionWidth]="unsetHeaderGridActionWidth">
+    <ng-content select="[customGridActionsLeft]" ngProjectAs="[customGridActionsLeft]"></ng-content>
+    <ng-content select="[customGridActionsCenter]" ngProjectAs="[customGridActionsCenter]"></ng-content>
+    <ng-content select="[customGridActionsRight]" ngProjectAs="[customGridActionsRight]"></ng-content>
+</wadnr-grid-header>
+}
+
+<div class="table-responsive" #gridContainer>
+    @if (isFullScreen) {
+        <div class="wadnr-grid__fullscreen-header">
+            <span class="wadnr-grid__fullscreen-title">{{ fullscreenTitle || gridTitle || downloadFileName }}</span>
+        </div>
+    }
+    <ag-grid-angular
+        [style.height]="height"
+        [style.width]="width"
+        [theme]="gridTheme"
+        [popupParent]="popupParent"
+        defaultGridOptions
+        #gridref
+        [overlayLoadingTemplate]="agGridOverlay"
+        [rowData]="rowData"
+        [columnDefs]="columnDefs"
+        [defaultColDef]="defaultColDef"
+        [tooltipInteraction]="true"
+        [tooltipShowDelay]="800"
+        [rowSelection]="rowSelection"
+        [selectionColumnDef]="selectionColumnDef"
+        [suppressRowTransform]="true"
+        [suppressMenuHide]="true"
+        [pagination]="pagination"
+        [paginationPageSize]="paginationPageSize"
+        [suppressPaginationPanel]="true"
+        [suppressCellFocus]="showMultiRowSelectActions"
+        [suppressRowClickSelection]="showMultiRowSelectActions"
+        [quickFilterText]="quickFilterText"
+        [getRowId]="getRowId"
+        [gridOptions]="gridOptions"
+        (gridReady)="onGridReady($event)"
+        (firstDataRendered)="onFirstDataRendered($event)"
+        (gridColumnsChanged)="onGridColumnsChanged($event)"
+        (selectionChanged)="this.onSelectionChanged($event)"
+        (filterChanged)="onFilterChanged($event)"
+        (rowDataUpdated)="onRowDataUpdated($event)"
+        (sortChanged)="onSortChanged()"
+        (cellEditingStarted)="oncellEditingStarted($event)"
+        (cellEditingStopped)="oncellEditingStopped($event)"
+        (cellValueChanged)="onCellValueChanged($event)">
+    </ag-grid-angular>
+
+    <div class="wadnr-grid__footer flex-between">
+        <div style="display: flex">
+            @if (!hideFullscreenButton) {
+            <div class="wadnr-grid__fullscreen-btn">
+                <full-screen-button
+                    #fullScreenBtn
+                    [elementRef]="gridContainer"
+                    [enterFullScreenTitleText]="fullscreenTitleText"
+                    (screenSizeChangedEvent)="handleScreenSizeChangedEvent(fullScreenBtn.isFullScreen)"></full-screen-button>
+            </div>
+            } @if (!hideDownloadButton) {
+            <div>
+                <wadnr-csv-download-button [grid]="gridref" [fileName]="downloadFileName" [colIDsToExclude]="colIDsToExclude"></wadnr-csv-download-button>
+            </div>
+            }
+        </div>
+        @if (gridLoaded && pagination) {
+        <pagination-controls [grid]="gridref"></pagination-controls>
+        }
+
+        <div class="wadnr-grid__row-count">
+            Total Records: {{ rowData?.length | number }}
+
+            @if (anyFilterPresent) {
+            <div class="wadnr-grid__filtered-count">Filtered Records: {{ filteredRowsCount | number }}</div>
+            }
+        </div>
+    </div>
+</div>

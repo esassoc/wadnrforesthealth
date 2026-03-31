@@ -1,0 +1,47 @@
+.classification-modal {
+    &__color-field {
+        display: flex;
+        align-items: flex-end;
+
+        form-field {
+            flex: 1;
+            min-width: 0;
+
+            ::ng-deep input {
+                border-top-right-radius: 0 !important;
+                border-bottom-right-radius: 0 !important;
+                border-right: none !important;
+            }
+        }
+    }
+
+    &__color-picker {
+        width: 2.5rem;
+        height: 2rem;
+        flex-shrink: 0;
+        padding: var(--spacing-050);
+        border: 1px solid rgba(black, 0.2);
+        border-left: none;
+        border-top-right-radius: var(--border-radius-200);
+        border-bottom-right-radius: var(--border-radius-200);
+        cursor: pointer;
+        background: none;
+    }
+
+    &__existing-image {
+        margin-bottom: var(--spacing-200);
+    }
+
+    &__field-label {
+        display: block;
+        margin-bottom: var(--spacing-100);
+        font-weight: 600;
+    }
+
+    &__image-preview {
+        max-width: 200px;
+        max-height: 150px;
+        border: 1px solid rgba(black, 0.15);
+        border-radius: var(--border-radius-200);
+    }
+}

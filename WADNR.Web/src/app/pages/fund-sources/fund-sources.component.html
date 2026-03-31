@@ -1,0 +1,50 @@
+<page-header pageTitle="Fund Sources" [customRichTextTypeID]="customRichTextTypeID"></page-header>
+
+<div class="page-body">
+    <wadnr-grid
+        [rowData]="fundSources$ | async"
+        [columnDefs]="columnDefs"
+        downloadFileName="fund-sources"
+        fullscreenTitle="Fund Sources"
+        [gridTitle]="'Fund Sources'"
+        [defaultRowSelection]="'singleRow'"
+        (selectionChanged)="onFundSourceSelected($event)">
+        <div customGridActionsRight class="flex">
+            @if (canDownloadExcel$ | async) {
+            <button class="btn btn-sm btn-secondary" (click)="downloadExcel()" [buttonLoading]="isDownloading()">
+                <span class="fas fa-download"></span> Download Full Database
+            </button>
+            }
+            @if (canManage$ | async) {
+            <button class="btn btn-sm btn-primary" (click)="createNewFundSource()">
+                <span class="fas fa-plus"></span> Create New
+            </button>
+            }
+        </div>
+    </wadnr-grid>
+
+    @if (isAuthenticated$ | async) {
+    <div class="mt-3">
+        @if (noMatchingAllocations) {
+            <div class="alert alert-info">
+                No allocations found for fund source {{ selectedFundSourceNumber }}. Showing all allocations.
+            </div>
+        }
+        <wadnr-grid
+            [rowData]="allocations$ | async"
+            [columnDefs]="allocationColumnDefs"
+            downloadFileName="fund-source-allocations"
+            fullscreenTitle="Fund Source Allocations"
+            [gridTitle]="allocationGridTitle"
+            (gridReady)="onAllocationGridReady($event)">
+            @if (canManage$ | async) {
+            <div customGridActionsRight>
+                <button class="btn btn-sm btn-primary" (click)="createNewAllocation()">
+                    <span class="fas fa-plus"></span> Create New
+                </button>
+            </div>
+            }
+        </wadnr-grid>
+    </div>
+    }
+</div>

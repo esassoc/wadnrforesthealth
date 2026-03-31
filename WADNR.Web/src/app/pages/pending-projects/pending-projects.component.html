@@ -1,0 +1,20 @@
+<page-header pageTitle="Pending Projects" [customRichTextTypeID]="customRichTextTypeID"></page-header>
+
+<div class="page-body">
+    @if (canCreateProject$ | async) {
+    <div class="flex-end mb-3">
+        <a class="btn btn-primary" [routerLink]="['/projects/new']">
+            <span class="fas fa-plus"></span> Propose New Project
+        </a>
+    </div>
+    }
+    <wadnr-grid [rowData]="projects$ | async" [columnDefs]="columnDefs" [pinnedTotalsRow]="pinnedTotalsRow" downloadFileName="pending-projects" fullscreenTitle="Pending Projects">
+        @if (canDownloadExcel$ | async) {
+        <div customGridActionsRight class="flex">
+            <button class="btn btn-sm btn-secondary" (click)="downloadExcel()" [buttonLoading]="isDownloading()">
+                <span class="fas fa-download"></span> Download Full Database
+            </button>
+        </div>
+        }
+    </wadnr-grid>
+</div>

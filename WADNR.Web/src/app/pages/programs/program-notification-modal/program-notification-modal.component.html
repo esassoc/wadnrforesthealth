@@ -1,0 +1,47 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>{{ isEditMode ? 'Edit' : 'New' }} Notification Configuration</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form-field
+        fieldLabel="Notification Type"
+        [type]="FormFieldType.Select"
+        [formControl]="form.controls.programNotificationTypeID"
+        [formInputOptions]="notificationTypeOptions"
+        placeholder="Select a notification type...">
+    </form-field>
+
+    <form-field
+        fieldLabel="Recurrence Interval"
+        [type]="FormFieldType.Select"
+        [formControl]="form.controls.recurrenceIntervalID"
+        [formInputOptions]="recurrenceIntervalOptions"
+        placeholder="Select a recurrence interval...">
+    </form-field>
+
+    <form-field
+        fieldLabel="Email Text"
+        [type]="FormFieldType.RTE"
+        [formControl]="form.controls.notificationEmailText">
+    </form-field>
+
+    <p class="system-text">The notification email will also include a link at the bottom to the relevant project(s).</p>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="form.invalid || isSubmitting()"
+        [buttonLoading]="isSubmitting()">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting()">
+        Cancel
+    </button>
+</div>
+</div>

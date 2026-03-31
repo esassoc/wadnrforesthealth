@@ -1,0 +1,236 @@
+<nav class="main-nav">
+    <div class="main-nav__wrapper">
+        <ul class="main-nav__links">
+            <li class="main-nav__explorer">
+                <a routerLink="/" routerLinkActive="active" class="main-nav__logo">
+                    <img src="/assets/header-images/header_logo.png" class="navbarLogo" [alt]="'WADNR logo'" />
+                </a>
+            </li>
+        </ul>
+        <ul class="main-nav__links main-nav__utilities">
+            <li class="nav-item">
+                <project-search-typeahead class="main-nav__search"></project-search-typeahead>
+            </li>
+            <!-- @if (!isAuthenticated()) {
+            <li class="nav-item" routerLinkActive="active">
+                <a href="javascript:void(0);" (click)="login()" routerLinkActive="active" class="nav-link">Log In</a>
+            </li>
+            <li class="nav-item" routerLinkActive="active">
+                <a routerLink="/request-support" routerLinkActive="active" class="nav-link">Request Support</a>
+            </li>
+            }  -->
+            <!-- @if (currentUser$ | async; as currentUser) {
+            <li class="nav-item dropdown welcomeUser" routerLinkActive="active" [dropdownToggle]="userToggle">
+                <a class="dropdown-toggle nav-link" role="button" aria-haspopup="true" aria-expanded="false"> Welcome {{ currentUser.FirstName }} {{ currentUser.LastName }} </a>
+                <div #userToggle class="dropdown-menu dropdown-menu-right">
+                    <a routerLink="/request-support" class="dropdown-item">Request Support</a>
+                    <a href="javascript:void(0);" (click)="logout()" class="dropdown-item">Log Out</a>
+                </div>
+            </li>
+            }  -->
+            @if (showTestingWarning()) {
+            <li class="nav-item qa-warning">
+                <div class="nav-link">
+                    <a class="btn btn-sm btn-warning" [innerHTML]="testingWarningText()"></a>
+                </div>
+            </li>
+            }
+        </ul>
+    </div>
+</nav>
+
+@if (currentUser$ | async; as impUser) {
+    @if (isBeingImpersonated(impUser)) {
+        <div class="impersonation-banner">
+            <span>Impersonating <strong>{{ impUser.FirstName }} {{ impUser.LastName }}</strong></span>
+            <button class="btn btn-sm btn-warning" (click)="stopImpersonation()">Stop Impersonating</button>
+        </div>
+    }
+}
+
+<header class="site-header">
+    @if (navigationMenus$ | async; as navigationMenus) {
+    <nav class="secondary-nav">
+        <div style="width: 100%">
+            <ul class="secondary-nav__links">
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0);" [dropdownToggle]="aboutMenu" class="nav-link dropdown-toggle">About <icon icon="AngleDown"></icon></a>
+                    <ul #aboutMenu class="dropdown-menu">
+                        @for (menuItem of navigationMenus.about; track menuItem.CustomPageID ?? menuItem.CustomPageVanityUrl) {
+                        <li>
+                            <a [routerLink]="vanityUrlToRouterLink(menuItem.CustomPageVanityUrl)" class="dropdown-item">{{ menuItem.CustomPageDisplayName }}</a>
+                        </li>
+                        }
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0);" [dropdownToggle]="projectsMenu" class="nav-link dropdown-toggle">Projects <icon icon="AngleDown"></icon></a>
+                    <ul #projectsMenu class="dropdown-menu">
+                        <li><a routerLink="/projects/map" class="dropdown-item">Project Map</a></li>
+                        <li class="divider"></li>
+                        <li><a routerLink="/projects" class="dropdown-item">Full Project List</a></li>
+                        <li><a routerLink="/projects-by-type" class="dropdown-item">Projects By Type</a></li>
+                        <li><a routerLink="/projects-by-theme" class="dropdown-item">Projects By Theme</a></li>
+                        <li><a routerLink="/tags" class="dropdown-item">Project Tags</a></li>
+                        @if (currentUser$ | async; as currentUserForPending) {
+                            @if (!isUnassigned(currentUserForPending)) {
+                            <li><a routerLink="/projects/pending" class="dropdown-item">Pending Projects</a></li>
+                            }
+                        }
+                        <li class="divider"></li>
+                        <li><a routerLink="/interactions-events" class="dropdown-item">Full Interactions/Events List</a></li>
+                        <li class="divider"></li>
+                        @for (menuItem of navigationMenus.projects; track menuItem.CustomPageID ?? menuItem.CustomPageVanityUrl) {
+                        <li>
+                            <a [routerLink]="vanityUrlToRouterLink(menuItem.CustomPageVanityUrl)" class="dropdown-item">{{ menuItem.CustomPageDisplayName }}</a>
+                        </li>
+                        }
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0);" [dropdownToggle]="financialsMenu" class="nav-link dropdown-toggle">Financials <icon icon="AngleDown"></icon></a>
+                    <ul #financialsMenu class="dropdown-menu">
+                        <li><a routerLink="/fund-sources" class="dropdown-item">Full Fund Source List</a></li>
+                        <li class="divider"></li>
+                        <li><a routerLink="/agreements" class="dropdown-item">Full Agreement List</a></li>
+                        @if (navigationMenus.financials.length > 0) {
+                        <li class="divider"></li>
+                        @for (menuItem of navigationMenus.financials; track menuItem.CustomPageID ?? menuItem.CustomPageVanityUrl) {
+                        <li>
+                            <a [routerLink]="vanityUrlToRouterLink(menuItem.CustomPageVanityUrl)" class="dropdown-item">{{ menuItem.CustomPageDisplayName }}</a>
+                        </li>
+                        } }
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0);" [dropdownToggle]="programMenu" class="nav-link dropdown-toggle">Program Info<icon icon="AngleDown"></icon></a>
+                    <ul #programMenu class="dropdown-menu">
+                        <li><a routerLink="/find-your-forester" class="dropdown-item">Find Your Forester</a></li>
+                        <li><a routerLink="/programs" class="dropdown-item">Programs</a></li>
+                        <li class="divider"></li>
+                        <li><a routerLink="/priority-landscapes" class="dropdown-item">Priority Landscapes</a></li>
+                        <li><a routerLink="/dnr-upland-regions" class="dropdown-item">DNR Upland Regions</a></li>
+                        @if (currentUser$ | async) {
+                        <li><a routerLink="/focus-areas" class="dropdown-item">DNR LOA Focus Areas</a></li>
+                        }
+                        <li><a routerLink="/counties" class="dropdown-item">Counties</a></li>
+                        <li class="divider"></li>
+                        @if (hasCanStewardProjectsRelationship$ | async) {
+                        <li><a routerLink="/project-steward-organizations" class="dropdown-item">Project Steward Organizations</a></li>
+                        }
+                        <li><a routerLink="/organizations" class="dropdown-item">Contributing Organizations</a></li>
+                        @if (currentUser$ | async; as currentUserForVendors) {
+                            @if (isStewardOrAbove(currentUserForVendors)) {
+                            <li><a routerLink="/vendors" class="dropdown-item">Vendors</a></li>
+                            }
+                        }
+                        <li class="divider"></li>
+                        @for (menuItem of navigationMenus.programInfo; track menuItem.CustomPageID ?? menuItem.CustomPageVanityUrl) {
+                        <li>
+                            <a [routerLink]="vanityUrlToRouterLink(menuItem.CustomPageVanityUrl)" class="dropdown-item">{{ menuItem.CustomPageDisplayName }}</a>
+                        </li>
+                        }
+                    </ul>
+                </li>
+                @if (currentUser$ | async; as currentUserForManage) {
+                    @if (canViewManageMenu(currentUserForManage)) {
+                    <li class="nav-item dropdown">
+                        <a href="javascript:void(0);" [dropdownToggle]="manageMenu" class="nav-link dropdown-toggle">Manage <icon icon="AngleDown"></icon></a>
+                        <ul #manageMenu class="dropdown-menu">
+                            <!-- Group 1: Classification (Admin only) -->
+                            @if (isAdmin(currentUserForManage)) {
+                            <li><a routerLink="/project-types" class="dropdown-item">Project Types</a></li>
+                            <li><a routerLink="/project-themes" class="dropdown-item">Project Themes</a></li>
+                            <li class="divider"></li>
+                            }
+                            <!-- Group 2: System Config -->
+                            @if (canManageUsersContactsOrganizations(currentUserForManage)) {
+                            <li><a routerLink="/people" class="dropdown-item">Users and Contacts</a></li>
+                            }
+                            @if (isAdmin(currentUserForManage)) {
+                            <li><a routerLink="/projects/featured" class="dropdown-item">Featured Projects</a></li>
+                            <li><a routerLink="/project-updates" class="dropdown-item">Project Updates</a></li>
+                            <li><a routerLink="/homepage-configuration" class="dropdown-item">Homepage Configuration</a></li>
+                            }
+                            <li class="divider"></li>
+                            <!-- Group 3: Content Editing (PageContentManageFeature) -->
+                            @if (canManagePageContent(currentUserForManage)) {
+                            <li><a routerLink="/manage-page-content" class="dropdown-item">Manage Page Content</a></li>
+                            <li><a routerLink="/labels-and-definitions" class="dropdown-item">Custom Labels &amp; Definitions</a></li>
+                            <li><a routerLink="/manage-custom-pages" class="dropdown-item">Custom Pages</a></li>
+                            <li class="divider"></li>
+                            }
+                            <!-- Group 4: Other (Admin only) -->
+                            @if (isAdmin(currentUserForManage)) {
+                            <li><a routerLink="/internal-setup-notes" class="dropdown-item">Internal Setup Notes</a></li>
+                            <li><a routerLink="/upload-excel-files" class="dropdown-item">Upload Excel Files / ETL</a></li>
+                            <li class="divider"></li>
+                            }
+                            <!-- Group 5: Organizations -->
+                            @if (isAdmin(currentUserForManage)) {
+                            <li><a routerLink="/organization-and-relationship-types" class="dropdown-item">Contributing Organization Types</a></li>
+                            }
+                            @if (isStewardOrAbove(currentUserForManage)) {
+                            <li><a routerLink="/manage-find-your-forester" class="dropdown-item">Manage Find Your Forester</a></li>
+                            }
+                            @if (isAdmin(currentUserForManage)) {
+                            <li><a routerLink="/map-layers" class="dropdown-item">Map Layers</a></li>
+                            <li class="divider"></li>
+                            <!-- Group 6: Jobs -->
+                            <li><a routerLink="/jobs" class="dropdown-item">Jobs</a></li>
+                            <li class="divider"></li>
+                            <!-- Group 7: JSON APIs -->
+                            <li><a routerLink="/json-apis" class="dropdown-item">JSON APIs</a></li>
+                            }
+                        </ul>
+                    </li>
+                    }
+                }
+                @if (currentUser$ | async; as currentUserForReports) {
+                  @if (isStewardOrAbove(currentUserForReports)) {
+                    <li class="nav-item dropdown">
+                        <a href="javascript:void(0);" [dropdownToggle]="reportsMenu" class="nav-link dropdown-toggle">Reports <icon icon="AngleDown"></icon></a>
+                        <ul #reportsMenu class="dropdown-menu">
+                            <li><a routerLink="/reports/projects" class="dropdown-item">Projects</a></li>
+                            @if (isAdmin(currentUserForReports)) {
+                            <li class="divider"></li>
+                            <li><a routerLink="/reports" class="dropdown-item">Manage Report Templates</a></li>
+                            }
+                        </ul>
+                    </li>
+                  }
+                }
+                <!-- first right-aligned item -->
+                @if (currentUser$ | async; as currentUser) {
+                    <li class="nav-item dropdown secondary-nav__right-start" [dropdownToggle]="userMenu">
+                        <a href="javascript:void(0);" class="nav-link dropdown-toggle">
+                            {{ isBeingImpersonated(currentUser) ? "Impersonating: " : "" }}{{ currentUser.FirstName }} {{ currentUser.LastName }} <icon icon="AngleDown"></icon>
+                        </a>
+                        <ul #userMenu class="dropdown-menu dropdown-menu-right">
+                            <li><a [routerLink]="['/people', currentUser.PersonID]" class="dropdown-item">View Account</a></li>
+                            <li class="divider"></li>
+                            <li><a href="javascript:void(0);" (click)="logout()" class="dropdown-item">{{ isBeingImpersonated(currentUser) ? "Stop Impersonating" : "Log Out" }}</a></li>
+                        </ul>
+                    </li>
+                } @else {
+                <li class="nav-item secondary-nav__right-start">
+                    <a href="javascript:void(0);" (click)="login()" class="nav-link">Log In</a>
+                </li>
+                }
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0);" [dropdownToggle]="helpMenu" class="nav-link dropdown-toggle">Help <icon icon="AngleDown"></icon></a>
+                    <ul #helpMenu class="dropdown-menu dropdown-menu-right">
+                        <li><a href="javascript:void(0);" (click)="openSupportModal()" class="dropdown-item">Request Support</a></li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="https://esassoc.com/services/technology/esa-software-platforms/projectfirma/" class="dropdown-item" target="_blank"
+                                >About Project Firma <icon icon="ExternalLink"></icon
+                            ></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    }
+</header>

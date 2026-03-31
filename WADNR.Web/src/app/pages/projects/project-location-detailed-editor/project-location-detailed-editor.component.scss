@@ -1,0 +1,229 @@
+// Location detailed editor modal styles
+
+.location-editor {
+    &__map-container {
+        border: 1px solid var(--muted);
+        border-radius: var(--border-radius-200);
+        overflow: hidden;
+    }
+
+    // Shape type badges
+    &__shape-badge {
+        display: inline-block;
+        padding: 0.2em 0.5em;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border-radius: var(--border-radius-200);
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+
+        &--polygon {
+            background-color: #cfe2ff;
+            color: #084298;
+        }
+
+        &--line {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+
+        &--point {
+            background-color: #fff3cd;
+            color: #664d03;
+        }
+    }
+
+    // Features table
+    &__features-table {
+        margin-bottom: 0;
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            border-bottom: 2px solid var(--muted);
+        }
+
+        tbody tr {
+            cursor: pointer;
+            transition: background-color 0.15s ease-in-out;
+
+            &:hover {
+                background-color: #f8f9fa;
+            }
+
+            &--selected {
+                background-color: #fff3cd;
+                border-left: 3px solid #ffc107;
+
+                &:hover {
+                    background-color: #ffecb5;
+                }
+            }
+
+            &--modified {
+                td:nth-child(2)::before {
+                    content: "*";
+                    color: #0d6efd;
+                    font-weight: bold;
+                    margin-right: var(--spacing-100);
+                }
+            }
+        }
+
+        td {
+            vertical-align: middle;
+            padding: var(--spacing-100) var(--spacing-200);
+        }
+
+        td:first-child {
+            text-align: center;
+
+            .fas {
+                margin-right: 0;
+            }
+        }
+    }
+
+    // Action buttons (link-style)
+    &__action-btn {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    // Deleted features table
+    &__deleted-table {
+        margin-bottom: 0;
+        background-color: #f8f9fa;
+
+        tr {
+            &--deleted {
+                opacity: 0.7;
+
+                td {
+                    padding: var(--spacing-200);
+                }
+            }
+        }
+    }
+
+    &__deleted-name {
+        text-decoration: line-through;
+    }
+
+    &__deleted-actions {
+        text-align: right;
+    }
+}
+
+// Scoped form-field overrides for table cells
+:host ::ng-deep {
+    .location-editor__features-table {
+        form-field {
+            .field {
+                margin-bottom: 0;
+
+                .field-label {
+                    display: none;
+                }
+
+                input[type="text"],
+                textarea {
+                    border-color: transparent;
+                    background-color: transparent;
+                    padding: var(--spacing-100) var(--spacing-200);
+                    color: #212529;
+
+                    &:focus,
+                    &:hover {
+                        border-color: #ced4da;
+                        background-color: var(--white);
+                    }
+                }
+
+                textarea {
+                    min-height: 50px;
+                    max-height: 100px;
+                    resize: vertical;
+                }
+
+                .ng-select {
+                    .ng-select-container {
+                        min-height: 31px;
+                        border-color: transparent;
+                        background-color: transparent;
+
+                        .ng-value-container {
+                            .ng-value {
+                                color: #212529 !important;
+                            }
+
+                            .ng-input {
+                                opacity: 0;
+
+                                > input {
+                                    color: #212529 !important;
+                                }
+                            }
+
+                            .ng-placeholder {
+                                color: #6c757d;
+                            }
+                        }
+
+                        &:hover {
+                            border-color: #ced4da;
+                            background-color: var(--white);
+                        }
+                    }
+
+                    &.ng-select-focused,
+                    &.ng-select-opened {
+                        .ng-select-container {
+                            border-color: #86b7fe;
+                            background-color: var(--white);
+
+                            .ng-value-container {
+                                .ng-value {
+                                    display: none;
+                                }
+
+                                .ng-input {
+                                    opacity: 1;
+                                }
+                            }
+                        }
+                    }
+
+                    &.ng-select-opened {
+                        .ng-select-container {
+                            .ng-value-container .ng-value {
+                                color: #212529 !important;
+                            }
+                        }
+                    }
+
+                    .ng-dropdown-panel {
+                        .ng-dropdown-panel-items {
+                            .ng-option {
+                                color: #212529;
+
+                                &.ng-option-selected {
+                                    background-color: #e9ecef;
+                                    color: #212529;
+                                }
+
+                                &.ng-option-marked {
+                                    background-color: #f8f9fa;
+                                    color: #212529;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

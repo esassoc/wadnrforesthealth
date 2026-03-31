@@ -1,0 +1,95 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>Create New Invoice Payment Request</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <p>Enter basic information about the Invoice Payment Request.</p>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.InvoicePaymentRequestDate"
+            fieldDefinitionName="InvoiceDate"
+            fieldDefinitionLabelOverride="Date"
+            [type]="FormFieldType.Date">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.PurchaseAuthorityIsLandownerCostShareAgreement"
+            fieldDefinitionName="PurchaseAuthority"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="purchaseAuthorityOptions"
+            placeholder="Choose one">
+        </form-field>
+
+        @if (showPurchaseAuthorityText) {
+            <form-field
+                [formControl]="form.controls.PurchaseAuthority"
+                fieldLabel="Agreement Number"
+                [type]="FormFieldType.Text"
+                placeholder="Enter agreement number">
+            </form-field>
+        }
+
+        <form-field
+            [formControl]="form.controls.Duns"
+            fieldDefinitionName="DUNS"
+            [type]="FormFieldType.Text"
+            placeholder="">
+        </form-field>
+
+        <div class="field">
+            <field-definition fieldDefinition="Vendor"></field-definition>
+            <label for="vendor-select" class="sr-only">Vendor</label>
+            <ng-select
+                class="custom"
+                [items]="vendorSearchResults$ | async"
+                [formControl]="vendorFormControl"
+                [typeahead]="vendorTypeahead$"
+                [loading]="vendorLoading"
+                [minTermLength]="2"
+                typeToSearchText="Type 2+ characters to search"
+                notFoundText="No vendors found"
+                loadingText="Searching..."
+                bindLabel="DisplayName"
+                bindValue="VendorID"
+                placeholder="Vendor Name or Number"
+                labelForId="vendor-select"
+                aria-label="Vendor">
+            </ng-select>
+        </div>
+
+        <form-field
+            [formControl]="form.controls.PreparedByPersonID"
+            fieldDefinitionName="PreparedByPerson"
+            fieldDefinitionLabelOverride="Prepared By"
+            [type]="FormFieldType.Select"
+            [formInputOptions]="people"
+            placeholder="Choose one">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.Notes"
+            fieldLabel="Notes"
+            [type]="FormFieldType.Textarea"
+            placeholder="">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [disabled]="isSubmitting"
+        [buttonLoading]="isSubmitting">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

@@ -1,0 +1,134 @@
+@if (dnrUplandRegionDetailPageData$ | async; as vm) {
+<breadcrumb [items]="[{ label: 'DNR Upland Regions', url: '/dnr-upland-regions' }, { label: vm.dnrUplandRegion.DNRUplandRegionName }]" [linkLast]="false"></breadcrumb>
+
+<page-header pageTitle="{{ vm.dnrUplandRegion.DNRUplandRegionName }}"> </page-header>
+
+<div class="grid-12">
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header flex-between">
+                <span class="card-title">Contact</span>
+                @if (isAdmin$ | async) {
+                    <button class="card-header-edit-link" (click)="openEditContactModal(vm.dnrUplandRegion)" title="Edit Contact">
+                        <icon icon="Edit"></icon>
+                    </button>
+                }
+            </div>
+            <div class="card-body">
+                <div class="grid-12 mb-2">
+                    <div class="g-col-4"><strong>Address</strong></div>
+                    <div class="g-col-8">{{ vm.dnrUplandRegion.RegionAddress || "—" }}</div>
+
+                    <div class="g-col-4"><strong>City</strong></div>
+                    <div class="g-col-8">{{ vm.dnrUplandRegion.RegionCity || "—" }}</div>
+
+                    <div class="g-col-4"><strong>State</strong></div>
+                    <div class="g-col-8">{{ vm.dnrUplandRegion.RegionState || "—" }}</div>
+
+                    <div class="g-col-4"><strong>Zip</strong></div>
+                    <div class="g-col-8">{{ vm.dnrUplandRegion.RegionZip || "—" }}</div>
+
+                    <div class="g-col-4"><strong>Phone</strong></div>
+                    <div class="g-col-8">{{ vm.dnrUplandRegion.RegionPhone || "—" }}</div>
+
+                    <div class="g-col-4"><strong>Email</strong></div>
+                    <div class="g-col-8">{{ vm.dnrUplandRegion.RegionEmail || "—" }}</div>
+                </div>
+
+                @if (isAdmin$ | async) {
+                    <hr>
+                    <div class="grid-12">
+                        <div class="g-col-4">
+                            <field-definition fieldDefinition="ServiceForestryRegionalCoordinator"></field-definition>
+                        </div>
+                        <div class="g-col-8">{{ vm.dnrUplandRegion.DNRUplandRegionCoordinatorFullName || "—" }}</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="g-col-6">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Map</span></div>
+            <div class="card-body">
+                <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
+                    <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
+                    @if (projectFeatures$ | async; as projectFeatures) {
+                    <generic-feature-collection-layer [map]="map" [layerControl]="layerControl" [featureCollection]="projectFeatures" [layerName]="'Project Locations'" [layerColor]="'#ffff00'" [displayOnLoad]="true"
+                        [popupContentFn]="buildProjectPopupContent()"></generic-feature-collection-layer>
+                    }
+                    <dnr-upland-regions-layer
+                        [map]="map"
+                        [layerControl]="layerControl"
+                        [selectedIDs]="[vm.dnrUplandRegion.DNRUplandRegionID]"
+                        [mode]="highlightedDNRUplandRegionLayerMode"></dnr-upland-regions-layer>
+
+                    <dnr-upland-regions-layer
+                        [map]="map"
+                        [layerControl]="layerControl"
+                        [mode]="allDNRUplandRegionsLayerMode"
+                        [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
+                </wadnr-map>
+            </div>
+        </div>
+    </div>
+
+    @if (hasAccountWithRole$ | async) {
+        <div class="g-col-12">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Fund Source Allocation Expenditures by Cost Type</span>
+                </div>
+                <div class="card-body" [loadingSpinner]="{ isLoading: expendituresIsLoading$ | async, loadingHeight: 300 }">
+                    @if (expenditureChartData$ | async; as chartData) {
+                        @if (chartData.length) {
+                            <vertical-stacked-bar-chart
+                                chartID="expenditures-by-cost-type"
+                                [chartData]="chartData"
+                                [chartHeight]="405"
+                                [colorRange]="expenditureColorRange"
+                                xFieldName="Year"
+                                yFieldName="Annual Expenditures"
+                                groupFieldName="Cost Type"
+                                valueFormatter="currency">
+                            </vertical-stacked-bar-chart>
+                        } @else {
+                            <p class="system-text">No Fund Source Allocation Expenditure data yet provided for this DNR Upland Region.</p>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Projects</span></div>
+            <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
+                @if (projects$ | async; as projects) {
+                <wadnr-grid [rowData]="projects" [columnDefs]="projectColumnDefs" [pinnedTotalsRow]="projectPinnedTotalsRow" [downloadFileName]="'projects'" fullscreenTitle="Projects"></wadnr-grid>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Fund Source Allocations</span></div>
+            <div class="card-body" [loadingSpinner]="{ isLoading: fundSourceAllocationsIsLoading$ | async, loadingHeight: 300 }">
+                @if (fundSourceAllocations$ | async; as fundSourceAllocations) {
+                <wadnr-grid
+                    [rowData]="fundSourceAllocations"
+                    [columnDefs]="fundSourceAllocationColumnDefs"
+                    [pinnedTotalsRow]="fundSourceAllocationPinnedTotalsRow"
+                    [downloadFileName]="'fund-source-allocations'"
+                    fullscreenTitle="Fund Source Allocations"></wadnr-grid>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+} @else {
+    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 400 }"></div>
+}

@@ -1,0 +1,61 @@
+@if ({ vm: vm$ | async, hasChanges: hasChanges$ | async }; as state) {
+@if (state.vm; as vm) {
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Update Treatments</span>
+        </div>
+        <div class="card-body">
+            @if (vm.isLoading) {
+                <div class="text-center p-4">Loading...</div>
+            } @else {
+                <p class="mb-3">
+                    Review and manage treatment activities for this project. Treatments are linked to project locations
+                    and define the specific work being performed.
+                </p>
+
+                <div class="treatments-step__header mb-3">
+                    <span [title]="(!vm.treatmentAreas || vm.treatmentAreas.length === 0) ? 'Add detailed locations with a Location Type of \'Treatment Area\' before adding treatments' : ''">
+                        <button class="btn btn-primary btn-sm"
+                            [style.pointer-events]="(!vm.treatmentAreas || vm.treatmentAreas.length === 0) ? 'none' : null"
+                            [disabled]="!vm.treatmentAreas || vm.treatmentAreas.length === 0"
+                            (click)="openAddTreatmentModal(vm.treatmentAreas)">
+                            + Add Treatment
+                        </button>
+                    </span>
+                </div>
+
+                @if (vm.treatments && vm.treatments.length > 0) {
+                    <wadnr-grid
+                        [rowData]="vm.treatments"
+                        [columnDefs]="columnDefs"
+                        [hideDownloadButton]="true"
+                        [hideFullscreenButton]="true"
+                        height="400px">
+                    </wadnr-grid>
+                } @else {
+                    <div class="alert alert-info">
+                        <em>No treatments have been added to this project.</em>
+                    </div>
+                }
+            }
+        </div>
+        <div class="card-footer">
+            <workflow-step-actions [showRevertActions]="true"
+                [isSaving]="false"
+                [hasChanges]="state.hasChanges"
+                [stepKey]="stepKey"
+                [projectID]="(projectID$ | async)"
+                (save)="onSave(false)"
+                (saveAndContinue)="onSave(true)"
+                (reverted)="onStepReverted()">
+            </workflow-step-actions>
+        </div>
+    </div>
+}
+} @else {
+    <div class="card">
+        <div class="card-body">
+            <div class="text-center p-4">Loading...</div>
+        </div>
+    </div>
+}

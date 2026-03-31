@@ -1,0 +1,63 @@
+@use "/src/scss/abstracts" as *;
+
+.home-index {
+    &__carousel {
+        margin-bottom: var(--spacing-600);
+    }
+
+    &__content {
+        padding: var(--spacing-600);
+        gap: var(--spacing-600);
+        max-width: 94rem;
+        margin: 0 auto;
+    }
+
+    &__richtext {
+        padding-right: var(--spacing-400);
+    }
+
+    &__action-btn {
+        display: block;
+        width: 100%;
+        text-align: center;
+        margin-bottom: var(--spacing-300);
+    }
+
+    &__sidebar-heading {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: var(--type-size-200);
+        color: var(--blue-500);
+        margin-bottom: var(--spacing-300);
+    }
+
+    &__map-link {
+        display: block;
+        cursor: pointer;
+        margin: var(--spacing-300) 0;
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid var(--gray-100);
+        transition: box-shadow 200ms ease;
+
+        &:hover {
+            box-shadow: var(--shadow-300);
+        }
+    }
+
+    &__featured {
+        padding: var(--spacing-700) var(--spacing-600);
+        max-width: 94rem;
+        margin: 0 auto;
+
+        h4 {
+            margin-bottom: var(--spacing-500);
+        }
+    }
+
+    &__additional-info {
+        padding: var(--spacing-700) var(--spacing-600);
+        max-width: 94rem;
+        margin: 0 auto;
+    }
+}

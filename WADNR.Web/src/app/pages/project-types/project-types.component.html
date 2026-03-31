@@ -1,0 +1,14 @@
+<page-header pageTitle="Project Types" [customRichTextTypeID]="customRichTextTypeID"></page-header>
+
+<div class="page-body">
+    <div class="flex-between no-wrap mb-2">
+        <div></div>
+        @if (isAdmin) {
+            <div>
+                <button class="btn btn-sm btn-secondary mr-2" (click)="openEditSortOrder()">Edit Sort Order</button>
+                <button class="btn btn-sm btn-primary" (click)="openCreateProjectType()">Create New Project Type</button>
+            </div>
+        }
+    </div>
+    <wadnr-grid [rowData]="projectTypes$ | async" [columnDefs]="columnDefs" downloadFileName="project-types" fullscreenTitle="Project Types" [sizeColumnsToFitGrid]="true"></wadnr-grid>
+</div>

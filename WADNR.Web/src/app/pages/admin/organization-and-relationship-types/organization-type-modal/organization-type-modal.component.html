@@ -1,0 +1,70 @@
+<div class="modal">
+<div class="modal-header">
+    <h3>{{ modalTitle }}</h3>
+</div>
+<div class="modal-body">
+    <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+
+    <form [formGroup]="form">
+        <form-field
+            [formControl]="form.controls.OrganizationTypeName"
+            fieldLabel="Name"
+            [type]="FormFieldType.Text"
+            placeholder="Enter contributing organization type name">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.OrganizationTypeAbbreviation"
+            fieldLabel="Abbreviation"
+            [type]="FormFieldType.Text"
+            placeholder="Enter abbreviation">
+        </form-field>
+
+        <div class="org-type-modal__color-field">
+            <form-field
+                [formControl]="form.controls.LegendColor"
+                fieldLabel="Legend Color"
+                [type]="FormFieldType.Text"
+                placeholder="#RRGGBB">
+            </form-field>
+            <input type="color"
+                class="org-type-modal__color-picker"
+                aria-label="Legend Color picker"
+                [value]="form.controls.LegendColor.value || '#000000'"
+                (input)="form.controls.LegendColor.setValue($any($event.target).value)">
+        </div>
+
+        <form-field
+            [formControl]="form.controls.ShowOnProjectMaps"
+            fieldLabel="Show On Maps"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.IsDefaultOrganizationType"
+            fieldLabel="Is Default"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+
+        <form-field
+            [formControl]="form.controls.IsFundingType"
+            fieldLabel="Is Funding Type"
+            [type]="FormFieldType.Toggle">
+        </form-field>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+        class="btn btn-primary"
+        (click)="save()"
+        [buttonLoading]="isSubmitting">
+        Save
+    </button>
+    <button
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+    </button>
+</div>
+</div>

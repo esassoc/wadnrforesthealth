@@ -1,0 +1,15 @@
+{
+    "/api": {
+        "target": "https://localhost:3212",
+        "secure": false,
+        "changeOrigin": true,
+        "pathRewrite": {
+            "^/api": ""
+        }
+    },
+    "/hangfire": {
+        "target": "https://localhost:3212",
+        "secure": false,
+        "changeOrigin": true
+    }
+}

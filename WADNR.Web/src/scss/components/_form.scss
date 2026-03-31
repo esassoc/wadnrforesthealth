@@ -1,0 +1,12 @@
+@use "/src/scss/abstracts" as *;
+
+.form {
+    &.grid-12 {
+        gap: 1rem 2rem;
+    }
+
+    &__actions {
+        border-top: 1px solid rgba(var(--black-rgb), 0.1);
+        padding-top: 1rem;
+    }
+}

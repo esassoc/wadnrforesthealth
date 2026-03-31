@@ -1,0 +1,44 @@
+.classifications-step {
+    &__system-section {
+        margin-bottom: var(--spacing-400);
+    }
+
+    &__system-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: var(--spacing-400);
+    }
+
+    &__row {
+        padding-top: var(--spacing-400);
+        padding-bottom: var(--spacing-200);
+    }
+
+    &__label {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--spacing-200);
+        cursor: pointer;
+
+        input[type="checkbox"] {
+            margin-top: var(--spacing-100);
+        }
+    }
+
+    &__name {
+        font-weight: 600;
+    }
+
+    &__description {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: var(--spacing-100);
+        margin-left: var(--spacing-500);
+    }
+
+    &__notes {
+        &--disabled {
+            background-color: #eeeeee;
+        }
+    }
+}

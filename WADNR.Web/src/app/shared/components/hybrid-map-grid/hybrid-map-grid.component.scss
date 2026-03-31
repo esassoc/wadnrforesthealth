@@ -1,0 +1,51 @@
+@use "../../../../scss/abstracts/" as *;
+
+.hybrid-map-grid {
+    &__toggle {
+        padding: 0;
+        overflow: hidden;
+
+        &-btn {
+            border: none;
+            border-radius: 0;
+        }
+    }
+
+    &__toggle-bar {
+        .btn-sm {
+            padding: 10px 15px 7px;
+            border-right: 1px solid var(--gray-200);
+
+            &:last-of-type {
+                border-right: none;
+            }
+        }
+
+        icon {
+            margin-right: 0.15rem;
+
+            ::ng-deep svg {
+                height: 12px;
+                width: 12px;
+            }
+        }
+    }
+
+    &__panel--hidden {
+        display: none;
+    }
+
+    &__container {
+        display: grid;
+        gap: 1rem;
+        @include desktop-small {
+            &:not(:has(div.hybrid-map-grid__panel--hidden)) {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @include tablet-max {
+            grid-template-columns: unset;
+        }
+    }
+}
