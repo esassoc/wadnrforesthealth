@@ -514,10 +514,10 @@ public static class People
             personID = await dbContext.People.AsNoTracking().Where(x => x.GlobalID == globalID).Select(x => x.PersonID).SingleOrDefaultAsync();
         }
 
-        // Detect if this is an enterprise login (Entra ID) from the sub claim prefix.
-        // Auth0 database connections produce subs like "auth0|...", while enterprise
-        // connections (Entra) produce subs like "waad|..." or similar.
-        var isEnterpriseUser = !string.IsNullOrEmpty(globalID) && !globalID.StartsWith("auth0|");
+        // Detect if this is an enterprise login (Entra ID) from the sub claim.
+        // Enterprise connections (Entra) contain "|waad|" in the sub claim.
+        // All other connections (auth0, social, etc.) are treated as public users.
+        var isEnterpriseUser = !string.IsNullOrEmpty(globalID) && globalID.Contains("|waad|");
 
         Person person;
         var email = claimsPrincipal?.Claims.SingleOrDefault(c => c.Type == ClaimsConstants.Emails)?.Value;
