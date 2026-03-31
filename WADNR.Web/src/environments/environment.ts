@@ -8,7 +8,6 @@ export const environment = {
     auth0: {
         domain: "wadnr-qa.us.auth0.com",
         clientId: "QioXm2t3RjItBMOqcFgWOqbRoYzK1gk7",
-        redirectUri: "https://wadnr.localhost.esassoc.com:3215",
         audience: "WADNRAPI",
     },
 };

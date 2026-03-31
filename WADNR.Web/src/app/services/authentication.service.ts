@@ -161,7 +161,7 @@ export class AuthenticationService {
     }
 
     signUp() {
-        const baseRedirect = environment.auth0?.redirectUri ?? window.location.origin;
+        const baseRedirect = window.location.origin;
         const target = baseRedirect.replace(/\/$/, "") + "/create-user-callback";
         this.auth0.loginWithRedirect({ authorizationParams: { screen_hint: "signup", redirect_uri: target, connection: "wa-state-ciam" } } as any);
     }
