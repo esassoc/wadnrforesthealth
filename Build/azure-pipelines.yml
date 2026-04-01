@@ -21,7 +21,7 @@ variables:
 
   # define these in the pipelines:
   domainApi: 'internalapi-wadnr.esa-$(Environment).sitkatech.com'
-  domainWeb: 'wadnr.esa-$(Environment).sitkatech.com'
+  #domainWeb: 'wadnr.esa-$(Environment).sitkatech.com'
   domainGeoserver: 'geoserver-wadnr.esa-$(Environment).sitkatech.com'
   domainScalarApi: 'api-wadnr.esa-$(Environment).sitkatech.com'
 resources:
