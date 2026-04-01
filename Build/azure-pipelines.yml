@@ -1,7 +1,7 @@
 trigger: none
 
 variables:
-  team: 'h2o'
+  team: 'hawk-moth'
   projectNumber: 'D020201674.00'
 
   azureApplicationTFStateResourceGroup: 'esa-$(Environment)'

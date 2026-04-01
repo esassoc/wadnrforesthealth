@@ -541,7 +541,7 @@ resource "datadog_synthetics_test" "api_test" {
     }
   }
   name    = "${var.environment} - https://${var.domainApi}/healthz API test"
-  message = "Notify @rlee@esassoc.com @mpeters@esassoc.com @team-${var.team}${var.environment == "qa" ? "-qa" : ""}"
+  message = "Notify @tkamin@esassoc.com @dsquires@esassoc.com @team-${var.team}${var.environment == "qa" ? "-qa" : ""}"
   tags    = ["env:${var.environment}", "managed:terraformed", "team:${var.team}"]
 
   status = "live"
@@ -576,7 +576,7 @@ resource "datadog_synthetics_test" "wadnr_test" {
     }
   }
   name    = "${var.environment} - ${var.domainWeb} test"
-  message = "Notify @rlee@esassoc.com @mpeters@esassoc.com @team-${var.team}${var.environment == "qa" ? "-qa" : ""}"
+  message = "Notify @tkamin@esassoc.com @dsquires@esassoc.com @team-${var.team}${var.environment == "qa" ? "-qa" : ""}"
   tags    = ["env:${var.environment}", "managed:terraformed", "team:${var.team}"]
 
   status = "live"
