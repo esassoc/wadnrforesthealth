@@ -227,7 +227,7 @@ export class ProgramDetailComponent {
         const dialogRef = this.dialogService.open(ProgramModalComponent, {
             data: {
                 mode: "edit",
-                program: program,
+                programID: program.ProgramID,
             } as ProgramModalData,
             width: "55vw"
         });

@@ -1,7 +1,8 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit, signal } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
-import { forkJoin, Observable, switchMap } from "rxjs";
+import { forkJoin, Observable, of, switchMap } from "rxjs";
 
 import { FormFieldComponent, FormFieldType } from "src/app/shared/components/forms/form-field/form-field.component";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
@@ -24,7 +25,7 @@ import {
 
 export interface ProgramModalData {
     mode: "create" | "edit";
-    program?: ProgramDetail;
+    programID?: number;
     defaultOrganizationID?: number;
 }
 
@@ -41,8 +42,8 @@ export class ProgramModalComponent extends BaseModal implements OnInit {
     public FormFieldType = FormFieldType;
     public mode: "create" | "edit" = "create";
     public program?: ProgramDetail;
-    public isLoading = true;
-    public isSubmitting = false;
+    public isLoading = signal(true);
+    public isSubmitting = signal(false);
     public lockedOrganizationName: string | null = null;
 
     public form = new FormGroup<ProgramUpsertRequestForm>({
@@ -75,6 +76,8 @@ export class ProgramModalComponent extends BaseModal implements OnInit {
     public organizationOptions: { Value: number; Label: string; disabled: boolean }[] = [];
     public personOptions: { Value: number; Label: string; disabled: boolean }[] = [];
 
+    private destroyRef = inject(DestroyRef);
+
     constructor(
         private programService: ProgramService,
         private organizationService: OrganizationService,
@@ -87,17 +90,25 @@ export class ProgramModalComponent extends BaseModal implements OnInit {
     ngOnInit(): void {
         const data = this.ref.data;
         this.mode = data?.mode ?? "create";
-        this.program = data?.program;
 
-        this.form.controls.IsDefaultProgramForImportOnly.valueChanges.subscribe(isDefault => {
+        this.form.controls.IsDefaultProgramForImportOnly.valueChanges.pipe(
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe(isDefault => {
             this.applyDefaultProgramToggle(isDefault);
         });
 
-        forkJoin({
+        const lookups$ = forkJoin({
             organizations: this.organizationService.listOrganization(),
-            people: this.personService.listLookupPerson()
-        }).subscribe({
-            next: ({ organizations, people }) => {
+            people: this.personService.listLookupPerson(),
+            program: this.mode === "edit" && data?.programID
+                ? this.programService.getProgram(data.programID)
+                : of(null as ProgramDetail | null),
+        });
+
+        lookups$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: ({ organizations, people, program }) => {
+                this.program = program;
+
                 this.organizationOptions = organizations.map(o => ({
                     Value: o.OrganizationID,
                     Label: o.OrganizationName,
@@ -143,10 +154,10 @@ export class ProgramModalComponent extends BaseModal implements OnInit {
                     }
                 }
 
-                this.isLoading = false;
+                this.isLoading.set(false);
             },
             error: (err) => {
-                this.isLoading = false;
+                this.isLoading.set(false);
                 const message = err?.error?.message ?? err?.message ?? "An error occurred loading form data.";
                 this.addLocalAlert(message, AlertContext.Danger, true);
             }
@@ -167,7 +178,7 @@ export class ProgramModalComponent extends BaseModal implements OnInit {
             return;
         }
 
-        this.isSubmitting = true;
+        this.isSubmitting.set(true);
         this.localAlerts.set([]);
 
         const programFile = this.programFileControl.value;
@@ -240,7 +251,7 @@ export class ProgramModalComponent extends BaseModal implements OnInit {
     }
 
     private onSaveError(err: any): void {
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
         const message = err?.error?.message ?? err?.message ?? "An error occurred.";
         this.addLocalAlert(message, AlertContext.Danger, true);
     }
