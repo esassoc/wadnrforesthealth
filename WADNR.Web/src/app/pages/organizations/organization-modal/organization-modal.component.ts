@@ -43,7 +43,7 @@ export class OrganizationModalComponent extends BaseModal implements OnInit {
     public FormFieldType = FormFieldType;
     public mode: "create" | "edit" = "create";
     public organization?: OrganizationDetail;
-    public isLoading = true;
+    public isLoading = signal(true);
     public isSubmitting = signal(false);
 
     public form = new FormGroup<OrganizationUpsertRequestForm>({
@@ -119,10 +119,10 @@ export class OrganizationModalComponent extends BaseModal implements OnInit {
                     });
                 }
 
-                this.isLoading = false;
+                this.isLoading.set(false);
             },
             error: (err) => {
-                this.isLoading = false;
+                this.isLoading.set(false);
                 const message = err?.error?.message ?? err?.message ?? "An error occurred loading form data.";
                 this.addLocalAlert(message, AlertContext.Danger, true);
             }
