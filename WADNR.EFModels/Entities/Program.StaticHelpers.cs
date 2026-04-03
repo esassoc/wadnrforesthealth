@@ -104,6 +104,27 @@ public static class Programs
         return crosswalks;
     }
 
+    public static async Task<string?> ValidateUpsertAsync(WADNRDbContext dbContext, ProgramUpsertRequest dto, int? currentProgramID = null)
+    {
+        if (dto.IsDefaultProgramForImportOnly) return null;
+
+        var duplicateName = await dbContext.Programs
+            .AnyAsync(p => p.OrganizationID == dto.OrganizationID
+                && p.ProgramName == dto.ProgramName
+                && (currentProgramID == null || p.ProgramID != currentProgramID));
+        if (duplicateName)
+            return $"A program with the name '{dto.ProgramName}' already exists for this organization.";
+
+        var duplicateShortName = await dbContext.Programs
+            .AnyAsync(p => p.OrganizationID == dto.OrganizationID
+                && p.ProgramShortName == dto.ProgramShortName
+                && (currentProgramID == null || p.ProgramID != currentProgramID));
+        if (duplicateShortName)
+            return $"A program with the short name '{dto.ProgramShortName}' already exists for this organization.";
+
+        return null;
+    }
+
     public static async Task<ProgramDetail?> CreateAsync(WADNRDbContext dbContext, ProgramUpsertRequest dto, int callingPersonID)
     {
         var entity = new Program
@@ -122,6 +143,31 @@ public static class Programs
         };
         dbContext.Programs.Add(entity);
         await dbContext.SaveChangesAsync();
+
+        // Create GisUploadSourceOrganization with sensible defaults (matches legacy ProgramController.New behavior)
+        var leadImplementerRelationshipType = await dbContext.RelationshipTypes
+            .FirstAsync(rt => rt.IsPrimaryContact);
+
+        var gisUploadSourceOrganization = new GisUploadSourceOrganization
+        {
+            GisUploadSourceOrganizationName = dto.ProgramName ?? entity.Organization?.OrganizationName ?? "Default",
+            AdjustProjectTypeBasedOnTreatmentTypes = false,
+            ProjectStageDefaultID = (int)ProjectStageEnum.Implementation,
+            DataDeriveProjectStage = false,
+            DefaultLeadImplementerOrganizationID = dto.OrganizationID,
+            RelationshipTypeForDefaultOrganizationID = leadImplementerRelationshipType.RelationshipTypeID,
+            ImportAsDetailedLocationInsteadOfTreatments = false,
+            ApplyCompletedDateToProject = true,
+            ApplyStartDateToProject = true,
+            ProgramID = entity.ProgramID,
+            ImportAsDetailedLocationInAdditionToTreatments = false,
+            ApplyStartDateToTreatments = false,
+            ApplyEndDateToTreatments = false,
+            ImportIsFlattened = false,
+        };
+        dbContext.GisUploadSourceOrganizations.Add(gisUploadSourceOrganization);
+        await dbContext.SaveChangesAsync();
+
         return await GetByIDAsDetailAsync(dbContext, entity.ProgramID);
     }
 
@@ -149,24 +195,175 @@ public static class Programs
         return await GetByIDAsDetailAsync(dbContext, entity.ProgramID);
     }
 
+    public static async Task<ProgramDeleteInfo?> GetDeleteInfoAsync(WADNRDbContext dbContext, int programID)
+    {
+        if (!await dbContext.Programs.AnyAsync(x => x.ProgramID == programID))
+            return null;
+
+        return new ProgramDeleteInfo
+        {
+            ProjectCount = await dbContext.ProjectPrograms.CountAsync(x => x.ProgramID == programID),
+            TreatmentCount = await dbContext.Treatments.CountAsync(x => x.ProgramID == programID),
+            TreatmentUpdateCount = await dbContext.TreatmentUpdates.CountAsync(x => x.ProgramID == programID),
+            ProjectLocationCount = await dbContext.ProjectLocations.CountAsync(x => x.ProgramID == programID),
+        };
+    }
+
     public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int programID)
     {
-        // Clean up junction table
+        var entity = await dbContext.Programs.FirstOrDefaultAsync(x => x.ProgramID == programID);
+        if (entity == null)
+            return false;
+
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
+        // Remove project associations (junction table only — projects remain intact)
+        await dbContext.ProjectPrograms
+            .Where(x => x.ProgramID == programID)
+            .ExecuteDeleteAsync();
+
+        // Delete GIS-imported project data (matches legacy DeleteFull behavior)
+        await dbContext.Treatments
+            .Where(x => x.ProgramID == programID)
+            .ExecuteDeleteAsync();
+        await dbContext.TreatmentUpdates
+            .Where(x => x.ProgramID == programID)
+            .ExecuteDeleteAsync();
+        await dbContext.ProjectLocations
+            .Where(x => x.ProgramID == programID)
+            .ExecuteDeleteAsync();
+
+        // Cascade GIS config children (deepest first)
+        var gisSourceOrgIDs = await dbContext.GisUploadSourceOrganizations
+            .Where(g => g.ProgramID == programID)
+            .Select(g => g.GisUploadSourceOrganizationID)
+            .ToListAsync();
+
+        if (gisSourceOrgIDs.Count > 0)
+        {
+            await dbContext.GisCrossWalkDefaults
+                .Where(x => gisSourceOrgIDs.Contains(x.GisUploadSourceOrganizationID))
+                .ExecuteDeleteAsync();
+            await dbContext.GisDefaultMappings
+                .Where(x => gisSourceOrgIDs.Contains(x.GisUploadSourceOrganizationID))
+                .ExecuteDeleteAsync();
+
+            // GisExcludeIncludeColumn children first
+            var excludeIncludeColumnIDs = await dbContext.GisExcludeIncludeColumns
+                .Where(x => gisSourceOrgIDs.Contains(x.GisUploadSourceOrganizationID))
+                .Select(x => x.GisExcludeIncludeColumnID)
+                .ToListAsync();
+            if (excludeIncludeColumnIDs.Count > 0)
+            {
+                await dbContext.GisExcludeIncludeColumnValues
+                    .Where(x => excludeIncludeColumnIDs.Contains(x.GisExcludeIncludeColumnID))
+                    .ExecuteDeleteAsync();
+            }
+            await dbContext.GisExcludeIncludeColumns
+                .Where(x => gisSourceOrgIDs.Contains(x.GisUploadSourceOrganizationID))
+                .ExecuteDeleteAsync();
+
+            // GisUploadAttempt children first
+            var uploadAttemptIDs = await dbContext.GisUploadAttempts
+                .Where(x => gisSourceOrgIDs.Contains(x.GisUploadSourceOrganizationID))
+                .Select(x => x.GisUploadAttemptID)
+                .ToListAsync();
+            if (uploadAttemptIDs.Count > 0)
+            {
+                var gisFeatureIDs = await dbContext.GisFeatures
+                    .Where(x => uploadAttemptIDs.Contains(x.GisUploadAttemptID))
+                    .Select(x => x.GisFeatureID)
+                    .ToListAsync();
+                if (gisFeatureIDs.Count > 0)
+                {
+                    await dbContext.GisFeatureMetadataAttributes
+                        .Where(x => gisFeatureIDs.Contains(x.GisFeatureID))
+                        .ExecuteDeleteAsync();
+                    await dbContext.GisFeatures
+                        .Where(x => uploadAttemptIDs.Contains(x.GisUploadAttemptID))
+                        .ExecuteDeleteAsync();
+                }
+                await dbContext.GisUploadAttemptGisMetadataAttributes
+                    .Where(x => uploadAttemptIDs.Contains(x.GisUploadAttemptID))
+                    .ExecuteDeleteAsync();
+
+                // Null out GisUploadAttempt FKs before deleting the upload attempts
+                await dbContext.Projects
+                    .Where(x => x.CreateGisUploadAttemptID != null && uploadAttemptIDs.Contains(x.CreateGisUploadAttemptID.Value))
+                    .ExecuteUpdateAsync(s => s.SetProperty(x => x.CreateGisUploadAttemptID, (int?)null));
+                await dbContext.Projects
+                    .Where(x => x.LastUpdateGisUploadAttemptID != null && uploadAttemptIDs.Contains(x.LastUpdateGisUploadAttemptID.Value))
+                    .ExecuteUpdateAsync(s => s.SetProperty(x => x.LastUpdateGisUploadAttemptID, (int?)null));
+
+                // Null out GisUploadAttempt FKs on remaining Treatments/TreatmentUpdates
+                // (rows from other programs may still reference these upload attempts)
+                await dbContext.Treatments
+                    .Where(x => x.CreateGisUploadAttemptID != null && uploadAttemptIDs.Contains(x.CreateGisUploadAttemptID.Value))
+                    .ExecuteUpdateAsync(s => s.SetProperty(x => x.CreateGisUploadAttemptID, (int?)null));
+                await dbContext.Treatments
+                    .Where(x => x.UpdateGisUploadAttemptID != null && uploadAttemptIDs.Contains(x.UpdateGisUploadAttemptID.Value))
+                    .ExecuteUpdateAsync(s => s.SetProperty(x => x.UpdateGisUploadAttemptID, (int?)null));
+
+                await dbContext.TreatmentUpdates
+                    .Where(x => x.CreateGisUploadAttemptID != null && uploadAttemptIDs.Contains(x.CreateGisUploadAttemptID.Value))
+                    .ExecuteUpdateAsync(s => s.SetProperty(x => x.CreateGisUploadAttemptID, (int?)null));
+                await dbContext.TreatmentUpdates
+                    .Where(x => x.UpdateGisUploadAttemptID != null && uploadAttemptIDs.Contains(x.UpdateGisUploadAttemptID.Value))
+                    .ExecuteUpdateAsync(s => s.SetProperty(x => x.UpdateGisUploadAttemptID, (int?)null));
+            }
+            await dbContext.GisUploadAttempts
+                .Where(x => gisSourceOrgIDs.Contains(x.GisUploadSourceOrganizationID))
+                .ExecuteDeleteAsync();
+
+            await dbContext.GisUploadSourceOrganizations
+                .Where(x => gisSourceOrgIDs.Contains(x.GisUploadSourceOrganizationID))
+                .ExecuteDeleteAsync();
+        }
+
+        // Cascade notification children (deepest first)
+        var notificationConfigIDs = await dbContext.ProgramNotificationConfigurations
+            .Where(x => x.ProgramID == programID)
+            .Select(x => x.ProgramNotificationConfigurationID)
+            .ToListAsync();
+
+        if (notificationConfigIDs.Count > 0)
+        {
+            var sentIDs = await dbContext.ProgramNotificationSents
+                .Where(x => notificationConfigIDs.Contains(x.ProgramNotificationConfigurationID))
+                .Select(x => x.ProgramNotificationSentID)
+                .ToListAsync();
+
+            if (sentIDs.Count > 0)
+            {
+                await dbContext.ProgramNotificationSentProjects
+                    .Where(x => sentIDs.Contains(x.ProgramNotificationSentID))
+                    .ExecuteDeleteAsync();
+                await dbContext.ProgramNotificationSents
+                    .Where(x => notificationConfigIDs.Contains(x.ProgramNotificationConfigurationID))
+                    .ExecuteDeleteAsync();
+            }
+
+            await dbContext.ProgramNotificationConfigurations
+                .Where(x => x.ProgramID == programID)
+                .ExecuteDeleteAsync();
+        }
+
+        // Delete remaining owned children
+        await dbContext.ProjectImportBlockLists
+            .Where(x => x.ProgramID == programID)
+            .ExecuteDeleteAsync();
+        await dbContext.ProjectUpdatePrograms
+            .Where(x => x.ProgramID == programID)
+            .ExecuteDeleteAsync();
         await dbContext.ProgramPeople
             .Where(x => x.ProgramID == programID)
             .ExecuteDeleteAsync();
 
-        var deletedCount = await dbContext.Programs
-            .Where(x => x.ProgramID == programID)
-            .ExecuteDeleteAsync();
-        return deletedCount > 0;
-    }
-
-    public static bool IsProgramNameUnique(IEnumerable<Program> programs, string programName, int currentProgramID)
-    {
-        var program =
-            programs.SingleOrDefault(x => x.ProgramID != currentProgramID && string.Equals(x.ProgramName, programName, StringComparison.InvariantCultureIgnoreCase));
-        return program == null;
+        // Delete the program
+        dbContext.Programs.Remove(entity);
+        await dbContext.SaveChangesAsync();
+        await transaction.CommitAsync();
+        return true;
     }
 
     public static async Task<List<PersonLookupItem>> ListEligibleProgramEditorsAsync(WADNRDbContext dbContext)

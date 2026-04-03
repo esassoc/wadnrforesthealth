@@ -47,6 +47,9 @@ public class ProgramController(
     [ProgramManageFeature]
     public async Task<ActionResult<ProgramDetail>> Create([FromBody] ProgramUpsertRequest dto)
     {
+        var validationError = await Programs.ValidateUpsertAsync(DbContext, dto);
+        if (validationError != null) return BadRequest(new { message = validationError });
+
         var created = await Programs.CreateAsync(DbContext, dto, CallingUser.PersonID);
         if (created == null)
         {
@@ -60,8 +63,20 @@ public class ProgramController(
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<ActionResult<ProgramDetail>> Update([FromRoute] int programID, [FromBody] ProgramUpsertRequest dto)
     {
+        var validationError = await Programs.ValidateUpsertAsync(DbContext, dto, programID);
+        if (validationError != null) return BadRequest(new { message = validationError });
+
         var updated = await Programs.UpdateAsync(DbContext, programID, dto, CallingUser.PersonID);
         return RequireNotNullThrowNotFound(updated, "Program", programID);
+    }
+
+    [HttpGet("{programID}/delete-info")]
+    [ProgramManageFeature]
+    [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
+    public async Task<ActionResult<ProgramDeleteInfo>> GetDeleteInfo([FromRoute] int programID)
+    {
+        var info = await Programs.GetDeleteInfoAsync(DbContext, programID);
+        return RequireNotNullThrowNotFound(info, "Program", programID);
     }
 
     [HttpDelete("{programID}")]
