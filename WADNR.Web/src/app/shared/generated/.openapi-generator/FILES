@@ -276,6 +276,7 @@ model/priority-landscape-file-update-request.ts
 model/priority-landscape-grid-row.ts
 model/priority-landscape-lookup-item.ts
 model/priority-landscape-upsert-request.ts
+model/program-delete-info.ts
 model/program-detail.ts
 model/program-editors-upsert-request.ts
 model/program-grid-row.ts

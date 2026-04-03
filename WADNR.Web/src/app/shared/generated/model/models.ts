@@ -211,6 +211,7 @@ export * from './priority-landscape-file-update-request';
 export * from './priority-landscape-grid-row';
 export * from './priority-landscape-lookup-item';
 export * from './priority-landscape-upsert-request';
+export * from './program-delete-info';
 export * from './program-detail';
 export * from './program-editors-upsert-request';
 export * from './program-grid-row';
