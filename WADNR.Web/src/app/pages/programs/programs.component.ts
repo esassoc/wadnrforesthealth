@@ -3,7 +3,7 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 import { AsyncPipe } from "@angular/common";
 import { ProgramService } from "src/app/shared/generated/api/program.service";
 import { ProgramDetail } from "src/app/shared/generated/model/program-detail";
-import { ColDef } from "ag-grid-community";
+import { ColDef, GetRowIdFunc, GridApi, GridReadyEvent } from "ag-grid-community";
 import { firstValueFrom, map, Observable, take } from "rxjs";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { ProgramModalComponent, ProgramModalData } from "./program-modal/program-modal.component";
@@ -26,6 +26,8 @@ export class ProgramsComponent {
     public columnDefs: ColDef[];
     public customRichTextTypeID = FirmaPageTypeEnum.ProgramsList;
     public canManagePrograms$: Observable<boolean>;
+    public getRowId: GetRowIdFunc = (params) => params.data.ProgramID;
+    private gridApi: GridApi;
 
     constructor(
         private programService: ProgramService,
@@ -68,6 +70,10 @@ export class ProgramsComponent {
             ];
         });
         this.programs$ = this.programService.listProgram();
+    }
+
+    onGridReady(event: GridReadyEvent) {
+        this.gridApi = event.api;
     }
 
     openCreateModal() {
@@ -133,9 +139,14 @@ export class ProgramsComponent {
         this.dialogService.open(AsyncConfirmModalComponent, { data, size: "sm" })
             .afterClosed$.subscribe((result) => {
                 if (result) {
+                    // Remove the row directly via ag-grid's API. The async modal
+                    // guarantees the delete succeeded, so we can remove it immediately
+                    // without waiting for a server round-trip. This avoids the delay
+                    // seen in QA where the GET /programs response is slow after the
+                    // heavy cascading delete transaction.
+                    this.gridApi?.applyTransaction({ remove: [program] });
                     this.alertService.clearAlerts();
                     this.alertService.pushAlert(new Alert("Program deleted successfully.", AlertContext.Success));
-                    this.programs$ = this.programService.listProgram();
                 }
             });
     }
