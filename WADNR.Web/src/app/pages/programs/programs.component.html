@@ -6,5 +6,5 @@
             <button class="btn btn-primary" (click)="openCreateModal()"><i class="fa fa-plus" aria-hidden="true"></i> Create New Program</button>
         </div>
     }
-    <wadnr-grid [rowData]="programs$ | async" [columnDefs]="columnDefs" downloadFileName="programs" fullscreenTitle="Programs"></wadnr-grid>
+    <wadnr-grid [rowData]="programs$ | async" [columnDefs]="columnDefs" [getRowId]="getRowId" downloadFileName="programs" fullscreenTitle="Programs" (gridReady)="onGridReady($event)"></wadnr-grid>
 </div>
