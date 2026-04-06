@@ -53,26 +53,9 @@ public static class ProgramHelper
     /// </summary>
     public static async Task DeleteProgramAsync(WADNRDbContext dbContext, int programID)
     {
-        // Delete related data in FK-safe order
-        await dbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM dbo.ProgramPerson WHERE ProgramID = {programID}");
-        await dbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM dbo.ProjectProgram WHERE ProgramID = {programID}");
-        await dbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM dbo.ProjectUpdateProgram WHERE ProgramID = {programID}");
-        await dbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM dbo.ProjectImportBlockList WHERE ProgramID = {programID}");
-
-        // Delete notification chain: SentProject -> Sent -> Configuration
-        await dbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM dbo.ProgramNotificationSentProject WHERE ProgramNotificationSentID IN (SELECT ProgramNotificationSentID FROM dbo.ProgramNotificationSent WHERE ProgramNotificationConfigurationID IN (SELECT ProgramNotificationConfigurationID FROM dbo.ProgramNotificationConfiguration WHERE ProgramID = {programID}))");
-        await dbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM dbo.ProgramNotificationSent WHERE ProgramNotificationConfigurationID IN (SELECT ProgramNotificationConfigurationID FROM dbo.ProgramNotificationConfiguration WHERE ProgramID = {programID})");
-        await dbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM dbo.ProgramNotificationConfiguration WHERE ProgramID = {programID}");
-
-        await dbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM dbo.Program WHERE ProgramID = {programID}");
+        // Use the production delete method which handles the full cascade
+        dbContext.ChangeTracker.Clear();
+        await Programs.DeleteAsync(dbContext, programID);
     }
 
     /// <summary>

@@ -3,7 +3,11 @@
         <h4>{{ data.title }}</h4>
     </div>
     <div class="modal-body">
-        <p>{{ data.message }}</p>
+        @if (data.htmlMessage) {
+            <div [innerHTML]="data.message | trustHtml"></div>
+        } @else {
+            <p>{{ data.message }}</p>
+        }
     </div>
     <div class="modal-footer">
         <button [class]="'btn ' + (data.buttonClassYes ?? 'btn-primary')"

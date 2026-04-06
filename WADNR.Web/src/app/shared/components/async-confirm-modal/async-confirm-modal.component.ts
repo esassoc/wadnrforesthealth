@@ -2,6 +2,7 @@ import { Component, inject } from "@angular/core";
 import { Observable } from "rxjs";
 import { DialogRef } from "@ngneat/dialog";
 import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
+import { TrustHtmlPipe } from "src/app/shared/pipes/trust-html.pipe";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
@@ -9,6 +10,8 @@ import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 export interface AsyncConfirmModalData {
     title: string;
     message: string;
+    /** When true, message is rendered as HTML via [innerHTML] */
+    htmlMessage?: boolean;
     buttonTextYes: string;
     buttonTextNo?: string;
     buttonClassYes?: string;
@@ -18,7 +21,7 @@ export interface AsyncConfirmModalData {
 @Component({
     selector: "async-confirm-modal",
     standalone: true,
-    imports: [ButtonLoadingDirective],
+    imports: [ButtonLoadingDirective, TrustHtmlPipe],
     templateUrl: "./async-confirm-modal.component.html",
 })
 export class AsyncConfirmModalComponent {

@@ -7,11 +7,11 @@ import { ColDef } from "ag-grid-community";
 import { firstValueFrom, map, Observable, take } from "rxjs";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { ProgramModalComponent, ProgramModalData } from "./program-modal/program-modal.component";
+import { AsyncConfirmModalComponent, AsyncConfirmModalData } from "src/app/shared/components/async-confirm-modal/async-confirm-modal.component";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { DialogService } from "@ngneat/dialog";
 import { AlertService } from "src/app/shared/services/alert.service";
-import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { FirmaPageTypeEnum } from "src/app/shared/generated/enum/firma-page-type-enum";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
@@ -32,7 +32,6 @@ export class ProgramsComponent {
         private utilityFunctions: UtilityFunctionsService,
         private dialogService: DialogService,
         private alertService: AlertService,
-        private confirmService: ConfirmService,
         private authenticationService: AuthenticationService
     ) {}
 
@@ -121,24 +120,23 @@ export class ProgramsComponent {
             // If delete-info fails, proceed with basic confirmation
         }
 
-        const confirmed = await this.confirmService.confirm({
+        const data: AsyncConfirmModalData = {
             title: "Delete Program",
             message,
+            htmlMessage: true,
             buttonTextYes: "Delete",
             buttonTextNo: "Cancel",
             buttonClassYes: "btn-danger",
-        });
+            actionFn: () => this.programService.deleteProgram(program.ProgramID),
+        };
 
-        if (confirmed) {
-            try {
-                await firstValueFrom(this.programService.deleteProgram(program.ProgramID));
-                this.alertService.clearAlerts();
-                this.alertService.pushAlert(new Alert("Program deleted successfully.", AlertContext.Success));
-                this.programs$ = this.programService.listProgram();
-            } catch (error: any) {
-                this.alertService.clearAlerts();
-                this.alertService.pushAlert(new Alert(error.error?.message || error.message || "An error occurred while deleting the program.", AlertContext.Danger));
-            }
-        }
+        this.dialogService.open(AsyncConfirmModalComponent, { data, size: "sm" })
+            .afterClosed$.subscribe((result) => {
+                if (result) {
+                    this.alertService.clearAlerts();
+                    this.alertService.pushAlert(new Alert("Program deleted successfully.", AlertContext.Success));
+                    this.programs$ = this.programService.listProgram();
+                }
+            });
     }
 }

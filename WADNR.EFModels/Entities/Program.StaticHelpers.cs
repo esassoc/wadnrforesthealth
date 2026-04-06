@@ -211,11 +211,31 @@ public static class Programs
 
     public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int programID)
     {
-        var entity = await dbContext.Programs.FirstOrDefaultAsync(x => x.ProgramID == programID);
-        if (entity == null)
+        if (!await dbContext.Programs.AnyAsync(x => x.ProgramID == programID))
             return false;
 
         await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
+        // Subquery helpers to avoid fetching IDs into memory (each becomes a SQL subquery)
+        var gisSourceOrgIDsQuery = dbContext.GisUploadSourceOrganizations
+            .Where(g => g.ProgramID == programID)
+            .Select(g => g.GisUploadSourceOrganizationID);
+
+        var uploadAttemptIDsQuery = dbContext.GisUploadAttempts
+            .Where(x => gisSourceOrgIDsQuery.Contains(x.GisUploadSourceOrganizationID))
+            .Select(x => x.GisUploadAttemptID);
+
+        var gisFeatureIDsQuery = dbContext.GisFeatures
+            .Where(x => uploadAttemptIDsQuery.Contains(x.GisUploadAttemptID))
+            .Select(x => x.GisFeatureID);
+
+        var notificationConfigIDsQuery = dbContext.ProgramNotificationConfigurations
+            .Where(x => x.ProgramID == programID)
+            .Select(x => x.ProgramNotificationConfigurationID);
+
+        var sentIDsQuery = dbContext.ProgramNotificationSents
+            .Where(x => notificationConfigIDsQuery.Contains(x.ProgramNotificationConfigurationID))
+            .Select(x => x.ProgramNotificationSentID);
 
         // Remove project associations (junction table only — projects remain intact)
         await dbContext.ProjectPrograms
@@ -233,120 +253,77 @@ public static class Programs
             .Where(x => x.ProgramID == programID)
             .ExecuteDeleteAsync();
 
-        // Cascade GIS config children (deepest first)
-        var gisSourceOrgIDs = await dbContext.GisUploadSourceOrganizations
-            .Where(g => g.ProgramID == programID)
-            .Select(g => g.GisUploadSourceOrganizationID)
-            .ToListAsync();
+        // Cascade GIS config children (deepest first, using subqueries)
+        await dbContext.GisCrossWalkDefaults
+            .Where(x => gisSourceOrgIDsQuery.Contains(x.GisUploadSourceOrganizationID))
+            .ExecuteDeleteAsync();
+        await dbContext.GisDefaultMappings
+            .Where(x => gisSourceOrgIDsQuery.Contains(x.GisUploadSourceOrganizationID))
+            .ExecuteDeleteAsync();
 
-        if (gisSourceOrgIDs.Count > 0)
-        {
-            await dbContext.GisCrossWalkDefaults
-                .Where(x => gisSourceOrgIDs.Contains(x.GisUploadSourceOrganizationID))
-                .ExecuteDeleteAsync();
-            await dbContext.GisDefaultMappings
-                .Where(x => gisSourceOrgIDs.Contains(x.GisUploadSourceOrganizationID))
-                .ExecuteDeleteAsync();
+        // GisExcludeIncludeColumn children first
+        var excludeIncludeColumnIDsQuery = dbContext.GisExcludeIncludeColumns
+            .Where(x => gisSourceOrgIDsQuery.Contains(x.GisUploadSourceOrganizationID))
+            .Select(x => x.GisExcludeIncludeColumnID);
 
-            // GisExcludeIncludeColumn children first
-            var excludeIncludeColumnIDs = await dbContext.GisExcludeIncludeColumns
-                .Where(x => gisSourceOrgIDs.Contains(x.GisUploadSourceOrganizationID))
-                .Select(x => x.GisExcludeIncludeColumnID)
-                .ToListAsync();
-            if (excludeIncludeColumnIDs.Count > 0)
-            {
-                await dbContext.GisExcludeIncludeColumnValues
-                    .Where(x => excludeIncludeColumnIDs.Contains(x.GisExcludeIncludeColumnID))
-                    .ExecuteDeleteAsync();
-            }
-            await dbContext.GisExcludeIncludeColumns
-                .Where(x => gisSourceOrgIDs.Contains(x.GisUploadSourceOrganizationID))
-                .ExecuteDeleteAsync();
+        await dbContext.GisExcludeIncludeColumnValues
+            .Where(x => excludeIncludeColumnIDsQuery.Contains(x.GisExcludeIncludeColumnID))
+            .ExecuteDeleteAsync();
+        await dbContext.GisExcludeIncludeColumns
+            .Where(x => gisSourceOrgIDsQuery.Contains(x.GisUploadSourceOrganizationID))
+            .ExecuteDeleteAsync();
 
-            // GisUploadAttempt children first
-            var uploadAttemptIDs = await dbContext.GisUploadAttempts
-                .Where(x => gisSourceOrgIDs.Contains(x.GisUploadSourceOrganizationID))
-                .Select(x => x.GisUploadAttemptID)
-                .ToListAsync();
-            if (uploadAttemptIDs.Count > 0)
-            {
-                var gisFeatureIDs = await dbContext.GisFeatures
-                    .Where(x => uploadAttemptIDs.Contains(x.GisUploadAttemptID))
-                    .Select(x => x.GisFeatureID)
-                    .ToListAsync();
-                if (gisFeatureIDs.Count > 0)
-                {
-                    await dbContext.GisFeatureMetadataAttributes
-                        .Where(x => gisFeatureIDs.Contains(x.GisFeatureID))
-                        .ExecuteDeleteAsync();
-                    await dbContext.GisFeatures
-                        .Where(x => uploadAttemptIDs.Contains(x.GisUploadAttemptID))
-                        .ExecuteDeleteAsync();
-                }
-                await dbContext.GisUploadAttemptGisMetadataAttributes
-                    .Where(x => uploadAttemptIDs.Contains(x.GisUploadAttemptID))
-                    .ExecuteDeleteAsync();
+        // GisUploadAttempt children
+        await dbContext.GisFeatureMetadataAttributes
+            .Where(x => gisFeatureIDsQuery.Contains(x.GisFeatureID))
+            .ExecuteDeleteAsync();
+        await dbContext.GisFeatures
+            .Where(x => uploadAttemptIDsQuery.Contains(x.GisUploadAttemptID))
+            .ExecuteDeleteAsync();
+        await dbContext.GisUploadAttemptGisMetadataAttributes
+            .Where(x => uploadAttemptIDsQuery.Contains(x.GisUploadAttemptID))
+            .ExecuteDeleteAsync();
 
-                // Null out GisUploadAttempt FKs before deleting the upload attempts
-                await dbContext.Projects
-                    .Where(x => x.CreateGisUploadAttemptID != null && uploadAttemptIDs.Contains(x.CreateGisUploadAttemptID.Value))
-                    .ExecuteUpdateAsync(s => s.SetProperty(x => x.CreateGisUploadAttemptID, (int?)null));
-                await dbContext.Projects
-                    .Where(x => x.LastUpdateGisUploadAttemptID != null && uploadAttemptIDs.Contains(x.LastUpdateGisUploadAttemptID.Value))
-                    .ExecuteUpdateAsync(s => s.SetProperty(x => x.LastUpdateGisUploadAttemptID, (int?)null));
+        // Null out GisUploadAttempt FKs before deleting the upload attempts
+        await dbContext.Projects
+            .Where(x => x.CreateGisUploadAttemptID != null && uploadAttemptIDsQuery.Contains(x.CreateGisUploadAttemptID.Value))
+            .ExecuteUpdateAsync(s => s.SetProperty(x => x.CreateGisUploadAttemptID, (int?)null));
+        await dbContext.Projects
+            .Where(x => x.LastUpdateGisUploadAttemptID != null && uploadAttemptIDsQuery.Contains(x.LastUpdateGisUploadAttemptID.Value))
+            .ExecuteUpdateAsync(s => s.SetProperty(x => x.LastUpdateGisUploadAttemptID, (int?)null));
 
-                // Null out GisUploadAttempt FKs on remaining Treatments/TreatmentUpdates
-                // (rows from other programs may still reference these upload attempts)
-                await dbContext.Treatments
-                    .Where(x => x.CreateGisUploadAttemptID != null && uploadAttemptIDs.Contains(x.CreateGisUploadAttemptID.Value))
-                    .ExecuteUpdateAsync(s => s.SetProperty(x => x.CreateGisUploadAttemptID, (int?)null));
-                await dbContext.Treatments
-                    .Where(x => x.UpdateGisUploadAttemptID != null && uploadAttemptIDs.Contains(x.UpdateGisUploadAttemptID.Value))
-                    .ExecuteUpdateAsync(s => s.SetProperty(x => x.UpdateGisUploadAttemptID, (int?)null));
+        // Null out GisUploadAttempt FKs on remaining Treatments/TreatmentUpdates
+        // (rows from other programs may still reference these upload attempts)
+        await dbContext.Treatments
+            .Where(x => x.CreateGisUploadAttemptID != null && uploadAttemptIDsQuery.Contains(x.CreateGisUploadAttemptID.Value))
+            .ExecuteUpdateAsync(s => s.SetProperty(x => x.CreateGisUploadAttemptID, (int?)null));
+        await dbContext.Treatments
+            .Where(x => x.UpdateGisUploadAttemptID != null && uploadAttemptIDsQuery.Contains(x.UpdateGisUploadAttemptID.Value))
+            .ExecuteUpdateAsync(s => s.SetProperty(x => x.UpdateGisUploadAttemptID, (int?)null));
+        await dbContext.TreatmentUpdates
+            .Where(x => x.CreateGisUploadAttemptID != null && uploadAttemptIDsQuery.Contains(x.CreateGisUploadAttemptID.Value))
+            .ExecuteUpdateAsync(s => s.SetProperty(x => x.CreateGisUploadAttemptID, (int?)null));
+        await dbContext.TreatmentUpdates
+            .Where(x => x.UpdateGisUploadAttemptID != null && uploadAttemptIDsQuery.Contains(x.UpdateGisUploadAttemptID.Value))
+            .ExecuteUpdateAsync(s => s.SetProperty(x => x.UpdateGisUploadAttemptID, (int?)null));
 
-                await dbContext.TreatmentUpdates
-                    .Where(x => x.CreateGisUploadAttemptID != null && uploadAttemptIDs.Contains(x.CreateGisUploadAttemptID.Value))
-                    .ExecuteUpdateAsync(s => s.SetProperty(x => x.CreateGisUploadAttemptID, (int?)null));
-                await dbContext.TreatmentUpdates
-                    .Where(x => x.UpdateGisUploadAttemptID != null && uploadAttemptIDs.Contains(x.UpdateGisUploadAttemptID.Value))
-                    .ExecuteUpdateAsync(s => s.SetProperty(x => x.UpdateGisUploadAttemptID, (int?)null));
-            }
-            await dbContext.GisUploadAttempts
-                .Where(x => gisSourceOrgIDs.Contains(x.GisUploadSourceOrganizationID))
-                .ExecuteDeleteAsync();
-
-            await dbContext.GisUploadSourceOrganizations
-                .Where(x => gisSourceOrgIDs.Contains(x.GisUploadSourceOrganizationID))
-                .ExecuteDeleteAsync();
-        }
-
-        // Cascade notification children (deepest first)
-        var notificationConfigIDs = await dbContext.ProgramNotificationConfigurations
+        await dbContext.GisUploadAttempts
+            .Where(x => gisSourceOrgIDsQuery.Contains(x.GisUploadSourceOrganizationID))
+            .ExecuteDeleteAsync();
+        await dbContext.GisUploadSourceOrganizations
             .Where(x => x.ProgramID == programID)
-            .Select(x => x.ProgramNotificationConfigurationID)
-            .ToListAsync();
+            .ExecuteDeleteAsync();
 
-        if (notificationConfigIDs.Count > 0)
-        {
-            var sentIDs = await dbContext.ProgramNotificationSents
-                .Where(x => notificationConfigIDs.Contains(x.ProgramNotificationConfigurationID))
-                .Select(x => x.ProgramNotificationSentID)
-                .ToListAsync();
-
-            if (sentIDs.Count > 0)
-            {
-                await dbContext.ProgramNotificationSentProjects
-                    .Where(x => sentIDs.Contains(x.ProgramNotificationSentID))
-                    .ExecuteDeleteAsync();
-                await dbContext.ProgramNotificationSents
-                    .Where(x => notificationConfigIDs.Contains(x.ProgramNotificationConfigurationID))
-                    .ExecuteDeleteAsync();
-            }
-
-            await dbContext.ProgramNotificationConfigurations
-                .Where(x => x.ProgramID == programID)
-                .ExecuteDeleteAsync();
-        }
+        // Cascade notification children (deepest first, using subqueries)
+        await dbContext.ProgramNotificationSentProjects
+            .Where(x => sentIDsQuery.Contains(x.ProgramNotificationSentID))
+            .ExecuteDeleteAsync();
+        await dbContext.ProgramNotificationSents
+            .Where(x => notificationConfigIDsQuery.Contains(x.ProgramNotificationConfigurationID))
+            .ExecuteDeleteAsync();
+        await dbContext.ProgramNotificationConfigurations
+            .Where(x => x.ProgramID == programID)
+            .ExecuteDeleteAsync();
 
         // Delete remaining owned children
         await dbContext.ProjectImportBlockLists
@@ -359,9 +336,10 @@ public static class Programs
             .Where(x => x.ProgramID == programID)
             .ExecuteDeleteAsync();
 
-        // Delete the program
-        dbContext.Programs.Remove(entity);
-        await dbContext.SaveChangesAsync();
+        // Delete the program (use ExecuteDeleteAsync to stay consistent and avoid change tracker conflicts)
+        await dbContext.Programs
+            .Where(x => x.ProgramID == programID)
+            .ExecuteDeleteAsync();
         await transaction.CommitAsync();
         return true;
     }
