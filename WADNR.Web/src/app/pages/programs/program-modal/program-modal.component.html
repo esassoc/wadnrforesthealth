@@ -2,7 +2,7 @@
 <div class="modal-header">
     <h3>{{ modalTitle }}</h3>
 </div>
-<div class="modal-body" [loadingSpinner]="{ isLoading, loadingHeight: 300 }">
+<div class="modal-body" [loadingSpinner]="{ isLoading: isLoading(), loadingHeight: 300 }">
     <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
 
     <form [formGroup]="form">
@@ -97,14 +97,14 @@
     <button
         class="btn btn-primary"
         (click)="save()"
-        [disabled]="isLoading || isSubmitting"
-        [buttonLoading]="isSubmitting">
+        [disabled]="isLoading() || isSubmitting()"
+        [buttonLoading]="isSubmitting()">
         Save
     </button>
     <button
         class="btn btn-secondary"
         (click)="cancel()"
-        [disabled]="isSubmitting">
+        [disabled]="isSubmitting()">
         Cancel
     </button>
 </div>

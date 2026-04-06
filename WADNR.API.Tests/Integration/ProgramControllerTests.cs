@@ -204,6 +204,76 @@ public class ProgramControllerTests
         Assert.IsFalse(deleted);
     }
 
+    [TestMethod]
+    public async Task Delete_DeletesProgram_WithProjectAssociations()
+    {
+        // Arrange - Create a program and a project, then link them
+        var programToDelete = await ProgramHelper.CreateProgramAsync(
+            AssemblySteps.DbContext, AssemblySteps.TestAdminPersonID, organizationID: _testOrganizationID);
+        var project = await ProjectHelper.CreateApprovedProjectWithValidLookupsAsync(
+            AssemblySteps.DbContext, AssemblySteps.TestAdminPersonID);
+
+        try
+        {
+            AssemblySteps.DbContext.ProjectPrograms.Add(new ProjectProgram
+            {
+                ProjectID = project.ProjectID,
+                ProgramID = programToDelete.ProgramID
+            });
+            await AssemblySteps.DbContext.SaveChangesWithNoAuditingAsync();
+
+            // Act
+            var deleted = await Programs.DeleteAsync(AssemblySteps.DbContext, programToDelete.ProgramID);
+
+            // Assert - Program is deleted
+            Assert.IsTrue(deleted);
+            var retrievedProgram = await ProgramHelper.GetByIDAsync(AssemblySteps.DbContext, programToDelete.ProgramID);
+            Assert.IsNull(retrievedProgram);
+
+            // Assert - Junction record is removed
+            var junctionExists = await AssemblySteps.DbContext.ProjectPrograms
+                .AnyAsync(pp => pp.ProgramID == programToDelete.ProgramID);
+            Assert.IsFalse(junctionExists);
+
+            // Assert - Project still exists
+            var retrievedProject = await AssemblySteps.DbContext.Projects
+                .AnyAsync(p => p.ProjectID == project.ProjectID);
+            Assert.IsTrue(retrievedProject, "Project should still exist after program deletion");
+        }
+        finally
+        {
+            await ProjectHelper.DeleteProjectAsync(AssemblySteps.DbContext, project.ProjectID);
+        }
+    }
+
+    #endregion
+
+    #region Delete Info Tests
+
+    [TestMethod]
+    public async Task GetDeleteInfo_ReturnsInfo_WhenProgramExists()
+    {
+        // Act
+        var info = await Programs.GetDeleteInfoAsync(AssemblySteps.DbContext, _testProgramID);
+
+        // Assert
+        Assert.IsNotNull(info);
+        Assert.AreEqual(0, info.ProjectCount);
+        Assert.AreEqual(0, info.TreatmentCount);
+        Assert.AreEqual(0, info.TreatmentUpdateCount);
+        Assert.AreEqual(0, info.ProjectLocationCount);
+    }
+
+    [TestMethod]
+    public async Task GetDeleteInfo_ReturnsNull_WhenProgramNotExists()
+    {
+        // Act
+        var info = await Programs.GetDeleteInfoAsync(AssemblySteps.DbContext, 999999);
+
+        // Assert
+        Assert.IsNull(info);
+    }
+
     #endregion
 
     #region Projects Tests
@@ -716,23 +786,33 @@ public class ProgramControllerTests
     #region Program Name Uniqueness Tests
 
     [TestMethod]
-    public async Task IsProgramNameUnique_ReturnsTrue_WhenNameUnique()
+    public async Task ValidateUpsertAsync_ReturnsNull_WhenNameUnique()
     {
         // Arrange
-        var programs = await AssemblySteps.DbContext.Programs.ToListAsync();
+        var existingProgram = await AssemblySteps.DbContext.Programs
+            .AsNoTracking()
+            .FirstAsync(p => p.ProgramID == _testProgramID);
+
+        var dto = new ProgramUpsertRequest
+        {
+            OrganizationID = existingProgram.OrganizationID,
+            ProgramName = $"Unique Name {DateTime.UtcNow.Ticks}",
+            ProgramShortName = $"UN{DateTime.UtcNow.Ticks}",
+            IsDefaultProgramForImportOnly = false,
+            ProgramIsActive = true
+        };
 
         // Act
-        var isUnique = Programs.IsProgramNameUnique(
-            programs, $"Unique Name {DateTime.UtcNow.Ticks}", _testProgramID);
+        var error = await Programs.ValidateUpsertAsync(AssemblySteps.DbContext, dto);
 
         // Assert
-        Assert.IsTrue(isUnique);
+        Assert.IsNull(error);
     }
 
     [TestMethod]
-    public async Task IsProgramNameUnique_ReturnsFalse_WhenNameExists()
+    public async Task ValidateUpsertAsync_ReturnsError_WhenNameExistsInSameOrg()
     {
-        // Arrange - Get an existing program name
+        // Arrange - Get an existing program with a name
         var existingProgram = await AssemblySteps.DbContext.Programs
             .AsNoTracking()
             .Where(p => p.ProgramID != _testProgramID && p.ProgramName != null)
@@ -744,14 +824,52 @@ public class ProgramControllerTests
             return;
         }
 
-        var programs = await AssemblySteps.DbContext.Programs.ToListAsync();
+        var dto = new ProgramUpsertRequest
+        {
+            OrganizationID = existingProgram.OrganizationID,
+            ProgramName = existingProgram.ProgramName,
+            ProgramShortName = $"UN{DateTime.UtcNow.Ticks}",
+            IsDefaultProgramForImportOnly = false,
+            ProgramIsActive = true
+        };
 
         // Act
-        var isUnique = Programs.IsProgramNameUnique(
-            programs, existingProgram.ProgramName, _testProgramID);
+        var error = await Programs.ValidateUpsertAsync(AssemblySteps.DbContext, dto);
 
         // Assert
-        Assert.IsFalse(isUnique);
+        Assert.IsNotNull(error);
+        Assert.IsTrue(error.Contains("already exists"));
+    }
+
+    [TestMethod]
+    public async Task ValidateUpsertAsync_ReturnsNull_WhenUpdatingSameProgram()
+    {
+        // Arrange - Validate against itself should pass
+        var existingProgram = await AssemblySteps.DbContext.Programs
+            .AsNoTracking()
+            .Where(p => p.ProgramName != null)
+            .FirstOrDefaultAsync();
+
+        if (existingProgram?.ProgramName == null)
+        {
+            Assert.Inconclusive("No programs with names found");
+            return;
+        }
+
+        var dto = new ProgramUpsertRequest
+        {
+            OrganizationID = existingProgram.OrganizationID,
+            ProgramName = existingProgram.ProgramName,
+            ProgramShortName = existingProgram.ProgramShortName,
+            IsDefaultProgramForImportOnly = false,
+            ProgramIsActive = true
+        };
+
+        // Act
+        var error = await Programs.ValidateUpsertAsync(AssemblySteps.DbContext, dto, existingProgram.ProgramID);
+
+        // Assert
+        Assert.IsNull(error);
     }
 
     #endregion

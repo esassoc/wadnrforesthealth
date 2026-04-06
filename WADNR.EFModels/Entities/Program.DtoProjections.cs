@@ -34,7 +34,7 @@ public static class ProgramProjections
             ? x.ProgramFileResource.FileResourceGUID.ToString()
             : null,
         ProgramFileName = x.ProgramFileResource != null
-            ? x.ProgramFileResource.OriginalBaseFilename + x.ProgramFileResource.OriginalFileExtension
+            ? x.ProgramFileResource.OriginalBaseFilename + "." + x.ProgramFileResource.OriginalFileExtension
             : null,
 
         // Program Example Geospatial File
@@ -43,7 +43,7 @@ public static class ProgramProjections
             ? x.ProgramExampleGeospatialUploadFileResource.FileResourceGUID.ToString()
             : null,
         ProgramExampleGeospatialUploadFileName = x.ProgramExampleGeospatialUploadFileResource != null
-            ? x.ProgramExampleGeospatialUploadFileResource.OriginalBaseFilename + x.ProgramExampleGeospatialUploadFileResource.OriginalFileExtension
+            ? x.ProgramExampleGeospatialUploadFileResource.OriginalBaseFilename + "." + x.ProgramExampleGeospatialUploadFileResource.OriginalFileExtension
             : null,
 
         // Program Editors (People who can edit this program)

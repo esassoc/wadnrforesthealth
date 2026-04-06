@@ -1,5 +1,3 @@
-using System;
-
 namespace WADNR.Models.DataTransferObjects;
 
 public class FileResourceLookupItem
@@ -9,5 +7,5 @@ public class FileResourceLookupItem
     public string OriginalBaseFilename { get; set; } = string.Empty;
     public string OriginalFileExtension { get; set; } = string.Empty;
 
-    public string OriginalCompleteFileName => $"{OriginalBaseFilename}{OriginalFileExtension}";
+    public string OriginalCompleteFileName => $"{OriginalBaseFilename}.{OriginalFileExtension}";
 }

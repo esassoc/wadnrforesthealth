@@ -11475,6 +11475,47 @@
         }
       }
     },
+    "/programs/{programID}/delete-info": {
+      "get": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "GetDeleteInfo_Program",
+        "parameters": [
+          {
+            "name": "programID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramDeleteInfo"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramDeleteInfo"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramDeleteInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/programs/eligible-editors": {
       "get": {
         "tags": [
@@ -30740,6 +30781,28 @@
           "PriorityLandscapeAboveMapText": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProgramDeleteInfo": {
+        "type": "object",
+        "properties": {
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentUpdateCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

@@ -33,6 +33,8 @@ import { PersonLookupItem } from '../model/person-lookup-item';
 // @ts-ignore
 import { PersonWithOrganizationLookupItem } from '../model/person-with-organization-lookup-item';
 // @ts-ignore
+import { ProgramDeleteInfo } from '../model/program-delete-info';
+// @ts-ignore
 import { ProgramDetail } from '../model/program-detail';
 // @ts-ignore
 import { ProgramEditorsUpsertRequest } from '../model/program-editors-upsert-request';
@@ -466,6 +468,61 @@ export class ProgramService extends BaseService {
         let localVarPath = `/programs/${this.configuration.encodeParam({name: "programID", value: programID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/projects/download-gdb`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<any>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param programID 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getDeleteInfoProgram(programID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<ProgramDeleteInfo>;
+    public getDeleteInfoProgram(programID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ProgramDeleteInfo>>;
+    public getDeleteInfoProgram(programID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ProgramDeleteInfo>>;
+    public getDeleteInfoProgram(programID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (programID === null || programID === undefined) {
+            throw new Error('Required parameter programID was null or undefined when calling getDeleteInfoProgram.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/programs/${this.configuration.encodeParam({name: "programID", value: programID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/delete-info`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<ProgramDeleteInfo>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
