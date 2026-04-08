@@ -91,8 +91,12 @@
                     <a href="javascript:void(0);" [dropdownToggle]="financialsMenu" class="nav-link dropdown-toggle">Financials <icon icon="AngleDown"></icon></a>
                     <ul #financialsMenu class="dropdown-menu">
                         <li><a routerLink="/fund-sources" class="dropdown-item">Full Fund Source List</a></li>
+                        @if (currentUser$ | async; as currentUserForAgreements) {
+                            @if (isAdmin(currentUserForAgreements)) {
                         <li class="divider"></li>
                         <li><a routerLink="/agreements" class="dropdown-item">Full Agreement List</a></li>
+                            }
+                        }
                         @if (navigationMenus.financials.length > 0) {
                         <li class="divider"></li>
                         @for (menuItem of navigationMenus.financials; track menuItem.CustomPageID ?? menuItem.CustomPageVanityUrl) {

@@ -25,7 +25,7 @@ public class AgreementController(
     : SitkaController<AgreementController>(dbContext, logger, configuration)
 {
     [HttpGet]
-    [AllowAnonymous]
+    [AdminFeature]
     public async Task<ActionResult<IEnumerable<AgreementGridRow>>> List()
     {
         var agreements = await Agreements.ListAsGridRowAsync(DbContext);
