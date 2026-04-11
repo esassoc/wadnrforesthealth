@@ -27,14 +27,17 @@
             <p>All API requests must include your API key in the <code>x-api-key</code> HTTP header.</p>
 
             @if (currentUser$ | async; as user) {
-                @let apiKey = apiKey$ | async;
+                @let apiKeyInfo = apiKeyInfo$ | async;
                 <div class="json-apis__api-key-section">
                     <span class="field-label">Your API Key</span>
-                    @if (apiKey) {
+                    @if (apiKeyInfo?.apiKey) {
                         <div class="json-apis__api-key-row">
-                            <code [copyToClipboard]="true">{{ apiKey }}</code>
+                            <code [copyToClipboard]="true">{{ apiKeyInfo.apiKey }}</code>
                             <button class="btn btn-sm btn-secondary" (click)="generateApiKey(user.PersonID, true)">Regenerate</button>
                         </div>
+                        @if (apiKeyInfo.generatedDate) {
+                            <span class="json-apis__generated-date">Generated on {{ apiKeyInfo.generatedDate | date:"medium" }}</span>
+                        }
                     } @else {
                         <div class="json-apis__api-key-row">
                             <span class="json-apis__text-muted">No API key generated.</span>

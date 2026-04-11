@@ -590,21 +590,22 @@ public static class People
         return await GetByIDAsDetailAsync(dbContext, person.PersonID);
     }
 
-    public static async Task<string> GenerateApiKeyAsync(WADNRDbContext dbContext, int personID)
+    public static async Task<(string ApiKey, DateTime GeneratedDate)> GenerateApiKeyAsync(WADNRDbContext dbContext, int personID)
     {
         var person = await dbContext.People.SingleAsync(p => p.PersonID == personID);
         person.ApiKey = Guid.NewGuid();
+        person.ApiKeyGeneratedDate = DateTime.UtcNow;
         await dbContext.SaveChangesAsync();
-        return person.ApiKey.Value.ToString();
+        return (person.ApiKey.Value.ToString(), person.ApiKeyGeneratedDate.Value);
     }
 
-    public static async Task<string?> GetApiKeyByPersonIDAsync(WADNRDbContext dbContext, int personID)
+    public static async Task<(string? ApiKey, DateTime? GeneratedDate)> GetApiKeyByPersonIDAsync(WADNRDbContext dbContext, int personID)
     {
-        var apiKey = await dbContext.People
+        var result = await dbContext.People
             .Where(p => p.PersonID == personID)
-            .Select(p => p.ApiKey)
+            .Select(p => new { p.ApiKey, p.ApiKeyGeneratedDate })
             .SingleOrDefaultAsync();
-        return apiKey?.ToString();
+        return (result?.ApiKey?.ToString(), result?.ApiKeyGeneratedDate);
     }
 
 }

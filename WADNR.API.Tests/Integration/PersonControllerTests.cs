@@ -545,11 +545,12 @@ public class PersonControllerTests
     public async Task GetApiKeyByPersonID_ReturnsNull_WhenNoApiKey()
     {
         // Act
-        var apiKey = await People.GetApiKeyByPersonIDAsync(
+        var result = await People.GetApiKeyByPersonIDAsync(
             AssemblySteps.DbContext, _testPersonID);
 
         // Assert
-        Assert.IsNull(apiKey);
+        Assert.IsNull(result.ApiKey);
+        Assert.IsNull(result.GeneratedDate);
     }
 
     [TestMethod]
@@ -563,17 +564,17 @@ public class PersonControllerTests
         try
         {
             // Act
-            var apiKey = await People.GenerateApiKeyAsync(
+            var result = await People.GenerateApiKeyAsync(
                 AssemblySteps.DbContext, userID);
 
             // Assert
-            Assert.IsNotNull(apiKey);
-            Assert.IsTrue(Guid.TryParse(apiKey, out _), "API key should be a valid GUID");
+            Assert.IsNotNull(result.ApiKey);
+            Assert.IsTrue(Guid.TryParse(result.ApiKey, out _), "API key should be a valid GUID");
 
             // Verify it can be retrieved
-            var retrievedKey = await People.GetApiKeyByPersonIDAsync(
+            var retrieved = await People.GetApiKeyByPersonIDAsync(
                 AssemblySteps.DbContext, userID);
-            Assert.AreEqual(apiKey, retrievedKey);
+            Assert.AreEqual(result.ApiKey, retrieved.ApiKey);
         }
         finally
         {
@@ -584,6 +585,50 @@ public class PersonControllerTests
             {
                 personEntity.GlobalID = null;
                 personEntity.ApiKey = null;
+                personEntity.ApiKeyGeneratedDate = null;
+                await AssemblySteps.DbContext.SaveChangesWithNoAuditingAsync();
+                await PersonHelper.DeletePersonAsync(AssemblySteps.DbContext, userID);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task GenerateApiKey_SetsGeneratedDate()
+    {
+        // Arrange
+        var user = await PersonHelper.CreateUserAsync(
+            AssemblySteps.DbContext, RoleEnum.Normal);
+        var userID = user.PersonID;
+        var beforeGenerate = DateTime.UtcNow;
+
+        try
+        {
+            // Act
+            var result = await People.GenerateApiKeyAsync(
+                AssemblySteps.DbContext, userID);
+
+            // Assert - GeneratedDate should be set to approximately now
+            Assert.IsTrue(result.GeneratedDate >= beforeGenerate,
+                "GeneratedDate should be at or after the time generation was called");
+            Assert.IsTrue(result.GeneratedDate <= DateTime.UtcNow,
+                "GeneratedDate should not be in the future");
+
+            // Verify the date is persisted and retrievable (within SQL datetime precision of ~3ms)
+            var retrieved = await People.GetApiKeyByPersonIDAsync(
+                AssemblySteps.DbContext, userID);
+            Assert.IsNotNull(retrieved.GeneratedDate);
+            Assert.IsTrue(Math.Abs((result.GeneratedDate - retrieved.GeneratedDate.Value).TotalMilliseconds) < 10,
+                "Retrieved GeneratedDate should match within SQL datetime precision");
+        }
+        finally
+        {
+            var personEntity = await AssemblySteps.DbContext.People
+                .FirstOrDefaultAsync(p => p.PersonID == userID);
+            if (personEntity != null)
+            {
+                personEntity.GlobalID = null;
+                personEntity.ApiKey = null;
+                personEntity.ApiKeyGeneratedDate = null;
                 await AssemblySteps.DbContext.SaveChangesWithNoAuditingAsync();
                 await PersonHelper.DeletePersonAsync(AssemblySteps.DbContext, userID);
             }

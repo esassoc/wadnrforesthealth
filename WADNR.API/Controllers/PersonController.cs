@@ -222,8 +222,8 @@ public class PersonController(
         var gate = await CheckApiKeyGateAsync(personID);
         if (gate != null) return gate;
 
-        var apiKey = await People.GetApiKeyByPersonIDAsync(DbContext, personID);
-        return Ok(new { ApiKey = apiKey });
+        var result = await People.GetApiKeyByPersonIDAsync(DbContext, personID);
+        return Ok(new { ApiKey = result.ApiKey, ApiKeyGeneratedDate = result.GeneratedDate });
     }
 
     [HttpPost("{personID}/api-key")]
@@ -233,8 +233,8 @@ public class PersonController(
         var gate = await CheckApiKeyGateAsync(personID);
         if (gate != null) return gate;
 
-        var apiKey = await People.GenerateApiKeyAsync(DbContext, personID);
-        return Ok(new { ApiKey = apiKey });
+        var result = await People.GenerateApiKeyAsync(DbContext, personID);
+        return Ok(new { ApiKey = result.ApiKey, ApiKeyGeneratedDate = result.GeneratedDate });
     }
 
     /// <summary>

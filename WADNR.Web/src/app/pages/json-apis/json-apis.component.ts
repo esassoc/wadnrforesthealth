@@ -8,6 +8,9 @@ import { PersonService } from "src/app/shared/generated/api/person.service";
 import { SystemInfoService } from "src/app/shared/generated/api/system-info.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
+import { AlertService } from "src/app/shared/services/alert.service";
+import { Alert } from "src/app/shared/models/alert";
+import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 
 
 @Component({
@@ -24,18 +27,22 @@ export class JsonApisComponent {
     );
 
     public currentUser$ = this.authenticationService.currentUserSetObservable;
-    public apiKey$: Observable<string | null>;
+    public apiKeyInfo$: Observable<{ apiKey: string | null; generatedDate: string | null }>;
     private refreshApiKey$ = new BehaviorSubject<void>(undefined);
 
     constructor(
         private personService: PersonService,
         private systemInfoService: SystemInfoService,
         private authenticationService: AuthenticationService,
-        private confirmService: ConfirmService
+        private confirmService: ConfirmService,
+        private alertService: AlertService
     ) {
-        this.apiKey$ = combineLatest([this.currentUser$, this.refreshApiKey$]).pipe(
+        this.apiKeyInfo$ = combineLatest([this.currentUser$, this.refreshApiKey$]).pipe(
             switchMap(([user]) => this.personService.getApiKeyPerson(user.PersonID)),
-            map((response: any) => response?.ApiKey || null),
+            map((response: any) => ({
+                apiKey: response?.ApiKey || null,
+                generatedDate: response?.ApiKeyGeneratedDate || null,
+            })),
             shareReplay({ bufferSize: 1, refCount: true })
         );
     }
@@ -52,6 +59,7 @@ export class JsonApisComponent {
             if (!confirmed) return;
         }
         this.personService.generateApiKeyPerson(personID).subscribe(() => {
+            this.alertService.pushAlert(new Alert("API key generated successfully.", AlertContext.Success));
             this.refreshApiKey$.next();
         });
     }

@@ -18,4 +18,6 @@ GO
 GO
 :r ".\0005 - Strip returnUrl query params from CustomPage content.sql"
 GO
+:r ".\0006 - Add ApiKeyGeneratedDate to Person.sql"
+GO
 
