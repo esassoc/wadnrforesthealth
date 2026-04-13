@@ -217,24 +217,24 @@ public class PersonController(
 
     [HttpGet("{personID}/api-key")]
     [NormalUserFeature]
-    public async Task<ActionResult<object>> GetApiKey([FromRoute] int personID)
+    public async Task<ActionResult<PersonApiKey>> GetApiKey([FromRoute] int personID)
     {
         var gate = await CheckApiKeyGateAsync(personID);
         if (gate != null) return gate;
 
         var result = await People.GetApiKeyByPersonIDAsync(DbContext, personID);
-        return Ok(new { ApiKey = result.ApiKey, ApiKeyGeneratedDate = result.GeneratedDate });
+        return Ok(result);
     }
 
     [HttpPost("{personID}/api-key")]
     [NormalUserFeature]
-    public async Task<ActionResult<object>> GenerateApiKey([FromRoute] int personID)
+    public async Task<ActionResult<PersonApiKey>> GenerateApiKey([FromRoute] int personID)
     {
         var gate = await CheckApiKeyGateAsync(personID);
         if (gate != null) return gate;
 
         var result = await People.GenerateApiKeyAsync(DbContext, personID);
-        return Ok(new { ApiKey = result.ApiKey, ApiKeyGeneratedDate = result.GeneratedDate });
+        return Ok(result);
     }
 
     /// <summary>

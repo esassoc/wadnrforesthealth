@@ -190,6 +190,7 @@ export * from './organization-type-upsert-request';
 export * from './organization-upsert-request';
 export * from './pending-project-grid-row';
 export * from './people-receiving-reminder-grid-row';
+export * from './person-api-key';
 export * from './person-detail';
 export * from './person-first-name-last-name';
 export * from './person-grid-row';

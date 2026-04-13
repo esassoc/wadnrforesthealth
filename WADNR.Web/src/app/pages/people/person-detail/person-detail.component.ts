@@ -26,6 +26,7 @@ import { OrganizationService } from "src/app/shared/generated/api/organization.s
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { SelectDropdownOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { PersonDetail } from "src/app/shared/generated/model/person-detail";
+import { PersonApiKey } from "src/app/shared/generated/model/person-api-key";
 import { ProjectForPersonDetailGridRow } from "src/app/shared/generated/model/project-for-person-detail-grid-row";
 import { AgreementGridRow } from "src/app/shared/generated/model/agreement-grid-row";
 import { InteractionEventGridRow } from "src/app/shared/generated/model/interaction-event-grid-row";
@@ -66,7 +67,7 @@ export class PersonDetailComponent {
     public notificationsIsLoading$: Observable<boolean>;
     public isDownloadingAgreements = signal(false);
 
-    public apiKeyInfo$: Observable<{ apiKey: string | null; generatedDate: string | null }>;
+    public apiKey$: Observable<PersonApiKey>;
     public canViewApiKey$: Observable<boolean>;
     private refreshApiKey$ = new BehaviorSubject<void>(undefined);
 
@@ -227,12 +228,8 @@ export class PersonDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.apiKeyInfo$ = combineLatest([this.personID$, this.refreshApiKey$]).pipe(
+        this.apiKey$ = combineLatest([this.personID$, this.refreshApiKey$]).pipe(
             switchMap(([personID]) => this.personService.getApiKeyPerson(personID)),
-            map((response: any) => ({
-                apiKey: response?.ApiKey || null,
-                generatedDate: response?.ApiKeyGeneratedDate || null,
-            })),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 

@@ -550,7 +550,7 @@ public class PersonControllerTests
 
         // Assert
         Assert.IsNull(result.ApiKey);
-        Assert.IsNull(result.GeneratedDate);
+        Assert.IsNull(result.ApiKeyGeneratedDate);
     }
 
     [TestMethod]
@@ -599,7 +599,7 @@ public class PersonControllerTests
         var user = await PersonHelper.CreateUserAsync(
             AssemblySteps.DbContext, RoleEnum.Normal);
         var userID = user.PersonID;
-        var beforeGenerate = DateTime.UtcNow;
+        var beforeGenerate = DateTimeOffset.UtcNow;
 
         try
         {
@@ -607,18 +607,23 @@ public class PersonControllerTests
             var result = await People.GenerateApiKeyAsync(
                 AssemblySteps.DbContext, userID);
 
-            // Assert - GeneratedDate should be set to approximately now
-            Assert.IsTrue(result.GeneratedDate >= beforeGenerate,
-                "GeneratedDate should be at or after the time generation was called");
-            Assert.IsTrue(result.GeneratedDate <= DateTime.UtcNow,
-                "GeneratedDate should not be in the future");
+            // Assert - ApiKeyGeneratedDate should be set to approximately now, with UTC offset
+            Assert.IsNotNull(result.ApiKeyGeneratedDate);
+            Assert.AreEqual(TimeSpan.Zero, result.ApiKeyGeneratedDate.Value.Offset,
+                "ApiKeyGeneratedDate should have a UTC offset (zero)");
+            Assert.IsTrue(result.ApiKeyGeneratedDate.Value >= beforeGenerate,
+                "ApiKeyGeneratedDate should be at or after the time generation was called");
+            Assert.IsTrue(result.ApiKeyGeneratedDate.Value <= DateTimeOffset.UtcNow,
+                "ApiKeyGeneratedDate should not be in the future");
 
             // Verify the date is persisted and retrievable (within SQL datetime precision of ~3ms)
             var retrieved = await People.GetApiKeyByPersonIDAsync(
                 AssemblySteps.DbContext, userID);
-            Assert.IsNotNull(retrieved.GeneratedDate);
-            Assert.IsTrue(Math.Abs((result.GeneratedDate - retrieved.GeneratedDate.Value).TotalMilliseconds) < 10,
-                "Retrieved GeneratedDate should match within SQL datetime precision");
+            Assert.IsNotNull(retrieved.ApiKeyGeneratedDate);
+            Assert.AreEqual(TimeSpan.Zero, retrieved.ApiKeyGeneratedDate.Value.Offset,
+                "Retrieved ApiKeyGeneratedDate should have a UTC offset");
+            Assert.IsTrue(Math.Abs((result.ApiKeyGeneratedDate.Value - retrieved.ApiKeyGeneratedDate.Value).TotalMilliseconds) < 10,
+                "Retrieved ApiKeyGeneratedDate should match within SQL datetime precision");
         }
         finally
         {

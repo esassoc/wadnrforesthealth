@@ -104,18 +104,18 @@
                         </dl>
 
                         @if (canViewApiKey$ | async) {
-                            @let apiKeyInfo = apiKeyInfo$ | async;
+                            @let apiKey = apiKey$ | async;
                             <hr>
                             <dl class="person-detail__kv-list">
                                 <dt>API Key</dt>
                                 <dd>
-                                    @if (apiKeyInfo?.apiKey) {
+                                    @if (apiKey?.ApiKey) {
                                         <span class="person-detail__api-key-row">
-                                            <span [copyToClipboard]="true">{{ apiKeyInfo.apiKey }}</span>
+                                            <span [copyToClipboard]="true">{{ apiKey.ApiKey }}</span>
                                             <button class="btn btn-sm btn-secondary" (click)="generateApiKey(person.PersonID, true)">Regenerate</button>
                                         </span>
-                                        @if (apiKeyInfo.generatedDate) {
-                                            <span class="person-detail__generated-date">Generated on {{ apiKeyInfo.generatedDate | date:"medium" }}</span>
+                                        @if (apiKey.ApiKeyGeneratedDate) {
+                                            <span class="person-detail__generated-date">Generated on {{ apiKey.ApiKeyGeneratedDate | date:"medium" }}</span>
                                         }
                                     } @else {
                                         <span class="person-detail__api-key-row">

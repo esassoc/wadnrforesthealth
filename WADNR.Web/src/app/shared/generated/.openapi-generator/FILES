@@ -255,6 +255,7 @@ model/organization-type-upsert-request.ts
 model/organization-upsert-request.ts
 model/pending-project-grid-row.ts
 model/people-receiving-reminder-grid-row.ts
+model/person-api-key.ts
 model/person-detail.ts
 model/person-first-name-last-name.ts
 model/person-grid-row.ts

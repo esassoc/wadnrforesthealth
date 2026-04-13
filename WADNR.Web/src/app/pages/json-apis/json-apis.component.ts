@@ -5,6 +5,7 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { CopyToClipboardDirective } from "src/app/shared/directives/copy-to-clipboard.directive";
 import { PersonService } from "src/app/shared/generated/api/person.service";
+import { PersonApiKey } from "src/app/shared/generated/model/person-api-key";
 import { SystemInfoService } from "src/app/shared/generated/api/system-info.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
@@ -27,7 +28,7 @@ export class JsonApisComponent {
     );
 
     public currentUser$ = this.authenticationService.currentUserSetObservable;
-    public apiKeyInfo$: Observable<{ apiKey: string | null; generatedDate: string | null }>;
+    public apiKey$: Observable<PersonApiKey>;
     private refreshApiKey$ = new BehaviorSubject<void>(undefined);
 
     constructor(
@@ -37,12 +38,8 @@ export class JsonApisComponent {
         private confirmService: ConfirmService,
         private alertService: AlertService
     ) {
-        this.apiKeyInfo$ = combineLatest([this.currentUser$, this.refreshApiKey$]).pipe(
+        this.apiKey$ = combineLatest([this.currentUser$, this.refreshApiKey$]).pipe(
             switchMap(([user]) => this.personService.getApiKeyPerson(user.PersonID)),
-            map((response: any) => ({
-                apiKey: response?.ApiKey || null,
-                generatedDate: response?.ApiKeyGeneratedDate || null,
-            })),
             shareReplay({ bufferSize: 1, refCount: true })
         );
     }
