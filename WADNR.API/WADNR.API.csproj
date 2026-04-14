@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <UserSecretsId>e6a64456-ac18-4900-817c-11308f1abd94</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>

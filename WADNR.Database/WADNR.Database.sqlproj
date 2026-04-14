@@ -439,6 +439,13 @@
     <None Include="Scripts\ReleaseScripts\0004 - Update RTE links to new Angular routes.sql" />
     <None Include="Scripts\ReleaseScripts\0005 - Strip returnUrl query params from CustomPage content.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\170\SqlSchemas\master.dacpac">
+      <HintPath>$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\170\SqlSchemas\master.dacpac</HintPath>
+      <SuppressMissingDependenciesErrors>False</SuppressMissingDependenciesErrors>
+      <DatabaseVariableLiteralValue>master</DatabaseVariableLiteralValue>
+    </ArtifactReference>
+  </ItemGroup>
   <UsingTask TaskName="ScriptDeploymentGenerator" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
       <releaseScriptFolder ParameterType="System.String" Required="true" />
