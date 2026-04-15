@@ -15,6 +15,9 @@ import { CopyToClipboardDirective } from "src/app/shared/directives/copy-to-clip
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
+import { AlertService } from "src/app/shared/services/alert.service";
+import { Alert } from "src/app/shared/models/alert";
+import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { AsyncConfirmModalComponent, AsyncConfirmModalData } from "src/app/shared/components/async-confirm-modal/async-confirm-modal.component";
 
 import { AuthenticationService } from "src/app/services/authentication.service";
@@ -23,6 +26,7 @@ import { OrganizationService } from "src/app/shared/generated/api/organization.s
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { SelectDropdownOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { PersonDetail } from "src/app/shared/generated/model/person-detail";
+import { PersonApiKey } from "src/app/shared/generated/model/person-api-key";
 import { ProjectForPersonDetailGridRow } from "src/app/shared/generated/model/project-for-person-detail-grid-row";
 import { AgreementGridRow } from "src/app/shared/generated/model/agreement-grid-row";
 import { InteractionEventGridRow } from "src/app/shared/generated/model/interaction-event-grid-row";
@@ -63,7 +67,7 @@ export class PersonDetailComponent {
     public notificationsIsLoading$: Observable<boolean>;
     public isDownloadingAgreements = signal(false);
 
-    public apiKey$: Observable<string | null>;
+    public apiKey$: Observable<PersonApiKey>;
     public canViewApiKey$: Observable<boolean>;
     private refreshApiKey$ = new BehaviorSubject<void>(undefined);
 
@@ -97,6 +101,7 @@ export class PersonDetailComponent {
         private authenticationService: AuthenticationService,
         private dialogService: DialogService,
         private confirmService: ConfirmService,
+        private alertService: AlertService,
         private utilityFunctions: UtilityFunctionsService,
         private router: Router
     ) {}
@@ -225,7 +230,6 @@ export class PersonDetailComponent {
 
         this.apiKey$ = combineLatest([this.personID$, this.refreshApiKey$]).pipe(
             switchMap(([personID]) => this.personService.getApiKeyPerson(personID)),
-            map((response: any) => response?.ApiKey || null),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -378,6 +382,7 @@ export class PersonDetailComponent {
             if (!confirmed) return;
         }
         this.personService.generateApiKeyPerson(personID).subscribe(() => {
+            this.alertService.pushAlert(new Alert("API key generated successfully.", AlertContext.Success));
             this.refreshApiKey$.next();
         });
     }

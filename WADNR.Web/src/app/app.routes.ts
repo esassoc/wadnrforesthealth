@@ -40,7 +40,7 @@ export const routes: Routes = [
         title: "Agreement Detail",
         loadComponent: () => import("./pages/agreements/agreement-detail/agreement-detail.component").then((m) => m.AgreementDetailComponent),
     },
-    { path: "agreements", title: "Agreements", loadComponent: () => import("./pages/agreements/agreements.component").then((m) => m.AgreementsComponent) },
+    { path: "agreements", title: "Agreements", canActivate: [adminGuard], loadComponent: () => import("./pages/agreements/agreements.component").then((m) => m.AgreementsComponent) },
     {
         path: "counties",
         title: "Counties",

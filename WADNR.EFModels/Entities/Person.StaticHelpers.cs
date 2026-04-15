@@ -590,21 +590,33 @@ public static class People
         return await GetByIDAsDetailAsync(dbContext, person.PersonID);
     }
 
-    public static async Task<string> GenerateApiKeyAsync(WADNRDbContext dbContext, int personID)
+    public static async Task<PersonApiKey> GenerateApiKeyAsync(WADNRDbContext dbContext, int personID)
     {
         var person = await dbContext.People.SingleAsync(p => p.PersonID == personID);
         person.ApiKey = Guid.NewGuid();
+        person.ApiKeyGeneratedDate = DateTime.UtcNow;
         await dbContext.SaveChangesAsync();
-        return person.ApiKey.Value.ToString();
+        return new PersonApiKey
+        {
+            ApiKey = person.ApiKey.Value.ToString(),
+            ApiKeyGeneratedDate = new DateTimeOffset(person.ApiKeyGeneratedDate.Value, TimeSpan.Zero),
+        };
     }
 
-    public static async Task<string?> GetApiKeyByPersonIDAsync(WADNRDbContext dbContext, int personID)
+    public static async Task<PersonApiKey> GetApiKeyByPersonIDAsync(WADNRDbContext dbContext, int personID)
     {
-        var apiKey = await dbContext.People
+        var result = await dbContext.People
+            .AsNoTracking()
             .Where(p => p.PersonID == personID)
-            .Select(p => p.ApiKey)
+            .Select(p => new { p.ApiKey, p.ApiKeyGeneratedDate })
             .SingleOrDefaultAsync();
-        return apiKey?.ToString();
+        return new PersonApiKey
+        {
+            ApiKey = result?.ApiKey?.ToString(),
+            ApiKeyGeneratedDate = result?.ApiKeyGeneratedDate.HasValue == true
+                ? new DateTimeOffset(result.ApiKeyGeneratedDate.Value, TimeSpan.Zero)
+                : null,
+        };
     }
 
 }

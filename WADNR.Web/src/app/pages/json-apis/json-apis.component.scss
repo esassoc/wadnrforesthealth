@@ -26,4 +26,11 @@
         color: var(--gray-600);
         font-style: italic;
     }
+
+    &__generated-date {
+        display: block;
+        margin-top: var(--spacing-200);
+        color: var(--gray-600);
+        font-size: var(--type-size-100);
+    }
 }

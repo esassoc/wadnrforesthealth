@@ -41,8 +41,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       },
       "post": {
         "tags": [
@@ -10666,7 +10665,24 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonApiKey"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonApiKey"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonApiKey"
+                }
+              }
+            }
           }
         }
       },
@@ -10688,7 +10704,24 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonApiKey"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonApiKey"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonApiKey"
+                }
+              }
+            }
           }
         }
       }
@@ -30008,6 +30041,21 @@
             "format": "int32"
           },
           "LastReminderDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonApiKey": {
+        "type": "object",
+        "properties": {
+          "ApiKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "ApiKeyGeneratedDate": {
             "type": "string",
             "format": "date-time",
             "nullable": true

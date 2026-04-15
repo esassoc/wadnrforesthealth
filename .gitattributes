@@ -13,6 +13,9 @@
 *.sql     -text
 *.build   -text
 
+# Normalize TypeScript files to LF so generated enum files don't cause phantom diffs across machines
+*.ts      text eol=lf
+
 # Images should be treated as binary
 # (binary is a macro for -text -diff)
 *.png     binary

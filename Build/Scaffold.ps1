@@ -29,15 +29,11 @@ $csProj = $config.EFPocoGeneratorCSProj
 if ($csProj)
 {
   "Build POCO Generator"
-  Import-Module .\Invoke-MsBuild.psm1
-
-  if ([string]::IsNullOrEmpty($msBuildPath)) {
-    $result = Invoke-MsBuild -Path $config.EFPocoGeneratorCSProj -MsBuildParameters "/restore"
+  & dotnet build "$PSScriptRoot\$csProj" --nologo
+  if ($LASTEXITCODE -ne 0) {
+    Write-Error "POCO Generator build failed (exit code $LASTEXITCODE)"
+    exit $LASTEXITCODE
   }
-  else {
-    $result = Invoke-MsBuild -MsBuildFilePath $msBuildPath -Path $config.EFPocoGeneratorCSProj -MsBuildParameters "/restore"
-  }
-  Write-Output "Build Succeeded: " $result.BuildSucceeded
 }
 
 $path = $config.EFPocoGeneratorExePath

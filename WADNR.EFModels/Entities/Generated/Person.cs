@@ -45,6 +45,9 @@ public partial class Person
 
     public Guid? ApiKey { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime? ApiKeyGeneratedDate { get; set; }
+
     [StringLength(100)]
     [Unicode(false)]
     public string? MiddleName { get; set; }

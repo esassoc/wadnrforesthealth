@@ -109,11 +109,14 @@
                             <dl class="person-detail__kv-list">
                                 <dt>API Key</dt>
                                 <dd>
-                                    @if (apiKey) {
+                                    @if (apiKey?.ApiKey) {
                                         <span class="person-detail__api-key-row">
-                                            <span [copyToClipboard]="true">{{ apiKey }}</span>
+                                            <span [copyToClipboard]="true">{{ apiKey.ApiKey }}</span>
                                             <button class="btn btn-sm btn-secondary" (click)="generateApiKey(person.PersonID, true)">Regenerate</button>
                                         </span>
+                                        @if (apiKey.ApiKeyGeneratedDate) {
+                                            <span class="person-detail__generated-date">Generated on {{ apiKey.ApiKeyGeneratedDate | date:"medium" }}</span>
+                                        }
                                     } @else {
                                         <span class="person-detail__api-key-row">
                                             <span class="person-detail__text-muted">No API key generated.</span>

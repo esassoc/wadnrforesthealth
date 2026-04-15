@@ -5,9 +5,13 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { CopyToClipboardDirective } from "src/app/shared/directives/copy-to-clipboard.directive";
 import { PersonService } from "src/app/shared/generated/api/person.service";
+import { PersonApiKey } from "src/app/shared/generated/model/person-api-key";
 import { SystemInfoService } from "src/app/shared/generated/api/system-info.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
+import { AlertService } from "src/app/shared/services/alert.service";
+import { Alert } from "src/app/shared/models/alert";
+import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 
 
 @Component({
@@ -24,18 +28,18 @@ export class JsonApisComponent {
     );
 
     public currentUser$ = this.authenticationService.currentUserSetObservable;
-    public apiKey$: Observable<string | null>;
+    public apiKey$: Observable<PersonApiKey>;
     private refreshApiKey$ = new BehaviorSubject<void>(undefined);
 
     constructor(
         private personService: PersonService,
         private systemInfoService: SystemInfoService,
         private authenticationService: AuthenticationService,
-        private confirmService: ConfirmService
+        private confirmService: ConfirmService,
+        private alertService: AlertService
     ) {
         this.apiKey$ = combineLatest([this.currentUser$, this.refreshApiKey$]).pipe(
             switchMap(([user]) => this.personService.getApiKeyPerson(user.PersonID)),
-            map((response: any) => response?.ApiKey || null),
             shareReplay({ bufferSize: 1, refCount: true })
         );
     }
@@ -52,6 +56,7 @@ export class JsonApisComponent {
             if (!confirmed) return;
         }
         this.personService.generateApiKeyPerson(personID).subscribe(() => {
+            this.alertService.pushAlert(new Alert("API key generated successfully.", AlertContext.Success));
             this.refreshApiKey$.next();
         });
     }

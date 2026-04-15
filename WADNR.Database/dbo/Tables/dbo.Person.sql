@@ -11,6 +11,7 @@ CREATE TABLE [dbo].[Person](
     [OrganizationID] [int] NULL CONSTRAINT [FK_Person_Organization_OrganizationID] FOREIGN KEY REFERENCES [dbo].[Organization]([OrganizationID]),
     [ReceiveSupportEmails] [bit] NOT NULL,
     [ApiKey] [uniqueidentifier] NULL,
+    [ApiKeyGeneratedDate] [datetime] NULL,
     [MiddleName] [varchar](100) NULL,
     [Notes] [varchar](500) NULL,
     [PersonAddress] [varchar](255) NULL,
