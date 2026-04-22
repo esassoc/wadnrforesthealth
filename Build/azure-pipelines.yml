@@ -97,8 +97,9 @@ stages:
         SecretsFilter: '*'
         RunAsPreJob: true
 
-    - template: azure-pipelines/templates/docker/docker-template.yml@BuildTemplates 
+    - template: azure-pipelines/templates/docker/docker-template.yml@BuildTemplates
       parameters:
+        projectName: 'wadnr'
         displayName: 'API'
         subscription: '$(azureSubscription)'
         containerRegistry: '$(kv-containerRegistry)'
@@ -107,6 +108,10 @@ stages:
         additionalImageTags: |
           $(Build.BuildNumber)-$(environment)
         includeLatestTag: true
+        imageNames:
+          - wadnr/api
+          - wadnr/scalar
+          - wadnr/gdalapi
 
 
   - job: BuildWeb
@@ -125,8 +130,9 @@ stages:
         SecretsFilter: '*'
         RunAsPreJob: true
 
-    - template: azure-pipelines/templates/docker/docker-template.yml@BuildTemplates 
+    - template: azure-pipelines/templates/docker/docker-template.yml@BuildTemplates
       parameters:
+        projectName: 'wadnr'
         displayName: 'Web'
         subscription: '$(azureSubscription)'
         containerRegistry: '$(kv-containerRegistry)'
@@ -135,6 +141,8 @@ stages:
         additionalImageTags: |
           $(Build.BuildNumber)-$(environment)
         includeLatestTag: true
+        imageNames:
+          - wadnr/web
 
 - stage: BuildTerraform
   displayName: Terraform Plan
