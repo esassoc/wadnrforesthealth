@@ -8,6 +8,7 @@ using WADNR.EFModels.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,8 @@ using NetTopologySuite.IO.Converters;
 using SendGrid;
 using Serilog;
 using System;
+using System.IO.Compression;
+using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -62,6 +65,16 @@ namespace WADNR.API
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;
                 options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowReadingFromString;
             });
+
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/json" });
+            });
+            services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
 
             services.Configure<WADNRConfiguration>(Configuration);
             services.Configure<SendGridConfiguration>(Configuration);
@@ -227,6 +240,7 @@ namespace WADNR.API
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
+            app.UseResponseCompression();
             app.UseRouting();
             app.UseCors(policy =>
             {
