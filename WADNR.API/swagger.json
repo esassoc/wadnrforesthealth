@@ -25118,6 +25118,9 @@
               "$ref": "#/components/schemas/FundSourceAllocationRequestStepItem"
             },
             "nullable": true
+          },
+          "IsInLandownerAssistanceProgram": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -26864,6 +26867,16 @@
             "type": "integer",
             "format": "int32"
           },
+          "MatchAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "PayAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "TotalAmount": {
             "type": "number",
             "format": "double",
@@ -26959,6 +26972,16 @@
           "FundSourceAllocationID": {
             "type": "integer",
             "format": "int32"
+          },
+          "MatchAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "PayAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           },
           "TotalAmount": {
             "type": "number",
@@ -32828,6 +32851,9 @@
               "$ref": "#/components/schemas/FundSourceAllocationRequestItem"
             },
             "nullable": true
+          },
+          "IsInLandownerAssistanceProgram": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -34796,6 +34822,9 @@
               "$ref": "#/components/schemas/FundSourceAllocationRequestUpdateItem"
             },
             "nullable": true
+          },
+          "IsInLandownerAssistanceProgram": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

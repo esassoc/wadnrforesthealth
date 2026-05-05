@@ -756,21 +756,48 @@ public static class ProjectUpdateDiffs
             .Select(f => GetFundingSourceName(f.FundingSourceID))
             .ToList();
 
+        var isInLandownerAssistanceProgram = await dbContext.ProjectPrograms
+            .AsNoTracking()
+            .AnyAsync(pp => pp.ProjectID == project.ProjectID && pp.ProgramID == Program.LandownerAssistanceProgramID);
+
+        var allocHeaders = isInLandownerAssistanceProgram
+            ? new List<string> { "Allocation", "Match", "Pay", "Total" }
+            : new List<string> { "Allocation", "Total" };
+
+        static string FormatMoney(decimal? value) =>
+            value?.ToString("C", CultureInfo.GetCultureInfo("en-US")) ?? "(none)";
+
         var originalAllocRows = allocations
             .OrderBy(a => a.FundSourceAllocation?.FundSourceAllocationName)
-            .Select(a => new List<string>
-            {
-                a.FundSourceAllocation?.FundSourceAllocationName ?? "(unknown)",
-                a.TotalAmount?.ToString("C", CultureInfo.GetCultureInfo("en-US")) ?? "(none)"
-            })
+            .Select(a => isInLandownerAssistanceProgram
+                ? new List<string>
+                {
+                    a.FundSourceAllocation?.FundSourceAllocationName ?? "(unknown)",
+                    FormatMoney(a.MatchAmount),
+                    FormatMoney(a.PayAmount),
+                    FormatMoney(a.TotalAmount)
+                }
+                : new List<string>
+                {
+                    a.FundSourceAllocation?.FundSourceAllocationName ?? "(unknown)",
+                    FormatMoney(a.TotalAmount)
+                })
             .ToList();
         var updatedAllocRows = updateAllocations
             .OrderBy(a => a.FundSourceAllocation?.FundSourceAllocationName)
-            .Select(a => new List<string>
-            {
-                a.FundSourceAllocation?.FundSourceAllocationName ?? "(unknown)",
-                a.TotalAmount?.ToString("C", CultureInfo.GetCultureInfo("en-US")) ?? "(none)"
-            })
+            .Select(a => isInLandownerAssistanceProgram
+                ? new List<string>
+                {
+                    a.FundSourceAllocation?.FundSourceAllocationName ?? "(unknown)",
+                    FormatMoney(a.MatchAmount),
+                    FormatMoney(a.PayAmount),
+                    FormatMoney(a.TotalAmount)
+                }
+                : new List<string>
+                {
+                    a.FundSourceAllocation?.FundSourceAllocationName ?? "(unknown)",
+                    FormatMoney(a.TotalAmount)
+                })
             .ToList();
 
         var hasChanges = fields.Any(f => f.OriginalValue != f.UpdatedValue)
@@ -794,7 +821,7 @@ public static class ProjectUpdateDiffs
                 {
                     Title = "Fund Source Allocations",
                     Type = "table",
-                    Headers = ["Allocation", "Total"],
+                    Headers = allocHeaders,
                     OriginalRows = originalAllocRows,
                     UpdatedRows = updatedAllocRows
                 }

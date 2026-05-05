@@ -73,12 +73,20 @@
             <colgroup>
                 <col style="width: 30px;" />
                 <col />
+                @if (isInLandownerAssistanceProgram) {
+                    <col style="width: 130px;" />
+                    <col style="width: 130px;" />
+                }
                 <col style="width: 130px;" />
             </colgroup>
             <thead>
                 <tr>
                     <th></th>
                     <th><field-definition fieldDefinition="FundSourceAllocation"></field-definition></th>
+                    @if (isInLandownerAssistanceProgram) {
+                        <th style="text-align: right"><field-definition fieldDefinition="ProjectFundSourceAllocationRequestMatchAmount"></field-definition></th>
+                        <th style="text-align: right"><field-definition fieldDefinition="ProjectFundSourceAllocationRequestPayAmount"></field-definition></th>
+                    }
                     <th style="text-align: right"><field-definition fieldDefinition="ProjectFundSourceAllocationRequestTotalAmount"></field-definition></th>
                 </tr>
             </thead>
@@ -100,6 +108,24 @@
                             }
                             {{ row.fundSourceAllocationName }}
                         </td>
+                        @if (isInLandownerAssistanceProgram) {
+                            <td>
+                                <form-field
+                                    [formControl]="row.matchAmountControl"
+                                    [type]="FormFieldType.Currency"
+                                    placeholder="$0.00"
+                                    [readOnly]="isSubmitting">
+                                </form-field>
+                            </td>
+                            <td>
+                                <form-field
+                                    [formControl]="row.payAmountControl"
+                                    [type]="FormFieldType.Currency"
+                                    placeholder="$0.00"
+                                    [readOnly]="isSubmitting">
+                                </form-field>
+                            </td>
+                        }
                         <td>
                             <form-field
                                 [formControl]="row.totalAmountControl"
@@ -113,6 +139,10 @@
                 <tr class="totals-row">
                     <th></th>
                     <th style="text-align: right">Total</th>
+                    @if (isInLandownerAssistanceProgram) {
+                        <th style="text-align: right">{{ formatCurrency(matchAmountTotal) }}</th>
+                        <th style="text-align: right">{{ formatCurrency(payAmountTotal) }}</th>
+                    }
                     <th style="text-align: right">{{ formatCurrency(allocationTotal) }}</th>
                 </tr>
             </tbody>

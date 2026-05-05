@@ -17,6 +17,7 @@ export class ExpectedFundingStep {
     ProjectFundingSourceNotes?: string | null;
     SelectedFundingSourceIDs?: Array<number> | null;
     AllocationRequests?: Array<FundSourceAllocationRequestStepItem> | null;
+    IsInLandownerAssistanceProgram?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -28,6 +29,7 @@ export interface ExpectedFundingStepForm {
     ProjectFundingSourceNotes?: FormControl<string>;
     SelectedFundingSourceIDs?: FormControl<Array<number>>;
     AllocationRequests?: FormControl<Array<FundSourceAllocationRequestStepItem>>;
+    IsInLandownerAssistanceProgram?: FormControl<boolean>;
 }
 
 export class ExpectedFundingStepFormControls { 
@@ -72,6 +74,16 @@ export class ExpectedFundingStepFormControls {
         }
     );
     public static AllocationRequests = (value: FormControlState<Array<FundSourceAllocationRequestStepItem>> | Array<FundSourceAllocationRequestStepItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<FundSourceAllocationRequestStepItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static IsInLandownerAssistanceProgram = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {
