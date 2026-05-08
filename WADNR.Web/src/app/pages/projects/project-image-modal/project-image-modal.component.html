@@ -11,7 +11,8 @@
                 [formControl]="fileControl"
                 fieldLabel="Image File"
                 [type]="FormFieldType.File"
-                [uploadFileAccepts]="allowedFileExtensions">
+                [uploadFileAccepts]="allowedFileExtensions"
+                uploadHelpText="Upload a jpg, jpeg, gif, png file and it will automatically be resized to 5MB or less.">
             </form-field>
         }
 

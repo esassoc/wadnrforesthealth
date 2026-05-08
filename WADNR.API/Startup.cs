@@ -140,6 +140,7 @@ namespace WADNR.API
             services.AddScoped<ProgramAuthorizationContext>();
             services.AddScoped<ImpersonationService>();
             services.AddScoped<FileService>();
+            services.AddScoped<ImageResizeService>();
             services.AddScoped<IAzureStorage, AzureStorage>();
             services.AddScoped<ProjectNotificationService>();
             services.AddScoped<IAuditUserProvider, HttpContextAuditUserProvider>();

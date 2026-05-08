@@ -20,9 +20,12 @@ public class ProjectImageController(
     WADNRDbContext dbContext,
     ILogger<ProjectImageController> logger,
     IOptions<WADNRConfiguration> configuration,
-    FileService fileService)
+    FileService fileService,
+    ImageResizeService imageResizeService)
     : SitkaController<ProjectImageController>(dbContext, logger, configuration)
 {
+    private const long MaxRawUploadBytes = 30L * 1000 * 1000;
+
     private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".jpg", ".jpeg", ".gif", ".png"
@@ -47,6 +50,7 @@ public class ProjectImageController(
     [HttpPost]
     [ProjectEditAsAdminFeature]
     [Consumes("multipart/form-data")]
+    [RequestFormLimits(MultipartBodyLengthLimit = MaxRawUploadBytes)]
     public async Task<ActionResult<ProjectImageDetail>> Create(
         [FromForm] int projectID,
         [FromForm] string caption,
@@ -58,6 +62,11 @@ public class ProjectImageController(
         if (file == null || file.Length == 0)
         {
             return BadRequest("Image file is required.");
+        }
+
+        if (file.Length > MaxRawUploadBytes)
+        {
+            return BadRequest("Image file is too large. Please choose an image under 30MB.");
         }
 
         // Validate file extension
@@ -86,8 +95,25 @@ public class ProjectImageController(
             return NotFound($"Project with ID {projectID} not found.");
         }
 
-        // Create file resource
-        var fileResource = await fileService.CreateFileResource(DbContext, file, CallingUser.PersonID);
+        // Resize the image to <= 5MB if needed (preserves the original format/extension).
+        ResizeResult resizeResult;
+        await using (var uploadStream = file.OpenReadStream())
+        {
+            resizeResult = imageResizeService.ResizeIfNeeded(uploadStream, extension);
+        }
+
+        if (!resizeResult.IsValid)
+        {
+            return BadRequest(resizeResult.ErrorMessage);
+        }
+
+        // Create file resource from the (possibly resized) stream
+        FileResource fileResource;
+        await using (resizeResult.Stream)
+        {
+            fileResource = await fileService.CreateFileResource(
+                DbContext, resizeResult.Stream, file.FileName, CallingUser.PersonID);
+        }
 
         // Create project image
         var projectImage = await ProjectImages.CreateAsync(
