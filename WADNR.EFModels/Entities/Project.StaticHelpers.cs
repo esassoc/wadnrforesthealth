@@ -44,24 +44,26 @@ public static class Projects
         return await dbContext.Projects.FindAsync(projectID);
     }
 
-    internal static async Task<string> GenerateFhtProjectNumberAsync(WADNRDbContext dbContext)
+    public static async Task<string> GenerateFhtProjectNumberAsync(WADNRDbContext dbContext)
     {
-        // Get the max FHT number and increment
-        var maxNumber = await dbContext.Projects
-            .Where(p => p.FhtProjectNumber.StartsWith("FHT-"))
+        var year = DateTime.Now.Year;
+        var prefix = $"FHT-{year}-";
+
+        var existingForYear = await dbContext.Projects
+            .Where(p => p.FhtProjectNumber.StartsWith(prefix))
             .Select(p => p.FhtProjectNumber)
             .ToListAsync();
 
-        var maxNumeric = maxNumber
+        var maxCounter = existingForYear
             .Select(n =>
             {
                 var parts = n.Split('-');
-                return parts.Length > 1 && int.TryParse(parts[1], out var num) ? num : 0;
+                return parts.Length >= 3 && int.TryParse(parts[2], out var num) ? num : 0;
             })
             .DefaultIfEmpty(0)
             .Max();
 
-        return $"FHT-{maxNumeric + 1:D5}";
+        return $"{prefix}{maxCounter + 1:D5}";
     }
 
     public static async Task<List<ProjectCountyDetailGridRow>> ListAsCountyDetailGridRowAsync(WADNRDbContext dbContext, int countyID)

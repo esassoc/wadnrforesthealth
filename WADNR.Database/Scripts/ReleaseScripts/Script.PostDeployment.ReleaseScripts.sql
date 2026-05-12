@@ -20,4 +20,6 @@ GO
 GO
 :r ".\0006 - Add ApiKeyGeneratedDate to Person.sql"
 GO
+:r ".\0007 - WADNR-2263 Backfill FHT Project Numbers with year prefix.sql"
+GO
 
