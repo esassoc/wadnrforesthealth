@@ -440,7 +440,7 @@
     <None Include="Scripts\ReleaseScripts\0005 - Strip returnUrl query params from CustomPage content.sql" />
     <None Include="Scripts\ReleaseScripts\0006 - Add ApiKeyGeneratedDate to Person.sql" />
     <None Include="Scripts\ReleaseScripts\0007 - WADNR-2263 Backfill FHT Project Numbers with year prefix.sql" />
-    <Build Include="Scripts\ReleaseScripts\0008 - WADNR-2264 Delete blocked projects imported in error.sql" />
+    <None Include="Scripts\ReleaseScripts\0008 - WADNR-2264 Delete blocked projects imported in error.sql" />
   </ItemGroup>
   <UsingTask TaskName="ScriptDeploymentGenerator" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
