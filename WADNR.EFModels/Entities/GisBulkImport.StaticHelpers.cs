@@ -408,6 +408,11 @@ public static class GisBulkImports
             .GroupBy(f => projectIdentifierLookup[f.GisFeatureID])
             .ToList();
 
+        // Pre-load the Project Import Block List for this program. Match is case-insensitive
+        // on either ProjectGisIdentifier or ProjectName, matching the normalization the
+        // import loop already applies at line ~400.
+        var (blockedIdentifiers, blockedNames) = await LoadBlockListAsync(dbContext, sourceOrg.ProgramID);
+
         foreach (var projectGroup in featuresByProject)
         {
             var projectIdentifier = projectGroup.Key;
@@ -422,6 +427,18 @@ public static class GisBulkImports
                 projectName = name;
             }
             projectName ??= originalIdentifier;
+
+            // Skip projects that match the Project Import Block List for this program (creates AND updates).
+            if (IsBlocked(projectIdentifier, projectName, blockedIdentifiers, blockedNames))
+            {
+                result.ProjectsBlocked++;
+                result.BlockedProjects.Add(new GisBulkImportProjectResult
+                {
+                    ProjectID = 0,
+                    ProjectName = projectName
+                });
+                continue;
+            }
 
             // Find existing project by GIS identifier within the same program (case-insensitive)
             var existingProject = await dbContext.Projects
@@ -649,5 +666,58 @@ public static class GisBulkImports
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Loads the Project Import Block List for a program and returns normalized
+    /// (uppercased, trimmed) sets of blocked GIS identifiers and project names.
+    /// Used by ImportProjectsAsync to skip blocked projects.
+    /// </summary>
+    public static async Task<(HashSet<string> BlockedIdentifiers, HashSet<string> BlockedNames)> LoadBlockListAsync(
+        WADNRDbContext dbContext, int programID)
+    {
+        var blockListEntries = await dbContext.ProjectImportBlockLists
+            .AsNoTracking()
+            .Where(x => x.ProgramID == programID)
+            .Select(x => new { x.ProjectGisIdentifier, x.ProjectName })
+            .ToListAsync();
+
+        var blockedIdentifiers = blockListEntries
+            .Where(x => !string.IsNullOrWhiteSpace(x.ProjectGisIdentifier))
+            .Select(x => x.ProjectGisIdentifier.Trim().ToUpperInvariant())
+            .ToHashSet();
+
+        var blockedNames = blockListEntries
+            .Where(x => !string.IsNullOrWhiteSpace(x.ProjectName))
+            .Select(x => x.ProjectName.Trim().ToUpperInvariant())
+            .ToHashSet();
+
+        return (blockedIdentifiers, blockedNames);
+    }
+
+    /// <summary>
+    /// Returns true if the given project identifier or name matches any entry in the
+    /// normalized block-list sets. Identifier is expected to be already trimmed + uppercased
+    /// (the import loop normalizes it at the grouping step).
+    /// </summary>
+    public static bool IsBlocked(
+        string projectIdentifierUpper,
+        string projectName,
+        HashSet<string> blockedIdentifiers,
+        HashSet<string> blockedNames)
+    {
+        if (!string.IsNullOrWhiteSpace(projectIdentifierUpper)
+            && blockedIdentifiers.Contains(projectIdentifierUpper))
+        {
+            return true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(projectName)
+            && blockedNames.Contains(projectName.Trim().ToUpperInvariant()))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

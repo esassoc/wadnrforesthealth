@@ -244,6 +244,13 @@ export class ValidateMetadataStepComponent implements OnInit {
             );
         }
 
+        if (result.BlockedProjects?.length) {
+            lines.push(`<br/><strong>Projects blocked by the Project Import Block List (${result.BlockedProjects.length}):</strong>`);
+            lines.push(
+                "<ul style='margin: 0.25rem 0 0.5rem 1.5rem;'>" + result.BlockedProjects.map((p) => `<li>${p.ProjectName}</li>`).join("") + "</ul>"
+            );
+        }
+
         if (result.ProjectsSkipped) {
             lines.push(`<br/>${result.ProjectsSkipped} project(s) skipped.`);
         }

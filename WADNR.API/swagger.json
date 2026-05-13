@@ -28255,6 +28255,10 @@
             "type": "integer",
             "format": "int32"
           },
+          "ProjectsBlocked": {
+            "type": "integer",
+            "format": "int32"
+          },
           "TreatmentsCreated": {
             "type": "integer",
             "format": "int32"
@@ -28271,6 +28275,13 @@
             "nullable": true
           },
           "UpdatedProjects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GisBulkImportProjectResult"
+            },
+            "nullable": true
+          },
+          "BlockedProjects": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/GisBulkImportProjectResult"
