@@ -28,7 +28,7 @@ public class ProjectImageController(
 
     private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
-        ".jpg", ".jpeg", ".gif", ".png"
+        ".jpg", ".jpeg", ".gif", ".png", ".heic", ".heif"
     };
 
     [HttpGet("timings")]
@@ -107,12 +107,15 @@ public class ProjectImageController(
             return BadRequest(resizeResult.ErrorMessage);
         }
 
-        // Create file resource from the (possibly resized) stream
+        // Create file resource from the (possibly resized) stream. If the resize service converted
+        // the image (e.g. HEIC -> JPEG), use the new extension so the stored filename matches what
+        // <img> tags can render.
+        var storedFileName = Path.ChangeExtension(file.FileName, resizeResult.Extension);
         FileResource fileResource;
         await using (resizeResult.Stream)
         {
             fileResource = await fileService.CreateFileResource(
-                DbContext, resizeResult.Stream, file.FileName, CallingUser.PersonID);
+                DbContext, resizeResult.Stream, storedFileName, CallingUser.PersonID);
         }
 
         // Create project image

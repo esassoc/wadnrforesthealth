@@ -61,7 +61,7 @@ export class ProjectImageModalComponent extends BaseModal implements OnInit {
 
     public timingDropdownOptions: FormInputOption[] = [];
 
-    public allowedFileExtensions = ".jpg,.jpeg,.gif,.png";
+    public allowedFileExtensions = ".jpg,.jpeg,.gif,.png,.heic,.heif";
     private readonly maxUploadBytes = 30 * 1000 * 1000;
 
     constructor(

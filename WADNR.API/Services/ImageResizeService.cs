@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using ImageMagick;
 using Microsoft.Extensions.Logging;
 using SkiaSharp;
 
@@ -32,13 +33,33 @@ namespace WADNR.API.Services
                 return ResizeResult.Invalid("Unsupported image extension.");
             }
 
-            var buffered = CopyToMemoryStream(input);
+            // HEIC/HEIF inputs are decoded to JPEG up front so the rest of the pipeline (and the
+            // browser-side <img>) can treat them as JPEG. The returned extension flips to .jpg.
+            MemoryStream buffered;
+            var storedExtension = originalExtension;
+            if (IsHeic(originalExtension))
+            {
+                try
+                {
+                    buffered = ConvertHeicToJpeg(input);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to decode HEIC image.");
+                    return ResizeResult.Invalid("File could not be decoded as an image.");
+                }
+                storedExtension = ".jpg";
+            }
+            else
+            {
+                buffered = CopyToMemoryStream(input);
+            }
             var originalLength = buffered.Length;
 
             if (originalLength <= MaxStoredImageBytes)
             {
                 buffered.Seek(0, SeekOrigin.Begin);
-                return ResizeResult.Ok(buffered, originalExtension, originalLength);
+                return ResizeResult.Ok(buffered, storedExtension, originalLength);
             }
 
             buffered.Seek(0, SeekOrigin.Begin);
@@ -76,7 +97,7 @@ namespace WADNR.API.Services
                         _logger.LogInformation(
                             "Resized image from {OriginalBytes} to {NewBytes} (longest edge {Edge}px, quality {Quality}).",
                             originalLength, output.Length, maxEdge, quality);
-                        return ResizeResult.Ok(output, originalExtension, output.Length);
+                        return ResizeResult.Ok(output, storedExtension, output.Length);
                     }
 
                     if (format.Value != SKEncodedImageFormat.Jpeg || quality <= MinJpegQuality)
@@ -128,8 +149,28 @@ namespace WADNR.API.Services
                 "jpeg" => SKEncodedImageFormat.Jpeg,
                 "png" => SKEncodedImageFormat.Png,
                 "gif" => SKEncodedImageFormat.Gif,
+                "heic" => SKEncodedImageFormat.Jpeg,
+                "heif" => SKEncodedImageFormat.Jpeg,
                 _ => null
             };
+        }
+
+        private static bool IsHeic(string extension)
+        {
+            if (string.IsNullOrEmpty(extension)) return false;
+            var ext = extension.StartsWith('.') ? extension.Substring(1) : extension;
+            ext = ext.ToLowerInvariant();
+            return ext == "heic" || ext == "heif";
+        }
+
+        private static MemoryStream ConvertHeicToJpeg(Stream input)
+        {
+            using var magick = new MagickImage(input);
+            magick.Format = MagickFormat.Jpeg;
+            var output = new MemoryStream();
+            magick.Write(output);
+            output.Seek(0, SeekOrigin.Begin);
+            return output;
         }
     }
 

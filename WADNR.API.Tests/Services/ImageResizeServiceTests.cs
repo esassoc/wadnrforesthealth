@@ -80,9 +80,27 @@ public class ImageResizeServiceTests
         var service = CreateService();
         using var input = MakeNoiseImage(100, 100, SKEncodedImageFormat.Jpeg, quality: 80);
 
-        var result = service.ResizeIfNeeded(input, ".heic");
+        var result = service.ResizeIfNeeded(input, ".bmp");
 
         Assert.IsFalse(result.IsValid);
+    }
+
+    // HEIC coverage uses a real fixture file because Magick.NET-Q8-AnyCPU ships the libheif
+    // decoder but not the GPL-licensed x265 encoder, so HEIC bytes can't be synthesized in-test.
+    // Drop a sample iPhone HEIC at TestData/sample.heic to enable this test.
+    [TestMethod]
+    public void ResizeIfNeeded_ConvertsHeic_ToJpegUnderLimit()
+    {
+        var service = CreateService();
+        using var input = LoadFixtureOrInconclusive("sample.heic");
+
+        var result = service.ResizeIfNeeded(input, ".heic");
+
+        Assert.IsTrue(result.IsValid, result.ErrorMessage);
+        Assert.AreEqual(".jpg", result.Extension);
+        Assert.IsTrue(result.Length <= ImageResizeService.MaxStoredImageBytes,
+            $"Output was {result.Length} bytes, exceeds 5MB cap");
+        AssertStreamIsDecodableImage(result.Stream);
     }
 
     [TestMethod]
@@ -96,6 +114,19 @@ public class ImageResizeServiceTests
         Assert.IsTrue(result.IsValid);
         Assert.AreEqual(".jpeg", result.Extension);
         result.Stream.Dispose();
+    }
+
+    private static MemoryStream LoadFixtureOrInconclusive(string fileName)
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "TestData", fileName);
+        if (!File.Exists(path))
+        {
+            Assert.Inconclusive(
+                $"Test fixture '{fileName}' not found at '{path}'. Drop a real HEIC sample (e.g. " +
+                "from an iPhone export) at WADNR.API.Tests/TestData/ and mark it as CopyToOutput to enable this test.");
+        }
+        var bytes = File.ReadAllBytes(path);
+        return new MemoryStream(bytes);
     }
 
     private static MemoryStream MakeNoiseImage(int width, int height, SKEncodedImageFormat format, int quality)
