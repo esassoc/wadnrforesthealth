@@ -19,17 +19,14 @@ Source code is available upon request via <support@sitkatech.com>.
 </license>
 -----------------------------------------------------------------------*/
 using System;
-using System.Runtime.Serialization;
 
 namespace WADNR.Common.DesignByContract
 {
-	[Serializable]
 	public class InvariantException : System.ApplicationException
 	{
 		public InvariantException() {}
 		public InvariantException(string message) : base(message) {}
 		public InvariantException(string message, Exception inner) : base(message, inner) {}
-		public InvariantException(SerializationInfo info, StreamingContext context): base(info, context) {}
 	}
 }
 

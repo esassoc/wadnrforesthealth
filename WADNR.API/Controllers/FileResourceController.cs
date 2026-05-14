@@ -42,7 +42,7 @@ public class FileResourceController(
         // Unhappy path - return an HTTP 404
         // ---------------------------------
         var message = $"File resource not found in database. It may have been deleted.";
-        logger.LogError(message);
+        Logger.LogError(message);
         return NotFound(message);
     }
 
@@ -53,7 +53,7 @@ public class FileResourceController(
             FileName = $"{fileName}.{fileExtension}",
             Inline = false
         };
-        Response.Headers.Add("Content-Disposition", contentDisposition.ToString());
+        Response.Headers["Content-Disposition"] = contentDisposition.ToString();
 
         var provider = new FileExtensionContentTypeProvider();
         if (!provider.TryGetContentType(contentDisposition.FileName, out var contentType))

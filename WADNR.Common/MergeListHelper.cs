@@ -32,7 +32,7 @@ namespace WADNR.Common
             existingList.Merge(updatedList, allInDatabase, matchCriteria, null);
         }
 
-        public static void Merge<T>(this ICollection<T> existingList, ICollection<T> updatedList, DbSet<T> allInDatabase, Match<T> matchCriteria, UpdateFunction<T> updateFunction) where T : class
+        public static void Merge<T>(this ICollection<T> existingList, ICollection<T> updatedList, DbSet<T> allInDatabase, Match<T> matchCriteria, UpdateFunction<T>? updateFunction) where T : class
         {
             existingList.MergeNew(updatedList, allInDatabase, matchCriteria);
             if (updateFunction != null)
@@ -99,7 +99,7 @@ namespace WADNR.Common
             });
         }
 
-        private static T MatchRecord<T>(this IEnumerable<T> listToSearch, T itemToSearch, Match<T> matcher)
+        private static T? MatchRecord<T>(this IEnumerable<T> listToSearch, T itemToSearch, Match<T> matcher)
         {
             if (matcher == null)
             {

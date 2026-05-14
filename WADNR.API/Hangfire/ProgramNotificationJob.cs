@@ -62,7 +62,7 @@ public class ProgramNotificationJob(
                     WADNRConfiguration.WebUrl);
 
                 mailMessage.To.Add(new System.Net.Mail.MailAddress(notification.SentToPerson.Email));
-                await sitkaSmtpClient.Send(mailMessage);
+                await SitkaSmtpClient.Send(mailMessage);
             }
         }
 

@@ -278,7 +278,7 @@ namespace WADNR.Common
         }
         public static string ToStringForRss(this DateTime value)
         {
-            var ts = TimeZone.CurrentTimeZone.GetUtcOffset(value);
+            var ts = TimeZoneInfo.Local.GetUtcOffset(value);
             return value.Subtract(ts).ToString("ddd, dd MMM yyyy HH':'mm':'ss 'GMT'").ToStringCdataEnclosed();
         }
         public static string ToStringCurrencyEdit(this decimal value)
@@ -356,7 +356,7 @@ namespace WADNR.Common
             return dateTime?.ToString("MM/dd/yyyy HH:mm:ss.fffffff") ?? String.Empty;
         }
 
-        public static bool TryParsePhoneNumber(string input, out string phoneNumber)
+        public static bool TryParsePhoneNumber(string input, out string? phoneNumber)
         {
             const int strippedPhoneLength = 10;
             phoneNumber = null;
@@ -373,7 +373,7 @@ namespace WADNR.Common
             return true;
         }
 
-        public static string ToPhoneNumberString(this string phoneNumber)
+        public static string? ToPhoneNumberString(this string phoneNumber)
         {
             if (!String.IsNullOrWhiteSpace(phoneNumber))
             {
@@ -474,7 +474,7 @@ namespace WADNR.Common
 
         // Capitalize the first character and add a space before
         // each capitalized letter (except the first character).
-        public static string ToProperCase(this string text)
+        public static string? ToProperCase(this string text)
         {
             // If there are 0 or 1 characters, just return the string.
             if (text == null) return null;
@@ -497,7 +497,7 @@ namespace WADNR.Common
         }
 
         // Convert the string to camel case. e.g. thisIsATestString
-        public static string ToCamelCase(this string text)
+        public static string? ToCamelCase(this string text)
         {
             // If there are 0 or 1 characters, just return the string.
             if (text == null || text.Length < 2)
@@ -519,7 +519,7 @@ namespace WADNR.Common
         }
 
         // Convert the string to Pascal case. e.g. ThisIsATestString
-        public static string ToPascalCase(this string text)
+        public static string? ToPascalCase(this string text)
         {
             // If there are 0 or 1 characters, just return the string.
             if (text == null) return null;
@@ -552,14 +552,14 @@ namespace WADNR.Common
             return htmlString.DoesHtmlStringContainAbsoluteUrlWithApplicationDomainReference(GetContainAbsoluteUrlWithApplicationDomainReferenceRegEx(applicationDomain));
         }
 
-        public static HtmlString MakeAbsoluteLinksToApplicationDomainRelative(this HtmlString htmlString, string applicationDomain)
+        public static HtmlString? MakeAbsoluteLinksToApplicationDomainRelative(this HtmlString htmlString, string applicationDomain)
         {
             if (htmlString?.ToString() == null)
             {
                 // ReSharper disable once ExpressionIsAlwaysNull
                 return htmlString;
             }
-            return new HtmlString(GetContainAbsoluteUrlWithApplicationDomainReferenceRegEx(applicationDomain).Replace(htmlString.ToString(), string.Empty));
+            return new HtmlString(GetContainAbsoluteUrlWithApplicationDomainReferenceRegEx(applicationDomain).Replace(htmlString.ToString()!, string.Empty));
         }
 
         public static string ConstructContainAbsoluteUrlWithApplicationDomainReferenceRegExForApplicationDomain(string applicationDomain)

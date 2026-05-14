@@ -27,21 +27,21 @@ namespace WADNR.Common.ExcelWorkbookUtilities
     {
         public readonly string ColumnName;
         public string? NumberFormat { get; set; }
-        private readonly Func<T, int> _intValueFunc;
-        private readonly Func<T, int?> _nullableIntValueFunc;
-        private readonly Func<T, short> _shortValueFunc;
-        private readonly Func<T, short?> _nullableShortValueFunc;
-        private readonly Func<T, byte> _byteValueFunc;
-        private readonly Func<T, byte?> _nullableByteValueFunc;
-        private readonly Func<T, string> _stringValueFunc;
-        private readonly Func<T, DateTime> _dateTimeValueFunc;
-        private readonly Func<T, DateTime?> _nullableDateTimeValueFunc;
-        private readonly Func<T, decimal> _decimalValueFunc;
-        private readonly Func<T, decimal?> _nullableDecimalValueFunc;
-        private readonly Func<T, double> _doubleValueFunc;
-        private readonly Func<T, double?> _nullableDoubleValueFunc;
-        private readonly Func<T, bool> _boolValueFunc;
-        private readonly Func<T, bool?> _nullableBoolValueFunc;
+        private readonly Func<T, int>? _intValueFunc;
+        private readonly Func<T, int?>? _nullableIntValueFunc;
+        private readonly Func<T, short>? _shortValueFunc;
+        private readonly Func<T, short?>? _nullableShortValueFunc;
+        private readonly Func<T, byte>? _byteValueFunc;
+        private readonly Func<T, byte?>? _nullableByteValueFunc;
+        private readonly Func<T, string>? _stringValueFunc;
+        private readonly Func<T, DateTime>? _dateTimeValueFunc;
+        private readonly Func<T, DateTime?>? _nullableDateTimeValueFunc;
+        private readonly Func<T, decimal>? _decimalValueFunc;
+        private readonly Func<T, decimal?>? _nullableDecimalValueFunc;
+        private readonly Func<T, double>? _doubleValueFunc;
+        private readonly Func<T, double?>? _nullableDoubleValueFunc;
+        private readonly Func<T, bool>? _boolValueFunc;
+        private readonly Func<T, bool?>? _nullableBoolValueFunc;
 
         private readonly FuncType _funcType;
 
@@ -175,60 +175,61 @@ namespace WADNR.Common.ExcelWorkbookUtilities
 
         public void SetValue(IXLCell cell, T dataObject)
         {
+            // _funcType determines which field is set; the others are null.
             switch (_funcType)
             {
                 case FuncType.String:
-                    var stringValue = _stringValueFunc(dataObject);
+                    var stringValue = _stringValueFunc!(dataObject);
                     if (stringValue != null)
                     {
                         cell.SetValue(stringValue);
                     }
                     break;
                 case FuncType.Int:
-                    cell.SetValue(_intValueFunc(dataObject));
+                    cell.SetValue(_intValueFunc!(dataObject));
                     break;
                 case FuncType.NullableInt:
-                    var intValue = _nullableIntValueFunc(dataObject);
+                    var intValue = _nullableIntValueFunc!(dataObject);
                     if (intValue.HasValue)
                     {
                         cell.SetValue(intValue);
                     }
                     break;
                 case FuncType.DateTime:
-                    cell.SetValue(_dateTimeValueFunc(dataObject));
+                    cell.SetValue(_dateTimeValueFunc!(dataObject));
                     break;
                 case FuncType.NullableDateTime:
-                    var dateTimeValue = _nullableDateTimeValueFunc(dataObject);
+                    var dateTimeValue = _nullableDateTimeValueFunc!(dataObject);
                     if (dateTimeValue.HasValue)
                     {
                         cell.SetValue(dateTimeValue);
                     }
                     break;
                 case FuncType.Decimal:
-                    cell.SetValue(_decimalValueFunc(dataObject));
+                    cell.SetValue(_decimalValueFunc!(dataObject));
                     break;
                 case FuncType.NullableDecimal:
-                    var decimalValue = _nullableDecimalValueFunc(dataObject);
+                    var decimalValue = _nullableDecimalValueFunc!(dataObject);
                     if (decimalValue.HasValue)
                     {
                         cell.SetValue(decimalValue);
                     }
                     break;
                 case FuncType.Double:
-                    cell.SetValue(_doubleValueFunc(dataObject));
+                    cell.SetValue(_doubleValueFunc!(dataObject));
                     break;
                 case FuncType.NullableDouble:
-                    var doubleValue = _nullableDoubleValueFunc(dataObject);
+                    var doubleValue = _nullableDoubleValueFunc!(dataObject);
                     if (doubleValue.HasValue)
                     {
                         cell.SetValue(doubleValue);
                     }
                     break;
                 case FuncType.Bool:
-                    cell.SetValue(_boolValueFunc(dataObject));
+                    cell.SetValue(_boolValueFunc!(dataObject));
                     break;
                 case FuncType.NullableBool:
-                    var boolValue = _nullableBoolValueFunc(dataObject);
+                    var boolValue = _nullableBoolValueFunc!(dataObject);
                     if (boolValue.HasValue)
                     {
                         //TODO: what to do here?
@@ -236,20 +237,20 @@ namespace WADNR.Common.ExcelWorkbookUtilities
                     }
                     break;
                 case FuncType.Short:
-                    cell.SetValue(_shortValueFunc(dataObject));
+                    cell.SetValue(_shortValueFunc!(dataObject));
                     break;
                 case FuncType.NullableShort:
-                    var shortValue = _nullableShortValueFunc(dataObject);
+                    var shortValue = _nullableShortValueFunc!(dataObject);
                     if (shortValue.HasValue)
                     {
                         cell.SetValue(shortValue);
                     }
                     break;
                 case FuncType.Byte:
-                    cell.SetValue(_byteValueFunc(dataObject));
+                    cell.SetValue(_byteValueFunc!(dataObject));
                     break;
                 case FuncType.NullableByte:
-                    var byteValue = _nullableByteValueFunc(dataObject);
+                    var byteValue = _nullableByteValueFunc!(dataObject);
                     if (byteValue.HasValue)
                     {
                         cell.SetValue(byteValue);

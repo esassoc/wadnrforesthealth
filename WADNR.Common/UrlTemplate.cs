@@ -451,9 +451,9 @@ namespace WADNR.Common
 
             if (typeof(TParameter) == typeof(int))
             {
-                return urlTemplate.Replace(IntParameters[parameterPosition - 1].ToString(), parameterValue.ToString());
+                return urlTemplate.Replace(IntParameters[parameterPosition - 1].ToString(), parameterValue?.ToString() ?? string.Empty);
             }
-            return urlTemplate.Replace(StringParameters[parameterPosition - 1], parameterValue.ToString());
+            return urlTemplate.Replace(StringParameters[parameterPosition - 1], parameterValue?.ToString() ?? string.Empty);
         }
 
         [Pure]
@@ -604,22 +604,22 @@ namespace WADNR.Common
             return MakeHrefString(url, linkText, null, null);
         }
 
-        public static HtmlString MakeHrefString(string url, string linkText, string titleText)
+        public static HtmlString MakeHrefString(string url, string linkText, string? titleText)
         {
             return MakeHrefString(url, linkText, titleText, null);
         }
 
-        public static HtmlString MakeHrefString(string url, string linkText, Dictionary<string, string> attributeDict)
+        public static HtmlString MakeHrefString(string url, string linkText, Dictionary<string, string>? attributeDict)
         {
             return MakeHrefString(url, linkText, null, attributeDict);
         }
 
-        public static HtmlString MakeHrefString(string url, string linkText, string titleText, Dictionary<string, string> attributeDict)
+        public static HtmlString MakeHrefString(string url, string linkText, string? titleText, Dictionary<string, string>? attributeDict)
         {
             return new HtmlString(string.Format("<a title=\"{2}\" href=\"{0}\"{3}>{1}</a>", url, linkText, titleText, BuildAttributeString(attributeDict)));
         }
 
-        private static string BuildAttributeString(Dictionary<string, string> attributeDict)
+        private static string BuildAttributeString(Dictionary<string, string>? attributeDict)
         {
             if (attributeDict == null || !attributeDict.Any())
             {

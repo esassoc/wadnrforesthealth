@@ -830,7 +830,7 @@ public class ProjectController(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "GDB import failed for project {ProjectID}", projectID);
+            Logger.LogError(ex, "GDB import failed for project {ProjectID}", projectID);
             return StatusCode(500, new { ErrorMessage = "Failed to process the GDB file. The file may be corrupt or the import service may be unavailable. Please try again." });
         }
 
@@ -1405,7 +1405,7 @@ public class ProjectController(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "GDB import failed for project {ProjectID}", projectID);
+            Logger.LogError(ex, "GDB import failed for project {ProjectID}", projectID);
             return StatusCode(500, new { ErrorMessage = "Failed to process the GDB file. The file may be corrupt or the import service may be unavailable. Please try again." });
         }
 
@@ -2605,7 +2605,7 @@ public class ProjectController(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "GDB import failed for project {ProjectID}", projectID);
+            Logger.LogError(ex, "GDB import failed for project {ProjectID}", projectID);
             return StatusCode(500, new { ErrorMessage = "Failed to process the GDB file. The file may be corrupt or the import service may be unavailable. Please try again." });
         }
 

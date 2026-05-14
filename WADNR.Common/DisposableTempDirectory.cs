@@ -25,7 +25,7 @@ namespace WADNR.Common
 {
     public class DisposableTempDirectory : IDisposable
     {
-        private DirectoryInfo _directoryInfo;
+        private DirectoryInfo? _directoryInfo;
 
         private bool _isDisposed;
 
@@ -42,7 +42,7 @@ namespace WADNR.Common
             get
             {
                 Check.Require(!_isDisposed, "Object is already disposed");
-                return _directoryInfo;
+                return _directoryInfo!;
             }
         }
 

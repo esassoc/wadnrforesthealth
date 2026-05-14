@@ -108,7 +108,7 @@ namespace WADNR.Common
         }
 
         // removes "n" characters from the left side of the string
-        public static string Pop(this string s, int n)
+        public static string? Pop(this string s, int n)
         {
             if (s == null)
                 return null;
@@ -120,7 +120,7 @@ namespace WADNR.Common
         }
 
         // removes "n" characters from the right side of the string
-        public static string Shift(this string s, int n)
+        public static string? Shift(this string s, int n)
         {
             if (s == null)
                 return null;
@@ -217,22 +217,22 @@ namespace WADNR.Common
             return p == 0 ? 0.0M : Decimal.Parse((p * 100M).ToString("N1"));
         }
 
-        public static TRet DefaultIfNull<TSrc, TRet>(this TSrc value, Func<TSrc, TRet> property) where TSrc : class
+        public static TRet? DefaultIfNull<TSrc, TRet>(this TSrc? value, Func<TSrc, TRet> property) where TSrc : class
         {
             return value.DefaultIfNull(property, default(TRet));
         }
 
-        public static TRet DefaultIfNull<TSrc, TRet>(this TSrc value, Func<TSrc, TRet> property, TRet deflt) where TSrc : class
+        public static TRet? DefaultIfNull<TSrc, TRet>(this TSrc? value, Func<TSrc, TRet> property, TRet? deflt) where TSrc : class
         {
             return value == null ? deflt : property(value);
         }
 
-        public static TRet DefaultIfNull<TSrc, TRet>(this TSrc? value, Func<TSrc, TRet> property, TRet deflt) where TSrc : struct
+        public static TRet? DefaultIfNull<TSrc, TRet>(this TSrc? value, Func<TSrc, TRet> property, TRet? deflt) where TSrc : struct
         {
             return value == null ? deflt : property(value.Value);
         }
 
-        public static TRet DefaultIfNull<TSrc, TRet>(this TSrc? value, Func<TSrc, TRet> property) where TSrc : struct
+        public static TRet? DefaultIfNull<TSrc, TRet>(this TSrc? value, Func<TSrc, TRet> property) where TSrc : struct
         {
             return value.DefaultIfNull(property, default(TRet));
         }

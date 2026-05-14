@@ -5,6 +5,7 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <UserSecretsId>e6a64456-ac18-4900-817c-11308f1abd94</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <Nullable>annotations</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

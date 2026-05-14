@@ -19,17 +19,14 @@ Source code is available upon request via <support@sitkatech.com>.
 </license>
 -----------------------------------------------------------------------*/
 using System;
-using System.Runtime.Serialization;
 
 namespace WADNR.Common.DesignByContract
 {
-	[Serializable]
 	public class AssertionException : System.ApplicationException
 	{
 
         public AssertionException() {}
 		public AssertionException(string message) : base(message) {}
 		public AssertionException(string message, Exception inner) : base(message, inner) {}
-		public AssertionException(SerializationInfo info, StreamingContext context): base(info, context) {}
 	}
 }
