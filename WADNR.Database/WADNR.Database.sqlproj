@@ -56,13 +56,7 @@
   </PropertyGroup>
   <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
-  <ItemGroup>
-    <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\170\SqlSchemas\master.dacpac">
-      <HintPath>$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\170\SqlSchemas\master.dacpac</HintPath>
-      <SuppressMissingDependenciesErrors>False</SuppressMissingDependenciesErrors>
-      <DatabaseVariableLiteralValue>master</DatabaseVariableLiteralValue>
-    </ArtifactReference>
-  </ItemGroup>
+
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="dbo" />
@@ -372,7 +366,6 @@
     <Build Include="dbo\Functions\dbo.fConvertDateTimeUtcToPacificStandardTime.sql" />
     <Build Include="dbo\Functions\dbo.fGetBoundingBoxForProjectIdList.sql" />
     <Build Include="dbo\Functions\dbo.fGetCalendarMonthIndexFromMonthString.sql" />
-    <Build Include="dbo\Functions\dbo.fGetColumnNamesForTable.sql" />
     <Build Include="dbo\Functions\dbo.fGetCurrentFiscalYearBiennium.sql" />
     <Build Include="dbo\Functions\dbo.fGetFiscalYearBienniumForDate.sql" />
     <Build Include="dbo\Functions\dbo.fGetProjectDnrUploadRegion.sql" />
@@ -385,11 +378,9 @@
     <Build Include="dbo\Functions\dbo.RTrimX.sql" />
     <Build Include="dbo\Procs\pVendorImportJson.sql" />
     <Build Include="dbo\Procs\dbo.pClearGisImportTables.sql" />
-    <Build Include="dbo\Procs\dbo.pGeospatial_SpatialIndexCreate.sql" />
     <Build Include="dbo\Procs\dbo.pHangFireClearJobQueue.sql" />
     <Build Include="dbo\Procs\dbo.pHangFireRescheduleJobs.sql" />
     <Build Include="dbo\Procs\dbo.pImportLoaTabularData.sql" />
-    <Build Include="dbo\Procs\dbo.procImportGisTableToGisFeature.sql" />
     <Build Include="dbo\Procs\dbo.procImportTreatmentsFromGisUploadAttempt.sql" />
     <Build Include="dbo\Procs\pArcOnlineFundSourceExpenditureImportJson.sql" />
     <Build Include="dbo\Procs\pArcOnlineMarkJsonImportStatus.sql" />
