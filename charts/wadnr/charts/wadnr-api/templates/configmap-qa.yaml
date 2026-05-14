@@ -8,7 +8,7 @@ data:
   ASPNETCORE_ENVIRONMENT: "Staging"
   SECRET_PATH: "/app/secrets/wadnrApiSecrets"
   SitkaEmailRedirect: "notifications-qa@sitkatech.com"
-  SitkaSupportEmail: "h2o.team@esassoc.com"
+  SitkaSupportEmail: "projectfirma@sitkatech.com"
   DoNotReplyEmail: "donotreply@esassoc.com"
   MailLogBcc: ""
   GDALAPIBaseUrl: "http://wadnr-gdalapi"

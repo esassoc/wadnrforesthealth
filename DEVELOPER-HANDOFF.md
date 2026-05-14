@@ -196,7 +196,7 @@ SECRET_PATH_SCALAR=/run/secrets/appsecrets-scalar
 
 # Email
 SitkaEmailRedirect=your.email@example.com    # Set blank for prod
-SitkaSupportEmail=rocket.team@sitkatech.com
+SitkaSupportEmail=projectfirma@sitkatech.com
 
 # Feature flags
 EnableE2ETestAuth=true   # Enables test auth for local dev

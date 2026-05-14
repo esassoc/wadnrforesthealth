@@ -81,7 +81,7 @@ public abstract class ScheduledBackgroundJobBase<T>
                     IsBodyHtml = true
                 };
 
-                mailMessage.To.Add(new MailAddress(WADNRConfiguration.SitkaEmailRedirect));
+                mailMessage.To.Add(new MailAddress(WADNRConfiguration.SitkaSupportEmail));
                 SitkaSmtpClient.Send(mailMessage);
                 throw new ScheduledBackgroundJobException(_jobName, ex);
             }
