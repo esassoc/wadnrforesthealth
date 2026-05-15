@@ -1194,9 +1194,14 @@ dotnet build WADNR.sln
 # Run API tests
 dotnet test WADNR.API.Tests
 
-# Run Angular tests
+# Run Angular e2e tests (Playwright)
 cd WADNR.Web
-npm test
+npm run e2e               # Full suite
+npm run e2e:headed        # With browser window
+npm run e2e:ui            # Playwright UI mode
+npm run e2e:a11y          # Accessibility project only
+npm run e2e:visual        # Visual regression project
+npm run e2e:report        # Open last HTML report
 
 # Lint Angular code
 cd WADNR.Web
