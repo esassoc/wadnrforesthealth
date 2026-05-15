@@ -214,6 +214,13 @@ public static class Programs
         if (!await dbContext.Programs.AnyAsync(x => x.ProgramID == programID))
             return false;
 
+        var strategy = dbContext.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () => await DeleteCoreAsync(dbContext, programID));
+        return true;
+    }
+
+    private static async Task DeleteCoreAsync(WADNRDbContext dbContext, int programID)
+    {
         await using var transaction = await dbContext.Database.BeginTransactionAsync();
 
         // Subquery helpers to avoid fetching IDs into memory (each becomes a SQL subquery)
@@ -341,7 +348,6 @@ public static class Programs
             .Where(x => x.ProgramID == programID)
             .ExecuteDeleteAsync();
         await transaction.CommitAsync();
-        return true;
     }
 
     public static async Task<List<PersonLookupItem>> ListEligibleProgramEditorsAsync(WADNRDbContext dbContext)

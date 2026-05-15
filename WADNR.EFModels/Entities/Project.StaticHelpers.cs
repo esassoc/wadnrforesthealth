@@ -223,6 +223,12 @@ public static class Projects
 
     public static async Task<List<Guid>> DeleteAsync(WADNRDbContext dbContext, int projectID)
     {
+        var strategy = dbContext.Database.CreateExecutionStrategy();
+        return await strategy.ExecuteAsync(async () => await DeleteCoreAsync(dbContext, projectID));
+    }
+
+    private static async Task<List<Guid>> DeleteCoreAsync(WADNRDbContext dbContext, int projectID)
+    {
         await using var transaction = await dbContext.Database.BeginTransactionAsync();
 
         // Phase A: Collect FileResource IDs and GUIDs before deleting anything

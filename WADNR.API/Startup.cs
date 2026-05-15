@@ -135,6 +135,7 @@ namespace WADNR.API
                 {
                     x.CommandTimeout((int)TimeSpan.FromMinutes(3).TotalSeconds);
                     x.UseNetTopologySuite();
+                    x.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null);
                 });
             });
 
