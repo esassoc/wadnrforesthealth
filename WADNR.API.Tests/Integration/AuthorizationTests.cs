@@ -72,16 +72,6 @@ public class AuthorizationTests
             $"AllowAnonymous endpoint should succeed.\nRoute: {route}\nStatus: {result.StatusCode}");
     }
 
-    [TestMethod]
-    public async Task AllowAnonymous_AgreementList_Returns200_WhenUnauthenticated()
-    {
-        var route = RouteHelper.GetRouteFor<AgreementController>(c => c.List());
-        var result = await AssemblySteps.UnauthenticatedHttpClient.GetAsync(route);
-
-        Assert.IsTrue(result.IsSuccessStatusCode,
-            $"AllowAnonymous endpoint should succeed.\nRoute: {route}\nStatus: {result.StatusCode}");
-    }
-
     #endregion
 
     #region ProjectViewFeature — allows anonymous but filters visibility
@@ -116,6 +106,17 @@ public class AuthorizationTests
     {
         // RoleController.List() has [AdminFeature]
         var route = RouteHelper.GetRouteFor<RoleController>(c => c.List());
+        var result = await AssemblySteps.UnauthenticatedHttpClient.GetAsync(route);
+
+        Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode,
+            $"AdminFeature endpoint should return 401 for unauthenticated users.\nRoute: {route}");
+    }
+
+    [TestMethod]
+    public async Task AdminFeature_AgreementList_Returns401_WhenUnauthenticated()
+    {
+        // AgreementController.List() has [AdminFeature] (WADNR-2251 hotfix)
+        var route = RouteHelper.GetRouteFor<AgreementController>(c => c.List());
         var result = await AssemblySteps.UnauthenticatedHttpClient.GetAsync(route);
 
         Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode,
@@ -173,6 +174,27 @@ public class AuthorizationTests
     public async Task AdminFeature_RoleList_Returns200_ForAdmin()
     {
         var route = RouteHelper.GetRouteFor<RoleController>(c => c.List());
+        var result = await AssemblySteps.AdminHttpClient.GetAsync(route);
+
+        Assert.IsTrue(result.IsSuccessStatusCode,
+            $"AdminFeature endpoint should succeed for Admin.\nRoute: {route}\nStatus: {result.StatusCode}\n{await result.Content.ReadAsStringAsync()}");
+    }
+
+    [TestMethod]
+    public async Task AdminFeature_AgreementList_Returns403_ForNormalUser()
+    {
+        // AgreementController.List() has [AdminFeature] (WADNR-2251 hotfix) — Normal users should get 403
+        var route = RouteHelper.GetRouteFor<AgreementController>(c => c.List());
+        var result = await AssemblySteps.NormalHttpClient.GetAsync(route);
+
+        Assert.AreEqual(HttpStatusCode.Forbidden, result.StatusCode,
+            $"AdminFeature endpoint should return 403 for Normal users.\nRoute: {route}");
+    }
+
+    [TestMethod]
+    public async Task AdminFeature_AgreementList_Returns200_ForAdmin()
+    {
+        var route = RouteHelper.GetRouteFor<AgreementController>(c => c.List());
         var result = await AssemblySteps.AdminHttpClient.GetAsync(route);
 
         Assert.IsTrue(result.IsSuccessStatusCode,

@@ -383,14 +383,14 @@ public class AgreementControllerHttpTests
     #region Authorization Tests
 
     [TestMethod]
-    public async Task List_Returns200_WhenUnauthenticated_BecauseAllowAnonymous()
+    public async Task List_Returns401_WhenUnauthenticated_BecauseAdminFeature()
     {
-        // AgreementController.List() has [AllowAnonymous]
+        // AgreementController.List() has [AdminFeature] (WADNR-2251)
         var route = RouteHelper.GetRouteFor<AgreementController>(c => c.List());
         var result = await AssemblySteps.UnauthenticatedHttpClient.GetAsync(route);
 
-        Assert.IsTrue(result.IsSuccessStatusCode,
-            $"AllowAnonymous endpoint should succeed unauthenticated.\nRoute: {route}\n{await result.Content.ReadAsStringAsync()}");
+        Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode,
+            $"AdminFeature endpoint should return 401 for unauthenticated users.\nRoute: {route}");
     }
 
     [TestMethod]
