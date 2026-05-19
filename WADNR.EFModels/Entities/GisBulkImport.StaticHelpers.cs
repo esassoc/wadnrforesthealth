@@ -408,6 +408,11 @@ public static class GisBulkImports
             .GroupBy(f => projectIdentifierLookup[f.GisFeatureID])
             .ToList();
 
+        // Pre-load the Project Import Block List for this program. Match is case-insensitive
+        // on either ProjectGisIdentifier or ProjectName, matching the normalization the
+        // import loop already applies at line ~400.
+        var (blockedIdentifiers, blockedNames) = await LoadBlockListAsync(dbContext, sourceOrg.ProgramID);
+
         foreach (var projectGroup in featuresByProject)
         {
             var projectIdentifier = projectGroup.Key;
@@ -423,177 +428,223 @@ public static class GisBulkImports
             }
             projectName ??= originalIdentifier;
 
-            // Find existing project by GIS identifier within the same program (case-insensitive)
-            var existingProject = await dbContext.Projects
-                .Include(p => p.ProjectPrograms)
-                .FirstOrDefaultAsync(p => p.ProjectGisIdentifier != null &&
-                    p.ProjectGisIdentifier.Trim().ToUpper() == projectIdentifier &&
-                    p.ProjectPrograms.Any(pp => pp.ProgramID == sourceOrg.ProgramID));
-
-            if (existingProject != null)
+            // Skip projects that match the Project Import Block List for this program (creates AND updates).
+            if (IsBlocked(projectIdentifier, projectName, blockedIdentifiers, blockedNames))
             {
-                // Update fields from GIS data (matching legacy behavior)
-                existingProject.ProjectName = projectName.Length > 140 ? projectName[..140] : projectName;
-                existingProject.ProjectStageID = sourceOrg.ProjectStageDefaultID;
-                existingProject.LastUpdateGisUploadAttemptID = gisUploadAttemptID;
-
-                // Auto-approve if stage is not Planned and project is Draft/PendingApproval
-                if (sourceOrg.ProjectStageDefaultID != (int)ProjectStageEnum.Planned
-                    && (existingProject.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Draft
-                        || existingProject.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.PendingApproval))
+                result.ProjectsBlocked++;
+                result.BlockedProjects.Add(new GisBulkImportProjectResult
                 {
-                    existingProject.ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.Approved;
-                }
+                    ProjectID = 0,
+                    ProjectName = projectName
+                });
+                continue;
+            }
 
-                // Update dates if configured
-                if (sourceOrg.ApplyStartDateToProject && request.StartDateMetadataAttributeID.HasValue &&
-                    firstMetadata.TryGetValue(request.StartDateMetadataAttributeID.Value, out var existingStartDateStr) &&
-                    DateTime.TryParse(existingStartDateStr, out var existingStartDate))
-                {
-                    existingProject.PlannedDate = DateOnly.FromDateTime(existingStartDate);
-                }
+            // Per-iteration outcomes — applied to `result` only after the transaction commits,
+            // so deadlock-triggered retries don't double-count.
+            var wasCreated = false;
+            var wasUpdated = false;
+            var locationsCreatedThisIteration = 0;
+            GisBulkImportProjectResult resultEntry = null;
 
-                if (sourceOrg.ApplyCompletedDateToProject && request.CompletionDateMetadataAttributeID.HasValue &&
-                    firstMetadata.TryGetValue(request.CompletionDateMetadataAttributeID.Value, out var existingCompletionDateStr) &&
-                    DateTime.TryParse(existingCompletionDateStr, out var existingCompletionDate))
-                {
-                    existingProject.CompletionDate = DateOnly.FromDateTime(existingCompletionDate);
-                }
+            var strategy = dbContext.Database.CreateExecutionStrategy();
+            await strategy.ExecuteAsync(async () =>
+            {
+                // Reset tracker + outcomes on each retry attempt so we re-run cleanly.
+                dbContext.ChangeTracker.Clear();
+                wasCreated = false;
+                wasUpdated = false;
+                locationsCreatedThisIteration = 0;
+                resultEntry = null;
 
-                // Set description only if empty
-                if (string.IsNullOrEmpty(existingProject.ProjectDescription) && !string.IsNullOrEmpty(sourceOrg.ProjectDescriptionDefaultText))
-                {
-                    existingProject.ProjectDescription = sourceOrg.ProjectDescriptionDefaultText;
-                }
+                await using var transaction = await dbContext.Database.BeginTransactionAsync();
 
-                // Ensure program link exists
-                if (!existingProject.ProjectPrograms.Any(pp => pp.ProgramID == sourceOrg.ProgramID))
+                // Find existing project by GIS identifier within the same program (case-insensitive)
+                var existingProject = await dbContext.Projects
+                    .Include(p => p.ProjectPrograms)
+                    .FirstOrDefaultAsync(p => p.ProjectGisIdentifier != null &&
+                        p.ProjectGisIdentifier.Trim().ToUpper() == projectIdentifier &&
+                        p.ProjectPrograms.Any(pp => pp.ProgramID == sourceOrg.ProgramID));
+
+                if (existingProject != null)
                 {
-                    dbContext.ProjectPrograms.Add(new ProjectProgram
+                    // Update fields from GIS data (matching legacy behavior)
+                    existingProject.ProjectName = projectName.Length > 140 ? projectName[..140] : projectName;
+                    existingProject.ProjectStageID = sourceOrg.ProjectStageDefaultID;
+                    existingProject.LastUpdateGisUploadAttemptID = gisUploadAttemptID;
+
+                    // Auto-approve if stage is not Planned and project is Draft/PendingApproval
+                    if (sourceOrg.ProjectStageDefaultID != (int)ProjectStageEnum.Planned
+                        && (existingProject.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Draft
+                            || existingProject.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.PendingApproval))
+                    {
+                        existingProject.ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.Approved;
+                    }
+
+                    // Update dates if configured
+                    if (sourceOrg.ApplyStartDateToProject && request.StartDateMetadataAttributeID.HasValue &&
+                        firstMetadata.TryGetValue(request.StartDateMetadataAttributeID.Value, out var existingStartDateStr) &&
+                        DateTime.TryParse(existingStartDateStr, out var existingStartDate))
+                    {
+                        existingProject.PlannedDate = DateOnly.FromDateTime(existingStartDate);
+                    }
+
+                    if (sourceOrg.ApplyCompletedDateToProject && request.CompletionDateMetadataAttributeID.HasValue &&
+                        firstMetadata.TryGetValue(request.CompletionDateMetadataAttributeID.Value, out var existingCompletionDateStr) &&
+                        DateTime.TryParse(existingCompletionDateStr, out var existingCompletionDate))
+                    {
+                        existingProject.CompletionDate = DateOnly.FromDateTime(existingCompletionDate);
+                    }
+
+                    // Set description only if empty
+                    if (string.IsNullOrEmpty(existingProject.ProjectDescription) && !string.IsNullOrEmpty(sourceOrg.ProjectDescriptionDefaultText))
+                    {
+                        existingProject.ProjectDescription = sourceOrg.ProjectDescriptionDefaultText;
+                    }
+
+                    // Ensure program link exists
+                    if (!existingProject.ProjectPrograms.Any(pp => pp.ProgramID == sourceOrg.ProgramID))
+                    {
+                        dbContext.ProjectPrograms.Add(new ProjectProgram
+                        {
+                            ProjectID = existingProject.ProjectID,
+                            ProgramID = sourceOrg.ProgramID
+                        });
+                    }
+
+                    wasUpdated = true;
+                    resultEntry = new GisBulkImportProjectResult
                     {
                         ProjectID = existingProject.ProjectID,
+                        ProjectName = existingProject.ProjectName
+                    };
+                }
+                else
+                {
+                    // Look up ProjectTypeID from the source org's default name
+                    var projectTypeID = await dbContext.ProjectTypes
+                        .Where(pt => pt.ProjectTypeName == (sourceOrg.ProjectTypeDefaultName ?? ""))
+                        .Select(pt => pt.ProjectTypeID)
+                        .FirstOrDefaultAsync();
+                    if (projectTypeID == 0)
+                    {
+                        projectTypeID = await dbContext.ProjectTypes.Select(pt => pt.ProjectTypeID).FirstAsync();
+                    }
+
+                    var newProject = new Project
+                    {
+                        ProjectName = projectName.Length > 140 ? projectName[..140] : projectName,
+                        FhtProjectNumber = await Projects.GenerateFhtProjectNumberAsync(dbContext),
+                        ProjectGisIdentifier = originalIdentifier.Length > 140 ? originalIdentifier[..140] : originalIdentifier,
+                        ProjectTypeID = projectTypeID,
+                        ProjectStageID = sourceOrg.ProjectStageDefaultID,
+                        ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.Approved,
+                        ProjectLocationSimpleTypeID = (int)ProjectLocationSimpleTypeEnum.None,
+                        CreateGisUploadAttemptID = gisUploadAttemptID,
+                        LastUpdateGisUploadAttemptID = gisUploadAttemptID
+                    };
+
+                    // Set dates if configured
+                    if (sourceOrg.ApplyStartDateToProject && request.StartDateMetadataAttributeID.HasValue &&
+                        firstMetadata.TryGetValue(request.StartDateMetadataAttributeID.Value, out var startDateStr) &&
+                        DateTime.TryParse(startDateStr, out var startDate))
+                    {
+                        newProject.PlannedDate = DateOnly.FromDateTime(startDate);
+                    }
+
+                    if (sourceOrg.ApplyCompletedDateToProject && request.CompletionDateMetadataAttributeID.HasValue &&
+                        firstMetadata.TryGetValue(request.CompletionDateMetadataAttributeID.Value, out var completionDateStr) &&
+                        DateTime.TryParse(completionDateStr, out var completionDate))
+                    {
+                        newProject.CompletionDate = DateOnly.FromDateTime(completionDate);
+                    }
+
+                    // Set project description
+                    if (!string.IsNullOrEmpty(sourceOrg.ProjectDescriptionDefaultText))
+                    {
+                        newProject.ProjectDescription = sourceOrg.ProjectDescriptionDefaultText;
+                    }
+
+                    dbContext.Projects.Add(newProject);
+                    await dbContext.SaveChangesWithNoAuditingAsync();
+
+                    // Link project to program
+                    dbContext.ProjectPrograms.Add(new ProjectProgram
+                    {
+                        ProjectID = newProject.ProjectID,
                         ProgramID = sourceOrg.ProgramID
                     });
+
+                    // Create default organization relationship
+                    dbContext.ProjectOrganizations.Add(new ProjectOrganization
+                    {
+                        ProjectID = newProject.ProjectID,
+                        OrganizationID = sourceOrg.DefaultLeadImplementerOrganizationID,
+                        RelationshipTypeID = sourceOrg.RelationshipTypeForDefaultOrganizationID
+                    });
+
+                    existingProject = newProject;
+                    wasCreated = true;
+                    resultEntry = new GisBulkImportProjectResult
+                    {
+                        ProjectID = newProject.ProjectID,
+                        ProjectName = newProject.ProjectName
+                    };
                 }
 
-                result.ProjectsUpdated++;
-                result.UpdatedProjects.Add(new GisBulkImportProjectResult
+                // Remove prior ProjectArea locations for this project+program before re-creating (matching legacy DeleteFull behavior)
+                var locationIDsToDelete = await dbContext.ProjectLocations
+                    .Where(pl => pl.ProjectID == existingProject.ProjectID &&
+                        pl.ProjectLocationTypeID == (int)ProjectLocationTypeEnum.ProjectArea &&
+                        pl.ProgramID == sourceOrg.ProgramID)
+                    .Select(pl => pl.ProjectLocationID)
+                    .ToListAsync();
+
+                if (locationIDsToDelete.Count > 0)
                 {
-                    ProjectID = existingProject.ProjectID,
-                    ProjectName = existingProject.ProjectName
-                });
-            }
-            else
-            {
-                // Look up ProjectTypeID from the source org's default name
-                var projectTypeID = await dbContext.ProjectTypes
-                    .Where(pt => pt.ProjectTypeName == (sourceOrg.ProjectTypeDefaultName ?? ""))
-                    .Select(pt => pt.ProjectTypeID)
-                    .FirstOrDefaultAsync();
-                if (projectTypeID == 0)
-                {
-                    projectTypeID = await dbContext.ProjectTypes.Select(pt => pt.ProjectTypeID).FirstAsync();
+                    // Delete child Treatments first, then the locations
+                    await dbContext.Treatments
+                        .Where(t => t.ProjectLocationID != null && locationIDsToDelete.Contains(t.ProjectLocationID.Value))
+                        .ExecuteDeleteAsync();
+
+                    await dbContext.ProjectLocations
+                        .Where(pl => locationIDsToDelete.Contains(pl.ProjectLocationID))
+                        .ExecuteDeleteAsync();
                 }
 
-                var newProject = new Project
+                // Create project locations from feature geometries
+                foreach (var feature in projectGroup)
                 {
-                    ProjectName = projectName.Length > 140 ? projectName[..140] : projectName,
-                    FhtProjectNumber = await Projects.GenerateFhtProjectNumberAsync(dbContext),
-                    ProjectGisIdentifier = originalIdentifier.Length > 140 ? originalIdentifier[..140] : originalIdentifier,
-                    ProjectTypeID = projectTypeID,
-                    ProjectStageID = sourceOrg.ProjectStageDefaultID,
-                    ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.Approved,
-                    ProjectLocationSimpleTypeID = (int)ProjectLocationSimpleTypeEnum.None,
-                    CreateGisUploadAttemptID = gisUploadAttemptID,
-                    LastUpdateGisUploadAttemptID = gisUploadAttemptID
-                };
+                    var locationName = $"{originalIdentifier} - Feature {feature.GisImportFeatureKey}";
 
-                // Set dates if configured
-                if (sourceOrg.ApplyStartDateToProject && request.StartDateMetadataAttributeID.HasValue &&
-                    firstMetadata.TryGetValue(request.StartDateMetadataAttributeID.Value, out var startDateStr) &&
-                    DateTime.TryParse(startDateStr, out var startDate))
-                {
-                    newProject.PlannedDate = DateOnly.FromDateTime(startDate);
+                    dbContext.ProjectLocations.Add(new ProjectLocation
+                    {
+                        ProjectID = existingProject.ProjectID,
+                        ProjectLocationGeometry = feature.GisFeatureGeometry,
+                        ProjectLocationName = locationName.Length > 100 ? locationName[..100] : locationName,
+                        ProjectLocationTypeID = (int)ProjectLocationTypeEnum.ProjectArea,
+                        ImportedFromGisUpload = true,
+                        ProgramID = sourceOrg.ProgramID
+                    });
+                    locationsCreatedThisIteration++;
                 }
 
-                if (sourceOrg.ApplyCompletedDateToProject && request.CompletionDateMetadataAttributeID.HasValue &&
-                    firstMetadata.TryGetValue(request.CompletionDateMetadataAttributeID.Value, out var completionDateStr) &&
-                    DateTime.TryParse(completionDateStr, out var completionDate))
-                {
-                    newProject.CompletionDate = DateOnly.FromDateTime(completionDate);
-                }
-
-                // Set project description
-                if (!string.IsNullOrEmpty(sourceOrg.ProjectDescriptionDefaultText))
-                {
-                    newProject.ProjectDescription = sourceOrg.ProjectDescriptionDefaultText;
-                }
-
-                dbContext.Projects.Add(newProject);
                 await dbContext.SaveChangesWithNoAuditingAsync();
+                await transaction.CommitAsync();
+            });
 
-                // Link project to program
-                dbContext.ProjectPrograms.Add(new ProjectProgram
-                {
-                    ProjectID = newProject.ProjectID,
-                    ProgramID = sourceOrg.ProgramID
-                });
-
-                // Create default organization relationship
-                dbContext.ProjectOrganizations.Add(new ProjectOrganization
-                {
-                    ProjectID = newProject.ProjectID,
-                    OrganizationID = sourceOrg.DefaultLeadImplementerOrganizationID,
-                    RelationshipTypeID = sourceOrg.RelationshipTypeForDefaultOrganizationID
-                });
-
-                existingProject = newProject;
+            // Apply outcomes after the transaction commits (retries won't double-count)
+            result.LocationsCreated += locationsCreatedThisIteration;
+            if (wasCreated)
+            {
                 result.ProjectsCreated++;
-                result.CreatedProjects.Add(new GisBulkImportProjectResult
-                {
-                    ProjectID = newProject.ProjectID,
-                    ProjectName = newProject.ProjectName
-                });
+                result.CreatedProjects.Add(resultEntry);
             }
-
-            // Remove prior ProjectArea locations for this project+program before re-creating (matching legacy DeleteFull behavior)
-            var locationIDsToDelete = await dbContext.ProjectLocations
-                .Where(pl => pl.ProjectID == existingProject.ProjectID &&
-                    pl.ProjectLocationTypeID == (int)ProjectLocationTypeEnum.ProjectArea &&
-                    pl.ProgramID == sourceOrg.ProgramID)
-                .Select(pl => pl.ProjectLocationID)
-                .ToListAsync();
-
-            if (locationIDsToDelete.Count > 0)
+            else if (wasUpdated)
             {
-                // Delete child Treatments first, then the locations
-                await dbContext.Treatments
-                    .Where(t => t.ProjectLocationID != null && locationIDsToDelete.Contains(t.ProjectLocationID.Value))
-                    .ExecuteDeleteAsync();
-
-                await dbContext.ProjectLocations
-                    .Where(pl => locationIDsToDelete.Contains(pl.ProjectLocationID))
-                    .ExecuteDeleteAsync();
+                result.ProjectsUpdated++;
+                result.UpdatedProjects.Add(resultEntry);
             }
-
-            // Create project locations from feature geometries
-            foreach (var feature in projectGroup)
-            {
-                var locationName = $"{originalIdentifier} - Feature {feature.GisImportFeatureKey}";
-
-                dbContext.ProjectLocations.Add(new ProjectLocation
-                {
-                    ProjectID = existingProject.ProjectID,
-                    ProjectLocationGeometry = feature.GisFeatureGeometry,
-                    ProjectLocationName = locationName.Length > 100 ? locationName[..100] : locationName,
-                    ProjectLocationTypeID = (int)ProjectLocationTypeEnum.ProjectArea,
-                    ImportedFromGisUpload = true,
-                    ProgramID = sourceOrg.ProgramID
-                });
-                result.LocationsCreated++;
-            }
-
-            await dbContext.SaveChangesWithNoAuditingAsync();
         }
 
         // Call stored proc for treatment imports
@@ -649,5 +700,58 @@ public static class GisBulkImports
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Loads the Project Import Block List for a program and returns normalized
+    /// (uppercased, trimmed) sets of blocked GIS identifiers and project names.
+    /// Used by ImportProjectsAsync to skip blocked projects.
+    /// </summary>
+    public static async Task<(HashSet<string> BlockedIdentifiers, HashSet<string> BlockedNames)> LoadBlockListAsync(
+        WADNRDbContext dbContext, int programID)
+    {
+        var blockListEntries = await dbContext.ProjectImportBlockLists
+            .AsNoTracking()
+            .Where(x => x.ProgramID == programID)
+            .Select(x => new { x.ProjectGisIdentifier, x.ProjectName })
+            .ToListAsync();
+
+        var blockedIdentifiers = blockListEntries
+            .Where(x => !string.IsNullOrWhiteSpace(x.ProjectGisIdentifier))
+            .Select(x => x.ProjectGisIdentifier.Trim().ToUpperInvariant())
+            .ToHashSet();
+
+        var blockedNames = blockListEntries
+            .Where(x => !string.IsNullOrWhiteSpace(x.ProjectName))
+            .Select(x => x.ProjectName.Trim().ToUpperInvariant())
+            .ToHashSet();
+
+        return (blockedIdentifiers, blockedNames);
+    }
+
+    /// <summary>
+    /// Returns true if the given project identifier or name matches any entry in the
+    /// normalized block-list sets. Identifier is expected to be already trimmed + uppercased
+    /// (the import loop normalizes it at the grouping step).
+    /// </summary>
+    public static bool IsBlocked(
+        string projectIdentifierUpper,
+        string projectName,
+        HashSet<string> blockedIdentifiers,
+        HashSet<string> blockedNames)
+    {
+        if (!string.IsNullOrWhiteSpace(projectIdentifierUpper)
+            && blockedIdentifiers.Contains(projectIdentifierUpper))
+        {
+            return true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(projectName)
+            && blockedNames.Contains(projectName.Trim().ToUpperInvariant()))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

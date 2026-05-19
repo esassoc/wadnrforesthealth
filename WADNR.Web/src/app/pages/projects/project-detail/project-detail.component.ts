@@ -1078,12 +1078,14 @@ export class ProjectDetailComponent implements OnDestroy {
     }
 
     // Calculate totals for fund source allocation requests
-    getFundingTotals(requests: FundSourceAllocationRequestItem[] | null | undefined): { total: number } {
+    getFundingTotals(requests: FundSourceAllocationRequestItem[] | null | undefined): { total: number; match: number; pay: number } {
         if (!requests || requests.length === 0) {
-            return { total: 0 };
+            return { total: 0, match: 0, pay: 0 };
         }
         return {
             total: requests.reduce((sum, r) => sum + (r.TotalAmount ?? 0), 0),
+            match: requests.reduce((sum, r) => sum + (r.MatchAmount ?? 0), 0),
+            pay: requests.reduce((sum, r) => sum + (r.PayAmount ?? 0), 0),
         };
     }
 

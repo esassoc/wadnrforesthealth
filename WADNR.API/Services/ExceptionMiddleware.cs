@@ -49,7 +49,7 @@ namespace WADNR.API.Services
                     }
                     break;
                 default:
-                    message = "Oops!  Something went wrong with your request.  Please try your request again.  If the problem persists, please email rocket.team@sitkatech.com";
+                    message = "Oops!  Something went wrong with your request.  Please try your request again.  If the problem persists, please email projectfirma@sitkatech.com";
                     break;
             }
 

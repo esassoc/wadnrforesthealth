@@ -334,6 +334,7 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/agreements/[^/]+/fund-source-allocations$"),
     new RegExp("^/agreements/[^/]+/projects$"),
     new RegExp("^/classifications/[^/]+$"),
+    new RegExp("^/counties/[^/]+/content$"),
     new RegExp("^/custom-pages/[^/]+$"),
     new RegExp("^/custom-pages/[^/]+/content$"),
     new RegExp("^/custom-rich-texts/[^/]+$"),

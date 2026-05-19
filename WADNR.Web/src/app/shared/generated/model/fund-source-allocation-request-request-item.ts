@@ -13,6 +13,8 @@ import { FormControl, FormControlOptions, FormControlState, Validators } from "@
 export class FundSourceAllocationRequestRequestItem { 
     ProjectFundSourceAllocationRequestID?: number | null;
     FundSourceAllocationID?: number;
+    MatchAmount?: number | null;
+    PayAmount?: number | null;
     TotalAmount?: number | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -22,6 +24,8 @@ export class FundSourceAllocationRequestRequestItem {
 export interface FundSourceAllocationRequestRequestItemForm { 
     ProjectFundSourceAllocationRequestID?: FormControl<number>;
     FundSourceAllocationID?: FormControl<number>;
+    MatchAmount?: FormControl<number>;
+    PayAmount?: FormControl<number>;
     TotalAmount?: FormControl<number>;
 }
 
@@ -37,6 +41,26 @@ export class FundSourceAllocationRequestRequestItemFormControls {
         }
     );
     public static FundSourceAllocationID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static MatchAmount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PayAmount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

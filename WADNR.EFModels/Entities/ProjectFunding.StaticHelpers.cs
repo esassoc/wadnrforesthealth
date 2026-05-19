@@ -40,12 +40,17 @@ public static class ProjectFunding
             .ThenBy(r => r.FundSourceAllocationName)
             .ToListAsync();
 
+        var isInLandownerAssistanceProgram = await dbContext.ProjectPrograms
+            .AsNoTracking()
+            .AnyAsync(pp => pp.ProjectID == projectID && pp.ProgramID == Program.LandownerAssistanceProgramID);
+
         return new ProjectFundingDetail
         {
             EstimatedTotalCost = project.EstimatedTotalCost,
             FundingSourceNotes = project.ProjectFundingSourceNotes,
             SelectedFundingSourceIDs = fundingSourceIDs,
-            AllocationRequests = allocationRequests
+            AllocationRequests = allocationRequests,
+            IsInLandownerAssistanceProgram = isInLandownerAssistanceProgram
         };
     }
 

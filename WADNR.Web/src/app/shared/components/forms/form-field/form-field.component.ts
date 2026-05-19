@@ -75,6 +75,9 @@ export class FormFieldComponent implements OnInit, OnDestroy {
      */
     @Input() uploadFileAccepts: string;
 
+    /** When set, replaces the default "Maximum total file size..." hint under file inputs. */
+    @Input() uploadHelpText: string;
+
     @ViewChild("fileUploadField") fileUploadField: any;
     public fileName: string = null;
     public fileExtension: string = null;

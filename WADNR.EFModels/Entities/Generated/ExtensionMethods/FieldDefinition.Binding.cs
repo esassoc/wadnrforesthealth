@@ -2159,13 +2159,13 @@ namespace WADNR.EFModels.Entities
     public partial class FieldDefinitionProjectFundSourceAllocationRequestMatchAmount : FieldDefinition
     {
         private FieldDefinitionProjectFundSourceAllocationRequestMatchAmount(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionProjectFundSourceAllocationRequestMatchAmount Instance = new FieldDefinitionProjectFundSourceAllocationRequestMatchAmount(476, @"ProjectFundSourceAllocationRequestMatchAmount", @"MatchAmount", @"<p>Funding that has been acquired for a project.</p>");
+        public static readonly FieldDefinitionProjectFundSourceAllocationRequestMatchAmount Instance = new FieldDefinitionProjectFundSourceAllocationRequestMatchAmount(476, @"ProjectFundSourceAllocationRequestMatchAmount", @"DNR Match Amount", @"<p>The portion of the fund source allocation provided as match by WA DNR.</p>");
     }
 
     public partial class FieldDefinitionProjectFundSourceAllocationRequestPayAmount : FieldDefinition
     {
         private FieldDefinitionProjectFundSourceAllocationRequestPayAmount(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionProjectFundSourceAllocationRequestPayAmount Instance = new FieldDefinitionProjectFundSourceAllocationRequestPayAmount(477, @"ProjectFundSourceAllocationRequestPayAmount", @"PayAmount", @"<p>Funding that has been acquired for a project.</p>");
+        public static readonly FieldDefinitionProjectFundSourceAllocationRequestPayAmount Instance = new FieldDefinitionProjectFundSourceAllocationRequestPayAmount(477, @"ProjectFundSourceAllocationRequestPayAmount", @"DNR Pay Amount", @"<p>The amount WA DNR has paid from this fund source allocation. Used to track grant expenditures and balances.</p>");
     }
 
     public partial class FieldDefinitionProjectApplicationDate : FieldDefinition

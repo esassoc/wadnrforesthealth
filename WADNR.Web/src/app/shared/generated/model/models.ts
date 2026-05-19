@@ -27,6 +27,7 @@ export * from './classification-with-project-count';
 export * from './coordinate';
 export * from './coordinate-sequence';
 export * from './coordinate-sequence-factory';
+export * from './county-content-upsert-request';
 export * from './county-detail';
 export * from './county-grid-row';
 export * from './county-lookup-item';

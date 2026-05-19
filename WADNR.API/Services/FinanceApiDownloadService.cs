@@ -192,6 +192,9 @@ public class FinanceApiDownloadService(
     /// </summary>
     public async Task ExecuteImportProcAsync(string procName, int importID, int? biennium = null)
     {
+        // procName is an internal constant supplied by callers - not user input.
+        // EXEC requires the procedure name to be embedded; parameters protect the actual data.
+#pragma warning disable EF1002 // SQL injection
         if (biennium.HasValue)
         {
             await dbContext.Database.ExecuteSqlRawAsync(
@@ -204,6 +207,7 @@ public class FinanceApiDownloadService(
                 $"EXEC {procName} @ArcOnlineFinanceApiRawJsonImportID = {{0}}",
                 importID);
         }
+#pragma warning restore EF1002
     }
 
     /// <summary>

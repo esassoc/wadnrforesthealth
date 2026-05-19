@@ -52,12 +52,12 @@ namespace WADNR.Common
 
         public static DirectoryInfo GetExecutingAssemblyDirectory()
         {
-            return GetExecutingAssemblyFile().Directory;
+            return GetExecutingAssemblyFile().Directory!;
         }
 
         public static FileInfo GetExecutingAssemblyFile()
         {
-            var localAssemblyPathString = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
+            var localAssemblyPathString = new Uri(Assembly.GetExecutingAssembly().Location).LocalPath;
             return new FileInfo(localAssemblyPathString);
         }
 
@@ -82,13 +82,13 @@ namespace WADNR.Common
             if (!first.HasValue)
                 return second;
 
-            return first.ToString();
+            return first.Value.ToString();
         }
 
-        public static Dictionary<string, object> ToDictionary(this object data)
+        public static Dictionary<string, object?> ToDictionary(this object data)
         {
             const BindingFlags attr = BindingFlags.Public | BindingFlags.Instance;
-            var dict = new Dictionary<string, object>();
+            var dict = new Dictionary<string, object?>();
             foreach (var property in data.GetType().GetProperties(attr))
             {
                 if (property.CanRead)
@@ -149,12 +149,12 @@ namespace WADNR.Common
             }
 
             private readonly string _methodOrMemberName;
-            private readonly Type _declaringType;
+            private readonly Type _declaringType = null!;
 
             public ParsedExpressionParts(MethodCallExpression methodCallExpression)
             {
                 var methodInfo = methodCallExpression.Method;
-                _declaringType = methodInfo.DeclaringType;
+                _declaringType = methodInfo.DeclaringType!;
                 _methodOrMemberName = methodInfo.Name;
                 CheckInvariantAllFieldsNotNull();
             }
@@ -162,7 +162,7 @@ namespace WADNR.Common
             public ParsedExpressionParts(MemberExpression methodCallExpression)
             {
                 var memberInfo = methodCallExpression.Member;
-                _declaringType = memberInfo.DeclaringType;
+                _declaringType = memberInfo.DeclaringType!;
                 _methodOrMemberName = memberInfo.Name;
                 CheckInvariantAllFieldsNotNull();
             }
@@ -181,7 +181,7 @@ namespace WADNR.Common
             return stringToEncode.Replace("\n", "<br/>");
         }
 
-        public static string TrimWhitespaceEvenIfNull(string possiblyNullableThingToTrim)
+        public static string? TrimWhitespaceEvenIfNull(string? possiblyNullableThingToTrim)
         {
             return possiblyNullableThingToTrim?.Trim();
         }
@@ -189,7 +189,7 @@ namespace WADNR.Common
         /// <summary>
         /// This will take a possibly null string and return either an empty string (if null) or the trimmed version of the string
         /// </summary>
-        public static string TrimWhitespaceMapNullToEmptyString(string possiblyNullableThingToTrim)
+        public static string TrimWhitespaceMapNullToEmptyString(string? possiblyNullableThingToTrim)
         {
             return possiblyNullableThingToTrim?.Trim() ?? string.Empty;
         }

@@ -61,7 +61,8 @@ export class ProjectImageModalComponent extends BaseModal implements OnInit {
 
     public timingDropdownOptions: FormInputOption[] = [];
 
-    public allowedFileExtensions = ".jpg,.jpeg,.gif,.png";
+    public allowedFileExtensions = ".jpg,.jpeg,.gif,.png,.heic,.heif";
+    private readonly maxUploadBytes = 30 * 1000 * 1000;
 
     constructor(
         private projectImageService: ProjectImageService,
@@ -110,6 +111,11 @@ export class ProjectImageModalComponent extends BaseModal implements OnInit {
 
         if (this.isCreateMode && !this.fileControl.value) {
             this.addLocalAlert("Please select an image file to upload.", AlertContext.Danger, true);
+            return;
+        }
+
+        if (this.isCreateMode && this.fileControl.value && this.fileControl.value.size > this.maxUploadBytes) {
+            this.addLocalAlert("File is too large. Please choose an image under 30MB.", AlertContext.Danger, true);
             return;
         }
 

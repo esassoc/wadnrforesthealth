@@ -6,4 +6,5 @@ public class ProjectFundingDetail
     public string? FundingSourceNotes { get; set; }
     public List<int> SelectedFundingSourceIDs { get; set; } = new();
     public List<FundSourceAllocationRequestItem> AllocationRequests { get; set; } = new();
+    public bool IsInLandownerAssistanceProgram { get; set; }
 }

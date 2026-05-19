@@ -24,7 +24,7 @@ namespace WADNR.Common.JsonConverters
 
         public override double Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return reader.TokenType == JsonTokenType.String ? double.Parse(reader.GetString()) : reader.GetDouble();
+            return reader.TokenType == JsonTokenType.String ? double.Parse(reader.GetString()!) : reader.GetDouble();
         }
 
         public override void Write(Utf8JsonWriter writer, double value, JsonSerializerOptions options)

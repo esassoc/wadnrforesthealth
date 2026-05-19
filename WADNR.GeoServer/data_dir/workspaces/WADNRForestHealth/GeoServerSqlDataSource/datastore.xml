@@ -1,4 +1,3 @@
-<!-- datastore.xml.template generates datastore.xml during the release/deploy process, customized for the local environment. -->
 <dataStore>
   <id>DataStoreInfoImpl--7c524755:15d7bc5e17f:-6447</id>
   <name>GeoServerSqlDataSource</name>
@@ -9,24 +8,26 @@
   </workspace>
   <connectionParameters>
     <entry key="schema">dbo</entry>
-    <entry key="Use native geometry serialization">true</entry>
-    <entry key="database">${datastore-database}</entry>
-    <entry key="host">${datastore-host}</entry>
-    <entry key="Use Native Paging">false</entry>
     <entry key="Force spatial index usage via hints">false</entry>
+    <entry key="fetch size">1000</entry>
     <entry key="Expose primary keys">true</entry>
     <entry key="validate connections">false</entry>
+    <entry key="Connection timeout">20</entry>
+    <entry key="Use native geometry serialization">true</entry>
+    <entry key="database">${datastore-database}</entry>
     <entry key="Integrated Security">false</entry>
     <entry key="port">1433</entry>
+    <entry key="passwd">crypt2:xjL80HChgf3TyQR0s7k28EY0O51eN7QhNSekQ25ulE9KA5PZE4J9RihD0hKyYMFS</entry>
     <entry key="min connections">1</entry>
+    <entry key="host">${datastore-host}</entry>
     <entry key="dbtype">sqlserver</entry>
     <entry key="namespace">WADNRForestHealth</entry>
-    <entry key="Connection timeout">20</entry>
     <entry key="max connections">10</entry>
-    <entry key="fetch size">1000</entry>
     <entry key="Test while idle">false</entry>
+    <entry key="Use Native Paging">false</entry>
     <entry key="user">${datastore-user}</entry>
-    <entry key="passwd">${datastore-password}</entry>
   </connectionParameters>
   <__default>false</__default>
+  <dateModified>2026-05-13 17:28:44.996 UTC</dateModified>
+  <disableOnConnFailure>false</disableOnConnFailure>
 </dataStore>

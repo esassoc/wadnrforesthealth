@@ -152,7 +152,7 @@ public class OrganizationControllerTests
         var request = new OrganizationUpsertRequest
         {
             OrganizationName = newName,
-            OrganizationShortName = original.OrganizationShortName,
+            OrganizationShortName = original.OrganizationShortName ?? string.Empty,
             OrganizationTypeID = original.OrganizationTypeID,
             IsActive = original.IsActive,
         };

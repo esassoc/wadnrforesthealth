@@ -18,6 +18,7 @@ public class ExpectedFundingStep
     /// Fund source allocation requests for this project.
     /// </summary>
     public List<FundSourceAllocationRequestStepItem> AllocationRequests { get; set; } = new();
+    public bool IsInLandownerAssistanceProgram { get; set; }
 }
 
 /// <summary>
@@ -52,5 +53,7 @@ public class FundSourceAllocationRequestRequestItem
 {
     public int? ProjectFundSourceAllocationRequestID { get; set; }
     public int FundSourceAllocationID { get; set; }
+    public decimal? MatchAmount { get; set; }
+    public decimal? PayAmount { get; set; }
     public decimal? TotalAmount { get; set; }
 }

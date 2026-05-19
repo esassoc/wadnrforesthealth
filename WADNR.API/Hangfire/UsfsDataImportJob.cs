@@ -41,7 +41,7 @@ public class UsfsDataImportJob(
     private async Task RunImportAsync()
     {
         // Build WHERE clause from GisCrossWalkDefaults activity codes
-        var sourceOrg = await dbContext.GisUploadSourceOrganizations
+        var sourceOrg = await DbContext.GisUploadSourceOrganizations
             .Include(x => x.GisCrossWalkDefaults)
             .SingleAsync(x => x.GisUploadSourceOrganizationID == UsfsGisUploadSourceOrganizationID);
 

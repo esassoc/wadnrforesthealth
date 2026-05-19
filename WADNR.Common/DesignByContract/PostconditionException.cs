@@ -19,17 +19,14 @@ Source code is available upon request via <support@sitkatech.com>.
 </license>
 -----------------------------------------------------------------------*/
 using System;
-using System.Runtime.Serialization;
 
 namespace WADNR.Common.DesignByContract
 {
-	[Serializable]
 	public class PostconditionException : System.ApplicationException
 	{
 		public PostconditionException() {}
 		public PostconditionException(string message) : base(message) {}
 		public PostconditionException(string message, Exception inner) : base(message, inner) {}
-		public PostconditionException(SerializationInfo info, StreamingContext context): base(info, context) {}
 	}
 }
 

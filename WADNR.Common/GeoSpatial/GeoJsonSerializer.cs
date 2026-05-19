@@ -13,12 +13,12 @@ public static class GeoJsonSerializer
 {
     public static JsonSerializerOptions DefaultSerializerOptions = CreateGeoJSONSerializerOptions();
 
-    public static T Deserialize<T>(string json)
+    public static T? Deserialize<T>(string json)
     {
         return JsonSerializer.Deserialize<T>(json, DefaultSerializerOptions);
     }
 
-    public static async Task<T> DeserializeAsync<T>(Stream stream)
+    public static async Task<T?> DeserializeAsync<T>(Stream stream)
     {
         return await JsonSerializer.DeserializeAsync<T>(stream, DefaultSerializerOptions);
     }
@@ -56,7 +56,7 @@ public static class GeoJsonSerializer
         return Encoding.UTF8.GetString(fileContentsByteArray);
     }
 
-    public static async Task<T> DeserializeFromFileAsync<T>(string pathToGeoJsonFile, JsonSerializerOptions jsonSerializerOptions)
+    public static async Task<T?> DeserializeFromFileAsync<T>(string pathToGeoJsonFile, JsonSerializerOptions jsonSerializerOptions)
     {
         await using var openStream = File.OpenRead(pathToGeoJsonFile);
         var deserializeAsync = await JsonSerializer.DeserializeAsync<T>(openStream, jsonSerializerOptions);
@@ -64,7 +64,7 @@ public static class GeoJsonSerializer
         return deserializeAsync;
     }
 
-    public static T DeserializeFromFile<T>(string pathToGeoJsonFile, JsonSerializerOptions jsonSerializerOptions)
+    public static T? DeserializeFromFile<T>(string pathToGeoJsonFile, JsonSerializerOptions jsonSerializerOptions)
     {
         using var openStream = File.OpenRead(pathToGeoJsonFile);
         return JsonSerializer.Deserialize<T>(openStream, jsonSerializerOptions);
@@ -84,7 +84,7 @@ public static class GeoJsonSerializer
 
     public static async Task<FeatureCollection> GetFeatureCollectionFromGeoJsonStream(Stream stream, JsonSerializerOptions jsonSerializerOptions)
     {
-        return await JsonSerializer.DeserializeAsync<FeatureCollection>(stream, jsonSerializerOptions);
+        return (await JsonSerializer.DeserializeAsync<FeatureCollection>(stream, jsonSerializerOptions))!;
     }
 
     public static async Task<List<IFeature>> GetFeatureCollectionFromGeoJsonByteArray(byte[] fileContentsByteArray, IPreparedGeometry boundingBox, JsonSerializerOptions jsonSerializerOptions)
@@ -236,9 +236,9 @@ public static class GeoJsonSerializer
         return deserialized;
     }
 
-    public static T DeserializeFromFeatureWithNoGeometry<T>(IFeature feature, JsonSerializerOptions geoJSONSerializerOptions)
+    public static T? DeserializeFromFeatureWithNoGeometry<T>(IFeature feature, JsonSerializerOptions geoJSONSerializerOptions)
     {
-        feature.Attributes.TryDeserializeJsonObject<T>(geoJSONSerializerOptions, out var deserialized);
+        ((IPartiallyDeserializedAttributesTable)feature.Attributes).TryDeserializeJsonObject<T>(geoJSONSerializerOptions, out var deserialized);
         return deserialized;
     }
 
@@ -269,13 +269,13 @@ public static class GeoJsonSerializer
         return featureCollection.AsParallel().Select(x => DeserializeFromFeature<T>(x, DefaultSerializerOptions)).ToList();
     }
 
-    public static async Task<List<T>> DeserializeFromFeatureCollectionWithNoGeometry<T>(byte[] byteArray, JsonSerializerOptions geoJSONSerializerOptions)
+    public static async Task<List<T?>> DeserializeFromFeatureCollectionWithNoGeometry<T>(byte[] byteArray, JsonSerializerOptions geoJSONSerializerOptions)
     {
         var featureCollection = await GetFeatureCollectionFromGeoJsonByteArray(byteArray, geoJSONSerializerOptions);
         return DeserializeFromFeatureCollectionWithNoGeometry<T>(featureCollection, geoJSONSerializerOptions);
     }
 
-    public static List<T> DeserializeFromFeatureCollectionWithNoGeometry<T>(FeatureCollection featureCollection, JsonSerializerOptions geoJSONSerializerOptions)
+    public static List<T?> DeserializeFromFeatureCollectionWithNoGeometry<T>(FeatureCollection featureCollection, JsonSerializerOptions geoJSONSerializerOptions)
     {
         return featureCollection.AsParallel().Select(x => DeserializeFromFeatureWithNoGeometry<T>(x, geoJSONSerializerOptions)).ToList();
     }
@@ -287,9 +287,8 @@ public static class GeoJsonSerializer
         return new Feature(featureClass.Geometry, attributesTable);
     }
 
-    public static Dictionary<string, object> ToKeyValuePairList<T>(T obj)
+    public static Dictionary<string, object?> ToKeyValuePairList<T>(T obj) where T : notnull
     {
         return obj.GetType().GetProperties().Where(x => !x.IsDefined(typeof(JsonIgnoreAttribute), false)).ToDictionary(p => p.Name, p => p.GetValue(obj));
-        //            return obj.GetType().GetProperties().Where(x => !x.IsDefined(typeof(JsonIgnoreAttribute), false)).Select(p => new KeyValuePair<string, object>(p.Name, p.GetValue(obj))).ToList();
     }
 }

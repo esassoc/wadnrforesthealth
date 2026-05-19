@@ -31,6 +31,8 @@ interface AllocationRow {
     fundSourceAllocationID: number;
     fundSourceAllocationName: string;
     fundSourceName: string;
+    matchAmountControl: FormControl<number | null>;
+    payAmountControl: FormControl<number | null>;
     totalAmountControl: FormControl<number | null>;
 }
 
@@ -53,6 +55,7 @@ export class ProjectFundingEditorComponent extends BaseModal implements OnInit {
     public availableAllocationOptions: FormInputOption[] = [];
     public allocationRows: AllocationRow[] = [];
     public allocationToAdd = new FormControl<number | null>(null);
+    public isInLandownerAssistanceProgram = false;
 
     // Lookup for allocation display names
     private allocationLookup = new Map<number, { name: string; fundSourceName: string }>();
@@ -112,12 +115,16 @@ export class ProjectFundingEditorComponent extends BaseModal implements OnInit {
                 fundingSourceNotes: funding?.FundingSourceNotes ?? "",
             });
 
+            this.isInLandownerAssistanceProgram = funding?.IsInLandownerAssistanceProgram ?? false;
+
             // Pre-populate allocation rows
             this.allocationRows = (funding?.AllocationRequests ?? []).map((r) => ({
                 projectFundSourceAllocationRequestID: r.ProjectFundSourceAllocationRequestID ?? null,
                 fundSourceAllocationID: r.FundSourceAllocationID!,
                 fundSourceAllocationName: r.FundSourceAllocationName ?? "",
                 fundSourceName: r.FundSourceName ?? "",
+                matchAmountControl: new FormControl<number | null>(r.MatchAmount ?? null),
+                payAmountControl: new FormControl<number | null>(r.PayAmount ?? null),
                 totalAmountControl: new FormControl<number | null>(r.TotalAmount ?? null),
             }));
 
@@ -133,6 +140,14 @@ export class ProjectFundingEditorComponent extends BaseModal implements OnInit {
 
     get allocationTotal(): number {
         return this.allocationRows.reduce((sum, r) => sum + (r.totalAmountControl.value ?? 0), 0);
+    }
+
+    get matchAmountTotal(): number {
+        return this.allocationRows.reduce((sum, r) => sum + (r.matchAmountControl.value ?? 0), 0);
+    }
+
+    get payAmountTotal(): number {
+        return this.allocationRows.reduce((sum, r) => sum + (r.payAmountControl.value ?? 0), 0);
     }
 
     addAllocation(allocID: number): void {
@@ -151,6 +166,8 @@ export class ProjectFundingEditorComponent extends BaseModal implements OnInit {
                 fundSourceAllocationID: allocID,
                 fundSourceAllocationName: lookup?.name ?? (option?.Label as string) ?? "",
                 fundSourceName: lookup?.fundSourceName ?? "",
+                matchAmountControl: new FormControl<number | null>(null),
+                payAmountControl: new FormControl<number | null>(null),
                 totalAmountControl: new FormControl<number | null>(null),
             },
         ];
@@ -181,6 +198,8 @@ export class ProjectFundingEditorComponent extends BaseModal implements OnInit {
             AllocationRequests: this.allocationRows.map((r) => ({
                 ProjectFundSourceAllocationRequestID: r.projectFundSourceAllocationRequestID,
                 FundSourceAllocationID: r.fundSourceAllocationID,
+                MatchAmount: r.matchAmountControl.value != null ? Number(r.matchAmountControl.value) : null,
+                PayAmount: r.payAmountControl.value != null ? Number(r.payAmountControl.value) : null,
                 TotalAmount: r.totalAmountControl.value != null ? Number(r.totalAmountControl.value) : null,
             })),
         });

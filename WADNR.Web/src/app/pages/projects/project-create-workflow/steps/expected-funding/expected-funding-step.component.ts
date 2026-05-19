@@ -34,6 +34,8 @@ interface AllocationRequest {
     fundSourceAllocationID: number;
     fundSourceAllocationName: string;
     fundSourceName: string;
+    matchAmountControl: FormControl<number | null>;
+    payAmountControl: FormControl<number | null>;
     amountControl: FormControl<number | null>;
 }
 
@@ -43,6 +45,7 @@ interface ExpectedFundingViewModel {
     fundingSourceCheckboxes: FundingSourceCheckbox[];
     allAllocationOptions: FormInputOption[];
     fundSourceAllocations: FundSourceAllocationLookupItem[];
+    isInLandownerAssistanceProgram: boolean;
 }
 
 @Component({
@@ -146,6 +149,8 @@ export class ExpectedFundingStepComponent extends CreateWorkflowStepBase impleme
                         fundSourceAllocationID: ar.FundSourceAllocationID!,
                         fundSourceAllocationName: ar.FundSourceAllocationName!,
                         fundSourceName: ar.FundSourceName!,
+                        matchAmountControl: new FormControl<number | null>(ar.MatchAmount ?? null),
+                        payAmountControl: new FormControl<number | null>(ar.PayAmount ?? null),
                         amountControl: new FormControl<number | null>(ar.TotalAmount ?? null),
                     }));
                     this.updateAvailableAllocationOptions(allAllocationOptions);
@@ -157,11 +162,12 @@ export class ExpectedFundingStepComponent extends CreateWorkflowStepBase impleme
                     fundingSourceCheckboxes,
                     allAllocationOptions,
                     fundSourceAllocations,
+                    isInLandownerAssistanceProgram: data?.IsInLandownerAssistanceProgram ?? false,
                 };
                 this.currentVm = vm;
                 return vm;
             }),
-            startWith({ isLoading: true, data: null, fundingSourceCheckboxes: [], allAllocationOptions: [], fundSourceAllocations: [] } as ExpectedFundingViewModel),
+            startWith({ isLoading: true, data: null, fundingSourceCheckboxes: [], allAllocationOptions: [], fundSourceAllocations: [], isInLandownerAssistanceProgram: false } as ExpectedFundingViewModel),
             shareReplay({ bufferSize: 1, refCount: true })
         );
     }
@@ -196,6 +202,8 @@ export class ExpectedFundingStepComponent extends CreateWorkflowStepBase impleme
             fundSourceAllocationID: allocationID,
             fundSourceAllocationName: option.FundSourceAllocationName!,
             fundSourceName: option.FundSourceName!,
+            matchAmountControl: new FormControl<number | null>(null),
+            payAmountControl: new FormControl<number | null>(null),
             amountControl: new FormControl<number | null>(null),
         });
 
@@ -214,6 +222,14 @@ export class ExpectedFundingStepComponent extends CreateWorkflowStepBase impleme
         return this.allocationRequests.reduce((sum, ar) => sum + (Number(ar.amountControl.value) || 0), 0);
     }
 
+    getMatchAmountTotal(): number {
+        return this.allocationRequests.reduce((sum, ar) => sum + (Number(ar.matchAmountControl.value) || 0), 0);
+    }
+
+    getPayAmountTotal(): number {
+        return this.allocationRequests.reduce((sum, ar) => sum + (Number(ar.payAmountControl.value) || 0), 0);
+    }
+
     onSave(navigate: boolean): void {
         if (!this.currentVm) return;
 
@@ -224,6 +240,8 @@ export class ExpectedFundingStepComponent extends CreateWorkflowStepBase impleme
         const allocationRequestItems: FundSourceAllocationRequestRequestItem[] = this.allocationRequests.map((ar) => ({
             ProjectFundSourceAllocationRequestID: ar.projectFundSourceAllocationRequestID,
             FundSourceAllocationID: ar.fundSourceAllocationID,
+            MatchAmount: ar.matchAmountControl.value,
+            PayAmount: ar.payAmountControl.value,
             TotalAmount: ar.amountControl.value,
         }));
 

@@ -873,6 +873,10 @@ public static class ProjectCreateWorkflowSteps
 
         if (project == null) return null;
 
+        var isInLandownerAssistanceProgram = await dbContext.ProjectPrograms
+            .AsNoTracking()
+            .AnyAsync(pp => pp.ProjectID == projectID && pp.ProgramID == Program.LandownerAssistanceProgramID);
+
         var dto = new ExpectedFundingStep
         {
             ProjectID = projectID,
@@ -885,8 +889,11 @@ public static class ProjectCreateWorkflowSteps
                 FundSourceAllocationID = ar.FundSourceAllocationID,
                 FundSourceAllocationName = ar.FundSourceAllocation.FundSourceAllocationName,
                 FundSourceName = ar.FundSourceAllocation.FundSource.FundSourceName,
+                MatchAmount = ar.MatchAmount,
+                PayAmount = ar.PayAmount,
                 TotalAmount = ar.TotalAmount
-            }).ToList()
+            }).ToList(),
+            IsInLandownerAssistanceProgram = isInLandownerAssistanceProgram
         };
 
         return dto;
@@ -933,6 +940,8 @@ public static class ProjectCreateWorkflowSteps
             {
                 var existing = project.ProjectFundSourceAllocationRequests.First(ar => ar.ProjectFundSourceAllocationRequestID == arRequest.ProjectFundSourceAllocationRequestID.Value);
                 existing.FundSourceAllocationID = arRequest.FundSourceAllocationID;
+                existing.MatchAmount = arRequest.MatchAmount;
+                existing.PayAmount = arRequest.PayAmount;
                 existing.TotalAmount = arRequest.TotalAmount;
                 existing.UpdateDate = DateTime.Now;
             }
@@ -942,6 +951,8 @@ public static class ProjectCreateWorkflowSteps
                 {
                     ProjectID = projectID,
                     FundSourceAllocationID = arRequest.FundSourceAllocationID,
+                    MatchAmount = arRequest.MatchAmount,
+                    PayAmount = arRequest.PayAmount,
                     TotalAmount = arRequest.TotalAmount,
                     CreateDate = DateTime.Now
                 });

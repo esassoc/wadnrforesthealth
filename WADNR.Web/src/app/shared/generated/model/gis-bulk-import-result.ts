@@ -15,10 +15,12 @@ export class GisBulkImportResult {
     ProjectsCreated?: number;
     ProjectsUpdated?: number;
     ProjectsSkipped?: number;
+    ProjectsBlocked?: number;
     TreatmentsCreated?: number;
     LocationsCreated?: number;
     CreatedProjects?: Array<GisBulkImportProjectResult> | null;
     UpdatedProjects?: Array<GisBulkImportProjectResult> | null;
+    BlockedProjects?: Array<GisBulkImportProjectResult> | null;
     Warnings?: Array<string> | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
@@ -29,10 +31,12 @@ export interface GisBulkImportResultForm {
     ProjectsCreated?: FormControl<number>;
     ProjectsUpdated?: FormControl<number>;
     ProjectsSkipped?: FormControl<number>;
+    ProjectsBlocked?: FormControl<number>;
     TreatmentsCreated?: FormControl<number>;
     LocationsCreated?: FormControl<number>;
     CreatedProjects?: FormControl<Array<GisBulkImportProjectResult>>;
     UpdatedProjects?: FormControl<Array<GisBulkImportProjectResult>>;
+    BlockedProjects?: FormControl<Array<GisBulkImportProjectResult>>;
     Warnings?: FormControl<Array<string>>;
 }
 
@@ -58,6 +62,16 @@ export class GisBulkImportResultFormControls {
         }
     );
     public static ProjectsSkipped = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static ProjectsBlocked = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
@@ -98,6 +112,16 @@ export class GisBulkImportResultFormControls {
         }
     );
     public static UpdatedProjects = (value: FormControlState<Array<GisBulkImportProjectResult>> | Array<GisBulkImportProjectResult> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<GisBulkImportProjectResult>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static BlockedProjects = (value: FormControlState<Array<GisBulkImportProjectResult>> | Array<GisBulkImportProjectResult> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<GisBulkImportProjectResult>>(
         value,
         formControlOptions ?? 
         {

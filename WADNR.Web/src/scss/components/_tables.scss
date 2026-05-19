@@ -24,7 +24,8 @@
     }
 
     tbody {
-        td {
+        td,
+        th {
             padding: 1rem 0.75rem;
             vertical-align: middle;
         }
@@ -43,6 +44,14 @@
 
         tr:nth-of-type(even) {
             background: rgba(var(--primary-rgb), 0.05);
+        }
+    }
+
+    tfoot {
+        td,
+        th {
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
         }
     }
 

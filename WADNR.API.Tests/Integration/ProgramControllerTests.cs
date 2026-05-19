@@ -418,6 +418,114 @@ public class ProgramControllerTests
         Assert.IsFalse(deleted);
     }
 
+    [TestMethod]
+    public async Task LoadBlockList_IsScopedToProgram()
+    {
+        // Arrange: add a block-list entry for the test program
+        var uniqueId = $"GIS-SCOPE-{DateTime.UtcNow.Ticks}";
+        try
+        {
+            await Programs.AddToBlockListAsync(AssemblySteps.DbContext, _testProgramID, new AddToBlockListRequest
+            {
+                ProjectGisIdentifier = uniqueId,
+                ProjectName = null,
+                Notes = "Scope test"
+            });
+
+            // Act: load the block list for THIS program and for an unrelated program
+            var thisProgram = await GisBulkImports.LoadBlockListAsync(AssemblySteps.DbContext, _testProgramID);
+            var otherProgram = await GisBulkImports.LoadBlockListAsync(AssemblySteps.DbContext, _testProgramID + 999999);
+
+            // Assert: only this program sees the entry
+            Assert.IsTrue(thisProgram.BlockedIdentifiers.Contains(uniqueId.ToUpperInvariant()),
+                "Block list for the seeded program should contain the seeded identifier");
+            Assert.IsFalse(otherProgram.BlockedIdentifiers.Contains(uniqueId.ToUpperInvariant()),
+                "Block list for an unrelated program should not contain the seeded identifier");
+        }
+        finally
+        {
+            await AssemblySteps.DbContext.Database.ExecuteSqlInterpolatedAsync(
+                $"DELETE FROM dbo.ProjectImportBlockList WHERE ProgramID = {_testProgramID}");
+        }
+    }
+
+    [TestMethod]
+    public async Task LoadBlockList_NormalizesIdentifiersAndNames()
+    {
+        // Arrange: mixed-casing + surrounding whitespace, separate identifier-only and name-only entries
+        try
+        {
+            await Programs.AddToBlockListAsync(AssemblySteps.DbContext, _testProgramID, new AddToBlockListRequest
+            {
+                ProjectGisIdentifier = "  Mixed-Case-Gis-Id  ",
+                ProjectName = null,
+                Notes = "Identifier-only entry"
+            });
+            await Programs.AddToBlockListAsync(AssemblySteps.DbContext, _testProgramID, new AddToBlockListRequest
+            {
+                ProjectGisIdentifier = null,
+                ProjectName = "  Blocked Project Name  ",
+                Notes = "Name-only entry"
+            });
+
+            // Act
+            var (identifiers, names) = await GisBulkImports.LoadBlockListAsync(AssemblySteps.DbContext, _testProgramID);
+
+            // Assert: both sets contain uppercased, trimmed values
+            Assert.IsTrue(identifiers.Contains("MIXED-CASE-GIS-ID"));
+            Assert.IsTrue(names.Contains("BLOCKED PROJECT NAME"));
+            Assert.IsFalse(identifiers.Contains(""), "Empty/null identifiers must not enter the set");
+            Assert.IsFalse(names.Contains(""), "Empty/null names must not enter the set");
+        }
+        finally
+        {
+            await AssemblySteps.DbContext.Database.ExecuteSqlInterpolatedAsync(
+                $"DELETE FROM dbo.ProjectImportBlockList WHERE ProgramID = {_testProgramID}");
+        }
+    }
+
+    [TestMethod]
+    public void IsBlocked_MatchesOnIdentifier_CaseInsensitive()
+    {
+        var ids = new HashSet<string> { "USFS-123" };
+        var names = new HashSet<string>();
+
+        // Identifier is expected pre-uppercased by the import loop
+        Assert.IsTrue(GisBulkImports.IsBlocked("USFS-123", "Some Project", ids, names));
+        Assert.IsFalse(GisBulkImports.IsBlocked("USFS-999", "Some Project", ids, names));
+    }
+
+    [TestMethod]
+    public void IsBlocked_MatchesOnName_CaseInsensitive()
+    {
+        var ids = new HashSet<string>();
+        var names = new HashSet<string> { "BLOCKED PROJECT" };
+
+        Assert.IsTrue(GisBulkImports.IsBlocked("UNRELATED-ID", "blocked project", ids, names));
+        Assert.IsTrue(GisBulkImports.IsBlocked("UNRELATED-ID", "  Blocked Project  ", ids, names));
+        Assert.IsFalse(GisBulkImports.IsBlocked("UNRELATED-ID", "Other Project", ids, names));
+    }
+
+    [TestMethod]
+    public void IsBlocked_ReturnsFalse_WhenNeitherMatches()
+    {
+        var ids = new HashSet<string> { "BLOCKED-GIS" };
+        var names = new HashSet<string> { "BLOCKED PROJECT" };
+
+        Assert.IsFalse(GisBulkImports.IsBlocked("OTHER-GIS", "Other Project", ids, names));
+    }
+
+    [TestMethod]
+    public void IsBlocked_HandlesNullAndEmpty()
+    {
+        var ids = new HashSet<string> { "BLOCKED-GIS" };
+        var names = new HashSet<string> { "BLOCKED PROJECT" };
+
+        Assert.IsFalse(GisBulkImports.IsBlocked(null!, null!, ids, names));
+        Assert.IsFalse(GisBulkImports.IsBlocked("", "", ids, names));
+        Assert.IsFalse(GisBulkImports.IsBlocked("   ", "   ", ids, names));
+    }
+
     #endregion
 
     #region Editor Tests

@@ -20,6 +20,31 @@
             </div>
         </div>
     </div>
+    @if (showBasics$ | async) {
+        <div class="g-col-6">
+            <div class="card">
+                <div class="card-header flex-between">
+                    <span class="card-title">Basics</span>
+                    @if ((canEdit$ | async) && !(isEditing$ | async)) {
+                        <button type="button" class="card-header-edit-link" (click)="enterEdit(county.CountyContent)" title="Edit Basics">
+                            <icon icon="Edit"></icon>
+                        </button>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (isEditing$ | async) {
+                        <editor #tinyMceEditor [init]="tinyMceConfig" [(ngModel)]="editedContent"></editor>
+                        <div class="flex-end mt-3">
+                            <button type="button" class="btn btn-primary mr-2" [buttonLoading]="isSaving$ | async" (click)="saveEdit(county.CountyID)">Save</button>
+                            <button type="button" class="btn btn-secondary-outline" (click)="cancelEdit()">Cancel</button>
+                        </div>
+                    } @else {
+                        <div [innerHTML]="countyContentSafeHtml$ | async"></div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
     <div class="g-col-12">
         <div class="card">
             <div class="card-header"><span class="card-title">Projects</span></div>

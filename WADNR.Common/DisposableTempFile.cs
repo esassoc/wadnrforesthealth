@@ -26,7 +26,7 @@ namespace WADNR.Common
 {
     public class DisposableTempFile : IDisposable
     {
-        private FileInfo _fileInfo;
+        private FileInfo? _fileInfo;
 
         private bool _isDisposed;
 
@@ -53,7 +53,7 @@ namespace WADNR.Common
             get
             {
                 Check.Require(!_isDisposed, "Object is already disposed");
-                return _fileInfo;
+                return _fileInfo!;
             }
         }
 

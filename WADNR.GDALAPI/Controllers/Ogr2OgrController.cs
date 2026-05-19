@@ -113,7 +113,7 @@ public class Ogr2OgrController : ControllerBase
     [HttpPost("ogr2ogr/geojson-to-gdb")]
     [RequestSizeLimit(10_000_000_000)]
     [RequestFormLimits(MultipartBodyLengthLimit = 10_000_000_000)]
-    public async Task<IActionResult> GeoJsonToGdb([FromForm] IFormFile file, [FromForm] string layerName, [FromForm] string gdbName = null)
+    public async Task<IActionResult> GeoJsonToGdb([FromForm] IFormFile file, [FromForm] string layerName, [FromForm] string? gdbName = null)
     {
         if (string.IsNullOrWhiteSpace(layerName) || !ValidLayerNameRegex.IsMatch(layerName))
         {

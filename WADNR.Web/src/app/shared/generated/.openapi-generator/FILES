@@ -91,6 +91,7 @@ model/classification-with-project-count.ts
 model/coordinate-sequence-factory.ts
 model/coordinate-sequence.ts
 model/coordinate.ts
+model/county-content-upsert-request.ts
 model/county-detail.ts
 model/county-grid-row.ts
 model/county-lookup-item.ts

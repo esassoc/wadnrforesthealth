@@ -56,6 +56,7 @@
   </PropertyGroup>
   <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="dbo" />
@@ -365,7 +366,6 @@
     <Build Include="dbo\Functions\dbo.fConvertDateTimeUtcToPacificStandardTime.sql" />
     <Build Include="dbo\Functions\dbo.fGetBoundingBoxForProjectIdList.sql" />
     <Build Include="dbo\Functions\dbo.fGetCalendarMonthIndexFromMonthString.sql" />
-    <Build Include="dbo\Functions\dbo.fGetColumnNamesForTable.sql" />
     <Build Include="dbo\Functions\dbo.fGetCurrentFiscalYearBiennium.sql" />
     <Build Include="dbo\Functions\dbo.fGetFiscalYearBienniumForDate.sql" />
     <Build Include="dbo\Functions\dbo.fGetProjectDnrUploadRegion.sql" />
@@ -378,11 +378,9 @@
     <Build Include="dbo\Functions\dbo.RTrimX.sql" />
     <Build Include="dbo\Procs\pVendorImportJson.sql" />
     <Build Include="dbo\Procs\dbo.pClearGisImportTables.sql" />
-    <Build Include="dbo\Procs\dbo.pGeospatial_SpatialIndexCreate.sql" />
     <Build Include="dbo\Procs\dbo.pHangFireClearJobQueue.sql" />
     <Build Include="dbo\Procs\dbo.pHangFireRescheduleJobs.sql" />
     <Build Include="dbo\Procs\dbo.pImportLoaTabularData.sql" />
-    <Build Include="dbo\Procs\dbo.procImportGisTableToGisFeature.sql" />
     <Build Include="dbo\Procs\dbo.procImportTreatmentsFromGisUploadAttempt.sql" />
     <Build Include="dbo\Procs\pArcOnlineFundSourceExpenditureImportJson.sql" />
     <Build Include="dbo\Procs\pArcOnlineMarkJsonImportStatus.sql" />
@@ -438,6 +436,9 @@
     <None Include="Scripts\ReleaseScripts\0003 - Populate IsUser column on Person table.sql" />
     <None Include="Scripts\ReleaseScripts\0004 - Update RTE links to new Angular routes.sql" />
     <None Include="Scripts\ReleaseScripts\0005 - Strip returnUrl query params from CustomPage content.sql" />
+    <None Include="Scripts\ReleaseScripts\0006 - Add ApiKeyGeneratedDate to Person.sql" />
+    <None Include="Scripts\ReleaseScripts\0007 - WADNR-2263 Backfill FHT Project Numbers with year prefix.sql" />
+    <None Include="Scripts\ReleaseScripts\0008 - WADNR-2264 Delete blocked projects imported in error.sql" />
   </ItemGroup>
   <UsingTask TaskName="ScriptDeploymentGenerator" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>

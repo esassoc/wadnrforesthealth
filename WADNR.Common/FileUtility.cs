@@ -207,11 +207,17 @@ namespace WADNR.Common
         {
             var mime = "application/octetstream";
 
+            if (!OperatingSystem.IsWindows())
+            {
+                return mime;
+            }
+
             var ext = ExtensionFor(fileName).ToLower();
             var rk = Registry.ClassesRoot.OpenSubKey(ext);
-            if (rk?.GetValue("Content Type") != null)
+            var contentType = rk?.GetValue("Content Type")?.ToString();
+            if (!string.IsNullOrEmpty(contentType))
             {
-                mime = rk.GetValue("Content Type").ToString();
+                mime = contentType;
             }
             return mime;
         }
@@ -283,7 +289,7 @@ namespace WADNR.Common
                         var fileUnzipFullPath = Path.GetDirectoryName(fileUnzipFullName);
 
                         //Creates the directory (if it doesn't exist) for the new path
-                        if (!Directory.Exists(fileUnzipFullPath))
+                        if (!string.IsNullOrEmpty(fileUnzipFullPath) && !Directory.Exists(fileUnzipFullPath))
                         {
                             Directory.CreateDirectory(fileUnzipFullPath);
                         }

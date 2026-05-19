@@ -14,6 +14,7 @@ export class CountyDetail {
     CountyID?: number;
     CountyName?: string | null;
     StateProvinceID?: number;
+    CountyContent?: string | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -23,6 +24,7 @@ export interface CountyDetailForm {
     CountyID?: FormControl<number>;
     CountyName?: FormControl<string>;
     StateProvinceID?: FormControl<number>;
+    CountyContent?: FormControl<string>;
 }
 
 export class CountyDetailFormControls { 
@@ -47,6 +49,16 @@ export class CountyDetailFormControls {
         }
     );
     public static StateProvinceID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static CountyContent = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

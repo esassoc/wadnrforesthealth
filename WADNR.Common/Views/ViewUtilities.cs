@@ -97,7 +97,7 @@ namespace WADNR.Common.Views
             {
                 var o = stringFuncIfTrue();
                 if (o != null)
-                    result = o.ToString();
+                    result = o.ToString() ?? string.Empty;
             }
             return result.HtmlEncode().Flatten("<br/>");
         }
@@ -114,7 +114,7 @@ namespace WADNR.Common.Views
 
         public static string DisplayValue(this int? value, string stringIfNullOrDefault)
         {
-            return value == null || value == default(int) ? stringIfNullOrDefault : value.ToString();
+            return value == null || value == default(int) ? stringIfNullOrDefault : value.Value.ToString();
         }
 
         public static string DisplayValue(this int? value)

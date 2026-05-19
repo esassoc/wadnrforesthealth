@@ -24,7 +24,7 @@ public abstract class ScheduledBackgroundJobBase<T>
     private readonly IWebHostEnvironment _webHostEnvironment;
     protected readonly WADNRDbContext DbContext;
     protected readonly WADNRConfiguration WADNRConfiguration;
-    private readonly SitkaSmtpClientService _sitkaSmtpClient;
+    protected readonly SitkaSmtpClientService SitkaSmtpClient;
 
     /// <summary> 
     /// Jobs must have a proscribed environment to run in (for example, to prevent a job that makes a lot of calls to an external API from accidentally DOSing that API by running on all local boxes, QA, and Prod at the same time.
@@ -38,7 +38,7 @@ public abstract class ScheduledBackgroundJobBase<T>
         _webHostEnvironment = webHostEnvironment;
         DbContext = dbContext;
         WADNRConfiguration = ltInfoConfiguration.Value;
-        _sitkaSmtpClient = sitkaSmtpClient;
+        SitkaSmtpClient = sitkaSmtpClient;
     }
 
     /// <summary>
@@ -81,8 +81,8 @@ public abstract class ScheduledBackgroundJobBase<T>
                     IsBodyHtml = true
                 };
 
-                mailMessage.To.Add(new MailAddress(WADNRConfiguration.SitkaEmailRedirect));
-                _sitkaSmtpClient.Send(mailMessage);
+                mailMessage.To.Add(new MailAddress(WADNRConfiguration.SitkaSupportEmail));
+                SitkaSmtpClient.Send(mailMessage);
                 throw new ScheduledBackgroundJobException(_jobName, ex);
             }
         }

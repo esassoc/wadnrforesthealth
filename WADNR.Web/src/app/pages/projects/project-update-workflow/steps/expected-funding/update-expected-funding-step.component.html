@@ -85,6 +85,10 @@
                                 <tr>
                                     <th style="width: 40px"></th>
                                     <th>WA DNR Fund Source Allocation</th>
+                                    @if (vm.isInLandownerAssistanceProgram) {
+                                        <th style="width: 150px; text-align: right"><field-definition fieldDefinition="ProjectFundSourceAllocationRequestMatchAmount"></field-definition></th>
+                                        <th style="width: 150px; text-align: right"><field-definition fieldDefinition="ProjectFundSourceAllocationRequestPayAmount"></field-definition></th>
+                                    }
                                     <th style="width: 180px; text-align: right">Total Amount</th>
                                 </tr>
                             </thead>
@@ -102,6 +106,14 @@
                                             </a>
                                         </td>
                                         <td>{{ ar.fundSourceAllocationName }}</td>
+                                        @if (vm.isInLandownerAssistanceProgram) {
+                                            <td>
+                                                <form-field [formControl]="ar.matchAmountControl" [type]="FormFieldType.Currency" [readOnly]="state.saving" placeholder="$0.00" fieldLabel="Match Amount" [srOnlyLabel]="true"> </form-field>
+                                            </td>
+                                            <td>
+                                                <form-field [formControl]="ar.payAmountControl" [type]="FormFieldType.Currency" [readOnly]="state.saving" placeholder="$0.00" fieldLabel="Pay Amount" [srOnlyLabel]="true"> </form-field>
+                                            </td>
+                                        }
                                         <td>
                                             <form-field [formControl]="ar.amountControl" [type]="FormFieldType.Currency" [readOnly]="state.saving" placeholder="$0.00" fieldLabel="Total Amount" [srOnlyLabel]="true"> </form-field>
                                         </td>
@@ -111,6 +123,10 @@
                             <tfoot>
                                 <tr>
                                     <th colspan="2">Total</th>
+                                    @if (vm.isInLandownerAssistanceProgram) {
+                                        <th class="text-right">{{ getMatchAmountTotal() | currency }}</th>
+                                        <th class="text-right">{{ getPayAmountTotal() | currency }}</th>
+                                    }
                                     <th class="text-right">{{ getTotalAmount() | currency }}</th>
                                 </tr>
                             </tfoot>

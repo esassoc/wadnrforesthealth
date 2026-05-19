@@ -105,9 +105,14 @@ public static class AssemblySteps
         var configAdminID = int.Parse(Configuration["testAdminPersonID"] ?? "1");
         var configNormalID = int.Parse(Configuration["testNormalPersonID"] ?? "2");
 
-        // Create DbContext options
+        // Create DbContext options (mirror production: NetTopologySuite + EnableRetryOnFailure so
+        // tests exercise the real execution-strategy path, including the user-initiated-transaction guard)
         var dbOptions = new DbContextOptionsBuilder<WADNRDbContext>()
-            .UseSqlServer(connectionString, x => x.UseNetTopologySuite())
+            .UseSqlServer(connectionString, x =>
+            {
+                x.UseNetTopologySuite();
+                x.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null);
+            })
             .Options;
 
         // Create a temporary context without audit provider to query persons
@@ -279,6 +284,7 @@ public static class AssemblySteps
                     {
                         x.CommandTimeout((int)TimeSpan.FromMinutes(3).TotalSeconds);
                         x.UseNetTopologySuite();
+                        x.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null);
                     });
                 });
 
@@ -342,7 +348,11 @@ public static class AssemblySteps
             ?? throw new InvalidOperationException("sqlConnectionString not found in environment.json");
 
         var dbOptions = new DbContextOptionsBuilder<WADNRDbContext>()
-            .UseSqlServer(connectionString, x => x.UseNetTopologySuite())
+            .UseSqlServer(connectionString, x =>
+            {
+                x.UseNetTopologySuite();
+                x.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null);
+            })
             .Options;
 
         return new WADNRDbContext(dbOptions, AuditUserProvider);

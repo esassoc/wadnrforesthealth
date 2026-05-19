@@ -19,16 +19,13 @@ Source code is available upon request via <support@sitkatech.com>.
 </license>
 -----------------------------------------------------------------------*/
 using System;
-using System.Runtime.Serialization;
 
 namespace WADNR.Common.DesignByContract
 {
-	[Serializable]
 	public class PreconditionException : System.ApplicationException
 	{
 		public PreconditionException() {}
 		public PreconditionException(string message) : base(message) {}
 		public PreconditionException(string message, Exception inner) : base(message, inner) {}
-		public PreconditionException(SerializationInfo info, StreamingContext context): base(info, context) {}
 	}
 }

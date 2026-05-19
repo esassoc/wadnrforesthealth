@@ -47,6 +47,15 @@ public class CountyController(
         return Ok(projects);
     }
 
+    [HttpPut("{countyID}/content")]
+    [PageContentManageFeature]
+    [EntityNotFound(typeof(County), "countyID")]
+    public async Task<ActionResult<CountyDetail>> UpdateContent([FromRoute] int countyID, [FromBody] CountyContentUpsertRequest request)
+    {
+        var updated = await Counties.UpdateContentAsync(DbContext, countyID, request.CountyContent);
+        return RequireNotNullThrowNotFound(updated, "County", countyID);
+    }
+
     [HttpGet("{countyID}/projects/feature-collection")]
     [AllowAnonymous]
     [EntityNotFound(typeof(County), "countyID")]

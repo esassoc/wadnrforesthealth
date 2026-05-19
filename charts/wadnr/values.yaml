@@ -35,7 +35,7 @@ api:
     pullPolicy: Always
   nameOverride: ""
   fullnameOverride: ""
-  namespace: h2o
+  namespace: hawk-moth
   resources: 
     requests:
       memory: "1G"
@@ -91,7 +91,7 @@ web:
     pullPolicy: Always
   nameOverride: ""
   fullnameOverride: ""
-  namespace: h2o
+  namespace: hawk-moth
   resources: 
     requests:
       memory: "1G"
@@ -149,7 +149,7 @@ geoserver:
     # Overrides the image tag whose default is the chart appVersion.
   nameOverride: ""
   fullnameOverride: ""
-  namespace: h2o
+  namespace: hawk-moth
   resources: 
     requests:
       memory: "4G"
@@ -204,7 +204,7 @@ gdalapi:
     pullPolicy: Always
   nameOverride: ""
   fullnameOverride: ""
-  namespace: h2o
+  namespace: hawk-moth
   resources:
     requests:
       memory: "512Mi"
@@ -241,7 +241,7 @@ sitkacapture:
     pullPolicy: Always
   nameOverride: ""
   fullnameOverride: ""
-  namespace: h2o
+  namespace: hawk-moth
   resources:
     requests:
       memory: "512Mi"
@@ -279,7 +279,7 @@ scalar:
     pullPolicy: Always
   nameOverride: ""
   fullnameOverride: ""
-  namespace: h2o
+  namespace: hawk-moth
   resources:
     requests:
       memory: "512Mi"

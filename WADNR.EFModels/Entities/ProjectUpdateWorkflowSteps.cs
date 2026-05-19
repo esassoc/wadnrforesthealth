@@ -1230,6 +1230,7 @@ public static class ProjectUpdateWorkflowSteps
             .AsNoTracking()
             .Include(b => b.ProjectUpdates)
             .Include(b => b.ProjectFundingSourceUpdates)
+            .Include(b => b.ProjectUpdatePrograms)
             .Include(b => b.ProjectFundSourceAllocationRequestUpdates)
                 .ThenInclude(ar => ar.FundSourceAllocation)
                     .ThenInclude(fsa => fsa.FundSource)
@@ -1251,8 +1252,11 @@ public static class ProjectUpdateWorkflowSteps
                 FundSourceAllocationID = ar.FundSourceAllocationID,
                 FundSourceAllocationName = ar.FundSourceAllocation.FundSourceAllocationName,
                 FundSourceName = ar.FundSourceAllocation.FundSource.FundSourceName,
+                MatchAmount = ar.MatchAmount,
+                PayAmount = ar.PayAmount,
                 TotalAmount = ar.TotalAmount
-            }).ToList()
+            }).ToList(),
+            IsInLandownerAssistanceProgram = batch.ProjectUpdatePrograms.Any(pp => pp.ProgramID == Program.LandownerAssistanceProgramID)
         };
     }
 
@@ -1308,6 +1312,8 @@ public static class ProjectUpdateWorkflowSteps
             {
                 var existing = batch.ProjectFundSourceAllocationRequestUpdates.First(ar => ar.ProjectFundSourceAllocationRequestUpdateID == arRequest.ProjectFundSourceAllocationRequestUpdateID.Value);
                 existing.FundSourceAllocationID = arRequest.FundSourceAllocationID;
+                existing.MatchAmount = arRequest.MatchAmount;
+                existing.PayAmount = arRequest.PayAmount;
                 existing.TotalAmount = arRequest.TotalAmount;
             }
             else
@@ -1316,6 +1322,8 @@ public static class ProjectUpdateWorkflowSteps
                 {
                     ProjectUpdateBatchID = projectUpdateBatchID,
                     FundSourceAllocationID = arRequest.FundSourceAllocationID,
+                    MatchAmount = arRequest.MatchAmount,
+                    PayAmount = arRequest.PayAmount,
                     TotalAmount = arRequest.TotalAmount,
                     CreateDate = DateTime.UtcNow
                 });
@@ -2272,6 +2280,8 @@ public static class ProjectUpdateWorkflowSteps
             {
                 ProjectUpdateBatchID = batch.ProjectUpdateBatchID,
                 FundSourceAllocationID = ar.FundSourceAllocationID,
+                MatchAmount = ar.MatchAmount,
+                PayAmount = ar.PayAmount,
                 TotalAmount = ar.TotalAmount,
                 CreateDate = ar.CreateDate
             });
