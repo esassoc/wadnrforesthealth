@@ -7,7 +7,7 @@ import { ActivatedRoute } from "@angular/router";
 import { EditorComponent, TINYMCE_SCRIPT_SRC } from "@tinymce/tinymce-angular";
 import { Feature } from "geojson";
 import { Map } from "leaflet";
-import { BehaviorSubject, Observable, distinctUntilChanged, filter, map, shareReplay, switchMap } from "rxjs";
+import { BehaviorSubject, Observable, combineLatest, distinctUntilChanged, filter, map, shareReplay, switchMap } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
@@ -58,6 +58,8 @@ export class CountyDetailComponent implements OnInit, AfterViewChecked {
     public countyID$: Observable<number>;
     public county$: Observable<CountyDetail>;
     public countyContentSafeHtml$: Observable<SafeHtml>;
+    public hasContent$: Observable<boolean>;
+    public showBasics$: Observable<boolean>;
     public projects$: Observable<ProjectCountyDetailGridRow[]>;
     public projectsIsLoading$: Observable<boolean>;
     public projectFeatures$: Observable<IFeature[]>;
@@ -123,6 +125,14 @@ export class CountyDetailComponent implements OnInit, AfterViewChecked {
 
         this.countyContentSafeHtml$ = this.county$.pipe(
             map((c) => this.sanitizer.bypassSecurityTrustHtml(c?.CountyContent ?? ""))
+        );
+
+        this.hasContent$ = this.county$.pipe(
+            map((c) => !!c?.CountyContent && c.CountyContent.trim().length > 0)
+        );
+
+        this.showBasics$ = combineLatest([this.canEdit$, this.hasContent$]).pipe(
+            map(([canEdit, hasContent]) => canEdit || hasContent)
         );
 
         this.projects$ = this.countyID$.pipe(
