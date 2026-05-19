@@ -2,6 +2,7 @@ CREATE TABLE [dbo].[County](
     [CountyName] [varchar](100) NOT NULL,
     [StateProvinceID] [int] NOT NULL CONSTRAINT FK_County_StateProvince_StateProvinceID FOREIGN KEY REFERENCES [dbo].[StateProvince]([StateProvinceID]),
     [CountyFeature] [geometry] NULL,
+    [CountyContent] [nvarchar](max) NULL,
     [CountyID] [int] IDENTITY(1,1) NOT NULL CONSTRAINT PK_County_CountyID PRIMARY KEY,
     CONSTRAINT AK_County_CountyName_StateProvinceID UNIQUE ([CountyName], [StateProvinceID])
 )

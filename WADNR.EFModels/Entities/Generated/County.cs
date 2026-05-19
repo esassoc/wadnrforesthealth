@@ -20,6 +20,8 @@ public partial class County
     [Column(TypeName = "geometry")]
     public Geometry? CountyFeature { get; set; }
 
+    public string? CountyContent { get; set; }
+
     [Key]
     public int CountyID { get; set; }
 

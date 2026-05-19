@@ -49,6 +49,25 @@ public static class Counties
         return await GetByIDAsDetailAsync(dbContext, entity.CountyID);
     }
 
+    public static async Task<CountyDetail?> UpdateContentAsync(WADNRDbContext dbContext, int countyID, string? content)
+    {
+        var entity = await dbContext.Counties.SingleOrDefaultAsync(x => x.CountyID == countyID);
+        if (entity == null)
+        {
+            return null;
+        }
+
+        entity.CountyContent = content;
+        await dbContext.SaveChangesAsync();
+        return new CountyDetail
+        {
+            CountyID = entity.CountyID,
+            CountyName = entity.CountyName,
+            StateProvinceID = entity.StateProvinceID,
+            CountyContent = entity.CountyContent
+        };
+    }
+
     public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int countyID)
     {
         var deletedCount = await dbContext.Counties

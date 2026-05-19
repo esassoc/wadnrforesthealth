@@ -9,7 +9,8 @@ public static class CountyProjections
     {
         CountyID = x.CountyID,
         CountyName = x.CountyName,
-        StateProvinceID = x.StateProvinceID
+        StateProvinceID = x.StateProvinceID,
+        CountyContent = x.CountyContent
     };
 
     public static readonly Expression<Func<County, CountyGridRow>> AsGridRow = x => new CountyGridRow

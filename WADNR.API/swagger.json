@@ -1557,6 +1557,66 @@
         "x-anonymous": true
       }
     },
+    "/counties/{countyID}/content": {
+      "put": {
+        "tags": [
+          "County"
+        ],
+        "operationId": "UpdateContent_County",
+        "parameters": [
+          {
+            "name": "countyID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CountyContentUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CountyContentUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CountyContentUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountyDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountyDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountyDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/counties/{countyID}/projects/feature-collection": {
       "get": {
         "tags": [
@@ -24463,6 +24523,16 @@
         },
         "additionalProperties": false
       },
+      "CountyContentUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "CountyContent": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CountyDetail": {
         "type": "object",
         "properties": {
@@ -24477,6 +24547,10 @@
           "StateProvinceID": {
             "type": "integer",
             "format": "int32"
+          },
+          "CountyContent": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
