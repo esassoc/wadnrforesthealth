@@ -25,7 +25,9 @@
             <div class="card-header flex-between">
                 <span class="card-title">Basics</span>
                 @if ((canEdit$ | async) && !(isEditing$ | async)) {
-                    <button type="button" class="btn btn-secondary" (click)="enterEdit(county.CountyContent)">Edit</button>
+                    <button type="button" class="card-header-edit-link" (click)="enterEdit(county.CountyContent)" title="Edit Basics">
+                        <icon icon="Edit"></icon>
+                    </button>
                 }
             </div>
             <div class="card-body">

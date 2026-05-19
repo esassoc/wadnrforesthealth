@@ -23,6 +23,7 @@ import { IFeature } from "src/app/shared/generated/model/i-feature";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
+import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { AlertService } from "src/app/shared/services/alert.service";
@@ -45,6 +46,7 @@ import { ColDef } from "node_modules/ag-grid-community/dist/types/src/entities/c
         WADNRGridComponent,
         LoadingDirective,
         ButtonLoadingDirective,
+        IconComponent,
         EditorComponent,
         FormsModule,
     ],
