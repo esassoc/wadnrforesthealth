@@ -13,6 +13,7 @@ using WADNR.API.Services.Authorization;
 using WADNR.Common.ExcelWorkbookUtilities;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.FundSourceAllocation;
 
 namespace WADNR.API.Controllers;
 
@@ -96,9 +97,9 @@ public class FundSourceController(
     }
 
     [HttpGet("{fundSourceID}/allocations")]
-    [AllowAnonymous]
+    [LoggedInFeature]
     [EntityNotFound(typeof(FundSource), "fundSourceID")]
-    public async Task<ActionResult<IEnumerable<FundSourceAllocationLookupItem>>> ListAllocations([FromRoute] int fundSourceID)
+    public async Task<ActionResult<IEnumerable<FundSourceAllocationGridRow>>> ListAllocations([FromRoute] int fundSourceID)
     {
         var allocations = await FundSources.ListAllocationsAsync(DbContext, fundSourceID);
         return Ok(allocations);

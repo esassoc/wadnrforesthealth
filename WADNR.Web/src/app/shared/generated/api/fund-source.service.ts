@@ -17,7 +17,7 @@ import { Observable }                                        from 'rxjs';
 // @ts-ignore
 import { FundSourceAgreementGridRow } from '../model/fund-source-agreement-grid-row';
 // @ts-ignore
-import { FundSourceAllocationLookupItem } from '../model/fund-source-allocation-lookup-item';
+import { FundSourceAllocationGridRow } from '../model/fund-source-allocation-grid-row';
 // @ts-ignore
 import { FundSourceBudgetLineItemGridRow } from '../model/fund-source-budget-line-item-grid-row';
 // @ts-ignore
@@ -634,9 +634,9 @@ export class FundSourceService extends BaseService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listAllocationsFundSource(fundSourceID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FundSourceAllocationLookupItem>>;
-    public listAllocationsFundSource(fundSourceID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FundSourceAllocationLookupItem>>>;
-    public listAllocationsFundSource(fundSourceID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FundSourceAllocationLookupItem>>>;
+    public listAllocationsFundSource(fundSourceID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FundSourceAllocationGridRow>>;
+    public listAllocationsFundSource(fundSourceID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FundSourceAllocationGridRow>>>;
+    public listAllocationsFundSource(fundSourceID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FundSourceAllocationGridRow>>>;
     public listAllocationsFundSource(fundSourceID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (fundSourceID === null || fundSourceID === undefined) {
             throw new Error('Required parameter fundSourceID was null or undefined when calling listAllocationsFundSource.');
@@ -671,7 +671,7 @@ export class FundSourceService extends BaseService {
 
         let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/allocations`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Array<FundSourceAllocationLookupItem>>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<Array<FundSourceAllocationGridRow>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

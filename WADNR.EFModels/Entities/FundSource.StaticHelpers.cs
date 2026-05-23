@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WADNR.Models.DataTransferObjects;
 using WADNR.Models.DataTransferObjects.FundSource;
+using WADNR.Models.DataTransferObjects.FundSourceAllocation;
 
 namespace WADNR.EFModels.Entities;
 
@@ -130,18 +131,9 @@ public static class FundSources
         return deletedCount > 0;
     }
 
-    public static async Task<List<FundSourceAllocationLookupItem>> ListAllocationsAsync(WADNRDbContext dbContext, int fundSourceID)
+    public static async Task<List<FundSourceAllocationGridRow>> ListAllocationsAsync(WADNRDbContext dbContext, int fundSourceID)
     {
-        return await dbContext.FundSourceAllocations
-            .AsNoTracking()
-            .Where(x => x.FundSourceID == fundSourceID)
-            .OrderBy(x => x.FundSourceAllocationName)
-            .Select(x => new FundSourceAllocationLookupItem
-            {
-                FundSourceAllocationID = x.FundSourceAllocationID,
-                FundSourceAllocationName = x.FundSourceAllocationName ?? string.Empty
-            })
-            .ToListAsync();
+        return await FundSourceAllocations.ListForFundSourceAsGridRowAsync(dbContext, fundSourceID);
     }
 
     public static async Task<List<FundSourceProjectGridRow>> ListProjectsAsync(WADNRDbContext dbContext, int fundSourceID)

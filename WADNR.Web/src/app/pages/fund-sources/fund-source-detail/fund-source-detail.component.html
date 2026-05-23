@@ -171,6 +171,37 @@
     </div>
     }
 
+    <!-- Fund Source Allocations Grid (logged-in users only) -->
+    @if (isUserLoggedIn$ | async) {
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Fund Source Allocations for this Fund Source ({{ fundSource.FundSourceTitle }})</span>
+            </div>
+            <div class="card-body">
+                @if (canManageFundSources$ | async) {
+                    <div class="flex-end mb-2">
+                        <button class="btn btn-sm btn-primary" (click)="openCreateAllocationModal(fundSource.FundSourceID)">Add Allocation</button>
+                    </div>
+                }
+                @if (allocations$ | async; as allocations) {
+                    @if (allocations.length > 0) {
+                        <wadnr-grid
+                            [columnDefs]="allocationColumnDefs"
+                            [rowData]="allocations"
+                            height="350px"
+                            downloadFileName="fund-source-allocations"
+                            fullscreenTitle="Fund Source Allocations">
+                        </wadnr-grid>
+                    } @else {
+                        <p class="text-muted">No allocations exist for this fund source.</p>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    }
+
     <!-- Projects Grid (always visible) -->
     <div class="g-col-12">
         <div class="card">

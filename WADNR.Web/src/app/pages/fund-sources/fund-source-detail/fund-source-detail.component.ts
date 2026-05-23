@@ -17,6 +17,8 @@ import { ConfirmService } from "src/app/shared/services/confirm/confirm.service"
 
 import { FundSourceService } from "src/app/shared/generated/api/fund-source.service";
 import { FundSourceDetail } from "src/app/shared/generated/model/fund-source-detail";
+import { FundSourceAllocationDetail } from "src/app/shared/generated/model/fund-source-allocation-detail";
+import { FundSourceAllocationGridRow } from "src/app/shared/generated/model/fund-source-allocation-grid-row";
 import { FundSourceProjectGridRow } from "src/app/shared/generated/model/fund-source-project-grid-row";
 import { FundSourceAgreementGridRow } from "src/app/shared/generated/model/fund-source-agreement-grid-row";
 import { FundSourceBudgetLineItemGridRow } from "src/app/shared/generated/model/fund-source-budget-line-item-grid-row";
@@ -44,6 +46,7 @@ export class FundSourceDetailComponent {
 
     public fundSourceID$: Observable<number>;
     public fundSource$: Observable<FundSourceDetail>;
+    public allocations$: Observable<FundSourceAllocationGridRow[]>;
     public projects$: Observable<FundSourceProjectGridRow[]>;
     public agreements$: Observable<FundSourceAgreementGridRow[]>;
     public budgetLineItems$: Observable<FundSourceBudgetLineItemGridRow[]>;
@@ -51,6 +54,7 @@ export class FundSourceDetailComponent {
     public notes$: Observable<FundSourceNoteGridRow[]>;
     public internalNotes$: Observable<FundSourceNoteInternalGridRow[]>;
 
+    public allocationColumnDefs: ColDef<FundSourceAllocationGridRow>[] = [];
     public projectColumnDefs: ColDef<FundSourceProjectGridRow>[] = [];
     public agreementColumnDefs: ColDef<FundSourceAgreementGridRow>[] = [];
     public budgetLineItemColumnDefs: ColDef<FundSourceBudgetLineItemGridRow>[] = [];
@@ -87,6 +91,14 @@ export class FundSourceDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.allocations$ = combineLatest([this.fundSourceID$, refresh$, this.isUserLoggedIn$]).pipe(
+            switchMap(([fundSourceID, , isLoggedIn]) => isLoggedIn
+                ? this.fundSourceService.listAllocationsFundSource(fundSourceID)
+                : of([] as FundSourceAllocationGridRow[])
+            ),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
         this.projects$ = this.fundSourceID$.pipe(
             switchMap((fundSourceID) => this.fundSourceService.listProjectsFundSource(fundSourceID)),
             shareReplay({ bufferSize: 1, refCount: true })
@@ -120,9 +132,34 @@ export class FundSourceDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
+        this.allocationColumnDefs = this.createAllocationColumnDefs();
         this.projectColumnDefs = this.createProjectColumnDefs();
         this.agreementColumnDefs = this.createAgreementColumnDefs();
         this.budgetLineItemColumnDefs = this.createBudgetLineItemColumnDefs();
+    }
+
+    private createAllocationColumnDefs(): ColDef<FundSourceAllocationGridRow>[] {
+        return [
+            this.utilityFunctions.createLinkColumnDef("Allocation Name", "FundSourceAllocationName", "FundSourceAllocationID", {
+                InRouterLink: "/fund-source-allocations/",
+            }),
+            this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy"),
+            this.utilityFunctions.createDateColumnDef("End Date", "EndDate", "M/d/yyyy"),
+            this.utilityFunctions.createCurrencyColumnDef("Allocation Amount", "AllocationAmount", {
+                MaxDecimalPlacesToDisplay: 2,
+            }),
+            this.utilityFunctions.createCurrencyColumnDef("Current Balance", "CurrentBalance", {
+                MaxDecimalPlacesToDisplay: 2,
+            }),
+            this.utilityFunctions.createBasicColumnDef("DNR Upland Region", "DNRUplandRegionName", {
+                CustomDropdownFilterField: "DNRUplandRegionName",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Organization", "OrganizationName"),
+            this.utilityFunctions.createBasicColumnDef("Priority", "FundSourceAllocationPriorityName", {
+                CustomDropdownFilterField: "FundSourceAllocationPriorityName",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Project Count", "ProjectCount"),
+        ];
     }
 
     private createProjectColumnDefs(): ColDef<FundSourceProjectGridRow>[] {
@@ -205,6 +242,24 @@ export class FundSourceDetailComponent {
     }
 
     // Modal & action methods
+    openCreateAllocationModal(fundSourceID: number): void {
+        import("../../fund-source-allocations/fund-source-allocation-detail/fund-source-allocation-edit-modal.component").then(({ FundSourceAllocationEditModalComponent }) => {
+            const dialogRef = this.dialogService.open(FundSourceAllocationEditModalComponent, {
+                data: {
+                    allocation: new FundSourceAllocationDetail({ FundSourceID: fundSourceID }),
+                    mode: "create" as const,
+                    lockFundSource: true,
+                },
+                size: "lg",
+            });
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (typeof result === "number" || result === true) {
+                    this.refreshData$.next();
+                }
+            });
+        });
+    }
+
     openEditModal(fundSource: FundSourceDetail): void {
         import("../fund-source-edit-modal.component").then(({ FundSourceEditModalComponent }) => {
             const dialogRef = this.dialogService.open(FundSourceEditModalComponent, {

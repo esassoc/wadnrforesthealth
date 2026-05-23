@@ -4690,7 +4690,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                    "$ref": "#/components/schemas/FundSourceAllocationGridRow"
                   }
                 }
               },
@@ -4698,7 +4698,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                    "$ref": "#/components/schemas/FundSourceAllocationGridRow"
                   }
                 }
               },
@@ -4706,14 +4706,13 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                    "$ref": "#/components/schemas/FundSourceAllocationGridRow"
                   }
                 }
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       }
     },
     "/fund-sources/{fundSourceID}/projects": {
