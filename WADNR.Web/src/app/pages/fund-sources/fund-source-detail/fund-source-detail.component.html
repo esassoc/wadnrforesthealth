@@ -179,24 +179,18 @@
                 <span class="card-title">Fund Source Allocations for this Fund Source ({{ fundSource.FundSourceTitle }})</span>
             </div>
             <div class="card-body">
-                @if (canManageFundSources$ | async) {
-                    <div class="flex-end mb-2">
-                        <button class="btn btn-sm btn-primary" (click)="openCreateAllocationModal(fundSource.FundSourceID)">Add Allocation</button>
-                    </div>
-                }
-                @if (allocations$ | async; as allocations) {
-                    @if (allocations.length > 0) {
-                        <wadnr-grid
-                            [columnDefs]="allocationColumnDefs"
-                            [rowData]="allocations"
-                            height="350px"
-                            downloadFileName="fund-source-allocations"
-                            fullscreenTitle="Fund Source Allocations">
-                        </wadnr-grid>
-                    } @else {
-                        <p class="text-muted">No allocations exist for this fund source.</p>
+                <wadnr-grid
+                    [rowData]="allocations$ | async"
+                    [columnDefs]="allocationColumnDefs"
+                    height="350px"
+                    downloadFileName="fund-source-allocations"
+                    fullscreenTitle="Fund Source Allocations">
+                    @if (canManageFundSources$ | async) {
+                        <button customGridActionsRight class="btn btn-sm btn-primary" (click)="openCreateAllocationModal(fundSource)">
+                            <i class="fa fa-plus"></i> Add Allocation
+                        </button>
                     }
-                }
+                </wadnr-grid>
             </div>
         </div>
     </div>

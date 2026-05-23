@@ -242,11 +242,16 @@ export class FundSourceDetailComponent {
     }
 
     // Modal & action methods
-    openCreateAllocationModal(fundSourceID: number): void {
+    openCreateAllocationModal(fundSource: FundSourceDetail): void {
         import("../../fund-source-allocations/fund-source-allocation-detail/fund-source-allocation-edit-modal.component").then(({ FundSourceAllocationEditModalComponent }) => {
             const dialogRef = this.dialogService.open(FundSourceAllocationEditModalComponent, {
                 data: {
-                    allocation: new FundSourceAllocationDetail({ FundSourceID: fundSourceID }),
+                    allocation: new FundSourceAllocationDetail({
+                        FundSourceID: fundSource.FundSourceID,
+                        OrganizationID: fundSource.Organization?.OrganizationID,
+                        StartDate: fundSource.StartDate,
+                        EndDate: fundSource.EndDate,
+                    }),
                     mode: "create" as const,
                     lockFundSource: true,
                 },
