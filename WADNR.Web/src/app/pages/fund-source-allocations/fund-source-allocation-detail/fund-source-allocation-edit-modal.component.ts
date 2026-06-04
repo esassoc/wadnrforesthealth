@@ -231,7 +231,7 @@ export class FundSourceAllocationEditModalComponent extends BaseModal implements
     form = new FormGroup({
         fundSourceAllocationName: new FormControl<string | null>(null, Validators.required),
         fundSourceID: new FormControl<number | null>(null, Validators.required),
-        allocationAmount: new FormControl<number | null>(null),
+        allocationAmount: new FormControl<number | null>(null, [Validators.required, Validators.min(0.01)]),
         startDate: new FormControl<string | null>(null),
         endDate: new FormControl<string | null>(null),
         organizationID: new FormControl<number | null>(null, Validators.required),

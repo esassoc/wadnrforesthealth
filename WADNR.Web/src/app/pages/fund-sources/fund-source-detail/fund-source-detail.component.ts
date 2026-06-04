@@ -141,24 +141,56 @@ export class FundSourceDetailComponent {
     private createAllocationColumnDefs(): ColDef<FundSourceAllocationGridRow>[] {
         return [
             this.utilityFunctions.createLinkColumnDef("Allocation Name", "FundSourceAllocationName", "FundSourceAllocationID", {
+                FieldDefinitionType: "FundSourceAllocationName",
+                FieldDefinitionLabelOverride: "Allocation Name",
                 InRouterLink: "/fund-source-allocations/",
             }),
-            this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy"),
-            this.utilityFunctions.createDateColumnDef("End Date", "EndDate", "M/d/yyyy"),
             this.utilityFunctions.createCurrencyColumnDef("Allocation Amount", "AllocationAmount", {
                 MaxDecimalPlacesToDisplay: 2,
+                FieldDefinitionType: "AllocationAmount",
             }),
             this.utilityFunctions.createCurrencyColumnDef("Current Balance", "CurrentBalance", {
                 MaxDecimalPlacesToDisplay: 2,
+                FieldDefinitionType: "FundSourceAllocationCurrentBalance",
+                FieldDefinitionLabelOverride: "Allocation Current Balance",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Fund Source Manager", "FundSourceManagerName", {
+                FieldDefinitionType: "FundSourceManager",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Program Managers", "ProgramManagerNames", {
+                FieldDefinitionType: "ProgramManager",
+            }),
+            this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy", {
+                FieldDefinitionType: "FundSourceStartDate",
+            }),
+            this.utilityFunctions.createDateColumnDef("End Date", "EndDate", "M/d/yyyy", {
+                FieldDefinitionType: "FundSourceEndDate",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Parent Fund Source Status", "FundSourceStatusName", {
+                FieldDefinitionType: "FundSourceStatus",
+                FieldDefinitionLabelOverride: "Parent Fund Source Status",
+                CustomDropdownFilterField: "FundSourceStatusName",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Division", "DivisionName", {
+                FieldDefinitionType: "Division",
+                CustomDropdownFilterField: "DivisionName",
             }),
             this.utilityFunctions.createBasicColumnDef("DNR Upland Region", "DNRUplandRegionName", {
+                FieldDefinitionType: "DNRUplandRegion",
                 CustomDropdownFilterField: "DNRUplandRegionName",
             }),
-            this.utilityFunctions.createBasicColumnDef("Organization", "OrganizationName"),
-            this.utilityFunctions.createBasicColumnDef("Priority", "FundSourceAllocationPriorityName", {
-                CustomDropdownFilterField: "FundSourceAllocationPriorityName",
+            this.utilityFunctions.createBasicColumnDef("Federal Job Code", "FederalFundCodeAbbrev", {
+                FieldDefinitionType: "FederalFundCode",
+                FieldDefinitionLabelOverride: "Federal Job Code",
+                CustomDropdownFilterField: "FederalFundCodeAbbrev",
             }),
-            this.utilityFunctions.createBasicColumnDef("Project Count", "ProjectCount"),
+            this.utilityFunctions.createBasicColumnDef("PI/PC Pairs", "ProgramIndexProjectCodeDisplay", {
+                FieldDefinitionType: "ProgramIndexProjectCode",
+            }),
+            this.utilityFunctions.createBasicColumnDef("Contributing Organization", "OrganizationName", {
+                FieldDefinitionType: "Organization",
+                FieldDefinitionLabelOverride: "Contributing Organization",
+            }),
         ];
     }
 
