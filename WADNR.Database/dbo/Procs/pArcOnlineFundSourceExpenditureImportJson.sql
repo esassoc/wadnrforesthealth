@@ -97,12 +97,23 @@ select
     tgp.ExpendAccrued
 from dbo.FundSourceAllocationProgramIndexProjectCode as gapc
 inner join ProgramIndex as pin on gapc.ProgramIndexID = pin.ProgramIndexID
-inner join ProjectCode as pc on gapc.ProjectCodeID = pc.ProjectCodeID
+left join ProjectCode as pc on gapc.ProjectCodeID = pc.ProjectCodeID
 inner join dbo.FundSourceAllocationExpenditureJsonStage as tgp
-        on 
-        dbo.fRemoveLeadingZeroes(tgp.ProjectCd) = pc.ProjectCodeName 
-        and 
+        on
         dbo.fRemoveLeadingZeroes(tgp.ProgIdxCd) = pin.ProgramIndexCode
+        and
+        (
+            -- PI+PC import row matches a PI+PC allocation
+            (gapc.ProjectCodeID is not null
+             and dbo.fRemoveLeadingZeroes(tgp.ProjectCd) = pc.ProjectCodeName)
+            or
+            -- PI-only import row (blank/null PC) matches a PI-only allocation (NULL ProjectCodeID)
+            (gapc.ProjectCodeID is null
+             and (tgp.ProjectCd is null
+                  or ltrim(rtrim(tgp.ProjectCd)) = ''
+                  or ltrim(rtrim(tgp.ProjectCd)) = '---'
+                  or ltrim(rtrim(tgp.ProjectCd)) = 'N/A'))
+        )
 inner join dbo.CostTypeDatamartMapping as ctdm on ctdm.DatamartObjectCode = tgp.ObjCd
                                                   and
                                                   ctdm.DatamartSubObjectCode = tgp.SubObjCd
