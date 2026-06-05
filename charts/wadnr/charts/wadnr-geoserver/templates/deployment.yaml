@@ -44,6 +44,8 @@ spec:
             path: geoserverSqlServerPassword
           - key: geoserverAdminPassword
             path: geoserverAdminPassword
+          - key: geoserverAdminUser
+            path: geoserverAdminUser
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
