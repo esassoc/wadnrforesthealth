@@ -3,7 +3,7 @@ using WADNR.Models.DataTransferObjects;
 
 namespace WADNR.EFModels.Entities;
 
-public static class Programs
+public static partial class Programs
 {
     public static async Task<List<ProgramGridRow>> ListAsGridRowAsync(WADNRDbContext dbContext)
     {
