@@ -17,7 +17,7 @@
     <entry key="database">${datastore-database}</entry>
     <entry key="Integrated Security">false</entry>
     <entry key="port">1433</entry>
-    <entry key="passwd">crypt2:xjL80HChgf3TyQR0s7k28EY0O51eN7QhNSekQ25ulE9KA5PZE4J9RihD0hKyYMFS</entry>
+    <entry key="passwd">${datastore-password}</entry>
     <entry key="min connections">1</entry>
     <entry key="host">${datastore-host}</entry>
     <entry key="dbtype">sqlserver</entry>
@@ -28,6 +28,6 @@
     <entry key="user">${datastore-user}</entry>
   </connectionParameters>
   <__default>false</__default>
-  <dateModified>2026-05-13 17:28:44.996 UTC</dateModified>
+  <dateModified>2026-06-08 16:36:33.171 UTC</dateModified>
   <disableOnConnFailure>false</disableOnConnFailure>
 </dataStore>
