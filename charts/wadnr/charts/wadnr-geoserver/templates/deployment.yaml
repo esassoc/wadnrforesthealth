@@ -36,16 +36,6 @@ spec:
           sources:
           - configMap:
               name: {{ include "geoserver.fullname" . }}-environment-properties-configmap
-      - name: secrets
-        secret:
-          secretName: wadnr-geoserver-secrets
-          items:
-          - key: geoserverSqlServerPassword
-            path: geoserverSqlServerPassword
-          - key: geoserverAdminPassword
-            path: geoserverAdminPassword
-          - key: geoserverAdminUser
-            path: geoserverAdminUser
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -94,9 +84,6 @@ spec:
             exec:
               command: ["sleep","120"]
         volumeMounts:
-        - name: secrets
-          mountPath: /app/secrets
-          readOnly: true
         - name: config
           mountPath: /app/config
           readOnly: true
@@ -106,6 +93,17 @@ spec:
         envFrom:
         - configMapRef:
             name: {{ include "geoserver.fullname" . }}-configmap
+        env:
+        - name: GEOSERVER_ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              name: wadnr-geoserver-secrets
+              key: geoserverAdminUser
+        - name: GEOSERVER_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wadnr-geoserver-secrets
+              key: geoserverAdminPassword
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
       terminationGracePeriodSeconds: 131
