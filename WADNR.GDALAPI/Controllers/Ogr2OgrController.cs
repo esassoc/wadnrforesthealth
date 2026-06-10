@@ -11,15 +11,13 @@ public class Ogr2OgrController : ControllerBase
 {
     private readonly ILogger<Ogr2OgrController> _logger;
     private readonly Ogr2OgrService _ogr2OgrService;
-    private readonly OgrInfoService _ogrInfoService;
 
     private static readonly Regex ValidLayerNameRegex = new(@"^[\w\-. ]+$", RegexOptions.Compiled);
 
-    public Ogr2OgrController(ILogger<Ogr2OgrController> logger, Ogr2OgrService ogr2OgrService, OgrInfoService ogrInfoService)
+    public Ogr2OgrController(ILogger<Ogr2OgrController> logger, Ogr2OgrService ogr2OgrService)
     {
         _logger = logger;
         _ogr2OgrService = ogr2OgrService;
-        _ogrInfoService = ogrInfoService;
     }
 
     [HttpGet("/")]
@@ -149,7 +147,10 @@ public class Ogr2OgrController : ControllerBase
 
             // Zip the .gdb directory
             var zipPath = outputGdbDir + ".zip";
-            ZipFile.CreateFromDirectory(outputGdbDir, zipPath, CompressionLevel.Optimal, true);
+            // includeBaseDirectory=false so the .gdb files sit at the zip root.
+            // When Windows "Extract All" defaults the output folder to the zip name
+            // (e.g. Foo.gdb.zip -> Foo.gdb/), this produces a single non-nested .gdb folder.
+            ZipFile.CreateFromDirectory(outputGdbDir, zipPath, CompressionLevel.Optimal, false);
 
             var zipBytes = await System.IO.File.ReadAllBytesAsync(zipPath);
             System.IO.File.Delete(zipPath);
@@ -211,8 +212,6 @@ public class Ogr2OgrController : ControllerBase
                 geoJsonTempFiles.Add(tempFile);
                 await using var fileStream = new FileStream(tempFile.FileInfo.FullName, FileMode.Create);
                 await files[i].CopyToAsync(fileStream);
-                _logger.LogInformation("Wrote GeoJSON for layer '{LayerName}' to {Path} ({Length} bytes)",
-                    layerNames[i], tempFile.FileInfo.FullName, files[i].Length);
             }
 
             for (var i = 0; i < files.Count; i++)
@@ -222,8 +221,7 @@ public class Ogr2OgrController : ControllerBase
                     : BuildCommandLineArgumentsForGeoJsonAddLayerToFileGdb(geoJsonTempFiles[i].FileInfo.FullName, outputGdbDir, layerNames[i]);
 
                 _logger.LogInformation("Running ogr2ogr for layer '{LayerName}': {Args}", layerNames[i], string.Join(" ", args));
-                var result = _ogr2OgrService.Run(args);
-                _logger.LogInformation("ogr2ogr stdout/stderr for layer '{LayerName}': {Output}", layerNames[i], result.StdOutAndStdErr);
+                _ogr2OgrService.Run(args);
             }
 
             if (!Directory.Exists(outputGdbDir))
@@ -231,22 +229,11 @@ public class Ogr2OgrController : ControllerBase
                 return StatusCode(500, "ogr2ogr did not produce output GDB directory.");
             }
 
-            var gdbFiles = Directory.GetFiles(outputGdbDir).Select(Path.GetFileName).OrderBy(n => n).ToList();
-            _logger.LogInformation("GDB directory '{Dir}' contains {Count} files: {Files}",
-                outputGdbDir, gdbFiles.Count, string.Join(", ", gdbFiles));
-
-            try
-            {
-                var ogrinfoResult = _ogrInfoService.Run(new List<string> { "-so", outputGdbDir });
-                _logger.LogInformation("ogrinfo -so on output GDB:\n{Output}", ogrinfoResult.StdOutAndStdErr);
-            }
-            catch (Exception ogrInfoEx)
-            {
-                _logger.LogWarning(ogrInfoEx, "ogrinfo verification of output GDB failed (non-fatal)");
-            }
-
             var zipPath = outputGdbDir + ".zip";
-            ZipFile.CreateFromDirectory(outputGdbDir, zipPath, CompressionLevel.Optimal, true);
+            // includeBaseDirectory=false so the .gdb files sit at the zip root.
+            // When Windows "Extract All" defaults the output folder to the zip name
+            // (e.g. Foo.gdb.zip -> Foo.gdb/), this produces a single non-nested .gdb folder.
+            ZipFile.CreateFromDirectory(outputGdbDir, zipPath, CompressionLevel.Optimal, false);
 
             var zipBytes = await System.IO.File.ReadAllBytesAsync(zipPath);
             System.IO.File.Delete(zipPath);

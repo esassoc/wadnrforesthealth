@@ -28,6 +28,14 @@ public class ProgramGdbProjectPointDto : IHasGeometry
     public DateOnly? PlannedDate { get; set; }
     public DateOnly? CompletionDate { get; set; }
     public decimal? EstimatedTotalCost { get; set; }
+    public string? ProjectLocationNotes { get; set; }
+    // Column name is overridden at serialization time using the FieldDefinition label
+    // for "ProjectIdentifier" so it matches the UI's configurable label.
+    public string? ProjectGisIdentifier { get; set; }
+    public string? Counties { get; set; }
+    public string? Regions { get; set; }
+    public string? PriorityLandscapes { get; set; }
+    public string? FundingSources { get; set; }
     [JsonIgnore]
     public Geometry Geometry { get; set; } = null!;
 }
@@ -38,13 +46,20 @@ public class ProgramGdbProjectLocationDto : IHasGeometry
     public int ProjectID { get; set; }
     public string ProjectName { get; set; } = null!;
     public string FhtProjectNumber { get; set; } = null!;
+    public string? ProjectStage { get; set; }
+    public string? ProjectType { get; set; }
     public string ProjectLocationName { get; set; } = null!;
     public string? ProjectLocationType { get; set; }
     public string? ProjectLocationNotes { get; set; }
+    public int? ArcGisObjectID { get; set; }
+    public string? ArcGisGlobalID { get; set; }
+    public bool? ImportedFromGisUpload { get; set; }
+    public string? SourceProgram { get; set; }
     public int TreatmentCount { get; set; }
     public string? TreatmentTypes { get; set; }
     public decimal TotalFootprintAcres { get; set; }
     public decimal? TotalTreatedAcres { get; set; }
+    public decimal? TotalCost { get; set; }
     [JsonIgnore]
     public Geometry Geometry { get; set; } = null!;
 }
@@ -58,13 +73,17 @@ public class ProgramGdbTreatmentDto : IHasGeometry
     public int ProjectLocationID { get; set; }
     public string ProjectLocationName { get; set; } = null!;
     public string? TreatmentType { get; set; }
+    public string? TreatmentTypeImportedText { get; set; }
     public string? TreatmentDetailedActivityType { get; set; }
+    public string? TreatmentDetailedActivityTypeImportedText { get; set; }
     public string? TreatmentCode { get; set; }
     public DateOnly? TreatmentStartDate { get; set; }
     public DateOnly? TreatmentEndDate { get; set; }
     public decimal TreatmentFootprintAcres { get; set; }
     public decimal? TreatmentTreatedAcres { get; set; }
     public decimal? CostPerAcre { get; set; }
+    public decimal? TotalCost { get; set; }
+    public bool? ImportedFromGis { get; set; }
     public string? TreatmentNotes { get; set; }
     [JsonIgnore]
     public Geometry Geometry { get; set; } = null!;

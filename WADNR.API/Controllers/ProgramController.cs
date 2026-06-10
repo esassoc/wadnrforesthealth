@@ -215,7 +215,8 @@ public class ProgramController(
         var layers = new List<(string LayerName, string GeoJson)>();
         if (exportData.ProjectPoints.Count > 0)
         {
-            layers.Add(("ProjectPoints", SerializeAsGeoJson(exportData.ProjectPoints)));
+            var gisIdentifierLabel = await GetProjectIdentifierLabelAsync();
+            layers.Add(("ProjectPoints", SerializeProjectPointsAsGeoJson(exportData.ProjectPoints, gisIdentifierLabel)));
         }
         if (exportData.ProjectLocations.Count > 0)
         {
@@ -241,6 +242,52 @@ public class ProgramController(
     {
         var featureCollection = features.Cast<IHasGeometry>().ToFeatureCollection();
         return GeoJsonSerializer.Serialize(featureCollection);
+    }
+
+    private string SerializeProjectPointsAsGeoJson(IReadOnlyList<ProgramGdbProjectPointDto> features, string gisIdentifierLabel)
+    {
+        // Determine the target column name once: if the configured label collides with another
+        // attribute we already write (e.g. an admin sets the label to "ProjectName"), keep the
+        // original "ProjectGisIdentifier" key rather than silently overwriting the existing
+        // attribute. Use any feature's attribute set to check — the schema is identical per row.
+        var resolvedLabel = gisIdentifierLabel;
+        if (features.Count > 0 && !string.Equals(gisIdentifierLabel, nameof(ProgramGdbProjectPointDto.ProjectGisIdentifier), StringComparison.Ordinal))
+        {
+            var sampleAttributes = GeoJsonSerializer.ToKeyValuePairList(features[0]);
+            sampleAttributes.Remove(nameof(ProgramGdbProjectPointDto.ProjectGisIdentifier));
+            if (sampleAttributes.ContainsKey(gisIdentifierLabel))
+            {
+                Logger.LogWarning(
+                    "Configured FieldDefinition label '{Label}' for ProjectIdentifier collides with an existing ProjectPoints column. Falling back to '{Fallback}' for the GDB export.",
+                    gisIdentifierLabel, nameof(ProgramGdbProjectPointDto.ProjectGisIdentifier));
+                resolvedLabel = nameof(ProgramGdbProjectPointDto.ProjectGisIdentifier);
+            }
+        }
+
+        var featureCollection = new NetTopologySuite.Features.FeatureCollection();
+        foreach (var feature in features)
+        {
+            var attributes = GeoJsonSerializer.ToKeyValuePairList(feature);
+            if (attributes.Remove(nameof(ProgramGdbProjectPointDto.ProjectGisIdentifier), out var gisIdentifierValue))
+            {
+                attributes[resolvedLabel] = gisIdentifierValue;
+            }
+            featureCollection.Add(new NetTopologySuite.Features.Feature(feature.Geometry, new NetTopologySuite.Features.AttributesTable(attributes)));
+        }
+        return GeoJsonSerializer.Serialize(featureCollection);
+    }
+
+    private async Task<string> GetProjectIdentifierLabelAsync()
+    {
+        var customLabel = await DbContext.FieldDefinitionData
+            .AsNoTracking()
+            .Where(x => x.FieldDefinitionID == (int)FieldDefinitionEnum.ProjectIdentifier)
+            .Select(x => x.FieldDefinitionLabel)
+            .SingleOrDefaultAsync();
+
+        return !string.IsNullOrWhiteSpace(customLabel)
+            ? customLabel
+            : FieldDefinition.ProjectIdentifier.FieldDefinitionDisplayName;
     }
 
     #endregion

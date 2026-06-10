@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using WADNR.Models.DataTransferObjects;
 
@@ -5,6 +6,10 @@ namespace WADNR.EFModels.Entities;
 
 public static partial class Programs
 {
+    // Explicit culture so Linux containers (which often default to invariant/POSIX)
+    // render currency as $10,000.00 rather than ¤10000.00.
+    private static readonly CultureInfo GdbExportCurrencyCulture = CultureInfo.GetCultureInfo("en-US");
+
     public static async Task<ProgramGdbExportData> GetGdbExportDataAsync(WADNRDbContext dbContext, int programID)
     {
         var projectPoints = await GetGdbProjectPointsAsync(dbContext, programID);
@@ -37,6 +42,8 @@ public static partial class Programs
                 pp.Project.PlannedDate,
                 pp.Project.CompletionDate,
                 pp.Project.EstimatedTotalCost,
+                pp.Project.ProjectLocationNotes,
+                pp.Project.ProjectGisIdentifier,
                 Geometry = pp.Project.ProjectLocationPoint!,
                 Organizations = pp.Project.ProjectOrganizations.Select(po => new
                 {
@@ -50,6 +57,21 @@ public static partial class Programs
                 ProgramNames = pp.Project.ProjectPrograms
                     .Select(prp => prp.Program.ProgramName)
                     .ToList(),
+                CountyNames = pp.Project.ProjectCounties
+                    .Select(pc => pc.County.CountyName)
+                    .ToList(),
+                RegionNames = pp.Project.ProjectRegions
+                    .Select(pr => pr.DNRUplandRegion.DNRUplandRegionName)
+                    .ToList(),
+                PriorityLandscapeNames = pp.Project.ProjectPriorityLandscapes
+                    .Select(ppl => ppl.PriorityLandscape.PriorityLandscapeName)
+                    .ToList(),
+                FundingSources = pp.Project.ProjectFundSourceAllocationRequests
+                    .Select(fsar => new
+                    {
+                        FundSourceName = fsar.FundSourceAllocation.FundSource.FundSourceName,
+                        fsar.TotalAmount,
+                    }).ToList(),
             })
             .ToListAsync();
 
@@ -62,6 +84,12 @@ public static partial class Programs
             var leadImplementer = r.Organizations.FirstOrDefault(o => o.IsPrimaryContact)?.OrganizationName;
             var orgsCsv = string.Join("; ", r.Organizations
                 .Select(o => $"{o.OrganizationName} ({o.RelationshipTypeName})"));
+
+            var fundingSourcesCsv = string.Join("; ", r.FundingSources
+                .OrderBy(fs => fs.FundSourceName)
+                .Select(fs => fs.TotalAmount.HasValue
+                    ? $"{fs.FundSourceName}: {fs.TotalAmount.Value.ToString("C2", GdbExportCurrencyCulture)}"
+                    : fs.FundSourceName));
 
             return new ProgramGdbProjectPointDto
             {
@@ -80,6 +108,12 @@ public static partial class Programs
                 PlannedDate = r.PlannedDate,
                 CompletionDate = r.CompletionDate,
                 EstimatedTotalCost = r.EstimatedTotalCost,
+                ProjectLocationNotes = r.ProjectLocationNotes,
+                ProjectGisIdentifier = r.ProjectGisIdentifier,
+                Counties = r.CountyNames.Count == 0 ? null : string.Join("; ", r.CountyNames.OrderBy(n => n)),
+                Regions = r.RegionNames.Count == 0 ? null : string.Join("; ", r.RegionNames.OrderBy(n => n)),
+                PriorityLandscapes = r.PriorityLandscapeNames.Count == 0 ? null : string.Join("; ", r.PriorityLandscapeNames.OrderBy(n => n)),
+                FundingSources = string.IsNullOrEmpty(fundingSourcesCsv) ? null : fundingSourcesCsv,
                 Geometry = r.Geometry,
             };
         }).ToList();
@@ -98,21 +132,32 @@ public static partial class Programs
                 pl.ProjectID,
                 pl.Project.ProjectName,
                 pl.Project.FhtProjectNumber,
+                pl.Project.ProjectStageID,
+                ProjectTypeName = pl.Project.ProjectType.ProjectTypeName,
                 pl.ProjectLocationName,
                 pl.ProjectLocationTypeID,
                 pl.ProjectLocationNotes,
+                pl.ArcGisObjectID,
+                pl.ArcGisGlobalID,
+                pl.ImportedFromGisUpload,
+                SourceProgramName = pl.Program != null ? pl.Program.ProgramName : null,
                 Geometry = pl.ProjectLocationGeometry,
                 Treatments = pl.Treatments.Select(t => new
                 {
                     t.TreatmentTypeID,
                     t.TreatmentFootprintAcres,
                     t.TreatmentTreatedAcres,
+                    t.CostPerAcre,
                 }).ToList(),
             })
             .ToListAsync();
 
         return rows.Select(r =>
         {
+            var stageName = ProjectStage.AllLookupDictionary.TryGetValue(r.ProjectStageID, out var stage)
+                ? stage.ProjectStageDisplayName
+                : null;
+
             var locationTypeName = ProjectLocationType.AllLookupDictionary.TryGetValue(r.ProjectLocationTypeID, out var locType)
                 ? locType.ProjectLocationTypeDisplayName
                 : null;
@@ -124,21 +169,34 @@ public static partial class Programs
                 .OrderBy(n => n)
                 .ToList();
 
+            // Same rule as Treatments.TotalCost: (TreatedAcres ?? Footprint) × CostPerAcre, summed.
+            var treatmentsWithCost = r.Treatments.Where(t => t.CostPerAcre.HasValue).ToList();
+            decimal? totalCost = treatmentsWithCost.Count == 0
+                ? null
+                : treatmentsWithCost.Sum(t => (t.TreatmentTreatedAcres ?? t.TreatmentFootprintAcres) * t.CostPerAcre!.Value);
+
             return new ProgramGdbProjectLocationDto
             {
                 ProjectLocationID = r.ProjectLocationID,
                 ProjectID = r.ProjectID,
                 ProjectName = r.ProjectName,
                 FhtProjectNumber = r.FhtProjectNumber,
+                ProjectStage = stageName,
+                ProjectType = r.ProjectTypeName,
                 ProjectLocationName = r.ProjectLocationName,
                 ProjectLocationType = locationTypeName,
                 ProjectLocationNotes = r.ProjectLocationNotes,
+                ArcGisObjectID = r.ArcGisObjectID,
+                ArcGisGlobalID = r.ArcGisGlobalID,
+                ImportedFromGisUpload = r.ImportedFromGisUpload,
+                SourceProgram = r.SourceProgramName,
                 TreatmentCount = r.Treatments.Count,
                 TreatmentTypes = treatmentTypeNames.Count == 0 ? null : string.Join("; ", treatmentTypeNames!),
                 TotalFootprintAcres = r.Treatments.Sum(t => t.TreatmentFootprintAcres),
                 TotalTreatedAcres = r.Treatments.Any(t => t.TreatmentTreatedAcres.HasValue)
                     ? r.Treatments.Sum(t => t.TreatmentTreatedAcres ?? 0m)
                     : (decimal?)null,
+                TotalCost = totalCost,
                 Geometry = r.Geometry,
             };
         }).ToList();
@@ -160,13 +218,16 @@ public static partial class Programs
                 ProjectLocationID = t.ProjectLocationID!.Value,
                 ProjectLocationName = t.ProjectLocation!.ProjectLocationName,
                 t.TreatmentTypeID,
+                t.TreatmentTypeImportedText,
                 t.TreatmentDetailedActivityTypeID,
+                t.TreatmentDetailedActivityTypeImportedText,
                 t.TreatmentCodeID,
                 t.TreatmentStartDate,
                 t.TreatmentEndDate,
                 t.TreatmentFootprintAcres,
                 t.TreatmentTreatedAcres,
                 t.CostPerAcre,
+                t.ImportedFromGis,
                 t.TreatmentNotes,
                 Geometry = t.ProjectLocation.ProjectLocationGeometry,
             })
@@ -184,6 +245,11 @@ public static partial class Programs
                 ? tc.TreatmentCodeDisplayName
                 : null;
 
+            // TreatedAcres × CostPerAcre when both available; fall back to footprint × cost.
+            decimal? totalCost = r.CostPerAcre.HasValue
+                ? (r.TreatmentTreatedAcres ?? r.TreatmentFootprintAcres) * r.CostPerAcre.Value
+                : null;
+
             return new ProgramGdbTreatmentDto
             {
                 TreatmentID = r.TreatmentID,
@@ -193,13 +259,17 @@ public static partial class Programs
                 ProjectLocationID = r.ProjectLocationID,
                 ProjectLocationName = r.ProjectLocationName,
                 TreatmentType = treatmentTypeName,
+                TreatmentTypeImportedText = r.TreatmentTypeImportedText,
                 TreatmentDetailedActivityType = detailedTypeName,
+                TreatmentDetailedActivityTypeImportedText = r.TreatmentDetailedActivityTypeImportedText,
                 TreatmentCode = treatmentCodeName,
                 TreatmentStartDate = r.TreatmentStartDate,
                 TreatmentEndDate = r.TreatmentEndDate,
                 TreatmentFootprintAcres = r.TreatmentFootprintAcres,
                 TreatmentTreatedAcres = r.TreatmentTreatedAcres,
                 CostPerAcre = r.CostPerAcre,
+                TotalCost = totalCost,
+                ImportedFromGis = r.ImportedFromGis,
                 TreatmentNotes = r.TreatmentNotes,
                 Geometry = r.Geometry,
             };
