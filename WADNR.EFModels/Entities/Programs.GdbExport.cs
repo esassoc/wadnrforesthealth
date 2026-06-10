@@ -10,9 +10,9 @@ public static partial class Programs
     // render currency as $10,000.00 rather than ¤10000.00.
     private static readonly CultureInfo GdbExportCurrencyCulture = CultureInfo.GetCultureInfo("en-US");
 
-    public static async Task<ProgramGdbExportData> GetGdbExportDataAsync(WADNRDbContext dbContext, int programID)
+    public static async Task<ProgramGdbExportData> GetGdbExportDataAsync(WADNRDbContext dbContext, int programID, string webUrl)
     {
-        var projectPoints = await GetGdbProjectPointsAsync(dbContext, programID);
+        var projectPoints = await GetGdbProjectPointsAsync(dbContext, programID, webUrl);
         var projectLocations = await GetGdbProjectLocationsAsync(dbContext, programID);
         var treatments = await GetGdbTreatmentsAsync(dbContext, programID);
 
@@ -24,8 +24,10 @@ public static partial class Programs
         };
     }
 
-    private static async Task<List<ProgramGdbProjectPointDto>> GetGdbProjectPointsAsync(WADNRDbContext dbContext, int programID)
+    private static async Task<List<ProgramGdbProjectPointDto>> GetGdbProjectPointsAsync(WADNRDbContext dbContext, int programID, string webUrl)
     {
+        var baseUrl = (webUrl ?? string.Empty).TrimEnd('/');
+
         var rows = await dbContext.ProjectPrograms
             .AsNoTracking()
             .Where(pp => pp.ProgramID == programID && pp.Project.ProjectLocationPoint != null)
@@ -114,6 +116,7 @@ public static partial class Programs
                 Regions = r.RegionNames.Count == 0 ? null : string.Join("; ", r.RegionNames.OrderBy(n => n)),
                 PriorityLandscapes = r.PriorityLandscapeNames.Count == 0 ? null : string.Join("; ", r.PriorityLandscapeNames.OrderBy(n => n)),
                 FundingSources = string.IsNullOrEmpty(fundingSourcesCsv) ? null : fundingSourcesCsv,
+                ProjectDetailUrl = $"{baseUrl}/projects/{r.ProjectID}",
                 Geometry = r.Geometry,
             };
         }).ToList();

@@ -36,6 +36,7 @@ public class ProgramGdbProjectPointDto : IHasGeometry
     public string? Regions { get; set; }
     public string? PriorityLandscapes { get; set; }
     public string? FundingSources { get; set; }
+    public string? ProjectDetailUrl { get; set; }
     [JsonIgnore]
     public Geometry Geometry { get; set; } = null!;
 }

@@ -894,11 +894,13 @@ public class ProgramControllerTests
 
     #region GDB Download Tests
 
+    private const string TestWebUrl = "https://test.wadnrforesthealth.example.com";
+
     [TestMethod]
     public async Task GetGdbExportData_ReturnsEmptyLists_WhenProgramHasNoProjects()
     {
         // Act
-        var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID);
+        var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID, TestWebUrl);
 
         // Assert
         Assert.IsNotNull(data);
@@ -919,13 +921,14 @@ public class ProgramControllerTests
             await SetProjectLocationPointAsync(project.ProjectID, new Point(-120.5, 47.5) { SRID = 4326 });
 
             // Act
-            var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID);
+            var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID, TestWebUrl);
 
             // Assert
             Assert.AreEqual(1, data.ProjectPoints.Count);
             var point = data.ProjectPoints.Single();
             Assert.AreEqual(project.ProjectID, point.ProjectID);
             Assert.AreEqual(project.ProjectName, point.ProjectName);
+            Assert.AreEqual($"{TestWebUrl}/projects/{project.ProjectID}", point.ProjectDetailUrl);
             Assert.IsNotNull(point.Geometry);
             Assert.AreEqual("Point", point.Geometry.GeometryType);
         }
@@ -947,7 +950,7 @@ public class ProgramControllerTests
             await SetProjectLocationPointAsync(project.ProjectID, new Point(-120.5, 47.5) { SRID = 4326 });
 
             // Act
-            var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID);
+            var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID, TestWebUrl);
 
             // Assert - the project was created with ProjectStageEnum.Planned
             var expected = ProjectStage.AllLookupDictionary[(int)ProjectStageEnum.Planned].ProjectStageDisplayName;
@@ -973,7 +976,7 @@ public class ProgramControllerTests
             await AddTreatmentForLocationAsync(project.ProjectID, projectLocation.ProjectLocationID);
 
             // Act
-            var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID);
+            var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID, TestWebUrl);
 
             // Assert
             Assert.AreEqual(1, data.ProjectPoints.Count, "Should have one project point");
@@ -1007,7 +1010,7 @@ public class ProgramControllerTests
             await AddProjectLocationWithPolygonAsync(project.ProjectID);
 
             // Act
-            var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID);
+            var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID, TestWebUrl);
 
             // Assert
             Assert.AreEqual(0, data.ProjectPoints.Count, "No point means no ProjectPoints row");

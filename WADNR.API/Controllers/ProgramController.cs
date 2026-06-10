@@ -203,7 +203,7 @@ public class ProgramController(
             .FirstOrDefaultAsync(p => p.ProgramID == programID);
         if (program == null) return NotFound();
 
-        var exportData = await Programs.GetGdbExportDataAsync(DbContext, programID);
+        var exportData = await Programs.GetGdbExportDataAsync(DbContext, programID, Configuration.WebUrl);
 
         if (exportData.ProjectPoints.Count == 0
             && exportData.ProjectLocations.Count == 0
