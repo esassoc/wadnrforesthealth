@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using WADNR.API.Services;
 using WADNR.API.Services.Attributes;
 using WADNR.API.Services.Authorization;
+using WADNR.Common.GeoSpatial;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
 
@@ -202,75 +203,29 @@ public class ProgramController(
             .FirstOrDefaultAsync(p => p.ProgramID == programID);
         if (program == null) return NotFound();
 
-        var projects = await DbContext.ProjectPrograms
-            .AsNoTracking()
-            .Where(pp => pp.ProgramID == programID && pp.Project.ProjectLocationPoint != null)
-            .Select(pp => new
-            {
-                pp.Project.ProjectID,
-                pp.Project.ProjectName,
-                pp.Project.FhtProjectNumber,
-                pp.Project.ProjectStageID,
-                pp.Project.ProjectTypeID,
-                TaxonomyBranchID = pp.Project.ProjectType.TaxonomyBranchID,
-                TaxonomyTrunkID = pp.Project.ProjectType.TaxonomyBranch.TaxonomyTrunkID,
-                Longitude = pp.Project.ProjectLocationPoint.Coordinate.X,
-                Latitude = pp.Project.ProjectLocationPoint.Coordinate.Y,
-                ClassificationIDs = pp.Project.ProjectClassifications
-                    .Select(pc => pc.ClassificationID).ToList(),
-                ProgramIDs = pp.Project.ProjectPrograms
-                    .Select(prp => prp.ProgramID).ToList(),
-                Organizations = pp.Project.ProjectOrganizations
-                    .Select(po => new { po.OrganizationID, po.RelationshipTypeID, po.RelationshipType.RelationshipTypeName, po.RelationshipType.IsPrimaryContact }).ToList(),
-            })
-            .ToListAsync();
+        var exportData = await Programs.GetGdbExportDataAsync(DbContext, programID);
 
-        if (projects.Count == 0)
+        if (exportData.ProjectPoints.Count == 0
+            && exportData.ProjectLocations.Count == 0
+            && exportData.Treatments.Count == 0)
         {
             return BadRequest("No projects with location data found for this program.");
         }
 
-        var baseUrl = $"{Request.Scheme}://{Request.Host}";
-
-        var features = projects.Select(p =>
+        var layers = new List<(string LayerName, string GeoJson)>();
+        if (exportData.ProjectPoints.Count > 0)
         {
-            var properties = new Dictionary<string, object>
-            {
-                ["TaxonomyTrunkID"] = p.TaxonomyTrunkID,
-                ["ProjectStageID"] = p.ProjectStageID,
-                ["ProjectStageColor"] = ProjectStage.AllLookupDictionary.TryGetValue(p.ProjectStageID, out var stage) ? stage.ProjectStageColor : "",
-                ["ProjectName"] = p.ProjectName,
-                ["FhtProjectNumber"] = p.FhtProjectNumber,
-                ["ProjectID"] = p.ProjectID,
-                ["TaxonomyBranchID"] = p.TaxonomyBranchID,
-                ["ProjectTypeID"] = p.ProjectTypeID,
-                ["ClassificationID"] = string.Join(",", p.ClassificationIDs),
-            };
-
-            foreach (var group in p.Organizations.GroupBy(o => o.RelationshipTypeName))
-            {
-                properties[$"{group.Key}ID"] = group.Select(o => o.OrganizationID).ToList();
-            }
-
-            properties["PopupUrl"] = $"{baseUrl}/api/projects/{p.ProjectID}/map-popup-html";
-            properties["ProgramID"] = string.Join(",", p.ProgramIDs);
-            properties["LeadImplementerID"] = (object)(p.Organizations.FirstOrDefault(o => o.IsPrimaryContact)?.OrganizationID ?? -1);
-            properties["FeatureColor"] = "#99b3ff";
-
-            return new
-            {
-                type = "Feature",
-                geometry = new
-                {
-                    type = "Point",
-                    coordinates = new[] { p.Longitude, p.Latitude }
-                },
-                properties
-            };
-        });
-
-        var featureCollection = new { type = "FeatureCollection", features };
-        var geoJson = JsonSerializer.Serialize(featureCollection);
+            var gisIdentifierLabel = await GetProjectIdentifierLabelAsync();
+            layers.Add(("ProjectPoints", SerializeProjectPointsAsGeoJson(exportData.ProjectPoints, gisIdentifierLabel)));
+        }
+        if (exportData.ProjectLocations.Count > 0)
+        {
+            layers.Add(("ProjectLocations", SerializeAsGeoJson(exportData.ProjectLocations)));
+        }
+        if (exportData.Treatments.Count > 0)
+        {
+            layers.Add(("Treatments", SerializeAsGeoJson(exportData.Treatments)));
+        }
 
         var programDisplayName = program.IsDefaultProgramForImportOnly
             ? $"{program.Organization.OrganizationName} ({program.Organization.OrganizationShortName})"
@@ -279,8 +234,60 @@ public class ProgramController(
         var gdbName = $"ProjectsInProgram-{programDisplayName}-{dateStr}";
         var fileName = $"{gdbName}.gdb.zip";
 
-        var stream = await gdalApiService.Ogr2OgrGeoJsonToGdb(geoJson, "ProjectLocationSimple", gdbName);
+        var stream = await gdalApiService.Ogr2OgrGeoJsonToGdbMultiLayer(layers, gdbName);
         return File(stream, "application/zip", fileName);
+    }
+
+    private static string SerializeAsGeoJson<T>(IEnumerable<T> features) where T : IHasGeometry
+    {
+        var featureCollection = features.Cast<IHasGeometry>().ToFeatureCollection();
+        return GeoJsonSerializer.Serialize(featureCollection);
+    }
+
+    private string SerializeProjectPointsAsGeoJson(IReadOnlyList<ProgramGdbProjectPointDto> features, string gisIdentifierLabel)
+    {
+        // Determine the target column name once: if the configured label collides with another
+        // attribute we already write (e.g. an admin sets the label to "ProjectName"), keep the
+        // original "ProjectGisIdentifier" key rather than silently overwriting the existing
+        // attribute. Use any feature's attribute set to check — the schema is identical per row.
+        var resolvedLabel = gisIdentifierLabel;
+        if (features.Count > 0 && !string.Equals(gisIdentifierLabel, nameof(ProgramGdbProjectPointDto.ProjectGisIdentifier), StringComparison.Ordinal))
+        {
+            var sampleAttributes = GeoJsonSerializer.ToKeyValuePairList(features[0]);
+            sampleAttributes.Remove(nameof(ProgramGdbProjectPointDto.ProjectGisIdentifier));
+            if (sampleAttributes.ContainsKey(gisIdentifierLabel))
+            {
+                Logger.LogWarning(
+                    "Configured FieldDefinition label '{Label}' for ProjectIdentifier collides with an existing ProjectPoints column. Falling back to '{Fallback}' for the GDB export.",
+                    gisIdentifierLabel, nameof(ProgramGdbProjectPointDto.ProjectGisIdentifier));
+                resolvedLabel = nameof(ProgramGdbProjectPointDto.ProjectGisIdentifier);
+            }
+        }
+
+        var featureCollection = new NetTopologySuite.Features.FeatureCollection();
+        foreach (var feature in features)
+        {
+            var attributes = GeoJsonSerializer.ToKeyValuePairList(feature);
+            if (attributes.Remove(nameof(ProgramGdbProjectPointDto.ProjectGisIdentifier), out var gisIdentifierValue))
+            {
+                attributes[resolvedLabel] = gisIdentifierValue;
+            }
+            featureCollection.Add(new NetTopologySuite.Features.Feature(feature.Geometry, new NetTopologySuite.Features.AttributesTable(attributes)));
+        }
+        return GeoJsonSerializer.Serialize(featureCollection);
+    }
+
+    private async Task<string> GetProjectIdentifierLabelAsync()
+    {
+        var customLabel = await DbContext.FieldDefinitionData
+            .AsNoTracking()
+            .Where(x => x.FieldDefinitionID == (int)FieldDefinitionEnum.ProjectIdentifier)
+            .Select(x => x.FieldDefinitionLabel)
+            .SingleOrDefaultAsync();
+
+        return !string.IsNullOrWhiteSpace(customLabel)
+            ? customLabel
+            : FieldDefinition.ProjectIdentifier.FieldDefinitionDisplayName;
     }
 
     #endregion
