@@ -13,6 +13,7 @@ namespace WADNR.EFModels.Entities
     {
         public static readonly TabularDataImportTableTypeLoaNortheast LoaNortheast = TabularDataImportTableTypeLoaNortheast.Instance;
         public static readonly TabularDataImportTableTypeLoaSoutheast LoaSoutheast = TabularDataImportTableTypeLoaSoutheast.Instance;
+        public static readonly TabularDataImportTableTypeServiceForestry ServiceForestry = TabularDataImportTableTypeServiceForestry.Instance;
 
         public static readonly List<TabularDataImportTableType> All;
         public static readonly ReadOnlyDictionary<int, TabularDataImportTableType> AllLookupDictionary;
@@ -22,7 +23,7 @@ namespace WADNR.EFModels.Entities
         /// </summary>
         static TabularDataImportTableType()
         {
-            All = new List<TabularDataImportTableType> { LoaNortheast, LoaSoutheast };
+            All = new List<TabularDataImportTableType> { LoaNortheast, LoaSoutheast, ServiceForestry };
             AllLookupDictionary = new ReadOnlyDictionary<int, TabularDataImportTableType>(All.ToDictionary(x => x.TabularDataImportTableTypeID));
         }
 
@@ -94,6 +95,8 @@ namespace WADNR.EFModels.Entities
                     return LoaNortheast;
                 case TabularDataImportTableTypeEnum.LoaSoutheast:
                     return LoaSoutheast;
+                case TabularDataImportTableTypeEnum.ServiceForestry:
+                    return ServiceForestry;
                 default:
                     throw new ArgumentException("Unable to map Enum: {enumValue}");
             }
@@ -103,7 +106,8 @@ namespace WADNR.EFModels.Entities
     public enum TabularDataImportTableTypeEnum
     {
         LoaNortheast = 1,
-        LoaSoutheast = 2
+        LoaSoutheast = 2,
+        ServiceForestry = 3
     }
 
     public partial class TabularDataImportTableTypeLoaNortheast : TabularDataImportTableType
@@ -116,5 +120,11 @@ namespace WADNR.EFModels.Entities
     {
         private TabularDataImportTableTypeLoaSoutheast(int tabularDataImportTableTypeID, string tabularDataImportTableTypeName) : base(tabularDataImportTableTypeID, tabularDataImportTableTypeName) {}
         public static readonly TabularDataImportTableTypeLoaSoutheast Instance = new TabularDataImportTableTypeLoaSoutheast(2, @"LoaSoutheast");
+    }
+
+    public partial class TabularDataImportTableTypeServiceForestry : TabularDataImportTableType
+    {
+        private TabularDataImportTableTypeServiceForestry(int tabularDataImportTableTypeID, string tabularDataImportTableTypeName) : base(tabularDataImportTableTypeID, tabularDataImportTableTypeName) {}
+        public static readonly TabularDataImportTableTypeServiceForestry Instance = new TabularDataImportTableTypeServiceForestry(3, @"ServiceForestry");
     }
 }

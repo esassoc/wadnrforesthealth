@@ -464,6 +464,12 @@ export const routes: Routes = [
         loadComponent: () => import("./pages/admin/loa-upload/loa-upload.component").then((m) => m.LoaUploadComponent),
     },
     {
+        path: "upload-service-forestry",
+        title: "Upload Service Forestry / ETL",
+        canActivate: [adminGuard],
+        loadComponent: () => import("./pages/admin/service-forestry-upload/service-forestry-upload.component").then((m) => m.ServiceForestryUploadComponent),
+    },
+    {
         path: "manage-find-your-forester",
         title: "Manage Find Your Forester",
         canActivate: [elevatedAccessGuard],
