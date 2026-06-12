@@ -103,21 +103,27 @@ public class GDALAPIService
         throw new Exception($"GDAL API ogr2ogr GeoJSON-to-GDB request failed: {content}");
     }
 
-    public async Task<Stream> Ogr2OgrGeoJsonToGdbMultiLayer(IReadOnlyList<(string LayerName, string GeoJson)> layers, string gdbName)
+    /// <summary>
+    /// Uploads one GeoJSON file per layer to the GDAL API and returns the resulting GDB zip stream.
+    /// Each layer is read from a temp file via <see cref="StreamContent"/> so the GeoJSON streams
+    /// from disk to the socket and is never held in memory in its entirety — this is what keeps
+    /// large multi-layer exports from exhausting memory.
+    /// </summary>
+    public async Task<Stream> Ogr2OgrGeoJsonToGdbMultiLayer(IReadOnlyList<(string LayerName, string FilePath)> layers, string gdbName)
     {
         if (layers == null || layers.Count == 0)
         {
             throw new ArgumentException("At least one layer is required.", nameof(layers));
         }
 
-        var form = new MultipartFormDataContent();
+        // Disposing the form disposes its child StreamContents, which dispose the underlying file streams.
+        using var form = new MultipartFormDataContent();
 
         foreach (var layer in layers)
         {
-            var geoJsonBytes = System.Text.Encoding.UTF8.GetBytes(layer.GeoJson);
-            var byteContent = new ByteArrayContent(geoJsonBytes);
-            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            form.Add(byteContent, "files", $"{layer.LayerName}.geojson");
+            var streamContent = new StreamContent(File.OpenRead(layer.FilePath));
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            form.Add(streamContent, "files", $"{layer.LayerName}.geojson");
             form.Add(new StringContent(layer.LayerName), "layerNames");
         }
 

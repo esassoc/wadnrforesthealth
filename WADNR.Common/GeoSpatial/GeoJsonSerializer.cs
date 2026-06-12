@@ -13,6 +13,28 @@ public static class GeoJsonSerializer
 {
     public static JsonSerializerOptions DefaultSerializerOptions = CreateGeoJSONSerializerOptions();
 
+    // Compact (non-indented) options for machine-consumed exports (e.g. ogr2ogr GDB conversion).
+    // Indented output roughly doubles the byte size of coordinate-heavy geometries — wasted bytes
+    // when the consumer is GDAL, and a meaningful contributor to memory pressure on large exports.
+    public static JsonSerializerOptions CompactSerializerOptions = CreateCompactGeoJSONSerializerOptions();
+
+    private static JsonSerializerOptions CreateCompactGeoJSONSerializerOptions()
+    {
+        var options = CreateGeoJSONSerializerOptions();
+        options.WriteIndented = false;
+        return options;
+    }
+
+    /// <summary>
+    /// Serializes a FeatureCollection straight to a stream using compact (non-indented) options.
+    /// Streaming avoids building the entire GeoJSON document in a single contiguous in-memory
+    /// buffer, which is what caused OutOfMemoryException on large multi-layer GDB exports.
+    /// </summary>
+    public static async Task SerializeFeatureCollectionToStreamAsync(FeatureCollection featureCollection, Stream stream)
+    {
+        await JsonSerializer.SerializeAsync(stream, featureCollection, CompactSerializerOptions);
+    }
+
     public static T? Deserialize<T>(string json)
     {
         return JsonSerializer.Deserialize<T>(json, DefaultSerializerOptions);

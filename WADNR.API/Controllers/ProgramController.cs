@@ -212,19 +212,19 @@ public class ProgramController(
             return BadRequest("No projects with location data found for this program.");
         }
 
-        var layers = new List<(string LayerName, string GeoJson)>();
+        var layers = new List<(string LayerName, NetTopologySuite.Features.FeatureCollection Features)>();
         if (exportData.ProjectPoints.Count > 0)
         {
             var gisIdentifierLabel = await GetProjectIdentifierLabelAsync();
-            layers.Add(("ProjectPoints", SerializeProjectPointsAsGeoJson(exportData.ProjectPoints, gisIdentifierLabel)));
+            layers.Add(("ProjectPoints", BuildProjectPointsFeatureCollection(exportData.ProjectPoints, gisIdentifierLabel)));
         }
         if (exportData.ProjectLocations.Count > 0)
         {
-            layers.Add(("ProjectLocations", SerializeAsGeoJson(exportData.ProjectLocations)));
+            layers.Add(("ProjectLocations", BuildFeatureCollection(exportData.ProjectLocations)));
         }
         if (exportData.Treatments.Count > 0)
         {
-            layers.Add(("Treatments", SerializeAsGeoJson(exportData.Treatments)));
+            layers.Add(("Treatments", BuildFeatureCollection(exportData.Treatments)));
         }
 
         var programDisplayName = program.IsDefaultProgramForImportOnly
@@ -234,17 +234,50 @@ public class ProgramController(
         var gdbName = $"ProjectsInProgram-{programDisplayName}-{dateStr}";
         var fileName = $"{gdbName}.gdb.zip";
 
-        var stream = await gdalApiService.Ogr2OgrGeoJsonToGdbMultiLayer(layers, gdbName);
-        return File(stream, "application/zip", fileName);
+        // Stream each layer to a temp .geojson file instead of building giant in-memory strings.
+        // This bounds memory during both serialization and the upload to the GDAL API — large
+        // exports (notably the Treatments layer, which repeats each location's polygon per treatment)
+        // previously exhausted memory serializing the whole document into one contiguous buffer.
+        var tempFiles = new List<(string LayerName, string FilePath)>();
+        try
+        {
+            foreach (var (layerName, features) in layers)
+            {
+                var filePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"{Guid.NewGuid():N}.geojson");
+                await using (var fileStream = System.IO.File.Create(filePath))
+                {
+                    await GeoJsonSerializer.SerializeFeatureCollectionToStreamAsync(features, fileStream);
+                }
+                tempFiles.Add((layerName, filePath));
+            }
+
+            var stream = await gdalApiService.Ogr2OgrGeoJsonToGdbMultiLayer(tempFiles, gdbName);
+            return File(stream, "application/zip", fileName);
+        }
+        finally
+        {
+            // Temp files are the upload input — fully consumed by the time the GDAL call returns,
+            // so deleting them before the response is streamed back to the client is safe.
+            foreach (var (_, filePath) in tempFiles)
+            {
+                try
+                {
+                    if (System.IO.File.Exists(filePath)) System.IO.File.Delete(filePath);
+                }
+                catch (System.IO.IOException)
+                {
+                    // Best-effort cleanup; the OS will reclaim temp files eventually.
+                }
+            }
+        }
     }
 
-    private static string SerializeAsGeoJson<T>(IEnumerable<T> features) where T : IHasGeometry
+    private static NetTopologySuite.Features.FeatureCollection BuildFeatureCollection<T>(IEnumerable<T> features) where T : IHasGeometry
     {
-        var featureCollection = features.Cast<IHasGeometry>().ToFeatureCollection();
-        return GeoJsonSerializer.Serialize(featureCollection);
+        return features.Cast<IHasGeometry>().ToFeatureCollection();
     }
 
-    private string SerializeProjectPointsAsGeoJson(IReadOnlyList<ProgramGdbProjectPointDto> features, string gisIdentifierLabel)
+    private NetTopologySuite.Features.FeatureCollection BuildProjectPointsFeatureCollection(IReadOnlyList<ProgramGdbProjectPointDto> features, string gisIdentifierLabel)
     {
         // Determine the target column name once: if the configured label collides with another
         // attribute we already write (e.g. an admin sets the label to "ProjectName"), keep the
@@ -274,7 +307,7 @@ public class ProgramController(
             }
             featureCollection.Add(new NetTopologySuite.Features.Feature(feature.Geometry, new NetTopologySuite.Features.AttributesTable(attributes)));
         }
-        return GeoJsonSerializer.Serialize(featureCollection);
+        return featureCollection;
     }
 
     private async Task<string> GetProjectIdentifierLabelAsync()
