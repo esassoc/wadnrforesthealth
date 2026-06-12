@@ -1023,6 +1023,39 @@ public class ProgramControllerTests
         }
     }
 
+    [TestMethod]
+    public async Task GetGdbExportData_NormalizesGeometryCollectionToMultiPolygon_ForProjectLocations()
+    {
+        // Arrange — a ProjectLocation whose geometry is a GeometryCollection (a polygon plus a
+        // dangling line), which is what MakeValid() commonly yields for a self-intersecting polygon.
+        // FileGDB rejects GeometryCollection ("ERROR 6: Unsupported geometry type"), so the export
+        // must collapse it to a single MultiPolygon, dropping the non-polygonal artifact.
+        var project = await ProjectHelper.CreateApprovedProjectWithValidLookupsAsync(
+            AssemblySteps.DbContext, AssemblySteps.TestAdminPersonID);
+        try
+        {
+            await AttachProjectToProgramAsync(project.ProjectID, _testProgramID);
+            await AddProjectLocationWithGeometryCollectionAsync(project.ProjectID);
+
+            // Act
+            var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID, TestWebUrl);
+
+            // Assert
+            Assert.AreEqual(1, data.ProjectLocations.Count);
+            var location = data.ProjectLocations.Single();
+            Assert.IsNotNull(location.Geometry);
+            Assert.AreEqual("MultiPolygon", location.Geometry.GeometryType,
+                "GeometryCollection should be normalized to MultiPolygon so FileGDB can write it");
+            Assert.AreEqual(4326, location.Geometry.SRID, "SRID should be preserved");
+            Assert.AreEqual(1, location.Geometry.NumGeometries,
+                "Only the polygonal part should survive; the dangling line should be dropped");
+        }
+        finally
+        {
+            await ProjectHelper.DeleteProjectAsync(AssemblySteps.DbContext, project.ProjectID);
+        }
+    }
+
     #endregion
 
     #region GDB Download Helpers
@@ -1060,6 +1093,38 @@ public class ProgramControllerTests
         {
             ProjectID = projectID,
             ProjectLocationGeometry = polygon,
+            ProjectLocationName = $"Loc-{DateTime.UtcNow.Ticks % 1000000}",
+            ProjectLocationTypeID = ProjectLocationType.AllLookupDictionary.Keys.First(),
+        };
+        AssemblySteps.DbContext.ProjectLocations.Add(location);
+        await AssemblySteps.DbContext.SaveChangesWithNoAuditingAsync();
+        return location;
+    }
+
+    private static async Task<ProjectLocation> AddProjectLocationWithGeometryCollectionAsync(int projectID)
+    {
+        // Build a GeometryCollection of a square polygon plus a disjoint dangling line — the shape
+        // MakeValid() produces for a self-intersecting polygon, and the case that broke the GDB export.
+        var factory = new GeometryFactory(new PrecisionModel(), 4326);
+        var polygon = factory.CreatePolygon(factory.CreateLinearRing(new[]
+        {
+            new Coordinate(-120.51, 47.49),
+            new Coordinate(-120.49, 47.49),
+            new Coordinate(-120.49, 47.51),
+            new Coordinate(-120.51, 47.51),
+            new Coordinate(-120.51, 47.49),
+        }));
+        var danglingLine = factory.CreateLineString(new[]
+        {
+            new Coordinate(-120.60, 47.60),
+            new Coordinate(-120.59, 47.61),
+        });
+        var geometryCollection = factory.CreateGeometryCollection(new Geometry[] { polygon, danglingLine });
+
+        var location = new ProjectLocation
+        {
+            ProjectID = projectID,
+            ProjectLocationGeometry = geometryCollection,
             ProjectLocationName = $"Loc-{DateTime.UtcNow.Ticks % 1000000}",
             ProjectLocationTypeID = ProjectLocationType.AllLookupDictionary.Keys.First(),
         };

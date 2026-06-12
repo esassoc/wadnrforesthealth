@@ -1,5 +1,7 @@
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.Geometries.Utilities;
 using WADNR.Models.DataTransferObjects;
 
 namespace WADNR.EFModels.Entities;
@@ -9,6 +11,33 @@ public static partial class Programs
     // Explicit culture so Linux containers (which often default to invariant/POSIX)
     // render currency as $10,000.00 rather than ¤10000.00.
     private static readonly CultureInfo GdbExportCurrencyCulture = CultureInfo.GetCultureInfo("en-US");
+
+    /// <summary>
+    /// Normalizes an area geometry to a single MultiPolygon so it can be written to a FileGDB
+    /// polygon feature class. ProjectLocationGeometry can be a GeometryCollection — for example,
+    /// MakeValid() on a self-intersecting polygon commonly yields polygons plus dangling lines —
+    /// and ogr2ogr's OpenFileGDB driver rejects those with "ERROR 6: Unsupported geometry type"
+    /// even with -nlt PROMOTE_TO_MULTI. Extracting the polygonal parts yields a layer of one
+    /// supported geometry type. Non-polygonal artifacts (the dangling lines/points) are dropped;
+    /// a geometry with no polygonal content at all is left unchanged (vanishingly rare for an area).
+    /// </summary>
+    private static Geometry NormalizeToMultiPolygonForGdb(Geometry geometry)
+    {
+        if (geometry == null || geometry is MultiPolygon)
+        {
+            return geometry;
+        }
+
+        var polygons = PolygonExtracter.GetPolygons(geometry);
+        if (polygons.Count == 0)
+        {
+            return geometry;
+        }
+
+        var multiPolygon = geometry.Factory.CreateMultiPolygon(polygons.Cast<Polygon>().ToArray());
+        multiPolygon.SRID = geometry.SRID;
+        return multiPolygon;
+    }
 
     public static async Task<ProgramGdbExportData> GetGdbExportDataAsync(WADNRDbContext dbContext, int programID, string webUrl)
     {
@@ -200,7 +229,7 @@ public static partial class Programs
                     ? r.Treatments.Sum(t => t.TreatmentTreatedAcres ?? 0m)
                     : (decimal?)null,
                 TotalCost = totalCost,
-                Geometry = r.Geometry,
+                Geometry = NormalizeToMultiPolygonForGdb(r.Geometry),
             };
         }).ToList();
     }
@@ -274,7 +303,7 @@ public static partial class Programs
                 TotalCost = totalCost,
                 ImportedFromGis = r.ImportedFromGis,
                 TreatmentNotes = r.TreatmentNotes,
-                Geometry = r.Geometry,
+                Geometry = NormalizeToMultiPolygonForGdb(r.Geometry),
             };
         }).ToList();
     }
