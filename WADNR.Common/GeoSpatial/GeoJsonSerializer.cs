@@ -25,14 +25,45 @@ public static class GeoJsonSerializer
         return options;
     }
 
+    // Flush the Utf8JsonWriter to the underlying stream once this many bytes are pending. Keeps the
+    // in-memory buffer bounded to roughly one feature's worth of bytes during a large export.
+    private const int StreamingFlushThresholdBytes = 64 * 1024;
+
     /// <summary>
-    /// Serializes a FeatureCollection straight to a stream using compact (non-indented) options.
-    /// Streaming avoids building the entire GeoJSON document in a single contiguous in-memory
-    /// buffer, which is what caused OutOfMemoryException on large multi-layer GDB exports.
+    /// Serializes a FeatureCollection straight to a stream using compact (non-indented) options,
+    /// one feature at a time.
     /// </summary>
+    /// <remarks>
+    /// NTS's STJ converters serialize an entire FeatureCollection in a single synchronous Write call,
+    /// so <see cref="JsonSerializer.SerializeAsync(Stream, object, JsonSerializerOptions, CancellationToken)"/>
+    /// never reaches an await point to flush mid-document — the whole GeoJSON document ends up buffered
+    /// in one contiguous pooled byte buffer, which is what caused OutOfMemoryException on large multi-layer
+    /// GDB exports (the failure occurred inside StjGeometryConverter.Write while growing that buffer).
+    /// Writing the FeatureCollection envelope by hand and serializing each feature individually lets us
+    /// flush to the stream between features, bounding memory to a single feature rather than the whole
+    /// collection.
+    /// </remarks>
     public static async Task SerializeFeatureCollectionToStreamAsync(FeatureCollection featureCollection, Stream stream)
     {
-        await JsonSerializer.SerializeAsync(stream, featureCollection, CompactSerializerOptions);
+        await using var writer = new Utf8JsonWriter(stream);
+        writer.WriteStartObject();
+        writer.WriteString("type", "FeatureCollection");
+        writer.WriteStartArray("features");
+
+        foreach (var feature in featureCollection)
+        {
+            JsonSerializer.Serialize(writer, feature, CompactSerializerOptions);
+            if (writer.BytesPending >= StreamingFlushThresholdBytes)
+            {
+                await writer.FlushAsync();
+                await stream.FlushAsync();
+            }
+        }
+
+        writer.WriteEndArray();
+        writer.WriteEndObject();
+        await writer.FlushAsync();
+        await stream.FlushAsync();
     }
 
     public static T? Deserialize<T>(string json)
