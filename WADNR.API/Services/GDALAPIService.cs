@@ -109,7 +109,7 @@ public class GDALAPIService
     /// from disk to the socket and is never held in memory in its entirety — this is what keeps
     /// large multi-layer exports from exhausting memory.
     /// </summary>
-    public async Task<Stream> Ogr2OgrGeoJsonToGdbMultiLayer(IReadOnlyList<(string LayerName, string FilePath)> layers, string gdbName)
+    public async Task<Stream> Ogr2OgrGeoJsonToGdbMultiLayer(IReadOnlyList<(string LayerName, string FilePath, string GeometryType)> layers, string gdbName)
     {
         if (layers == null || layers.Count == 0)
         {
@@ -125,6 +125,10 @@ public class GDALAPIService
             streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             form.Add(streamContent, "files", $"{layer.LayerName}.geojson");
             form.Add(new StringContent(layer.LayerName), "layerNames");
+            // Parallel to layerNames/files (model binding preserves repeated-field order). An explicit
+            // per-layer geometry type is required so ogr2ogr does not see wkbUnknown for mixed
+            // Polygon/MultiPolygon layers, which OpenFileGDB rejects when adding a layer.
+            form.Add(new StringContent(layer.GeometryType), "geometryTypes");
         }
 
         if (!string.IsNullOrWhiteSpace(gdbName))

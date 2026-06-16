@@ -238,7 +238,7 @@ public class ProgramController(
         // This bounds memory during both serialization and the upload to the GDAL API — large
         // exports (notably the Treatments layer, which repeats each location's polygon per treatment)
         // previously exhausted memory serializing the whole document into one contiguous buffer.
-        var tempFiles = new List<(string LayerName, string FilePath)>();
+        var tempFiles = new List<(string LayerName, string FilePath, string GeometryType)>();
         try
         {
             foreach (var (layerName, features) in layers)
@@ -248,7 +248,10 @@ public class ProgramController(
                 {
                     await GeoJsonSerializer.SerializeFeatureCollectionToStreamAsync(features, fileStream);
                 }
-                tempFiles.Add((layerName, filePath));
+                // Derive an explicit multi geometry type per layer so ogr2ogr never sees wkbUnknown
+                // for layers that mix Polygon/MultiPolygon (which OpenFileGDB's CreateLayer rejects).
+                var geometryType = GeoJsonSerializer.GetOgrMultiGeometryTypeToken(features);
+                tempFiles.Add((layerName, filePath, geometryType));
             }
 
             var stream = await gdalApiService.Ogr2OgrGeoJsonToGdbMultiLayer(tempFiles, gdbName);
@@ -258,7 +261,7 @@ public class ProgramController(
         {
             // Temp files are the upload input — fully consumed by the time the GDAL call returns,
             // so deleting them before the response is streamed back to the client is safe.
-            foreach (var (_, filePath) in tempFiles)
+            foreach (var (_, filePath, _) in tempFiles)
             {
                 try
                 {

@@ -66,6 +66,69 @@ public static class GeoJsonSerializer
         await stream.FlushAsync();
     }
 
+    /// <summary>
+    /// Returns the explicit OGR geometry-type token (e.g. "MULTIPOLYGON") to hand ogr2ogr's
+    /// <c>-nlt</c> option for a layer built from this collection.
+    /// </summary>
+    /// <remarks>
+    /// <c>-nlt PROMOTE_TO_MULTI</c> is NOT sufficient for a GeoJSON layer that mixes single and multi
+    /// variants of the same shape (e.g. Polygon + MultiPolygon in one FeatureCollection): OGR reports
+    /// such a layer's geometry type as <c>wkbUnknown</c>, and PROMOTE_TO_MULTI leaves wkbUnknown
+    /// unchanged. OpenFileGDB's CreateLayer accepts wkbUnknown when *creating* a new datasource but
+    /// rejects it when *adding a layer* (update mode) and, on large/complex inputs, can leave a
+    /// half-created table behind — both of which broke the multi-layer GDB export. Passing a concrete
+    /// multi type avoids wkbUnknown entirely. Falls back to "PROMOTE_TO_MULTI" only when the collection
+    /// is empty or genuinely mixes dimensions (points + polygons), which can't share one GDB layer anyway.
+    /// </remarks>
+    public static string GetOgrMultiGeometryTypeToken(FeatureCollection featureCollection)
+    {
+        var hasPoint = false;
+        var hasLine = false;
+        var hasPolygon = false;
+        var hasOther = false;
+
+        foreach (var feature in featureCollection)
+        {
+            var geometry = feature.Geometry;
+            if (geometry == null)
+            {
+                continue;
+            }
+
+            switch (geometry.OgcGeometryType)
+            {
+                case OgcGeometryType.Point:
+                case OgcGeometryType.MultiPoint:
+                    hasPoint = true;
+                    break;
+                case OgcGeometryType.LineString:
+                case OgcGeometryType.MultiLineString:
+                    hasLine = true;
+                    break;
+                case OgcGeometryType.Polygon:
+                case OgcGeometryType.MultiPolygon:
+                    hasPolygon = true;
+                    break;
+                default:
+                    hasOther = true;
+                    break;
+            }
+        }
+
+        var distinctDimensions = (hasPoint ? 1 : 0) + (hasLine ? 1 : 0) + (hasPolygon ? 1 : 0);
+        if (hasOther || distinctDimensions != 1)
+        {
+            return "PROMOTE_TO_MULTI";
+        }
+
+        if (hasPolygon)
+        {
+            return "MULTIPOLYGON";
+        }
+
+        return hasLine ? "MULTILINESTRING" : "MULTIPOINT";
+    }
+
     public static T? Deserialize<T>(string json)
     {
         return JsonSerializer.Deserialize<T>(json, DefaultSerializerOptions);
