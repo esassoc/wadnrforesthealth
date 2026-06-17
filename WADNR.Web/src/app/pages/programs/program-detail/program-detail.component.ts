@@ -1,7 +1,7 @@
 import { AsyncPipe } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, of, shareReplay, switchMap, take } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, finalize, forkJoin, map, Observable, of, shareReplay, switchMap, take } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 import { DialogService } from "@ngneat/dialog";
@@ -11,6 +11,7 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { PersonLinkComponent } from "src/app/shared/components/person-link/person-link.component";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { AlertService } from "src/app/shared/services/alert.service";
@@ -47,7 +48,7 @@ import { AuthenticationService } from "src/app/services/authentication.service";
 @Component({
     selector: "program-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRGridComponent, RouterLink, PersonLinkComponent, LoadingDirective, IconComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRGridComponent, RouterLink, PersonLinkComponent, LoadingDirective, ButtonLoadingDirective, IconComponent],
     templateUrl: "./program-detail.component.html",
     styleUrls: ["./program-detail.component.scss"],
 })
@@ -68,6 +69,9 @@ export class ProgramDetailComponent {
 
     public canManagePrograms$: Observable<boolean>;
     public canEditProgramMappings$: Observable<boolean>;
+
+    public isDownloadingGdb = false;
+    private static readonly GDB_DOWNLOAD_PREPARING = "GdbDownloadPreparing";
 
     private refreshData$ = new BehaviorSubject<void>(undefined);
     private refreshNotifications$ = new BehaviorSubject<void>(undefined);
@@ -144,24 +148,43 @@ export class ProgramDetailComponent {
     }
 
     downloadGdb(): void {
+        if (this.isDownloadingGdb) return;
+
+        // Immediate feedback: the GDB can take a while to build, so show a spinner on the button
+        // and an informational alert as soon as the user clicks.
+        this.isDownloadingGdb = true;
+        const preparingAlert = new Alert(
+            "Preparing your GDB download. This may take a moment for large programs…",
+            AlertContext.Info,
+            false,
+            ProgramDetailComponent.GDB_DOWNLOAD_PREPARING
+        );
+        this.alertService.pushAlert(preparingAlert);
+
         combineLatest([this.programID$, this.program$]).pipe(take(1)).subscribe(([programID, program]) => {
-            this.programService.downloadProjectsAsGdbProgram(programID, "body", false, { httpHeaderAccept: "application/octet-stream" as any }).subscribe({
-                next: (blob) => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    const date = new Date().toISOString().slice(0, 10);
-                    const displayName = program.IsDefaultProgramForImportOnly
-                        ? `${program.OrganizationName} (${program.OrganizationShortName})`
-                        : program.ProgramName;
-                    a.download = `ProjectsInProgram-${displayName}-${date}.gdb.zip`;
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                },
-                error: () => {
-                    this.alertService.pushAlert(new Alert("An error occurred while downloading the GDB.", AlertContext.Danger, true));
-                },
-            });
+            this.programService.downloadProjectsAsGdbProgram(programID, "body", false, { httpHeaderAccept: "application/octet-stream" as any })
+                .pipe(finalize(() => {
+                    this.isDownloadingGdb = false;
+                    this.alertService.removeAlert(preparingAlert);
+                }))
+                .subscribe({
+                    next: (blob) => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        const date = new Date().toISOString().slice(0, 10);
+                        const displayName = program.IsDefaultProgramForImportOnly
+                            ? `${program.OrganizationName} (${program.OrganizationShortName})`
+                            : program.ProgramName;
+                        a.download = `ProjectsInProgram-${displayName}-${date}.gdb.zip`;
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        this.alertService.pushAlert(new Alert("Your GDB download is ready.", AlertContext.Success, true));
+                    },
+                    error: () => {
+                        this.alertService.pushAlert(new Alert("An error occurred while downloading the GDB.", AlertContext.Danger, true));
+                    },
+                });
         });
     }
 

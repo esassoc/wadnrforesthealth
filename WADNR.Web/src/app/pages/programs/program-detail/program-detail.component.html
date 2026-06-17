@@ -109,8 +109,16 @@
             <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
                 @if (canEditProgramMappings$ | async) {
                     <div class="flex-end mb-2">
-                        <button class="btn btn-sm btn-primary" title="Download GDB of projects" (click)="downloadGdb()">
-                            <i class="fa fa-download"></i> Download GDB
+                        <button
+                            class="btn btn-sm btn-primary"
+                            title="Download GDB of projects"
+                            (click)="downloadGdb()"
+                            [buttonLoading]="isDownloadingGdb"
+                            [disabled]="isDownloadingGdb">
+                            @if (!isDownloadingGdb) {
+                                <i class="fa fa-download" aria-hidden="true"></i>
+                            }
+                            {{ isDownloadingGdb ? "Preparing GDB…" : "Download GDB" }}
                         </button>
                     </div>
                 }
