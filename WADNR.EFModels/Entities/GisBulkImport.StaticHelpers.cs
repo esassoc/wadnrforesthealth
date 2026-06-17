@@ -387,6 +387,17 @@ public static class GisBulkImports
                 m => m.GisMetadataAttributeID,
                 m => m.GisFeatureMetadataAttributeValue));
 
+        // Resolve the metadata attribute IDs for the Esri system fields (stored lowercased)
+        // so each created ProjectLocation can carry its source OBJECTID / GlobalID. Absent for
+        // non-Esri sources, in which case ArcGisObjectID / ArcGisGlobalID stay null.
+        var metadataAttributeIDByName = features
+            .SelectMany(f => f.GisFeatureMetadataAttributes)
+            .Select(m => m.GisMetadataAttribute)
+            .GroupBy(a => a.GisMetadataAttributeName.ToLowerInvariant())
+            .ToDictionary(g => g.Key, g => g.First().GisMetadataAttributeID);
+        int? objectIdAttributeID = metadataAttributeIDByName.TryGetValue("objectid", out var oidAttrID) ? oidAttrID : null;
+        int? globalIdAttributeID = metadataAttributeIDByName.TryGetValue("globalid", out var gidAttrID) ? gidAttrID : null;
+
         // Get project identifier values to group features by project
         // Normalize to uppercase for case-insensitive grouping; keep originals for display/storage
         var projectIdentifierLookup = new Dictionary<int, string>();
@@ -617,6 +628,26 @@ public static class GisBulkImports
                 {
                     var locationName = $"{originalIdentifier} - Feature {feature.GisImportFeatureKey}";
 
+                    // Carry the source Esri identifiers through so downstream consumers (e.g. the
+                    // GDB export's ProjectLocations layer) can join back to the source service.
+                    var metadata = featureMetadata[feature.GisFeatureID];
+                    int? arcGisObjectID = null;
+                    if (objectIdAttributeID.HasValue
+                        && metadata.TryGetValue(objectIdAttributeID.Value, out var objectIdValue)
+                        && int.TryParse(objectIdValue, out var parsedObjectID))
+                    {
+                        arcGisObjectID = parsedObjectID;
+                    }
+
+                    string arcGisGlobalID = null;
+                    if (globalIdAttributeID.HasValue
+                        && metadata.TryGetValue(globalIdAttributeID.Value, out var globalIdValue)
+                        && !string.IsNullOrWhiteSpace(globalIdValue))
+                    {
+                        arcGisGlobalID = globalIdValue.Trim();
+                        if (arcGisGlobalID.Length > 50) arcGisGlobalID = arcGisGlobalID[..50];
+                    }
+
                     dbContext.ProjectLocations.Add(new ProjectLocation
                     {
                         ProjectID = existingProject.ProjectID,
@@ -624,7 +655,9 @@ public static class GisBulkImports
                         ProjectLocationName = locationName.Length > 100 ? locationName[..100] : locationName,
                         ProjectLocationTypeID = (int)ProjectLocationTypeEnum.ProjectArea,
                         ImportedFromGisUpload = true,
-                        ProgramID = sourceOrg.ProgramID
+                        ProgramID = sourceOrg.ProgramID,
+                        ArcGisObjectID = arcGisObjectID,
+                        ArcGisGlobalID = arcGisGlobalID
                     });
                     locationsCreatedThisIteration++;
                 }
