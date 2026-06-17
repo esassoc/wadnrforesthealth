@@ -220,7 +220,7 @@ public static partial class Programs
                 ProjectLocationNotes = r.ProjectLocationNotes,
                 ArcGisObjectID = r.ArcGisObjectID,
                 ArcGisGlobalID = r.ArcGisGlobalID,
-                ImportedFromGisUpload = r.ImportedFromGisUpload,
+                ImportedFromGisUpload = r.ImportedFromGisUpload == true ? "Yes" : "No",
                 SourceProgram = r.SourceProgramName,
                 TreatmentCount = r.Treatments.Count,
                 TreatmentTypes = treatmentTypeNames.Count == 0 ? null : string.Join("; ", treatmentTypeNames!),
@@ -301,7 +301,7 @@ public static partial class Programs
                 TreatmentTreatedAcres = r.TreatmentTreatedAcres,
                 CostPerAcre = r.CostPerAcre,
                 TotalCost = totalCost,
-                ImportedFromGis = r.ImportedFromGis,
+                ImportedFromGis = r.ImportedFromGis == true ? "Yes" : "No",
                 TreatmentNotes = r.TreatmentNotes,
                 Geometry = NormalizeToMultiPolygonForGdb(r.Geometry),
             };

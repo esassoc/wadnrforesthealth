@@ -54,7 +54,8 @@ public class ProgramGdbProjectLocationDto : IHasGeometry
     public string? ProjectLocationNotes { get; set; }
     public int? ArcGisObjectID { get; set; }
     public string? ArcGisGlobalID { get; set; }
-    public bool? ImportedFromGisUpload { get; set; }
+    // Emitted as "Yes"/"No" (not a raw bool) so the GDB attribute table reads clearly.
+    public string? ImportedFromGisUpload { get; set; }
     public string? SourceProgram { get; set; }
     public int TreatmentCount { get; set; }
     public string? TreatmentTypes { get; set; }
@@ -84,7 +85,8 @@ public class ProgramGdbTreatmentDto : IHasGeometry
     public decimal? TreatmentTreatedAcres { get; set; }
     public decimal? CostPerAcre { get; set; }
     public decimal? TotalCost { get; set; }
-    public bool? ImportedFromGis { get; set; }
+    // Emitted as "Yes"/"No" (not a raw bool) so the GDB attribute table matches the grid display.
+    public string? ImportedFromGis { get; set; }
     public string? TreatmentNotes { get; set; }
     [JsonIgnore]
     public Geometry Geometry { get; set; } = null!;
