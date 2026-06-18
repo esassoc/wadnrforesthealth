@@ -269,6 +269,8 @@ public partial class WADNRDbContext : DbContext
 
     public virtual DbSet<ReportTemplate> ReportTemplates { get; set; }
 
+    public virtual DbSet<ServiceForestryStage> ServiceForestryStages { get; set; }
+
     public virtual DbSet<SocrataDataMartRawJsonImport> SocrataDataMartRawJsonImports { get; set; }
 
     public virtual DbSet<StateProvince> StateProvinces { get; set; }
@@ -1388,6 +1390,11 @@ public partial class WADNRDbContext : DbContext
             entity.HasKey(e => e.ReportTemplateID).HasName("PK_ReportTemplate_ReportTemplateID");
 
             entity.HasOne(d => d.FileResource).WithMany(p => p.ReportTemplates).OnDelete(DeleteBehavior.ClientSetNull);
+        });
+
+        modelBuilder.Entity<ServiceForestryStage>(entity =>
+        {
+            entity.HasKey(e => e.ServiceForestryStageID).HasName("PK_ServiceForestryStage_ServiceForestryStageID");
         });
 
         modelBuilder.Entity<SocrataDataMartRawJsonImport>(entity =>

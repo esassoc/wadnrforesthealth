@@ -22129,6 +22129,116 @@
         "x-anonymous": true
       }
     },
+    "/service-forestry-upload/dashboard": {
+      "get": {
+        "tags": [
+          "ServiceForestryUpload"
+        ],
+        "operationId": "GetDashboard_ServiceForestryUpload",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadDashboard"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadDashboard"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadDashboard"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service-forestry-upload/import": {
+      "post": {
+        "tags": [
+          "ServiceForestryUpload"
+        ],
+        "operationId": "ImportFile_ServiceForestryUpload",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service-forestry-upload/publish": {
+      "post": {
+        "tags": [
+          "ServiceForestryUpload"
+        ],
+        "operationId": "Publish_ServiceForestryUpload",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryPublishingResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryPublishingResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryPublishingResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sitkacapture/generate-pdf": {
       "post": {
         "tags": [
@@ -35763,6 +35873,56 @@
         },
         "additionalProperties": false
       },
+      "ServiceForestryPublishingResult": {
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "ElapsedSeconds": {
+            "type": "number",
+            "format": "double"
+          },
+          "ErrorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceForestryUploadDashboard": {
+        "type": "object",
+        "properties": {
+          "LatestImport": {
+            "$ref": "#/components/schemas/TabularDataImportGridRow"
+          },
+          "PublishingProcessingIsNeeded": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceForestryUploadResult": {
+        "type": "object",
+        "properties": {
+          "RecordsImported": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ElapsedSeconds": {
+            "type": "number",
+            "format": "double"
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "SinglePolygonApproveRequest": {
         "type": "object",
         "properties": {
@@ -37389,6 +37549,9 @@
     },
     {
       "name": "Search"
+    },
+    {
+      "name": "ServiceForestryUpload"
     },
     {
       "name": "SitkaCapture"
