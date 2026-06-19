@@ -1,0 +1,20 @@
+<div class="modal">
+    <div class="modal-header">
+        <h3>Upload Service Forestry Excel File</h3>
+    </div>
+    <div class="modal-body">
+        <modal-alerts [alerts]="localAlerts()" (onClosed)="removeLocalAlert($event)"></modal-alerts>
+        <p>Select an <strong>.xlsx</strong> Excel file containing the Service Forestry export.</p>
+        <p>The file should contain a "query" sheet with the standard Service Forestry column layout (Project ID, Forester, FUND Source, DC Status, etc.).</p>
+        <form-field
+            [formControl]="fileControl"
+            fieldLabel="Excel File"
+            [type]="FormFieldType.File"
+            uploadFileAccepts=".xlsx">
+        </form-field>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="upload()" [buttonLoading]="isSubmitting()" [disabled]="!fileControl.value || isSubmitting()">Upload</button>
+        <button class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting()">Cancel</button>
+    </div>
+</div>

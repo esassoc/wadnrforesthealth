@@ -335,6 +335,7 @@
     <Build Include="dbo\Tables\dbo.StateProvince.sql" />
     <Build Include="dbo\Tables\dbo.SupportRequestLog.sql" />
     <Build Include="dbo\Tables\dbo.SupportRequestType.sql" />
+    <Build Include="dbo\Tables\dbo.ServiceForestryStage.sql" />
     <Build Include="dbo\Tables\dbo.SystemAttribute.sql" />
     <Build Include="dbo\Tables\dbo.TabularDataImport.sql" />
     <Build Include="dbo\Tables\dbo.TabularDataImportTableType.sql" />
@@ -381,6 +382,7 @@
     <Build Include="dbo\Procs\dbo.pHangFireClearJobQueue.sql" />
     <Build Include="dbo\Procs\dbo.pHangFireRescheduleJobs.sql" />
     <Build Include="dbo\Procs\dbo.pImportLoaTabularData.sql" />
+    <Build Include="dbo\Procs\dbo.pImportServiceForestryTabularData.sql" />
     <Build Include="dbo\Procs\dbo.procImportTreatmentsFromGisUploadAttempt.sql" />
     <Build Include="dbo\Procs\pArcOnlineFundSourceExpenditureImportJson.sql" />
     <Build Include="dbo\Procs\pArcOnlineMarkJsonImportStatus.sql" />
