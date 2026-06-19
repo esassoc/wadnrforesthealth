@@ -10,7 +10,7 @@ CREATE TABLE [dbo].[ProjectLocation](
     [ProgramID] [int] NULL CONSTRAINT [FK_ProjectLocation_Program_ProgramID] FOREIGN KEY REFERENCES [dbo].[Program]([ProgramID]),
     [ImportedFromGisUpload] [bit] NULL,
     [TemporaryTreatmentCacheID] [int] NULL,
-    CONSTRAINT [AK_ProjectLocation_ProjectID_ProjectLocationName] UNIQUE ([ProjectID], [ProjectLocationName])
+    CONSTRAINT [AK_ProjectLocation_ProjectID_ProgramID_ProjectLocationName] UNIQUE ([ProjectID], [ProgramID], [ProjectLocationName])
 )
 GO
 

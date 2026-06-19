@@ -626,8 +626,6 @@ public static class GisBulkImports
                 // Create project locations from feature geometries
                 foreach (var feature in projectGroup)
                 {
-                    var locationName = $"{originalIdentifier} - Feature {feature.GisImportFeatureKey}";
-
                     // Carry the source Esri identifiers through so downstream consumers (e.g. the
                     // GDB export's ProjectLocations layer) can join back to the source service.
                     var metadata = featureMetadata[feature.GisFeatureID];
@@ -647,6 +645,17 @@ public static class GisBulkImports
                         arcGisGlobalID = globalIdValue.Trim();
                         if (arcGisGlobalID.Length > 50) arcGisGlobalID = arcGisGlobalID[..50];
                     }
+
+                    // Derive the location name from a stable source identifier rather than the
+                    // positional GisImportFeatureKey (a per-attempt running counter). The Esri
+                    // OBJECTID / GlobalID are stable across re-imports, so re-running an import
+                    // produces the same names (delete-then-recreate stays clean) and two
+                    // unrelated features can no longer land on the same name. Falls back to the
+                    // feature key only for non-Esri sources that carry neither identifier.
+                    var featureIdentifier = arcGisObjectID?.ToString()
+                        ?? arcGisGlobalID
+                        ?? feature.GisImportFeatureKey.ToString();
+                    var locationName = $"{originalIdentifier} - Feature {featureIdentifier}";
 
                     dbContext.ProjectLocations.Add(new ProjectLocation
                     {

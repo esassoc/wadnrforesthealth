@@ -159,6 +159,46 @@ public class GisBulkImportArcGisIdTests
     }
 
     [TestMethod]
+    public async Task ImportProjects_NamesLocationFromObjectID_WhenObjectIdPresent()
+    {
+        // The location name must derive from the stable Esri OBJECTID, not the positional
+        // GisImportFeatureKey, so re-imports produce identical names and cross-feature/cross-program
+        // name collisions on AK_ProjectLocation_ProjectID_ProgramID_ProjectLocationName are avoided.
+        await using var db = NewInMemoryContext();
+        await SeedAsync(db, objectIdValue: "4242", globalIdValue: "{ABC-123}");
+
+        await GisBulkImports.ImportProjectsAsync(db, AttemptID, BuildRequest());
+
+        var location = await db.ProjectLocations.SingleAsync();
+        Assert.AreEqual("PROJ-1 - Feature 4242", location.ProjectLocationName);
+    }
+
+    [TestMethod]
+    public async Task ImportProjects_NamesLocationFromGlobalID_WhenObjectIdAbsent()
+    {
+        await using var db = NewInMemoryContext();
+        await SeedAsync(db, objectIdValue: null, globalIdValue: "{ABC-123}");
+
+        await GisBulkImports.ImportProjectsAsync(db, AttemptID, BuildRequest());
+
+        var location = await db.ProjectLocations.SingleAsync();
+        Assert.AreEqual("PROJ-1 - Feature {ABC-123}", location.ProjectLocationName);
+    }
+
+    [TestMethod]
+    public async Task ImportProjects_NamesLocationFromFeatureKey_WhenNoEsriIdentifiers()
+    {
+        // Non-Esri sources carry neither OBJECTID nor GlobalID; fall back to the feature key.
+        await using var db = NewInMemoryContext();
+        await SeedAsync(db, objectIdValue: null, globalIdValue: null);
+
+        await GisBulkImports.ImportProjectsAsync(db, AttemptID, BuildRequest());
+
+        var location = await db.ProjectLocations.SingleAsync();
+        Assert.AreEqual("PROJ-1 - Feature 0", location.ProjectLocationName);
+    }
+
+    [TestMethod]
     public void BuildOutFields_AppendsObjectIdAndGlobalId_WhenIncludeGlobalIdTrue()
     {
         var outFields = GisDataImportService.BuildOutFields(new[] { "Approval_ID", "Project_Name" }, includeGlobalId: true);
