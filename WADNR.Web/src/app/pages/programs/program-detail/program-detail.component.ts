@@ -1,7 +1,7 @@
 import { AsyncPipe } from "@angular/common";
-import { Component } from "@angular/core";
+import { ChangeDetectorRef, Component } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, finalize, forkJoin, map, Observable, of, shareReplay, switchMap, take } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, of, shareReplay, switchMap, take } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 import { DialogService } from "@ngneat/dialog";
@@ -87,7 +87,8 @@ export class ProgramDetailComponent {
         private dialogService: DialogService,
         private confirmService: ConfirmService,
         private alertService: AlertService,
-        private authenticationService: AuthenticationService
+        private authenticationService: AuthenticationService,
+        private changeDetectorRef: ChangeDetectorRef
     ) {}
 
     ngOnInit(): void {
@@ -163,10 +164,6 @@ export class ProgramDetailComponent {
 
         combineLatest([this.programID$, this.program$]).pipe(take(1)).subscribe(([programID, program]) => {
             this.programService.downloadProjectsAsGdbProgram(programID, "body", false, { httpHeaderAccept: "application/octet-stream" as any })
-                .pipe(finalize(() => {
-                    this.isDownloadingGdb = false;
-                    this.alertService.removeAlert(preparingAlert);
-                }))
                 .subscribe({
                     next: (blob) => {
                         const url = window.URL.createObjectURL(blob);
@@ -179,12 +176,27 @@ export class ProgramDetailComponent {
                         a.download = `ProjectsInProgram-${displayName}-${date}.gdb.zip`;
                         a.click();
                         window.URL.revokeObjectURL(url);
-                        this.alertService.pushAlert(new Alert("Your GDB download is ready.", AlertContext.Success, true));
+                        this.finishGdbDownload(preparingAlert, new Alert("Your GDB download is ready.", AlertContext.Success, true));
                     },
                     error: () => {
-                        this.alertService.pushAlert(new Alert("An error occurred while downloading the GDB.", AlertContext.Danger, true));
+                        this.finishGdbDownload(preparingAlert, new Alert("An error occurred while downloading the GDB.", AlertContext.Danger, true));
                     },
                 });
+        });
+    }
+
+    // Resets the download button and swaps the "preparing" alert for the result alert.
+    // The GDB blob response resolves at an awkward point in Angular 21's change-detection
+    // scheduling: flipping isDownloadingGdb -> false otherwise gets caught by the deferred
+    // checkNoChanges pass (NG0100 ExpressionChangedAfterItHasBeenChecked), which aborts the
+    // button's DOM update and leaves it stuck on "Preparing GDB…". Running on a fresh macrotask
+    // and then reconciling synchronously with detectChanges() settles the view in one clean pass.
+    private finishGdbDownload(preparingAlert: Alert, resultAlert: Alert): void {
+        setTimeout(() => {
+            this.isDownloadingGdb = false;
+            this.alertService.removeAlert(preparingAlert);
+            this.alertService.pushAlert(resultAlert);
+            this.changeDetectorRef.detectChanges();
         });
     }
 
