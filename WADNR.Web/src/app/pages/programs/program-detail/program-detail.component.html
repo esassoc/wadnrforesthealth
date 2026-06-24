@@ -111,10 +111,10 @@
                     <div class="flex-end mb-2">
                         <button
                             class="btn btn-sm btn-primary"
-                            title="Download GDB of projects"
+                            [title]="projects.length === 0 ? 'No projects associated with this program to download' : 'Download GDB of projects'"
                             (click)="downloadGdb()"
                             [buttonLoading]="isDownloadingGdb"
-                            [disabled]="isDownloadingGdb">
+                            [disabled]="isDownloadingGdb || projects.length === 0">
                             @if (!isDownloadingGdb) {
                                 <i class="fa fa-download" aria-hidden="true"></i>
                             }

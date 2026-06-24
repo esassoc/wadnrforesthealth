@@ -178,11 +178,39 @@ export class ProgramDetailComponent {
                         window.URL.revokeObjectURL(url);
                         this.finishGdbDownload(preparingAlert, new Alert("Your GDB download is ready.", AlertContext.Success, true));
                     },
-                    error: () => {
-                        this.finishGdbDownload(preparingAlert, new Alert("An error occurred while downloading the GDB.", AlertContext.Danger, true));
+                    error: (err) => {
+                        // The request asks for a blob, so a 4xx body comes back as a Blob too — read it
+                        // to surface the backend's specific reason (e.g. "No projects with location data
+                        // found for this program.") instead of a generic message.
+                        this.extractErrorMessage(err).then((message) => {
+                            this.finishGdbDownload(preparingAlert, new Alert(message, AlertContext.Danger, true));
+                        });
                     },
                 });
         });
+    }
+
+    // Pulls a human-readable message out of a failed GDB download response. Because the request
+    // accepts a blob, an error body arrives as a Blob whose text is the backend's message (a 400
+    // BadRequest serializes its string as a quoted JSON value). Falls back to a generic message.
+    private async extractErrorMessage(err: unknown): Promise<string> {
+        const fallback = "An error occurred while downloading the GDB.";
+        const body = (err as { error?: unknown })?.error;
+        if (!(body instanceof Blob)) return fallback;
+        try {
+            const text = (await body.text()).trim();
+            if (!text) return fallback;
+            // BadRequest("message") comes back as a JSON-encoded string ("\"message\"").
+            try {
+                const parsed = JSON.parse(text);
+                if (typeof parsed === "string" && parsed.trim()) return parsed.trim();
+            } catch {
+                // Not JSON — use the raw text.
+            }
+            return text;
+        } catch {
+            return fallback;
+        }
     }
 
     // Resets the download button and swaps the "preparing" alert for the result alert.
