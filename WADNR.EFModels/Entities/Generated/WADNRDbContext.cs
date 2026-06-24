@@ -271,8 +271,6 @@ public partial class WADNRDbContext : DbContext
 
     public virtual DbSet<ServiceForestryStage> ServiceForestryStages { get; set; }
 
-    public virtual DbSet<SocrataDataMartRawJsonImport> SocrataDataMartRawJsonImports { get; set; }
-
     public virtual DbSet<StateProvince> StateProvinces { get; set; }
 
     public virtual DbSet<SupportRequestLog> SupportRequestLogs { get; set; }
@@ -314,8 +312,6 @@ public partial class WADNRDbContext : DbContext
     public virtual DbSet<vLoaStageProjectFundSourceAllocation> vLoaStageProjectFundSourceAllocations { get; set; }
 
     public virtual DbSet<vSingularFundSourceAllocation> vSingularFundSourceAllocations { get; set; }
-
-    public virtual DbSet<vSocrataDataMartRawJsonImportIndex> vSocrataDataMartRawJsonImportIndices { get; set; }
 
     public virtual DbSet<vTotalTreatedAcresByProject> vTotalTreatedAcresByProjects { get; set; }
 
@@ -1397,11 +1393,6 @@ public partial class WADNRDbContext : DbContext
             entity.HasKey(e => e.ServiceForestryStageID).HasName("PK_ServiceForestryStage_ServiceForestryStageID");
         });
 
-        modelBuilder.Entity<SocrataDataMartRawJsonImport>(entity =>
-        {
-            entity.HasKey(e => e.SocrataDataMartRawJsonImportID).HasName("PK_SocrataDataMartRawJsonImport_SocrataDataMartRawJsonImportID");
-        });
-
         modelBuilder.Entity<StateProvince>(entity =>
         {
             entity.HasKey(e => e.StateProvinceID).HasName("PK_StateProvince_StateProvinceID");
@@ -1531,11 +1522,6 @@ public partial class WADNRDbContext : DbContext
         modelBuilder.Entity<vSingularFundSourceAllocation>(entity =>
         {
             entity.ToView("vSingularFundSourceAllocation");
-        });
-
-        modelBuilder.Entity<vSocrataDataMartRawJsonImportIndex>(entity =>
-        {
-            entity.ToView("vSocrataDataMartRawJsonImportIndex");
         });
 
         modelBuilder.Entity<vTotalTreatedAcresByProject>(entity =>

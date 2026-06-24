@@ -14,7 +14,6 @@ CREATE TABLE [dbo].[SystemAttribute](
     [ShowLeadImplementerLogoOnFactSheet] [bit] NOT NULL,
     [EnableAccomplishmentsDashboard] [bit] NOT NULL,
     [ProjectStewardshipAreaTypeID] [int] NULL CONSTRAINT [FK_SystemAttribute_ProjectStewardshipAreaType_ProjectStewardshipAreaTypeID] FOREIGN KEY REFERENCES [dbo].[ProjectStewardshipAreaType]([ProjectStewardshipAreaTypeID]),
-    [SocrataAppToken] [varchar](200) NOT NULL,
     CONSTRAINT [CK_TenantAttribute_AssociatedPerfomanceMeasureTaxonomyLevelLessThanEqualToTaxonomyLevelID] CHECK (([AssociatePerfomanceMeasureTaxonomyLevelID] <= [TaxonomyLevelID]))
 )
 GO

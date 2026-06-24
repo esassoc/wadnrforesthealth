@@ -102,8 +102,6 @@ GO
 GO
 :r ".\dbo.Role.sql"
 GO
-:r ".\dbo.SocrataDataMartRawJsonImportTableType.sql"
-GO
 :r ".\dbo.SupportRequestType.sql"
 GO
 :r ".\dbo.TabularDataImportTableType.sql"
