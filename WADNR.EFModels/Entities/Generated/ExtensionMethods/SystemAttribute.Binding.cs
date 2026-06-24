@@ -13,7 +13,6 @@ namespace WADNR.EFModels.Entities
         {
             public const int RecaptchaPublicKey = 100;
             public const int RecaptchaPrivateKey = 100;
-            public const int SocrataAppToken = 200;
         }
     }
 }
