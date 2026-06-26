@@ -424,6 +424,9 @@
     <Build Include="dbo\Views\dbo.vLoaStageFundSourceAllocation.sql" />
     <Build Include="dbo\Views\dbo.vLoaStageFundSourceAllocationByProgramIndexProjectCode.sql" />
     <Build Include="dbo\Views\dbo.vLoaStageProjectFundSourceAllocation.sql" />
+    <Build Include="dbo\Views\dbo.vServiceForestryStageFundSourceAllocation.sql" />
+    <Build Include="dbo\Views\dbo.vServiceForestryStageFundSourceAllocationByProgramIndexProjectCode.sql" />
+    <Build Include="dbo\Views\dbo.vServiceForestryStageProjectFundSourceAllocation.sql" />
     <Build Include="dbo\Views\dbo.vSingularFundSourceAllocation.sql" />
   </ItemGroup>
   <ItemGroup>
