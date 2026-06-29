@@ -102,7 +102,12 @@ export class HomeIndexComponent implements OnInit {
     handleMapReady(event: any): void {
         this.map = event.map;
         this.layerControl = event.layerControl;
-        this.mapIsReady = true;
+        // <wadnr-map> emits onMapLoad synchronously from its ngAfterViewInit, i.e. during the
+        // parent's change-detection pass. Flipping mapIsReady inline would mutate the @if binding
+        // after it was checked (NG0100). Defer to the next microtask so it lands in a fresh CD pass.
+        Promise.resolve().then(() => {
+            this.mapIsReady = true;
+        });
     }
 
     openGisImportModal(): void {
