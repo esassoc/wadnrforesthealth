@@ -834,6 +834,7 @@ export class ProjectDetailComponent implements OnDestroy {
             },
             this.utilityFunctions.createBasicColumnDef("Description", "Description"),
             this.utilityFunctions.createBasicColumnDef("Type", "DocumentTypeName"),
+            this.utilityFunctions.createDateColumnDef("Uploaded Date", "UploadDate", "short", { Sort: "asc" }),
         ];
         if (canEdit) {
             cols.push(this.utilityFunctions.createActionsColumnDef((params) => {
