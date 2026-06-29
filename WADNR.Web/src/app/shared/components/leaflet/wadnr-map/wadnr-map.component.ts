@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, Input, NgZone, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from "@angular/core";
 
 import { Control, LeafletEvent, Map, MapOptions, DomUtil, ControlPosition } from "leaflet";
-import "src/scripts/leaflet.groupedlayercontrol.js";
 import * as L from "leaflet";
 import { FullScreen } from "leaflet.fullscreen";
 import GestureHandling from "leaflet-gesture-handling";
