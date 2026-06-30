@@ -83,6 +83,9 @@ export class FormFieldComponent implements OnInit, OnDestroy {
     public fileExtension: string = null;
     public selectedFiles: File[] = [];
 
+    /** True while a file is being dragged over the file drop target, for visual feedback. */
+    public isDragging: boolean = false;
+
     public val: any;
     set value(val) {
         this.val = val;
@@ -124,8 +127,18 @@ export class FormFieldComponent implements OnInit, OnDestroy {
     }
 
     onFileChange(event: any): void {
+        this.handleFiles(event.target.files);
+        // Reset native input so the same file can be re-selected (and so a later drop isn't blocked)
+        event.target.value = "";
+    }
+
+    /**
+     * Shared file-intake logic used by both the native file input (Browse) and drag-and-drop.
+     * Applies the same accept-extension validation and single/multiple handling for both paths.
+     */
+    private handleFiles(fileList: FileList | File[]): void {
         if (this.multiple) {
-            let newFiles: File[] = Array.from(event.target.files ?? []);
+            let newFiles: File[] = Array.from(fileList ?? []);
             if (newFiles.length && this.uploadFileAccepts) {
                 const allowedExts = this.uploadFileAccepts.split(",").map(e => e.trim().toLowerCase());
                 newFiles = newFiles.filter(f => {
@@ -133,8 +146,7 @@ export class FormFieldComponent implements OnInit, OnDestroy {
                     return allowedExts.includes(ext);
                 });
                 if (!newFiles.length) {
-                    event.target.value = "";
-                    // Set errors after clearing input so Angular's re-validation doesn't clear them
+                    // Set errors so Angular's re-validation doesn't clear them
                     this.formControl.setErrors({ invalidFileType: { allowed: this.uploadFileAccepts } });
                     this.formControl.markAsTouched();
                     return;
@@ -144,15 +156,12 @@ export class FormFieldComponent implements OnInit, OnDestroy {
                 this.selectedFiles = [...this.selectedFiles, ...newFiles];
                 this.value = [...this.selectedFiles];
             }
-            // Reset native input so the same file can be re-added
-            event.target.value = "";
         } else {
-            let file = event.target.files[0];
+            let file = fileList?.[0];
             if (file && this.uploadFileAccepts) {
                 const allowedExts = this.uploadFileAccepts.split(",").map(e => e.trim().toLowerCase());
                 const ext = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
                 if (!allowedExts.includes(ext)) {
-                    event.target.value = "";
                     this.value = null;
                     this.fileName = null;
                     this.fileExtension = null;
@@ -172,6 +181,30 @@ export class FormFieldComponent implements OnInit, OnDestroy {
                 this.fileName = null;
                 this.fileExtension = null;
             }
+        }
+    }
+
+    onDragOver(event: DragEvent): void {
+        if (this.isDisabled) return;
+        event.preventDefault();
+        event.stopPropagation();
+        this.isDragging = true;
+    }
+
+    onDragLeave(event: DragEvent): void {
+        event.preventDefault();
+        event.stopPropagation();
+        this.isDragging = false;
+    }
+
+    onDrop(event: DragEvent): void {
+        if (this.isDisabled) return;
+        event.preventDefault();
+        event.stopPropagation();
+        this.isDragging = false;
+        const files = event.dataTransfer?.files;
+        if (files?.length) {
+            this.handleFiles(files);
         }
     }
 

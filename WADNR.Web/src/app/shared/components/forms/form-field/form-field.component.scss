@@ -57,6 +57,28 @@
         height: var(--spacing-700);
     }
 
+    &__file-dropzone {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-200);
+        padding: var(--spacing-300);
+        border: 1px dashed var(--gray-default);
+        border-radius: var(--border-radius-200);
+        transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+
+        &--dragging {
+            border-color: var(--primary);
+            border-style: solid;
+            background-color: var(--gray-200);
+        }
+    }
+
+    &__file-drop-hint {
+        font-size: var(--type-size-100);
+        color: var(--gray-600);
+    }
+
     &__multi-file-list {
         display: flex;
         flex-direction: column;
@@ -133,6 +155,15 @@
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
+}
+
+// Drag-and-drop highlight for the single-file upload bar.
+// Base .custom-file-upload styling is global in src/scss/components/_field.scss;
+// this only adds emphasis while a file is dragged over, with no layout shift.
+.custom-file-upload--dragging {
+    border-color: var(--primary);
+    border-style: dashed;
+    background-color: var(--gray-200);
 }
 
 // Disabled state styling

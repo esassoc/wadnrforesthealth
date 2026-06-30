@@ -170,29 +170,42 @@
                     </label>
                 }
                 @if (multiple) {
-                    <div class="form-field__multi-file-list">
-                        @for (file of selectedFiles; track $index) {
-                            <div class="form-field__multi-file-item">
-                                <span class="form-field__multi-file-name" [title]="file.name">{{ file.name }}</span>
-                                <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeFile($index)">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        }
+                    <div
+                        class="form-field__file-dropzone"
+                        [class.form-field__file-dropzone--dragging]="isDragging"
+                        (dragover)="onDragOver($event)"
+                        (dragleave)="onDragLeave($event)"
+                        (drop)="onDrop($event)">
+                        <div class="form-field__multi-file-list">
+                            @for (file of selectedFiles; track $index) {
+                                <div class="form-field__multi-file-item">
+                                    <span class="form-field__multi-file-name" [title]="file.name">{{ file.name }}</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeFile($index)">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                        <input
+                            [id]="inputId"
+                            type="file"
+                            #fileUploadField
+                            multiple
+                            (change)="onFileChange($event)"
+                            [accept]="uploadFileAccepts"
+                            style="display: none" />
+                        <button type="button" class="btn btn-sm btn-outline-primary" (click)="onClickFileUpload($event)">
+                            <i class="fas fa-plus"></i> Add File(s)
+                        </button>
+                        <span class="form-field__file-drop-hint">or drag file(s) here</span>
                     </div>
-                    <input
-                        [id]="inputId"
-                        type="file"
-                        #fileUploadField
-                        multiple
-                        (change)="onFileChange($event)"
-                        [accept]="uploadFileAccepts"
-                        style="display: none" />
-                    <button type="button" class="btn btn-sm btn-outline-primary" (click)="onClickFileUpload($event)">
-                        <i class="fas fa-plus"></i> Add File(s)
-                    </button>
                 } @else {
-                    <div class="custom-file-upload">
+                    <div
+                        class="custom-file-upload"
+                        [class.custom-file-upload--dragging]="isDragging"
+                        (dragover)="onDragOver($event)"
+                        (dragleave)="onDragLeave($event)"
+                        (drop)="onDrop($event)">
                         <input
                             [id]="inputId"
                             type="file"
@@ -202,7 +215,7 @@
                             [placeholder]="placeholder"
                             [formControl]="formControl"
                             [name]="name" />
-                        {{ formControl.value ? formControl.value.name : "No file chosen..." }}
+                        {{ formControl.value ? formControl.value.name : "No file chosen... (or drag a file here)" }}
                         <button type="button" class="btn btn-lg btn-primary" (click)="onClickFileUpload($event)">
                             <i class="fas fa-folder-open"></i>
                             Browse
