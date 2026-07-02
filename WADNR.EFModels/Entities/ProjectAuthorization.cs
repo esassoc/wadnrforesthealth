@@ -82,13 +82,15 @@ public static class ProjectAuthorization
         if (authData.IsPendingProject)
             return false;
 
-        // ProjectSteward must be able to steward this project
-        if (IsProjectSteward(person))
-            return CanStewardProject(person, authData, stewardshipAreaTypeID);
+        // A user may hold both the ProjectSteward base role and the CanEditProgram
+        // supplemental role. Grant access if EITHER their stewardship scope OR their
+        // assigned programs cover this project — do not short-circuit on the steward
+        // check, which would ignore a valid program-based grant.
+        if (IsProjectSteward(person) && CanStewardProject(person, authData, stewardshipAreaTypeID))
+            return true;
 
-        // CanEditProgram must have overlapping programs
-        if (person.HasCanEditProgramRole())
-            return CanProgramEditorManageProject(person, authData);
+        if (person.HasCanEditProgramRole() && CanProgramEditorManageProject(person, authData))
+            return true;
 
         return false;
     }
@@ -102,11 +104,14 @@ public static class ProjectAuthorization
         if (IsAdminOrEsaAdmin(person))
             return true;
 
-        if (IsProjectSteward(person))
-            return CanStewardProject(person, authData, stewardshipAreaTypeID);
+        // A user may hold both the ProjectSteward base role and the CanEditProgram
+        // supplemental role. Grant if EITHER stewardship scope OR program overlap covers
+        // this project — do not short-circuit on the steward check.
+        if (IsProjectSteward(person) && CanStewardProject(person, authData, stewardshipAreaTypeID))
+            return true;
 
-        if (person.HasCanEditProgramRole())
-            return CanProgramEditorManageProject(person, authData);
+        if (person.HasCanEditProgramRole() && CanProgramEditorManageProject(person, authData))
+            return true;
 
         return false;
     }
