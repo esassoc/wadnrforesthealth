@@ -215,7 +215,9 @@
                             [placeholder]="placeholder"
                             [formControl]="formControl"
                             [name]="name" />
-                        {{ formControl.value ? formControl.value.name : "No file chosen... (or drag a file here)" }}
+                        <span class="file-upload-name" [title]="formControl.value?.name">
+                            {{ formControl.value ? formControl.value.name : "No file chosen... (or drag a file here)" }}
+                        </span>
                         <button type="button" class="btn btn-lg btn-primary" (click)="onClickFileUpload($event)">
                             <i class="fas fa-folder-open"></i>
                             Browse
