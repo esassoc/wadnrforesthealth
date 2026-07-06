@@ -831,6 +831,8 @@ export class ProjectDetailComponent implements OnDestroy {
                     const doc = params.data as ProjectDocumentGridRow;
                     return `<a href="${this.apiUrl}/file-resources/${doc.FileResourceGuid}" target="_blank">${doc.DisplayName}</a>`;
                 },
+                comparator: this.utilityFunctions.linkRendererComparator,
+                filterValueGetter: (params) => (params.data as ProjectDocumentGridRow).DisplayName,
             },
             this.utilityFunctions.createBasicColumnDef("Description", "Description"),
             this.utilityFunctions.createBasicColumnDef("Type", "DocumentTypeName"),
