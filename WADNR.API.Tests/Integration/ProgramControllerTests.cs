@@ -929,6 +929,9 @@ public class ProgramControllerTests
             Assert.AreEqual(project.ProjectID, point.ProjectID);
             Assert.AreEqual(project.ProjectName, point.ProjectName);
             Assert.AreEqual($"{TestWebUrl}/projects/{project.ProjectID}", point.ProjectDetailUrl);
+            // Point was set to (X=-120.5 lon, Y=47.5 lat) in WGS84.
+            Assert.AreEqual(47.5, point.Latitude);
+            Assert.AreEqual(-120.5, point.Longitude);
             Assert.IsNotNull(point.Geometry);
             Assert.AreEqual("Point", point.Geometry.GeometryType);
         }

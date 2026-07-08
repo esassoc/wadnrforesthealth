@@ -37,6 +37,9 @@ public class ProgramGdbProjectPointDto : IHasGeometry
     public string? PriorityLandscapes { get; set; }
     public string? FundingSources { get; set; }
     public string? ProjectDetailUrl { get; set; }
+    // Point coordinates in WGS84 (SRID 4326): X = Longitude, Y = Latitude.
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
     [JsonIgnore]
     public Geometry Geometry { get; set; } = null!;
 }

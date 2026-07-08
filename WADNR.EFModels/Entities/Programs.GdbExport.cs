@@ -146,6 +146,9 @@ public static partial class Programs
                 PriorityLandscapes = r.PriorityLandscapeNames.Count == 0 ? null : string.Join("; ", r.PriorityLandscapeNames.OrderBy(n => n)),
                 FundingSources = string.IsNullOrEmpty(fundingSourcesCsv) ? null : fundingSourcesCsv,
                 ProjectDetailUrl = $"{baseUrl}/projects/{r.ProjectID}",
+                // ProjectLocationPoint is stored in WGS84 (SRID 4326): X = Longitude, Y = Latitude.
+                Latitude = r.Geometry.Coordinate?.Y,
+                Longitude = r.Geometry.Coordinate?.X,
                 Geometry = r.Geometry,
             };
         }).ToList();
