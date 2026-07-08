@@ -42,8 +42,8 @@ public static partial class Programs
     public static async Task<ProgramGdbExportData> GetGdbExportDataAsync(WADNRDbContext dbContext, int programID, string webUrl)
     {
         var projectPoints = await GetGdbProjectPointsAsync(dbContext, programID, webUrl);
-        var projectLocations = await GetGdbProjectLocationsAsync(dbContext, programID);
-        var treatments = await GetGdbTreatmentsAsync(dbContext, programID);
+        var projectLocations = await GetGdbProjectLocationsAsync(dbContext, programID, webUrl);
+        var treatments = await GetGdbTreatmentsAsync(dbContext, programID, webUrl);
 
         return new ProgramGdbExportData
         {
@@ -151,8 +151,10 @@ public static partial class Programs
         }).ToList();
     }
 
-    private static async Task<List<ProgramGdbProjectLocationDto>> GetGdbProjectLocationsAsync(WADNRDbContext dbContext, int programID)
+    private static async Task<List<ProgramGdbProjectLocationDto>> GetGdbProjectLocationsAsync(WADNRDbContext dbContext, int programID, string webUrl)
     {
+        var baseUrl = (webUrl ?? string.Empty).TrimEnd('/');
+
         var rows = await dbContext.ProjectPrograms
             .AsNoTracking()
             .Where(pp => pp.ProgramID == programID)
@@ -229,13 +231,16 @@ public static partial class Programs
                     ? r.Treatments.Sum(t => t.TreatmentTreatedAcres ?? 0m)
                     : (decimal?)null,
                 TotalCost = totalCost,
+                ProjectDetailUrl = $"{baseUrl}/projects/{r.ProjectID}",
                 Geometry = NormalizeToMultiPolygonForGdb(r.Geometry),
             };
         }).ToList();
     }
 
-    private static async Task<List<ProgramGdbTreatmentDto>> GetGdbTreatmentsAsync(WADNRDbContext dbContext, int programID)
+    private static async Task<List<ProgramGdbTreatmentDto>> GetGdbTreatmentsAsync(WADNRDbContext dbContext, int programID, string webUrl)
     {
+        var baseUrl = (webUrl ?? string.Empty).TrimEnd('/');
+
         var rows = await dbContext.ProjectPrograms
             .AsNoTracking()
             .Where(pp => pp.ProgramID == programID)
@@ -303,6 +308,7 @@ public static partial class Programs
                 TotalCost = totalCost,
                 ImportedFromGis = r.ImportedFromGis == true ? "Yes" : "No",
                 TreatmentNotes = r.TreatmentNotes,
+                ProjectDetailUrl = $"{baseUrl}/projects/{r.ProjectID}",
                 Geometry = NormalizeToMultiPolygonForGdb(r.Geometry),
             };
         }).ToList();

@@ -986,11 +986,13 @@ public class ProgramControllerTests
             var location = data.ProjectLocations.Single();
             Assert.AreEqual(1, location.TreatmentCount);
             Assert.IsNotNull(location.TreatmentTypes);
+            Assert.AreEqual($"{TestWebUrl}/projects/{project.ProjectID}", location.ProjectDetailUrl);
 
             var treatment = data.Treatments.Single();
             Assert.AreEqual(projectLocation.ProjectLocationID, treatment.ProjectLocationID);
             Assert.IsNotNull(treatment.TreatmentType);
             Assert.IsNotNull(treatment.Geometry);
+            Assert.AreEqual($"{TestWebUrl}/projects/{project.ProjectID}", treatment.ProjectDetailUrl);
         }
         finally
         {

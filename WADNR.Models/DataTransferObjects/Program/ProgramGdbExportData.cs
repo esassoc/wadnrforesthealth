@@ -62,6 +62,7 @@ public class ProgramGdbProjectLocationDto : IHasGeometry
     public decimal TotalFootprintAcres { get; set; }
     public decimal? TotalTreatedAcres { get; set; }
     public decimal? TotalCost { get; set; }
+    public string? ProjectDetailUrl { get; set; }
     [JsonIgnore]
     public Geometry Geometry { get; set; } = null!;
 }
@@ -88,6 +89,7 @@ public class ProgramGdbTreatmentDto : IHasGeometry
     // Emitted as "Yes"/"No" (not a raw bool) so the GDB attribute table matches the grid display.
     public string? ImportedFromGis { get; set; }
     public string? TreatmentNotes { get; set; }
+    public string? ProjectDetailUrl { get; set; }
     [JsonIgnore]
     public Geometry Geometry { get; set; } = null!;
 }
