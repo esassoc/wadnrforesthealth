@@ -618,7 +618,12 @@ public static class ProjectCreateWorkflowSteps
     /// Auto-assigns geographic regions (priority landscapes, DNR upland regions, counties)
     /// based on project location intersections.
     /// </summary>
-    private static async Task AutoAssignGeographicRegionsAsync(WADNRDbContext dbContext, int projectID)
+    /// <param name="useNoAuditingSave">
+    /// When true, persists via SaveChangesWithNoAuditingAsync instead of SaveChangesAsync.
+    /// Used by system-driven paths (e.g. GIS bulk import and the nightly ArcGIS jobs) that
+    /// deliberately avoid writing audit fields.
+    /// </param>
+    internal static async Task AutoAssignGeographicRegionsAsync(WADNRDbContext dbContext, int projectID, bool useNoAuditingSave = false)
     {
         var project = await dbContext.Projects
             .Include(p => p.ProjectLocations)
@@ -649,7 +654,10 @@ public static class ProjectCreateWorkflowSteps
             project.NoPriorityLandscapesExplanation ??= "Neither the simple location nor the detailed location on this project intersects with any Priority Landscape.";
             project.NoRegionsExplanation ??= "Neither the simple location nor the detailed location on this project intersects with any DNR Upland Region.";
             project.NoCountiesExplanation ??= "Neither the simple location nor the detailed location on this project intersects with any County.";
-            await dbContext.SaveChangesAsync();
+            if (useNoAuditingSave)
+                await dbContext.SaveChangesWithNoAuditingAsync();
+            else
+                await dbContext.SaveChangesAsync();
             return;
         }
 
@@ -719,7 +727,10 @@ public static class ProjectCreateWorkflowSteps
             ? "Neither the simple location nor the detailed location on this project intersects with any County."
             : null;
 
-        await dbContext.SaveChangesAsync();
+        if (useNoAuditingSave)
+            await dbContext.SaveChangesWithNoAuditingAsync();
+        else
+            await dbContext.SaveChangesAsync();
     }
 
     #endregion

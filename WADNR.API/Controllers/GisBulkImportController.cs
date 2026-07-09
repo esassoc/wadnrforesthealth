@@ -149,7 +149,17 @@ public class GisBulkImportController(
     [GisBulkImportFeature]
     public async Task<ActionResult<GisBulkImportResult>> ImportProjects([FromRoute] int gisUploadAttemptID, [FromBody] GisBulkImportRequest request)
     {
-        var result = await GisBulkImports.ImportProjectsAsync(DbContext, gisUploadAttemptID, request);
-        return Ok(result);
+        try
+        {
+            var result = await GisBulkImports.ImportProjectsAsync(DbContext, gisUploadAttemptID, request);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            // Log full detail server-side (also forwarded to Datadog); return a controlled,
+            // non-leaking message so the client shows something actionable instead of a bare 500.
+            Logger.LogError(ex, "Bulk import failed for GisUploadAttemptID {GisUploadAttemptID}", gisUploadAttemptID);
+            return StatusCode(500, new { ErrorMessage = "The import failed while processing the uploaded data. The issue has been logged. Please try again, and contact support if the problem persists." });
+        }
     }
 }

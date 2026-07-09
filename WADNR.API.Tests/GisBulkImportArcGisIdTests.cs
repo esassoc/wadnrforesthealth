@@ -199,6 +199,51 @@ public class GisBulkImportArcGisIdTests
     }
 
     [TestMethod]
+    public async Task ImportProjects_AssignsCountyRegionAndPriorityLandscape_FromLocationGeometry()
+    {
+        // WADNR-2272: imported projects were not getting location-based data set. The import must
+        // populate County / DNR Upland Region / Priority Landscape from the created location
+        // geometry, mirroring the interactive project workflow (AutoAssignGeographicRegionsAsync).
+        await using var db = NewInMemoryContext();
+        await SeedAsync(db, objectIdValue: "4242", globalIdValue: "{ABC-123}");
+
+        // A county, region, and priority landscape whose boundary overlaps the feature square.
+        var overlapping = MakeSquare();
+        db.Counties.Add(new County { CountyID = 1, CountyName = "Test County", StateProvinceID = 1, CountyFeature = overlapping });
+        db.DNRUplandRegions.Add(new DNRUplandRegion { DNRUplandRegionID = 1, DNRUplandRegionName = "Test Region", DNRUplandRegionLocation = overlapping });
+        db.PriorityLandscapes.Add(new PriorityLandscape { PriorityLandscapeID = 1, PriorityLandscapeName = "Test Priority Landscape", PriorityLandscapeLocation = overlapping });
+        await db.SaveChangesWithNoAuditingAsync();
+
+        var result = await GisBulkImports.ImportProjectsAsync(db, AttemptID, BuildRequest());
+
+        Assert.AreEqual(1, result.ProjectsCreated);
+        var projectID = (await db.Projects.SingleAsync()).ProjectID;
+        Assert.AreEqual(1, await db.ProjectCounties.CountAsync(x => x.ProjectID == projectID), "Expected the intersecting county to be assigned.");
+        Assert.AreEqual(1, await db.ProjectRegions.CountAsync(x => x.ProjectID == projectID), "Expected the intersecting DNR upland region to be assigned.");
+        Assert.AreEqual(1, await db.ProjectPriorityLandscapes.CountAsync(x => x.ProjectID == projectID), "Expected the intersecting priority landscape to be assigned.");
+    }
+
+    [TestMethod]
+    public async Task ImportProjects_LeavesLocationDataEmptyAndSetsExplanations_WhenNoBoundaryIntersects()
+    {
+        // No county / region / priority landscape seeded, so nothing intersects: the import must
+        // still succeed, leave the join tables empty, and record the "does not intersect" explanations.
+        await using var db = NewInMemoryContext();
+        await SeedAsync(db, objectIdValue: "4242", globalIdValue: "{ABC-123}");
+
+        var result = await GisBulkImports.ImportProjectsAsync(db, AttemptID, BuildRequest());
+
+        Assert.AreEqual(1, result.ProjectsCreated);
+        var project = await db.Projects.SingleAsync();
+        Assert.AreEqual(0, await db.ProjectCounties.CountAsync(x => x.ProjectID == project.ProjectID));
+        Assert.AreEqual(0, await db.ProjectRegions.CountAsync(x => x.ProjectID == project.ProjectID));
+        Assert.AreEqual(0, await db.ProjectPriorityLandscapes.CountAsync(x => x.ProjectID == project.ProjectID));
+        Assert.IsNotNull(project.NoCountiesExplanation);
+        Assert.IsNotNull(project.NoRegionsExplanation);
+        Assert.IsNotNull(project.NoPriorityLandscapesExplanation);
+    }
+
+    [TestMethod]
     public void BuildOutFields_AppendsObjectIdAndGlobalId_WhenIncludeGlobalIdTrue()
     {
         var outFields = GisDataImportService.BuildOutFields(new[] { "Approval_ID", "Project_Name" }, includeGlobalId: true);

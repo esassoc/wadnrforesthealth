@@ -672,6 +672,14 @@ public static class GisBulkImports
                 }
 
                 await dbContext.SaveChangesWithNoAuditingAsync();
+
+                // Populate County / DNR Upland Region / Priority Landscape from the just-saved
+                // location geometries, mirroring the interactive project workflow. Runs inside the
+                // same transaction (atomic with the locations) and saves without auditing, matching
+                // this pipeline's convention. Idempotent, so execution-strategy retries are safe.
+                await ProjectCreateWorkflowSteps.AutoAssignGeographicRegionsAsync(
+                    dbContext, existingProject.ProjectID, useNoAuditingSave: true);
+
                 await transaction.CommitAsync();
             });
 
