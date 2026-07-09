@@ -1003,7 +1003,6 @@ public static class Projects
         entity.UserIsAdmin = isAdmin;
         entity.UserCanDelete = isAdmin;
         entity.UserCanApprove = ProjectAuthorization.CanApprove(callingUser, authData, stewardshipAreaTypeID);
-        entity.UserCanDirectEdit = entity.UserCanApprove;
         entity.UserCanViewCostSharePDFs = callingUser.SupplementalRoleList?.Any(r => r.RoleID == (int)RoleEnum.CanViewLandownerInfo) ?? false;
         if (isAdmin) entity.UserCanViewCostSharePDFs = true;
 
@@ -1017,6 +1016,12 @@ public static class Projects
                 r.RoleID == (int)RoleEnum.CanManageFundSourcesAndAgreements) ?? false);
 
         entity.UserCanEditProjectAsAdmin = ProjectAuthorization.CanEditAsAdmin(callingUser, authData, stewardshipAreaTypeID);
+
+        // Detail-page direct-edit buttons (Contacts, Basics, Location, etc.) must match what
+        // their edit endpoints enforce ([ProjectEditAsAdminFeature] => CanEditAsAdmin), not the
+        // approve permission. These differ on pending projects, where showing the button would
+        // let the user trigger a 403. WADNR-2259.
+        entity.UserCanDirectEdit = entity.UserCanEditProjectAsAdmin;
 
         entity.UserCanViewInternalNotes = entity.UserCanEditProjectAsAdmin && isApproved;
 

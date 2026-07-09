@@ -595,6 +595,44 @@ public class ProjectControllerHttpTests
         Assert.IsFalse(project.UserCanViewCostSharePDFs, "Unassigned user should not view cost share PDFs");
     }
 
+    // WADNR-2259: detail-page direct-edit buttons must match what their edit endpoints enforce
+    // ([ProjectEditAsAdminFeature] => CanEditAsAdmin). UserCanDirectEdit is now derived from
+    // UserCanEditProjectAsAdmin rather than UserCanApprove, so the two must always agree.
+    [TestMethod]
+    public async Task Get_DirectEditMatchesEditAsAdmin_ForAdminOnApprovedProject()
+    {
+        var route = RouteHelper.GetRouteFor<ProjectController>(c => c.Get(_testProjectID));
+        var result = await AssemblySteps.AdminHttpClient.GetAsync(route);
+
+        Assert.IsTrue(result.IsSuccessStatusCode, $"Route: {route}\n{await result.Content.ReadAsStringAsync()}");
+        var project = await result.DeserializeContentAsync<ProjectDetail>();
+        Assert.IsNotNull(project);
+        Assert.IsTrue(project.UserCanEditProjectAsAdmin, "Admin should be able to edit an approved project");
+        Assert.AreEqual(project.UserCanEditProjectAsAdmin, project.UserCanDirectEdit,
+            "UserCanDirectEdit must equal UserCanEditProjectAsAdmin");
+    }
+
+    [TestMethod]
+    public async Task Get_DirectEditFalse_ForAdminOnPendingProject()
+    {
+        // CanEditAsAdmin denies pending projects for everyone (including admins); the direct-edit
+        // buttons must therefore be hidden on a pending project even though CanApprove would allow it.
+        var pending = await ProjectHelper.CreatePendingApprovalProjectWithValidLookupsAsync(
+            AssemblySteps.DbContext, AssemblySteps.TestAdminPersonID);
+        _createdProjectIDs.Add(pending.ProjectID);
+
+        var route = RouteHelper.GetRouteFor<ProjectController>(c => c.Get(pending.ProjectID));
+        var result = await AssemblySteps.AdminHttpClient.GetAsync(route);
+
+        Assert.IsTrue(result.IsSuccessStatusCode, $"Route: {route}\n{await result.Content.ReadAsStringAsync()}");
+        var project = await result.DeserializeContentAsync<ProjectDetail>();
+        Assert.IsNotNull(project);
+        Assert.IsFalse(project.UserCanEditProjectAsAdmin, "Pending projects are not admin-editable");
+        Assert.IsFalse(project.UserCanDirectEdit, "Direct-edit buttons must be hidden on pending projects");
+        Assert.AreEqual(project.UserCanEditProjectAsAdmin, project.UserCanDirectEdit,
+            "UserCanDirectEdit must equal UserCanEditProjectAsAdmin");
+    }
+
     #endregion
 
     #region SaveBasics Failure Tests
