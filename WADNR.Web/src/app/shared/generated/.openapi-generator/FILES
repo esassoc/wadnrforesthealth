@@ -22,6 +22,7 @@ api/fund-source-allocation-note-internal.service.ts
 api/fund-source-allocation-note.service.ts
 api/fund-source-allocation-priority.service.ts
 api/fund-source-allocation.service.ts
+api/fund-source-image.service.ts
 api/fund-source-type.service.ts
 api/fund-source.service.ts
 api/funding-source.service.ts
@@ -143,7 +144,7 @@ model/focus-area-upsert-request.ts
 model/forester-contact-result.ts
 model/forester-role-lookup-item.ts
 model/forester-work-unit-grid-row.ts
-model/fund-source-agreement-grid-row.ts
+model/fund-source-about-upsert-request.ts
 model/fund-source-allocation-agreement-grid-row.ts
 model/fund-source-allocation-budget-line-item-grid-row.ts
 model/fund-source-allocation-budget-line-item-upsert-item.ts
@@ -176,11 +177,13 @@ model/fund-source-allocation-request-update-item-request.ts
 model/fund-source-allocation-request-update-item.ts
 model/fund-source-allocation-source-lookup-item.ts
 model/fund-source-allocation-upsert-request.ts
-model/fund-source-budget-line-item-grid-row.ts
 model/fund-source-detail.ts
 model/fund-source-file-resource-grid-row.ts
 model/fund-source-file-update-request.ts
 model/fund-source-grid-row.ts
+model/fund-source-image-detail.ts
+model/fund-source-image-grid-row.ts
+model/fund-source-image-upsert-request.ts
 model/fund-source-lookup-item.ts
 model/fund-source-note-grid-row.ts
 model/fund-source-note-internal-grid-row.ts

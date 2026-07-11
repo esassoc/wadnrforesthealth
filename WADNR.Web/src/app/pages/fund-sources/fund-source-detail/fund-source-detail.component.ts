@@ -1,9 +1,13 @@
 import { AsyncPipe } from "@angular/common";
-import { Component, Input } from "@angular/core";
+import { AfterViewChecked, Component, DestroyRef, inject, Input, ViewChild } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { FormsModule } from "@angular/forms";
+import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { RouterLink } from "@angular/router";
 import { DialogService } from "@ngneat/dialog";
 import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, of, shareReplay, startWith, Subject, switchMap } from "rxjs";
 import { ColDef } from "ag-grid-community";
+import { EditorComponent, TINYMCE_SCRIPT_SRC } from "@tinymce/tinymce-angular";
 import { environment } from "src/environments/environment";
 
 import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadcrumb.component";
@@ -11,31 +15,55 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
+import { ImageGalleryComponent, ImageGalleryItem } from "src/app/shared/components/image-gallery/image-gallery.component";
+import { ProjectsMapSharedComponent } from "src/app/shared/components/projects-map/projects-map.component";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
+import { AlertService } from "src/app/shared/services/alert.service";
+import { Alert } from "src/app/shared/models/alert";
+import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
+import TinyMCEHelpers from "src/app/shared/helpers/tiny-mce-helpers";
+import { PROJECT_STAGE_LEGEND_COLORS, Palette } from "src/app/shared/models/legend-colors";
 
 import { FundSourceService } from "src/app/shared/generated/api/fund-source.service";
 import { FundSourceDetail } from "src/app/shared/generated/model/fund-source-detail";
 import { FundSourceAllocationDetail } from "src/app/shared/generated/model/fund-source-allocation-detail";
 import { FundSourceAllocationGridRow } from "src/app/shared/generated/model/fund-source-allocation-grid-row";
 import { FundSourceProjectGridRow } from "src/app/shared/generated/model/fund-source-project-grid-row";
-import { FundSourceAgreementGridRow } from "src/app/shared/generated/model/fund-source-agreement-grid-row";
-import { FundSourceBudgetLineItemGridRow } from "src/app/shared/generated/model/fund-source-budget-line-item-grid-row";
 import { FundSourceFileResourceGridRow } from "src/app/shared/generated/model/fund-source-file-resource-grid-row";
 import { FundSourceNoteGridRow } from "src/app/shared/generated/model/fund-source-note-grid-row";
 import { FundSourceNoteInternalGridRow } from "src/app/shared/generated/model/fund-source-note-internal-grid-row";
+import { IFeature } from "src/app/shared/generated/model/i-feature";
+import { FieldDefinitionEnum, FieldDefinitions } from "src/app/shared/generated/enum/field-definition-enum";
+import { FundSourceImageService } from "src/app/shared/generated/api/fund-source-image.service";
+import { FundSourceImageGridRow } from "src/app/shared/generated/model/fund-source-image-grid-row";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { LocalDatePipe } from "src/app/shared/pipes/local-date.pipe";
 
 @Component({
     selector: "fund-source-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, RouterLink, WADNRGridComponent, FieldDefinitionComponent, IconComponent, LoadingDirective, LocalDatePipe],
+    imports: [
+        PageHeaderComponent,
+        AsyncPipe,
+        BreadcrumbComponent,
+        RouterLink,
+        WADNRGridComponent,
+        FieldDefinitionComponent,
+        IconComponent,
+        LoadingDirective,
+        LocalDatePipe,
+        FormsModule,
+        EditorComponent,
+        ImageGalleryComponent,
+        ProjectsMapSharedComponent,
+    ],
+    providers: [{ provide: TINYMCE_SCRIPT_SRC, useValue: "tinymce/tinymce.min.js" }],
     templateUrl: "./fund-source-detail.component.html",
     styleUrls: ["./fund-source-detail.component.scss"],
 })
-export class FundSourceDetailComponent {
+export class FundSourceDetailComponent implements AfterViewChecked {
     apiUrl = environment.mainAppApiUrl;
     @Input() set fundSourceID(value: string | number) {
         this._fundSourceID$.next(Number(value));
@@ -43,37 +71,58 @@ export class FundSourceDetailComponent {
 
     private _fundSourceID$ = new BehaviorSubject<number | null>(null);
     private refreshData$ = new Subject<void>();
+    private destroyRef = inject(DestroyRef);
 
     public fundSourceID$: Observable<number>;
     public fundSource$: Observable<FundSourceDetail>;
     public allocations$: Observable<FundSourceAllocationGridRow[]>;
     public projects$: Observable<FundSourceProjectGridRow[]>;
-    public agreements$: Observable<FundSourceAgreementGridRow[]>;
-    public budgetLineItems$: Observable<FundSourceBudgetLineItemGridRow[]>;
+    public projectLocations$: Observable<IFeature[]>;
     public files$: Observable<FundSourceFileResourceGridRow[]>;
+    public photoItems$: Observable<ImageGalleryItem[]>;
     public notes$: Observable<FundSourceNoteGridRow[]>;
     public internalNotes$: Observable<FundSourceNoteInternalGridRow[]>;
 
     public allocationColumnDefs: ColDef<FundSourceAllocationGridRow>[] = [];
     public projectColumnDefs: ColDef<FundSourceProjectGridRow>[] = [];
-    public agreementColumnDefs: ColDef<FundSourceAgreementGridRow>[] = [];
-    public budgetLineItemColumnDefs: ColDef<FundSourceBudgetLineItemGridRow>[] = [];
 
-    public isUserLoggedIn$: Observable<boolean>;
     public canManageFundSources$: Observable<boolean>;
+
+    // Associated projects map coloring
+    public colorByPropertyName = "ProjectStageID";
+    public legendColorsToUse: Record<string, Palette> = PROJECT_STAGE_LEGEND_COLORS;
+
+    // Files & Photos tab state
+    public activeFilesTab: "files" | "photos" = "files";
+
+    // "About this fund source" rich text inline editing
+    @ViewChild("tinyMceEditor") tinyMceEditor: EditorComponent;
+    public tinyMceConfig: object;
+    public editedAboutContent = "";
+    private aboutContentSubject = new BehaviorSubject<SafeHtml>("");
+    public aboutContent$ = this.aboutContentSubject.asObservable();
+    private aboutIsEmptySubject = new BehaviorSubject<boolean>(true);
+    public aboutIsEmpty$ = this.aboutIsEmptySubject.asObservable();
+    private isEditingAboutSubject = new BehaviorSubject<boolean>(false);
+    public isEditingAbout$ = this.isEditingAboutSubject.asObservable();
+    private isSavingAboutSubject = new BehaviorSubject<boolean>(false);
+    public isSavingAbout$ = this.isSavingAboutSubject.asObservable();
+
+    private currentFundSourceID: number | null = null;
+    private photosCache: FundSourceImageGridRow[] = [];
 
     constructor(
         private fundSourceService: FundSourceService,
+        private fundSourceImageService: FundSourceImageService,
         private dialogService: DialogService,
         private utilityFunctions: UtilityFunctionsService,
         private authService: AuthenticationService,
         private confirmService: ConfirmService,
+        private alertService: AlertService,
+        private sanitizer: DomSanitizer,
     ) {}
 
     ngOnInit(): void {
-        this.isUserLoggedIn$ = this.authService.currentUserSetObservable.pipe(
-            map((user) => user != null),
-        );
         this.canManageFundSources$ = this.authService.currentUserSetObservable.pipe(
             map((user) => this.authService.canManageFundSources(user)),
         );
@@ -83,6 +132,7 @@ export class FundSourceDetailComponent {
             distinctUntilChanged(),
             shareReplay({ bufferSize: 1, refCount: true })
         );
+        this.fundSourceID$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((id) => (this.currentFundSourceID = id));
 
         const refresh$ = this.refreshData$.pipe(startWith(undefined));
 
@@ -91,11 +141,15 @@ export class FundSourceDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.allocations$ = combineLatest([this.fundSourceID$, refresh$, this.isUserLoggedIn$]).pipe(
-            switchMap(([fundSourceID, , isLoggedIn]) => isLoggedIn
-                ? this.fundSourceService.listAllocationsFundSource(fundSourceID)
-                : of([] as FundSourceAllocationGridRow[])
-            ),
+        // Seed the "About" rich text content from the fund source detail
+        this.fundSource$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((fundSource) => {
+            if (!this.isEditingAboutSubject.value) {
+                this.loadAboutContent(fundSource.AboutThisFundSource);
+            }
+        });
+
+        this.allocations$ = combineLatest([this.fundSourceID$, refresh$]).pipe(
+            switchMap(([fundSourceID]) => this.fundSourceService.listAllocationsFundSource(fundSourceID)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -104,19 +158,26 @@ export class FundSourceDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.agreements$ = this.fundSourceID$.pipe(
-            switchMap((fundSourceID) => this.fundSourceService.listAgreementsFundSource(fundSourceID)),
-            shareReplay({ bufferSize: 1, refCount: true })
-        );
-
-        this.budgetLineItems$ = this.fundSourceID$.pipe(
-            switchMap((fundSourceID) => this.fundSourceService.listBudgetLineItemsFundSource(fundSourceID)),
+        this.projectLocations$ = this.fundSourceID$.pipe(
+            switchMap((fundSourceID) => this.fundSourceService.listProjectLocationsFundSource(fundSourceID)),
+            // The API serializes a GeoJSON FeatureCollection object ({ type, features }); normalize to
+            // the features array so the empty-state check and the map layer both work.
+            map((featureCollection: any) => (Array.isArray(featureCollection) ? featureCollection : (featureCollection?.features ?? [])) as IFeature[]),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
         this.files$ = combineLatest([this.fundSourceID$, refresh$]).pipe(
             switchMap(([id]) => this.fundSourceService.listFilesFundSource(id)),
             shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        const photos$ = combineLatest([this.fundSourceID$, refresh$]).pipe(
+            switchMap(([id]) => this.fundSourceService.listImagesFundSource(id)),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+        photos$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((photos) => (this.photosCache = photos));
+        this.photoItems$ = photos$.pipe(
+            map((images) => images.map((image) => this.toGalleryItem(image)))
         );
 
         this.notes$ = combineLatest([this.fundSourceID$, refresh$]).pipe(
@@ -134,8 +195,107 @@ export class FundSourceDetailComponent {
 
         this.allocationColumnDefs = this.createAllocationColumnDefs();
         this.projectColumnDefs = this.createProjectColumnDefs();
-        this.agreementColumnDefs = this.createAgreementColumnDefs();
-        this.budgetLineItemColumnDefs = this.createBudgetLineItemColumnDefs();
+    }
+
+    ngAfterViewChecked(): void {
+        this.tinyMceConfig = TinyMCEHelpers.DefaultInitConfig(this.tinyMceEditor, null, "About this fund source");
+    }
+
+    // ----- About this fund source (rich text) -----
+    private loadAboutContent(html: string | null | undefined): void {
+        const content = html || "";
+        this.editedAboutContent = content;
+        this.aboutContentSubject.next(this.sanitizer.bypassSecurityTrustHtml(content));
+        this.aboutIsEmptySubject.next(content.trim().length === 0);
+    }
+
+    public enterEditAbout(): void {
+        this.isEditingAboutSubject.next(true);
+    }
+
+    public cancelEditAbout(): void {
+        this.isEditingAboutSubject.next(false);
+        // Re-render the persisted content (discard edits)
+        this.loadAboutContent(this.editedAboutContent);
+    }
+
+    public saveAbout(): void {
+        if (this.currentFundSourceID == null) return;
+        this.isSavingAboutSubject.next(true);
+        this.fundSourceService
+            .updateAboutFundSource(this.currentFundSourceID, { AboutThisFundSource: this.editedAboutContent })
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+                next: (updated) => {
+                    this.isSavingAboutSubject.next(false);
+                    this.isEditingAboutSubject.next(false);
+                    this.loadAboutContent(updated.AboutThisFundSource);
+                },
+                error: () => {
+                    this.isSavingAboutSubject.next(false);
+                    this.alertService.pushAlert(new Alert("There was an error updating the fund source description.", AlertContext.Danger, true));
+                },
+            });
+    }
+
+    // ----- Files & Photos helpers -----
+    public setActiveFilesTab(tab: "files" | "photos"): void {
+        this.activeFilesTab = tab;
+    }
+
+    private toGalleryItem(image: FundSourceImageGridRow): ImageGalleryItem {
+        return {
+            imageID: image.FundSourceImageID ?? 0,
+            fileResourceGuid: image.FileResourceGuid ?? "",
+            caption: image.Caption || undefined,
+            credit: image.Credit || undefined,
+            isKeyPhoto: image.IsKeyPhoto ?? false,
+            contentLength: image.ContentLength ?? undefined,
+        };
+    }
+
+    public openAddPhotoModal(): void {
+        if (this.currentFundSourceID == null) return;
+        import("./fund-source-image-modal.component").then(({ FundSourceImageModalComponent }) => {
+            const dialogRef = this.dialogService.open(FundSourceImageModalComponent, {
+                data: { mode: "create" as const, fundSourceID: this.currentFundSourceID },
+                size: "md",
+            });
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (result) this.refreshData$.next();
+            });
+        });
+    }
+
+    public onGalleryEdit(item: ImageGalleryItem): void {
+        if (this.currentFundSourceID == null) return;
+        const image = this.photosCache.find((p) => p.FundSourceImageID === item.imageID);
+        if (!image) return;
+        import("./fund-source-image-modal.component").then(({ FundSourceImageModalComponent }) => {
+            const dialogRef = this.dialogService.open(FundSourceImageModalComponent, {
+                data: { mode: "edit" as const, fundSourceID: this.currentFundSourceID, image },
+                size: "md",
+            });
+            dialogRef.afterClosed$.subscribe((result) => {
+                if (result) this.refreshData$.next();
+            });
+        });
+    }
+
+    public async onGalleryDelete(item: ImageGalleryItem): Promise<void> {
+        const confirmed = await this.confirmService.confirm({
+            title: "Confirm Delete",
+            message: "Are you sure you want to delete this photo?",
+            buttonTextYes: "Delete",
+            buttonClassYes: "btn-danger",
+            buttonTextNo: "Cancel",
+        });
+        if (!confirmed) return;
+        this.fundSourceImageService.deleteFundSourceImage(item.imageID).subscribe(() => this.refreshData$.next());
+    }
+
+    public onGallerySetKeyPhoto(item: ImageGalleryItem): void {
+        this.fundSourceImageService.setKeyPhotoFundSourceImage(item.imageID).subscribe(() => this.refreshData$.next());
     }
 
     private createAllocationColumnDefs(): ColDef<FundSourceAllocationGridRow>[] {
@@ -195,14 +355,16 @@ export class FundSourceDetailComponent {
     }
 
     private createProjectColumnDefs(): ColDef<FundSourceProjectGridRow>[] {
+        const fundSourceAllocationLabel =
+            FieldDefinitions.find((fd) => fd.Value === FieldDefinitionEnum.FundSourceAllocation)?.DisplayName ?? "Fund Source Allocation";
         return [
-            this.utilityFunctions.createLinkColumnDef("Allocation", "FundSourceAllocationName", "FundSourceAllocationID", {
+            this.utilityFunctions.createLinkColumnDef(fundSourceAllocationLabel, "FundSourceAllocationName", "FundSourceAllocationID", {
+                FieldDefinitionType: "FundSourceAllocation",
                 InRouterLink: "/fund-source-allocations/",
             }),
             this.utilityFunctions.createLinkColumnDef("Project", "ProjectName", "ProjectID", {
                 InRouterLink: "/projects/",
             }),
-            this.utilityFunctions.createBasicColumnDef("FHT #", "FhtProjectNumber"),
             this.utilityFunctions.createBasicColumnDef("Stage", "ProjectStageName", {
                 CustomDropdownFilterField: "ProjectStageName",
             }),
@@ -213,61 +375,6 @@ export class FundSourceDetailComponent {
                 MaxDecimalPlacesToDisplay: 2,
             }),
             this.utilityFunctions.createCurrencyColumnDef("Total Amount", "TotalAmount", {
-                MaxDecimalPlacesToDisplay: 2,
-            }),
-        ];
-    }
-
-    private createAgreementColumnDefs(): ColDef<FundSourceAgreementGridRow>[] {
-        return [
-            this.utilityFunctions.createBasicColumnDef("Type", "AgreementTypeAbbrev", {
-                CustomDropdownFilterField: "AgreementTypeAbbrev",
-            }),
-            this.utilityFunctions.createBasicColumnDef("Number", "AgreementNumber"),
-            this.utilityFunctions.createLinkColumnDef("Organization", "OrganizationName", "OrganizationID", {
-                InRouterLink: "/organizations/",
-            }),
-            this.utilityFunctions.createLinkColumnDef("Title", "AgreementTitle", "AgreementID", {
-                InRouterLink: "/agreements/",
-            }),
-            this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy"),
-            this.utilityFunctions.createDateColumnDef("End Date", "EndDate", "M/d/yyyy"),
-            this.utilityFunctions.createCurrencyColumnDef("Amount", "AgreementAmount", {
-                MaxDecimalPlacesToDisplay: 2,
-            }),
-            this.utilityFunctions.createBasicColumnDef("Program Index", "ProgramIndices", {
-                CustomDropdownFilterField: "ProgramIndices",
-            }),
-            this.utilityFunctions.createBasicColumnDef("Project Code", "ProjectCodes", {
-                CustomDropdownFilterField: "ProjectCodes",
-            }),
-        ];
-    }
-
-    private createBudgetLineItemColumnDefs(): ColDef<FundSourceBudgetLineItemGridRow>[] {
-        return [
-            this.utilityFunctions.createLinkColumnDef("Allocation", "FundSourceAllocationName", "FundSourceAllocationID", {
-                InRouterLink: "/fund-source-allocations/",
-            }),
-            this.utilityFunctions.createCurrencyColumnDef("Personnel", "PersonnelAmount", {
-                MaxDecimalPlacesToDisplay: 2,
-            }),
-            this.utilityFunctions.createCurrencyColumnDef("Benefits", "BenefitsAmount", {
-                MaxDecimalPlacesToDisplay: 2,
-            }),
-            this.utilityFunctions.createCurrencyColumnDef("Travel", "TravelAmount", {
-                MaxDecimalPlacesToDisplay: 2,
-            }),
-            this.utilityFunctions.createCurrencyColumnDef("Supplies", "SuppliesAmount", {
-                MaxDecimalPlacesToDisplay: 2,
-            }),
-            this.utilityFunctions.createCurrencyColumnDef("Contractual", "ContractualAmount", {
-                MaxDecimalPlacesToDisplay: 2,
-            }),
-            this.utilityFunctions.createCurrencyColumnDef("Indirect Costs", "IndirectCostsAmount", {
-                MaxDecimalPlacesToDisplay: 2,
-            }),
-            this.utilityFunctions.createCurrencyColumnDef("Total", "TotalAmount", {
                 MaxDecimalPlacesToDisplay: 2,
             }),
         ];
@@ -387,12 +494,12 @@ export class FundSourceDetailComponent {
     }
 
     formatCurrency(value: number | null | undefined): string {
-        if (value == null) return "\u2014";
+        if (value == null) return "—";
         return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
     }
 
     formatDateTime(value: string | null | undefined): string {
-        if (!value) return "\u2014";
+        if (!value) return "—";
         const date = new Date(value);
         const month = date.getMonth() + 1;
         const day = date.getDate();

@@ -210,6 +210,7 @@
     <Build Include="dbo\Tables\dbo.FundSourceAllocationProgramManager.sql" />
     <Build Include="dbo\Tables\dbo.FundSourceAllocationSource.sql" />
     <Build Include="dbo\Tables\dbo.FundSourceFileResource.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceImage.sql" />
     <Build Include="dbo\Tables\dbo.FundSourceNote.sql" />
     <Build Include="dbo\Tables\dbo.FundSourceNoteInternal.sql" />
     <Build Include="dbo\Tables\dbo.FundSourceStatus.sql" />

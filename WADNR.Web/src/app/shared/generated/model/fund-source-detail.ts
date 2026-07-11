@@ -27,6 +27,7 @@ export class FundSourceDetail {
     CFDANumber?: string | null;
     StartDate?: string | null;
     EndDate?: string | null;
+    AboutThisFundSource?: string | null;
     ConditionsAndRequirements?: string | null;
     ComplianceNotes?: string | null;
     AllocationCount?: number;
@@ -55,6 +56,7 @@ export interface FundSourceDetailForm {
     CFDANumber?: FormControl<string>;
     StartDate?: FormControl<string>;
     EndDate?: FormControl<string>;
+    AboutThisFundSource?: FormControl<string>;
     ConditionsAndRequirements?: FormControl<string>;
     ComplianceNotes?: FormControl<string>;
     AllocationCount?: FormControl<number>;
@@ -197,6 +199,16 @@ export class FundSourceDetailFormControls {
         }
     );
     public static EndDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static AboutThisFundSource = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

@@ -5,6 +5,7 @@ CREATE TABLE [dbo].[FundSource](
     [EndDate] [date] NULL,
     [ConditionsAndRequirements] [varchar](max) NULL,
     [ComplianceNotes] [varchar](max) NULL,
+    [AboutThisFundSource] [dbo].[html] NULL,
     [CFDANumber] [varchar](10) NULL,
     [FundSourceName] [varchar](64) NOT NULL,
     [FundSourceTypeID] [int] NULL CONSTRAINT [FK_FundSource_FundSourceType_FundSourceTypeID] FOREIGN KEY REFERENCES [dbo].[FundSourceType]([FundSourceTypeID]),

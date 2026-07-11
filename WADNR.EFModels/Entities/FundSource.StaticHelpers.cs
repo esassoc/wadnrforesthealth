@@ -102,6 +102,34 @@ public static class FundSources
         return await GetByIDAsDetailAsync(dbContext, entity.FundSourceID);
     }
 
+    public static async Task<FundSourceDetail?> UpdateAboutAsync(WADNRDbContext dbContext, int fundSourceID, string? aboutThisFundSource)
+    {
+        var entity = await dbContext.FundSources
+            .FirstOrDefaultAsync(x => x.FundSourceID == fundSourceID);
+        if (entity == null)
+        {
+            return null;
+        }
+
+        entity.AboutThisFundSource = string.IsNullOrWhiteSpace(aboutThisFundSource) ? null : aboutThisFundSource;
+        await dbContext.SaveChangesAsync();
+        return await GetByIDAsDetailAsync(dbContext, fundSourceID);
+    }
+
+    /// <summary>
+    /// Builds a GeoJSON FeatureCollection of the mapped point locations for all projects
+    /// associated with this fund source (via its allocations' funding requests), filtered
+    /// to those the calling user is allowed to see (anonymous sees only public projects).
+    /// </summary>
+    public static async Task<NetTopologySuite.Features.FeatureCollection> MapProjectsFeatureCollectionForUserAsync(WADNRDbContext dbContext, int fundSourceID, PersonDetail? callingUser)
+    {
+        var visibleProjects = ProjectVisibility.ApplyVisibilityFilter(dbContext.Projects, callingUser);
+        var query = visibleProjects
+            .Where(p => p.ProjectFundSourceAllocationRequests
+                .Any(r => r.FundSourceAllocation.FundSourceID == fundSourceID));
+        return await Projects.MapProjectFeatureCollection(query);
+    }
+
     public static async Task<bool> DeleteAsync(WADNRDbContext dbContext, int fundSourceID)
     {
         // Delete all allocations and their children first
@@ -136,11 +164,13 @@ public static class FundSources
         return await FundSourceAllocations.ListForFundSourceAsGridRowAsync(dbContext, fundSourceID);
     }
 
-    public static async Task<List<FundSourceProjectGridRow>> ListProjectsAsync(WADNRDbContext dbContext, int fundSourceID)
+    public static async Task<List<FundSourceProjectGridRow>> ListProjectsForUserAsync(WADNRDbContext dbContext, int fundSourceID, PersonDetail? callingUser)
     {
+        var visibleProjects = ProjectVisibility.ApplyVisibilityFilter(dbContext.Projects, callingUser);
         return await dbContext.ProjectFundSourceAllocationRequests
             .AsNoTracking()
             .Where(x => x.FundSourceAllocation.FundSourceID == fundSourceID)
+            .Where(x => visibleProjects.Any(p => p.ProjectID == x.ProjectID))
             .OrderBy(x => x.Project.ProjectName)
             .Select(x => new FundSourceProjectGridRow
             {
@@ -155,67 +185,6 @@ public static class FundSources
                 TotalAmount = x.TotalAmount
             })
             .ToListAsync();
-    }
-
-    public static async Task<List<FundSourceAgreementGridRow>> ListAgreementsAsync(WADNRDbContext dbContext, int fundSourceID)
-    {
-        return await dbContext.AgreementFundSourceAllocations
-            .AsNoTracking()
-            .Where(x => x.FundSourceAllocation.FundSourceID == fundSourceID)
-            .Select(x => x.Agreement)
-            .Distinct()
-            .OrderBy(x => x.AgreementTitle)
-            .Select(x => new FundSourceAgreementGridRow
-            {
-                AgreementID = x.AgreementID,
-                AgreementTitle = x.AgreementTitle ?? string.Empty,
-                AgreementNumber = x.AgreementNumber,
-                AgreementTypeAbbrev = x.AgreementType != null ? x.AgreementType.AgreementTypeAbbrev : null,
-                OrganizationID = x.OrganizationID,
-                OrganizationName = x.Organization != null ? x.Organization.OrganizationName : null,
-                StartDate = x.StartDate,
-                EndDate = x.EndDate,
-                AgreementAmount = x.AgreementAmount,
-                ProgramIndices = string.Join(", ", x.AgreementFundSourceAllocations
-                    .SelectMany(a => a.FundSourceAllocation.FundSourceAllocationProgramIndexProjectCodes)
-                    .Select(p => p.ProgramIndex.ProgramIndexCode)
-                    .Distinct()),
-                ProjectCodes = string.Join(", ", x.AgreementFundSourceAllocations
-                    .SelectMany(a => a.FundSourceAllocation.FundSourceAllocationProgramIndexProjectCodes)
-                    .Where(p => p.ProjectCode != null)
-                    .Select(p => p.ProjectCode!.ProjectCodeName)
-                    .Distinct())
-            })
-            .ToListAsync();
-    }
-
-    public static async Task<List<FundSourceBudgetLineItemGridRow>> ListBudgetLineItemsAsync(WADNRDbContext dbContext, int fundSourceID)
-    {
-        // Get all allocations for this fund source with their budget line items grouped by allocation
-        var allocations = await dbContext.FundSourceAllocations
-            .AsNoTracking()
-            .Where(x => x.FundSourceID == fundSourceID)
-            .Select(x => new
-            {
-                x.FundSourceAllocationID,
-                x.FundSourceAllocationName,
-                BudgetLineItems = x.FundSourceAllocationBudgetLineItems.ToList()
-            })
-            .ToListAsync();
-
-        // CostTypeID values: Personnel=3, Benefits=4, Travel=5, Supplies=2, Contractual=6, IndirectCosts=1
-        return allocations.Select(a => new FundSourceBudgetLineItemGridRow
-        {
-            FundSourceAllocationID = a.FundSourceAllocationID,
-            FundSourceAllocationName = a.FundSourceAllocationName,
-            PersonnelAmount = a.BudgetLineItems.Where(b => b.CostTypeID == 3).Sum(b => b.FundSourceAllocationBudgetLineItemAmount),
-            BenefitsAmount = a.BudgetLineItems.Where(b => b.CostTypeID == 4).Sum(b => b.FundSourceAllocationBudgetLineItemAmount),
-            TravelAmount = a.BudgetLineItems.Where(b => b.CostTypeID == 5).Sum(b => b.FundSourceAllocationBudgetLineItemAmount),
-            SuppliesAmount = a.BudgetLineItems.Where(b => b.CostTypeID == 2).Sum(b => b.FundSourceAllocationBudgetLineItemAmount),
-            ContractualAmount = a.BudgetLineItems.Where(b => b.CostTypeID == 6).Sum(b => b.FundSourceAllocationBudgetLineItemAmount),
-            IndirectCostsAmount = a.BudgetLineItems.Where(b => b.CostTypeID == 1).Sum(b => b.FundSourceAllocationBudgetLineItemAmount),
-            TotalAmount = a.BudgetLineItems.Sum(b => b.FundSourceAllocationBudgetLineItemAmount)
-        }).ToList();
     }
 
     public static async Task<List<FundSourceFileResourceGridRow>> ListFilesAsync(WADNRDbContext dbContext, int fundSourceID)

@@ -45,6 +45,9 @@ public static class FundSourceProjections
         StartDate = x.StartDate,
         EndDate = x.EndDate,
 
+        // Public-facing narrative
+        AboutThisFundSource = x.AboutThisFundSource,
+
         // Additional details
         ConditionsAndRequirements = x.ConditionsAndRequirements,
         ComplianceNotes = x.ComplianceNotes,

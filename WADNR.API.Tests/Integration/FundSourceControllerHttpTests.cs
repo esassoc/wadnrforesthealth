@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WADNR.API.Controllers;
 using WADNR.API.Tests.Helpers;
 using WADNR.EFModels.Entities;
+using WADNR.Models.DataTransferObjects;
 using WADNR.Models.DataTransferObjects.FundSourceAllocation;
 
 namespace WADNR.API.Tests.Integration;
@@ -101,13 +102,17 @@ public class FundSourceControllerHttpTests
     }
 
     [TestMethod]
-    public async Task ListAllocations_Returns401Or403_WhenAnonymous()
+    public async Task ListAllocations_Returns200_WhenAnonymous()
     {
+        // Fund source pages are public: allocations must be viewable by anonymous users (WADNR-2269).
         var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.ListAllocations(_testFundSourceID));
         var result = await AssemblySteps.UnauthenticatedHttpClient.GetAsync(route);
 
-        Assert.IsTrue(result.StatusCode == HttpStatusCode.Unauthorized || result.StatusCode == HttpStatusCode.Forbidden,
-            $"Expected 401/403 for anonymous access, got {result.StatusCode}");
+        Assert.IsTrue(result.IsSuccessStatusCode,
+            $"Allocations endpoint should allow anonymous access. Route: {route}, Status: {result.StatusCode}");
+        var rows = await result.DeserializeContentAsync<List<FundSourceAllocationGridRow>>();
+        Assert.IsNotNull(rows);
+        Assert.AreEqual(2, rows.Count(r => r.FundSourceID == _testFundSourceID));
     }
 
     [TestMethod]
@@ -117,5 +122,97 @@ public class FundSourceControllerHttpTests
         var result = await AssemblySteps.AdminHttpClient.GetAsync(route);
 
         Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
+    }
+
+    [TestMethod]
+    public async Task ListProjectLocations_Returns200_WhenAnonymous()
+    {
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.ListProjectLocations(_testFundSourceID));
+        var result = await AssemblySteps.UnauthenticatedHttpClient.GetAsync(route);
+
+        Assert.IsTrue(result.IsSuccessStatusCode,
+            $"Project-locations endpoint should allow anonymous access. Route: {route}, Status: {result.StatusCode}");
+    }
+
+    [TestMethod]
+    public async Task ListProjectLocations_Returns404_WhenFundSourceMissing()
+    {
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.ListProjectLocations(-1));
+        var result = await AssemblySteps.AdminHttpClient.GetAsync(route);
+
+        Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
+    }
+
+    [TestMethod]
+    public async Task ListProjects_Returns200_WhenAnonymous()
+    {
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.ListProjects(_testFundSourceID));
+        var result = await AssemblySteps.UnauthenticatedHttpClient.GetAsync(route);
+
+        Assert.IsTrue(result.IsSuccessStatusCode,
+            $"Projects endpoint should allow anonymous access. Route: {route}, Status: {result.StatusCode}");
+        var rows = await result.DeserializeContentAsync<List<FundSourceProjectGridRow>>();
+        Assert.IsNotNull(rows);
+    }
+
+    [TestMethod]
+    public async Task ListProjects_Returns404_WhenFundSourceMissing()
+    {
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.ListProjects(-1));
+        var result = await AssemblySteps.AdminHttpClient.GetAsync(route);
+
+        Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
+    }
+
+    [TestMethod]
+    public async Task ListImages_Returns200_WhenAnonymous()
+    {
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.ListImages(_testFundSourceID));
+        var result = await AssemblySteps.UnauthenticatedHttpClient.GetAsync(route);
+
+        Assert.IsTrue(result.IsSuccessStatusCode,
+            $"Images endpoint should allow anonymous access. Route: {route}, Status: {result.StatusCode}");
+        var rows = await result.DeserializeContentAsync<List<FundSourceImageGridRow>>();
+        Assert.IsNotNull(rows);
+    }
+
+    [TestMethod]
+    public async Task ListImages_Returns404_WhenFundSourceMissing()
+    {
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.ListImages(-1));
+        var result = await AssemblySteps.AdminHttpClient.GetAsync(route);
+
+        Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
+    }
+
+    [TestMethod]
+    public async Task UpdateAbout_Returns200AndPersists_WhenAdmin()
+    {
+        var aboutHtml = $"<p>Public narrative {DateTime.UtcNow.Ticks}</p>";
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.UpdateAbout(_testFundSourceID, null));
+        var result = await AssemblySteps.AdminHttpClient.PutAsJsonAsync(route,
+            new FundSourceAboutUpsertRequest { AboutThisFundSource = aboutHtml });
+
+        Assert.IsTrue(result.IsSuccessStatusCode, $"Route: {route}\n{await result.Content.ReadAsStringAsync()}");
+        var updated = await result.DeserializeContentAsync<FundSourceDetail>();
+        Assert.IsNotNull(updated);
+        Assert.AreEqual(aboutHtml, updated.AboutThisFundSource);
+
+        // Confirm it persisted via the public detail endpoint.
+        var getRoute = RouteHelper.GetRouteFor<FundSourceController>(c => c.Get(_testFundSourceID));
+        var getResult = await AssemblySteps.UnauthenticatedHttpClient.GetAsync(getRoute);
+        var detail = await getResult.DeserializeContentAsync<FundSourceDetail>();
+        Assert.AreEqual(aboutHtml, detail.AboutThisFundSource);
+    }
+
+    [TestMethod]
+    public async Task UpdateAbout_Returns401Or403_WhenAnonymous()
+    {
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.UpdateAbout(_testFundSourceID, null));
+        var result = await AssemblySteps.UnauthenticatedHttpClient.PutAsJsonAsync(route,
+            new FundSourceAboutUpsertRequest { AboutThisFundSource = "<p>nope</p>" });
+
+        Assert.IsTrue(result.StatusCode == HttpStatusCode.Unauthorized || result.StatusCode == HttpStatusCode.Forbidden,
+            $"Expected 401/403 for anonymous edit, got {result.StatusCode}");
     }
 }
