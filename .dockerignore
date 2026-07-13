@@ -20,6 +20,9 @@
 **/node_modules
 **/npm-debug.log
 **/obj
+**/*.bacpac
+**/*.bak
+Build/temp
 **/secrets.dev.yaml
 **/values.dev.yaml
 LICENSE
