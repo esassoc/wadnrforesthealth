@@ -1918,6 +1918,7 @@ export class ProjectDetailComponent implements OnDestroy {
         const data: ProjectContactEditorData = {
             projectID: project.ProjectID,
             existingContacts: project.People ?? [],
+            canViewLandownerInfo: project.UserCanViewLandownerInfo ?? false,
         };
 
         this.dialogService

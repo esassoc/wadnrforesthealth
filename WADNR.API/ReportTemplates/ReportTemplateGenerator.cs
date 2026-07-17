@@ -32,12 +32,17 @@ namespace WADNR.API.ReportTemplates
 
         protected Guid ReportTemplateUniqueIdentifier { get; set; }
 
-        public ReportTemplateGenerator(ReportTemplate reportTemplate, List<int> selectedModelIDs)
+        // Whether the requesting user may see restricted (Private Landowner) contacts in the
+        // generated document. Defaults to false so a caller that forgets to pass it can't leak. WADNR-2259.
+        protected bool CallerCanViewLandownerInfo { get; set; }
+
+        public ReportTemplateGenerator(ReportTemplate reportTemplate, List<int> selectedModelIDs, bool callerCanViewLandownerInfo = false)
         {
             ReportTemplate = reportTemplate;
             ReportTemplateModelEnum = (ReportTemplateModelEnum)reportTemplate.ReportTemplateModelID;
             ReportTemplateModelTypeEnum = (ReportTemplateModelTypeEnum)reportTemplate.ReportTemplateModelTypeID;
             SelectedModelIDs = selectedModelIDs;
+            CallerCanViewLandownerInfo = callerCanViewLandownerInfo;
             ReportTemplateUniqueIdentifier = Guid.NewGuid();
             InitializeTempFolders(new DirectoryInfo(Path.GetTempPath()));
         }
@@ -220,6 +225,15 @@ namespace WADNR.API.ReportTemplates
                 .Include(x => x.Person).ThenInclude(x => x.Organization).ThenInclude(x => x.OrganizationType)
                 .Where(x => projectIds.Contains(x.ProjectID))
                 .ToListAsync();
+
+            // Drop restricted (Private Landowner) contacts from the report for users who can't view
+            // them, so a merge template can't surface landowner identities to an unauthorized user. WADNR-2259.
+            if (!CallerCanViewLandownerInfo)
+            {
+                projectPeople = projectPeople
+                    .Where(x => !ProjectPeople.RestrictedRelationshipTypeIDs.Contains(x.ProjectPersonRelationshipTypeID))
+                    .ToList();
+            }
 
             var projectOrganizations = await dbContext.ProjectOrganizations
                 .AsNoTracking()

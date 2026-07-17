@@ -547,7 +547,7 @@ public class ProjectController(
             return BadRequest("Only one Primary Contact is allowed per project.");
         }
 
-        var result = await ProjectPeople.SaveAllAsync(DbContext, projectID, request);
+        var result = await ProjectPeople.SaveAllAsync(DbContext, projectID, request, CallingUser.CanViewLandownerInfo());
         return Ok(result);
     }
 
@@ -672,7 +672,7 @@ public class ProjectController(
     public async Task<ActionResult<WADNR.Models.DataTransferObjects.ProjectUpdate.ProjectUpdateDiffSummary>> GetUpdateHistoryDiff(
         [FromRoute] int projectID, [FromRoute] int projectUpdateBatchID)
     {
-        var diffSummary = await ProjectUpdateDiffs.GetDiffSummaryAsync(DbContext, projectUpdateBatchID);
+        var diffSummary = await ProjectUpdateDiffs.GetDiffSummaryAsync(DbContext, projectUpdateBatchID, CallingUser.CanViewLandownerInfo());
         return Ok(diffSummary);
     }
 
@@ -935,7 +935,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ProjectContactsStep>> GetCreateContactsStep([FromRoute] int projectID)
     {
-        var dto = await ProjectCreateWorkflowSteps.GetContactsStepAsync(DbContext, projectID);
+        var dto = await ProjectCreateWorkflowSteps.GetContactsStepAsync(DbContext, projectID, CallingUser.CanViewLandownerInfo());
         return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
@@ -944,7 +944,7 @@ public class ProjectController(
     [EntityNotFound(typeof(Project), "projectID")]
     public async Task<ActionResult<ProjectContactsStep>> SaveCreateContactsStep([FromRoute] int projectID, [FromBody] ProjectContactsStepRequest request)
     {
-        var dto = await ProjectCreateWorkflowSteps.SaveContactsStepAsync(DbContext, projectID, request);
+        var dto = await ProjectCreateWorkflowSteps.SaveContactsStepAsync(DbContext, projectID, request, CallingUser.CanViewLandownerInfo());
         return RequireNotNullThrowNotFound(dto, "Project", projectID);
     }
 
@@ -1700,7 +1700,7 @@ public class ProjectController(
             return NotFound();
         }
 
-        var dto = await ProjectUpdateWorkflowSteps.GetContactsStepAsync(DbContext, batch.ProjectUpdateBatchID);
+        var dto = await ProjectUpdateWorkflowSteps.GetContactsStepAsync(DbContext, batch.ProjectUpdateBatchID, CallingUser.CanViewLandownerInfo());
         if (dto == null)
         {
             return NotFound();
@@ -1721,7 +1721,7 @@ public class ProjectController(
 
         try
         {
-            var dto = await ProjectUpdateWorkflowSteps.SaveContactsStepAsync(DbContext, batch.ProjectUpdateBatchID, request, CallingUser.PersonID);
+            var dto = await ProjectUpdateWorkflowSteps.SaveContactsStepAsync(DbContext, batch.ProjectUpdateBatchID, request, CallingUser.PersonID, CallingUser.CanViewLandownerInfo());
             if (dto == null)
             {
                 return NotFound();
@@ -2332,7 +2332,7 @@ public class ProjectController(
             return NotFound();
         }
 
-        var response = await ProjectUpdateDiffs.GetStepDiffAsync(DbContext, batch.ProjectUpdateBatchID, stepKey);
+        var response = await ProjectUpdateDiffs.GetStepDiffAsync(DbContext, batch.ProjectUpdateBatchID, stepKey, CallingUser.CanViewLandownerInfo());
         return Ok(response);
     }
 
@@ -2483,7 +2483,7 @@ public class ProjectController(
             return NotFound();
         }
 
-        var diffSummary = await ProjectUpdateDiffs.GetDiffSummaryAsync(DbContext, batch.ProjectUpdateBatchID);
+        var diffSummary = await ProjectUpdateDiffs.GetDiffSummaryAsync(DbContext, batch.ProjectUpdateBatchID, CallingUser.CanViewLandownerInfo());
 
         return Ok(new WADNR.Models.DataTransferObjects.ProjectUpdate.ProjectUpdateDiffSummary
         {

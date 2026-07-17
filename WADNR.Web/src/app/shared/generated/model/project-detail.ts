@@ -66,6 +66,7 @@ export class ProjectDetail {
     UserCanApprove?: boolean;
     UserIsAdmin?: boolean;
     UserCanViewCostSharePDFs?: boolean;
+    UserCanViewLandownerInfo?: boolean;
     UserCanManageTreatments?: boolean;
     UserCanEditProjectAsAdmin?: boolean;
     UserCanViewInternalNotes?: boolean;
@@ -123,6 +124,7 @@ export interface ProjectDetailForm {
     UserCanApprove?: FormControl<boolean>;
     UserIsAdmin?: FormControl<boolean>;
     UserCanViewCostSharePDFs?: FormControl<boolean>;
+    UserCanViewLandownerInfo?: FormControl<boolean>;
     UserCanManageTreatments?: FormControl<boolean>;
     UserCanEditProjectAsAdmin?: FormControl<boolean>;
     UserCanViewInternalNotes?: FormControl<boolean>;
@@ -537,6 +539,16 @@ export class ProjectDetailFormControls {
         }
     );
     public static UserCanViewCostSharePDFs = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static UserCanViewLandownerInfo = (value: FormControlState<boolean> | boolean = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<boolean>(
         value,
         formControlOptions ?? 
         {

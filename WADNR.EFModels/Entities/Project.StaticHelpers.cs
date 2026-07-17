@@ -1006,6 +1006,11 @@ public static class Projects
         entity.UserCanViewCostSharePDFs = callingUser.SupplementalRoleList?.Any(r => r.RoleID == (int)RoleEnum.CanViewLandownerInfo) ?? false;
         if (isAdmin) entity.UserCanViewCostSharePDFs = true;
 
+        // Drives whether the contacts editor exposes restricted relationship types (e.g. Private
+        // Landowner). Must mirror the People filter below (line ~914) so the modal never offers a
+        // section for contacts the user can't see. WADNR-2259.
+        entity.UserCanViewLandownerInfo = callingUser.CanViewLandownerInfo();
+
         // UserCanEdit: admin, elevated with scoping, or "my project"
         entity.UserCanEdit = isAdmin
             || ProjectAuthorization.CanApprove(callingUser, authData, stewardshipAreaTypeID)

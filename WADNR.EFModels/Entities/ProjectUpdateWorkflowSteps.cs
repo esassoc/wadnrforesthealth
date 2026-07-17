@@ -1069,7 +1069,7 @@ public static class ProjectUpdateWorkflowSteps
 
     #region Contacts Step
 
-    public static async Task<ProjectUpdateContactsStep?> GetContactsStepAsync(WADNRDbContext dbContext, int projectUpdateBatchID)
+    public static async Task<ProjectUpdateContactsStep?> GetContactsStepAsync(WADNRDbContext dbContext, int projectUpdateBatchID, bool callerCanViewLandownerInfo)
     {
         var batch = await dbContext.ProjectUpdateBatches
             .AsNoTracking()
@@ -1079,10 +1079,14 @@ public static class ProjectUpdateWorkflowSteps
 
         if (batch == null) return null;
 
+        // Hide restricted (Private Landowner) contacts from callers who can't view them. WADNR-2259.
+        var contacts = batch.ProjectPersonUpdates
+            .Where(pp => callerCanViewLandownerInfo || !ProjectPeople.RestrictedRelationshipTypeIDs.Contains(pp.ProjectPersonRelationshipTypeID));
+
         return new ProjectUpdateContactsStep
         {
             ProjectUpdateBatchID = projectUpdateBatchID,
-            Contacts = batch.ProjectPersonUpdates.Select(pp => new ProjectPersonUpdateItem
+            Contacts = contacts.Select(pp => new ProjectPersonUpdateItem
             {
                 ProjectPersonUpdateID = pp.ProjectPersonUpdateID,
                 PersonID = pp.PersonID,
@@ -1099,7 +1103,8 @@ public static class ProjectUpdateWorkflowSteps
         WADNRDbContext dbContext,
         int projectUpdateBatchID,
         ProjectUpdateContactsStepRequest request,
-        int callingPersonID)
+        int callingPersonID,
+        bool callerCanViewLandownerInfo)
     {
         var batch = await dbContext.ProjectUpdateBatches
             .Include(b => b.ProjectPersonUpdates)
@@ -1112,7 +1117,12 @@ public static class ProjectUpdateWorkflowSteps
         var existingIDs = batch.ProjectPersonUpdates.Select(pp => pp.ProjectPersonUpdateID).ToHashSet();
         var requestIDs = request.Contacts.Where(c => c.ProjectPersonUpdateID.HasValue).Select(c => c.ProjectPersonUpdateID!.Value).ToHashSet();
 
-        var toRemove = batch.ProjectPersonUpdates.Where(pp => !requestIDs.Contains(pp.ProjectPersonUpdateID)).ToList();
+        // Preserve restricted (Private Landowner) contacts the caller can't view — they were filtered
+        // out of what the caller loaded, so their absence from the request is not a delete. WADNR-2259.
+        var toRemove = batch.ProjectPersonUpdates
+            .Where(pp => !requestIDs.Contains(pp.ProjectPersonUpdateID)
+                && (callerCanViewLandownerInfo || !ProjectPeople.RestrictedRelationshipTypeIDs.Contains(pp.ProjectPersonRelationshipTypeID)))
+            .ToList();
         dbContext.ProjectPersonUpdates.RemoveRange(toRemove);
 
         foreach (var contactRequest in request.Contacts)
@@ -1139,7 +1149,7 @@ public static class ProjectUpdateWorkflowSteps
 
         await dbContext.SaveChangesAsync();
 
-        return await GetContactsStepAsync(dbContext, projectUpdateBatchID);
+        return await GetContactsStepAsync(dbContext, projectUpdateBatchID, callerCanViewLandownerInfo);
     }
 
     #endregion

@@ -32738,6 +32738,9 @@
           "UserCanViewCostSharePDFs": {
             "type": "boolean"
           },
+          "UserCanViewLandownerInfo": {
+            "type": "boolean"
+          },
           "UserCanManageTreatments": {
             "type": "boolean"
           },
