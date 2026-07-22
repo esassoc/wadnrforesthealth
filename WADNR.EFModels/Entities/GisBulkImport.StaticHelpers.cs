@@ -660,7 +660,12 @@ public static class GisBulkImports
                     dbContext.ProjectLocations.Add(new ProjectLocation
                     {
                         ProjectID = existingProject.ProjectID,
-                        ProjectLocationGeometry = feature.GisFeatureGeometry,
+                        // GIS source features can be topologically invalid (self-intersections, etc.).
+                        // Normalize on the way in, matching the interactive project workflow
+                        // (ProjectCreateWorkflowSteps.cs), so downstream spatial operations
+                        // (AutoAssignGeographicRegionsAsync's STIntersects, GeoServer, GDB export)
+                        // don't hit SQL Server error 24144 on an invalid instance.
+                        ProjectLocationGeometry = feature.GisFeatureGeometry?.MakeValid(),
                         ProjectLocationName = locationName.Length > 100 ? locationName[..100] : locationName,
                         ProjectLocationTypeID = (int)ProjectLocationTypeEnum.ProjectArea,
                         ImportedFromGisUpload = true,

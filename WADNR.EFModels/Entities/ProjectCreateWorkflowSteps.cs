@@ -634,17 +634,21 @@ public static class ProjectCreateWorkflowSteps
 
         if (project == null) return;
 
-        // Build combined geometry from simple and detailed locations
+        // Build combined geometry from simple and detailed locations.
+        // MakeValid each source geometry: rows persisted outside the interactive workflow
+        // (e.g. GIS bulk import) may be topologically invalid, and passing an invalid instance
+        // to SQL Server's STIntersects below throws error 24144. This also protects rows
+        // imported before that path was fixed.
         var geometries = new List<Geometry>();
         if (project.ProjectLocationPoint != null)
         {
-            geometries.Add(project.ProjectLocationPoint);
+            geometries.Add(project.ProjectLocationPoint.MakeValid());
         }
         foreach (var loc in project.ProjectLocations)
         {
             if (loc.ProjectLocationGeometry != null)
             {
-                geometries.Add(loc.ProjectLocationGeometry);
+                geometries.Add(loc.ProjectLocationGeometry.MakeValid());
             }
         }
 
