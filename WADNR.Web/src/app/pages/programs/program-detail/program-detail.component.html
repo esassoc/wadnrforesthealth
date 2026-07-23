@@ -107,7 +107,7 @@
                 <span class="card-title">Projects Associated with this Program</span>
             </div>
             <div class="card-body" [loadingSpinner]="{ isLoading: projectsIsLoading$ | async, loadingHeight: 300 }">
-                @if (canEditProgramMappings$ | async) {
+                @if (canManagePrograms$ | async) {
                     <div class="flex-end mb-2">
                         <button
                             class="btn btn-sm btn-primary"

@@ -189,7 +189,7 @@ public class ProgramController(
     #region Download GDB
 
     [HttpGet("{programID}/projects/download-gdb")]
-    [ProgramEditMappingsFeature]
+    [ProgramManageFeature]
     [EntityNotFound(typeof(WADNR.EFModels.Entities.Program), "programID")]
     public async Task<IActionResult> DownloadProjectsAsGdb([FromRoute] int programID)
     {
