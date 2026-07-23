@@ -20,6 +20,11 @@ import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import { FormFieldComponent, FormFieldType, FormInputOption } from "src/app/shared/components/forms/form-field/form-field.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
+import { AuthenticationService } from "src/app/services/authentication.service";
+
+// Relationship types hidden from users without landowner-view permission. Mirrors the API's
+// ProjectPersonRelationshipType.IsRestrictedToAdminAndProjectStewardAndCanViewLandownerInfo flag. WADNR-2259.
+const RESTRICTED_RELATIONSHIP_TYPE_IDS: number[] = [ProjectPersonRelationshipTypeEnum.PrivateLandowner];
 
 interface ContactsByType {
     relationshipType: LookupTableEntry;
@@ -62,7 +67,8 @@ export class UpdateContactsStepComponent extends UpdateWorkflowStepBase implemen
 
     constructor(
         private projectService: ProjectService,
-        private personService: PersonService
+        private personService: PersonService,
+        private authService: AuthenticationService
     ) {
         super();
     }
@@ -95,15 +101,23 @@ export class UpdateContactsStepComponent extends UpdateWorkflowStepBase implemen
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.vm$ = combineLatest([stepData$, people$]).pipe(
-            map(([data, people]) => {
+        const canViewLandowner$ = this.authService.currentUserSetObservable.pipe(
+            map((user) => this.authService.canViewLandownerInfo(user)),
+            startWith(false)
+        );
+
+        this.vm$ = combineLatest([stepData$, people$, canViewLandowner$]).pipe(
+            map(([data, people, canViewLandowner]) => {
                 const allPeopleOptions: FormInputOption[] = people.map((p) => ({
                     Value: p.PersonID,
                     Label: p.FullName,
                     disabled: false,
                 }));
 
-                const sortedRelationshipTypes = [...ProjectPersonRelationshipTypes].sort((a, b) => a.SortOrder - b.SortOrder);
+                // Hide restricted (Private Landowner) types from users who can't view landowner info. WADNR-2259.
+                const sortedRelationshipTypes = [...ProjectPersonRelationshipTypes]
+                    .filter((rt) => canViewLandowner || !RESTRICTED_RELATIONSHIP_TYPE_IDS.includes(rt.Value))
+                    .sort((a, b) => a.SortOrder - b.SortOrder);
 
                 const contactsByType: ContactsByType[] = sortedRelationshipTypes.map((rt) => {
                     const canOnlyBeRelatedOnce = rt.Value === ProjectPersonRelationshipTypeEnum.PrimaryContact;

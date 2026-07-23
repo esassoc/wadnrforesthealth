@@ -66,6 +66,9 @@ public partial class FileResource
     public virtual ICollection<FundSourceFileResource> FundSourceFileResources { get; set; } = new List<FundSourceFileResource>();
 
     [InverseProperty("FileResource")]
+    public virtual ICollection<FundSourceImage> FundSourceImages { get; set; } = new List<FundSourceImage>();
+
+    [InverseProperty("FileResource")]
     public virtual InteractionEventFileResource? InteractionEventFileResource { get; set; }
 
     [InverseProperty("InvoiceFileResource")]

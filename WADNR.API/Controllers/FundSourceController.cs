@@ -13,6 +13,7 @@ using WADNR.API.Services.Authorization;
 using WADNR.Common.ExcelWorkbookUtilities;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
+using WADNR.Models.DataTransferObjects.FundSourceAllocation;
 
 namespace WADNR.API.Controllers;
 
@@ -95,40 +96,42 @@ public class FundSourceController(
         return DeleteOrNotFound(deleted);
     }
 
+    [HttpPut("{fundSourceID}/about")]
+    [FundSourceManageFeature]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<ActionResult<FundSourceDetail>> UpdateAbout(
+        [FromRoute] int fundSourceID,
+        [FromBody] FundSourceAboutUpsertRequest request)
+    {
+        var updated = await FundSources.UpdateAboutAsync(DbContext, fundSourceID, request.AboutThisFundSource);
+        return RequireNotNullThrowNotFound(updated, "FundSource", fundSourceID);
+    }
+
     [HttpGet("{fundSourceID}/allocations")]
     [AllowAnonymous]
     [EntityNotFound(typeof(FundSource), "fundSourceID")]
-    public async Task<ActionResult<IEnumerable<FundSourceAllocationLookupItem>>> ListAllocations([FromRoute] int fundSourceID)
+    public async Task<ActionResult<IEnumerable<FundSourceAllocationGridRow>>> ListAllocations([FromRoute] int fundSourceID)
     {
         var allocations = await FundSources.ListAllocationsAsync(DbContext, fundSourceID);
         return Ok(allocations);
     }
 
+    [HttpGet("{fundSourceID}/project-locations")]
+    [ProjectViewFeature]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<ActionResult<NetTopologySuite.Features.FeatureCollection>> ListProjectLocations([FromRoute] int fundSourceID)
+    {
+        var featureCollection = await FundSources.MapProjectsFeatureCollectionForUserAsync(DbContext, fundSourceID, CallingUser);
+        return Ok(featureCollection);
+    }
+
     [HttpGet("{fundSourceID}/projects")]
-    [AllowAnonymous]
+    [ProjectViewFeature]
     [EntityNotFound(typeof(FundSource), "fundSourceID")]
     public async Task<ActionResult<IEnumerable<FundSourceProjectGridRow>>> ListProjects([FromRoute] int fundSourceID)
     {
-        var projects = await FundSources.ListProjectsAsync(DbContext, fundSourceID);
+        var projects = await FundSources.ListProjectsForUserAsync(DbContext, fundSourceID, CallingUser);
         return Ok(projects);
-    }
-
-    [HttpGet("{fundSourceID}/agreements")]
-    [AllowAnonymous]
-    [EntityNotFound(typeof(FundSource), "fundSourceID")]
-    public async Task<ActionResult<IEnumerable<FundSourceAgreementGridRow>>> ListAgreements([FromRoute] int fundSourceID)
-    {
-        var agreements = await FundSources.ListAgreementsAsync(DbContext, fundSourceID);
-        return Ok(agreements);
-    }
-
-    [HttpGet("{fundSourceID}/budget-line-items")]
-    [AllowAnonymous]
-    [EntityNotFound(typeof(FundSource), "fundSourceID")]
-    public async Task<ActionResult<IEnumerable<FundSourceBudgetLineItemGridRow>>> ListBudgetLineItems([FromRoute] int fundSourceID)
-    {
-        var budgetLineItems = await FundSources.ListBudgetLineItemsAsync(DbContext, fundSourceID);
-        return Ok(budgetLineItems);
     }
 
     [HttpGet("{fundSourceID}/files")]
@@ -138,6 +141,15 @@ public class FundSourceController(
     {
         var files = await FundSources.ListFilesAsync(DbContext, fundSourceID);
         return Ok(files);
+    }
+
+    [HttpGet("{fundSourceID}/images")]
+    [AllowAnonymous]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<ActionResult<IEnumerable<FundSourceImageGridRow>>> ListImages([FromRoute] int fundSourceID)
+    {
+        var images = await FundSourceImages.ListAsGridRowAsync(DbContext, fundSourceID);
+        return Ok(images);
     }
 
     [HttpPost("{fundSourceID}/files")]

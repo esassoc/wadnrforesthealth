@@ -142,7 +142,6 @@
     <None Include="Scripts\LookupTables\dbo.ReportTemplateModel.sql" />
     <None Include="Scripts\LookupTables\dbo.ReportTemplateModelType.sql" />
     <None Include="Scripts\LookupTables\dbo.Role.sql" />
-    <None Include="Scripts\LookupTables\dbo.SocrataDataMartRawJsonImportTableType.sql" />
     <None Include="Scripts\LookupTables\dbo.SupportRequestType.sql" />
     <None Include="Scripts\LookupTables\dbo.TabularDataImportTableType.sql" />
     <None Include="Scripts\LookupTables\dbo.TreatmentCode.sql" />
@@ -211,6 +210,7 @@
     <Build Include="dbo\Tables\dbo.FundSourceAllocationProgramManager.sql" />
     <Build Include="dbo\Tables\dbo.FundSourceAllocationSource.sql" />
     <Build Include="dbo\Tables\dbo.FundSourceFileResource.sql" />
+    <Build Include="dbo\Tables\dbo.FundSourceImage.sql" />
     <Build Include="dbo\Tables\dbo.FundSourceNote.sql" />
     <Build Include="dbo\Tables\dbo.FundSourceNoteInternal.sql" />
     <Build Include="dbo\Tables\dbo.FundSourceStatus.sql" />
@@ -329,12 +329,11 @@
     <Build Include="dbo\Tables\dbo.ReportTemplateModel.sql" />
     <Build Include="dbo\Tables\dbo.ReportTemplateModelType.sql" />
     <Build Include="dbo\Tables\dbo.Role.sql" />
-    <Build Include="dbo\Tables\dbo.SocrataDataMartRawJsonImport.sql" />
-    <Build Include="dbo\Tables\dbo.SocrataDataMartRawJsonImportTableType.sql" />
     <Build Include="dbo\Tables\dbo.spatial_ref_sys.sql" />
     <Build Include="dbo\Tables\dbo.StateProvince.sql" />
     <Build Include="dbo\Tables\dbo.SupportRequestLog.sql" />
     <Build Include="dbo\Tables\dbo.SupportRequestType.sql" />
+    <Build Include="dbo\Tables\dbo.ServiceForestryStage.sql" />
     <Build Include="dbo\Tables\dbo.SystemAttribute.sql" />
     <Build Include="dbo\Tables\dbo.TabularDataImport.sql" />
     <Build Include="dbo\Tables\dbo.TabularDataImportTableType.sql" />
@@ -360,7 +359,6 @@
     <Build Include="dbo\Views\dbo.vGeoServerProjectTreatment.sql" />
     <Build Include="dbo\Views\dbo.vGeoServerRegion.sql" />
     <Build Include="dbo\Views\dbo.vGeoServerWashingtonLegislativeDistrict.sql" />
-    <Build Include="dbo\Views\dbo.vSocrataDataMartRawJsonImportIndex.sql" />
     <Build Include="dbo\Views\dbo.vTotalTreatedAcresByProject.sql" />
     <Build Include="dbo\Functions\dbo.TrimX.sql" />
     <Build Include="dbo\Functions\dbo.fConvertDateTimeUtcToPacificStandardTime.sql" />
@@ -376,11 +374,11 @@
     <Build Include="dbo\Functions\dbo.fUnixTimeToDateTime2.sql" />
     <Build Include="dbo\Functions\dbo.LTrimX.sql" />
     <Build Include="dbo\Functions\dbo.RTrimX.sql" />
-    <Build Include="dbo\Procs\pVendorImportJson.sql" />
     <Build Include="dbo\Procs\dbo.pClearGisImportTables.sql" />
     <Build Include="dbo\Procs\dbo.pHangFireClearJobQueue.sql" />
     <Build Include="dbo\Procs\dbo.pHangFireRescheduleJobs.sql" />
     <Build Include="dbo\Procs\dbo.pImportLoaTabularData.sql" />
+    <Build Include="dbo\Procs\dbo.pImportServiceForestryTabularData.sql" />
     <Build Include="dbo\Procs\dbo.procImportTreatmentsFromGisUploadAttempt.sql" />
     <Build Include="dbo\Procs\pArcOnlineFundSourceExpenditureImportJson.sql" />
     <Build Include="dbo\Procs\pArcOnlineMarkJsonImportStatus.sql" />
@@ -392,14 +390,7 @@
     <Build Include="dbo\Procs\pClearAuditLogTable.sql" />
     <Build Include="dbo\Procs\pClearFundSourceAllocationExpenditureTables.sql" />
     <Build Include="dbo\Procs\pClearOutdatedArcOnlineFinanceApiRawJsonImports.sql" />
-    <Build Include="dbo\Procs\pClearOutdatedSocrataDataMartRawJsonImports.sql" />
-    <Build Include="dbo\Procs\pClearSocrataDataMartRawJsonImportsTable.sql" />
-    <Build Include="dbo\Procs\pFundSourceExpenditureImportJson.sql" />
-    <Build Include="dbo\Procs\pLatestSuccessfulJsonImportInfoForBienniumAndImportTableType.sql" />
     <Build Include="dbo\Procs\pLatestSuccessfulJsonImportInfoForBienniumAndImportTableTypeFromArcOnlineFinanceApi.sql" />
-    <Build Include="dbo\Procs\pMarkJsonImportStatus.sql" />
-    <Build Include="dbo\Procs\pProgramIndexImportJson.sql" />
-    <Build Include="dbo\Procs\pProjectCodeImportJson.sql" />
     <Build Include="dbo\Procs\pSetMeToWADNRAdminRole.sql" />
     <None Include="Scripts\Utility\Copy Tenant Full.sql" />
     <None Include="Scripts\Utility\delete projects.sql" />

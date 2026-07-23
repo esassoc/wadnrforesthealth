@@ -1,7 +1,9 @@
 import { Injectable, Injector } from "@angular/core";
+import { datadogLogs } from "@datadog/browser-logs";
 import { BusyService } from ".";
 import { Alert } from "../models/alert";
 import { AlertService } from "./alert.service";
+import { isDatadogLogsEnabled } from "../datadog";
 
 @Injectable({
     providedIn: "root",
@@ -44,10 +46,13 @@ export class GlobalErrorHandlerService {
             }
 
             console.error(error);
-            // todo: add datadog
-            // if (error.stack) {
-            //     datadogLogs.logger.error(error.message, error, error);
-            // }
+            if (isDatadogLogsEnabled()) {
+                datadogLogs.logger.error(
+                    error?.message ?? "Unknown client error",
+                    { errorStatus: error?.status },
+                    error instanceof Error ? error : undefined
+                );
+            }
         } else if (error) {
             console.warn(error);
             this.busyService.setBusy(false);

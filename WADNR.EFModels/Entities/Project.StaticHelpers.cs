@@ -1003,9 +1003,13 @@ public static class Projects
         entity.UserIsAdmin = isAdmin;
         entity.UserCanDelete = isAdmin;
         entity.UserCanApprove = ProjectAuthorization.CanApprove(callingUser, authData, stewardshipAreaTypeID);
-        entity.UserCanDirectEdit = entity.UserCanApprove;
         entity.UserCanViewCostSharePDFs = callingUser.SupplementalRoleList?.Any(r => r.RoleID == (int)RoleEnum.CanViewLandownerInfo) ?? false;
         if (isAdmin) entity.UserCanViewCostSharePDFs = true;
+
+        // Drives whether the contacts editor exposes restricted relationship types (e.g. Private
+        // Landowner). Must mirror the People filter below (line ~914) so the modal never offers a
+        // section for contacts the user can't see. WADNR-2259.
+        entity.UserCanViewLandownerInfo = callingUser.CanViewLandownerInfo();
 
         // UserCanEdit: admin, elevated with scoping, or "my project"
         entity.UserCanEdit = isAdmin
@@ -1017,6 +1021,12 @@ public static class Projects
                 r.RoleID == (int)RoleEnum.CanManageFundSourcesAndAgreements) ?? false);
 
         entity.UserCanEditProjectAsAdmin = ProjectAuthorization.CanEditAsAdmin(callingUser, authData, stewardshipAreaTypeID);
+
+        // Detail-page direct-edit buttons (Contacts, Basics, Location, etc.) must match what
+        // their edit endpoints enforce ([ProjectEditAsAdminFeature] => CanEditAsAdmin), not the
+        // approve permission. These differ on pending projects, where showing the button would
+        // let the user trigger a 403. WADNR-2259.
+        entity.UserCanDirectEdit = entity.UserCanEditProjectAsAdmin;
 
         entity.UserCanViewInternalNotes = entity.UserCanEditProjectAsAdmin && isApproved;
 

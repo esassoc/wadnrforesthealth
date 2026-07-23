@@ -8,7 +8,7 @@ using NetTopologySuite.Geometries;
 namespace WADNR.EFModels.Entities;
 
 [Table("ProjectLocation")]
-[Index("ProjectID", "ProjectLocationName", Name = "AK_ProjectLocation_ProjectID_ProjectLocationName", IsUnique = true)]
+[Index("ProjectID", "ProgramID", "ProjectLocationName", Name = "AK_ProjectLocation_ProjectID_ProgramID_ProjectLocationName", IsUnique = true)]
 [Index("ProjectLocationGeometry", Name = "SPATIAL_ProjectLocation_ProjectLocationGeometry")]
 public partial class ProjectLocation
 {

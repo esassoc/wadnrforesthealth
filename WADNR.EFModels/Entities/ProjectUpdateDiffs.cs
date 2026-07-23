@@ -46,8 +46,10 @@ public static class ProjectUpdateDiffs
         batch.NotesDiffLog = await GenerateNotesDiffAsync(dbContext, project, batch);
         batch.ExpectedFundingDiffLog = await GenerateExpectedFundingDiffAsync(dbContext, project, batch);
 
-        // Store structured JSON diffs (covers all 13 steps)
-        var structuredDiffs = await GetAllStepDiffsAsync(dbContext, batch.ProjectUpdateBatchID);
+        // Store structured JSON diffs (covers all 13 steps). Store the COMPLETE audit trail
+        // (including restricted landowner contacts); GetDiffSummaryAsync filters per-caller at read
+        // time so unauthorized viewers never receive landowner rows. WADNR-2259.
+        var structuredDiffs = await GetAllStepDiffsAsync(dbContext, batch.ProjectUpdateBatchID, callerCanViewLandownerInfo: true);
         batch.StructuredDiffLogJson = JsonSerializer.Serialize(structuredDiffs);
     }
 
@@ -448,7 +450,7 @@ public static class ProjectUpdateDiffs
     /// Returns a dictionary keyed by kebab-case step name.
     /// </summary>
     public static async Task<Dictionary<string, StepDiffResponse>> GetAllStepDiffsAsync(
-        WADNRDbContext dbContext, int projectUpdateBatchID)
+        WADNRDbContext dbContext, int projectUpdateBatchID, bool callerCanViewLandownerInfo)
     {
         var batch = await dbContext.ProjectUpdateBatches
             .AsNoTracking()
@@ -478,7 +480,7 @@ public static class ProjectUpdateDiffs
             {
                 "basics" => await GetBasicsStepDiffAsync(dbContext, project, batch),
                 "organizations" => await GetOrganizationsStepDiffAsync(dbContext, project, batch),
-                "contacts" => await GetContactsStepDiffAsync(dbContext, project, batch),
+                "contacts" => await GetContactsStepDiffAsync(dbContext, project, batch, callerCanViewLandownerInfo),
                 "expected-funding" => await GetExpectedFundingStepDiffAsync(dbContext, project, batch),
                 "external-links" => await GetExternalLinksStepDiffAsync(dbContext, project, batch),
                 "documents-notes" => await GetDocumentsNotesStepDiffAsync(dbContext, project, batch),
@@ -500,7 +502,7 @@ public static class ProjectUpdateDiffs
     /// Gets real-time diff for a specific step by comparing update batch data to current project data.
     /// Returns structured sections describing the changes.
     /// </summary>
-    public static async Task<StepDiffResponse> GetStepDiffAsync(WADNRDbContext dbContext, int projectUpdateBatchID, string stepKey)
+    public static async Task<StepDiffResponse> GetStepDiffAsync(WADNRDbContext dbContext, int projectUpdateBatchID, string stepKey, bool callerCanViewLandownerInfo)
     {
         var batch = await dbContext.ProjectUpdateBatches
             .AsNoTracking()
@@ -529,7 +531,7 @@ public static class ProjectUpdateDiffs
         {
             "basics" => await GetBasicsStepDiffAsync(dbContext, project, batch),
             "organizations" => await GetOrganizationsStepDiffAsync(dbContext, project, batch),
-            "contacts" => await GetContactsStepDiffAsync(dbContext, project, batch),
+            "contacts" => await GetContactsStepDiffAsync(dbContext, project, batch, callerCanViewLandownerInfo),
             "expected-funding" => await GetExpectedFundingStepDiffAsync(dbContext, project, batch),
             "external-links" => await GetExternalLinksStepDiffAsync(dbContext, project, batch),
             "documents-notes" => await GetDocumentsNotesStepDiffAsync(dbContext, project, batch),
@@ -652,7 +654,7 @@ public static class ProjectUpdateDiffs
         };
     }
 
-    private static async Task<StepDiffResponse> GetContactsStepDiffAsync(WADNRDbContext dbContext, Project project, ProjectUpdateBatch batch)
+    private static async Task<StepDiffResponse> GetContactsStepDiffAsync(WADNRDbContext dbContext, Project project, ProjectUpdateBatch batch, bool callerCanViewLandownerInfo)
     {
         var updateContacts = await dbContext.ProjectPersonUpdates
             .AsNoTracking()
@@ -665,6 +667,13 @@ public static class ProjectUpdateDiffs
             .Include(pp => pp.Person)
             .Where(pp => pp.ProjectID == project.ProjectID)
             .ToListAsync();
+
+        // Hide restricted (Private Landowner) contacts from callers who can't view them. WADNR-2259.
+        if (!callerCanViewLandownerInfo)
+        {
+            updateContacts = updateContacts.Where(pp => !ProjectPeople.RestrictedRelationshipTypeIDs.Contains(pp.ProjectPersonRelationshipTypeID)).ToList();
+            projectPeople = projectPeople.Where(pp => !ProjectPeople.RestrictedRelationshipTypeIDs.Contains(pp.ProjectPersonRelationshipTypeID)).ToList();
+        }
 
         var originalRows = projectPeople
             .OrderBy(p => p.Person?.LastName).ThenBy(p => p.Person?.FirstName)
@@ -1265,7 +1274,7 @@ public static class ProjectUpdateDiffs
     /// <summary>
     /// Returns a summary of all diffs for display in the UI
     /// </summary>
-    public static async Task<ProjectUpdateDiffSummary> GetDiffSummaryAsync(WADNRDbContext dbContext, int projectUpdateBatchID)
+    public static async Task<ProjectUpdateDiffSummary> GetDiffSummaryAsync(WADNRDbContext dbContext, int projectUpdateBatchID, bool callerCanViewLandownerInfo)
     {
         var batch = await dbContext.ProjectUpdateBatches
             .FirstOrDefaultAsync(b => b.ProjectUpdateBatchID == projectUpdateBatchID);
@@ -1293,9 +1302,45 @@ public static class ProjectUpdateDiffs
         {
             summary.StructuredStepDiffs = JsonSerializer.Deserialize<Dictionary<string, StepDiffResponse>>(
                 batch.StructuredDiffLogJson);
+
+            // The stored diff is the full audit trail. Strip restricted (Private Landowner) contact
+            // rows for callers who can't view them before returning. WADNR-2259.
+            if (!callerCanViewLandownerInfo)
+            {
+                RemoveRestrictedContactRowsFromStoredDiff(summary.StructuredStepDiffs);
+            }
         }
 
         return summary;
+    }
+
+    /// <summary>
+    /// Removes restricted (Private Landowner) contact rows from the stored "contacts" step diff for
+    /// callers who lack CanViewLandownerInfo, and recomputes that step's HasChanges. Matches on the
+    /// relationship display name (column index 1), which the stored rows share with the lookup. WADNR-2259.
+    /// </summary>
+    private static void RemoveRestrictedContactRowsFromStoredDiff(Dictionary<string, StepDiffResponse>? stepDiffs)
+    {
+        if (stepDiffs == null || !stepDiffs.TryGetValue("contacts", out var contactsDiff) || contactsDiff?.Sections == null)
+        {
+            return;
+        }
+
+        var restrictedRelTypeNames = ProjectPersonRelationshipType.AllLookupDictionary.Values
+            .Where(rt => rt.IsRestrictedToAdminAndProjectStewardAndCanViewLandownerInfo)
+            .Select(rt => rt.ProjectPersonRelationshipTypeDisplayName)
+            .ToHashSet();
+
+        bool NotRestricted(List<string> row) => row.Count < 2 || !restrictedRelTypeNames.Contains(row[1]);
+
+        foreach (var section in contactsDiff.Sections)
+        {
+            section.OriginalRows = section.OriginalRows?.Where(NotRestricted).ToList();
+            section.UpdatedRows = section.UpdatedRows?.Where(NotRestricted).ToList();
+        }
+
+        contactsDiff.HasChanges = contactsDiff.Sections.Any(s =>
+            !RowsEqual(s.OriginalRows ?? [], s.UpdatedRows ?? []));
     }
 
     #endregion

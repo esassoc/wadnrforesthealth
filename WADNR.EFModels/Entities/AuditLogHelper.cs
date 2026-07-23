@@ -32,7 +32,6 @@ public static class AuditLogHelper
         "PersonStewardOrganization",
         "PersonStewardTaxonomyBranch",
         "PersonStewardRegion",
-        "SocrataDataMartRawJsonImport",
         "ArcOnlineFinanceApiRawJsonImport",
         "DatabaseMigration"
     };

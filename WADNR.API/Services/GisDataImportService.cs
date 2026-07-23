@@ -38,7 +38,8 @@ public class GisDataImportService(
 
         var mappedFieldNames = uploadSourceOrganization.GisDefaultMappings
             .Select(x => x.GisDefaultMappingColumnName).ToList();
-        var outFields = string.Join(",", mappedFieldNames);
+        // LOA source has a GlobalID field; request it so it lands on ProjectLocation.ArcGisGlobalID.
+        var outFields = BuildOutFields(mappedFieldNames, includeGlobalId: true);
         var queryString = $"?f=json&outSr=4326&where=Approval_ID%20is%20not%20null&outFields={outFields}";
         var fullUrl = arcOnlineUrl + queryString;
 
@@ -100,7 +101,9 @@ public class GisDataImportService(
 
         var mappedFieldNames = uploadSourceOrganization.GisDefaultMappings
             .Select(x => x.GisDefaultMappingColumnName).ToList();
-        var outFields = string.Join(",", mappedFieldNames);
+        // USFS / NEPA boundary services have no GlobalID field — requesting it would make ArcGIS
+        // reject the query, so only OBJECTID is added here.
+        var outFields = BuildOutFields(mappedFieldNames, includeGlobalId: false);
 
         using var httpClient = httpClientFactory.CreateClient("GisApi");
         httpClient.DefaultRequestHeaders.Add("User-Agent", "WADNR Forest Health Tracker");
@@ -258,6 +261,35 @@ public class GisDataImportService(
             message.AppendLine($"Warnings: {string.Join("; ", result.Warnings)}");
         }
         logger.LogInformation("{Message}", message.ToString());
+    }
+
+    /// <summary>
+    /// Builds the outFields query value from the org's mapped business fields plus the Esri
+    /// system fields needed downstream (persisted onto ProjectLocation.ArcGisObjectID /
+    /// ArcGisGlobalID), skipping any already present in the mappings (case-insensitive).
+    ///
+    /// OBJECTID exists on every Esri feature service (the POST path even filters on it), so it is
+    /// always requested. GlobalID is NOT universal: the USFS and NEPA boundary services have no
+    /// GlobalID field, and naming a non-existent field in outFields makes ArcGIS reject the whole
+    /// query — so it is only requested when <paramref name="includeGlobalId"/> is true (the LOA
+    /// source, which has it). Services without GlobalID simply leave that column null.
+    /// </summary>
+    internal static string BuildOutFields(IEnumerable<string> mappedFieldNames, bool includeGlobalId)
+    {
+        var fields = mappedFieldNames.ToList();
+
+        var systemFields = includeGlobalId
+            ? new[] { "OBJECTID", "GlobalID" }
+            : new[] { "OBJECTID" };
+
+        foreach (var systemField in systemFields)
+        {
+            if (!fields.Any(f => string.Equals(f, systemField, StringComparison.OrdinalIgnoreCase)))
+            {
+                fields.Add(systemField);
+            }
+        }
+        return string.Join(",", fields);
     }
 
     private static JsonElement GetRequiredProperty(JsonElement root, string propertyName, string context)

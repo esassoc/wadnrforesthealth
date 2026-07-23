@@ -15,7 +15,7 @@ export class FundSourceAllocationUpsertRequest {
     FundSourceID?: number;
     StartDate?: string | null;
     EndDate?: string | null;
-    AllocationAmount?: number | null;
+    AllocationAmount: number;
     FederalFundCodeID?: number | null;
     OrganizationID?: number | null;
     DNRUplandRegionID?: number | null;
@@ -38,7 +38,7 @@ export interface FundSourceAllocationUpsertRequestForm {
     FundSourceID?: FormControl<number>;
     StartDate?: FormControl<string>;
     EndDate?: FormControl<string>;
-    AllocationAmount?: FormControl<number>;
+    AllocationAmount: FormControl<number>;
     FederalFundCodeID?: FormControl<number>;
     OrganizationID?: FormControl<number>;
     DNRUplandRegionID?: FormControl<number>;
@@ -98,9 +98,12 @@ export class FundSourceAllocationUpsertRequestFormControls {
         value,
         formControlOptions ?? 
         {
-            nonNullable: false,
+            nonNullable: true,
             validators: 
             [
+                Validators.required,
+                Validators.min(0.01),
+                Validators.max(79228162514264337593543950335),
             ],
         }
     );

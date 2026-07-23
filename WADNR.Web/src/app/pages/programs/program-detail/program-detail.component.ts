@@ -1,5 +1,5 @@
 import { AsyncPipe } from "@angular/common";
-import { Component } from "@angular/core";
+import { ChangeDetectorRef, Component } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, of, shareReplay, switchMap, take } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
@@ -11,6 +11,7 @@ import { PageHeaderComponent } from "src/app/shared/components/page-header/page-
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { PersonLinkComponent } from "src/app/shared/components/person-link/person-link.component";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
+import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
 import { AlertService } from "src/app/shared/services/alert.service";
@@ -47,7 +48,7 @@ import { AuthenticationService } from "src/app/services/authentication.service";
 @Component({
     selector: "program-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRGridComponent, RouterLink, PersonLinkComponent, LoadingDirective, IconComponent],
+    imports: [PageHeaderComponent, AsyncPipe, BreadcrumbComponent, WADNRGridComponent, RouterLink, PersonLinkComponent, LoadingDirective, ButtonLoadingDirective, IconComponent],
     templateUrl: "./program-detail.component.html",
     styleUrls: ["./program-detail.component.scss"],
 })
@@ -69,6 +70,9 @@ export class ProgramDetailComponent {
     public canManagePrograms$: Observable<boolean>;
     public canEditProgramMappings$: Observable<boolean>;
 
+    public isDownloadingGdb = false;
+    private static readonly GDB_DOWNLOAD_PREPARING = "GdbDownloadPreparing";
+
     private refreshData$ = new BehaviorSubject<void>(undefined);
     private refreshNotifications$ = new BehaviorSubject<void>(undefined);
     private refreshBlockList$ = new BehaviorSubject<void>(undefined);
@@ -83,7 +87,8 @@ export class ProgramDetailComponent {
         private dialogService: DialogService,
         private confirmService: ConfirmService,
         private alertService: AlertService,
-        private authenticationService: AuthenticationService
+        private authenticationService: AuthenticationService,
+        private changeDetectorRef: ChangeDetectorRef
     ) {}
 
     ngOnInit(): void {
@@ -144,24 +149,82 @@ export class ProgramDetailComponent {
     }
 
     downloadGdb(): void {
+        if (this.isDownloadingGdb) return;
+
+        // Immediate feedback: the GDB can take a while to build, so show a spinner on the button
+        // and an informational alert as soon as the user clicks.
+        this.isDownloadingGdb = true;
+        const preparingAlert = new Alert(
+            "Preparing your GDB download. This may take a moment for large programs…",
+            AlertContext.Info,
+            false,
+            ProgramDetailComponent.GDB_DOWNLOAD_PREPARING
+        );
+        this.alertService.pushAlert(preparingAlert);
+
         combineLatest([this.programID$, this.program$]).pipe(take(1)).subscribe(([programID, program]) => {
-            this.programService.downloadProjectsAsGdbProgram(programID, "body", false, { httpHeaderAccept: "application/octet-stream" as any }).subscribe({
-                next: (blob) => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    const date = new Date().toISOString().slice(0, 10);
-                    const displayName = program.IsDefaultProgramForImportOnly
-                        ? `${program.OrganizationName} (${program.OrganizationShortName})`
-                        : program.ProgramName;
-                    a.download = `ProjectsInProgram-${displayName}-${date}.gdb.zip`;
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                },
-                error: () => {
-                    this.alertService.pushAlert(new Alert("An error occurred while downloading the GDB.", AlertContext.Danger, true));
-                },
-            });
+            this.programService.downloadProjectsAsGdbProgram(programID, "body", false, { httpHeaderAccept: "application/octet-stream" as any })
+                .subscribe({
+                    next: (blob) => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        const date = new Date().toISOString().slice(0, 10);
+                        const displayName = program.IsDefaultProgramForImportOnly
+                            ? `${program.OrganizationName} (${program.OrganizationShortName})`
+                            : program.ProgramName;
+                        a.download = `ProjectsInProgram-${displayName}-${date}.gdb.zip`;
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        this.finishGdbDownload(preparingAlert, new Alert("Your GDB download is ready.", AlertContext.Success, true));
+                    },
+                    error: (err) => {
+                        // The request asks for a blob, so a 4xx body comes back as a Blob too — read it
+                        // to surface the backend's specific reason (e.g. "No projects with location data
+                        // found for this program.") instead of a generic message.
+                        this.extractErrorMessage(err).then((message) => {
+                            this.finishGdbDownload(preparingAlert, new Alert(message, AlertContext.Danger, true));
+                        });
+                    },
+                });
+        });
+    }
+
+    // Pulls a human-readable message out of a failed GDB download response. Because the request
+    // accepts a blob, an error body arrives as a Blob whose text is the backend's message (a 400
+    // BadRequest serializes its string as a quoted JSON value). Falls back to a generic message.
+    private async extractErrorMessage(err: unknown): Promise<string> {
+        const fallback = "An error occurred while downloading the GDB.";
+        const body = (err as { error?: unknown })?.error;
+        if (!(body instanceof Blob)) return fallback;
+        try {
+            const text = (await body.text()).trim();
+            if (!text) return fallback;
+            // BadRequest("message") comes back as a JSON-encoded string ("\"message\"").
+            try {
+                const parsed = JSON.parse(text);
+                if (typeof parsed === "string" && parsed.trim()) return parsed.trim();
+            } catch {
+                // Not JSON — use the raw text.
+            }
+            return text;
+        } catch {
+            return fallback;
+        }
+    }
+
+    // Resets the download button and swaps the "preparing" alert for the result alert.
+    // The GDB blob response resolves at an awkward point in Angular 21's change-detection
+    // scheduling: flipping isDownloadingGdb -> false otherwise gets caught by the deferred
+    // checkNoChanges pass (NG0100 ExpressionChangedAfterItHasBeenChecked), which aborts the
+    // button's DOM update and leaves it stuck on "Preparing GDB…". Running on a fresh macrotask
+    // and then reconciling synchronously with detectChanges() settles the view in one clean pass.
+    private finishGdbDownload(preparingAlert: Alert, resultAlert: Alert): void {
+        setTimeout(() => {
+            this.isDownloadingGdb = false;
+            this.alertService.removeAlert(preparingAlert);
+            this.alertService.pushAlert(resultAlert);
+            this.changeDetectorRef.detectChanges();
         });
     }
 

@@ -1,0 +1,41 @@
+<page-header pageTitle="Upload Service Forestry Tabular Data"></page-header>
+@if (dashboard$ | async; as dashboard) {
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Upload Service Forestry Excel File</span>
+        </div>
+        <div class="card-body">
+            <p>Upload Service Forestry data from the "DNR Service Forestry ALL REGIONS" Excel export.</p>
+
+            <p><strong>Last Upload:</strong> {{ formatImport(dashboard.LatestImport) }}</p>
+            <button class="btn btn-primary" (click)="openUploadModal()">
+                Upload Service Forestry File
+            </button>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header">
+            <span class="card-title">Publishing Processing</span>
+        </div>
+        <div class="card-body">
+            <p>Publishing processing imports the staged Service Forestry data into the application.</p>
+
+            <p><strong>Last Processed:</strong> {{ formatProcessing(dashboard.LatestImport) }}</p>
+
+            @if (dashboard.PublishingProcessingIsNeeded) {
+                <p class="mt-3"><strong>** Publishing Processing is needed **</strong></p>
+            } @else {
+                <p class="mt-3"><strong>Publishing Processing appears to be up-to-date</strong></p>
+            }
+
+            <button class="btn btn-primary mt-2" (click)="publish()" [buttonLoading]="isPublishing()" [disabled]="isPublishing()">
+                Do Publishing Processing
+            </button>
+        </div>
+    </div>
+} @else {
+    <div class="text-center p-5">
+        <i class="fas fa-spinner fa-spin fa-2x"></i>
+    </div>
+}

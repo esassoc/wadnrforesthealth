@@ -229,7 +229,7 @@ public class ReportTemplateController(
             return BadRequest("At least one model ID is required.");
         }
 
-        var reportTemplateGenerator = new ReportTemplateGenerator(reportTemplate, request.ModelIDList);
+        var reportTemplateGenerator = new ReportTemplateGenerator(reportTemplate, request.ModelIDList, CallingUser.CanViewLandownerInfo());
         var ext = reportTemplate.FileResource.OriginalFileExtension;
         var downloadFileName = $"{reportTemplate.FileResource.OriginalBaseFilename}{(ext.StartsWith(".") ? "" : ".")}{ext}";
         return await GenerateAndDownload(reportTemplateGenerator, downloadFileName);
@@ -257,7 +257,7 @@ public class ReportTemplateController(
             return NotFound($"Project with ID {projectID} does not exist!");
         }
 
-        var reportTemplateGenerator = new ReportTemplateGenerator(reportTemplate, new List<int> { projectID });
+        var reportTemplateGenerator = new ReportTemplateGenerator(reportTemplate, new List<int> { projectID }, CallingUser.CanViewLandownerInfo());
         var downloadFileName = $"{project.ProjectName} - Financial Assistance Approval Letter.docx";
         return await GenerateAndDownload(reportTemplateGenerator, downloadFileName);
     }
@@ -286,7 +286,7 @@ public class ReportTemplateController(
             return NotFound($"InvoicePaymentRequest with ID {invoicePaymentRequestID} does not exist!");
         }
 
-        var reportTemplateGenerator = new ReportTemplateGenerator(reportTemplate, new List<int> { invoicePaymentRequestID });
+        var reportTemplateGenerator = new ReportTemplateGenerator(reportTemplate, new List<int> { invoicePaymentRequestID }, CallingUser.CanViewLandownerInfo());
         var downloadFileName = $"{ipr.Project.ProjectName} - Invoice Payment Request {ipr.InvoicePaymentRequestDate:MM-dd-yyyy}.docx";
         return await GenerateAndDownload(reportTemplateGenerator, downloadFileName);
     }

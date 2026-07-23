@@ -27,7 +27,6 @@ exec pClearFundSourceAllocationExpenditureTables 2013
 
 set statistics time off
 
-select * from [dbo].[SocrataDataMartRawJsonImport]
 select * from dbo.FundSourceAllocationExpenditureJsonStage
 select * from dbo.FundSourceAllocationExpenditure
 

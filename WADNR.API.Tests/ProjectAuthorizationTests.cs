@@ -364,6 +364,82 @@ public class ProjectAuthorizationTests
         Assert.IsFalse(ProjectAuthorization.CanEditAsAdmin(person, authData, null));
     }
 
+    // Dual-role (ProjectSteward base + CanEditProgram supplemental): access must be granted
+    // if EITHER the steward scope OR the program overlap covers the project. Regression test
+    // for WADNR-2259, where region-stewards who are also program editors were denied edit on
+    // region-less imported projects because the steward check short-circuited the program check.
+
+    [TestMethod]
+    public void CanEditAsAdmin_ReturnsTrue_WhenStewardAndProgramEditor_RegionMissingButProgramOverlaps()
+    {
+        // Steward of regions 1,2 who is also a Service-Forestry-style program editor.
+        // The project has NO regions (imported without a region) but shares a program.
+        var person = MakePerson(
+            baseRoleID: (int)RoleEnum.ProjectSteward,
+            supplementalRoleIDs: [(int)RoleEnum.CanEditProgram],
+            assignedProgramIDs: [5],
+            stewardRegionIDs: [1, 2]);
+        var authData = MakeAuthData(
+            approvalStatusID: (int)ProjectApprovalStatusEnum.Approved,
+            regionIDs: [],
+            programIDs: [5]);
+
+        Assert.IsTrue(ProjectAuthorization.CanEditAsAdmin(person, authData,
+            (int)ProjectStewardshipAreaTypeEnum.Regions));
+    }
+
+    [TestMethod]
+    public void CanEditAsAdmin_ReturnsTrue_WhenStewardAndProgramEditor_RegionOverlapsButProgramDoesNot()
+    {
+        var person = MakePerson(
+            baseRoleID: (int)RoleEnum.ProjectSteward,
+            supplementalRoleIDs: [(int)RoleEnum.CanEditProgram],
+            assignedProgramIDs: [5],
+            stewardRegionIDs: [1, 2]);
+        var authData = MakeAuthData(
+            approvalStatusID: (int)ProjectApprovalStatusEnum.Approved,
+            regionIDs: [2, 3],
+            programIDs: [9]);
+
+        Assert.IsTrue(ProjectAuthorization.CanEditAsAdmin(person, authData,
+            (int)ProjectStewardshipAreaTypeEnum.Regions));
+    }
+
+    [TestMethod]
+    public void CanEditAsAdmin_ReturnsFalse_WhenStewardAndProgramEditor_NeitherRegionNorProgramMatch()
+    {
+        var person = MakePerson(
+            baseRoleID: (int)RoleEnum.ProjectSteward,
+            supplementalRoleIDs: [(int)RoleEnum.CanEditProgram],
+            assignedProgramIDs: [5],
+            stewardRegionIDs: [1, 2]);
+        var authData = MakeAuthData(
+            approvalStatusID: (int)ProjectApprovalStatusEnum.Approved,
+            regionIDs: [3, 4],
+            programIDs: [9]);
+
+        Assert.IsFalse(ProjectAuthorization.CanEditAsAdmin(person, authData,
+            (int)ProjectStewardshipAreaTypeEnum.Regions));
+    }
+
+    [TestMethod]
+    public void CanEditAsAdmin_ReturnsFalse_WhenStewardAndProgramEditor_ProgramOverlapsButProjectPending()
+    {
+        // Pending projects are still blocked on the admin edit path even with a program match.
+        var person = MakePerson(
+            baseRoleID: (int)RoleEnum.ProjectSteward,
+            supplementalRoleIDs: [(int)RoleEnum.CanEditProgram],
+            assignedProgramIDs: [5],
+            stewardRegionIDs: [1, 2]);
+        var authData = MakeAuthData(
+            approvalStatusID: (int)ProjectApprovalStatusEnum.PendingApproval,
+            regionIDs: [],
+            programIDs: [5]);
+
+        Assert.IsFalse(ProjectAuthorization.CanEditAsAdmin(person, authData,
+            (int)ProjectStewardshipAreaTypeEnum.Regions));
+    }
+
     #endregion
 
     #region CanApprove
@@ -439,6 +515,37 @@ public class ProjectAuthorizationTests
         var authData = MakeAuthData();
 
         Assert.IsFalse(ProjectAuthorization.CanApprove(person, authData, null));
+    }
+
+    // Dual-role (ProjectSteward + CanEditProgram): CanApprove feeds UserCanDirectEdit, which
+    // gates the Project detail edit buttons. Must not short-circuit on the steward check.
+
+    [TestMethod]
+    public void CanApprove_ReturnsTrue_WhenStewardAndProgramEditor_RegionMissingButProgramOverlaps()
+    {
+        var person = MakePerson(
+            baseRoleID: (int)RoleEnum.ProjectSteward,
+            supplementalRoleIDs: [(int)RoleEnum.CanEditProgram],
+            assignedProgramIDs: [5],
+            stewardRegionIDs: [1, 2]);
+        var authData = MakeAuthData(regionIDs: [], programIDs: [5]);
+
+        Assert.IsTrue(ProjectAuthorization.CanApprove(person, authData,
+            (int)ProjectStewardshipAreaTypeEnum.Regions));
+    }
+
+    [TestMethod]
+    public void CanApprove_ReturnsFalse_WhenStewardAndProgramEditor_NeitherRegionNorProgramMatch()
+    {
+        var person = MakePerson(
+            baseRoleID: (int)RoleEnum.ProjectSteward,
+            supplementalRoleIDs: [(int)RoleEnum.CanEditProgram],
+            assignedProgramIDs: [5],
+            stewardRegionIDs: [1, 2]);
+        var authData = MakeAuthData(regionIDs: [3, 4], programIDs: [9]);
+
+        Assert.IsFalse(ProjectAuthorization.CanApprove(person, authData,
+            (int)ProjectStewardshipAreaTypeEnum.Regions));
     }
 
     #endregion

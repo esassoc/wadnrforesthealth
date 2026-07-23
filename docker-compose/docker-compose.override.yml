@@ -74,6 +74,11 @@ services:
       - GEOSERVER_CONFIG_DIRECTORY=/app/config
       - GEOSERVER_ADMIN_USER=geomaster
       - GEOSERVER_ADMIN_PASSWORD=${GeoserverAdminPassword}
+      # Run the GeoServer process as root. On Docker Desktop (Windows bind mount)
+      # the data_dir stays root-owned because chown is a no-op on the mount, so the
+      # default non-root user can't create runtime files like security/csp.xml
+      # (new in GeoServer 2.28), which otherwise fails container startup.
+      - RUN_AS_ROOT=true
       - INITIAL_MEMORY=4G
       - MAXIMUM_MEMORY=8G
     ports:

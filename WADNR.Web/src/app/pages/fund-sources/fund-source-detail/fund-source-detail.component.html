@@ -3,14 +3,43 @@
 <page-header [pageTitle]="fundSource.FundSourceTitle"></page-header>
 
 <div class="page-body grid-12">
-    <!-- Row 1: Basics (left) and Files (right) -->
+    <!-- About this fund source (rich text narrative) -->
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header flex-between">
+                <span class="card-title">About this fund source</span>
+                @if ((canManageFundSources$ | async) && !(isEditingAbout$ | async)) {
+                    <button class="card-header-edit-link" (click)="enterEditAbout()" [attr.aria-label]="'Edit About this fund source'" title="Edit About this fund source">
+                        <icon icon="Edit" aria-hidden="true"></icon>
+                    </button>
+                }
+            </div>
+            <div class="card-body" [loadingSpinner]="{ isLoading: isSavingAbout$ | async, loadingHeight: 80 }">
+                @if (!(isEditingAbout$ | async)) {
+                    @if (!(aboutIsEmpty$ | async)) {
+                        <div class="fund-source-detail__about-content" [innerHtml]="aboutContent$ | async"></div>
+                    } @else {
+                        <p class="text-muted mb-0">No description has been provided for this fund source.</p>
+                    }
+                } @else {
+                    <editor #tinyMceEditor [init]="tinyMceConfig" [(ngModel)]="editedAboutContent"></editor>
+                    <div class="flex-end mt-2">
+                        <button class="btn btn-primary mr-2" (click)="saveAbout()">Save</button>
+                        <button class="btn btn-secondary" (click)="cancelEditAbout()">Cancel</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Basics (left) and Associated Projects Map (right) -->
     <div class="g-col-6">
         <div class="card">
             <div class="card-header flex-between">
                 <span class="card-title">Basics</span>
                 @if (canManageFundSources$ | async) {
-                    <button class="card-header-edit-link" (click)="openEditModal(fundSource)" title="Edit Basics">
-                        <icon icon="Edit"></icon>
+                    <button class="card-header-edit-link" (click)="openEditModal(fundSource)" [attr.aria-label]="'Edit Basics'" title="Edit Basics">
+                        <icon icon="Edit" aria-hidden="true"></icon>
                     </button>
                 }
             </div>
@@ -24,7 +53,7 @@
                 <!-- 2. Short Name -->
                 <div class="fund-source-detail__field-row">
                     <div class="fund-source-detail__field-label"><field-definition fieldDefinition="FundSourceShortName"></field-definition></div>
-                    <div class="fund-source-detail__field-value">{{ fundSource.ShortName || "\u2014" }}</div>
+                    <div class="fund-source-detail__field-value">{{ fundSource.ShortName || "—" }}</div>
                 </div>
 
                 <!-- 3. Organization -->
@@ -44,25 +73,25 @@
                 <!-- 4. Status -->
                 <div class="fund-source-detail__field-row">
                     <div class="fund-source-detail__field-label"><field-definition fieldDefinition="FundSourceStatus"></field-definition></div>
-                    <div class="fund-source-detail__field-value">{{ fundSource.FundSourceStatus?.FundSourceStatusName || "\u2014" }}</div>
+                    <div class="fund-source-detail__field-value">{{ fundSource.FundSourceStatus?.FundSourceStatusName || "—" }}</div>
                 </div>
 
                 <!-- 5. Type -->
                 <div class="fund-source-detail__field-row">
                     <div class="fund-source-detail__field-label"><field-definition fieldDefinition="FundSourceType"></field-definition></div>
-                    <div class="fund-source-detail__field-value">{{ fundSource.FundSourceTypeName || "\u2014" }}</div>
+                    <div class="fund-source-detail__field-value">{{ fundSource.FundSourceTypeName || "—" }}</div>
                 </div>
 
                 <!-- 6. CFDA -->
                 <div class="fund-source-detail__field-row">
                     <div class="fund-source-detail__field-label"><field-definition fieldDefinition="CFDA" labelOverride="Federal Assistance Listing"></field-definition></div>
-                    <div class="fund-source-detail__field-value">{{ fundSource.CFDANumber || "\u2014" }}</div>
+                    <div class="fund-source-detail__field-value">{{ fundSource.CFDANumber || "—" }}</div>
                 </div>
 
                 <!-- 7. Fund Source Number -->
                 <div class="fund-source-detail__field-row">
                     <div class="fund-source-detail__field-label"><field-definition fieldDefinition="FundSourceNumber"></field-definition></div>
-                    <div class="fund-source-detail__field-value">{{ fundSource.FundSourceNumber || "\u2014" }}</div>
+                    <div class="fund-source-detail__field-value">{{ fundSource.FundSourceNumber || "—" }}</div>
                 </div>
 
                 <!-- 8. Total Award Amount -->
@@ -71,21 +100,13 @@
                     <div class="fund-source-detail__field-value">{{ formatCurrency(fundSource.TotalAwardAmount) }}</div>
                 </div>
 
-                <!-- 9. Current Balance (logged-in only) -->
-                @if (isUserLoggedIn$ | async) {
-                <div class="fund-source-detail__field-row">
-                    <div class="fund-source-detail__field-label"><field-definition fieldDefinition="FundSourceCurrentBalance" labelOverride="Estimated current fund source balance"></field-definition></div>
-                    <div class="fund-source-detail__field-value">{{ formatCurrency(fundSource.CurrentBalance) }}</div>
-                </div>
-                }
-
-                <!-- 10. Start Date -->
+                <!-- 9. Start Date -->
                 <div class="fund-source-detail__field-row">
                     <div class="fund-source-detail__field-label"><field-definition fieldDefinition="FundSourceStartDate"></field-definition></div>
                     <div class="fund-source-detail__field-value">{{ fundSource.StartDate | localDate }}</div>
                 </div>
 
-                <!-- 11. End Date -->
+                <!-- 10. End Date -->
                 <div class="fund-source-detail__field-row">
                     <div class="fund-source-detail__field-label"><field-definition fieldDefinition="FundSourceEndDate"></field-definition></div>
                     <div class="fund-source-detail__field-value">{{ fundSource.EndDate | localDate }}</div>
@@ -94,84 +115,32 @@
         </div>
     </div>
 
-    <!-- Files Card (right column) -->
+    <!-- Associated Projects Map (right column) -->
     <div class="g-col-6">
-        @if (files$ | async; as files) {
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Files</span>
-                </div>
-                <div class="card-body">
-                    @if (canManageFundSources$ | async) {
-                        <div class="flex-end mb-2">
-                            <button class="btn btn-sm btn-primary" (click)="openFileModal(fundSource.FundSourceID)">Add File(s)</button>
-                        </div>
-                    }
-                    @if (files.length) {
-                        @for (file of files; track file.FundSourceFileResourceID) {
-                            <div class="fund-source-detail__file">
-                                <div class="fund-source-detail__file-main">
-                                    <a [href]="apiUrl + '/file-resources/' + file.FileResourceGUID" target="_blank">{{ file.DisplayName || file.OriginalBaseFilename }}</a>
-                                    <span class="fund-source-detail__file-meta">({{ file.FileResourceMimeTypeName }}) &mdash; {{ file.CreateDate | localDate }}</span>
-                                    @if (canManageFundSources$ | async) {
-                                        <span class="fund-source-detail__file-actions">
-                                            <a
-                                                href="#"
-                                                class="ml-2"
-                                                (click)="openEditFileModal(fundSource.FundSourceID, file); $event.preventDefault()"
-                                                title="Edit file">
-                                                <icon [icon]="'Edit'"></icon>
-                                            </a>
-                                            <a
-                                                href="#"
-                                                class="text-danger ml-1"
-                                                (click)="deleteFile(fundSource.FundSourceID, file.FundSourceFileResourceID!); $event.preventDefault()"
-                                                title="Delete file">
-                                                <icon [icon]="'Delete'"></icon>
-                                            </a>
-                                        </span>
-                                    }
-                                </div>
-                                @if (file.Description) {
-                                    <div class="fund-source-detail__file-description">{{ file.Description }}</div>
-                                }
-                            </div>
-                        }
-                    } @else {
-                        <p class="text-muted">No files uploaded for this fund source.</p>
-                    }
-                </div>
-            </div>
-        }
-    </div>
-
-    <!-- Budget Line Items Grid (logged-in users only) -->
-    @if (isUserLoggedIn$ | async) {
-    <div class="g-col-12">
         <div class="card">
             <div class="card-header">
-                <span class="card-title">Fund Source Allocation Budget Line Items for this Fund Source ({{ fundSource.FundSourceTitle }})</span>
+                <span class="card-title">Associated Projects Map</span>
             </div>
             <div class="card-body">
-                @if (budgetLineItems$ | async; as budgetLineItems) {
-                    @if (budgetLineItems.length > 0) {
-                        <wadnr-grid
-                            [columnDefs]="budgetLineItemColumnDefs"
-                            [rowData]="budgetLineItems"
-                            height="350px"
-                            downloadFileName="fund-source-budget-line-items"
-                            fullscreenTitle="Budget Line Items">
-                        </wadnr-grid>
+                @if (projectLocations$ | async; as projectLocations) {
+                    @if (projectLocations.length > 0) {
+                        <projects-map
+                            [projectPoints]="projectLocations"
+                            [colorByPropertyName]="colorByPropertyName"
+                            [legendColorsToUse]="legendColorsToUse"
+                            mapHeight="400px">
+                        </projects-map>
                     } @else {
-                        <p class="text-muted">No budget line items for this fund source.</p>
+                        <p class="text-muted mb-0">No mapped projects are associated with this fund source.</p>
                     }
+                } @else {
+                    <div [loadingSpinner]="{ isLoading: true, loadingHeight: 200 }"></div>
                 }
             </div>
         </div>
     </div>
-    }
 
-    <!-- Projects Grid (always visible) -->
+    <!-- Funding by Project -->
     <div class="g-col-12">
         <div class="card">
             <div class="card-header">
@@ -195,31 +164,133 @@
         </div>
     </div>
 
-    <!-- Agreements Grid (logged-in users only) -->
-    @if (isUserLoggedIn$ | async) {
+    <!-- Files & Photos -->
     <div class="g-col-12">
         <div class="card">
             <div class="card-header">
-                <span class="card-title">Agreements for this Fund Source ({{ fundSource.FundSourceTitle }})</span>
+                <span class="card-title">Files &amp; Photos</span>
             </div>
             <div class="card-body">
-                @if (agreements$ | async; as agreements) {
-                    @if (agreements.length > 0) {
-                        <wadnr-grid
-                            [columnDefs]="agreementColumnDefs"
-                            [rowData]="agreements"
-                            height="350px"
-                            downloadFileName="fund-source-agreements"
-                            fullscreenTitle="Agreements">
-                        </wadnr-grid>
-                    } @else {
-                        <p class="text-muted">No agreements are associated with this fund source.</p>
-                    }
+                <div class="fund-source-detail__tabs" role="tablist" aria-label="Files and Photos">
+                    <button
+                        role="tab"
+                        [id]="'files-tab'"
+                        [attr.aria-selected]="activeFilesTab === 'files'"
+                        [attr.aria-controls]="'files-panel'"
+                        class="fund-source-detail__tab"
+                        [class.fund-source-detail__tab--active]="activeFilesTab === 'files'"
+                        (click)="setActiveFilesTab('files')">
+                        Files
+                    </button>
+                    <button
+                        role="tab"
+                        [id]="'photos-tab'"
+                        [attr.aria-selected]="activeFilesTab === 'photos'"
+                        [attr.aria-controls]="'photos-panel'"
+                        class="fund-source-detail__tab"
+                        [class.fund-source-detail__tab--active]="activeFilesTab === 'photos'"
+                        (click)="setActiveFilesTab('photos')">
+                        Photos
+                    </button>
+                </div>
+
+                <!-- Files tab -->
+                @if (activeFilesTab === 'files') {
+                    <div role="tabpanel" id="files-panel" aria-labelledby="files-tab">
+                        @if (canManageFundSources$ | async) {
+                            <div class="flex-end mb-2">
+                                <button class="btn btn-sm btn-primary" (click)="openFileModal(fundSource.FundSourceID)">Add File(s)</button>
+                            </div>
+                        }
+                        @if (files$ | async; as files) {
+                            @if (files.length) {
+                                @for (file of files; track file.FundSourceFileResourceID) {
+                                    <div class="fund-source-detail__file">
+                                        <div class="fund-source-detail__file-main">
+                                            <a [href]="apiUrl + '/file-resources/' + file.FileResourceGUID" target="_blank">{{ file.DisplayName || file.OriginalBaseFilename }}</a>
+                                            <span class="fund-source-detail__file-meta">({{ file.FileResourceMimeTypeName }}) &mdash; {{ file.CreateDate | localDate }}</span>
+                                            @if (canManageFundSources$ | async) {
+                                                <span class="fund-source-detail__file-actions">
+                                                    <a
+                                                        href="#"
+                                                        class="ml-2"
+                                                        (click)="openEditFileModal(fundSource.FundSourceID, file); $event.preventDefault()"
+                                                        [attr.aria-label]="'Edit ' + (file.DisplayName || file.OriginalBaseFilename)"
+                                                        title="Edit file">
+                                                        <icon [icon]="'Edit'" aria-hidden="true"></icon>
+                                                    </a>
+                                                    <a
+                                                        href="#"
+                                                        class="text-danger ml-1"
+                                                        (click)="deleteFile(fundSource.FundSourceID, file.FundSourceFileResourceID!); $event.preventDefault()"
+                                                        [attr.aria-label]="'Delete ' + (file.DisplayName || file.OriginalBaseFilename)"
+                                                        title="Delete file">
+                                                        <icon [icon]="'Delete'" aria-hidden="true"></icon>
+                                                    </a>
+                                                </span>
+                                            }
+                                        </div>
+                                        @if (file.Description) {
+                                            <div class="fund-source-detail__file-description">{{ file.Description }}</div>
+                                        }
+                                    </div>
+                                }
+                            } @else {
+                                <p class="text-muted">No files uploaded for this fund source.</p>
+                            }
+                        }
+                    </div>
+                }
+
+                <!-- Photos tab -->
+                @if (activeFilesTab === 'photos') {
+                    <div role="tabpanel" id="photos-panel" aria-labelledby="photos-tab">
+                        @if (canManageFundSources$ | async) {
+                            <div class="flex-end mb-2">
+                                <button class="btn btn-sm btn-primary" (click)="openAddPhotoModal()">Add Photo</button>
+                            </div>
+                        }
+                        @if (photoItems$ | async; as photoItems) {
+                            @if (photoItems.length) {
+                                <image-gallery
+                                    [images]="photoItems"
+                                    [canEdit]="(canManageFundSources$ | async) ?? false"
+                                    (edit)="onGalleryEdit($event)"
+                                    (delete)="onGalleryDelete($event)"
+                                    (setKeyPhoto)="onGallerySetKeyPhoto($event)">
+                                </image-gallery>
+                            } @else {
+                                <p class="text-muted">No photos uploaded for this fund source.</p>
+                            }
+                        }
+                    </div>
                 }
             </div>
         </div>
     </div>
-    }
+
+    <!-- Fund Source Allocations (visible to all) -->
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Fund Source Allocations for this Fund Source ({{ fundSource.FundSourceTitle }})</span>
+            </div>
+            <div class="card-body">
+                <wadnr-grid
+                    [rowData]="allocations$ | async"
+                    [columnDefs]="allocationColumnDefs"
+                    height="350px"
+                    downloadFileName="fund-source-allocations"
+                    fullscreenTitle="Fund Source Allocations">
+                    @if (canManageFundSources$ | async) {
+                        <button customGridActionsRight class="btn btn-sm btn-primary" (click)="openCreateAllocationModal(fundSource)">
+                            <i class="fa fa-plus" aria-hidden="true"></i> Add Allocation
+                        </button>
+                    }
+                </wadnr-grid>
+            </div>
+        </div>
+    </div>
 
     <!-- Notes Section -->
     <div class="g-col-12">
@@ -247,15 +318,17 @@
                                                 openNoteModal(fundSource.FundSourceID, false, 'edit', note.FundSourceNoteID, note.Note);
                                                 $event.preventDefault()
                                             "
+                                            [attr.aria-label]="'Edit note'"
                                             title="Edit"
-                                            ><i class="fa fa-pencil-square-o"></i
+                                            ><i class="fa fa-pencil-square-o" aria-hidden="true"></i
                                         ></a>
                                         <a
                                             href="#"
                                             class="text-danger ml-1"
                                             (click)="deleteNote(fundSource.FundSourceID, note.FundSourceNoteID!, false); $event.preventDefault()"
+                                            [attr.aria-label]="'Delete note'"
                                             title="Delete"
-                                            ><i class="fa fa-trash"></i
+                                            ><i class="fa fa-trash" aria-hidden="true"></i
                                         ></a>
                                     }
                                     <span class="ml-2">Created: {{ formatDateTime(note.CreateDate) }} {{ note.CreatedByPersonName }}</span>
@@ -287,15 +360,17 @@
                                                 openNoteModal(fundSource.FundSourceID, true, 'edit', note.FundSourceNoteInternalID, note.Note);
                                                 $event.preventDefault()
                                             "
+                                            [attr.aria-label]="'Edit internal note'"
                                             title="Edit"
-                                            ><i class="fa fa-pencil-square-o"></i
+                                            ><i class="fa fa-pencil-square-o" aria-hidden="true"></i
                                         ></a>
                                         <a
                                             href="#"
                                             class="text-danger ml-1"
                                             (click)="deleteNote(fundSource.FundSourceID, note.FundSourceNoteInternalID!, true); $event.preventDefault()"
+                                            [attr.aria-label]="'Delete internal note'"
                                             title="Delete"
-                                            ><i class="fa fa-trash"></i
+                                            ><i class="fa fa-trash" aria-hidden="true"></i
                                         ></a>
                                         <span class="ml-2">Created: {{ formatDateTime(note.CreateDate) }} {{ note.CreatedByPersonName }}</span>
                                     </div>

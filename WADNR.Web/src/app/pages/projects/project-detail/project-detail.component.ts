@@ -831,9 +831,12 @@ export class ProjectDetailComponent implements OnDestroy {
                     const doc = params.data as ProjectDocumentGridRow;
                     return `<a href="${this.apiUrl}/file-resources/${doc.FileResourceGuid}" target="_blank">${doc.DisplayName}</a>`;
                 },
+                comparator: this.utilityFunctions.linkRendererComparator,
+                filterValueGetter: (params) => (params.data as ProjectDocumentGridRow).DisplayName,
             },
             this.utilityFunctions.createBasicColumnDef("Description", "Description"),
             this.utilityFunctions.createBasicColumnDef("Type", "DocumentTypeName"),
+            this.utilityFunctions.createDateColumnDef("Uploaded Date", "UploadDate", "short", { Sort: "asc" }),
         ];
         if (canEdit) {
             cols.push(this.utilityFunctions.createActionsColumnDef((params) => {
@@ -1915,6 +1918,7 @@ export class ProjectDetailComponent implements OnDestroy {
         const data: ProjectContactEditorData = {
             projectID: project.ProjectID,
             existingContacts: project.People ?? [],
+            canViewLandownerInfo: project.UserCanViewLandownerInfo ?? false,
         };
 
         this.dialogService

@@ -32,6 +32,7 @@ import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 export interface EditModalInput {
     allocation: FundSourceAllocationDetail;
     mode: "edit" | "create";
+    lockFundSource?: boolean;
 }
 
 @Component({
@@ -230,7 +231,7 @@ export class FundSourceAllocationEditModalComponent extends BaseModal implements
     form = new FormGroup({
         fundSourceAllocationName: new FormControl<string | null>(null, Validators.required),
         fundSourceID: new FormControl<number | null>(null, Validators.required),
-        allocationAmount: new FormControl<number | null>(null),
+        allocationAmount: new FormControl<number | null>(null, [Validators.required, Validators.min(0.01)]),
         startDate: new FormControl<string | null>(null),
         endDate: new FormControl<string | null>(null),
         organizationID: new FormControl<number | null>(null, Validators.required),
@@ -288,6 +289,10 @@ export class FundSourceAllocationEditModalComponent extends BaseModal implements
             programManagerPersonIDs: a.ProgramManagers?.map(p => p.PersonID) ?? [],
             likelyToUsePersonIDs: a.LikelyToUsePeople?.map(p => p.PersonID) ?? [],
         });
+
+        if (this.data.lockFundSource) {
+            this.form.controls.fundSourceID.disable({ emitEvent: false });
+        }
 
         // Division / Region mutual exclusion
         if (a.DivisionID) {

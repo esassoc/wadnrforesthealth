@@ -618,7 +618,12 @@ public static class ProjectCreateWorkflowSteps
     /// Auto-assigns geographic regions (priority landscapes, DNR upland regions, counties)
     /// based on project location intersections.
     /// </summary>
-    private static async Task AutoAssignGeographicRegionsAsync(WADNRDbContext dbContext, int projectID)
+    /// <param name="useNoAuditingSave">
+    /// When true, persists via SaveChangesWithNoAuditingAsync instead of SaveChangesAsync.
+    /// Used by system-driven paths (e.g. GIS bulk import and the nightly ArcGIS jobs) that
+    /// deliberately avoid writing audit fields.
+    /// </param>
+    internal static async Task AutoAssignGeographicRegionsAsync(WADNRDbContext dbContext, int projectID, bool useNoAuditingSave = false)
     {
         var project = await dbContext.Projects
             .Include(p => p.ProjectLocations)
@@ -629,17 +634,21 @@ public static class ProjectCreateWorkflowSteps
 
         if (project == null) return;
 
-        // Build combined geometry from simple and detailed locations
+        // Build combined geometry from simple and detailed locations.
+        // MakeValid each source geometry: rows persisted outside the interactive workflow
+        // (e.g. GIS bulk import) may be topologically invalid, and passing an invalid instance
+        // to SQL Server's STIntersects below throws error 24144. This also protects rows
+        // imported before that path was fixed.
         var geometries = new List<Geometry>();
         if (project.ProjectLocationPoint != null)
         {
-            geometries.Add(project.ProjectLocationPoint);
+            geometries.Add(project.ProjectLocationPoint.MakeValid());
         }
         foreach (var loc in project.ProjectLocations)
         {
             if (loc.ProjectLocationGeometry != null)
             {
-                geometries.Add(loc.ProjectLocationGeometry);
+                geometries.Add(loc.ProjectLocationGeometry.MakeValid());
             }
         }
 
@@ -649,7 +658,10 @@ public static class ProjectCreateWorkflowSteps
             project.NoPriorityLandscapesExplanation ??= "Neither the simple location nor the detailed location on this project intersects with any Priority Landscape.";
             project.NoRegionsExplanation ??= "Neither the simple location nor the detailed location on this project intersects with any DNR Upland Region.";
             project.NoCountiesExplanation ??= "Neither the simple location nor the detailed location on this project intersects with any County.";
-            await dbContext.SaveChangesAsync();
+            if (useNoAuditingSave)
+                await dbContext.SaveChangesWithNoAuditingAsync();
+            else
+                await dbContext.SaveChangesAsync();
             return;
         }
 
@@ -719,7 +731,10 @@ public static class ProjectCreateWorkflowSteps
             ? "Neither the simple location nor the detailed location on this project intersects with any County."
             : null;
 
-        await dbContext.SaveChangesAsync();
+        if (useNoAuditingSave)
+            await dbContext.SaveChangesWithNoAuditingAsync();
+        else
+            await dbContext.SaveChangesAsync();
     }
 
     #endregion
@@ -794,9 +809,9 @@ public static class ProjectCreateWorkflowSteps
 
     #region Contacts Step
 
-    public static async Task<ProjectContactsStep?> GetContactsStepAsync(WADNRDbContext dbContext, int projectID)
+    public static async Task<ProjectContactsStep?> GetContactsStepAsync(WADNRDbContext dbContext, int projectID, bool callerCanViewLandownerInfo)
     {
-        return await dbContext.Projects
+        var dto = await dbContext.Projects
             .AsNoTracking()
             .Where(p => p.ProjectID == projectID)
             .Select(p => new ProjectContactsStep
@@ -812,9 +827,19 @@ public static class ProjectCreateWorkflowSteps
                 }).ToList()
             })
             .SingleOrDefaultAsync();
+
+        // Hide restricted (Private Landowner) contacts from callers who can't view them. WADNR-2259.
+        if (dto != null && !callerCanViewLandownerInfo)
+        {
+            dto.Contacts = dto.Contacts
+                .Where(c => !ProjectPeople.RestrictedRelationshipTypeIDs.Contains(c.ProjectPersonRelationshipTypeID))
+                .ToList();
+        }
+
+        return dto;
     }
 
-    public static async Task<ProjectContactsStep?> SaveContactsStepAsync(WADNRDbContext dbContext, int projectID, ProjectContactsStepRequest request)
+    public static async Task<ProjectContactsStep?> SaveContactsStepAsync(WADNRDbContext dbContext, int projectID, ProjectContactsStepRequest request, bool callerCanViewLandownerInfo)
     {
         var project = await dbContext.Projects
             .Include(p => p.ProjectPeople)
@@ -826,8 +851,13 @@ public static class ProjectCreateWorkflowSteps
         var existingIDs = project.ProjectPeople.Select(pp => pp.ProjectPersonID).ToHashSet();
         var requestIDs = request.Contacts.Where(c => c.ProjectPersonID.HasValue).Select(c => c.ProjectPersonID!.Value).ToHashSet();
 
-        // Remove not in request
-        var toRemove = project.ProjectPeople.Where(pp => !requestIDs.Contains(pp.ProjectPersonID)).ToList();
+        // Remove not in request, but preserve restricted (Private Landowner) contacts the caller
+        // can't view — they were filtered out of what the caller loaded, so their absence from the
+        // request is not an intent to delete. WADNR-2259.
+        var toRemove = project.ProjectPeople
+            .Where(pp => !requestIDs.Contains(pp.ProjectPersonID)
+                && (callerCanViewLandownerInfo || !ProjectPeople.RestrictedRelationshipTypeIDs.Contains(pp.ProjectPersonRelationshipTypeID)))
+            .ToList();
         dbContext.ProjectPeople.RemoveRange(toRemove);
 
         // Update existing and add new
@@ -854,7 +884,7 @@ public static class ProjectCreateWorkflowSteps
 
         await dbContext.SaveChangesAsync();
 
-        return await GetContactsStepAsync(dbContext, projectID);
+        return await GetContactsStepAsync(dbContext, projectID, callerCanViewLandownerInfo);
     }
 
     #endregion

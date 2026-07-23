@@ -27,7 +27,13 @@ import { LookupTableEntry } from "src/app/shared/models/lookup-table-entry";
 export interface ProjectContactEditorData {
     projectID: number;
     existingContacts: ProjectPersonItem[];
+    canViewLandownerInfo: boolean;
 }
+
+// Relationship types hidden from users without landowner-view permission. Mirrors the API's
+// ProjectPersonRelationshipType.IsRestrictedToAdminAndProjectStewardAndCanViewLandownerInfo flag
+// and the People filter in Project.StaticHelpers.PopulatePermissionFlagsAsync. WADNR-2259.
+const RESTRICTED_RELATIONSHIP_TYPE_IDS: number[] = [ProjectPersonRelationshipTypeEnum.PrivateLandowner];
 
 interface ContactsByType {
     relationshipType: LookupTableEntry;
@@ -87,7 +93,10 @@ export class ProjectContactEditorComponent extends BaseModal implements OnInit {
             disabled: false,
         }));
 
-        const sortedRelationshipTypes = [...ProjectPersonRelationshipTypes].sort((a, b) => a.SortOrder - b.SortOrder);
+        const canViewLandownerInfo = data?.canViewLandownerInfo ?? false;
+        const sortedRelationshipTypes = [...ProjectPersonRelationshipTypes]
+            .filter((rt) => canViewLandownerInfo || !RESTRICTED_RELATIONSHIP_TYPE_IDS.includes(rt.Value))
+            .sort((a, b) => a.SortOrder - b.SortOrder);
 
         this.contactsByType = sortedRelationshipTypes.map((rt) => {
             const canOnlyBeRelatedOnce = rt.Value === ProjectPersonRelationshipTypeEnum.PrimaryContact;

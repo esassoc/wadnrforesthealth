@@ -348,7 +348,7 @@ export class AuthenticationService {
     }
 
     /**
-     * Checks if user can edit program GDB mappings (import basics, default mappings, crosswalk values, download GDB).
+     * Checks if user can edit program GDB mappings (import basics, default mappings, crosswalk values).
      * Matches [ProgramEditMappingsFeature]: Admin, EsaAdmin, CanEditProgram.
      */
     public canEditProgramMappings(user: PersonDetail | null): boolean {

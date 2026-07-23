@@ -4665,6 +4665,66 @@
         }
       }
     },
+    "/fund-sources/{fundSourceID}/about": {
+      "put": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "UpdateAbout_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceAboutUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceAboutUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceAboutUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/fund-sources/{fundSourceID}/allocations": {
       "get": {
         "tags": [
@@ -4690,7 +4750,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                    "$ref": "#/components/schemas/FundSourceAllocationGridRow"
                   }
                 }
               },
@@ -4698,7 +4758,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                    "$ref": "#/components/schemas/FundSourceAllocationGridRow"
                   }
                 }
               },
@@ -4706,7 +4766,58 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                    "$ref": "#/components/schemas/FundSourceAllocationGridRow"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/fund-sources/{fundSourceID}/project-locations": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "ListProjectLocations_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
                   }
                 }
               }
@@ -4758,108 +4869,6 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/FundSourceProjectGridRow"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-anonymous": true
-      }
-    },
-    "/fund-sources/{fundSourceID}/agreements": {
-      "get": {
-        "tags": [
-          "FundSource"
-        ],
-        "operationId": "ListAgreements_FundSource",
-        "parameters": [
-          {
-            "name": "fundSourceID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FundSourceAgreementGridRow"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FundSourceAgreementGridRow"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FundSourceAgreementGridRow"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-anonymous": true
-      }
-    },
-    "/fund-sources/{fundSourceID}/budget-line-items": {
-      "get": {
-        "tags": [
-          "FundSource"
-        ],
-        "operationId": "ListBudgetLineItems_FundSource",
-        "parameters": [
-          {
-            "name": "fundSourceID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FundSourceBudgetLineItemGridRow"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FundSourceBudgetLineItemGridRow"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FundSourceBudgetLineItemGridRow"
                   }
                 }
               }
@@ -4989,6 +4998,57 @@
             }
           }
         }
+      }
+    },
+    "/fund-sources/{fundSourceID}/images": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "ListImages_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceImageGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceImageGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceImageGridRow"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
       }
     },
     "/fund-sources/{fundSourceID}/notes": {
@@ -6922,6 +6982,221 @@
           }
         },
         "x-anonymous": true
+      }
+    },
+    "/fund-source-images/{fundSourceImageID}": {
+      "get": {
+        "tags": [
+          "FundSourceImage"
+        ],
+        "operationId": "GetByID_FundSourceImage",
+        "parameters": [
+          {
+            "name": "fundSourceImageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      },
+      "put": {
+        "tags": [
+          "FundSourceImage"
+        ],
+        "operationId": "Update_FundSourceImage",
+        "parameters": [
+          {
+            "name": "fundSourceImageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceImageUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceImageUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceImageUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FundSourceImage"
+        ],
+        "operationId": "Delete_FundSourceImage",
+        "parameters": [
+          {
+            "name": "fundSourceImageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/fund-source-images": {
+      "post": {
+        "tags": [
+          "FundSourceImage"
+        ],
+        "operationId": "Create_FundSourceImage",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fundSourceID": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "caption": {
+                    "type": "string"
+                  },
+                  "credit": {
+                    "type": "string"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "fundSourceID": {
+                  "style": "form"
+                },
+                "caption": {
+                  "style": "form"
+                },
+                "credit": {
+                  "style": "form"
+                },
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fund-source-images/{fundSourceImageID}/set-key-photo": {
+      "post": {
+        "tags": [
+          "FundSourceImage"
+        ],
+        "operationId": "SetKeyPhoto_FundSourceImage",
+        "parameters": [
+          {
+            "name": "fundSourceImageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/fund-source-types/lookup": {
@@ -22130,6 +22405,116 @@
         "x-anonymous": true
       }
     },
+    "/service-forestry-upload/dashboard": {
+      "get": {
+        "tags": [
+          "ServiceForestryUpload"
+        ],
+        "operationId": "GetDashboard_ServiceForestryUpload",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadDashboard"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadDashboard"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadDashboard"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service-forestry-upload/import": {
+      "post": {
+        "tags": [
+          "ServiceForestryUpload"
+        ],
+        "operationId": "ImportFile_ServiceForestryUpload",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service-forestry-upload/publish": {
+      "post": {
+        "tags": [
+          "ServiceForestryUpload"
+        ],
+        "operationId": "Publish_ServiceForestryUpload",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryPublishingResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryPublishingResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryPublishingResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sitkacapture/generate-pdf": {
       "post": {
         "tags": [
@@ -25940,54 +26325,10 @@
         },
         "additionalProperties": false
       },
-      "FundSourceAgreementGridRow": {
+      "FundSourceAboutUpsertRequest": {
         "type": "object",
         "properties": {
-          "AgreementID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "AgreementTitle": {
-            "type": "string",
-            "nullable": true
-          },
-          "AgreementNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "AgreementTypeAbbrev": {
-            "type": "string",
-            "nullable": true
-          },
-          "OrganizationID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "OrganizationName": {
-            "type": "string",
-            "nullable": true
-          },
-          "StartDate": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "EndDate": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "AgreementAmount": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "ProgramIndices": {
-            "type": "string",
-            "nullable": true
-          },
-          "ProjectCodes": {
+          "AboutThisFundSource": {
             "type": "string",
             "nullable": true
           }
@@ -27080,6 +27421,9 @@
         "additionalProperties": false
       },
       "FundSourceAllocationUpsertRequest": {
+        "required": [
+          "AllocationAmount"
+        ],
         "type": "object",
         "properties": {
           "FundSourceAllocationName": {
@@ -27101,9 +27445,10 @@
             "nullable": true
           },
           "AllocationAmount": {
+            "maximum": 79228162514264337593543950335,
+            "minimum": 0.01,
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
           "FederalFundCodeID": {
             "type": "integer",
@@ -27171,48 +27516,6 @@
         },
         "additionalProperties": false
       },
-      "FundSourceBudgetLineItemGridRow": {
-        "type": "object",
-        "properties": {
-          "FundSourceAllocationID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "FundSourceAllocationName": {
-            "type": "string",
-            "nullable": true
-          },
-          "PersonnelAmount": {
-            "type": "number",
-            "format": "double"
-          },
-          "BenefitsAmount": {
-            "type": "number",
-            "format": "double"
-          },
-          "TravelAmount": {
-            "type": "number",
-            "format": "double"
-          },
-          "SuppliesAmount": {
-            "type": "number",
-            "format": "double"
-          },
-          "ContractualAmount": {
-            "type": "number",
-            "format": "double"
-          },
-          "IndirectCostsAmount": {
-            "type": "number",
-            "format": "double"
-          },
-          "TotalAmount": {
-            "type": "number",
-            "format": "double"
-          }
-        },
-        "additionalProperties": false
-      },
       "FundSourceDetail": {
         "type": "object",
         "properties": {
@@ -27272,6 +27575,10 @@
           "EndDate": {
             "type": "string",
             "format": "date",
+            "nullable": true
+          },
+          "AboutThisFundSource": {
+            "type": "string",
             "nullable": true
           },
           "ConditionsAndRequirements": {
@@ -27411,6 +27718,112 @@
             "nullable": true
           },
           "FundSourceTypeDisplay": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceImageDetail": {
+        "type": "object",
+        "properties": {
+          "FundSourceImageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Caption": {
+            "type": "string",
+            "nullable": true
+          },
+          "Credit": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsKeyPhoto": {
+            "type": "boolean"
+          },
+          "CreatedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "OriginalFilename": {
+            "type": "string",
+            "nullable": true
+          },
+          "ContentLength": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceImageGridRow": {
+        "type": "object",
+        "properties": {
+          "FundSourceImageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Caption": {
+            "type": "string",
+            "nullable": true
+          },
+          "Credit": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsKeyPhoto": {
+            "type": "boolean"
+          },
+          "CreatedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "OriginalFilename": {
+            "type": "string",
+            "nullable": true
+          },
+          "ContentLength": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceImageUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "Caption": {
+            "type": "string",
+            "nullable": true
+          },
+          "Credit": {
             "type": "string",
             "nullable": true
           }
@@ -32325,6 +32738,9 @@
           "UserCanViewCostSharePDFs": {
             "type": "boolean"
           },
+          "UserCanViewLandownerInfo": {
+            "type": "boolean"
+          },
           "UserCanManageTreatments": {
             "type": "boolean"
           },
@@ -35760,6 +36176,56 @@
         },
         "additionalProperties": false
       },
+      "ServiceForestryPublishingResult": {
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "ElapsedSeconds": {
+            "type": "number",
+            "format": "double"
+          },
+          "ErrorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceForestryUploadDashboard": {
+        "type": "object",
+        "properties": {
+          "LatestImport": {
+            "$ref": "#/components/schemas/TabularDataImportGridRow"
+          },
+          "PublishingProcessingIsNeeded": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceForestryUploadResult": {
+        "type": "object",
+        "properties": {
+          "RecordsImported": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ElapsedSeconds": {
+            "type": "number",
+            "format": "double"
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "SinglePolygonApproveRequest": {
         "type": "object",
         "properties": {
@@ -37307,6 +37773,9 @@
       "name": "FundSourceAllocationPriority"
     },
     {
+      "name": "FundSourceImage"
+    },
+    {
       "name": "FundSourceType"
     },
     {
@@ -37386,6 +37855,9 @@
     },
     {
       "name": "Search"
+    },
+    {
+      "name": "ServiceForestryUpload"
     },
     {
       "name": "SitkaCapture"

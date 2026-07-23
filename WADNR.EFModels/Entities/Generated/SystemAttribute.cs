@@ -47,10 +47,6 @@ public partial class SystemAttribute
 
     public int? ProjectStewardshipAreaTypeID { get; set; }
 
-    [StringLength(200)]
-    [Unicode(false)]
-    public string SocrataAppToken { get; set; } = null!;
-
     [ForeignKey("AssociatePerfomanceMeasureTaxonomyLevelID")]
     [InverseProperty("SystemAttributeAssociatePerfomanceMeasureTaxonomyLevels")]
     public virtual TaxonomyLevel AssociatePerfomanceMeasureTaxonomyLevel { get; set; } = null!;

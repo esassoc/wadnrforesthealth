@@ -32,6 +32,24 @@ declare @programID int;
 set @programID = (select giuso.ProgramID from dbo.GisUploadAttempt gia join dbo.GisUploadSourceOrganization giuso on giuso.GisUploadSourceOrganizationID = gia.GisUploadSourceOrganizationID where gia.GisUploadAttemptID = @piGisUploadAttemptID);
 
 
+-- WADNR-2150: For flattened imports (e.g. LOA) there is no single treatment-type/activity column to
+-- crosswalk; each treatment is derived from a per-activity acre column. Capture the source acre-column
+-- header (e.g. 'prune_acres') as the imported text so the GDB export shows the feed's origin label.
+-- Resolves to NULL when an acre attribute is unmapped (-1), which is the desired "no source" behavior.
+declare @pruningAcresColName varchar(500) = (select GisMetadataAttributeName from dbo.GisMetadataAttribute where GisMetadataAttributeID = @pruningAcresMetadataAttributeID);
+declare @thinningAcresColName varchar(500) = (select GisMetadataAttributeName from dbo.GisMetadataAttribute where GisMetadataAttributeID = @thinningAcresMetadataAttributeID);
+declare @chippingAcresColName varchar(500) = (select GisMetadataAttributeName from dbo.GisMetadataAttribute where GisMetadataAttributeID = @chippingAcresMetadataAttributeID);
+declare @masticationAcresColName varchar(500) = (select GisMetadataAttributeName from dbo.GisMetadataAttribute where GisMetadataAttributeID = @masticationAcresMetadataAttributeID);
+declare @grazingAcresColName varchar(500) = (select GisMetadataAttributeName from dbo.GisMetadataAttribute where GisMetadataAttributeID = @grazingAcresMetadataAttributeID);
+declare @lopScatterAcresColName varchar(500) = (select GisMetadataAttributeName from dbo.GisMetadataAttribute where GisMetadataAttributeID = @lopScatterAcresMetadataAttributeID);
+declare @biomassRemovalAcresColName varchar(500) = (select GisMetadataAttributeName from dbo.GisMetadataAttribute where GisMetadataAttributeID = @biomassRemovalAcresMetadataAttributeID);
+declare @handPileAcresColName varchar(500) = (select GisMetadataAttributeName from dbo.GisMetadataAttribute where GisMetadataAttributeID = @handPileAcresMetadataAttributeID);
+declare @handPileBurnAcresColName varchar(500) = (select GisMetadataAttributeName from dbo.GisMetadataAttribute where GisMetadataAttributeID = @handPileBurnAcresMetadataAttributeID);
+declare @machineBurnAcresColName varchar(500) = (select GisMetadataAttributeName from dbo.GisMetadataAttribute where GisMetadataAttributeID = @machineBurnAcresMetadataAttributeID);
+declare @broadcastBurnAcresColName varchar(500) = (select GisMetadataAttributeName from dbo.GisMetadataAttribute where GisMetadataAttributeID = @broadcastBurnAcresMetadataAttributeID);
+declare @otherAcresColName varchar(500) = (select GisMetadataAttributeName from dbo.GisMetadataAttribute where GisMetadataAttributeID = @otherBurnAcresMetadataAttributeID);
+
+
 if object_id('tempdb.dbo.#tempTreatmentsForDelete') is not null drop table #tempTreatmentsForDelete
 select p.ProjectID, t.TreatmentID, pl.ProjectLocationID 
 into #tempTreatmentsForDelete
@@ -268,8 +286,8 @@ begin
                , pl.ProjectLocationID 
                , 3 -- non-commercial
                , 2 -- Pruning
-               , x.TreatmentTypeImportedText
-               , x.TreatmentDetailedActivityTypeImportedText
+               , @pruningAcresColName
+               , @pruningAcresColName
                , @piGisUploadAttemptID
                , x.PruningAcres
 
@@ -305,8 +323,8 @@ begin
                , pl.ProjectLocationID 
                , 3 -- non-commercial
                , 3 -- Thinning
-               , x.TreatmentTypeImportedText
-               , x.TreatmentDetailedActivityTypeImportedText
+               , @thinningAcresColName
+               , @thinningAcresColName
                , @piGisUploadAttemptID
                , x.ThinningAcres
 
@@ -343,8 +361,8 @@ begin
                , pl.ProjectLocationID 
                , 3 -- non-commercial
                , 1 -- chipping
-               , x.TreatmentTypeImportedText
-               , x.TreatmentDetailedActivityTypeImportedText
+               , @chippingAcresColName
+               , @chippingAcresColName
                , @piGisUploadAttemptID
                , x.ChippingAcres
 
@@ -380,8 +398,8 @@ begin
                , pl.ProjectLocationID 
                , 3 -- non-commercial
                , 4 -- Mastication
-               , x.TreatmentTypeImportedText
-               , x.TreatmentDetailedActivityTypeImportedText
+               , @masticationAcresColName
+               , @masticationAcresColName
                , @piGisUploadAttemptID
                , x.MasticationAcres
 
@@ -416,8 +434,8 @@ begin
                , pl.ProjectLocationID 
                , 3 -- non-commercial
                , 5 -- Grazing
-               , x.TreatmentTypeImportedText
-               , x.TreatmentDetailedActivityTypeImportedText
+               , @grazingAcresColName
+               , @grazingAcresColName
                , @piGisUploadAttemptID
                , x.GrazingAcres
 
@@ -453,8 +471,8 @@ begin
                , pl.ProjectLocationID 
                , 3 -- non-commercial
                , 6 -- Lop and Scatter
-               , x.TreatmentTypeImportedText
-               , x.TreatmentDetailedActivityTypeImportedText
+               , @lopScatterAcresColName
+               , @lopScatterAcresColName
                , @piGisUploadAttemptID
                , x.LopScatterAcres
 
@@ -489,8 +507,8 @@ begin
                , pl.ProjectLocationID 
                , 3 -- non-commercial
                , 7 -- Biomass Removal
-               , x.TreatmentTypeImportedText
-               , x.TreatmentDetailedActivityTypeImportedText
+               , @biomassRemovalAcresColName
+               , @biomassRemovalAcresColName
                , @piGisUploadAttemptID
                , x.BiomassRemovalAcres
 
@@ -525,8 +543,8 @@ begin
                , pl.ProjectLocationID 
                , 3 -- non-commercial
                , 8 -- Hand Pile
-               , x.TreatmentTypeImportedText
-               , x.TreatmentDetailedActivityTypeImportedText
+               , @handPileAcresColName
+               , @handPileAcresColName
                , @piGisUploadAttemptID
                , x.HandPileAcres
 
@@ -562,8 +580,8 @@ begin
                , pl.ProjectLocationID 
                , 2 -- burn
                , 10 -- Hand Pile Burn
-               , x.TreatmentTypeImportedText
-               , x.TreatmentDetailedActivityTypeImportedText
+               , @handPileBurnAcresColName
+               , @handPileBurnAcresColName
                , @piGisUploadAttemptID
                , x.HandPileBurnAcres
 
@@ -599,8 +617,8 @@ begin
                , pl.ProjectLocationID 
                , 2 -- burn
                , 11 -- Machine Burn
-               , x.TreatmentTypeImportedText
-               , x.TreatmentDetailedActivityTypeImportedText
+               , @machineBurnAcresColName
+               , @machineBurnAcresColName
                , @piGisUploadAttemptID
                , x.MachineBurnAcres
 
@@ -636,8 +654,8 @@ begin
                , pl.ProjectLocationID
                , 2 -- fire
                , 9 -- Broadcast Burn
-               , x.TreatmentTypeImportedText
-               , x.TreatmentDetailedActivityTypeImportedText
+               , @broadcastBurnAcresColName
+               , @broadcastBurnAcresColName
                , @piGisUploadAttemptID
                , x.BroadcastBurnAcres
 
@@ -673,8 +691,8 @@ begin
                , pl.ProjectLocationID
                , 3 -- non-commercial
                , 13 -- Other
-               , x.TreatmentTypeImportedText
-               , x.TreatmentDetailedActivityTypeImportedText
+               , @otherAcresColName
+               , @otherAcresColName
                , @piGisUploadAttemptID
                , x.OtherAcres
 

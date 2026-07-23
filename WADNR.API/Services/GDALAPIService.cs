@@ -103,6 +103,51 @@ public class GDALAPIService
         throw new Exception($"GDAL API ogr2ogr GeoJSON-to-GDB request failed: {content}");
     }
 
+    /// <summary>
+    /// Uploads one GeoJSON file per layer to the GDAL API and returns the resulting GDB zip stream.
+    /// Each layer is read from a temp file via <see cref="StreamContent"/> so the GeoJSON streams
+    /// from disk to the socket and is never held in memory in its entirety — this is what keeps
+    /// large multi-layer exports from exhausting memory.
+    /// </summary>
+    public async Task<Stream> Ogr2OgrGeoJsonToGdbMultiLayer(IReadOnlyList<(string LayerName, string FilePath, string GeometryType)> layers, string gdbName)
+    {
+        if (layers == null || layers.Count == 0)
+        {
+            throw new ArgumentException("At least one layer is required.", nameof(layers));
+        }
+
+        // Disposing the form disposes its child StreamContents, which dispose the underlying file streams.
+        using var form = new MultipartFormDataContent();
+
+        foreach (var layer in layers)
+        {
+            var streamContent = new StreamContent(File.OpenRead(layer.FilePath));
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            form.Add(streamContent, "files", $"{layer.LayerName}.geojson");
+            form.Add(new StringContent(layer.LayerName), "layerNames");
+            // Parallel to layerNames/files (model binding preserves repeated-field order). An explicit
+            // per-layer geometry type is required so ogr2ogr does not see wkbUnknown for mixed
+            // Polygon/MultiPolygon layers, which OpenFileGDB rejects when adding a layer.
+            form.Add(new StringContent(layer.GeometryType), "geometryTypes");
+        }
+
+        if (!string.IsNullOrWhiteSpace(gdbName))
+        {
+            form.Add(new StringContent(gdbName), "gdbName");
+        }
+
+        _logger.LogInformation("Sending ogr2ogr GeoJSON-to-GDB multi-layer request to GDAL API with {LayerCount} layers", layers.Count);
+
+        var response = await _httpClient.PostAsync("/ogr2ogr/geojson-to-gdb-multilayer", form);
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadAsStreamAsync();
+        }
+
+        var content = await response.Content.ReadAsStringAsync();
+        throw new Exception($"GDAL API ogr2ogr GeoJSON-to-GDB multi-layer request failed: {content}");
+    }
+
     public async Task<List<GdbFeatureClassPreview>> OgrInfoShpToFeatureClassInfo(IFormFile formFile)
     {
         using var ms = new MemoryStream();

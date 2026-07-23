@@ -101,6 +101,8 @@ public partial class WADNRDbContext : DbContext
 
     public virtual DbSet<FundSourceFileResource> FundSourceFileResources { get; set; }
 
+    public virtual DbSet<FundSourceImage> FundSourceImages { get; set; }
+
     public virtual DbSet<FundSourceNote> FundSourceNotes { get; set; }
 
     public virtual DbSet<FundSourceNoteInternal> FundSourceNoteInternals { get; set; }
@@ -269,7 +271,7 @@ public partial class WADNRDbContext : DbContext
 
     public virtual DbSet<ReportTemplate> ReportTemplates { get; set; }
 
-    public virtual DbSet<SocrataDataMartRawJsonImport> SocrataDataMartRawJsonImports { get; set; }
+    public virtual DbSet<ServiceForestryStage> ServiceForestryStages { get; set; }
 
     public virtual DbSet<StateProvince> StateProvinces { get; set; }
 
@@ -312,8 +314,6 @@ public partial class WADNRDbContext : DbContext
     public virtual DbSet<vLoaStageProjectFundSourceAllocation> vLoaStageProjectFundSourceAllocations { get; set; }
 
     public virtual DbSet<vSingularFundSourceAllocation> vSingularFundSourceAllocations { get; set; }
-
-    public virtual DbSet<vSocrataDataMartRawJsonImportIndex> vSocrataDataMartRawJsonImportIndices { get; set; }
 
     public virtual DbSet<vTotalTreatedAcresByProject> vTotalTreatedAcresByProjects { get; set; }
 
@@ -652,6 +652,15 @@ public partial class WADNRDbContext : DbContext
             entity.HasOne(d => d.FileResource).WithMany(p => p.FundSourceFileResources).OnDelete(DeleteBehavior.ClientSetNull);
 
             entity.HasOne(d => d.FundSource).WithMany(p => p.FundSourceFileResources).OnDelete(DeleteBehavior.ClientSetNull);
+        });
+
+        modelBuilder.Entity<FundSourceImage>(entity =>
+        {
+            entity.HasKey(e => e.FundSourceImageID).HasName("PK_FundSourceImage_FundSourceImageID");
+
+            entity.HasOne(d => d.FileResource).WithMany(p => p.FundSourceImages).OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasOne(d => d.FundSource).WithMany(p => p.FundSourceImages).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<FundSourceNote>(entity =>
@@ -1390,9 +1399,9 @@ public partial class WADNRDbContext : DbContext
             entity.HasOne(d => d.FileResource).WithMany(p => p.ReportTemplates).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
-        modelBuilder.Entity<SocrataDataMartRawJsonImport>(entity =>
+        modelBuilder.Entity<ServiceForestryStage>(entity =>
         {
-            entity.HasKey(e => e.SocrataDataMartRawJsonImportID).HasName("PK_SocrataDataMartRawJsonImport_SocrataDataMartRawJsonImportID");
+            entity.HasKey(e => e.ServiceForestryStageID).HasName("PK_ServiceForestryStage_ServiceForestryStageID");
         });
 
         modelBuilder.Entity<StateProvince>(entity =>
@@ -1524,11 +1533,6 @@ public partial class WADNRDbContext : DbContext
         modelBuilder.Entity<vSingularFundSourceAllocation>(entity =>
         {
             entity.ToView("vSingularFundSourceAllocation");
-        });
-
-        modelBuilder.Entity<vSocrataDataMartRawJsonImportIndex>(entity =>
-        {
-            entity.ToView("vSocrataDataMartRawJsonImportIndex");
         });
 
         modelBuilder.Entity<vTotalTreatedAcresByProject>(entity =>

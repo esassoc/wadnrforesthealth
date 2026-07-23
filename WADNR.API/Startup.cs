@@ -237,7 +237,27 @@ namespace WADNR.API
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                // This is a Web API — there is no "/Home/Error" MVC route to re-execute to. Pointing the
+                // exception handler at a non-existent path made it produce a 404, which the middleware then
+                // turned into a confusing InvalidOperationException that masked the real exception. Handle
+                // errors inline instead: log the real exception and return a clean JSON 500.
+                app.UseExceptionHandler(errorApp =>
+                {
+                    errorApp.Run(async context =>
+                    {
+                        var feature = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerPathFeature>();
+                        logger.Error(feature?.Error, "Unhandled exception processing {Method} {Path}",
+                            context.Request.Method, feature?.Path ?? context.Request.Path.Value);
+
+                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                        context.Response.ContentType = "application/problem+json";
+                        await context.Response.WriteAsJsonAsync(new
+                        {
+                            title = "An unexpected error occurred.",
+                            status = StatusCodes.Status500InternalServerError,
+                        });
+                    });
+                });
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }

@@ -26,6 +26,9 @@ public partial class FundSource
     [Unicode(false)]
     public string? ComplianceNotes { get; set; }
 
+    [Unicode(false)]
+    public string? AboutThisFundSource { get; set; }
+
     [StringLength(10)]
     [Unicode(false)]
     public string? CFDANumber { get; set; }
@@ -52,6 +55,9 @@ public partial class FundSource
 
     [InverseProperty("FundSource")]
     public virtual ICollection<FundSourceFileResource> FundSourceFileResources { get; set; } = new List<FundSourceFileResource>();
+
+    [InverseProperty("FundSource")]
+    public virtual ICollection<FundSourceImage> FundSourceImages { get; set; } = new List<FundSourceImage>();
 
     [InverseProperty("FundSource")]
     public virtual ICollection<FundSourceNoteInternal> FundSourceNoteInternals { get; set; } = new List<FundSourceNoteInternal>();

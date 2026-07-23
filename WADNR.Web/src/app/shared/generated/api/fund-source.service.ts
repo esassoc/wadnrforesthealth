@@ -15,11 +15,9 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
-import { FundSourceAgreementGridRow } from '../model/fund-source-agreement-grid-row';
+import { FundSourceAboutUpsertRequest } from '../model/fund-source-about-upsert-request';
 // @ts-ignore
-import { FundSourceAllocationLookupItem } from '../model/fund-source-allocation-lookup-item';
-// @ts-ignore
-import { FundSourceBudgetLineItemGridRow } from '../model/fund-source-budget-line-item-grid-row';
+import { FundSourceAllocationGridRow } from '../model/fund-source-allocation-grid-row';
 // @ts-ignore
 import { FundSourceDetail } from '../model/fund-source-detail';
 // @ts-ignore
@@ -28,6 +26,8 @@ import { FundSourceFileResourceGridRow } from '../model/fund-source-file-resourc
 import { FundSourceFileUpdateRequest } from '../model/fund-source-file-update-request';
 // @ts-ignore
 import { FundSourceGridRow } from '../model/fund-source-grid-row';
+// @ts-ignore
+import { FundSourceImageGridRow } from '../model/fund-source-image-grid-row';
 // @ts-ignore
 import { FundSourceLookupItem } from '../model/fund-source-lookup-item';
 // @ts-ignore
@@ -40,6 +40,8 @@ import { FundSourceNoteUpsertRequest } from '../model/fund-source-note-upsert-re
 import { FundSourceProjectGridRow } from '../model/fund-source-project-grid-row';
 // @ts-ignore
 import { FundSourceUpsertRequest } from '../model/fund-source-upsert-request';
+// @ts-ignore
+import { IFeature } from '../model/i-feature';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -579,64 +581,9 @@ export class FundSourceService extends BaseService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listAgreementsFundSource(fundSourceID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FundSourceAgreementGridRow>>;
-    public listAgreementsFundSource(fundSourceID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FundSourceAgreementGridRow>>>;
-    public listAgreementsFundSource(fundSourceID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FundSourceAgreementGridRow>>>;
-    public listAgreementsFundSource(fundSourceID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        if (fundSourceID === null || fundSourceID === undefined) {
-            throw new Error('Required parameter fundSourceID was null or undefined when calling listAgreementsFundSource.');
-        }
-
-        let localVarHeaders = this.defaultHeaders;
-
-        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
-            'text/plain',
-            'application/json',
-            'text/json'
-        ]);
-        if (localVarHttpHeaderAcceptSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
-        }
-
-        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
-
-        const localVarTransferCache: boolean = options?.transferCache ?? true;
-
-
-        let responseType_: 'text' | 'json' | 'blob' = 'json';
-        if (localVarHttpHeaderAcceptSelected) {
-            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
-                responseType_ = 'text';
-            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
-                responseType_ = 'json';
-            } else {
-                responseType_ = 'blob';
-            }
-        }
-
-        let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/agreements`;
-        const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Array<FundSourceAgreementGridRow>>('get', `${basePath}${localVarPath}`,
-            {
-                context: localVarHttpContext,
-                responseType: <any>responseType_,
-                ...(withCredentials ? { withCredentials } : {}),
-                headers: localVarHeaders,
-                observe: observe,
-                transferCache: localVarTransferCache,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * @param fundSourceID 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public listAllocationsFundSource(fundSourceID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FundSourceAllocationLookupItem>>;
-    public listAllocationsFundSource(fundSourceID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FundSourceAllocationLookupItem>>>;
-    public listAllocationsFundSource(fundSourceID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FundSourceAllocationLookupItem>>>;
+    public listAllocationsFundSource(fundSourceID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FundSourceAllocationGridRow>>;
+    public listAllocationsFundSource(fundSourceID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FundSourceAllocationGridRow>>>;
+    public listAllocationsFundSource(fundSourceID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FundSourceAllocationGridRow>>>;
     public listAllocationsFundSource(fundSourceID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (fundSourceID === null || fundSourceID === undefined) {
             throw new Error('Required parameter fundSourceID was null or undefined when calling listAllocationsFundSource.');
@@ -671,62 +618,7 @@ export class FundSourceService extends BaseService {
 
         let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/allocations`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Array<FundSourceAllocationLookupItem>>('get', `${basePath}${localVarPath}`,
-            {
-                context: localVarHttpContext,
-                responseType: <any>responseType_,
-                ...(withCredentials ? { withCredentials } : {}),
-                headers: localVarHeaders,
-                observe: observe,
-                transferCache: localVarTransferCache,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * @param fundSourceID 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public listBudgetLineItemsFundSource(fundSourceID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FundSourceBudgetLineItemGridRow>>;
-    public listBudgetLineItemsFundSource(fundSourceID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FundSourceBudgetLineItemGridRow>>>;
-    public listBudgetLineItemsFundSource(fundSourceID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FundSourceBudgetLineItemGridRow>>>;
-    public listBudgetLineItemsFundSource(fundSourceID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        if (fundSourceID === null || fundSourceID === undefined) {
-            throw new Error('Required parameter fundSourceID was null or undefined when calling listBudgetLineItemsFundSource.');
-        }
-
-        let localVarHeaders = this.defaultHeaders;
-
-        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
-            'text/plain',
-            'application/json',
-            'text/json'
-        ]);
-        if (localVarHttpHeaderAcceptSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
-        }
-
-        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
-
-        const localVarTransferCache: boolean = options?.transferCache ?? true;
-
-
-        let responseType_: 'text' | 'json' | 'blob' = 'json';
-        if (localVarHttpHeaderAcceptSelected) {
-            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
-                responseType_ = 'text';
-            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
-                responseType_ = 'json';
-            } else {
-                responseType_ = 'blob';
-            }
-        }
-
-        let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/budget-line-items`;
-        const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Array<FundSourceBudgetLineItemGridRow>>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<Array<FundSourceAllocationGridRow>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -833,6 +725,61 @@ export class FundSourceService extends BaseService {
         let localVarPath = `/fund-sources`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Array<FundSourceGridRow>>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param fundSourceID 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public listImagesFundSource(fundSourceID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FundSourceImageGridRow>>;
+    public listImagesFundSource(fundSourceID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FundSourceImageGridRow>>>;
+    public listImagesFundSource(fundSourceID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FundSourceImageGridRow>>>;
+    public listImagesFundSource(fundSourceID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (fundSourceID === null || fundSourceID === undefined) {
+            throw new Error('Required parameter fundSourceID was null or undefined when calling listImagesFundSource.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/images`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<FundSourceImageGridRow>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -1011,6 +958,61 @@ export class FundSourceService extends BaseService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
+    public listProjectLocationsFundSource(fundSourceID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<IFeature>>;
+    public listProjectLocationsFundSource(fundSourceID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<IFeature>>>;
+    public listProjectLocationsFundSource(fundSourceID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<IFeature>>>;
+    public listProjectLocationsFundSource(fundSourceID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (fundSourceID === null || fundSourceID === undefined) {
+            throw new Error('Required parameter fundSourceID was null or undefined when calling listProjectLocationsFundSource.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/project-locations`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<IFeature>>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param fundSourceID 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
     public listProjectsFundSource(fundSourceID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FundSourceProjectGridRow>>;
     public listProjectsFundSource(fundSourceID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FundSourceProjectGridRow>>>;
     public listProjectsFundSource(fundSourceID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FundSourceProjectGridRow>>>;
@@ -1051,6 +1053,74 @@ export class FundSourceService extends BaseService {
         return this.httpClient.request<Array<FundSourceProjectGridRow>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param fundSourceID 
+     * @param fundSourceAboutUpsertRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateAboutFundSource(fundSourceID: number, fundSourceAboutUpsertRequest?: FundSourceAboutUpsertRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<FundSourceDetail>;
+    public updateAboutFundSource(fundSourceID: number, fundSourceAboutUpsertRequest?: FundSourceAboutUpsertRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<FundSourceDetail>>;
+    public updateAboutFundSource(fundSourceID: number, fundSourceAboutUpsertRequest?: FundSourceAboutUpsertRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<FundSourceDetail>>;
+    public updateAboutFundSource(fundSourceID: number, fundSourceAboutUpsertRequest?: FundSourceAboutUpsertRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (fundSourceID === null || fundSourceID === undefined) {
+            throw new Error('Required parameter fundSourceID was null or undefined when calling updateAboutFundSource.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/about`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<FundSourceDetail>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: fundSourceAboutUpsertRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

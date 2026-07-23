@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 using WADNR.API.Tests.Helpers;
 using WADNR.EFModels.Entities;
 using WADNR.Models.DataTransferObjects;
@@ -887,6 +888,271 @@ public class ProgramControllerTests
         // Assert
         Assert.IsNotNull(programs);
         Assert.IsTrue(programs.Any(p => p.ProgramID == _testProgramID));
+    }
+
+    #endregion
+
+    #region GDB Download Tests
+
+    private const string TestWebUrl = "https://test.wadnrforesthealth.example.com";
+
+    [TestMethod]
+    public async Task GetGdbExportData_ReturnsEmptyLists_WhenProgramHasNoProjects()
+    {
+        // Act
+        var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID, TestWebUrl);
+
+        // Assert
+        Assert.IsNotNull(data);
+        Assert.AreEqual(0, data.ProjectPoints.Count);
+        Assert.AreEqual(0, data.ProjectLocations.Count);
+        Assert.AreEqual(0, data.Treatments.Count);
+    }
+
+    [TestMethod]
+    public async Task GetGdbExportData_IncludesProjectPoint_WhenProjectHasPoint()
+    {
+        // Arrange
+        var project = await ProjectHelper.CreateApprovedProjectWithValidLookupsAsync(
+            AssemblySteps.DbContext, AssemblySteps.TestAdminPersonID);
+        try
+        {
+            await AttachProjectToProgramAsync(project.ProjectID, _testProgramID);
+            await SetProjectLocationPointAsync(project.ProjectID, new Point(-120.5, 47.5) { SRID = 4326 });
+
+            // Act
+            var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID, TestWebUrl);
+
+            // Assert
+            Assert.AreEqual(1, data.ProjectPoints.Count);
+            var point = data.ProjectPoints.Single();
+            Assert.AreEqual(project.ProjectID, point.ProjectID);
+            Assert.AreEqual(project.ProjectName, point.ProjectName);
+            Assert.AreEqual($"{TestWebUrl}/projects/{project.ProjectID}", point.ProjectDetailUrl);
+            // Point was set to (X=-120.5 lon, Y=47.5 lat) in WGS84.
+            Assert.AreEqual(47.5, point.Latitude);
+            Assert.AreEqual(-120.5, point.Longitude);
+            Assert.IsNotNull(point.Geometry);
+            Assert.AreEqual("Point", point.Geometry.GeometryType);
+        }
+        finally
+        {
+            await ProjectHelper.DeleteProjectAsync(AssemblySteps.DbContext, project.ProjectID);
+        }
+    }
+
+    [TestMethod]
+    public async Task GetGdbExportData_ResolvesProjectStageDisplayName()
+    {
+        // Arrange
+        var project = await ProjectHelper.CreateApprovedProjectWithValidLookupsAsync(
+            AssemblySteps.DbContext, AssemblySteps.TestAdminPersonID);
+        try
+        {
+            await AttachProjectToProgramAsync(project.ProjectID, _testProgramID);
+            await SetProjectLocationPointAsync(project.ProjectID, new Point(-120.5, 47.5) { SRID = 4326 });
+
+            // Act
+            var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID, TestWebUrl);
+
+            // Assert - the project was created with ProjectStageEnum.Planned
+            var expected = ProjectStage.AllLookupDictionary[(int)ProjectStageEnum.Planned].ProjectStageDisplayName;
+            Assert.AreEqual(expected, data.ProjectPoints.Single().ProjectStage);
+        }
+        finally
+        {
+            await ProjectHelper.DeleteProjectAsync(AssemblySteps.DbContext, project.ProjectID);
+        }
+    }
+
+    [TestMethod]
+    public async Task GetGdbExportData_IncludesAllThreeLayers_WhenProjectHasPointPolygonAndTreatment()
+    {
+        // Arrange
+        var project = await ProjectHelper.CreateApprovedProjectWithValidLookupsAsync(
+            AssemblySteps.DbContext, AssemblySteps.TestAdminPersonID);
+        try
+        {
+            await AttachProjectToProgramAsync(project.ProjectID, _testProgramID);
+            await SetProjectLocationPointAsync(project.ProjectID, new Point(-120.5, 47.5) { SRID = 4326 });
+            var projectLocation = await AddProjectLocationWithPolygonAsync(project.ProjectID);
+            await AddTreatmentForLocationAsync(project.ProjectID, projectLocation.ProjectLocationID);
+
+            // Act
+            var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID, TestWebUrl);
+
+            // Assert
+            Assert.AreEqual(1, data.ProjectPoints.Count, "Should have one project point");
+            Assert.AreEqual(1, data.ProjectLocations.Count, "Should have one project location polygon");
+            Assert.AreEqual(1, data.Treatments.Count, "Should have one treatment");
+
+            var location = data.ProjectLocations.Single();
+            Assert.AreEqual(1, location.TreatmentCount);
+            Assert.IsNotNull(location.TreatmentTypes);
+            Assert.AreEqual($"{TestWebUrl}/projects/{project.ProjectID}", location.ProjectDetailUrl);
+
+            var treatment = data.Treatments.Single();
+            Assert.AreEqual(projectLocation.ProjectLocationID, treatment.ProjectLocationID);
+            Assert.IsNotNull(treatment.TreatmentType);
+            Assert.IsNotNull(treatment.Geometry);
+            Assert.AreEqual($"{TestWebUrl}/projects/{project.ProjectID}", treatment.ProjectDetailUrl);
+        }
+        finally
+        {
+            await ProjectHelper.DeleteProjectAsync(AssemblySteps.DbContext, project.ProjectID);
+        }
+    }
+
+    [TestMethod]
+    public async Task GetGdbExportData_OmitsProjectPoint_WhenPointIsNull()
+    {
+        // Arrange — project has a polygon but no point
+        var project = await ProjectHelper.CreateApprovedProjectWithValidLookupsAsync(
+            AssemblySteps.DbContext, AssemblySteps.TestAdminPersonID);
+        try
+        {
+            await AttachProjectToProgramAsync(project.ProjectID, _testProgramID);
+            await AddProjectLocationWithPolygonAsync(project.ProjectID);
+
+            // Act
+            var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID, TestWebUrl);
+
+            // Assert
+            Assert.AreEqual(0, data.ProjectPoints.Count, "No point means no ProjectPoints row");
+            Assert.AreEqual(1, data.ProjectLocations.Count, "Polygon should still appear");
+            Assert.AreEqual(0, data.Treatments.Count);
+        }
+        finally
+        {
+            await ProjectHelper.DeleteProjectAsync(AssemblySteps.DbContext, project.ProjectID);
+        }
+    }
+
+    [TestMethod]
+    public async Task GetGdbExportData_NormalizesGeometryCollectionToMultiPolygon_ForProjectLocations()
+    {
+        // Arrange — a ProjectLocation whose geometry is a GeometryCollection (a polygon plus a
+        // dangling line), which is what MakeValid() commonly yields for a self-intersecting polygon.
+        // FileGDB rejects GeometryCollection ("ERROR 6: Unsupported geometry type"), so the export
+        // must collapse it to a single MultiPolygon, dropping the non-polygonal artifact.
+        var project = await ProjectHelper.CreateApprovedProjectWithValidLookupsAsync(
+            AssemblySteps.DbContext, AssemblySteps.TestAdminPersonID);
+        try
+        {
+            await AttachProjectToProgramAsync(project.ProjectID, _testProgramID);
+            await AddProjectLocationWithGeometryCollectionAsync(project.ProjectID);
+
+            // Act
+            var data = await Programs.GetGdbExportDataAsync(AssemblySteps.DbContext, _testProgramID, TestWebUrl);
+
+            // Assert
+            Assert.AreEqual(1, data.ProjectLocations.Count);
+            var location = data.ProjectLocations.Single();
+            Assert.IsNotNull(location.Geometry);
+            Assert.AreEqual("MultiPolygon", location.Geometry.GeometryType,
+                "GeometryCollection should be normalized to MultiPolygon so FileGDB can write it");
+            Assert.AreEqual(4326, location.Geometry.SRID, "SRID should be preserved");
+            Assert.AreEqual(1, location.Geometry.NumGeometries,
+                "Only the polygonal part should survive; the dangling line should be dropped");
+        }
+        finally
+        {
+            await ProjectHelper.DeleteProjectAsync(AssemblySteps.DbContext, project.ProjectID);
+        }
+    }
+
+    #endregion
+
+    #region GDB Download Helpers
+
+    private static async Task AttachProjectToProgramAsync(int projectID, int programID)
+    {
+        AssemblySteps.DbContext.ProjectPrograms.Add(new ProjectProgram
+        {
+            ProjectID = projectID,
+            ProgramID = programID,
+        });
+        await AssemblySteps.DbContext.SaveChangesWithNoAuditingAsync();
+    }
+
+    private static async Task SetProjectLocationPointAsync(int projectID, Point point)
+    {
+        var project = await AssemblySteps.DbContext.Projects.FirstAsync(p => p.ProjectID == projectID);
+        project.ProjectLocationPoint = point;
+        await AssemblySteps.DbContext.SaveChangesWithNoAuditingAsync();
+    }
+
+    private static async Task<ProjectLocation> AddProjectLocationWithPolygonAsync(int projectID)
+    {
+        // A small square polygon near the test point (-120.5, 47.5)
+        var polygon = new Polygon(new LinearRing(new[]
+        {
+            new Coordinate(-120.51, 47.49),
+            new Coordinate(-120.49, 47.49),
+            new Coordinate(-120.49, 47.51),
+            new Coordinate(-120.51, 47.51),
+            new Coordinate(-120.51, 47.49),
+        })) { SRID = 4326 };
+
+        var location = new ProjectLocation
+        {
+            ProjectID = projectID,
+            ProjectLocationGeometry = polygon,
+            ProjectLocationName = $"Loc-{DateTime.UtcNow.Ticks % 1000000}",
+            ProjectLocationTypeID = ProjectLocationType.AllLookupDictionary.Keys.First(),
+        };
+        AssemblySteps.DbContext.ProjectLocations.Add(location);
+        await AssemblySteps.DbContext.SaveChangesWithNoAuditingAsync();
+        return location;
+    }
+
+    private static async Task<ProjectLocation> AddProjectLocationWithGeometryCollectionAsync(int projectID)
+    {
+        // Build a GeometryCollection of a square polygon plus a disjoint dangling line — the shape
+        // MakeValid() produces for a self-intersecting polygon, and the case that broke the GDB export.
+        var factory = new GeometryFactory(new PrecisionModel(), 4326);
+        var polygon = factory.CreatePolygon(factory.CreateLinearRing(new[]
+        {
+            new Coordinate(-120.51, 47.49),
+            new Coordinate(-120.49, 47.49),
+            new Coordinate(-120.49, 47.51),
+            new Coordinate(-120.51, 47.51),
+            new Coordinate(-120.51, 47.49),
+        }));
+        var danglingLine = factory.CreateLineString(new[]
+        {
+            new Coordinate(-120.60, 47.60),
+            new Coordinate(-120.59, 47.61),
+        });
+        var geometryCollection = factory.CreateGeometryCollection(new Geometry[] { polygon, danglingLine });
+
+        var location = new ProjectLocation
+        {
+            ProjectID = projectID,
+            ProjectLocationGeometry = geometryCollection,
+            ProjectLocationName = $"Loc-{DateTime.UtcNow.Ticks % 1000000}",
+            ProjectLocationTypeID = ProjectLocationType.AllLookupDictionary.Keys.First(),
+        };
+        AssemblySteps.DbContext.ProjectLocations.Add(location);
+        await AssemblySteps.DbContext.SaveChangesWithNoAuditingAsync();
+        return location;
+    }
+
+    private static async Task<Treatment> AddTreatmentForLocationAsync(int projectID, int projectLocationID)
+    {
+        var treatment = new Treatment
+        {
+            ProjectID = projectID,
+            ProjectLocationID = projectLocationID,
+            TreatmentTypeID = TreatmentType.AllLookupDictionary.Keys.First(),
+            TreatmentDetailedActivityTypeID = TreatmentDetailedActivityType.AllLookupDictionary.Keys.First(),
+            TreatmentFootprintAcres = 10m,
+            TreatmentTreatedAcres = 8m,
+            TreatmentStartDate = DateOnly.FromDateTime(DateTime.Today),
+        };
+        AssemblySteps.DbContext.Treatments.Add(treatment);
+        await AssemblySteps.DbContext.SaveChangesWithNoAuditingAsync();
+        return treatment;
     }
 
     #endregion

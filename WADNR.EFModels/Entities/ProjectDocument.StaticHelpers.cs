@@ -37,7 +37,7 @@ public static class ProjectDocuments
                 UploadDate = d.UploadDate,
                 FileExtension = d.FileExtension
             })
-            .OrderBy(d => d.DisplayName)
+            .OrderBy(d => d.UploadDate)
             .ToList();
 
         return documents;

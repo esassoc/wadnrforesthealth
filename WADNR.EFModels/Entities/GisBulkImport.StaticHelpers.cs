@@ -387,6 +387,17 @@ public static class GisBulkImports
                 m => m.GisMetadataAttributeID,
                 m => m.GisFeatureMetadataAttributeValue));
 
+        // Resolve the metadata attribute IDs for the Esri system fields (stored lowercased)
+        // so each created ProjectLocation can carry its source OBJECTID / GlobalID. Absent for
+        // non-Esri sources, in which case ArcGisObjectID / ArcGisGlobalID stay null.
+        var metadataAttributeIDByName = features
+            .SelectMany(f => f.GisFeatureMetadataAttributes)
+            .Select(m => m.GisMetadataAttribute)
+            .GroupBy(a => a.GisMetadataAttributeName.ToLowerInvariant())
+            .ToDictionary(g => g.Key, g => g.First().GisMetadataAttributeID);
+        int? objectIdAttributeID = metadataAttributeIDByName.TryGetValue("objectid", out var oidAttrID) ? oidAttrID : null;
+        int? globalIdAttributeID = metadataAttributeIDByName.TryGetValue("globalid", out var gidAttrID) ? gidAttrID : null;
+
         // Get project identifier values to group features by project
         // Normalize to uppercase for case-insensitive grouping; keep originals for display/storage
         var projectIdentifierLookup = new Dictionary<int, string>();
@@ -615,21 +626,65 @@ public static class GisBulkImports
                 // Create project locations from feature geometries
                 foreach (var feature in projectGroup)
                 {
-                    var locationName = $"{originalIdentifier} - Feature {feature.GisImportFeatureKey}";
+                    // Carry the source Esri identifiers through so downstream consumers (e.g. the
+                    // GDB export's ProjectLocations layer) can join back to the source service.
+                    var metadata = featureMetadata[feature.GisFeatureID];
+                    int? arcGisObjectID = null;
+                    if (objectIdAttributeID.HasValue
+                        && metadata.TryGetValue(objectIdAttributeID.Value, out var objectIdValue)
+                        && int.TryParse(objectIdValue, out var parsedObjectID))
+                    {
+                        arcGisObjectID = parsedObjectID;
+                    }
+
+                    string arcGisGlobalID = null;
+                    if (globalIdAttributeID.HasValue
+                        && metadata.TryGetValue(globalIdAttributeID.Value, out var globalIdValue)
+                        && !string.IsNullOrWhiteSpace(globalIdValue))
+                    {
+                        arcGisGlobalID = globalIdValue.Trim();
+                        if (arcGisGlobalID.Length > 50) arcGisGlobalID = arcGisGlobalID[..50];
+                    }
+
+                    // Derive the location name from a stable source identifier rather than the
+                    // positional GisImportFeatureKey (a per-attempt running counter). The Esri
+                    // OBJECTID / GlobalID are stable across re-imports, so re-running an import
+                    // produces the same names (delete-then-recreate stays clean) and two
+                    // unrelated features can no longer land on the same name. Falls back to the
+                    // feature key only for non-Esri sources that carry neither identifier.
+                    var featureIdentifier = arcGisObjectID?.ToString()
+                        ?? arcGisGlobalID
+                        ?? feature.GisImportFeatureKey.ToString();
+                    var locationName = $"{originalIdentifier} - Feature {featureIdentifier}";
 
                     dbContext.ProjectLocations.Add(new ProjectLocation
                     {
                         ProjectID = existingProject.ProjectID,
-                        ProjectLocationGeometry = feature.GisFeatureGeometry,
+                        // GIS source features can be topologically invalid (self-intersections, etc.).
+                        // Normalize on the way in, matching the interactive project workflow
+                        // (ProjectCreateWorkflowSteps.cs), so downstream spatial operations
+                        // (AutoAssignGeographicRegionsAsync's STIntersects, GeoServer, GDB export)
+                        // don't hit SQL Server error 24144 on an invalid instance.
+                        ProjectLocationGeometry = feature.GisFeatureGeometry?.MakeValid(),
                         ProjectLocationName = locationName.Length > 100 ? locationName[..100] : locationName,
                         ProjectLocationTypeID = (int)ProjectLocationTypeEnum.ProjectArea,
                         ImportedFromGisUpload = true,
-                        ProgramID = sourceOrg.ProgramID
+                        ProgramID = sourceOrg.ProgramID,
+                        ArcGisObjectID = arcGisObjectID,
+                        ArcGisGlobalID = arcGisGlobalID
                     });
                     locationsCreatedThisIteration++;
                 }
 
                 await dbContext.SaveChangesWithNoAuditingAsync();
+
+                // Populate County / DNR Upland Region / Priority Landscape from the just-saved
+                // location geometries, mirroring the interactive project workflow. Runs inside the
+                // same transaction (atomic with the locations) and saves without auditing, matching
+                // this pipeline's convention. Idempotent, so execution-strategy retries are safe.
+                await ProjectCreateWorkflowSteps.AutoAssignGeographicRegionsAsync(
+                    dbContext, existingProject.ProjectID, useNoAuditingSave: true);
+
                 await transaction.CommitAsync();
             });
 

@@ -3,7 +3,8 @@ merge into dbo.TabularDataImportTableType as Target
 using (values
 
            (1, 'LoaNortheast'),
-           (2, 'LoaSoutheast')
+           (2, 'LoaSoutheast'),
+           (3, 'ServiceForestry')
 )
     as Source (TabularDataImportTableTypeID, TabularDataImportTableTypeName)
 on Target.TabularDataImportTableTypeID = Source.TabularDataImportTableTypeID

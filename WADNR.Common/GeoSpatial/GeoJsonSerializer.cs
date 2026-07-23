@@ -13,6 +13,122 @@ public static class GeoJsonSerializer
 {
     public static JsonSerializerOptions DefaultSerializerOptions = CreateGeoJSONSerializerOptions();
 
+    // Compact (non-indented) options for machine-consumed exports (e.g. ogr2ogr GDB conversion).
+    // Indented output roughly doubles the byte size of coordinate-heavy geometries — wasted bytes
+    // when the consumer is GDAL, and a meaningful contributor to memory pressure on large exports.
+    public static JsonSerializerOptions CompactSerializerOptions = CreateCompactGeoJSONSerializerOptions();
+
+    private static JsonSerializerOptions CreateCompactGeoJSONSerializerOptions()
+    {
+        var options = CreateGeoJSONSerializerOptions();
+        options.WriteIndented = false;
+        return options;
+    }
+
+    // Flush the Utf8JsonWriter to the underlying stream once this many bytes are pending. Keeps the
+    // in-memory buffer bounded to roughly one feature's worth of bytes during a large export.
+    private const int StreamingFlushThresholdBytes = 64 * 1024;
+
+    /// <summary>
+    /// Serializes a FeatureCollection straight to a stream using compact (non-indented) options,
+    /// one feature at a time.
+    /// </summary>
+    /// <remarks>
+    /// NTS's STJ converters serialize an entire FeatureCollection in a single synchronous Write call,
+    /// so <see cref="JsonSerializer.SerializeAsync(Stream, object, JsonSerializerOptions, CancellationToken)"/>
+    /// never reaches an await point to flush mid-document — the whole GeoJSON document ends up buffered
+    /// in one contiguous pooled byte buffer, which is what caused OutOfMemoryException on large multi-layer
+    /// GDB exports (the failure occurred inside StjGeometryConverter.Write while growing that buffer).
+    /// Writing the FeatureCollection envelope by hand and serializing each feature individually lets us
+    /// flush to the stream between features, bounding memory to a single feature rather than the whole
+    /// collection.
+    /// </remarks>
+    public static async Task SerializeFeatureCollectionToStreamAsync(FeatureCollection featureCollection, Stream stream)
+    {
+        await using var writer = new Utf8JsonWriter(stream);
+        writer.WriteStartObject();
+        writer.WriteString("type", "FeatureCollection");
+        writer.WriteStartArray("features");
+
+        foreach (var feature in featureCollection)
+        {
+            JsonSerializer.Serialize(writer, feature, CompactSerializerOptions);
+            if (writer.BytesPending >= StreamingFlushThresholdBytes)
+            {
+                await writer.FlushAsync();
+                await stream.FlushAsync();
+            }
+        }
+
+        writer.WriteEndArray();
+        writer.WriteEndObject();
+        await writer.FlushAsync();
+        await stream.FlushAsync();
+    }
+
+    /// <summary>
+    /// Returns the explicit OGR geometry-type token (e.g. "MULTIPOLYGON") to hand ogr2ogr's
+    /// <c>-nlt</c> option for a layer built from this collection.
+    /// </summary>
+    /// <remarks>
+    /// <c>-nlt PROMOTE_TO_MULTI</c> is NOT sufficient for a GeoJSON layer that mixes single and multi
+    /// variants of the same shape (e.g. Polygon + MultiPolygon in one FeatureCollection): OGR reports
+    /// such a layer's geometry type as <c>wkbUnknown</c>, and PROMOTE_TO_MULTI leaves wkbUnknown
+    /// unchanged. OpenFileGDB's CreateLayer accepts wkbUnknown when *creating* a new datasource but
+    /// rejects it when *adding a layer* (update mode) and, on large/complex inputs, can leave a
+    /// half-created table behind — both of which broke the multi-layer GDB export. Passing a concrete
+    /// multi type avoids wkbUnknown entirely. Falls back to "PROMOTE_TO_MULTI" only when the collection
+    /// is empty or genuinely mixes dimensions (points + polygons), which can't share one GDB layer anyway.
+    /// </remarks>
+    public static string GetOgrMultiGeometryTypeToken(FeatureCollection featureCollection)
+    {
+        var hasPoint = false;
+        var hasLine = false;
+        var hasPolygon = false;
+        var hasOther = false;
+
+        foreach (var feature in featureCollection)
+        {
+            var geometry = feature.Geometry;
+            if (geometry == null)
+            {
+                continue;
+            }
+
+            switch (geometry.OgcGeometryType)
+            {
+                case OgcGeometryType.Point:
+                case OgcGeometryType.MultiPoint:
+                    hasPoint = true;
+                    break;
+                case OgcGeometryType.LineString:
+                case OgcGeometryType.MultiLineString:
+                    hasLine = true;
+                    break;
+                case OgcGeometryType.Polygon:
+                case OgcGeometryType.MultiPolygon:
+                    hasPolygon = true;
+                    break;
+                default:
+                    hasOther = true;
+                    break;
+            }
+        }
+
+        var distinctDimensions = (hasPoint ? 1 : 0) + (hasLine ? 1 : 0) + (hasPolygon ? 1 : 0);
+        if (hasOther || distinctDimensions != 1)
+        {
+            return "PROMOTE_TO_MULTI";
+        }
+
+        if (hasPolygon)
+        {
+            return "MULTIPOLYGON";
+        }
+
+        return hasLine ? "MULTILINESTRING" : "MULTIPOINT";
+    }
+
     public static T? Deserialize<T>(string json)
     {
         return JsonSerializer.Deserialize<T>(json, DefaultSerializerOptions);

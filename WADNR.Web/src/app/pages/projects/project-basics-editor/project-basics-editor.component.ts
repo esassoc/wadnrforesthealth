@@ -53,6 +53,7 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
 
     public form: FormGroup;
     public selectedPrograms: { ProgramID: number; ProgramName: string }[] = [];
+    public availableProgramOptions: FormInputOption[] = [];
 
     constructor(
         private projectService: ProjectService,
@@ -166,6 +167,8 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
             ProgramID: p.ProgramID!,
             ProgramName: p.ProgramName!,
         }));
+
+        this.recomputeAvailableProgramOptions();
     }
 
     private toDateInputValue(dateStr: string | Date): string {
@@ -173,9 +176,9 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
         return d.toISOString().substring(0, 10);
     }
 
-    get availableProgramOptions(): FormInputOption[] {
+    private recomputeAvailableProgramOptions(): void {
         const selectedIDs = this.selectedPrograms.map((p) => p.ProgramID);
-        return this.programOptions.filter((o) => !selectedIDs.includes(o.Value as number));
+        this.availableProgramOptions = this.programOptions.filter((o) => !selectedIDs.includes(o.Value as number));
     }
 
     get descriptionCharCount(): number {
@@ -196,10 +199,12 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
 
         this.selectedPrograms = [...this.selectedPrograms, { ProgramID: programID, ProgramName: option.Label as string }];
         this.form.controls["programToAdd"].reset();
+        this.recomputeAvailableProgramOptions();
     }
 
     removeProgram(programID: number): void {
         this.selectedPrograms = this.selectedPrograms.filter((p) => p.ProgramID !== programID);
+        this.recomputeAvailableProgramOptions();
     }
 
     save(): void {

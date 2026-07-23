@@ -27,6 +27,9 @@ public class FundSourceDetail
     public DateOnly? StartDate { get; set; }
     public DateOnly? EndDate { get; set; }
 
+    // Public-facing narrative (rich text / HTML)
+    public string? AboutThisFundSource { get; set; }
+
     // Additional details
     public string? ConditionsAndRequirements { get; set; }
     public string? ComplianceNotes { get; set; }
