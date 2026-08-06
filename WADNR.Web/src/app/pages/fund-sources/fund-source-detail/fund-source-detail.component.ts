@@ -368,15 +368,29 @@ export class FundSourceDetailComponent implements AfterViewChecked {
             this.utilityFunctions.createBasicColumnDef("Stage", "ProjectStageName", {
                 CustomDropdownFilterField: "ProjectStageName",
             }),
-            this.utilityFunctions.createCurrencyColumnDef("Match Amount", "MatchAmount", {
-                MaxDecimalPlacesToDisplay: 2,
+            this.utilityFunctions.createLinkColumnDef("Lead Implementer", "LeadImplementer.OrganizationName", "LeadImplementer.OrganizationID", {
+                InRouterLink: "/organizations/",
+                FieldDefinitionType: "LeadImplementerOrganization",
+                CustomDropdownFilterField: "LeadImplementer.OrganizationName",
             }),
-            this.utilityFunctions.createCurrencyColumnDef("Pay Amount", "PayAmount", {
-                MaxDecimalPlacesToDisplay: 2,
+            this.utilityFunctions.createBasicColumnDef("Project Type", "ProjectType.ProjectTypeName", {
+                FieldDefinitionType: "ProjectType",
+                CustomDropdownFilterField: "ProjectType.ProjectTypeName",
             }),
-            this.utilityFunctions.createCurrencyColumnDef("Total Amount", "TotalAmount", {
-                MaxDecimalPlacesToDisplay: 2,
+            this.utilityFunctions.createMultiLinkColumnDef("Counties", "Counties", "CountyID", "CountyName", {
+                InRouterLink: "/counties/",
+                FieldDefinitionType: "County",
+                FieldDefinitionLabelOverride: "Counties",
+                CustomDropdownFilterField: "Counties.CountyName",
             }),
+            this.utilityFunctions.createMultiLinkColumnDef("Priority Landscapes", "PriorityLandscapes", "PriorityLandscapeID", "PriorityLandscapeName", {
+                InRouterLink: "/priority-landscapes/",
+                FieldDefinitionType: "PriorityLandscape",
+                FieldDefinitionLabelOverride: "Priority Landscapes",
+                CustomDropdownFilterField: "PriorityLandscapes.PriorityLandscapeName",
+            }),
+            this.utilityFunctions.createLatLonColumnDef("Latitude", "Latitude"),
+            this.utilityFunctions.createLatLonColumnDef("Longitude", "Longitude"),
         ];
     }
 

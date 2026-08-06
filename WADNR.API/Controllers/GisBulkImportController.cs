@@ -152,6 +152,17 @@ public class GisBulkImportController(
         try
         {
             var result = await GisBulkImports.ImportProjectsAsync(DbContext, gisUploadAttemptID, request);
+
+            // A partially successful import returns 200 with warnings, so without this the failure is
+            // visible to the user but invisible in Datadog — the only trace is a bare EF
+            // "Failed executing DbCommand" entry with no attempt ID on it.
+            if (result.Warnings?.Count > 0)
+            {
+                Logger.LogError(
+                    "Bulk import for GisUploadAttemptID {GisUploadAttemptID} completed with {WarningCount} warning(s): {Warnings}",
+                    gisUploadAttemptID, result.Warnings.Count, string.Join(" | ", result.Warnings));
+            }
+
             return Ok(result);
         }
         catch (Exception ex)

@@ -180,9 +180,34 @@ public static class FundSources
                 ProjectName = x.Project.ProjectName ?? string.Empty,
                 FhtProjectNumber = x.Project.FhtProjectNumber,
                 ProjectStageName = x.Project.ProjectStage != null ? x.Project.ProjectStage.ProjectStageDisplayName : null,
-                MatchAmount = x.MatchAmount,
-                PayAmount = x.PayAmount,
-                TotalAmount = x.TotalAmount
+                LeadImplementer = x.Project.ProjectOrganizations
+                    .Where(po => po.RelationshipType.IsPrimaryContact)
+                    .Select(po => new OrganizationLookupItem
+                    {
+                        OrganizationID = po.Organization.OrganizationID,
+                        OrganizationName = po.Organization.DisplayName
+                    })
+                    .SingleOrDefault(),
+                ProjectType = new ProjectTypeLookupItem
+                {
+                    ProjectTypeID = x.Project.ProjectType.ProjectTypeID,
+                    ProjectTypeName = x.Project.ProjectType.ProjectTypeName
+                },
+                Counties = x.Project.ProjectCounties
+                    .Select(pc => new CountyLookupItem
+                    {
+                        CountyID = pc.County.CountyID,
+                        CountyName = pc.County.CountyName
+                    }).ToList(),
+                PriorityLandscapes = x.Project.ProjectPriorityLandscapes
+                    .Select(ppl => new PriorityLandscapeLookupItem
+                    {
+                        PriorityLandscapeID = ppl.PriorityLandscape.PriorityLandscapeID,
+                        PriorityLandscapeName = ppl.PriorityLandscape.PriorityLandscapeName
+                    }).ToList(),
+                // ProjectLocationPoint is stored in WGS84 (SRID 4326): X = Longitude, Y = Latitude.
+                Latitude = x.Project.ProjectLocationPoint != null ? x.Project.ProjectLocationPoint.Coordinate.Y : (double?)null,
+                Longitude = x.Project.ProjectLocationPoint != null ? x.Project.ProjectLocationPoint.Coordinate.X : (double?)null
             })
             .ToListAsync();
     }
