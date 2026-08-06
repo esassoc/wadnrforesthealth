@@ -27951,17 +27951,32 @@
             "type": "string",
             "nullable": true
           },
-          "MatchAmount": {
+          "LeadImplementer": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "ProjectType": {
+            "$ref": "#/components/schemas/ProjectTypeLookupItem"
+          },
+          "Counties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountyLookupItem"
+            },
+            "nullable": true
+          },
+          "PriorityLandscapes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PriorityLandscapeLookupItem"
+            },
+            "nullable": true
+          },
+          "Latitude": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
-          "PayAmount": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "TotalAmount": {
+          "Longitude": {
             "type": "number",
             "format": "double",
             "nullable": true

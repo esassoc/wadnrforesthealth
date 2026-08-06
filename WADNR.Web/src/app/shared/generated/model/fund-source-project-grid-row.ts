@@ -7,6 +7,10 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { ProjectTypeLookupItem } from './project-type-lookup-item';
+import { OrganizationLookupItem } from './organization-lookup-item';
+import { PriorityLandscapeLookupItem } from './priority-landscape-lookup-item';
+import { CountyLookupItem } from './county-lookup-item';
 
 
 import { FormControl, FormControlOptions, FormControlState, Validators } from "@angular/forms";
@@ -17,9 +21,12 @@ export class FundSourceProjectGridRow {
     ProjectName?: string | null;
     FhtProjectNumber?: string | null;
     ProjectStageName?: string | null;
-    MatchAmount?: number | null;
-    PayAmount?: number | null;
-    TotalAmount?: number | null;
+    LeadImplementer?: OrganizationLookupItem;
+    ProjectType?: ProjectTypeLookupItem;
+    Counties?: Array<CountyLookupItem> | null;
+    PriorityLandscapes?: Array<PriorityLandscapeLookupItem> | null;
+    Latitude?: number | null;
+    Longitude?: number | null;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
@@ -32,9 +39,12 @@ export interface FundSourceProjectGridRowForm {
     ProjectName?: FormControl<string>;
     FhtProjectNumber?: FormControl<string>;
     ProjectStageName?: FormControl<string>;
-    MatchAmount?: FormControl<number>;
-    PayAmount?: FormControl<number>;
-    TotalAmount?: FormControl<number>;
+    LeadImplementer?: FormControl<OrganizationLookupItem>;
+    ProjectType?: FormControl<ProjectTypeLookupItem>;
+    Counties?: FormControl<Array<CountyLookupItem>>;
+    PriorityLandscapes?: FormControl<Array<PriorityLandscapeLookupItem>>;
+    Latitude?: FormControl<number>;
+    Longitude?: FormControl<number>;
 }
 
 export class FundSourceProjectGridRowFormControls { 
@@ -98,7 +108,7 @@ export class FundSourceProjectGridRowFormControls {
             ],
         }
     );
-    public static MatchAmount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static LeadImplementer = (value: FormControlState<OrganizationLookupItem> | OrganizationLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<OrganizationLookupItem>(
         value,
         formControlOptions ?? 
         {
@@ -108,7 +118,7 @@ export class FundSourceProjectGridRowFormControls {
             ],
         }
     );
-    public static PayAmount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static ProjectType = (value: FormControlState<ProjectTypeLookupItem> | ProjectTypeLookupItem = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<ProjectTypeLookupItem>(
         value,
         formControlOptions ?? 
         {
@@ -118,7 +128,37 @@ export class FundSourceProjectGridRowFormControls {
             ],
         }
     );
-    public static TotalAmount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+    public static Counties = (value: FormControlState<Array<CountyLookupItem>> | Array<CountyLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<CountyLookupItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static PriorityLandscapes = (value: FormControlState<Array<PriorityLandscapeLookupItem>> | Array<PriorityLandscapeLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<PriorityLandscapeLookupItem>>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Latitude = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
+        value,
+        formControlOptions ?? 
+        {
+            nonNullable: false,
+            validators: 
+            [
+            ],
+        }
+    );
+    public static Longitude = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {
