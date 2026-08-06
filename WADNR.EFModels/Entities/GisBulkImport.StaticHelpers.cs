@@ -1,3 +1,4 @@
+using System.Data;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Features;
@@ -9,6 +10,13 @@ namespace WADNR.EFModels.Entities;
 
 public static class GisBulkImports
 {
+    /// <summary>
+    /// Command timeout for the treatment import proc. The global default is 180s
+    /// (WADNR.API/Startup.cs), which large uploads exceed. Kept comfortably under the api ingress
+    /// request-timeout so the proc fails before Application Gateway drops the connection.
+    /// </summary>
+    private const int TreatmentImportCommandTimeoutSeconds = 600;
+
     public static async Task<List<GisUploadSourceOrganizationSummary>> ListSourceOrganizationsAsync(WADNRDbContext dbContext)
     {
         return await dbContext.GisUploadSourceOrganizations
@@ -723,38 +731,100 @@ public static class GisBulkImports
             // Null metadata attribute IDs use -1 sentinel for the proc
             int ToSqlID(int? id) => id ?? -1;
 
-            await dbContext.Database.ExecuteSqlInterpolatedAsync(
-                $@"EXEC dbo.procImportTreatmentsFromGisUploadAttempt
-                    @piGisUploadAttemptID = {gisUploadAttemptID},
-                    @projectIdentifierGisMetadataAttributeID = {request.ProjectIdentifierMetadataAttributeID},
-                    @footprintAcresMetadataAttributeID = {ToSqlID(request.FootprintAcresMetadataAttributeID)},
-                    @treatedAcresMetadataAttributeID = {ToSqlID(request.TreatedAcresMetadataAttributeID)},
-                    @treatmentTypeMetadataAttributeID = {ToSqlID(request.TreatmentTypeMetadataAttributeID)},
-                    @treatmentDetailedActivityTypeMetadataAttributeID = {ToSqlID(request.TreatmentDetailedActivityTypeMetadataAttributeID)},
-                    @treatmentTypeID = {treatmentTypeID},
-                    @treatmentDetailedActivityTypeID = {treatmentDetailedActivityTypeID},
-                    @isFlattened = {isFlattened},
-                    @pruningAcresMetadataAttributeID = {ToSqlID(request.PruningAcresMetadataAttributeID)},
-                    @thinningAcresMetadataAttributeID = {ToSqlID(request.ThinningAcresMetadataAttributeID)},
-                    @chippingAcresMetadataAttributeID = {ToSqlID(request.ChippingAcresMetadataAttributeID)},
-                    @masticationAcresMetadataAttributeID = {ToSqlID(request.MasticationAcresMetadataAttributeID)},
-                    @grazingAcresMetadataAttributeID = {ToSqlID(request.GrazingAcresMetadataAttributeID)},
-                    @lopScatterAcresMetadataAttributeID = {ToSqlID(request.LopScatAcresMetadataAttributeID)},
-                    @biomassRemovalAcresMetadataAttributeID = {ToSqlID(request.BiomassRemovalAcresMetadataAttributeID)},
-                    @handPileAcresMetadataAttributeID = {ToSqlID(request.HandPileAcresMetadataAttributeID)},
-                    @handPileBurnAcresMetadataAttributeID = {ToSqlID(request.HandPileBurnAcresMetadataAttributeID)},
-                    @machineBurnAcresMetadataAttributeID = {ToSqlID(request.MachinePileBurnAcresMetadataAttributeID)},
-                    @broadcastBurnAcresMetadataAttributeID = {ToSqlID(request.BroadcastBurnAcresMetadataAttributeID)},
-                    @otherBurnAcresMetadataAttributeID = {ToSqlID(request.OtherAcresMetadataAttributeID)},
-                    @startDateMetadataAttributeID = {ToSqlID(request.StartDateMetadataAttributeID)},
-                    @endDateMetadataAttributeID = {ToSqlID(request.CompletionDateMetadataAttributeID)}");
+            await ExecuteTreatmentImportProcAsync(dbContext, new Dictionary<string, int>
+            {
+                ["@piGisUploadAttemptID"] = gisUploadAttemptID,
+                ["@projectIdentifierGisMetadataAttributeID"] = request.ProjectIdentifierMetadataAttributeID,
+                ["@footprintAcresMetadataAttributeID"] = ToSqlID(request.FootprintAcresMetadataAttributeID),
+                ["@treatedAcresMetadataAttributeID"] = ToSqlID(request.TreatedAcresMetadataAttributeID),
+                ["@treatmentTypeMetadataAttributeID"] = ToSqlID(request.TreatmentTypeMetadataAttributeID),
+                ["@treatmentDetailedActivityTypeMetadataAttributeID"] = ToSqlID(request.TreatmentDetailedActivityTypeMetadataAttributeID),
+                ["@treatmentTypeID"] = treatmentTypeID,
+                ["@treatmentDetailedActivityTypeID"] = treatmentDetailedActivityTypeID,
+                ["@isFlattened"] = isFlattened,
+                ["@pruningAcresMetadataAttributeID"] = ToSqlID(request.PruningAcresMetadataAttributeID),
+                ["@thinningAcresMetadataAttributeID"] = ToSqlID(request.ThinningAcresMetadataAttributeID),
+                ["@chippingAcresMetadataAttributeID"] = ToSqlID(request.ChippingAcresMetadataAttributeID),
+                ["@masticationAcresMetadataAttributeID"] = ToSqlID(request.MasticationAcresMetadataAttributeID),
+                ["@grazingAcresMetadataAttributeID"] = ToSqlID(request.GrazingAcresMetadataAttributeID),
+                ["@lopScatterAcresMetadataAttributeID"] = ToSqlID(request.LopScatAcresMetadataAttributeID),
+                ["@biomassRemovalAcresMetadataAttributeID"] = ToSqlID(request.BiomassRemovalAcresMetadataAttributeID),
+                ["@handPileAcresMetadataAttributeID"] = ToSqlID(request.HandPileAcresMetadataAttributeID),
+                ["@handPileBurnAcresMetadataAttributeID"] = ToSqlID(request.HandPileBurnAcresMetadataAttributeID),
+                ["@machineBurnAcresMetadataAttributeID"] = ToSqlID(request.MachinePileBurnAcresMetadataAttributeID),
+                ["@broadcastBurnAcresMetadataAttributeID"] = ToSqlID(request.BroadcastBurnAcresMetadataAttributeID),
+                ["@otherBurnAcresMetadataAttributeID"] = ToSqlID(request.OtherAcresMetadataAttributeID),
+                ["@startDateMetadataAttributeID"] = ToSqlID(request.StartDateMetadataAttributeID),
+                ["@endDateMetadataAttributeID"] = ToSqlID(request.CompletionDateMetadataAttributeID),
+            });
         }
         catch (Exception ex)
         {
-            result.Warnings.Add($"Treatment import stored procedure encountered an error: {ex.Message}");
+            // Treatments failed but the projects/locations created above are already committed, so this
+            // stays a warning on an otherwise successful import rather than failing the whole request.
+            // GisBulkImportController logs the populated Warnings so the failure reaches Datadog with
+            // the attempt ID attached — the bare EF "Failed executing DbCommand" entry has no context.
+            result.Warnings.Add(
+                $"Treatment import failed, so no treatments were created for this upload. " +
+                $"Projects and locations were still imported. Error: {ex.Message}");
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Runs the treatment import proc directly against the underlying connection instead of going
+    /// through ExecuteSqlInterpolatedAsync.
+    ///
+    /// EF is configured with EnableRetryOnFailure(maxRetryCount: 3) (WADNR.API/Startup.cs), and SQL
+    /// timeouts are classed transient, so a long-running proc was executed up to four times — burning
+    /// 4 x CommandTimeout before the caller saw a failure, which is what pushed the request past the
+    /// api ingress request-timeout and produced a 504 in the browser. Using the raw connection skips
+    /// the execution strategy, so a timeout fails once, immediately, and visibly.
+    ///
+    /// Retrying is not merely slow here: the proc deletes from dbo.Treatment and dbo.ProjectLocation
+    /// and then re-inserts across many statements, so re-running it over a partially imported state is
+    /// not safe.
+    ///
+    /// NOTE: the proc opens no transaction of its own, so a timeout mid-proc can still leave treatments
+    /// partially imported. Making it atomic is a separate change — see the PR description.
+    /// </summary>
+    private static async Task ExecuteTreatmentImportProcAsync(
+        WADNRDbContext dbContext,
+        Dictionary<string, int> parameters)
+    {
+        var connection = dbContext.Database.GetDbConnection();
+        var openedByThisMethod = connection.State != ConnectionState.Open;
+        if (openedByThisMethod)
+        {
+            await connection.OpenAsync();
+        }
+
+        try
+        {
+            using var command = connection.CreateCommand();
+            command.CommandText = "dbo.procImportTreatmentsFromGisUploadAttempt";
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandTimeout = TreatmentImportCommandTimeoutSeconds;
+
+            foreach (var (parameterName, parameterValue) in parameters)
+            {
+                var parameter = command.CreateParameter();
+                parameter.ParameterName = parameterName;
+                parameter.DbType = DbType.Int32;
+                parameter.Value = parameterValue;
+                command.Parameters.Add(parameter);
+            }
+
+            await command.ExecuteNonQueryAsync();
+        }
+        finally
+        {
+            if (openedByThisMethod)
+            {
+                await connection.CloseAsync();
+            }
+        }
     }
 
     /// <summary>
