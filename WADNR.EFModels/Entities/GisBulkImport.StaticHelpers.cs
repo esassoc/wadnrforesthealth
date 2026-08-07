@@ -870,9 +870,12 @@ public static class GisBulkImports
     /// the per-project path ran NTS MakeValid and Union on every project's geometries and shipped the
     /// result as a query parameter.
     ///
-    /// Scoped by attempt rather than by an ID list, so this takes one int parameter instead of a
-    /// 3,042-element IN clause. That set is exactly the projects the loop touched; blocked projects are
-    /// correctly absent because they are skipped before anything is stamped.
+    /// Scoped by an explicit list of the projects this run touched, serialized as a JSON array and
+    /// expanded with OPENJSON — so it is still one parameter rather than a 3,042-element IN clause.
+    /// Deliberately NOT scoped by upload attempt: that would also sweep in projects an earlier run of
+    /// the same attempt touched but this one did not, recomputing regions that may since have been set
+    /// by hand (see the call site). Blocked projects are correctly absent from the list either way,
+    /// because they are skipped before anything is stamped.
     ///
     /// Equivalence with the per-project version: that one unions a project's geometries and intersects
     /// once; this intersects per geometry and takes DISTINCT. A union intersects R if and only if some
