@@ -103,6 +103,48 @@ test.describe("HttpErrorInterceptor", () => {
         await expect(page.getByText("That file type is not accepted.").first()).toBeVisible({ timeout: 15000 });
     });
 
+    test("two different 400 messages both surface", async ({ page }) => {
+        // The other half of per-message dedupe. A flat "Http400" code would collapse these two into
+        // one alert, because AlertService drops any alert whose code it has already seen — so the
+        // second endpoint's rejection would silently never reach the user.
+        await page.route("**/api/projects**", (route) =>
+            route.fulfill({ status: 400, contentType: "text/plain", body: "That file type is not accepted." })
+        );
+        await page.route("**/api/relationship-types**", (route) =>
+            route.fulfill({ status: 400, contentType: "text/plain", body: "Relationship type is unknown." })
+        );
+
+        await page.goto("/projects");
+
+        await expect(page.getByText("That file type is not accepted.")).toBeVisible({ timeout: 15000 });
+        await expect(page.getByText("Relationship type is unknown.")).toBeVisible();
+    });
+
+    test("markup in a server message renders as text, not as elements", async ({ page }) => {
+        // alert-display binds [innerHTML]. Angular's sanitizer drops scripts and event handlers, but
+        // it renders <a> and <img> quite happily — and 400s routinely quote user-supplied values back,
+        // so without escaping one user could put a link or a tracking pixel in another user's alert.
+        await page.route("**/api/**", (route) =>
+            route.fulfill({
+                status: 400,
+                contentType: "application/json",
+                body: JSON.stringify({
+                    errors: { ProjectName: ['Name <a href="https://example.com/evil">click here</a> is taken.'] },
+                }),
+            })
+        );
+
+        await page.goto("/projects");
+
+        const alerts = page.locator("alert");
+        await expect(alerts.first()).toBeVisible({ timeout: 15000 });
+
+        // The markup survives as visible text...
+        await expect(alerts.first()).toContainText('<a href="https://example.com/evil">');
+        // ...and produced no actual element.
+        await expect(alerts.locator('a[href="https://example.com/evil"]')).toHaveCount(0);
+    });
+
     test("403 shows the server message and does not navigate to a dead route", async ({ page }) => {
         // This used to redirect to /subscription-insufficient — a ProjectFirma fork artifact with no
         // route in this app, so it fell through to the "**" handler and landed on /not-found.
@@ -152,9 +194,11 @@ test.describe("HttpErrorInterceptor", () => {
             .poll(() => routeHit, { timeout: 15000 })
             .toBe(true);
 
-        // The gate: an external 404 must not navigate.
-        await page.waitForTimeout(1000);
-        expect(page.url()).not.toContain("/not-found");
+        // The gate: an external 404 must not navigate. Waiting *for* the navigation and requiring it
+        // to time out, rather than sleeping a fixed interval and reading the URL after — a fixed sleep
+        // passes on any run slow enough that the redirect simply hadn't landed yet, which is the run
+        // most likely to be hiding a regression.
+        await expect(page.waitForURL(/\/not-found/, { timeout: 5000 })).rejects.toThrow();
     });
 
     test("a 404 from our own API still redirects to not-found", async ({ page }) => {

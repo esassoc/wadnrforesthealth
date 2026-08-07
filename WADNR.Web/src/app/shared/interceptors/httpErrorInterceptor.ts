@@ -60,7 +60,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
      * shape is specific to their bulk-import endpoints and this API never returns it.
      */
     private handleBadRequest(error: HttpErrorResponse): void {
-        const body = error?.error;
+        const body: unknown = error?.error;
 
         // BadRequest() with no body, or a download endpoint's blob — nothing readable to show.
         if (!body || body instanceof Blob) {
@@ -68,52 +68,95 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         }
 
         if (typeof body === "string") {
-            this.pushServerMessage(error, "Http400");
+            this.pushBadRequestMessage(this.extractServerMessage(error));
             return;
         }
+
+        const fields = body as Record<string, unknown>;
 
         // ValidationProblemDetails from [ApiController] model validation: { errors: { Field: [msg] } }.
         // Checked before the generic message extraction because its `title` is only ever the useless
         // "One or more validation errors occurred." while the per-field entries say what to fix.
-        const validationErrors = body.errors;
+        const validationErrors = fields["errors"];
         if (validationErrors && typeof validationErrors === "object") {
-            this.pushFieldMessages(validationErrors);
+            this.pushFieldMessages(validationErrors as Record<string, unknown>);
             return;
         }
 
         // ProblemDetails, or an object carrying a single message.
-        if (this.pushServerMessage(error, "Http400")) {
+        if (this.pushBadRequestMessage(this.extractServerMessage(error))) {
             return;
         }
 
         // Otherwise assume a dictionary of messages keyed by field.
-        this.pushFieldMessages(body);
+        this.pushFieldMessages(fields);
     }
 
     /**
      * One alert per field of a validation dictionary.
+     */
+    private pushFieldMessages(container: Record<string, unknown>): void {
+        for (const field of Object.keys(container)) {
+            // Already escaped by formatMessages, which owns the <br/> joining.
+            this.pushBadRequestAlert(this.formatMessages(container[field]));
+        }
+    }
+
+    /** Escapes and pushes a single 400 message. Returns whether there was one to push. */
+    private pushBadRequestMessage(message: string | null): boolean {
+        if (!message) {
+            return false;
+        }
+        this.pushBadRequestAlert(HttpErrorInterceptor.escapeHtml(message));
+        return true;
+    }
+
+    /**
+     * Pushes 400 content that is already escaped and display-ready.
      *
      * The unique code is per *message*, not per status. A page that fires several requests gets the
      * same rejection back several times over, and with no code AlertService stacks every copy —
      * alert-display renders only the first three, so three duplicates of one message push everything
-     * else out of view. Keying on the message collapses those repeats while still letting a genuine
-     * multi-field failure show one alert per field, which a flat "Http400" would suppress.
+     * else out of view. Keying on the message collapses those repeats while still letting genuinely
+     * different rejections each be seen, which a flat "Http400" would suppress. 401/403 stay flat by
+     * contrast: those say "you are not signed in" / "you may not do this", and one alert is the
+     * whole message however many requests hit it.
      */
-    private pushFieldMessages(container: Record<string, unknown>): void {
-        for (const field of Object.keys(container)) {
-            const message = this.formatMessages(container[field]);
-            if (message) {
-                this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true, `Http400:${message}`));
-            }
+    private pushBadRequestAlert(safeMessage: string): void {
+        if (!safeMessage) {
+            return;
         }
+        this.alertService.pushAlert(new Alert(safeMessage, AlertContext.Danger, true, `Http400:${safeMessage}`));
     }
 
     /** Validation entries arrive as either a single message or an array of them. */
     private formatMessages(value: unknown): string {
         if (Array.isArray(value)) {
-            return value.map((entry) => String(entry)).filter((entry) => entry.length > 0).join("<br/>");
+            return value
+                .map((entry) => HttpErrorInterceptor.escapeHtml(String(entry).trim()))
+                .filter((entry) => entry.length > 0)
+                .join("<br/>");
         }
-        return typeof value === "string" ? value.trim() : "";
+        return typeof value === "string" ? HttpErrorInterceptor.escapeHtml(value.trim()) : "";
+    }
+
+    /**
+     * Escapes text on its way into an alert.
+     *
+     * alert-display renders alert.message through [innerHTML]. Angular's DomSanitizer strips scripts,
+     * event handlers and javascript: URLs, so this was never an XSS hole — but it happily renders
+     * benign-looking markup like <a href> and <img src>, and 400 messages routinely quote user-supplied
+     * values back ("Project name 'X' already exists"), which is enough for one user to put a link or a
+     * tracking pixel in another's alert. Escaping here means the only markup that survives is the
+     * <br/> that formatMessages puts in deliberately, after its parts are already escaped.
+     */
+    private static escapeHtml(value: string): string {
+        return value
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
     }
 
     /**
@@ -203,7 +246,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         if (!message) {
             return false;
         }
-        this.alertService.pushAlert(new Alert(message, AlertContext.Danger, true, uniqueCode));
+        this.alertService.pushAlert(new Alert(HttpErrorInterceptor.escapeHtml(message), AlertContext.Danger, true, uniqueCode));
         return true;
     }
 
