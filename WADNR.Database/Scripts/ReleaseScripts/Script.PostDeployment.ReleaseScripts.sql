@@ -24,4 +24,6 @@ GO
 GO
 :r ".\0008 - WADNR-2264 Delete blocked projects imported in error.sql"
 GO
+:r ".\0009 - WADNR-2287 Correct project types on GIS bulk imported projects.sql"
+GO
 
