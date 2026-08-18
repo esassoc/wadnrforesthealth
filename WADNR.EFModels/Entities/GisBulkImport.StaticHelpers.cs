@@ -414,6 +414,16 @@ public static class GisBulkImports
         // the features, matching legacy's FilterListBasedOnIncludeExcludeCriteria. The rewrite loaded
         // this configuration and then never read it, so every program's whitelist/blacklist was inert
         // — DNR State Lands has a blacklist on technique_cd that was being ignored entirely.
+        //
+        // Scope note: this filters the in-memory feature list only, so excluded features are left out
+        // of project and location creation but are still visible to
+        // dbo.procImportTreatmentsFromGisUploadAttempt, which reads dbo.GisFeature scoped solely by
+        // GisUploadAttemptID. An excluded feature can therefore still produce a Treatment. That is
+        // deliberate: legacy behaved exactly the same way, and this change is scoped to restoring
+        // legacy behaviour rather than extending it. Pushing the exclusion into the proc is a
+        // separate change, and one worth making together with correcting the column-name mismatch
+        // that currently stops this filter matching anything in production (the configuration names
+        // technique_cd; uploads stage the 10-character truncated technique_).
         var featureCountBeforeFiltering = features.Count;
         features = ApplyExcludeIncludeFilters(features, sourceOrg, metadataAttributeIDByName, featureMetadata);
         var featuresExcluded = featureCountBeforeFiltering - features.Count;

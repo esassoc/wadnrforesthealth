@@ -52,14 +52,28 @@ BEGIN
         -- Projects created by the two bad attempts that are still on the wrong type, carrying the
         -- source organization's ImportIsFlattened flag so the treatment filter matches the runtime
         -- rule in GisBulkImports.ApplyProjectTypeFromTreatmentTypesAsync.
-        DECLARE @AffectedProject TABLE (ProjectID INT PRIMARY KEY, ImportIsFlattened BIT NOT NULL);
+        DECLARE @AffectedProject TABLE (
+            ProjectID INT PRIMARY KEY,
+            ImportIsFlattened BIT NOT NULL,
+            FallbackProjectTypeID INT NOT NULL);
 
-        INSERT INTO @AffectedProject (ProjectID, ImportIsFlattened)
+        /*
+            FallbackProjectTypeID is what the corrected importer would assign at creation time:
+            the source organization's configured ProjectTypeDefaultName, or "Other" when it has none
+            or names a type that does not exist. Carrying it per project keeps this script's
+            behaviour identical to GisBulkImports.ResolveDefaultProjectTypeIDAsync rather than
+            assuming every affected project should fall back to "Other" -- which happens to be true
+            for DNR State Lands, but only because it has no default configured.
+        */
+        INSERT INTO @AffectedProject (ProjectID, ImportIsFlattened, FallbackProjectTypeID)
         SELECT P.ProjectID,
-               CASE WHEN GUSO.ImportIsFlattened = 1 THEN 1 ELSE 0 END
+               CASE WHEN GUSO.ImportIsFlattened = 1 THEN 1 ELSE 0 END,
+               ISNULL(DEF.ProjectTypeID, @OtherProjectTypeID)
         FROM dbo.Project P
         INNER JOIN dbo.GisUploadAttempt GUA ON GUA.GisUploadAttemptID = P.CreateGisUploadAttemptID
         INNER JOIN dbo.GisUploadSourceOrganization GUSO ON GUSO.GisUploadSourceOrganizationID = GUA.GisUploadSourceOrganizationID
+        LEFT JOIN dbo.ProjectType DEF
+               ON LTRIM(RTRIM(DEF.ProjectTypeName)) = LTRIM(RTRIM(GUSO.ProjectTypeDefaultName))
         WHERE P.CreateGisUploadAttemptID IN (6011, 6015)
           AND P.ProjectTypeID = @ResearchAndMonitoringProjectTypeID;
 
@@ -67,7 +81,7 @@ BEGIN
         PRINT 'Found ' + CAST(@AffectedProjectCount AS VARCHAR(10)) + ' project(s) to re-type.';
 
         -- Each project's sole treatment type, if it has exactly one. Projects with a mixed or empty
-        -- treatment set get no row here and fall through to "Other" (the legacy default) below.
+        -- treatment set get no row here and fall through to FallbackProjectTypeID below.
         DECLARE @SoleTreatmentType TABLE (ProjectID INT PRIMARY KEY, TreatmentTypeID INT NOT NULL);
 
         INSERT INTO @SoleTreatmentType (ProjectID, TreatmentTypeID)
@@ -88,8 +102,11 @@ BEGIN
                     WHEN STT.TreatmentTypeID = @PrescribedFireTreatmentTypeID THEN @PrescribedFireProjectTypeID
                 END,
                 -- No treatments, a mixed treatment set, an "Other" treatment type, or a target
-                -- project type that doesn't exist in this environment: fall back the way legacy did.
-                @OtherProjectTypeID)
+                -- project type that doesn't exist in this environment: fall back to whatever the
+                -- corrected creation path would have assigned. This mirrors the runtime rule, which
+                -- only re-types a project when its treatments share exactly one type and otherwise
+                -- leaves the creation-time value in place.
+                AP.FallbackProjectTypeID)
         FROM dbo.Project P
         INNER JOIN @AffectedProject AP ON AP.ProjectID = P.ProjectID
         LEFT JOIN @SoleTreatmentType STT ON STT.ProjectID = P.ProjectID;
