@@ -871,16 +871,22 @@ public static class GisBulkImports
             {
                 await ImportTreatmentsAsync(dbContext, gisUploadAttemptID, request, sourceOrg);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Treatments failed but the projects/locations created above are already committed, so this
                 // stays a warning on an otherwise successful import rather than failing the whole request.
-                // GisBulkImportController logs the populated Warnings so the failure reaches Datadog with
-                // the attempt ID attached — the bare EF "Failed executing DbCommand" entry has no context.
+                //
+                // The exception message is deliberately NOT surfaced here. Warnings are returned to the
+                // caller by GisBulkImportController, and a raw SQL/proc error is not something to hand
+                // back over the API even on an admin-only endpoint. The detail is still recoverable:
+                // GisBulkImportController logs this warning with the attempt ID attached, and EF's own
+                // "Failed executing DbCommand" entry for the failing proc call sits in the same request
+                // trace, so the two correlate.
                 treatmentsImported = false;
                 result.Warnings.Add(
-                    $"Treatment import failed, so no treatments were created for this upload. " +
-                    $"Projects and locations were still imported. Error: {ex.Message}");
+                    "Treatment import failed, so no treatments were created for this upload. Projects and " +
+                    $"locations were still imported. Quote GIS upload attempt {gisUploadAttemptID} when " +
+                    "reporting this so the underlying error can be located in the server logs.");
             }
         }
 
