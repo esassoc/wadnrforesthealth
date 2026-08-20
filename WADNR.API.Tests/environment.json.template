@@ -1,5 +1,9 @@
 {
   "sqlConnectionString": "<YOUR_SQL_SERVER_CONNECTION_STRING>",
   "testAdminPersonID": "<PERSON_ID_WITH_ADMIN_ROLE>",
-  "testNormalPersonID": "<PERSON_ID_WITH_NORMAL_ROLE>"
+  "testNormalPersonID": "<PERSON_ID_WITH_NORMAL_ROLE>",
+
+  "//": "Only needed to run the [Ignore]d LoaAgolSelfHealTests deliberately. Copy the service URLs from the deployed configmap; they are intentionally not committed.",
+  "arcGisLoaDataEasternUrl": "<LOA_EASTERN_FEATURE_SERVICE_QUERY_URL>",
+  "arcGisLoaDataWesternUrl": "<LOA_WESTERN_FEATURE_SERVICE_QUERY_URL>"
 }
