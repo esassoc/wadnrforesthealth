@@ -496,6 +496,10 @@ stages:
             displayName: 'Install Helm 3.8.0'
             inputs:
               helmVersion: 3.8.0
+              # Must stay false. When true the task ignores helmVersion, resolves
+              # "latest" from the GitHub releases API, and on lookup failure falls
+              # back to its hardcoded v3.1.2 - which predates --create-namespace.
+              checkLatestHelmVersion: false
               installKubectl: true
 
           - task: Kubernetes@1
