@@ -371,6 +371,27 @@ public static class GisBulkImports
             defaults.OtherAcresMetadataAttributeID = metadataAttributeID;
     }
 
+    /// <summary>
+    /// Creates or updates one project per distinct GIS identifier in an upload attempt, along with
+    /// its project areas, program and organization links, private landowners and geographic regions.
+    ///
+    /// Set-based rather than a loop over projects. A 3,042-project GDB previously cost ~36,500
+    /// database commands; nothing that reaches the database is per-project any more. The
+    /// existing-project lookup, the FHT number block, the other-program treatment dates, the project
+    /// rows, the links, the location delete/insert, the landowners and the region assignment are each
+    /// one batch for the whole import.
+    ///
+    /// The work before the transaction is deliberately pure. Every per-project decision — name,
+    /// stage, dates, landowners, lead implementer, blocked, skipped — is made against data already in
+    /// memory and recorded on a <see cref="ProjectPlan"/>; the transaction then only writes. The
+    /// decisions themselves, and the order they are made in, are unchanged from the per-project
+    /// version, because several of them interact: a project with no completion date is skipped before
+    /// the ProjectID block list is consulted, so it is counted as skipped rather than blocked.
+    ///
+    /// The write phase runs in ONE transaction, so a failed import leaves nothing behind. That is a
+    /// change from the previous shape, which committed per project and could leave an import
+    /// half-applied with no record of where it stopped.
+    /// </summary>
     public static async Task<GisBulkImportResult> ImportProjectsAsync(WADNRDbContext dbContext, int gisUploadAttemptID, GisBulkImportRequest request)
     {
         var result = new GisBulkImportResult();
@@ -459,7 +480,7 @@ public static class GisBulkImports
 
         // Pre-load the Project Import Block List for this program. Match is case-insensitive
         // on either ProjectGisIdentifier or ProjectName, matching the normalization the
-        // import loop already applies at line ~400.
+        // planning pass below applies at the grouping step.
         var (blockedIdentifiers, blockedNames) = await LoadBlockListAsync(dbContext, sourceOrg.ProgramID);
 
         // Block-list entries can also point straight at a ProjectID. Legacy honoured that; the
@@ -512,6 +533,15 @@ public static class GisBulkImports
             ? await LoadOrganizationIDsByNameAsync(dbContext)
             : new Dictionary<string, int>(StringComparer.InvariantCultureIgnoreCase);
 
+        // Every candidate for an identifier match, in one query, instead of a non-sargable
+        // Trim().ToUpper() scan of dbo.Project per project.
+        var existingProjectsByIdentifier = await LoadExistingProjectsByIdentifierAsync(dbContext, matchProgramIDs);
+
+        // ---- Planning pass: pure, no database ------------------------------------------------------
+        // Resolves everything about each project and records the outcomes that need no write (blocked,
+        // skipped) straight onto the result. Nothing here is undone by a retry of the transaction
+        // below, and nothing here needs to be.
+        var plans = new List<ProjectPlan>(featuresByProject.Count);
         foreach (var projectGroup in featuresByProject)
         {
             var projectIdentifier = projectGroup.Key;
@@ -565,6 +595,28 @@ public static class GisBulkImports
                 continue;
             }
 
+            // The identifier match, out of the preloaded index. Consulted after the completion-date
+            // skip above, because the per-project version only reached its ProjectID block-list check
+            // after that skip — a project that is both undated and block-listed by ProjectID counts
+            // as skipped, not blocked.
+            var existingProject = existingProjectsByIdentifier.TryGetValue(projectIdentifier, out var match)
+                ? match
+                : ((int ProjectID, string ProjectName)?)null;
+
+            if (existingProject.HasValue && blockedProjectIDs.Contains(existingProject.Value.ProjectID))
+            {
+                // Block-list entry pointing at this exact project — skip create and update alike.
+                // The name reported is the one already on the project rather than the incoming GIS
+                // name, because nothing is written to it.
+                result.ProjectsBlocked++;
+                result.BlockedProjects.Add(new GisBulkImportProjectResult
+                {
+                    ProjectID = existingProject.Value.ProjectID,
+                    ProjectName = existingProject.Value.ProjectName
+                });
+                continue;
+            }
+
             // Landowner values carried on the features, gathered across the whole project group the
             // way legacy did (distinct, non-empty, in feature order).
             var landownerValues = importsPeople
@@ -578,282 +630,191 @@ public static class GisBulkImports
             var leadImplementerOrganizationID = ResolveLeadImplementerOrganizationID(
                 sourceOrg, leadImplementerCrossWalks, organizationIDByName, leadImplementerSourceValue);
 
-            // Per-iteration outcomes — applied to `result` only after the transaction commits,
-            // so deadlock-triggered retries don't double-count.
-            var wasCreated = false;
-            var wasUpdated = false;
-            var wasBlockedByProjectID = false;
-            var locationsCreatedThisIteration = 0;
-            // People created inside this iteration's transaction. Held back from the shared
-            // personLookup until the transaction commits — see ApplyProjectLandownersAsync.
-            var peopleCreatedThisIteration = new List<(int PersonID, string FirstName, string LastName, DateTime CreateDate)>();
-            GisBulkImportProjectResult resultEntry = null;
-
-            var strategy = dbContext.Database.CreateExecutionStrategy();
-            await strategy.ExecuteAsync(async () =>
+            plans.Add(new ProjectPlan
             {
-                // Reset tracker + outcomes on each retry attempt so we re-run cleanly.
-                dbContext.ChangeTracker.Clear();
-                wasCreated = false;
-                wasUpdated = false;
-                wasBlockedByProjectID = false;
-                locationsCreatedThisIteration = 0;
-                peopleCreatedThisIteration.Clear();
-                resultEntry = null;
+                Identifier = projectIdentifier,
+                OriginalIdentifier = originalIdentifier,
+                ProjectName = projectName,
+                Features = projectGroup.ToList(),
+                ExistingProjectID = existingProject?.ProjectID,
+                ProjectStageID = projectStageID,
+                FeatureStartDate = featureStartDate,
+                FeatureCompletionDate = featureCompletionDate,
+                LandownerValues = landownerValues,
+                LeadImplementerOrganizationID = leadImplementerOrganizationID
+            });
+        }
 
-                await using var transaction = await dbContext.Database.BeginTransactionAsync();
+        // ---- Write phase ---------------------------------------------------------------------------
+        // Collected inside the transaction and applied to `result` only after it commits, so a
+        // deadlock retry cannot double-count.
+        var created = new List<GisBulkImportProjectResult>();
+        var updated = new List<GisBulkImportProjectResult>();
+        var locationsCreated = 0;
+        // People created inside the transaction. Held back from the shared personLookup until it
+        // commits — a retry rolls the Person inserts back, and publishing their IDs early would
+        // leave the retry pointing ProjectPerson rows at rows that no longer exist.
+        var peopleCreated = new List<(int PersonID, string FirstName, string LastName, DateTime CreateDate)>();
 
-                // Find existing project by GIS identifier within the matching program(s) (case-insensitive)
-                var existingProject = await dbContext.Projects
+        var existingProjectIDs = plans
+            .Where(p => p.ExistingProjectID.HasValue)
+            .Select(p => p.ExistingProjectID!.Value)
+            .ToList();
+
+        var executionStrategy = dbContext.Database.CreateExecutionStrategy();
+        await executionStrategy.ExecuteAsync(async () =>
+        {
+            // Reset tracker + outcomes on each retry attempt so we re-run cleanly.
+            dbContext.ChangeTracker.Clear();
+            created.Clear();
+            updated.Clear();
+            peopleCreated.Clear();
+            locationsCreated = 0;
+            // plan.Project / plan.WasCreated need no reset: phase 3 assigns both on every plan, on
+            // every branch, before anything reads them.
+
+            await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
+            // Reserved inside the retry, not outside it: a rolled-back attempt has released its
+            // numbers, and continuing the counter across attempts would leave a gap the width of the
+            // import in a user-visible identifier.
+            var fhtProjectNumbers = await Projects.FhtProjectNumberAllocator.CreateAsync(dbContext);
+
+            // ---- Phase 1: every existing project this import touches, in one query ----------------
+            var existingProjectsByID = existingProjectIDs.Count == 0
+                ? new Dictionary<int, Project>()
+                : await dbContext.Projects
                     .Include(p => p.ProjectPrograms)
-                    .FirstOrDefaultAsync(p => p.ProjectGisIdentifier != null &&
-                        p.ProjectGisIdentifier.Trim().ToUpper() == projectIdentifier &&
-                        p.ProjectPrograms.Any(pp => matchProgramIDs.Contains(pp.ProgramID)));
+                    .Where(p => existingProjectIDs.Contains(p.ProjectID))
+                    .ToDictionaryAsync(p => p.ProjectID);
 
-                if (existingProject != null && blockedProjectIDs.Contains(existingProject.ProjectID))
+            // ---- Phase 2: other-program treatment date bounds, in one query ----------------------
+            // Update path only: a brand-new project has no treatments to widen against.
+            var otherProgramDateBounds = await LoadOtherProgramTreatmentDateBoundsAsync(
+                dbContext, sourceOrg, existingProjectIDs);
+
+            // ---- Phase 3: create or update every project, then one SaveChanges -------------------
+            foreach (var plan in plans)
+            {
+                if (plan.ExistingProjectID.HasValue
+                    && existingProjectsByID.TryGetValue(plan.ExistingProjectID.Value, out var existingProject))
                 {
-                    // Block-list entry pointing at this exact project — skip create and update alike.
-                    wasBlockedByProjectID = true;
-                    resultEntry = new GisBulkImportProjectResult
-                    {
-                        ProjectID = existingProject.ProjectID,
-                        ProjectName = existingProject.ProjectName
-                    };
-                    await transaction.RollbackAsync();
-                    return;
-                }
-
-                if (existingProject != null)
-                {
-                    // Update fields from GIS data (matching legacy behavior)
-                    existingProject.ProjectName = projectName.Length > 140 ? projectName[..140] : projectName;
-                    existingProject.ProjectStageID = projectStageID;
-                    existingProject.LastUpdateGisUploadAttemptID = gisUploadAttemptID;
-
-                    // Auto-approve if stage is not Planned and project is Draft/PendingApproval
-                    if (projectStageID != (int)ProjectStageEnum.Planned
-                        && (existingProject.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Draft
-                            || existingProject.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.PendingApproval))
-                    {
-                        existingProject.ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.Approved;
-                    }
-
-                    // Update dates if configured. Widened by any treatments this project carries for
-                    // *other* programs, so a shared project keeps a span covering all of them - legacy
-                    // did this in CalculateStartDate / CalculateCompletionDate.
-                    var (updateStartDate, updateCompletionDate) = await WidenDatesFromOtherProgramTreatmentsAsync(
-                        dbContext, sourceOrg, existingProject.ProjectID, featureStartDate, featureCompletionDate);
-
-                    if (sourceOrg.ApplyStartDateToProject && updateStartDate.HasValue)
-                    {
-                        existingProject.PlannedDate = DateOnly.FromDateTime(updateStartDate.Value);
-                    }
-
-                    if (sourceOrg.ApplyCompletedDateToProject && updateCompletionDate.HasValue)
-                    {
-                        existingProject.CompletionDate = DateOnly.FromDateTime(updateCompletionDate.Value);
-                    }
-
-                    // Set description only if empty
-                    if (string.IsNullOrEmpty(existingProject.ProjectDescription) && !string.IsNullOrEmpty(sourceOrg.ProjectDescriptionDefaultText))
-                    {
-                        existingProject.ProjectDescription = sourceOrg.ProjectDescriptionDefaultText;
-                    }
-
-                    // Ensure program link exists
-                    if (!existingProject.ProjectPrograms.Any(pp => pp.ProgramID == sourceOrg.ProgramID))
-                    {
-                        dbContext.ProjectPrograms.Add(new ProjectProgram
-                        {
-                            ProjectID = existingProject.ProjectID,
-                            ProgramID = sourceOrg.ProgramID
-                        });
-                    }
-
-                    wasUpdated = true;
-                    resultEntry = new GisBulkImportProjectResult
-                    {
-                        ProjectID = existingProject.ProjectID,
-                        ProjectName = existingProject.ProjectName
-                    };
+                    otherProgramDateBounds.TryGetValue(existingProject.ProjectID, out var bounds);
+                    ApplyUpdate(existingProject, plan, sourceOrg, gisUploadAttemptID, bounds);
+                    plan.Project = existingProject;
+                    plan.WasCreated = false;
                 }
                 else
                 {
-                    var newProject = new Project
-                    {
-                        ProjectName = projectName.Length > 140 ? projectName[..140] : projectName,
-                        FhtProjectNumber = await Projects.GenerateFhtProjectNumberAsync(dbContext),
-                        ProjectGisIdentifier = originalIdentifier.Length > 140 ? originalIdentifier[..140] : originalIdentifier,
-                        ProjectTypeID = defaultProjectTypeID,
-                        ProjectStageID = projectStageID,
-                        ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.Approved,
-                        ProjectLocationSimpleTypeID = (int)ProjectLocationSimpleTypeEnum.None,
-                        CreateGisUploadAttemptID = gisUploadAttemptID,
-                        LastUpdateGisUploadAttemptID = gisUploadAttemptID
-                    };
-
-                    // Set dates if configured. A brand-new project has no treatments yet, so there is
-                    // nothing to widen against.
-                    if (sourceOrg.ApplyStartDateToProject && featureStartDate.HasValue)
-                    {
-                        newProject.PlannedDate = DateOnly.FromDateTime(featureStartDate.Value);
-                    }
-
-                    if (sourceOrg.ApplyCompletedDateToProject && featureCompletionDate.HasValue)
-                    {
-                        newProject.CompletionDate = DateOnly.FromDateTime(featureCompletionDate.Value);
-                    }
-
-                    // Set project description
-                    if (!string.IsNullOrEmpty(sourceOrg.ProjectDescriptionDefaultText))
-                    {
-                        newProject.ProjectDescription = sourceOrg.ProjectDescriptionDefaultText;
-                    }
-
+                    var newProject = BuildNewProject(
+                        plan, sourceOrg, gisUploadAttemptID, defaultProjectTypeID, fhtProjectNumbers.Next());
                     dbContext.Projects.Add(newProject);
-                    await dbContext.SaveChangesWithNoAuditingAsync();
+                    plan.Project = newProject;
+                    plan.WasCreated = true;
+                }
+            }
 
-                    // Link project to program
+            // EF batches these, so 3,042 individual INSERTs collapse to roughly 40 commands, and the
+            // generated IDs come back populated.
+            await dbContext.SaveChangesWithNoAuditingAsync();
+
+            // ---- Phase 4: program + organization links -------------------------------------------
+            foreach (var plan in plans)
+            {
+                // A new project's ProjectPrograms is empty, so this covers the created case too.
+                if (!plan.Project.ProjectPrograms.Any(pp => pp.ProgramID == sourceOrg.ProgramID))
+                {
                     dbContext.ProjectPrograms.Add(new ProjectProgram
                     {
-                        ProjectID = newProject.ProjectID,
+                        ProjectID = plan.Project.ProjectID,
                         ProgramID = sourceOrg.ProgramID
                     });
+                }
 
-                    // Create the lead implementer relationship — the crosswalked organization when
-                    // the GIS data maps to one, otherwise the source org's configured default.
+                if (plan.WasCreated)
+                {
+                    // The lead implementer relationship — the crosswalked organization when the GIS
+                    // data maps to one, otherwise the source org's configured default. Create path
+                    // only, matching the per-project version.
                     dbContext.ProjectOrganizations.Add(new ProjectOrganization
                     {
-                        ProjectID = newProject.ProjectID,
-                        OrganizationID = leadImplementerOrganizationID,
+                        ProjectID = plan.Project.ProjectID,
+                        OrganizationID = plan.LeadImplementerOrganizationID,
                         RelationshipTypeID = sourceOrg.RelationshipTypeForDefaultOrganizationID
                     });
-
-                    existingProject = newProject;
-                    wasCreated = true;
-                    resultEntry = new GisBulkImportProjectResult
-                    {
-                        ProjectID = newProject.ProjectID,
-                        ProjectName = newProject.ProjectName
-                    };
                 }
+            }
+            await dbContext.SaveChangesWithNoAuditingAsync();
 
-                // Remove prior ProjectArea locations for this project+program before re-creating (matching legacy DeleteFull behavior)
-                var locationIDsToDelete = await dbContext.ProjectLocations
-                    .Where(pl => pl.ProjectID == existingProject.ProjectID &&
-                        pl.ProjectLocationTypeID == (int)ProjectLocationTypeEnum.ProjectArea &&
-                        pl.ProgramID == sourceOrg.ProgramID)
-                    .Select(pl => pl.ProjectLocationID)
-                    .ToListAsync();
+            // ---- Phase 5: drop prior ProjectArea locations for every affected project -------------
+            // One SELECT and two deletes for the whole import, replacing three statements per project
+            // (matching legacy's DeleteFull behavior).
+            var affectedProjectIDs = plans.Select(p => p.Project.ProjectID).ToList();
 
-                if (locationIDsToDelete.Count > 0)
-                {
-                    // Delete child Treatments first, then the locations
-                    await dbContext.Treatments
-                        .Where(t => t.ProjectLocationID != null && locationIDsToDelete.Contains(t.ProjectLocationID.Value))
-                        .ExecuteDeleteAsync();
+            var locationIDsToDelete = await dbContext.ProjectLocations
+                .Where(pl => affectedProjectIDs.Contains(pl.ProjectID)
+                    && pl.ProjectLocationTypeID == (int)ProjectLocationTypeEnum.ProjectArea
+                    && pl.ProgramID == sourceOrg.ProgramID)
+                .Select(pl => pl.ProjectLocationID)
+                .ToListAsync();
 
-                    await dbContext.ProjectLocations
-                        .Where(pl => locationIDsToDelete.Contains(pl.ProjectLocationID))
-                        .ExecuteDeleteAsync();
-                }
-
-                // Create project locations from feature geometries
-                foreach (var feature in projectGroup)
-                {
-                    // Carry the source Esri identifiers through so downstream consumers (e.g. the
-                    // GDB export's ProjectLocations layer) can join back to the source service.
-                    var metadata = featureMetadata[feature.GisFeatureID];
-                    int? arcGisObjectID = null;
-                    if (objectIdAttributeID.HasValue
-                        && metadata.TryGetValue(objectIdAttributeID.Value, out var objectIdValue)
-                        && int.TryParse(objectIdValue, out var parsedObjectID))
-                    {
-                        arcGisObjectID = parsedObjectID;
-                    }
-
-                    string arcGisGlobalID = null;
-                    if (globalIdAttributeID.HasValue
-                        && metadata.TryGetValue(globalIdAttributeID.Value, out var globalIdValue)
-                        && !string.IsNullOrWhiteSpace(globalIdValue))
-                    {
-                        arcGisGlobalID = globalIdValue.Trim();
-                        if (arcGisGlobalID.Length > 50) arcGisGlobalID = arcGisGlobalID[..50];
-                    }
-
-                    // Derive the location name from a stable source identifier rather than the
-                    // positional GisImportFeatureKey (a per-attempt running counter). The Esri
-                    // OBJECTID / GlobalID are stable across re-imports, so re-running an import
-                    // produces the same names (delete-then-recreate stays clean) and two
-                    // unrelated features can no longer land on the same name. Falls back to the
-                    // feature key only for non-Esri sources that carry neither identifier.
-                    var featureIdentifier = arcGisObjectID?.ToString()
-                        ?? arcGisGlobalID
-                        ?? feature.GisImportFeatureKey.ToString();
-                    var locationName = $"{originalIdentifier} - Feature {featureIdentifier}";
-
-                    dbContext.ProjectLocations.Add(new ProjectLocation
-                    {
-                        ProjectID = existingProject.ProjectID,
-                        // GIS source features can be topologically invalid (self-intersections, etc.).
-                        // Normalize on the way in, matching the interactive project workflow
-                        // (ProjectCreateWorkflowSteps.cs), so downstream spatial operations
-                        // (AutoAssignGeographicRegionsAsync's STIntersects, GeoServer, GDB export)
-                        // don't hit SQL Server error 24144 on an invalid instance.
-                        ProjectLocationGeometry = feature.GisFeatureGeometry?.MakeValid(),
-                        ProjectLocationName = locationName.Length > 100 ? locationName[..100] : locationName,
-                        ProjectLocationTypeID = (int)ProjectLocationTypeEnum.ProjectArea,
-                        ImportedFromGisUpload = true,
-                        ProgramID = sourceOrg.ProgramID,
-                        ArcGisObjectID = arcGisObjectID,
-                        ArcGisGlobalID = arcGisGlobalID
-                    });
-                    locationsCreatedThisIteration++;
-                }
-
-                await dbContext.SaveChangesWithNoAuditingAsync();
-
-                // Private landowners and primary contact from the GIS metadata. Ports legacy's
-                // MakeProjectPeopleAndSave, which the rewrite dropped entirely even though the
-                // Landowner column mapping is still configured (and still posted by the UI).
-                if (importsPeople)
-                {
-                    await ApplyProjectLandownersAsync(
-                        dbContext, personLookup, existingProject.ProjectID, landownerValues, peopleCreatedThisIteration);
-                }
-
-                // Populate County / DNR Upland Region / Priority Landscape from the just-saved
-                // location geometries, mirroring the interactive project workflow. Runs inside the
-                // same transaction (atomic with the locations) and saves without auditing, matching
-                // this pipeline's convention. Idempotent, so execution-strategy retries are safe.
-                await ProjectCreateWorkflowSteps.AutoAssignGeographicRegionsAsync(
-                    dbContext, existingProject.ProjectID, useNoAuditingSave: true);
-
-                await transaction.CommitAsync();
-            });
-
-            // Apply outcomes after the transaction commits (retries won't double-count)
-            personLookup?.Merge(peopleCreatedThisIteration);
-
-            if (wasBlockedByProjectID)
+            if (locationIDsToDelete.Count > 0)
             {
-                result.ProjectsBlocked++;
-                result.BlockedProjects.Add(resultEntry);
-                continue;
+                // Delete child Treatments first, then the locations
+                await dbContext.Treatments
+                    .Where(t => t.ProjectLocationID != null && locationIDsToDelete.Contains(t.ProjectLocationID.Value))
+                    .ExecuteDeleteAsync();
+
+                await dbContext.ProjectLocations
+                    .Where(pl => locationIDsToDelete.Contains(pl.ProjectLocationID))
+                    .ExecuteDeleteAsync();
             }
 
-            result.LocationsCreated += locationsCreatedThisIteration;
-            if (wasCreated)
+            // ---- Phase 6: all locations, one SaveChanges ------------------------------------------
+            foreach (var plan in plans)
             {
-                result.ProjectsCreated++;
-                result.CreatedProjects.Add(resultEntry);
+                foreach (var feature in plan.Features)
+                {
+                    dbContext.ProjectLocations.Add(BuildLocation(
+                        plan, feature, featureMetadata[feature.GisFeatureID],
+                        objectIdAttributeID, globalIdAttributeID, sourceOrg.ProgramID));
+                    locationsCreated++;
+                }
             }
-            else if (wasUpdated)
+            await dbContext.SaveChangesWithNoAuditingAsync();
+
+            // ---- Phase 7: private landowners ------------------------------------------------------
+            // Ports legacy's MakeProjectPeopleAndSave, which the rewrite dropped entirely even though
+            // the Landowner column mapping is still configured (and still posted by the UI).
+            if (importsPeople)
             {
-                result.ProjectsUpdated++;
-                result.UpdatedProjects.Add(resultEntry);
+                await ApplyProjectLandownersAsync(dbContext, personLookup, plans, peopleCreated);
             }
-        }
+
+            // ---- Phase 8: geographic regions ------------------------------------------------------
+            await AssignRegionsAsync(dbContext, affectedProjectIDs);
+
+            foreach (var plan in plans)
+            {
+                var entry = new GisBulkImportProjectResult
+                {
+                    ProjectID = plan.Project.ProjectID,
+                    ProjectName = plan.Project.ProjectName
+                };
+                if (plan.WasCreated) created.Add(entry); else updated.Add(entry);
+            }
+
+            await transaction.CommitAsync();
+        });
+
+        // Apply outcomes after the transaction commits (retries won't double-count)
+        personLookup?.Merge(peopleCreated);
+
+        result.LocationsCreated = locationsCreated;
+        result.ProjectsCreated = created.Count;
+        result.ProjectsUpdated = updated.Count;
+        result.CreatedProjects.AddRange(created);
+        result.UpdatedProjects.AddRange(updated);
 
         if (projectsSkippedForMissingCompletionDate > 0)
         {
@@ -912,7 +873,7 @@ public static class GisBulkImports
         // Assign the DNR Service Forestry Regional Coordinator to newly-created Landowner Assistance
         // projects, from the DNR Upland Region they landed in. Ports legacy's AddProjectCoordinators,
         // which ran right after the regions were calculated. Runs last because it depends on the
-        // regions AutoAssignGeographicRegionsAsync assigned inside the loop.
+        // regions phase 8 assigned.
         await ApplyRegionalCoordinatorsAsync(dbContext, gisUploadAttemptID);
 
         // Clear this attempt's staged GIS features once everything above succeeded, so the staging
@@ -932,6 +893,427 @@ public static class GisBulkImports
 
         return result;
     }
+
+    /// <summary>
+    /// Everything the write phase needs to know about one project, resolved from data already in
+    /// memory. Built by the planning pass in <see cref="ImportProjectsAsync"/>; the write phase reads
+    /// it and never re-derives anything.
+    /// </summary>
+    private sealed class ProjectPlan
+    {
+        public required string Identifier { get; init; }
+        public required string OriginalIdentifier { get; init; }
+        public required string ProjectName { get; init; }
+        public required List<GisFeature> Features { get; init; }
+
+        /// <summary>The project this identifier matched, or null when one will be created.</summary>
+        public int? ExistingProjectID { get; init; }
+
+        public required int ProjectStageID { get; init; }
+        public DateTime? FeatureStartDate { get; init; }
+        public DateTime? FeatureCompletionDate { get; init; }
+        public required List<string> LandownerValues { get; init; }
+        public required int LeadImplementerOrganizationID { get; init; }
+
+        /// <summary>Assigned by phase 3, on every plan, before anything else reads it.</summary>
+        public Project Project { get; set; }
+        public bool WasCreated { get; set; }
+    }
+
+    /// <summary>
+    /// Maps normalized ProjectGisIdentifier → (ProjectID, ProjectName) for every project in the
+    /// matching programs that carries an identifier.
+    ///
+    /// Replaces a per-project <c>ProjectGisIdentifier.Trim().ToUpper() == @identifier</c> predicate,
+    /// which is non-sargable and has no supporting index, so each project scanned all of dbo.Project.
+    /// The name comes along because the ProjectID block list reports the project's existing name.
+    ///
+    /// Two intentional differences from the per-project lookup: normalization is
+    /// <see cref="string.ToUpperInvariant"/> rather than SQL's collation-aware <c>UPPER</c>
+    /// (identical for the ASCII identifiers this column holds), and where two projects in the
+    /// matching programs share an identifier the lowest ProjectID wins deterministically instead of
+    /// whichever row <c>FirstOrDefaultAsync</c> happened to return.
+    /// </summary>
+    private static async Task<Dictionary<string, (int ProjectID, string ProjectName)>> LoadExistingProjectsByIdentifierAsync(
+        WADNRDbContext dbContext, List<int> matchProgramIDs)
+    {
+        var candidates = await dbContext.Projects
+            .AsNoTracking()
+            .Where(p => p.ProjectGisIdentifier != null
+                && p.ProjectPrograms.Any(pp => matchProgramIDs.Contains(pp.ProgramID)))
+            .OrderBy(p => p.ProjectID)
+            .Select(p => new { p.ProjectID, p.ProjectGisIdentifier, p.ProjectName })
+            .ToListAsync();
+
+        var projectsByIdentifier =
+            new Dictionary<string, (int ProjectID, string ProjectName)>(candidates.Count, StringComparer.Ordinal);
+        foreach (var candidate in candidates)
+        {
+            // First wins, and the ordering above makes "first" the lowest ProjectID.
+            projectsByIdentifier.TryAdd(
+                candidate.ProjectGisIdentifier!.Trim().ToUpperInvariant(),
+                (candidate.ProjectID, candidate.ProjectName));
+        }
+
+        return projectsByIdentifier;
+    }
+
+    /// <summary>
+    /// Earliest treatment start and latest treatment end, per project, across treatments belonging to
+    /// programs other than the one being imported. One query for the whole import, replacing a query
+    /// per updated project.
+    ///
+    /// Returns an empty map when the source organization applies neither date, matching the
+    /// per-project version's early return — a project with no entry is simply not widened.
+    /// </summary>
+    private static async Task<Dictionary<int, (DateTime? EarliestStart, DateTime? LatestEnd)>>
+        LoadOtherProgramTreatmentDateBoundsAsync(
+            WADNRDbContext dbContext, GisUploadSourceOrganization sourceOrg, List<int> projectIDs)
+    {
+        var bounds = new Dictionary<int, (DateTime? EarliestStart, DateTime? LatestEnd)>();
+
+        if (projectIDs.Count == 0
+            || (!sourceOrg.ApplyStartDateToProject && !sourceOrg.ApplyCompletedDateToProject))
+        {
+            return bounds;
+        }
+
+        var treatmentDates = await dbContext.Treatments
+            .AsNoTracking()
+            .Where(t => projectIDs.Contains(t.ProjectID)
+                && t.ProgramID != null
+                && t.ProgramID != sourceOrg.ProgramID)
+            .Select(t => new { t.ProjectID, t.TreatmentStartDate, t.TreatmentEndDate })
+            .ToListAsync();
+
+        foreach (var group in treatmentDates.GroupBy(x => x.ProjectID))
+        {
+            var startDates = group
+                .Where(x => x.TreatmentStartDate != null)
+                .Select(x => x.TreatmentStartDate!.Value.ToDateTime(TimeOnly.MinValue))
+                .ToList();
+            var endDates = group
+                .Where(x => x.TreatmentEndDate != null)
+                .Select(x => x.TreatmentEndDate!.Value.ToDateTime(TimeOnly.MinValue))
+                .ToList();
+
+            bounds[group.Key] = (
+                startDates.Count > 0 ? startDates.Min() : null,
+                endDates.Count > 0 ? endDates.Max() : null);
+        }
+
+        return bounds;
+    }
+
+    /// <summary>
+    /// Widens a project's start / completion date to cover treatments it carries for programs other
+    /// than the one being imported, so a project shared across programs keeps a span covering all of
+    /// them rather than being clipped to this import's own features. Ports the second half of legacy
+    /// CalculateStartDate / CalculateCompletionDate.
+    /// </summary>
+    private static (DateTime? StartDate, DateTime? CompletionDate) WidenDates(
+        DateTime? startDate,
+        DateTime? completionDate,
+        (DateTime? EarliestStart, DateTime? LatestEnd) otherProgramBounds)
+    {
+        if (otherProgramBounds.EarliestStart.HasValue
+            && (!startDate.HasValue || otherProgramBounds.EarliestStart.Value < startDate.Value))
+        {
+            startDate = otherProgramBounds.EarliestStart;
+        }
+
+        if (otherProgramBounds.LatestEnd.HasValue
+            && (!completionDate.HasValue || otherProgramBounds.LatestEnd.Value > completionDate.Value))
+        {
+            completionDate = otherProgramBounds.LatestEnd;
+        }
+
+        return (startDate, completionDate);
+    }
+
+    /// <summary>
+    /// Applies a plan to the project it matched. Update fields from GIS data, matching legacy behavior.
+    /// </summary>
+    private static void ApplyUpdate(
+        Project project,
+        ProjectPlan plan,
+        GisUploadSourceOrganization sourceOrg,
+        int gisUploadAttemptID,
+        (DateTime? EarliestStart, DateTime? LatestEnd) otherProgramDateBounds)
+    {
+        project.ProjectName = plan.ProjectName.Length > 140 ? plan.ProjectName[..140] : plan.ProjectName;
+        project.ProjectStageID = plan.ProjectStageID;
+        project.LastUpdateGisUploadAttemptID = gisUploadAttemptID;
+
+        // Auto-approve if stage is not Planned and project is Draft/PendingApproval
+        if (plan.ProjectStageID != (int)ProjectStageEnum.Planned
+            && (project.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.Draft
+                || project.ProjectApprovalStatusID == (int)ProjectApprovalStatusEnum.PendingApproval))
+        {
+            project.ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.Approved;
+        }
+
+        // Update dates if configured, widened by any treatments this project carries for *other*
+        // programs so a shared project keeps a span covering all of them — legacy did this in
+        // CalculateStartDate / CalculateCompletionDate.
+        var (updateStartDate, updateCompletionDate) = WidenDates(
+            plan.FeatureStartDate, plan.FeatureCompletionDate, otherProgramDateBounds);
+
+        if (sourceOrg.ApplyStartDateToProject && updateStartDate.HasValue)
+        {
+            project.PlannedDate = DateOnly.FromDateTime(updateStartDate.Value);
+        }
+
+        if (sourceOrg.ApplyCompletedDateToProject && updateCompletionDate.HasValue)
+        {
+            project.CompletionDate = DateOnly.FromDateTime(updateCompletionDate.Value);
+        }
+
+        // Set description only if empty
+        if (string.IsNullOrEmpty(project.ProjectDescription) && !string.IsNullOrEmpty(sourceOrg.ProjectDescriptionDefaultText))
+        {
+            project.ProjectDescription = sourceOrg.ProjectDescriptionDefaultText;
+        }
+    }
+
+    /// <summary>
+    /// Builds the Project a plan with no identifier match will create. A brand-new project has no
+    /// treatments yet, so there is nothing to widen its dates against.
+    /// </summary>
+    private static Project BuildNewProject(
+        ProjectPlan plan,
+        GisUploadSourceOrganization sourceOrg,
+        int gisUploadAttemptID,
+        int defaultProjectTypeID,
+        string fhtProjectNumber)
+    {
+        var project = new Project
+        {
+            ProjectName = plan.ProjectName.Length > 140 ? plan.ProjectName[..140] : plan.ProjectName,
+            FhtProjectNumber = fhtProjectNumber,
+            ProjectGisIdentifier = plan.OriginalIdentifier.Length > 140 ? plan.OriginalIdentifier[..140] : plan.OriginalIdentifier,
+            ProjectTypeID = defaultProjectTypeID,
+            ProjectStageID = plan.ProjectStageID,
+            ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.Approved,
+            ProjectLocationSimpleTypeID = (int)ProjectLocationSimpleTypeEnum.None,
+            CreateGisUploadAttemptID = gisUploadAttemptID,
+            LastUpdateGisUploadAttemptID = gisUploadAttemptID
+        };
+
+        if (sourceOrg.ApplyStartDateToProject && plan.FeatureStartDate.HasValue)
+        {
+            project.PlannedDate = DateOnly.FromDateTime(plan.FeatureStartDate.Value);
+        }
+
+        if (sourceOrg.ApplyCompletedDateToProject && plan.FeatureCompletionDate.HasValue)
+        {
+            project.CompletionDate = DateOnly.FromDateTime(plan.FeatureCompletionDate.Value);
+        }
+
+        if (!string.IsNullOrEmpty(sourceOrg.ProjectDescriptionDefaultText))
+        {
+            project.ProjectDescription = sourceOrg.ProjectDescriptionDefaultText;
+        }
+
+        return project;
+    }
+
+    /// <summary>
+    /// Builds one ProjectArea location from a source feature, carrying the source Esri identifiers
+    /// through so downstream consumers (e.g. the GDB export's ProjectLocations layer) can join back
+    /// to the source service.
+    /// </summary>
+    private static ProjectLocation BuildLocation(
+        ProjectPlan plan,
+        GisFeature feature,
+        Dictionary<int, string> metadata,
+        int? objectIdAttributeID,
+        int? globalIdAttributeID,
+        int programID)
+    {
+        int? arcGisObjectID = null;
+        if (objectIdAttributeID.HasValue
+            && metadata.TryGetValue(objectIdAttributeID.Value, out var objectIdValue)
+            && int.TryParse(objectIdValue, out var parsedObjectID))
+        {
+            arcGisObjectID = parsedObjectID;
+        }
+
+        string arcGisGlobalID = null;
+        if (globalIdAttributeID.HasValue
+            && metadata.TryGetValue(globalIdAttributeID.Value, out var globalIdValue)
+            && !string.IsNullOrWhiteSpace(globalIdValue))
+        {
+            arcGisGlobalID = globalIdValue.Trim();
+            if (arcGisGlobalID.Length > 50) arcGisGlobalID = arcGisGlobalID[..50];
+        }
+
+        // Derive the location name from a stable source identifier rather than the positional
+        // GisImportFeatureKey (a per-attempt running counter). The Esri OBJECTID / GlobalID are
+        // stable across re-imports, so re-running an import produces the same names
+        // (delete-then-recreate stays clean) and two unrelated features can no longer land on the
+        // same name. Falls back to the feature key only for non-Esri sources that carry neither
+        // identifier. WADNR-2150.
+        var featureIdentifier = arcGisObjectID?.ToString()
+            ?? arcGisGlobalID
+            ?? feature.GisImportFeatureKey.ToString();
+        var locationName = $"{plan.OriginalIdentifier} - Feature {featureIdentifier}";
+
+        return new ProjectLocation
+        {
+            ProjectID = plan.Project.ProjectID,
+            // GIS source features can be topologically invalid (self-intersections, etc.).
+            // Normalize on the way in, matching the interactive project workflow
+            // (ProjectCreateWorkflowSteps.cs), so downstream spatial operations (region assignment's
+            // STIntersects, GeoServer, GDB export) don't hit SQL Server error 24144 on an invalid
+            // instance.
+            ProjectLocationGeometry = feature.GisFeatureGeometry?.MakeValid(),
+            ProjectLocationName = locationName.Length > 100 ? locationName[..100] : locationName,
+            ProjectLocationTypeID = (int)ProjectLocationTypeEnum.ProjectArea,
+            ImportedFromGisUpload = true,
+            ProgramID = programID,
+            ArcGisObjectID = arcGisObjectID,
+            ArcGisGlobalID = arcGisGlobalID
+        };
+    }
+
+    // The three explanation strings, verbatim from ProjectCreateWorkflowSteps.AutoAssignGeographicRegionsAsync.
+    // Any drift here is a parity failure between the two region-assignment paths, so they are
+    // constants rather than inline literals.
+    private const string NoPriorityLandscapesExplanation =
+        "Neither the simple location nor the detailed location on this project intersects with any Priority Landscape.";
+    private const string NoRegionsExplanation =
+        "Neither the simple location nor the detailed location on this project intersects with any DNR Upland Region.";
+    private const string NoCountiesExplanation =
+        "Neither the simple location nor the detailed location on this project intersects with any County.";
+
+    /// <summary>
+    /// Assigns County / DNRUplandRegion / PriorityLandscape for every project this import touched.
+    ///
+    /// Set-based on a relational provider, falling back to the interactive workflow's per-project
+    /// assignment on a non-relational one — the set-based path is raw SQL, and the in-memory provider
+    /// the GIS import tests use has no relational services. Same fallback shape as
+    /// <see cref="ClearStagedFeaturesAsync"/>, and for the same reason.
+    /// </summary>
+    private static async Task AssignRegionsAsync(WADNRDbContext dbContext, List<int> projectIDs)
+    {
+        if (projectIDs.Count == 0)
+        {
+            return;
+        }
+
+        if (!dbContext.Database.IsRelational())
+        {
+            foreach (var projectID in projectIDs)
+            {
+                await ProjectCreateWorkflowSteps.AutoAssignGeographicRegionsAsync(
+                    dbContext, projectID, useNoAuditingSave: true);
+            }
+            return;
+        }
+
+        await AssignRegionsSetBasedAsync(dbContext, projectIDs);
+    }
+
+    /// <summary>
+    /// Assigns County / DNRUplandRegion / PriorityLandscape for a whole import in one round trip,
+    /// replacing one project reload plus three STIntersects calls per project.
+    ///
+    /// The boundary tables are tiny — County 39 rows, DNRUplandRegion 6, PriorityLandscape 76 — yet
+    /// each per-project call cost 2-5ms, because the work is deserializing large multipolygons,
+    /// 18,252 times over for a 3,042-project GDB. Set-based they are read once. It also removes the
+    /// client-side half: the per-project path ran NTS MakeValid and Union on every project's
+    /// geometries and shipped the result as a query parameter.
+    ///
+    /// Scoped by an explicit list of the projects this run touched, serialized as a JSON array and
+    /// expanded with OPENJSON — so it is still one parameter rather than a 3,042-element IN clause.
+    /// Deliberately NOT scoped by upload attempt: that would also sweep in projects an earlier run of
+    /// the same attempt touched but this one did not, recomputing regions that may since have been set
+    /// by hand. Blocked and skipped projects are correctly absent from the list either way, because
+    /// they never reach the write phase.
+    ///
+    /// Equivalence with the per-project version: that one unions a project's geometries and intersects
+    /// once; this intersects per geometry and takes DISTINCT. A union intersects R if and only if some
+    /// member does, so the resulting set is identical.
+    /// </summary>
+    private static async Task AssignRegionsSetBasedAsync(WADNRDbContext dbContext, List<int> projectIDs)
+    {
+        // ONE command. The temp tables must live across every statement, and EF can return the
+        // connection to the pool between separate ExecuteSqlRaw calls, which would drop them. Sending
+        // it as a single batch also makes the whole of region assignment one round trip instead of
+        // 9,126.
+        await dbContext.Database.ExecuteSqlRawAsync(SetBasedRegionSql,
+            JsonSerializer.Serialize(projectIDs), NoCountiesExplanation, NoRegionsExplanation, NoPriorityLandscapesExplanation);
+    }
+
+    private const string SetBasedRegionSql = @"
+IF OBJECT_ID('tempdb..#ImportProject')  IS NOT NULL DROP TABLE #ImportProject;
+IF OBJECT_ID('tempdb..#ImportGeometry') IS NOT NULL DROP TABLE #ImportGeometry;
+
+CREATE TABLE #ImportProject (ProjectID int NOT NULL PRIMARY KEY, HasGeometry bit NOT NULL DEFAULT(0));
+INSERT INTO #ImportProject (ProjectID)
+SELECT DISTINCT CAST([value] AS int) FROM OPENJSON({0});
+
+CREATE TABLE #ImportGeometry (ProjectID int NOT NULL, Shape geometry NOT NULL);
+
+-- Detailed locations plus the simple point: exactly what the per-project version unions together.
+INSERT INTO #ImportGeometry (ProjectID, Shape)
+SELECT pl.ProjectID, pl.ProjectLocationGeometry.MakeValid()
+FROM dbo.ProjectLocation pl
+JOIN #ImportProject ip ON ip.ProjectID = pl.ProjectID
+WHERE pl.ProjectLocationGeometry IS NOT NULL;
+
+INSERT INTO #ImportGeometry (ProjectID, Shape)
+SELECT p.ProjectID, p.ProjectLocationPoint.MakeValid()
+FROM dbo.Project p
+JOIN #ImportProject ip ON ip.ProjectID = p.ProjectID
+WHERE p.ProjectLocationPoint IS NOT NULL;
+
+CREATE CLUSTERED INDEX IX_ImportGeometry_ProjectID ON #ImportGeometry (ProjectID);
+
+UPDATE ip SET HasGeometry = 1
+FROM #ImportProject ip
+WHERE EXISTS (SELECT 1 FROM #ImportGeometry g WHERE g.ProjectID = ip.ProjectID);
+
+DELETE pc  FROM dbo.ProjectCounty pc            JOIN #ImportProject ip ON ip.ProjectID = pc.ProjectID;
+DELETE pr  FROM dbo.ProjectRegion pr            JOIN #ImportProject ip ON ip.ProjectID = pr.ProjectID;
+DELETE ppl FROM dbo.ProjectPriorityLandscape ppl JOIN #ImportProject ip ON ip.ProjectID = ppl.ProjectID;
+
+INSERT INTO dbo.ProjectCounty (ProjectID, CountyID)
+SELECT DISTINCT g.ProjectID, c.CountyID
+FROM #ImportGeometry g CROSS JOIN dbo.County c
+WHERE c.CountyFeature.STIntersects(g.Shape) = 1;
+
+INSERT INTO dbo.ProjectRegion (ProjectID, DNRUplandRegionID)
+SELECT DISTINCT g.ProjectID, r.DNRUplandRegionID
+FROM #ImportGeometry g CROSS JOIN dbo.DNRUplandRegion r
+WHERE r.DNRUplandRegionLocation.STIntersects(g.Shape) = 1;
+
+INSERT INTO dbo.ProjectPriorityLandscape (ProjectID, PriorityLandscapeID)
+SELECT DISTINCT g.ProjectID, pl.PriorityLandscapeID
+FROM #ImportGeometry g CROSS JOIN dbo.PriorityLandscape pl
+WHERE pl.PriorityLandscapeLocation.STIntersects(g.Shape) = 1;
+
+-- Explanations. Two cases because the per-project version treats them differently: with geometry it
+-- ASSIGNS (the string when nothing intersected, NULL when something did); with no geometry at all it
+-- uses ??=, so it only fills an explanation that is already null.
+UPDATE p SET
+      NoCountiesExplanation           = CASE WHEN EXISTS (SELECT 1 FROM dbo.ProjectCounty x            WHERE x.ProjectID = p.ProjectID) THEN NULL ELSE {1} END
+    , NoRegionsExplanation            = CASE WHEN EXISTS (SELECT 1 FROM dbo.ProjectRegion x            WHERE x.ProjectID = p.ProjectID) THEN NULL ELSE {2} END
+    , NoPriorityLandscapesExplanation = CASE WHEN EXISTS (SELECT 1 FROM dbo.ProjectPriorityLandscape x WHERE x.ProjectID = p.ProjectID) THEN NULL ELSE {3} END
+FROM dbo.Project p JOIN #ImportProject ip ON ip.ProjectID = p.ProjectID
+WHERE ip.HasGeometry = 1;
+
+UPDATE p SET
+      NoCountiesExplanation           = ISNULL(p.NoCountiesExplanation,           {1})
+    , NoRegionsExplanation            = ISNULL(p.NoRegionsExplanation,            {2})
+    , NoPriorityLandscapesExplanation = ISNULL(p.NoPriorityLandscapesExplanation, {3})
+FROM dbo.Project p JOIN #ImportProject ip ON ip.ProjectID = p.ProjectID
+WHERE ip.HasGeometry = 0;
+
+DROP TABLE #ImportGeometry;
+DROP TABLE #ImportProject;
+";
 
     /// <summary>
     /// Builds the parameter set for dbo.procImportTreatmentsFromGisUploadAttempt and runs it.
@@ -1132,84 +1514,140 @@ public static class GisBulkImports
     }
 
     /// <summary>
-    /// Creates the ProjectPerson rows for a project's private landowners from the GIS metadata,
+    /// Creates the ProjectPerson rows for the import's private landowners from the GIS metadata,
     /// creating Person records for landowners we've never seen. Ports legacy's
     /// GenerateProjectPersonListForPrivateLandowners, which the rewrite dropped entirely even though
     /// the Landowner column mapping is still configured on DNR LOA NE and still posted by the UI.
     ///
-    /// Matching legacy, existing landowner rows are replaced only when the import actually carries
-    /// landowner values — an upload with no landowner column never clears ones entered by hand.
+    /// Matching legacy, a project's existing landowner rows are replaced only when the import
+    /// actually carries landowner values for it — an upload with no landowner column never clears
+    /// ones entered by hand.
+    ///
+    /// Set-based across the whole import: one query for every affected project's existing rows, one
+    /// SaveChanges to materialize new People (whose IDs the ProjectPerson rows need), one to write
+    /// the roles and links. The per-project version paid a query per project plus a SaveChanges per
+    /// created person.
+    ///
+    /// One behavioural difference falls out of the single transaction. The per-project version only
+    /// published a newly created Person to <paramref name="personLookup"/> after that project's
+    /// transaction committed, so a name first seen twice within one project created two People, while
+    /// the same name seen in two different projects created one. Here every name resolves through the
+    /// same pending index, so it is always one Person. Reaching the old behaviour required two
+    /// distinct raw landowner values that collapse to the same name only after the 100-character
+    /// truncation below, and one Person is the right answer in that case anyway.
     /// </summary>
     private static async Task ApplyProjectLandownersAsync(
         WADNRDbContext dbContext,
         PersonLookup personLookup,
-        int projectID,
-        List<string> landownerValues,
+        List<ProjectPlan> plans,
         List<(int PersonID, string FirstName, string LastName, DateTime CreateDate)> createdPeople)
     {
-        if (landownerValues.Count == 0)
+        var plansWithLandowners = plans.Where(x => x.LandownerValues.Count > 0).ToList();
+        if (plansWithLandowners.Count == 0)
         {
             return;
         }
 
+        var relationshipTypeID = ProjectPersonRelationshipType.PrivateLandowner.ProjectPersonRelationshipTypeID;
+        var projectIDs = plansWithLandowners.Select(x => x.Project.ProjectID).ToList();
+
         // Tracked removal rather than ExecuteDeleteAsync: this is at most a handful of rows per
         // project, and it keeps the change inside the surrounding transaction's change tracker.
         var existingLandownerRows = await dbContext.ProjectPeople
-            .Where(x => x.ProjectID == projectID
-                && x.ProjectPersonRelationshipTypeID == ProjectPersonRelationshipType.PrivateLandowner.ProjectPersonRelationshipTypeID)
+            .Where(x => projectIDs.Contains(x.ProjectID)
+                && x.ProjectPersonRelationshipTypeID == relationshipTypeID)
             .ToListAsync();
         dbContext.ProjectPeople.RemoveRange(existingLandownerRows);
 
-        foreach (var landowner in landownerValues)
+        // Name matching, identical to PersonLookup.FindByName's: case-insensitive, with a null and an
+        // empty last name treated as the same thing.
+        static bool NamesMatch(string firstName, string lastName, string otherFirstName, string otherLastName) =>
+            string.Equals(firstName, otherFirstName, StringComparison.InvariantCultureIgnoreCase)
+            && (string.Equals(lastName, otherLastName, StringComparison.InvariantCultureIgnoreCase)
+                || (string.IsNullOrEmpty(lastName) && string.IsNullOrEmpty(otherLastName)));
+
+        // People this import needs but the database doesn't have yet, added once and shared by every
+        // project that names them.
+        var pendingPeople = new List<(string FirstName, string LastName, Person Person)>();
+        // (project, existing PersonID or the pending Person that will supply one) in plan order.
+        var links = new List<(int ProjectID, int? PersonID, Person PendingPerson)>();
+
+        foreach (var plan in plansWithLandowners)
         {
-            var (firstName, lastName) = SplitLandownerName(landowner);
-            if (string.IsNullOrWhiteSpace(firstName))
+            foreach (var landowner in plan.LandownerValues)
             {
-                continue;
+                var (firstName, lastName) = SplitLandownerName(landowner);
+                if (string.IsNullOrWhiteSpace(firstName))
+                {
+                    continue;
+                }
+
+                // Person.FirstName / LastName are varchar(100). GIS landowner values are unbounded
+                // text and routinely carry long trust names, so truncate the way every other string
+                // assignment in this pipeline does rather than letting a 2628 abort the whole import.
+                firstName = Truncate(firstName, PersonNameMaxLength);
+                lastName = Truncate(lastName, PersonNameMaxLength);
+
+                var personID = personLookup.FindByName(firstName, lastName);
+                if (personID != null)
+                {
+                    links.Add((plan.Project.ProjectID, personID.Value, null));
+                    continue;
+                }
+
+                var pending = pendingPeople
+                    .FirstOrDefault(x => NamesMatch(x.FirstName, x.LastName, firstName, lastName))
+                    .Person;
+
+                if (pending == null)
+                {
+                    pending = new Person
+                    {
+                        FirstName = firstName,
+                        LastName = lastName,
+                        CreateDate = DateTime.UtcNow,
+                        IsActive = true,
+                        IsUser = false,
+                        ReceiveSupportEmails = false,
+                        CreatedAsPartOfBulkImport = true
+                    };
+                    dbContext.People.Add(pending);
+                    pendingPeople.Add((firstName, lastName, pending));
+                }
+
+                links.Add((plan.Project.ProjectID, null, pending));
             }
+        }
 
-            // Person.FirstName / LastName are varchar(100). GIS landowner values are unbounded text
-            // and routinely carry long trust names, so truncate the way every other string
-            // assignment in this pipeline does rather than letting a 2628 abort the whole import.
-            firstName = Truncate(firstName, PersonNameMaxLength);
-            lastName = Truncate(lastName, PersonNameMaxLength);
+        // Materialize the new People so their IDs are available to the links below. Also flushes the
+        // RemoveRange above, so a project whose landowners are unchanged doesn't try to re-insert a
+        // ProjectPerson row that is still present.
+        await dbContext.SaveChangesWithNoAuditingAsync();
 
-            var personID = personLookup.FindByName(firstName, lastName);
-            if (personID == null)
+        foreach (var pending in pendingPeople)
+        {
+            dbContext.PersonRoles.Add(new PersonRole
             {
-                var person = new Person
-                {
-                    FirstName = firstName,
-                    LastName = lastName,
-                    CreateDate = DateTime.UtcNow,
-                    IsActive = true,
-                    IsUser = false,
-                    ReceiveSupportEmails = false,
-                    CreatedAsPartOfBulkImport = true
-                };
-                dbContext.People.Add(person);
-                await dbContext.SaveChangesWithNoAuditingAsync();
+                PersonID = pending.Person.PersonID,
+                RoleID = Role.Unassigned.RoleID
+            });
 
-                dbContext.PersonRoles.Add(new PersonRole
-                {
-                    PersonID = person.PersonID,
-                    RoleID = Role.Unassigned.RoleID
-                });
+            // Buffered rather than written straight into personLookup: this runs inside the import's
+            // transaction, and an execution-strategy retry rolls the Person inserts back. Publishing
+            // the IDs to the shared index before the commit would leave the retry resolving PersonIDs
+            // that no longer exist and violating the ProjectPerson foreign key. The caller merges the
+            // buffer only after the transaction commits.
+            createdPeople.Add((
+                pending.Person.PersonID, pending.FirstName, pending.LastName, pending.Person.CreateDate));
+        }
 
-                // Buffered rather than written straight into personLookup: this runs inside the
-                // per-project transaction, and an execution-strategy retry rolls the Person insert
-                // back. Publishing the ID to the shared index before the commit would leave the
-                // retry resolving a PersonID that no longer exists and violating the ProjectPerson
-                // foreign key. The caller merges the buffer only after the transaction commits.
-                createdPeople.Add((person.PersonID, firstName, lastName, person.CreateDate));
-                personID = person.PersonID;
-            }
-
+        foreach (var link in links)
+        {
             dbContext.ProjectPeople.Add(new ProjectPerson
             {
-                ProjectID = projectID,
-                PersonID = personID.Value,
-                ProjectPersonRelationshipTypeID = ProjectPersonRelationshipType.PrivateLandowner.ProjectPersonRelationshipTypeID,
+                ProjectID = link.ProjectID,
+                PersonID = link.PersonID ?? link.PendingPerson.PersonID,
+                ProjectPersonRelationshipTypeID = relationshipTypeID,
                 CreatedAsPartOfBulkImport = true
             });
         }
@@ -1587,64 +2025,6 @@ public static class GisBulkImports
         }
 
         return useEarliest ? parsedDates.Min() : parsedDates.Max();
-    }
-
-    /// <summary>
-    /// Widens a project start / completion date to cover treatments it carries for programs other
-    /// than the one being imported, so a project shared across programs keeps a span covering all of
-    /// them rather than being clipped to this import own features. Ports the second half of legacy
-    /// CalculateStartDate / CalculateCompletionDate.
-    /// </summary>
-    private static async Task<(DateTime? StartDate, DateTime? CompletionDate)> WidenDatesFromOtherProgramTreatmentsAsync(
-        WADNRDbContext dbContext,
-        GisUploadSourceOrganization sourceOrg,
-        int projectID,
-        DateTime? startDate,
-        DateTime? completionDate)
-    {
-        if (!sourceOrg.ApplyStartDateToProject && !sourceOrg.ApplyCompletedDateToProject)
-        {
-            return (startDate, completionDate);
-        }
-
-        var otherProgramDates = await dbContext.Treatments
-            .AsNoTracking()
-            .Where(t => t.ProjectID == projectID && t.ProgramID != null && t.ProgramID != sourceOrg.ProgramID)
-            .Select(t => new { t.TreatmentStartDate, t.TreatmentEndDate })
-            .ToListAsync();
-
-        if (otherProgramDates.Count == 0)
-        {
-            return (startDate, completionDate);
-        }
-
-        var otherStartDates = otherProgramDates
-            .Where(x => x.TreatmentStartDate != null)
-            .Select(x => x.TreatmentStartDate!.Value.ToDateTime(TimeOnly.MinValue))
-            .ToList();
-        if (otherStartDates.Count > 0)
-        {
-            var earliestOtherStart = otherStartDates.Min();
-            if (!startDate.HasValue || earliestOtherStart < startDate.Value)
-            {
-                startDate = earliestOtherStart;
-            }
-        }
-
-        var otherEndDates = otherProgramDates
-            .Where(x => x.TreatmentEndDate != null)
-            .Select(x => x.TreatmentEndDate!.Value.ToDateTime(TimeOnly.MinValue))
-            .ToList();
-        if (otherEndDates.Count > 0)
-        {
-            var latestOtherEnd = otherEndDates.Max();
-            if (!completionDate.HasValue || latestOtherEnd > completionDate.Value)
-            {
-                completionDate = latestOtherEnd;
-            }
-        }
-
-        return (startDate, completionDate);
     }
 
     /// <summary>
