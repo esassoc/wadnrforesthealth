@@ -196,6 +196,99 @@ public class GisBulkImportArcGisIdTests
         Assert.IsNotNull(project.NoPriorityLandscapesExplanation);
     }
 
+    [TestMethod]
+    public async Task ImportProjects_AssignsEachProjectItsOwnRegions_WhenImportingSeveralAtOnce()
+    {
+        // Region assignment is one set-based SQL batch over every project in the import: temp tables,
+        // an OPENJSON project list, and a CROSS JOIN against the boundary tables reduced with
+        // DISTINCT g.ProjectID. If that per-project scoping were wrong — a join dropped, the DISTINCT
+        // widened — every project in the batch would receive the union of all their regions, and a
+        // single-project fixture could never tell. So: two projects at opposite ends of the state,
+        // asserted by ID against what an independent spatial query returns for each one's own
+        // geometry.
+        await using var db = NewContext();
+        var eastern = EasternWashington();
+        var northwestern = NorthwesternWashington();
+        var request = await ArrangeMultiAsync(db, ("PROJ-EAST", eastern), ("PROJ-NW", northwestern));
+
+        var expectedEasternCounties = await ExpectedCountyIDsAsync(db, eastern);
+        var expectedNorthwesternCounties = await ExpectedCountyIDsAsync(db, northwestern);
+
+        // Fixture guards: without these the disjointness assertions below could pass vacuously.
+        Assert.IsTrue(expectedEasternCounties.Count > 0 && expectedNorthwesternCounties.Count > 0,
+            "Both fixture geometries must intersect a County, or this test proves nothing.");
+        Assert.AreEqual(0, expectedEasternCounties.Intersect(expectedNorthwesternCounties).Count(),
+            "The two fixture geometries must sit in different counties for cross-contamination to be detectable.");
+
+        var result = await GisBulkImports.ImportProjectsAsync(db, _attemptID, request);
+
+        Assert.AreEqual(2, result.ProjectsCreated);
+
+        var projectIDByIdentifier = await ProjectIDByGisIdentifierAsync(db);
+
+        CollectionAssert.AreEquivalent(
+            expectedEasternCounties,
+            await AssignedCountyIDsAsync(db, projectIDByIdentifier["PROJ-EAST"]),
+            "The eastern project must get exactly its own counties — not the other project's as well.");
+        CollectionAssert.AreEquivalent(
+            expectedNorthwesternCounties,
+            await AssignedCountyIDsAsync(db, projectIDByIdentifier["PROJ-NW"]),
+            "The northwestern project must get exactly its own counties — not the other project's as well.");
+
+        // Same check one level up: DNR upland regions are assigned by the same batch and the same join.
+        CollectionAssert.AreEquivalent(
+            await ExpectedRegionIDsAsync(db, eastern),
+            await AssignedRegionIDsAsync(db, projectIDByIdentifier["PROJ-EAST"]));
+        CollectionAssert.AreEquivalent(
+            await ExpectedRegionIDsAsync(db, northwestern),
+            await AssignedRegionIDsAsync(db, projectIDByIdentifier["PROJ-NW"]));
+    }
+
+    [TestMethod]
+    public async Task ImportProjects_ReplacesLocationsAndRegions_WhenSeveralProjectsAreReImported()
+    {
+        // The prior-location cleanup is now one SELECT plus two deletes for the whole import rather
+        // than three statements per project, and region assignment likewise deletes and re-inserts in
+        // one batch. Re-importing the same features must therefore leave exactly what the first run
+        // left — no duplicated locations, no stacked region rows — across more than one project.
+        await using var db = NewContext();
+        var eastern = EasternWashington();
+        var northwestern = NorthwesternWashington();
+        var features = new[] { ("PROJ-EAST", eastern), ("PROJ-NW", northwestern) };
+        var request = await ArrangeMultiAsync(db, features);
+
+        var firstRun = await GisBulkImports.ImportProjectsAsync(db, _attemptID, request);
+        Assert.AreEqual(2, firstRun.ProjectsCreated);
+        Assert.AreEqual(2, firstRun.LocationsCreated);
+
+        var projectIDByIdentifier = await ProjectIDByGisIdentifierAsync(db);
+        var easternCountiesAfterFirstRun = await AssignedCountyIDsAsync(db, projectIDByIdentifier["PROJ-EAST"]);
+
+        // A successful import clears its own staged features, so re-stage before running again.
+        db.ChangeTracker.Clear();
+        await StageFeaturesAsync(db, features);
+
+        var secondRun = await GisBulkImports.ImportProjectsAsync(db, _attemptID, request);
+
+        Assert.AreEqual(0, secondRun.ProjectsCreated,
+            "Both projects already exist under this program, so the second run must match rather than duplicate them.");
+        Assert.AreEqual(2, secondRun.ProjectsUpdated);
+
+        db.ChangeTracker.Clear();
+        Assert.AreEqual(2, (await ImportedProjectsAsync(db)).Count,
+            "Re-importing must not create a second project per identifier.");
+
+        var projectIDs = await ImportedProjectsAsync(db);
+        Assert.AreEqual(2, await db.ProjectLocations
+                .CountAsync(l => projectIDs.Contains(l.ProjectID) && l.ImportedFromGisUpload == true),
+            "The batched delete must clear the first run's project areas before the second run re-creates them.");
+
+        CollectionAssert.AreEquivalent(
+            easternCountiesAfterFirstRun,
+            await AssignedCountyIDsAsync(db, projectIDByIdentifier["PROJ-EAST"]),
+            "Region assignment deletes and re-inserts, so a re-import must land on the same set, not a doubled one.");
+    }
+
     #endregion
 
     #region BuildOutFields (no database)
@@ -261,6 +354,15 @@ public class GisBulkImportArcGisIdTests
     /// <summary>Mid-Atlantic, so nothing in the WA boundary tables can intersect it.</summary>
     private static Geometry FarFromWashington() => Square(-40.0, 30.0);
 
+    /// <summary>
+    /// Two squares roughly 300km apart at opposite ends of the state, so they fall in different
+    /// counties and different DNR upland regions. The multi-project tests rely on that separation to
+    /// detect a batch that assigns one project's regions to another.
+    /// </summary>
+    private static Geometry EasternWashington() => Square(-118.5, 46.4);
+
+    private static Geometry NorthwesternWashington() => Square(-122.4, 48.4);
+
     private static Geometry Square(double minX, double minY)
     {
         const double size = 0.1;
@@ -285,6 +387,73 @@ public class GisBulkImportArcGisIdTests
     /// </summary>
     private async Task<GisBulkImportRequest> ArrangeAsync(
         WADNRDbContext dbContext, string? objectIdValue, string? globalIdValue, Geometry? geometry = null)
+    {
+        await SeedFixtureAsync(dbContext);
+
+        await GisBulkImports.UploadAndProcessFileAsync(
+            dbContext, _attemptID, BuildGeoJson(objectIdValue, globalIdValue, geometry ?? InsideWashington()));
+
+        return await BuildRequestAsync(dbContext);
+    }
+
+    /// <summary>
+    /// Stages several features, one per project identifier, through the same real upload path.
+    /// Used by the multi-project tests: the import is set-based, so a single-project fixture leaves
+    /// the batching — and the region SQL's per-project scoping in particular — unexercised.
+    /// </summary>
+    private async Task<GisBulkImportRequest> ArrangeMultiAsync(
+        WADNRDbContext dbContext, params (string Identifier, Geometry Geometry)[] features)
+    {
+        await SeedFixtureAsync(dbContext);
+        await StageFeaturesAsync(dbContext, features);
+        return await BuildRequestAsync(dbContext);
+    }
+
+    /// <summary>One feature per project identifier, each with its own geometry.</summary>
+    private static string BuildMultiFeatureGeoJson((string Identifier, Geometry Geometry)[] features)
+    {
+        var featureCollection = new FeatureCollection();
+        foreach (var (identifier, geometry) in features)
+        {
+            featureCollection.Add(new Feature(geometry, new AttributesTable
+            {
+                { "approval_id", identifier },
+                { "project_name", $"Test Project {identifier}" }
+            }));
+        }
+
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new GeoJsonConverterFactory());
+        return JsonSerializer.Serialize(featureCollection, options);
+    }
+
+    /// <summary>
+    /// Stages the given features onto this attempt. UploadAndProcessFileAsync clears the attempt's
+    /// prior staged rows first, so calling this a second time is exactly what a repeat upload of the
+    /// same GDB does — and it is the only way to exercise a second import, because a successful one
+    /// clears its own staged features.
+    /// </summary>
+    private async Task StageFeaturesAsync(
+        WADNRDbContext dbContext, params (string Identifier, Geometry Geometry)[] features) =>
+        await GisBulkImports.UploadAndProcessFileAsync(
+            dbContext, _attemptID, BuildMultiFeatureGeoJson(features));
+
+    private async Task<GisBulkImportRequest> BuildRequestAsync(WADNRDbContext dbContext)
+    {
+        var attributeIDByName = await dbContext.GisUploadAttemptGisMetadataAttributes
+            .AsNoTracking()
+            .Where(x => x.GisUploadAttemptID == _attemptID)
+            .Select(x => new { x.GisMetadataAttributeID, x.GisMetadataAttribute.GisMetadataAttributeName })
+            .ToDictionaryAsync(x => x.GisMetadataAttributeName, x => x.GisMetadataAttributeID, StringComparer.OrdinalIgnoreCase);
+
+        return new GisBulkImportRequest
+        {
+            ProjectIdentifierMetadataAttributeID = attributeIDByName["approval_id"],
+            ProjectNameMetadataAttributeID = attributeIDByName["project_name"]
+        };
+    }
+
+    private async Task SeedFixtureAsync(WADNRDbContext dbContext)
     {
         var program = await ProgramHelper.CreateProgramAsync(
             dbContext, AssemblySteps.TestAdminPersonID, name: $"ArcGis Id Test {DateTime.UtcNow:yyyyMMddHHmmssfff}");
@@ -319,21 +488,6 @@ public class GisBulkImportArcGisIdTests
         dbContext.GisUploadAttempts.Add(attempt);
         await dbContext.SaveChangesWithNoAuditingAsync();
         _attemptID = attempt.GisUploadAttemptID;
-
-        await GisBulkImports.UploadAndProcessFileAsync(
-            dbContext, _attemptID, BuildGeoJson(objectIdValue, globalIdValue, geometry ?? InsideWashington()));
-
-        var attributeIDByName = await dbContext.GisUploadAttemptGisMetadataAttributes
-            .AsNoTracking()
-            .Where(x => x.GisUploadAttemptID == _attemptID)
-            .Select(x => new { x.GisMetadataAttributeID, x.GisMetadataAttribute.GisMetadataAttributeName })
-            .ToDictionaryAsync(x => x.GisMetadataAttributeName, x => x.GisMetadataAttributeID, StringComparer.OrdinalIgnoreCase);
-
-        return new GisBulkImportRequest
-        {
-            ProjectIdentifierMetadataAttributeID = attributeIDByName["approval_id"],
-            ProjectNameMetadataAttributeID = attributeIDByName["project_name"]
-        };
     }
 
     private static string BuildGeoJson(string? objectIdValue, string? globalIdValue, Geometry geometry)
@@ -367,6 +521,31 @@ public class GisBulkImportArcGisIdTests
         await dbContext.DNRUplandRegions.AsNoTracking().CountAsync(r => r.DNRUplandRegionLocation.Intersects(geometry)),
         await dbContext.PriorityLandscapes.AsNoTracking().CountAsync(p => p.PriorityLandscapeLocation.Intersects(geometry))
     );
+
+    /// <summary>Which County / DNRUplandRegion rows a direct spatial query says a geometry hits.</summary>
+    private static async Task<List<int>> ExpectedCountyIDsAsync(WADNRDbContext dbContext, Geometry geometry) =>
+        await dbContext.Counties.AsNoTracking()
+            .Where(c => c.CountyFeature.Intersects(geometry)).Select(c => c.CountyID).ToListAsync();
+
+    private static async Task<List<int>> ExpectedRegionIDsAsync(WADNRDbContext dbContext, Geometry geometry) =>
+        await dbContext.DNRUplandRegions.AsNoTracking()
+            .Where(r => r.DNRUplandRegionLocation.Intersects(geometry)).Select(r => r.DNRUplandRegionID).ToListAsync();
+
+    /// <summary>What the import actually assigned.</summary>
+    private static async Task<List<int>> AssignedCountyIDsAsync(WADNRDbContext dbContext, int projectID) =>
+        await dbContext.ProjectCounties.AsNoTracking()
+            .Where(x => x.ProjectID == projectID).Select(x => x.CountyID).ToListAsync();
+
+    private static async Task<List<int>> AssignedRegionIDsAsync(WADNRDbContext dbContext, int projectID) =>
+        await dbContext.ProjectRegions.AsNoTracking()
+            .Where(x => x.ProjectID == projectID).Select(x => x.DNRUplandRegionID).ToListAsync();
+
+    private async Task<Dictionary<string, int>> ProjectIDByGisIdentifierAsync(WADNRDbContext dbContext) =>
+        await dbContext.Projects
+            .AsNoTracking()
+            .Where(p => (p.CreateGisUploadAttemptID == _attemptID || p.LastUpdateGisUploadAttemptID == _attemptID)
+                && p.ProjectGisIdentifier != null)
+            .ToDictionaryAsync(p => p.ProjectGisIdentifier!, p => p.ProjectID);
 
     private async Task<List<int>> ImportedProjectsAsync(WADNRDbContext dbContext) =>
         await dbContext.Projects
