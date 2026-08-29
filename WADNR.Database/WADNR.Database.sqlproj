@@ -431,6 +431,7 @@
     <None Include="Scripts\ReleaseScripts\0007 - WADNR-2263 Backfill FHT Project Numbers with year prefix.sql" />
     <None Include="Scripts\ReleaseScripts\0008 - WADNR-2264 Delete blocked projects imported in error.sql" />
     <None Include="Scripts\ReleaseScripts\0009 - WADNR-2287 Correct project types on GIS bulk imported projects.sql" />
+    <None Include="Scripts\ReleaseScripts\0010 - WADNR-2280 Backfill simple locations on GIS imported projects.sql" />
   </ItemGroup>
   <UsingTask TaskName="ScriptDeploymentGenerator" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>

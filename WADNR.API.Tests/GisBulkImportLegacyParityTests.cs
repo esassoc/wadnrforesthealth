@@ -624,6 +624,65 @@ public class GisBulkImportLegacyParityTests
         Assert.IsNull((await db.Projects.SingleAsync()).ProjectLocationPoint);
     }
 
+    [TestMethod]
+    public async Task ImportProjects_SetsProjectLocationPoint_OnTreatmentPathCreate()
+    {
+        // On the treatment path the proc normally sets the point, but it can't run in this in-memory
+        // harness (its call is swallowed to a warning) — mirroring production, where the proc is gated
+        // to newly-created projects and skipped entirely when the treatment import throws. The
+        // unconditional centroid heal must still give every created project a simple location. WADNR-2280.
+        await using var db = NewInMemoryContext();
+        await SeedAsync(db, new SeedOptions
+        {
+            ImportAsDetailedLocationInsteadOfTreatments = false,
+            Features = { new FeatureSpec("PROJ-1") }
+        });
+
+        await GisBulkImports.ImportProjectsAsync(db, AttemptID, BuildRequest());
+
+        db.ChangeTracker.Clear();
+        var project = await db.Projects.SingleAsync();
+        Assert.IsNotNull(project.ProjectLocationPoint, "Expected a centroid derived from the imported project areas.");
+        Assert.AreEqual((int)ProjectLocationSimpleTypeEnum.PointOnMap, project.ProjectLocationSimpleTypeID);
+    }
+
+    [TestMethod]
+    public async Task ImportProjects_SetsProjectLocationPoint_OnTreatmentPathUpdate()
+    {
+        // The proc's UPDATE is gated by CreateGisUploadAttemptID, so a project the import merely
+        // updates never gets a point from it. The heal is scoped by LastUpdateGisUploadAttemptID and
+        // must fill the point on updated projects too, not just newly-created ones. WADNR-2280.
+        await using var db = NewInMemoryContext();
+        await SeedAsync(db, new SeedOptions
+        {
+            ImportAsDetailedLocationInsteadOfTreatments = false,
+            Features = { new FeatureSpec("PROJ-1", Name: "Renamed By Import") }
+        });
+
+        db.Projects.Add(new Project
+        {
+            ProjectID = 500,
+            ProjectName = "Existing",
+            FhtProjectNumber = "FHT-2026-00001",
+            ProjectGisIdentifier = "PROJ-1",
+            ProjectTypeID = OtherProjectTypeID,
+            ProjectStageID = (int)ProjectStageEnum.Planned,
+            ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.Approved,
+            ProjectLocationSimpleTypeID = (int)ProjectLocationSimpleTypeEnum.None,
+        });
+        db.ProjectPrograms.Add(new ProjectProgram { ProjectID = 500, ProgramID = ProgramID });
+        await db.SaveChangesWithNoAuditingAsync();
+
+        var result = await GisBulkImports.ImportProjectsAsync(db, AttemptID, BuildRequest());
+
+        Assert.AreEqual(1, result.ProjectsUpdated);
+        db.ChangeTracker.Clear();
+        var project = await db.Projects.SingleAsync();
+        Assert.IsNotNull(project.ProjectLocationPoint,
+            "An updated project must get a centroid too — the proc's UPDATE is create-only.");
+        Assert.AreEqual((int)ProjectLocationSimpleTypeEnum.PointOnMap, project.ProjectLocationSimpleTypeID);
+    }
+
     // ---------------------------------------------------------------------------------------
     // Update-path branches
     // ---------------------------------------------------------------------------------------

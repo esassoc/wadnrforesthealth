@@ -26,4 +26,6 @@ GO
 GO
 :r ".\0009 - WADNR-2287 Correct project types on GIS bulk imported projects.sql"
 GO
+:r ".\0010 - WADNR-2280 Backfill simple locations on GIS imported projects.sql"
+GO
 

@@ -861,14 +861,13 @@ public static class GisBulkImports
             await ApplyProjectTypeFromTreatmentTypesAsync(dbContext, sourceOrg, gisUploadAttemptID);
         }
 
-        if (sourceOrg.ImportAsDetailedLocationInsteadOfTreatments)
-        {
-            // The proc is what normally sets Project.ProjectLocationPoint / ProjectLocationSimpleTypeID
-            // (its final UPDATE, joining Project -> Treatment -> ProjectLocation). Gating the proc off
-            // above would otherwise leave these sources with no simple location at all, so derive the
-            // centroid here the way legacy's MakeProjectLocationsAndSave did for exactly this flag.
-            await ApplySimpleLocationFromProjectAreasAsync(dbContext, gisUploadAttemptID);
-        }
+        // Ensure every project the attempt touched has a simple-location point. For detailed-location
+        // sources the proc is skipped, so this is the only thing that sets it. For treatment-path
+        // sources the proc's final UPDATE sets the point for newly-created projects only
+        // (CreateGisUploadAttemptID gate) and not at all when the treatment import failed — this heals
+        // updated projects and those gaps. Scoped by LastUpdateGisUploadAttemptID and fills only an
+        // unset point, so it never overwrites a steward-placed point or the proc's own result. WADNR-2280.
+        await ApplySimpleLocationFromProjectAreasAsync(dbContext, gisUploadAttemptID);
 
         // Assign the DNR Service Forestry Regional Coordinator to newly-created Landowner Assistance
         // projects, from the DNR Upland Region they landed in. Ports legacy's AddProjectCoordinators,
@@ -1727,9 +1726,11 @@ DROP TABLE #ImportProject;
     /// Sets Project.ProjectLocationPoint to the centroid of the project's imported project areas and
     /// marks the simple location type as a point on the map.
     ///
-    /// Only needed for sources that skip the treatment proc: the proc's final statement normally does
-    /// this, so gating it off would otherwise leave those projects with no simple location. Legacy
-    /// computed the same centroid inline for exactly these sources.
+    /// Runs for every import as a safety net. Detailed-location sources skip the treatment proc, so
+    /// this is the only thing that sets their point. Treatment-path sources normally get the point
+    /// from the proc's final UPDATE, but that only covers newly-created projects and does not run when
+    /// the treatment import failed; this fills those gaps. Only ever fills an unset point, so it never
+    /// overwrites the proc's result or a steward-placed point.
     /// </summary>
     private static async Task ApplySimpleLocationFromProjectAreasAsync(WADNRDbContext dbContext, int gisUploadAttemptID)
     {
