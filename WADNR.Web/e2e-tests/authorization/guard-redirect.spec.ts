@@ -8,8 +8,6 @@ import { test, expect } from "@playwright/test";
 
 test.describe("authGuard routes redirect anonymous users to /", () => {
     const authGuardRoutes = [
-        "/focus-areas",
-        "/focus-areas/1",
         "/vendors",
         "/people",
         "/people/5230",

@@ -38,8 +38,6 @@ public partial class ProjectUpdate
 
     public int ProjectLocationSimpleTypeID { get; set; }
 
-    public int? FocusAreaID { get; set; }
-
     public DateOnly? ExpirationDate { get; set; }
 
     [StringLength(4000)]
@@ -47,10 +45,6 @@ public partial class ProjectUpdate
     public string? ProjectFundingSourceNotes { get; set; }
 
     public int? PercentageMatch { get; set; }
-
-    [ForeignKey("FocusAreaID")]
-    [InverseProperty("ProjectUpdates")]
-    public virtual FocusArea? FocusArea { get; set; }
 
     [ForeignKey("ProjectUpdateBatchID")]
     [InverseProperty("ProjectUpdates")]

@@ -13,16 +13,6 @@ test.describe("Authenticated pages - visual regression", () => {
         await setupTestAuth(page, testUsers.admin);
     });
 
-    test("Focus areas", async ({ page }) => {
-        await page.goto("/focus-areas");
-        await waitForPageStable(page);
-        await waitForGrid(page);
-        await expect(page).toHaveScreenshot("focus-areas.png", {
-            ...DEFAULT_SCREENSHOT_OPTIONS,
-            mask: getGridBodyMasks(page),
-        });
-    });
-
     test("Agreements", async ({ page }) => {
         await page.goto("/agreements");
         await waitForPageStable(page);

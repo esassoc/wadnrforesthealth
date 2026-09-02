@@ -163,9 +163,6 @@
                         <div class="g-col-4 field-label"><field-definition fieldDefinition="ExpirationDate"></field-definition></div>
                         <div class="g-col-8">{{ project.ExpirationDate | localDate }}</div>
 
-                        <div class="g-col-4 field-label"><field-definition fieldDefinition="FocusArea" labelOverride="DNR LOA Focus Area"></field-definition></div>
-                        <div class="g-col-8">{{ project.FocusAreaName || "—" }}</div>
-
                         <div class="g-col-4 field-label"><field-definition fieldDefinition="Program"></field-definition></div>
                         <div class="g-col-8">
                             @if (project.Programs && project.Programs.length > 0) {

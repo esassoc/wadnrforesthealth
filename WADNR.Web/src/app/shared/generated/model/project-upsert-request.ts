@@ -24,7 +24,6 @@ export class ProjectUpsertRequest {
     ProposingDate?: string | null;
     SubmissionDate?: string | null;
     ApprovalDate?: string | null;
-    FocusAreaID?: number | null;
     ExpirationDate?: string | null;
     FhtProjectNumber?: string | null;
     constructor(obj?: any) {
@@ -46,7 +45,6 @@ export interface ProjectUpsertRequestForm {
     ProposingDate?: FormControl<string>;
     SubmissionDate?: FormControl<string>;
     ApprovalDate?: FormControl<string>;
-    FocusAreaID?: FormControl<number>;
     ExpirationDate?: FormControl<string>;
     FhtProjectNumber?: FormControl<string>;
 }
@@ -173,16 +171,6 @@ export class ProjectUpsertRequestFormControls {
         }
     );
     public static ApprovalDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static FocusAreaID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

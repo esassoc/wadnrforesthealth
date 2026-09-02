@@ -848,43 +848,6 @@ public class ProjectControllerTests
 
     #endregion
 
-    #region Focus Area Tests
-
-    [TestMethod]
-    public async Task ListForFocusAreaAsGridRow_ReturnsProjects_WhenProjectsExistInFocusArea()
-    {
-        // Arrange - Get a focus area
-        var focusArea = await AssemblySteps.DbContext.FocusAreas.FirstOrDefaultAsync();
-        if (focusArea == null)
-        {
-            Assert.Inconclusive("No focus areas found in database");
-            return;
-        }
-
-        // Assign the test project to the focus area
-        await AssemblySteps.DbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"UPDATE dbo.Project SET FocusAreaID = {focusArea.FocusAreaID} WHERE ProjectID = {_testProjectID}");
-
-        try
-        {
-            // Act - ListForFocusAreaAsGridRowAsync takes only dbContext and focusAreaID
-            var projects = await Projects.ListForFocusAreaAsGridRowAsync(
-                AssemblySteps.DbContext, focusArea.FocusAreaID);
-
-            // Assert
-            Assert.IsNotNull(projects);
-            Assert.IsTrue(projects.Any(p => p.ProjectID == _testProjectID));
-        }
-        finally
-        {
-            // Cleanup - Clear focus area assignment
-            await AssemblySteps.DbContext.Database.ExecuteSqlInterpolatedAsync(
-                $"UPDATE dbo.Project SET FocusAreaID = NULL WHERE ProjectID = {_testProjectID}");
-        }
-    }
-
-    #endregion
-
     #region Person Tests
 
     [TestMethod]

@@ -28,8 +28,8 @@ const ANON_EXACT: ExactMap = {
 
 const SECURED_EXACT: ExactMap = {
   'DELETE': [],
-  'GET': ["/agreements","/agreements/excel-download","/api/Job/import-history","/custom-pages","/custom-rich-texts","/external-map-layers","/field-definitions","/find-your-forester/assignable-people","/focus-areas","/focus-areas/locations","/fund-sources/excel-download","/gis-bulk-import/source-organizations","/invoices","/loa-upload/dashboard","/people","/people/lookup","/people/lookup/wadnr","/people/stewardship-areas/regions","/programs/eligible-editors","/project-update-configurations","/projects/excel-download","/projects/lookup","/projects/no-contact-count","/projects/pending","/projects/pending/excel-download","/projects/people-receiving-reminders","/projects/update-status","/report-templates","/report-templates/models","/roles","/service-forestry-upload/dashboard","/vendors","/vendors/excel-download","/vendors/search"],
-  'POST': ["/agreements","/agreements/upload-file","/api/Job/clear-outdated-imports","/classifications","/classifications/upload-key-image","/custom-pages","/dnr-upland-regions","/external-map-layers","/find-your-forester/work-units/bulk-assign","/firma-home-page-images","/focus-areas","/fund-source-allocation-notes","/fund-source-allocation-notes-internal","/fund-source-allocations","/fund-source-images","/fund-sources","/gis-bulk-import/attempts","/impersonation/stop","/interactions-events","/invoice-payment-requests","/invoices","/loa-upload/publish","/organization-types","/organizations","/people","/priority-landscapes","/programs","/programs/upload-example-geospatial-file","/programs/upload-program-file","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/projects/send-custom-notification","/projects/send-preview-notification","/relationship-types","/report-templates","/report-templates/generate-reports","/service-forestry-upload/import","/service-forestry-upload/publish","/support-requests","/tags","/tags/bulk-tag-projects","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
+  'GET': ["/agreements","/agreements/excel-download","/api/Job/import-history","/custom-pages","/custom-rich-texts","/external-map-layers","/field-definitions","/find-your-forester/assignable-people","/fund-sources/excel-download","/gis-bulk-import/source-organizations","/invoices","/loa-upload/dashboard","/people","/people/lookup","/people/lookup/wadnr","/people/stewardship-areas/regions","/programs/eligible-editors","/project-update-configurations","/projects/excel-download","/projects/lookup","/projects/no-contact-count","/projects/pending","/projects/pending/excel-download","/projects/people-receiving-reminders","/projects/update-status","/report-templates","/report-templates/models","/roles","/service-forestry-upload/dashboard","/vendors","/vendors/excel-download","/vendors/search"],
+  'POST': ["/agreements","/agreements/upload-file","/api/Job/clear-outdated-imports","/classifications","/classifications/upload-key-image","/custom-pages","/dnr-upland-regions","/external-map-layers","/find-your-forester/work-units/bulk-assign","/firma-home-page-images","/fund-source-allocation-notes","/fund-source-allocation-notes-internal","/fund-source-allocations","/fund-source-images","/fund-sources","/gis-bulk-import/attempts","/impersonation/stop","/interactions-events","/invoice-payment-requests","/invoices","/loa-upload/publish","/organization-types","/organizations","/people","/priority-landscapes","/programs","/programs/upload-example-geospatial-file","/programs/upload-program-file","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/projects/send-custom-notification","/projects/send-preview-notification","/relationship-types","/report-templates","/report-templates/generate-reports","/service-forestry-upload/import","/service-forestry-upload/publish","/support-requests","/tags","/tags/bulk-tag-projects","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
   'PUT': ["/classifications/sort-order","/firma-home-page-images/sort-order","/project-types/sort-order","/project-update-configurations","/projects/featured"],
 };
 
@@ -149,8 +149,6 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/dnr-upland-regions/[^/]+$"),
     new RegExp("^/external-map-layers/[^/]+$"),
     new RegExp("^/firma-home-page-images/[^/]+$"),
-    new RegExp("^/focus-areas/[^/]+$"),
-    new RegExp("^/focus-areas/[^/]+/location$"),
     new RegExp("^/fund-source-allocation-notes-internal/[^/]+$"),
     new RegExp("^/fund-source-allocation-notes/[^/]+$"),
     new RegExp("^/fund-source-allocations/[^/]+$"),
@@ -196,14 +194,8 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/cost-share/generate-pdf/[^/]+$"),
     new RegExp("^/custom-pages/[^/]+$"),
     new RegExp("^/dnr-upland-regions/[^/]+/expenditures-by-cost-type$"),
-    new RegExp("^/dnr-upland-regions/[^/]+/focus-areas$"),
     new RegExp("^/external-map-layers/[^/]+$"),
     new RegExp("^/find-your-forester/work-units/[^/]+$"),
-    new RegExp("^/focus-areas/[^/]+$"),
-    new RegExp("^/focus-areas/[^/]+/location$"),
-    new RegExp("^/focus-areas/[^/]+/location/staged-features$"),
-    new RegExp("^/focus-areas/[^/]+/projects$"),
-    new RegExp("^/focus-areas/[^/]+/projects/feature-collection$"),
     new RegExp("^/fund-source-allocation-notes-internal/[^/]+$"),
     new RegExp("^/fund-source-allocations/[^/]+/change-logs$"),
     new RegExp("^/fund-source-allocations/[^/]+/notes-internal$"),
@@ -284,8 +276,6 @@ const SECURED_REGEX: RegexMap = {
   'POST': [
     new RegExp("^/agreements/[^/]+/contacts$"),
     new RegExp("^/api/Job/[^/]+/trigger$"),
-    new RegExp("^/focus-areas/[^/]+/location/approve-gdb$"),
-    new RegExp("^/focus-areas/[^/]+/location/upload-gdb$"),
     new RegExp("^/fund-source-allocations/[^/]+/duplicate$"),
     new RegExp("^/fund-source-allocations/[^/]+/files$"),
     new RegExp("^/fund-source-images/[^/]+/set-key-photo$"),
@@ -345,7 +335,6 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/external-map-layers/[^/]+$"),
     new RegExp("^/field-definitions/[^/]+$"),
     new RegExp("^/firma-home-page-images/[^/]+$"),
-    new RegExp("^/focus-areas/[^/]+$"),
     new RegExp("^/fund-source-allocation-notes-internal/[^/]+$"),
     new RegExp("^/fund-source-allocation-notes/[^/]+$"),
     new RegExp("^/fund-source-allocations/[^/]+$"),

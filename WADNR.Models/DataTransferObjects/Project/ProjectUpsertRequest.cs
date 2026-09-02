@@ -15,7 +15,6 @@ public class ProjectUpsertRequest
     public DateTimeOffset? ProposingDate { get; set; }
     public DateTimeOffset? SubmissionDate { get; set; }
     public DateTimeOffset? ApprovalDate { get; set; }
-    public int? FocusAreaID { get; set; }
     public DateOnly? ExpirationDate { get; set; }
     public string FhtProjectNumber { get; set; } = string.Empty;
 }

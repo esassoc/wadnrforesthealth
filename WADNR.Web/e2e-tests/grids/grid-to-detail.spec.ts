@@ -27,11 +27,4 @@ test.describe("Grid row links navigate to detail pages", () => {
         await expect(page).toHaveURL(/\/counties\/\d+/);
     });
 
-    test("Focus areas grid row links to focus area detail", async ({ authedPage: page }) => {
-        await page.goto("/focus-areas");
-        await expect(page.locator(".ag-row").first()).toBeVisible({ timeout: 30000 });
-        const firstLink = page.locator(".ag-row .ag-cell a[href]").first();
-        await firstLink.click();
-        await expect(page).toHaveURL(/\/focus-areas\/\d+/);
-    });
 });

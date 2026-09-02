@@ -23,15 +23,6 @@ test.describe("Detail pages - visual regression", () => {
         });
     });
 
-    test("Focus area detail", async ({ page }) => {
-        await page.goto(`/focus-areas/${testData.focusAreaID}`);
-        await waitForPageStable(page);
-        await expect(page).toHaveScreenshot("detail-focus-area.png", {
-            ...DEFAULT_SCREENSHOT_OPTIONS,
-            mask: [...getMapMasks(page), ...getGridBodyMasks(page)],
-        });
-    });
-
     test("Fund source detail", async ({ page }) => {
         await page.goto(`/fund-sources/${testData.fundSourceID}`);
         await waitForPageStable(page);

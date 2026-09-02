@@ -41,8 +41,7 @@
               }
             }
           }
-        },
-        "x-anonymous": true
+        }
       },
       "post": {
         "tags": [
@@ -1558,6 +1557,66 @@
         "x-anonymous": true
       }
     },
+    "/counties/{countyID}/content": {
+      "put": {
+        "tags": [
+          "County"
+        ],
+        "operationId": "UpdateContent_County",
+        "parameters": [
+          {
+            "name": "countyID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CountyContentUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CountyContentUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CountyContentUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountyDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountyDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountyDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/counties/{countyID}/projects/feature-collection": {
       "get": {
         "tags": [
@@ -2481,56 +2540,6 @@
         "x-anonymous": true
       }
     },
-    "/dnr-upland-regions/{dnrUplandRegionID}/focus-areas": {
-      "get": {
-        "tags": [
-          "DNRUplandRegion"
-        ],
-        "operationId": "ListFocusAreas_DNRUplandRegion",
-        "parameters": [
-          {
-            "name": "dnrUplandRegionID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FocusAreaGridRow"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FocusAreaGridRow"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FocusAreaGridRow"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/dnr-upland-regions/{dnrUplandRegionID}/expenditures-by-cost-type": {
       "get": {
         "tags": [
@@ -3293,6 +3302,56 @@
         "x-anonymous": true
       }
     },
+    "/find-your-forester/by-point": {
+      "post": {
+        "tags": [
+          "FindYourForester"
+        ],
+        "operationId": "GetForestersByPoint_FindYourForester",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindYourForesterPointRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindYourForesterPointRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindYourForesterPointRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindYourForesterPointResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindYourForesterPointResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindYourForesterPointResult"
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
     "/find-your-forester/work-units/{foresterRoleID}": {
       "get": {
         "tags": [
@@ -3673,587 +3732,6 @@
         }
       }
     },
-    "/focus-areas": {
-      "get": {
-        "tags": [
-          "FocusArea"
-        ],
-        "operationId": "List_FocusArea",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FocusAreaGridRow"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FocusAreaGridRow"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FocusAreaGridRow"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "FocusArea"
-        ],
-        "operationId": "Create_FocusArea",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/FocusAreaUpsertRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/FocusAreaUpsertRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/FocusAreaUpsertRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/FocusAreaDetail"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FocusAreaDetail"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FocusAreaDetail"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/focus-areas/locations": {
-      "get": {
-        "tags": [
-          "FocusArea"
-        ],
-        "operationId": "ListLocations_FocusArea",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/IFeature"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/IFeature"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/IFeature"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/focus-areas/{focusAreaID}": {
-      "get": {
-        "tags": [
-          "FocusArea"
-        ],
-        "operationId": "GetByID_FocusArea",
-        "parameters": [
-          {
-            "name": "focusAreaID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/FocusAreaDetail"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FocusAreaDetail"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FocusAreaDetail"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "FocusArea"
-        ],
-        "operationId": "Update_FocusArea",
-        "parameters": [
-          {
-            "name": "focusAreaID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/FocusAreaUpsertRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/FocusAreaUpsertRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/FocusAreaUpsertRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/FocusAreaDetail"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FocusAreaDetail"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FocusAreaDetail"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "FocusArea"
-        ],
-        "operationId": "Delete_FocusArea",
-        "parameters": [
-          {
-            "name": "focusAreaID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/focus-areas/{focusAreaID}/location": {
-      "get": {
-        "tags": [
-          "FocusArea"
-        ],
-        "operationId": "GetLocation_FocusArea",
-        "parameters": [
-          {
-            "name": "focusAreaID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/IFeature"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/IFeature"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/IFeature"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "FocusArea"
-        ],
-        "operationId": "DeleteLocation_FocusArea",
-        "parameters": [
-          {
-            "name": "focusAreaID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/focus-areas/{focusAreaID}/location/upload-gdb": {
-      "post": {
-        "tags": [
-          "FocusArea"
-        ],
-        "operationId": "UploadGdbForLocation_FocusArea",
-        "parameters": [
-          {
-            "name": "focusAreaID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              },
-              "encoding": {
-                "file": {
-                  "style": "form"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GdbFeatureClassPreview"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GdbFeatureClassPreview"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GdbFeatureClassPreview"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/focus-areas/{focusAreaID}/location/staged-features": {
-      "get": {
-        "tags": [
-          "FocusArea"
-        ],
-        "operationId": "GetStagedFeatures_FocusArea",
-        "parameters": [
-          {
-            "name": "focusAreaID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/StagedFeatureLayer"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/StagedFeatureLayer"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/StagedFeatureLayer"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/focus-areas/{focusAreaID}/location/approve-gdb": {
-      "post": {
-        "tags": [
-          "FocusArea"
-        ],
-        "operationId": "ApproveGdbForLocation_FocusArea",
-        "parameters": [
-          {
-            "name": "focusAreaID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SinglePolygonApproveRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SinglePolygonApproveRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/SinglePolygonApproveRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/focus-areas/{focusAreaID}/projects": {
-      "get": {
-        "tags": [
-          "FocusArea"
-        ],
-        "operationId": "ListProjects_FocusArea",
-        "parameters": [
-          {
-            "name": "focusAreaID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProjectFocusAreaDetailGridRow"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProjectFocusAreaDetailGridRow"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProjectFocusAreaDetailGridRow"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/focus-areas/{focusAreaID}/projects/feature-collection": {
-      "get": {
-        "tags": [
-          "FocusArea"
-        ],
-        "operationId": "ListProjectsFeatureCollection_FocusArea",
-        "parameters": [
-          {
-            "name": "focusAreaID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/IFeature"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/IFeature"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/IFeature"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/funding-sources": {
       "get": {
         "tags": [
@@ -4556,6 +4034,66 @@
         }
       }
     },
+    "/fund-sources/{fundSourceID}/about": {
+      "put": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "UpdateAbout_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceAboutUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceAboutUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceAboutUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/fund-sources/{fundSourceID}/allocations": {
       "get": {
         "tags": [
@@ -4581,7 +4119,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                    "$ref": "#/components/schemas/FundSourceAllocationGridRow"
                   }
                 }
               },
@@ -4589,7 +4127,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                    "$ref": "#/components/schemas/FundSourceAllocationGridRow"
                   }
                 }
               },
@@ -4597,7 +4135,58 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FundSourceAllocationLookupItem"
+                    "$ref": "#/components/schemas/FundSourceAllocationGridRow"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      }
+    },
+    "/fund-sources/{fundSourceID}/project-locations": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "ListProjectLocations_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IFeature"
                   }
                 }
               }
@@ -4649,108 +4238,6 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/FundSourceProjectGridRow"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-anonymous": true
-      }
-    },
-    "/fund-sources/{fundSourceID}/agreements": {
-      "get": {
-        "tags": [
-          "FundSource"
-        ],
-        "operationId": "ListAgreements_FundSource",
-        "parameters": [
-          {
-            "name": "fundSourceID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FundSourceAgreementGridRow"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FundSourceAgreementGridRow"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FundSourceAgreementGridRow"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-anonymous": true
-      }
-    },
-    "/fund-sources/{fundSourceID}/budget-line-items": {
-      "get": {
-        "tags": [
-          "FundSource"
-        ],
-        "operationId": "ListBudgetLineItems_FundSource",
-        "parameters": [
-          {
-            "name": "fundSourceID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FundSourceBudgetLineItemGridRow"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FundSourceBudgetLineItemGridRow"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FundSourceBudgetLineItemGridRow"
                   }
                 }
               }
@@ -4880,6 +4367,57 @@
             }
           }
         }
+      }
+    },
+    "/fund-sources/{fundSourceID}/images": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "ListImages_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceImageGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceImageGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceImageGridRow"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
       }
     },
     "/fund-sources/{fundSourceID}/notes": {
@@ -6813,6 +6351,221 @@
           }
         },
         "x-anonymous": true
+      }
+    },
+    "/fund-source-images/{fundSourceImageID}": {
+      "get": {
+        "tags": [
+          "FundSourceImage"
+        ],
+        "operationId": "GetByID_FundSourceImage",
+        "parameters": [
+          {
+            "name": "fundSourceImageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      },
+      "put": {
+        "tags": [
+          "FundSourceImage"
+        ],
+        "operationId": "Update_FundSourceImage",
+        "parameters": [
+          {
+            "name": "fundSourceImageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceImageUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceImageUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceImageUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FundSourceImage"
+        ],
+        "operationId": "Delete_FundSourceImage",
+        "parameters": [
+          {
+            "name": "fundSourceImageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/fund-source-images": {
+      "post": {
+        "tags": [
+          "FundSourceImage"
+        ],
+        "operationId": "Create_FundSourceImage",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fundSourceID": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "caption": {
+                    "type": "string"
+                  },
+                  "credit": {
+                    "type": "string"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "fundSourceID": {
+                  "style": "form"
+                },
+                "caption": {
+                  "style": "form"
+                },
+                "credit": {
+                  "style": "form"
+                },
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundSourceImageDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fund-source-images/{fundSourceImageID}/set-key-photo": {
+      "post": {
+        "tags": [
+          "FundSourceImage"
+        ],
+        "operationId": "SetKeyPhoto_FundSourceImage",
+        "parameters": [
+          {
+            "name": "fundSourceImageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/fund-source-types/lookup": {
@@ -9865,6 +9618,53 @@
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "Create_Person",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonUpsertRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonUpsertRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDetail"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/people/lookup": {
@@ -9989,7 +9789,7 @@
         "tags": [
           "Person"
         ],
-        "operationId": "UpdateContact_Person",
+        "operationId": "Update_Person",
         "parameters": [
           {
             "name": "personID",
@@ -10047,7 +9847,7 @@
         "tags": [
           "Person"
         ],
-        "operationId": "DeleteContact_Person",
+        "operationId": "Delete_Person",
         "parameters": [
           {
             "name": "personID",
@@ -10272,55 +10072,6 @@
             "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/PersonPrimaryContactOrganizationsUpdateRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/PersonDetail"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PersonDetail"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PersonDetail"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/people/contacts": {
-      "post": {
-        "tags": [
-          "Person"
-        ],
-        "operationId": "CreateContact_Person",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ContactUpsertRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ContactUpsertRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ContactUpsertRequest"
               }
             }
           }
@@ -10592,6 +10343,86 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PersonDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/people/{personID}/api-key": {
+      "get": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "GetApiKey_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonApiKey"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonApiKey"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonApiKey"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "GenerateApiKey_Person",
+        "parameters": [
+          {
+            "name": "personID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonApiKey"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonApiKey"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonApiKey"
                 }
               }
             }
@@ -11377,6 +11208,47 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/programs/{programID}/delete-info": {
+      "get": {
+        "tags": [
+          "Program"
+        ],
+        "operationId": "GetDeleteInfo_Program",
+        "parameters": [
+          {
+            "name": "programID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramDeleteInfo"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramDeleteInfo"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramDeleteInfo"
+                }
+              }
+            }
           }
         }
       }
@@ -21902,6 +21774,116 @@
         "x-anonymous": true
       }
     },
+    "/service-forestry-upload/dashboard": {
+      "get": {
+        "tags": [
+          "ServiceForestryUpload"
+        ],
+        "operationId": "GetDashboard_ServiceForestryUpload",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadDashboard"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadDashboard"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadDashboard"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service-forestry-upload/import": {
+      "post": {
+        "tags": [
+          "ServiceForestryUpload"
+        ],
+        "operationId": "ImportFile_ServiceForestryUpload",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryUploadResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service-forestry-upload/publish": {
+      "post": {
+        "tags": [
+          "ServiceForestryUpload"
+        ],
+        "operationId": "Publish_ServiceForestryUpload",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryPublishingResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryPublishingResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceForestryPublishingResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sitkacapture/generate-pdf": {
       "post": {
         "tags": [
@@ -24200,66 +24182,6 @@
         },
         "additionalProperties": false
       },
-      "ContactUpsertRequest": {
-        "required": [
-          "FirstName"
-        ],
-        "type": "object",
-        "properties": {
-          "FirstName": {
-            "maxLength": 100,
-            "minLength": 0,
-            "type": "string"
-          },
-          "LastName": {
-            "maxLength": 100,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "Email": {
-            "maxLength": 255,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "Phone": {
-            "maxLength": 30,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "MiddleName": {
-            "maxLength": 100,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "PersonAddress": {
-            "maxLength": 255,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "OrganizationID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "VendorID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "Notes": {
-            "maxLength": 500,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "Coordinate": {
         "type": "object",
         "properties": {
@@ -24355,6 +24277,16 @@
         },
         "additionalProperties": false
       },
+      "CountyContentUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "CountyContent": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CountyDetail": {
         "type": "object",
         "properties": {
@@ -24369,6 +24301,10 @@
           "StateProvinceID": {
             "type": "integer",
             "format": "int32"
+          },
+          "CountyContent": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -25010,6 +24946,9 @@
               "$ref": "#/components/schemas/FundSourceAllocationRequestStepItem"
             },
             "nullable": true
+          },
+          "IsInLandownerAssistanceProgram": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -25309,6 +25248,41 @@
         },
         "additionalProperties": false
       },
+      "FindYourForesterPointRequest": {
+        "type": "object",
+        "properties": {
+          "Latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "Longitude": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FindYourForesterPointResult": {
+        "type": "object",
+        "properties": {
+          "Latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "Longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "ForesterContacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ForesterContactResult"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FindYourForesterQuestionTreeNode": {
         "type": "object",
         "properties": {
@@ -25470,147 +25444,48 @@
         },
         "additionalProperties": false
       },
-      "FocusAreaCloseoutProjectItem": {
+      "ForesterContactResult": {
         "type": "object",
         "properties": {
-          "ProjectID": {
+          "ForesterWorkUnitID": {
             "type": "integer",
             "format": "int32"
           },
-          "ProjectName": {
+          "ForesterRoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ForesterRoleDisplayName": {
             "type": "string",
             "nullable": true
           },
-          "ProjectStageID": {
+          "PersonID": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
-          "ProjectStageDisplayName": {
+          "FirstName": {
             "type": "string",
             "nullable": true
           },
-          "EstimatedTotalCost": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "FocusAreaDetail": {
-        "type": "object",
-        "properties": {
-          "FocusAreaID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "FocusAreaName": {
+          "LastName": {
             "type": "string",
             "nullable": true
           },
-          "FocusAreaStatusID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "FocusAreaStatusDisplayName": {
+          "Email": {
             "type": "string",
             "nullable": true
           },
-          "DNRUplandRegionID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "DNRUplandRegionName": {
+          "Phone": {
             "type": "string",
             "nullable": true
           },
-          "PlannedFootprintAcres": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "ProjectCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "HasLocation": {
-            "type": "boolean"
-          },
-          "SumOfEstimatedTotalCost": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "CloseoutProjects": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FocusAreaCloseoutProjectItem"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "FocusAreaGridRow": {
-        "type": "object",
-        "properties": {
-          "FocusAreaID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "FocusAreaName": {
+          "ForesterWorkUnitName": {
             "type": "string",
             "nullable": true
           },
-          "FocusAreaStatusID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "FocusAreaStatusDisplayName": {
+          "ForesterRoleDefinition": {
             "type": "string",
-            "nullable": true
-          },
-          "DNRUplandRegionID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "DNRUplandRegionName": {
-            "type": "string",
-            "nullable": true
-          },
-          "PlannedFootprintAcres": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "ProjectCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "HasLocation": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
-      "FocusAreaUpsertRequest": {
-        "type": "object",
-        "properties": {
-          "FocusAreaName": {
-            "type": "string",
-            "nullable": true
-          },
-          "FocusAreaStatusID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "DNRUplandRegionID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "PlannedFootprintAcres": {
-            "type": "number",
-            "format": "double",
             "nullable": true
           }
         },
@@ -25673,54 +25548,10 @@
         },
         "additionalProperties": false
       },
-      "FundSourceAgreementGridRow": {
+      "FundSourceAboutUpsertRequest": {
         "type": "object",
         "properties": {
-          "AgreementID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "AgreementTitle": {
-            "type": "string",
-            "nullable": true
-          },
-          "AgreementNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "AgreementTypeAbbrev": {
-            "type": "string",
-            "nullable": true
-          },
-          "OrganizationID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "OrganizationName": {
-            "type": "string",
-            "nullable": true
-          },
-          "StartDate": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "EndDate": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "AgreementAmount": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "ProgramIndices": {
-            "type": "string",
-            "nullable": true
-          },
-          "ProjectCodes": {
+          "AboutThisFundSource": {
             "type": "string",
             "nullable": true
           }
@@ -26674,6 +26505,16 @@
             "type": "integer",
             "format": "int32"
           },
+          "MatchAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "PayAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "TotalAmount": {
             "type": "number",
             "format": "double",
@@ -26770,6 +26611,16 @@
             "type": "integer",
             "format": "int32"
           },
+          "MatchAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "PayAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "TotalAmount": {
             "type": "number",
             "format": "double",
@@ -26793,6 +26644,9 @@
         "additionalProperties": false
       },
       "FundSourceAllocationUpsertRequest": {
+        "required": [
+          "AllocationAmount"
+        ],
         "type": "object",
         "properties": {
           "FundSourceAllocationName": {
@@ -26814,9 +26668,10 @@
             "nullable": true
           },
           "AllocationAmount": {
+            "maximum": 79228162514264337593543950335,
+            "minimum": 0.01,
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
           "FederalFundCodeID": {
             "type": "integer",
@@ -26884,48 +26739,6 @@
         },
         "additionalProperties": false
       },
-      "FundSourceBudgetLineItemGridRow": {
-        "type": "object",
-        "properties": {
-          "FundSourceAllocationID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "FundSourceAllocationName": {
-            "type": "string",
-            "nullable": true
-          },
-          "PersonnelAmount": {
-            "type": "number",
-            "format": "double"
-          },
-          "BenefitsAmount": {
-            "type": "number",
-            "format": "double"
-          },
-          "TravelAmount": {
-            "type": "number",
-            "format": "double"
-          },
-          "SuppliesAmount": {
-            "type": "number",
-            "format": "double"
-          },
-          "ContractualAmount": {
-            "type": "number",
-            "format": "double"
-          },
-          "IndirectCostsAmount": {
-            "type": "number",
-            "format": "double"
-          },
-          "TotalAmount": {
-            "type": "number",
-            "format": "double"
-          }
-        },
-        "additionalProperties": false
-      },
       "FundSourceDetail": {
         "type": "object",
         "properties": {
@@ -26985,6 +26798,10 @@
           "EndDate": {
             "type": "string",
             "format": "date",
+            "nullable": true
+          },
+          "AboutThisFundSource": {
+            "type": "string",
             "nullable": true
           },
           "ConditionsAndRequirements": {
@@ -27130,6 +26947,112 @@
         },
         "additionalProperties": false
       },
+      "FundSourceImageDetail": {
+        "type": "object",
+        "properties": {
+          "FundSourceImageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Caption": {
+            "type": "string",
+            "nullable": true
+          },
+          "Credit": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsKeyPhoto": {
+            "type": "boolean"
+          },
+          "CreatedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "OriginalFilename": {
+            "type": "string",
+            "nullable": true
+          },
+          "ContentLength": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceImageGridRow": {
+        "type": "object",
+        "properties": {
+          "FundSourceImageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FundSourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Caption": {
+            "type": "string",
+            "nullable": true
+          },
+          "Credit": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsKeyPhoto": {
+            "type": "boolean"
+          },
+          "CreatedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "OriginalFilename": {
+            "type": "string",
+            "nullable": true
+          },
+          "ContentLength": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceImageUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "Caption": {
+            "type": "string",
+            "nullable": true
+          },
+          "Credit": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FundSourceLookupItem": {
         "type": "object",
         "properties": {
@@ -27251,17 +27174,32 @@
             "type": "string",
             "nullable": true
           },
-          "MatchAmount": {
+          "LeadImplementer": {
+            "$ref": "#/components/schemas/OrganizationLookupItem"
+          },
+          "ProjectType": {
+            "$ref": "#/components/schemas/ProjectTypeLookupItem"
+          },
+          "Counties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountyLookupItem"
+            },
+            "nullable": true
+          },
+          "PriorityLandscapes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PriorityLandscapeLookupItem"
+            },
+            "nullable": true
+          },
+          "Latitude": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
-          "PayAmount": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "TotalAmount": {
+          "Longitude": {
             "type": "number",
             "format": "double",
             "nullable": true
@@ -28042,6 +27980,10 @@
             "type": "integer",
             "format": "int32"
           },
+          "ProjectsBlocked": {
+            "type": "integer",
+            "format": "int32"
+          },
           "TreatmentsCreated": {
             "type": "integer",
             "format": "int32"
@@ -28058,6 +28000,13 @@
             "nullable": true
           },
           "UpdatedProjects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GisBulkImportProjectResult"
+            },
+            "nullable": true
+          },
+          "BlockedProjects": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/GisBulkImportProjectResult"
@@ -29858,6 +29807,21 @@
         },
         "additionalProperties": false
       },
+      "PersonApiKey": {
+        "type": "object",
+        "properties": {
+          "ApiKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "ApiKeyGeneratedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PersonDetail": {
         "type": "object",
         "properties": {
@@ -30010,7 +29974,7 @@
             "format": "int32",
             "nullable": true
           },
-          "IsFullUser": {
+          "IsUser": {
             "type": "boolean"
           },
           "StewardRegions": {
@@ -30111,7 +30075,7 @@
           "IsActive": {
             "type": "boolean"
           },
-          "IsFullUser": {
+          "IsUser": {
             "type": "boolean"
           },
           "PrimaryContactOrganizationCount": {
@@ -30300,6 +30264,9 @@
             "minLength": 0,
             "type": "string",
             "nullable": true
+          },
+          "IsUser": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -30621,6 +30588,28 @@
           "PriorityLandscapeAboveMapText": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProgramDeleteInfo": {
+        "type": "object",
+        "properties": {
+          "ProjectCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TreatmentUpdateCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectLocationCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -31116,11 +31105,6 @@
             "format": "int32",
             "nullable": true
           },
-          "FocusAreaID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
           "PercentageMatch": {
             "type": "integer",
             "format": "int32",
@@ -31176,11 +31160,6 @@
             "format": "date",
             "nullable": true
           },
-          "FocusAreaID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
           "LeadImplementerOrganizationID": {
             "type": "integer",
             "format": "int32",
@@ -31234,11 +31213,6 @@
           "ExpirationDate": {
             "type": "string",
             "format": "date",
-            "nullable": true
-          },
-          "FocusAreaID": {
-            "type": "integer",
-            "format": "int32",
             "nullable": true
           },
           "LeadImplementerOrganizationID": {
@@ -31856,15 +31830,6 @@
             "format": "double",
             "nullable": true
           },
-          "FocusAreaID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "FocusAreaName": {
-            "type": "string",
-            "nullable": true
-          },
           "LeadImplementer": {
             "$ref": "#/components/schemas/OrganizationLookupItem"
           },
@@ -31985,6 +31950,9 @@
             "type": "boolean"
           },
           "UserCanViewCostSharePDFs": {
+            "type": "boolean"
+          },
+          "UserCanViewLandownerInfo": {
             "type": "boolean"
           },
           "UserCanManageTreatments": {
@@ -32421,67 +32389,6 @@
         },
         "additionalProperties": false
       },
-      "ProjectFocusAreaDetailGridRow": {
-        "type": "object",
-        "properties": {
-          "ProjectID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "FhtProjectNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "ProjectName": {
-            "type": "string",
-            "nullable": true
-          },
-          "ProjectStage": {
-            "$ref": "#/components/schemas/ProjectStageLookupItem"
-          },
-          "ProjectInitiationDate": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "ExpirationDate": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "CompletionDate": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "EstimatedTotalCost": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "TotalFunding": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "ProjectDescription": {
-            "type": "string",
-            "nullable": true
-          },
-          "PhotoCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "Tags": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TagLookupItem"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "ProjectForPersonDetailGridRow": {
         "type": "object",
         "properties": {
@@ -32598,6 +32505,9 @@
               "$ref": "#/components/schemas/FundSourceAllocationRequestItem"
             },
             "nullable": true
+          },
+          "IsInLandownerAssistanceProgram": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -34145,11 +34055,6 @@
             "format": "date",
             "nullable": true
           },
-          "FocusAreaID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
           "LeadImplementerOrganizationID": {
             "type": "integer",
             "format": "int32",
@@ -34212,11 +34117,6 @@
           "ExpirationDate": {
             "type": "string",
             "format": "date",
-            "nullable": true
-          },
-          "FocusAreaID": {
-            "type": "integer",
-            "format": "int32",
             "nullable": true
           },
           "LeadImplementerOrganizationID": {
@@ -34566,6 +34466,9 @@
               "$ref": "#/components/schemas/FundSourceAllocationRequestUpdateItem"
             },
             "nullable": true
+          },
+          "IsInLandownerAssistanceProgram": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -35076,11 +34979,6 @@
             "format": "date-time",
             "nullable": true
           },
-          "FocusAreaID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
           "ExpirationDate": {
             "type": "string",
             "format": "date",
@@ -35416,6 +35314,56 @@
         },
         "additionalProperties": false
       },
+      "ServiceForestryPublishingResult": {
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "ElapsedSeconds": {
+            "type": "number",
+            "format": "double"
+          },
+          "ErrorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceForestryUploadDashboard": {
+        "type": "object",
+        "properties": {
+          "LatestImport": {
+            "$ref": "#/components/schemas/TabularDataImportGridRow"
+          },
+          "PublishingProcessingIsNeeded": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceForestryUploadResult": {
+        "type": "object",
+        "properties": {
+          "RecordsImported": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ElapsedSeconds": {
+            "type": "number",
+            "format": "double"
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "SinglePolygonApproveRequest": {
         "type": "object",
         "properties": {
@@ -35552,6 +35500,10 @@
           "CompilationDateTime": {
             "type": "string",
             "format": "date-time"
+          },
+          "ScalarApiUrl": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -36938,9 +36890,6 @@
       "name": "FirmaHomePageImage"
     },
     {
-      "name": "FocusArea"
-    },
-    {
       "name": "FundingSource"
     },
     {
@@ -36957,6 +36906,9 @@
     },
     {
       "name": "FundSourceAllocationPriority"
+    },
+    {
+      "name": "FundSourceImage"
     },
     {
       "name": "FundSourceType"
@@ -37038,6 +36990,9 @@
     },
     {
       "name": "Search"
+    },
+    {
+      "name": "ServiceForestryUpload"
     },
     {
       "name": "SitkaCapture"

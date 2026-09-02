@@ -461,28 +461,6 @@ export const pageRegistry: PageRegistryEntry[] = [
         pageType: "page",
     },
 
-    // ── Focus Areas ────────────────────────────────────────────────────────────
-    {
-        id: "focus-areas-list",
-        name: "Focus Areas List",
-        area: "focusAreas",
-        legacyPath: "/FocusArea/Index",
-        modernPath: "/focus-areas",
-        status: "migrated",
-        auth: "elevated",
-        pageType: "page",
-    },
-    {
-        id: "focus-area-detail",
-        name: "Focus Area Detail",
-        area: "focusAreas",
-        legacyPath: "/FocusArea/Detail/{focusAreaID}",
-        modernPath: "/focus-areas/{focusAreaID}",
-        status: "migrated",
-        auth: "auth",
-        tokens: ["focusAreaID"],
-        pageType: "page",
-    },
 
     // ── Programs ───────────────────────────────────────────────────────────────
     {

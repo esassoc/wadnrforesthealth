@@ -34,7 +34,6 @@ let legacyContext: BrowserContext;
 function getTokenMap(): Record<string, string | number> {
     return {
         projectID: testData.projectID,
-        focusAreaID: testData.focusAreaID,
         countyID: testData.countyID,
         fundSourceID: testData.fundSourceID,
         programID: testData.programID,
