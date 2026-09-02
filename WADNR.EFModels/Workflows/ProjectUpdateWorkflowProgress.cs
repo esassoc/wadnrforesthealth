@@ -579,7 +579,6 @@ public static class ProjectUpdateWorkflowProgress
         if (project.PlannedDate != update.PlannedDate) return true;
         if (project.CompletionDate != update.CompletionDate) return true;
         if (project.ExpirationDate != update.ExpirationDate) return true;
-        if (project.FocusAreaID != update.FocusAreaID) return true;
         if (project.PercentageMatch != update.PercentageMatch) return true;
 
         // Check programs

@@ -32,10 +32,10 @@ BEGIN
     -- 2. Copy project basics to ProjectUpdate
     INSERT INTO dbo.ProjectUpdate (ProjectUpdateBatchID, ProjectStageID, ProjectDescription, CompletionDate,
         EstimatedTotalCost, ProjectLocationPoint, ProjectLocationNotes, PlannedDate,
-        ProjectLocationSimpleTypeID, FocusAreaID, ExpirationDate, ProjectFundingSourceNotes, PercentageMatch)
+        ProjectLocationSimpleTypeID, ExpirationDate, ProjectFundingSourceNotes, PercentageMatch)
     SELECT @BatchID, p.ProjectStageID, p.ProjectDescription, p.CompletionDate,
         p.EstimatedTotalCost, p.ProjectLocationPoint, p.ProjectLocationNotes, p.PlannedDate,
-        p.ProjectLocationSimpleTypeID, p.FocusAreaID, p.ExpirationDate, p.ProjectFundingSourceNotes, p.PercentageMatch
+        p.ProjectLocationSimpleTypeID, p.ExpirationDate, p.ProjectFundingSourceNotes, p.PercentageMatch
     FROM dbo.Project p
     WHERE p.ProjectID = @ProjectID;
 

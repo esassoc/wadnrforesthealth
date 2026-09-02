@@ -22,9 +22,4 @@ test.describe("Leaflet map rendering", () => {
         await expect(page.locator("#card-location .leaflet-container")).toBeVisible({ timeout: 30000 });
     });
 
-    test("Focus area detail page loads with map or content", async ({ authedPage: page }) => {
-        await page.goto(`/focus-areas/${testData.focusAreaID}`);
-        // Focus areas may or may not have spatial data for a map
-        await expect(page.locator(".leaflet-container, .card").first()).toBeVisible({ timeout: 30000 });
-    });
 });

@@ -20,7 +20,6 @@ export class ProjectUpdateBasicsStep {
     PlannedDate?: string | null;
     CompletionDate?: string | null;
     ExpirationDate?: string | null;
-    FocusAreaID?: number | null;
     LeadImplementerOrganizationID?: number | null;
     PercentageMatch?: number | null;
     ProgramIDs?: Array<number> | null;
@@ -42,7 +41,6 @@ export interface ProjectUpdateBasicsStepForm {
     PlannedDate?: FormControl<string>;
     CompletionDate?: FormControl<string>;
     ExpirationDate?: FormControl<string>;
-    FocusAreaID?: FormControl<number>;
     LeadImplementerOrganizationID?: FormControl<number>;
     PercentageMatch?: FormControl<number>;
     ProgramIDs?: FormControl<Array<number>>;
@@ -133,16 +131,6 @@ export class ProjectUpdateBasicsStepFormControls {
         }
     );
     public static ExpirationDate = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static FocusAreaID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

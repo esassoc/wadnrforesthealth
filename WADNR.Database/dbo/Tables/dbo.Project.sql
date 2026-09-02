@@ -19,7 +19,6 @@ CREATE TABLE [dbo].[Project](
     [ReviewedByPersonID] [int] NULL CONSTRAINT [FK_Project_Person_ReviewedByPersonID_PersonID] FOREIGN KEY REFERENCES [dbo].[Person]([PersonID]),
     [DefaultBoundingBox] [geometry] NULL,
     [NoExpendituresToReportExplanation] [varchar](max) NULL,
-    [FocusAreaID] [int] NULL CONSTRAINT [FK_Project_FocusArea_FocusAreaID] FOREIGN KEY REFERENCES [dbo].[FocusArea]([FocusAreaID]),
     [NoRegionsExplanation] [varchar](4000) NULL,
     [ExpirationDate] [date] NULL,
     [FhtProjectNumber] [varchar](20) NOT NULL CONSTRAINT [AK_Project_FhtProjectNumber] UNIQUE,

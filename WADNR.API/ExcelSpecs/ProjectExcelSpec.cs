@@ -17,7 +17,6 @@ public class ProjectExcelSpec : ExcelWorksheetSpec<ProjectExcelRow>
         AddColumn("Priority Landscapes", x => x.PriorityLandscapeNames);
         AddColumn("DNR Upland Region", x => x.DNRUplandRegionNames);
         AddColumn("County", x => x.CountyNames);
-        AddColumn("DNR LOA Focus Area", x => x.FocusAreaName ?? string.Empty);
         AddColumn("Project Initiation date", x => x.PlannedDate, "mm/dd/yyyy");
         AddColumn("Completion Date", x => x.CompletionDate, "mm/dd/yyyy");
         AddColumn("Project Description", x => x.ProjectDescription ?? string.Empty);

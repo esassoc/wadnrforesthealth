@@ -127,28 +127,6 @@ public static class Projects
             .ToListAsync();
     }
 
-    public static async Task<List<ProjectFocusAreaDetailGridRow>> ListForFocusAreaAsGridRowAsync(
-        WADNRDbContext dbContext, int focusAreaID)
-    {
-        var rows = await dbContext.Projects
-            .AsNoTracking()
-            .Where(IsActiveProjectExpr)
-            .Where(p => p.FocusAreaID == focusAreaID)
-            .OrderBy(p => p.ProjectName)
-            .Select(ProjectProjections.AsFocusAreaDetailGridRow)
-            .ToListAsync();
-
-        foreach (var row in rows)
-        {
-            if (ProjectStage.AllLookupDictionary.TryGetValue(row.ProjectStage.ProjectStageID, out var stage))
-            {
-                row.ProjectStage.ProjectStageName = stage.ProjectStageDisplayName;
-            }
-        }
-
-        return rows;
-    }
-
     public static async Task<List<ProjectProjectTypeDetailGridRow>> ListAsProjectTypeDetailGridRowAsync(WADNRDbContext dbContext, int projectTypeID)
     {
         var rows = await dbContext.Projects
@@ -238,7 +216,6 @@ public static class Projects
             ProposingDate = dto.ProposingDate?.DateTime,
             SubmissionDate = dto.SubmissionDate?.DateTime,
             ApprovalDate = dto.ApprovalDate?.DateTime,
-            FocusAreaID = dto.FocusAreaID,
             ExpirationDate = dto.ExpirationDate,
             FhtProjectNumber = dto.FhtProjectNumber
         };
@@ -264,7 +241,6 @@ public static class Projects
         entity.ProposingDate = dto.ProposingDate?.DateTime;
         entity.SubmissionDate = dto.SubmissionDate?.DateTime;
         entity.ApprovalDate = dto.ApprovalDate?.DateTime;
-        entity.FocusAreaID = dto.FocusAreaID;
         entity.ExpirationDate = dto.ExpirationDate;
         entity.FhtProjectNumber = dto.FhtProjectNumber;
 
@@ -815,7 +791,6 @@ public static class Projects
                     .Select(pr => pr.DNRUplandRegion.DNRUplandRegionName)),
                 CountyNames = string.Join(", ", p.ProjectCounties
                     .Select(pc => pc.County.CountyName)),
-                FocusAreaName = p.FocusArea != null ? p.FocusArea.FocusAreaName : null,
                 PlannedDate = p.PlannedDate,
                 CompletionDate = p.CompletionDate,
                 ProjectDescription = p.ProjectDescription,
@@ -885,7 +860,6 @@ public static class Projects
                     .Select(pr => pr.DNRUplandRegion.DNRUplandRegionName)),
                 CountyNames = string.Join(", ", p.ProjectCounties
                     .Select(pc => pc.County.CountyName)),
-                FocusAreaName = p.FocusArea != null ? p.FocusArea.FocusAreaName : null,
                 PlannedDate = p.PlannedDate,
                 CompletionDate = p.CompletionDate,
                 ProjectDescription = p.ProjectDescription,
@@ -1499,7 +1473,6 @@ public static class Projects
         project.CompletionDate = request.CompletionDate;
         project.ExpirationDate = request.ExpirationDate;
         project.ProjectGisIdentifier = request.ProjectGisIdentifier;
-        project.FocusAreaID = request.FocusAreaID;
         project.PercentageMatch = request.PercentageMatch;
 
         // Sync Lead Implementer Organization via ProjectOrganization with IsPrimaryContact relationship type

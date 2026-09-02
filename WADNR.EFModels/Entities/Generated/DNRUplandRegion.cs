@@ -65,9 +65,6 @@ public partial class DNRUplandRegion
     public virtual Person? DNRUplandRegionCoordinator { get; set; }
 
     [InverseProperty("DNRUplandRegion")]
-    public virtual ICollection<FocusArea> FocusAreas { get; set; } = new List<FocusArea>();
-
-    [InverseProperty("DNRUplandRegion")]
     public virtual ICollection<FundSourceAllocation> FundSourceAllocations { get; set; } = new List<FundSourceAllocation>();
 
     [InverseProperty("DNRUplandRegion")]

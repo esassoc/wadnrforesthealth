@@ -14,7 +14,6 @@ namespace WADNR.EFModels.Entities
             public const int ProjectIdentifier = 600;
             public const int ProjectStatus = 600;
             public const int FundSourceNumber = 600;
-            public const int FocusAreaName = 600;
             public const int ProgramIndex = 50;
             public const int ProjectCode = 50;
             public const int ForesterLastName = 200;

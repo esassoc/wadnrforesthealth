@@ -9,7 +9,6 @@ import { UpdateWorkflowStepBase } from "src/app/shared/components/workflow/updat
 import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow/workflow-step-actions/workflow-step-actions.component";
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
-import { FocusAreaService } from "src/app/shared/generated/api/focus-area.service";
 import { ProgramService } from "src/app/shared/generated/api/program.service";
 import { ProjectUpdateBasicsStep } from "src/app/shared/generated/model/project-update-basics-step";
 import { ProjectUpdateBasicsStepRequest } from "src/app/shared/generated/model/project-update-basics-step-request";
@@ -35,13 +34,11 @@ export class UpdateBasicsStepComponent extends UpdateWorkflowStepBase implements
     public FormFieldType = FormFieldType;
     public FirmaPageTypeEnum = FirmaPageTypeEnum;
     public organizationOptions$: Observable<FormInputOption[]>;
-    public focusAreaOptions$: Observable<FormInputOption[]>;
     public programOptions$: Observable<FormInputOption[]>;
     public projectStageOptions: SelectDropdownOption[] = ProjectStagesAsSelectDropdownOptions;
     public vm$: Observable<{
         isLoading: boolean;
         organizationOptions: FormInputOption[];
-        focusAreaOptions: FormInputOption[];
         programOptions: FormInputOption[];
         data: ProjectUpdateBasicsStep | null;
     }>;
@@ -65,7 +62,6 @@ export class UpdateBasicsStepComponent extends UpdateWorkflowStepBase implements
     constructor(
         private projectService: ProjectService,
         private organizationService: OrganizationService,
-        private focusAreaService: FocusAreaService,
         private programService: ProgramService
     ) {
         super();
@@ -76,7 +72,6 @@ export class UpdateBasicsStepComponent extends UpdateWorkflowStepBase implements
             completionDate: new FormControl(null),
             expirationDate: new FormControl(null),
             leadImplementerOrganizationID: new FormControl(null),
-            focusAreaID: new FormControl(null),
             percentageMatch: new FormControl(null),
             programIDs: new FormControl<number[]>([]),
             programToAdd: new FormControl<number | null>(null),
@@ -105,21 +100,6 @@ export class UpdateBasicsStepComponent extends UpdateWorkflowStepBase implements
             ),
             catchError(() => {
                 this.alertService.pushAlert(new Alert("Failed to load organizations.", AlertContext.Warning, true));
-                return of([]);
-            }),
-            shareReplay({ bufferSize: 1, refCount: true })
-        );
-
-        this.focusAreaOptions$ = this.focusAreaService.listFocusArea().pipe(
-            map((focusAreas) =>
-                focusAreas.map((fa) => ({
-                    Value: fa.FocusAreaID,
-                    Label: fa.FocusAreaName,
-                    disabled: false,
-                }))
-            ),
-            catchError(() => {
-                this.alertService.pushAlert(new Alert("Failed to load focus areas.", AlertContext.Warning, true));
                 return of([]);
             }),
             shareReplay({ bufferSize: 1, refCount: true })
@@ -173,15 +153,14 @@ export class UpdateBasicsStepComponent extends UpdateWorkflowStepBase implements
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.vm$ = combineLatest([this.organizationOptions$, this.focusAreaOptions$, this.programOptions$, stepData$]).pipe(
-            map(([organizationOptions, focusAreaOptions, programOptions, data]) => {
+        this.vm$ = combineLatest([this.organizationOptions$, this.programOptions$, stepData$]).pipe(
+            map(([organizationOptions, programOptions, data]) => {
                 if (data) {
                     this.populateForm(data, programOptions);
                 }
                 return {
                     isLoading: false,
                     organizationOptions,
-                    focusAreaOptions,
                     programOptions,
                     data,
                 };
@@ -189,7 +168,6 @@ export class UpdateBasicsStepComponent extends UpdateWorkflowStepBase implements
             startWith({
                 isLoading: true,
                 organizationOptions: [] as FormInputOption[],
-                focusAreaOptions: [] as FormInputOption[],
                 programOptions: [] as FormInputOption[],
                 data: null,
             }),
@@ -205,7 +183,6 @@ export class UpdateBasicsStepComponent extends UpdateWorkflowStepBase implements
             completionDate: data.CompletionDate ? this.formatDateForInput(data.CompletionDate) : null,
             expirationDate: data.ExpirationDate ? this.formatDateForInput(data.ExpirationDate) : null,
             leadImplementerOrganizationID: data.LeadImplementerOrganizationID,
-            focusAreaID: data.FocusAreaID,
             percentageMatch: data.PercentageMatch,
             programIDs: data.ProgramIDs ?? [],
         });
@@ -226,14 +203,6 @@ export class UpdateBasicsStepComponent extends UpdateWorkflowStepBase implements
         } else {
             this.form.controls.completionDate.enable();
         }
-
-        // Conditional required: FocusArea is required for "Fuels Reduction" projects
-        if (data.ProjectTypeName === "Fuels Reduction") {
-            this.form.controls.focusAreaID.setValidators([Validators.required]);
-        } else {
-            this.form.controls.focusAreaID.clearValidators();
-        }
-        this.form.controls.focusAreaID.updateValueAndValidity();
 
         this.selectedPrograms = (data.ProgramIDs ?? []).map((id) => {
             const option = programOptions.find((o) => o.Value === id);
@@ -319,7 +288,6 @@ export class UpdateBasicsStepComponent extends UpdateWorkflowStepBase implements
             CompletionDate: rawValue.completionDate,
             ExpirationDate: rawValue.expirationDate,
             LeadImplementerOrganizationID: rawValue.leadImplementerOrganizationID,
-            FocusAreaID: rawValue.focusAreaID,
             PercentageMatch: rawValue.percentageMatch,
             ProgramIDs: rawValue.programIDs ?? [],
         };

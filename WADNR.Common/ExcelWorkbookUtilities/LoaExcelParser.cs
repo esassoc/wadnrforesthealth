@@ -11,7 +11,6 @@ public class LoaStageRow
     public DateTime? ApplicationDate { get; set; }
     public DateTime? DecisionDate { get; set; }
     public string? FundSourceNumber { get; set; }
-    public string? FocusArea { get; set; }
     public string? ProjectCode { get; set; }
     public string? ProgramIndex { get; set; }
     public double? MatchAmount { get; set; }
@@ -92,7 +91,6 @@ public static class LoaExcelParser
                 ProjectID = projectID,
                 Status = GetStringValue(row, columnMapping, "Status"),
                 FundSourceNumber = GetStringValue(row, columnMapping, "FundSource #"),
-                FocusArea = GetStringValue(row, columnMapping, "FundSource"),
                 ProjectCode = GetStringValue(row, columnMapping, "Code"),
                 ProgramIndex = GetStringValue(row, columnMapping, "Index"),
                 Forester = GetStringValue(row, columnMapping, "Forester"),

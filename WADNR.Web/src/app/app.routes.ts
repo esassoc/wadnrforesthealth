@@ -25,7 +25,6 @@ export const routeParams = {
     vendorID: "vendorID",
     personID: "personID",
     invoiceID: "invoiceID",
-    focusAreaID: "focusAreaID",
     fundSourceAllocationID: "fundSourceAllocationID",
 };
 
@@ -65,18 +64,6 @@ export const routes: Routes = [
         path: "find-your-forester",
         title: "Find Your Forester",
         loadComponent: () => import("./pages/find-your-forester/find-your-forester.component").then((m) => m.FindYourForesterComponent),
-    },
-    {
-        path: "focus-areas",
-        title: "DNR LOA Focus Areas",
-        canActivate: [authGuard],
-        loadComponent: () => import("./pages/focus-areas/focus-areas.component").then((m) => m.FocusAreasComponent),
-    },
-    {
-        path: `focus-areas/:${routeParams.focusAreaID}`,
-        title: "Focus Area Detail",
-        canActivate: [authGuard],
-        loadComponent: () => import("./pages/focus-areas/focus-area-detail/focus-area-detail.component").then((m) => m.FocusAreaDetailComponent),
     },
     { path: "fund-sources", title: "Fund Sources", loadComponent: () => import("./pages/fund-sources/fund-sources.component").then((m) => m.FundSourcesComponent) },
     {
@@ -559,7 +546,6 @@ export const routes: Routes = [
         { path: "County/Detail/:id", data: { redirectTo: "/counties/:id" } },
         { path: "PriorityLandscape/Detail/:id", data: { redirectTo: "/priority-landscapes/:id" } },
         { path: "DNRUplandRegion/Detail/:id", data: { redirectTo: "/dnr-upland-regions/:id" } },
-        { path: "FocusArea/Detail/:id", data: { redirectTo: "/focus-areas/:id" } },
         { path: "Classification/Detail/:id", data: { redirectTo: "/classifications/:id" } },
         { path: "User/Detail/:id", data: { redirectTo: "/people/:id" } },
         { path: "Person/Detail/:id", data: { redirectTo: "/people/:id" } },
@@ -584,8 +570,6 @@ export const routes: Routes = [
         { path: "PriorityLandscape", data: { redirectTo: "/priority-landscapes" } },
         { path: "DNRUplandRegion/Index", data: { redirectTo: "/dnr-upland-regions" } },
         { path: "DNRUplandRegion", data: { redirectTo: "/dnr-upland-regions" } },
-        { path: "FocusArea/Index", data: { redirectTo: "/focus-areas" } },
-        { path: "FocusArea", data: { redirectTo: "/focus-areas" } },
         { path: "FieldDefinition/Index", data: { redirectTo: "/labels-and-definitions" } },
         // Admin routes
         { path: "ExcelUpload/ManageExcelUploadsAndEtl", data: { redirectTo: "/upload-excel-files" } },

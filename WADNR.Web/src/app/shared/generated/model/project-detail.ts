@@ -40,8 +40,6 @@ export class ProjectDetail {
     ProjectDescription?: string | null;
     EstimatedTotalCost?: number | null;
     PercentageMatch?: number | null;
-    FocusAreaID?: number | null;
-    FocusAreaName?: string | null;
     LeadImplementer?: OrganizationLookupItem;
     Programs?: Array<ProgramLookupItem> | null;
     Organizations?: Array<ProjectOrganizationItem> | null;
@@ -98,8 +96,6 @@ export interface ProjectDetailForm {
     ProjectDescription?: FormControl<string>;
     EstimatedTotalCost?: FormControl<number>;
     PercentageMatch?: FormControl<number>;
-    FocusAreaID?: FormControl<number>;
-    FocusAreaName?: FormControl<string>;
     LeadImplementer?: FormControl<OrganizationLookupItem>;
     Programs?: FormControl<Array<ProgramLookupItem>>;
     Organizations?: FormControl<Array<ProjectOrganizationItem>>;
@@ -279,26 +275,6 @@ export class ProjectDetailFormControls {
         }
     );
     public static PercentageMatch = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static FocusAreaID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static FocusAreaName = (value: FormControlState<string> | string = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<string>(
         value,
         formControlOptions ?? 
         {

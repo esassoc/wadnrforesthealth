@@ -77,6 +77,7 @@
   <ItemGroup>
     <None Include="LtInfo.Database.publish.xml" />
     <None Include="Scripts\PreReleaseScripts\README.md" />
+    <None Include="Scripts\PreReleaseScripts\0001 - WADNR-2290 Remove FocusArea lookup dependents.sql" />
     <None Include="Scripts\ReleaseScripts\README.md" />
   </ItemGroup>
   <ItemGroup>
@@ -107,7 +108,6 @@
     <None Include="Scripts\LookupTables\dbo.FileResourceMimeType.sql" />
     <None Include="Scripts\LookupTables\dbo.FirmaPageRenderType.sql" />
     <None Include="Scripts\LookupTables\dbo.FirmaPageType.sql" />
-    <None Include="Scripts\LookupTables\dbo.FocusAreaStatus.sql" />
     <None Include="Scripts\LookupTables\dbo.ForesterRole.sql" />
     <None Include="Scripts\LookupTables\dbo.FundingSource.sql" />
     <None Include="Scripts\LookupTables\dbo.FundSourceAllocationSource.sql" />
@@ -189,9 +189,6 @@
     <Build Include="dbo\Tables\dbo.FirmaPageImage.sql" />
     <Build Include="dbo\Tables\dbo.FirmaPageRenderType.sql" />
     <Build Include="dbo\Tables\dbo.FirmaPageType.sql" />
-    <Build Include="dbo\Tables\dbo.FocusArea.sql" />
-    <Build Include="dbo\Tables\dbo.FocusAreaLocationStaging.sql" />
-    <Build Include="dbo\Tables\dbo.FocusAreaStatus.sql" />
     <Build Include="dbo\Tables\dbo.ForesterRole.sql" />
     <Build Include="dbo\Tables\dbo.ForesterWorkUnit.sql" />
     <Build Include="dbo\Tables\dbo.FundingSource.sql" />
