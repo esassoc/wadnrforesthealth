@@ -20,6 +20,11 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
     @Input() identifierProperty: string;
     @Input() selectedIDs: number[] | null = null;
     @Input() popupContentFn: ((feature: Feature, latlng: L.LatLng) => string | null) | null = null;
+    /**
+     * When true, clicking a feature highlights it (in MAP_SELECTED_COLOR) without the parent
+     * needing to round-trip `selectedIDs`. Requires `identifierProperty`. Popups still fire.
+     */
+    @Input() selectOnClick: boolean = false;
 
     /** Emits the current bounds of rendered features (null if empty/unknown). */
     @Output() dataBounds = new EventEmitter<L.LatLngBounds | null>();
@@ -29,6 +34,18 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
 
     private geoJsonLayer: L.GeoJSON | null = null;
     private highlightLayer: L.FeatureGroup | null = null;
+    /** Feature ID highlighted via an in-map click when `selectOnClick` is enabled. */
+    private clickSelectedID: number | null = null;
+    private mapBackgroundClickBound = false;
+
+    /** Clears the click-selection when the user clicks an empty part of the map (not a marker). */
+    private readonly handleMapBackgroundClick = (): void => {
+        if (this.clickSelectedID == null) return;
+        this.clickSelectedID = null;
+        this.selectionFromMapClick = true;
+        this.refreshSelection();
+        this.closeActivePopup();
+    };
     private activePopup: L.Popup | null = null;
     private overlayInitialized = false;
     private selectionFromMapClick = false;
@@ -160,6 +177,12 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
         this.initLayer();
         this.overlayInitialized = true;
 
+        // Clear the click-selection when the user clicks the map background (marker clicks don't bubble here).
+        if (this.selectOnClick && this.map && !this.mapBackgroundClickBound) {
+            this.map.on("click", this.handleMapBackgroundClick);
+            this.mapBackgroundClickBound = true;
+        }
+
         // If data arrived before the map/layer control were ready, apply it now.
         this.refreshData();
 
@@ -183,6 +206,17 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
         this.refreshSelection();
     }
 
+    /**
+     * The IDs that should be highlighted: internally-tracked click selection when `selectOnClick`
+     * is enabled, otherwise the parent-provided `selectedIDs`.
+     */
+    private get effectiveSelectedIDs(): number[] | null {
+        if (this.selectOnClick) {
+            return this.clickSelectedID != null ? [this.clickSelectedID] : null;
+        }
+        return this.selectedIDs ?? null;
+    }
+
     private refreshSelection(): void {
         if (!this.map) return;
 
@@ -195,10 +229,11 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
             this.highlightLayer = null;
         }
 
-        if (!this.selectedIDs?.length || !this.identifierProperty || !this.geoJsonLayer) return;
+        const effectiveSelectedIDs = this.effectiveSelectedIDs;
+        if (!effectiveSelectedIDs?.length || !this.identifierProperty || !this.geoJsonLayer) return;
 
         this.highlightLayer = L.featureGroup();
-        const selectedSet = new Set(this.selectedIDs);
+        const selectedSet = new Set(effectiveSelectedIDs);
 
         this.geoJsonLayer.eachLayer((layer: any) => {
             const props = layer.feature?.properties;
@@ -219,7 +254,7 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
                 }
 
                 // Only fit bounds when selection came from outside (e.g. grid click), not from a map click
-                if (shouldFitBounds && this.selectedIDs.length === 1) {
+                if (shouldFitBounds && effectiveSelectedIDs.length === 1) {
                     if (typeof layer.getBounds === "function") {
                         this.map.fitBounds(layer.getBounds());
                     } else if (typeof layer.getLatLng === "function") {
@@ -428,6 +463,10 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
     }
 
     ngOnDestroy(): void {
+        if (this.mapBackgroundClickBound && this.map) {
+            this.map.off("click", this.handleMapBackgroundClick);
+            this.mapBackgroundClickBound = false;
+        }
         this.closeActivePopup();
     }
 
@@ -440,38 +479,43 @@ export class GenericFeatureCollectionLayerComponent extends MapLayerBase impleme
 
     private wireFeatureEvents(layer: L.Layer): void {
         layer.on("click", (e: any) => {
-            // Show popup if popupContentFn is configured
-            if (this.popupContentFn) {
-                const feature = (layer as any).feature as Feature | undefined;
-                const latlng = this.getPanTargetLatLng(layer, e);
-                if (feature && latlng && this.map) {
-                    const html = this.popupContentFn(feature, latlng);
-                    if (html) {
-                        this.closeActivePopup();
-                        this.activePopup = L.popup({ offset: [0, -12] })
-                            .setLatLng(latlng)
-                            .setContent(html)
-                            .openOn(this.map);
-                        return;
-                    }
-                }
-            }
+            const feature = (layer as any).feature as Feature | undefined;
+            const latlng = this.getPanTargetLatLng(layer, e);
 
-            // Emit selection if identifierProperty is configured
+            // Selection: highlight and/or emit when an identifier is configured.
             if (this.identifierProperty) {
-                const props = (layer as any).feature?.properties;
-                const id = props?.[this.identifierProperty];
+                const id = feature?.properties?.[this.identifierProperty];
                 if (id != null) {
                     this.selectionFromMapClick = true;
+                    if (this.selectOnClick) {
+                        this.clickSelectedID = Number(id);
+                        this.refreshSelection();
+                    }
                     this.selectedIDsChange.emit(Number(id));
-                    return;
                 }
             }
 
-            // Fallback: just pan to the feature
-            const target = this.getPanTargetLatLng(layer, e);
-            if (target && this.map) {
-                this.map.panTo(target);
+            // Popup: shown alongside selection when popupContentFn is configured.
+            if (this.popupContentFn && feature && latlng && this.map) {
+                const html = this.popupContentFn(feature, latlng);
+                if (html) {
+                    this.closeActivePopup();
+                    this.activePopup = L.popup({ offset: [0, -12] })
+                        .setLatLng(latlng)
+                        .setContent(html)
+                        .openOn(this.map);
+                }
+                return;
+            }
+
+            // Selection already handled above; nothing more to do.
+            if (this.identifierProperty) {
+                return;
+            }
+
+            // Fallback: just pan to the feature.
+            if (latlng && this.map) {
+                this.map.panTo(latlng);
             }
         });
     }

@@ -48,7 +48,9 @@
                                 [layerControl]="layerControl"
                                 [featureCollection]="projectFeatures"
                                 [layerName]="'Project Locations'"
-                                [layerColor]="'#ffff00'"
+                                [layerColor]="'#3388ff'"
+                                [identifierProperty]="'ProjectID'"
+                                [selectOnClick]="true"
                                 [displayOnLoad]="true"
                                 [popupContentFn]="buildProjectPopupContent(vm.priorityLandscape)"></generic-feature-collection-layer>
                         }

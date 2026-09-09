@@ -123,16 +123,22 @@
             </div>
             <div class="card-body">
                 @if (projectLocations$ | async; as projectLocations) {
-                    @if (projectLocations.length > 0) {
-                        <projects-map
-                            [projectPoints]="projectLocations"
-                            [colorByPropertyName]="colorByPropertyName"
-                            [legendColorsToUse]="legendColorsToUse"
-                            mapHeight="400px">
-                        </projects-map>
-                    } @else {
-                        <p class="text-muted mb-0">No mapped projects are associated with this fund source.</p>
-                    }
+                    <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
+                        <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
+                        <generic-feature-collection-layer
+                            [map]="map"
+                            [layerControl]="layerControl"
+                            [featureCollection]="projectLocations"
+                            [layerName]="'Project Locations'"
+                            [layerColor]="'#3388ff'"
+                            [identifierProperty]="'ProjectID'"
+                            [selectOnClick]="true"
+                            [displayOnLoad]="true"
+                            [popupContentFn]="projectPopupContentFn"></generic-feature-collection-layer>
+                        <priority-landscapes-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
+                        <dnr-upland-regions-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
+                        <counties-layer [map]="map" [layerControl]="layerControl" [mode]="OverlayMode.ReferenceOnly" [displayOnLoad]="false" [fitBoundsOnWmsAddToControl]="false"></counties-layer>
+                    </wadnr-map>
                 } @else {
                     <div [loadingSpinner]="{ isLoading: true, loadingHeight: 200 }"></div>
                 }

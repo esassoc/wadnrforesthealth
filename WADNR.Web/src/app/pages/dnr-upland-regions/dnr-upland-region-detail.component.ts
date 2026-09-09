@@ -348,13 +348,17 @@ export class DNRUplandRegionDetailComponent {
         ];
     }
 
-    buildProjectPopupContent(): (feature: Feature, latlng: L.LatLng) => string | null {
-        return (feature: Feature): string | null => {
+    buildProjectPopupContent(dnrUplandRegion: DNRUplandRegionDetail): (feature: Feature, latlng: L.LatLng) => string | null {
+        return (feature: Feature, latlng: L.LatLng): string | null => {
             const props = feature.properties;
             if (!props) return null;
             const projectID = props["ProjectID"];
             const projectName = props["ProjectName"] ?? projectID;
-            return `<a href="/projects/${projectID}">${projectName}</a>`;
+            return `
+                <b>DNR Upland Region:</b> <a href="/dnr-upland-regions/${dnrUplandRegion.DNRUplandRegionID}">${dnrUplandRegion.DNRUplandRegionName}</a><br>
+                <b>Project:</b> <a href="/projects/${projectID}">${projectName}</a><br>
+                <b>Location:</b> ${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}
+            `;
         };
     }
 

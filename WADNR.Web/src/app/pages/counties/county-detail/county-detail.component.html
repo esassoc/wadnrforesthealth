@@ -35,7 +35,7 @@
                 <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
                     <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'other'" [displayOnLoad]="false"></external-map-layers>
                     @if (projectFeatures$ | async; as projectFeatures) {
-                    <generic-feature-collection-layer [map]="map" [layerControl]="layerControl" [featureCollection]="projectFeatures" [layerName]="'Project Locations'" [layerColor]="'#ffff00'" [displayOnLoad]="true"
+                    <generic-feature-collection-layer [map]="map" [layerControl]="layerControl" [featureCollection]="projectFeatures" [layerName]="'Project Locations'" [layerColor]="'#3388ff'" [identifierProperty]="'ProjectID'" [selectOnClick]="true" [displayOnLoad]="true"
                         [popupContentFn]="buildProjectPopupContent(county)"></generic-feature-collection-layer>
                     }
                     <counties-layer [map]="map" [layerControl]="layerControl" [selectedIDs]="[county.CountyID]" [mode]="highlightedCountyLayerMode"></counties-layer>
