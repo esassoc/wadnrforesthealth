@@ -59,7 +59,6 @@ export class GroupedLayers extends Control {
     onAdd(map: Map): HTMLElement {
         this._map = map;
         this._initLayout();
-        this._addCloseButton();
         this._update();
         map.on("layeradd", this._onLayerChange, this).on("layerremove", this._onLayerChange, this);
         return this._container;
@@ -401,20 +400,6 @@ export class GroupedLayers extends Control {
         }
         return -1;
     }
-
-    private _addCloseButton = (): void => {
-        const elements = this._container.getElementsByClassName("leaflet-control-layers-list");
-        const closeButtonDiv = DomUtil.create("div");
-        closeButtonDiv.className = "leaflet-control-layers-close-button-wrapper";
-        const button = DomUtil.create("a", "leaflet-control-layers-close-button", closeButtonDiv);
-        (button as any).role = "button";
-        button.title = "Collapse layer control";
-        button.innerHTML = "Close";
-        button.addEventListener("click", () => this._collapse());
-        if (elements[0]) {
-            elements[0].appendChild(closeButtonDiv);
-        }
-    };
 }
 
 export function groupedLayers(
