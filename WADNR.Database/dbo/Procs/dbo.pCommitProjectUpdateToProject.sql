@@ -51,7 +51,6 @@ BEGIN
             CompletionDate,
             ExpirationDate,
             EstimatedTotalCost,
-            FocusAreaID,
             PercentageMatch,
             ProjectLocationSimpleTypeID,
             ProjectLocationNotes,
@@ -73,7 +72,6 @@ BEGIN
             p.CompletionDate = pu.CompletionDate,
             p.ExpirationDate = pu.ExpirationDate,
             p.EstimatedTotalCost = pu.EstimatedTotalCost,
-            p.FocusAreaID = pu.FocusAreaID,
             p.PercentageMatch = pu.PercentageMatch,
             p.ProjectLocationPoint = pu.ProjectLocationPoint,
             p.ProjectLocationSimpleTypeID = pu.ProjectLocationSimpleTypeID,
@@ -140,14 +138,6 @@ BEGIN
         FROM dbo.Project p CROSS JOIN #ProjectBefore b
         WHERE p.ProjectID = @ProjectID
           AND ISNULL(b.EstimatedTotalCost, -1) <> ISNULL(p.EstimatedTotalCost, -1);
-
-        -- FocusAreaID
-        INSERT INTO dbo.AuditLog (PersonID, AuditLogDate, AuditLogEventTypeID, TableName, RecordID, ColumnName, OriginalValue, NewValue, ProjectID)
-        SELECT @CallingPersonID, @AuditDate, 3, 'Project', @ProjectID, 'FocusAreaID',
-               CAST(b.FocusAreaID as varchar(max)), ISNULL(CAST(p.FocusAreaID as varchar(max)), ''), @ProjectID
-        FROM dbo.Project p CROSS JOIN #ProjectBefore b
-        WHERE p.ProjectID = @ProjectID
-          AND ISNULL(b.FocusAreaID, -1) <> ISNULL(p.FocusAreaID, -1);
 
         -- PercentageMatch
         INSERT INTO dbo.AuditLog (PersonID, AuditLogDate, AuditLogEventTypeID, TableName, RecordID, ColumnName, OriginalValue, NewValue, ProjectID)

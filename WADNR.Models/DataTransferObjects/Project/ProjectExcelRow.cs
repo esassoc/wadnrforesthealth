@@ -13,7 +13,6 @@ public class ProjectExcelRow
     public string PriorityLandscapeNames { get; set; } = string.Empty;
     public string DNRUplandRegionNames { get; set; } = string.Empty;
     public string CountyNames { get; set; } = string.Empty;
-    public string? FocusAreaName { get; set; }
     public DateOnly? PlannedDate { get; set; }
     public DateOnly? CompletionDate { get; set; }
     public string? ProjectDescription { get; set; }

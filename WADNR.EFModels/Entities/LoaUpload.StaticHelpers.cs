@@ -69,7 +69,6 @@ public static class LoaUploads
                 MatchAmount = row.MatchAmount.HasValue ? (decimal)row.MatchAmount.Value : null,
                 PayAmount = row.PayAmount.HasValue ? (decimal)row.PayAmount.Value : null,
                 FundSourceNumber = row.FundSourceNumber,
-                FocusAreaName = row.FocusArea,
                 ProjectExpirationDate = row.ProjectExpirationDate.HasValue ? DateOnly.FromDateTime(row.ProjectExpirationDate.Value) : null,
                 LetterDate = row.LetterDate.HasValue ? DateOnly.FromDateTime(row.LetterDate.Value) : null,
                 ProgramIndex = row.ProgramIndex,

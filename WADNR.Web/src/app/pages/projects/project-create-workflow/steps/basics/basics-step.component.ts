@@ -10,7 +10,6 @@ import { WorkflowStepActionsComponent } from "src/app/shared/components/workflow
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { ProjectTypeService } from "src/app/shared/generated/api/project-type.service";
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
-import { FocusAreaService } from "src/app/shared/generated/api/focus-area.service";
 import { ProgramService } from "src/app/shared/generated/api/program.service";
 import { ProjectBasicsStep } from "src/app/shared/generated/model/project-basics-step";
 import { ProjectBasicsStepRequest } from "src/app/shared/generated/model/project-basics-step-request";
@@ -37,7 +36,6 @@ export class BasicsStepComponent extends CreateWorkflowStepBase implements OnIni
     public FirmaPageTypeEnum = FirmaPageTypeEnum;
     public projectTypeOptions$: Observable<FormInputOption[]>;
     public organizationOptions$: Observable<FormInputOption[]>;
-    public focusAreaOptions$: Observable<FormInputOption[]>;
     public programOptions$: Observable<FormInputOption[]>;
     public projectStageOptions: SelectDropdownOption[] = ProjectStagesAsSelectDropdownOptions;
     public vm$: Observable<{
@@ -45,7 +43,6 @@ export class BasicsStepComponent extends CreateWorkflowStepBase implements OnIni
         isLoading: boolean;
         projectTypeOptions: FormInputOption[];
         organizationOptions: FormInputOption[];
-        focusAreaOptions: FormInputOption[];
         programOptions: FormInputOption[];
     }>;
 
@@ -72,7 +69,6 @@ export class BasicsStepComponent extends CreateWorkflowStepBase implements OnIni
         private projectService: ProjectService,
         private projectTypeService: ProjectTypeService,
         private organizationService: OrganizationService,
-        private focusAreaService: FocusAreaService,
         private programService: ProgramService
     ) {
         super();
@@ -85,7 +81,6 @@ export class BasicsStepComponent extends CreateWorkflowStepBase implements OnIni
             completionDate: new FormControl(null),
             expirationDate: new FormControl(null),
             leadImplementerOrganizationID: new FormControl(null, [Validators.required]),
-            focusAreaID: new FormControl(null),
             percentageMatch: new FormControl(null),
             programIDs: new FormControl<number[]>([]),
             programToAdd: new FormControl<number | null>(null),
@@ -131,22 +126,6 @@ export class BasicsStepComponent extends CreateWorkflowStepBase implements OnIni
             ),
             catchError(() => {
                 this.alertService.pushAlert(new Alert("Failed to load organizations.", AlertContext.Warning, true));
-                return of([]);
-            }),
-            shareReplay({ bufferSize: 1, refCount: true })
-        );
-
-        // Load focus areas for DNR LOA Focus Area dropdown
-        this.focusAreaOptions$ = this.focusAreaService.listFocusArea().pipe(
-            map((focusAreas) =>
-                focusAreas.map((fa) => ({
-                    Value: fa.FocusAreaID,
-                    Label: fa.FocusAreaName,
-                    disabled: false,
-                }))
-            ),
-            catchError(() => {
-                this.alertService.pushAlert(new Alert("Failed to load focus areas.", AlertContext.Warning, true));
                 return of([]);
             }),
             shareReplay({ bufferSize: 1, refCount: true })
@@ -205,8 +184,8 @@ export class BasicsStepComponent extends CreateWorkflowStepBase implements OnIni
         );
 
         // Combined view model
-        this.vm$ = combineLatest([this._projectID$, this.projectTypeOptions$, this.organizationOptions$, this.focusAreaOptions$, this.programOptions$, projectData$]).pipe(
-            map(([projectID, projectTypeOptions, organizationOptions, focusAreaOptions, programOptions, projectData]) => {
+        this.vm$ = combineLatest([this._projectID$, this.projectTypeOptions$, this.organizationOptions$, this.programOptions$, projectData$]).pipe(
+            map(([projectID, projectTypeOptions, organizationOptions, programOptions, projectData]) => {
                 const isNewProject = projectID == null || Number.isNaN(projectID);
                 if (projectData && !isNewProject) {
                     this.populateForm(projectData, programOptions);
@@ -216,7 +195,6 @@ export class BasicsStepComponent extends CreateWorkflowStepBase implements OnIni
                     isLoading: false,
                     projectTypeOptions,
                     organizationOptions,
-                    focusAreaOptions,
                     programOptions,
                 };
             }),
@@ -226,7 +204,6 @@ export class BasicsStepComponent extends CreateWorkflowStepBase implements OnIni
                 isLoading: true,
                 projectTypeOptions: [] as FormInputOption[],
                 organizationOptions: [] as FormInputOption[],
-                focusAreaOptions: [] as FormInputOption[],
                 programOptions: [] as FormInputOption[],
             }),
             shareReplay({ bufferSize: 1, refCount: true })
@@ -248,7 +225,6 @@ export class BasicsStepComponent extends CreateWorkflowStepBase implements OnIni
             completionDate: data.CompletionDate ? this.formatDateForInput(data.CompletionDate) : null,
             expirationDate: data.ExpirationDate ? this.formatDateForInput(data.ExpirationDate) : null,
             leadImplementerOrganizationID: data.LeadImplementerOrganizationID,
-            focusAreaID: data.FocusAreaID,
             percentageMatch: data.PercentageMatch,
             programIDs: data.ProgramIDs ?? [],
         });
@@ -310,7 +286,6 @@ export class BasicsStepComponent extends CreateWorkflowStepBase implements OnIni
             CompletionDate: this.form.value.completionDate,
             ExpirationDate: this.form.value.expirationDate,
             LeadImplementerOrganizationID: this.form.value.leadImplementerOrganizationID,
-            FocusAreaID: this.form.value.focusAreaID,
             PercentageMatch: this.form.value.percentageMatch,
             ProgramIDs: this.form.value.programIDs ?? [],
         };

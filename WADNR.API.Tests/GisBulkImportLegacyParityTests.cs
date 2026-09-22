@@ -624,6 +624,65 @@ public class GisBulkImportLegacyParityTests
         Assert.IsNull((await db.Projects.SingleAsync()).ProjectLocationPoint);
     }
 
+    [TestMethod]
+    public async Task ImportProjects_SetsProjectLocationPoint_OnTreatmentPathCreate()
+    {
+        // On the treatment path the proc normally sets the point, but it can't run in this in-memory
+        // harness (its call is swallowed to a warning) — mirroring production, where the proc is gated
+        // to newly-created projects and skipped entirely when the treatment import throws. The
+        // unconditional centroid heal must still give every created project a simple location. WADNR-2280.
+        await using var db = NewInMemoryContext();
+        await SeedAsync(db, new SeedOptions
+        {
+            ImportAsDetailedLocationInsteadOfTreatments = false,
+            Features = { new FeatureSpec("PROJ-1") }
+        });
+
+        await GisBulkImports.ImportProjectsAsync(db, AttemptID, BuildRequest());
+
+        db.ChangeTracker.Clear();
+        var project = await db.Projects.SingleAsync();
+        Assert.IsNotNull(project.ProjectLocationPoint, "Expected a centroid derived from the imported project areas.");
+        Assert.AreEqual((int)ProjectLocationSimpleTypeEnum.PointOnMap, project.ProjectLocationSimpleTypeID);
+    }
+
+    [TestMethod]
+    public async Task ImportProjects_SetsProjectLocationPoint_OnTreatmentPathUpdate()
+    {
+        // The proc's UPDATE is gated by CreateGisUploadAttemptID, so a project the import merely
+        // updates never gets a point from it. The heal is scoped by LastUpdateGisUploadAttemptID and
+        // must fill the point on updated projects too, not just newly-created ones. WADNR-2280.
+        await using var db = NewInMemoryContext();
+        await SeedAsync(db, new SeedOptions
+        {
+            ImportAsDetailedLocationInsteadOfTreatments = false,
+            Features = { new FeatureSpec("PROJ-1", Name: "Renamed By Import") }
+        });
+
+        db.Projects.Add(new Project
+        {
+            ProjectID = 500,
+            ProjectName = "Existing",
+            FhtProjectNumber = "FHT-2026-00001",
+            ProjectGisIdentifier = "PROJ-1",
+            ProjectTypeID = OtherProjectTypeID,
+            ProjectStageID = (int)ProjectStageEnum.Planned,
+            ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.Approved,
+            ProjectLocationSimpleTypeID = (int)ProjectLocationSimpleTypeEnum.None,
+        });
+        db.ProjectPrograms.Add(new ProjectProgram { ProjectID = 500, ProgramID = ProgramID });
+        await db.SaveChangesWithNoAuditingAsync();
+
+        var result = await GisBulkImports.ImportProjectsAsync(db, AttemptID, BuildRequest());
+
+        Assert.AreEqual(1, result.ProjectsUpdated);
+        db.ChangeTracker.Clear();
+        var project = await db.Projects.SingleAsync();
+        Assert.IsNotNull(project.ProjectLocationPoint,
+            "An updated project must get a centroid too — the proc's UPDATE is create-only.");
+        Assert.AreEqual((int)ProjectLocationSimpleTypeEnum.PointOnMap, project.ProjectLocationSimpleTypeID);
+    }
+
     // ---------------------------------------------------------------------------------------
     // Update-path branches
     // ---------------------------------------------------------------------------------------
@@ -669,6 +728,76 @@ public class GisBulkImportLegacyParityTests
         Assert.AreEqual(new DateOnly(2026, 6, 1), project.PlannedDate);
         Assert.AreEqual("Imported from the source organization.", project.ProjectDescription,
             "An empty description must be filled from the source organization default.");
+    }
+
+    [TestMethod]
+    public async Task ImportProjects_CreatesAndUpdatesInTheSamePass_WithoutCrossingTheTwo()
+    {
+        // The import writes in phases over the whole batch rather than a transaction per project, so
+        // creates and updates now share preloaded state: one query for the existing projects, one for
+        // the FHT number block, one for the other-program treatment dates. Every other test here is
+        // all-create or all-update, which leaves that sharing untested — a create drawing an existing
+        // project's row, or an update consuming a reserved FHT number, would go unnoticed.
+        await using var db = NewInMemoryContext();
+        await SeedAsync(db, new SeedOptions
+        {
+            ImportAsDetailedLocationInsteadOfTreatments = true,
+            Features =
+            {
+                new FeatureSpec("PROJ-EXISTING", Name: "Renamed By Import"),
+                new FeatureSpec("PROJ-NEW", Name: "Brand New"),
+            }
+        });
+
+        const string existingFhtProjectNumber = "FHT-2026-00001";
+        db.Projects.Add(new Project
+        {
+            ProjectID = 500,
+            ProjectName = "Existing",
+            FhtProjectNumber = existingFhtProjectNumber,
+            ProjectGisIdentifier = "PROJ-EXISTING",
+            ProjectTypeID = OtherProjectTypeID,
+            ProjectStageID = (int)ProjectStageEnum.Planned,
+            ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.Approved,
+            ProjectLocationSimpleTypeID = (int)ProjectLocationSimpleTypeEnum.None,
+        });
+        db.ProjectPrograms.Add(new ProjectProgram { ProjectID = 500, ProgramID = ProgramID });
+        await db.SaveChangesWithNoAuditingAsync();
+
+        var result = await GisBulkImports.ImportProjectsAsync(db, AttemptID, BuildRequest());
+
+        Assert.AreEqual(1, result.ProjectsCreated, "PROJ-NEW has no match and must be created.");
+        Assert.AreEqual(1, result.ProjectsUpdated, "PROJ-EXISTING matches project 500 and must be updated, not duplicated.");
+        Assert.AreEqual(2, result.LocationsCreated);
+
+        db.ChangeTracker.Clear();
+        var projectsByIdentifier = await db.Projects.AsNoTracking()
+            .ToDictionaryAsync(p => p.ProjectGisIdentifier!, p => p);
+        Assert.AreEqual(2, projectsByIdentifier.Count, "Exactly one project per identifier.");
+
+        var updated = projectsByIdentifier["PROJ-EXISTING"];
+        Assert.AreEqual(500, updated.ProjectID);
+        Assert.AreEqual("Renamed By Import", updated.ProjectName);
+        Assert.AreEqual(existingFhtProjectNumber, updated.FhtProjectNumber,
+            "An update must never renumber a project — the allocator is for the create path only.");
+
+        var created = projectsByIdentifier["PROJ-NEW"];
+        Assert.AreEqual("Brand New", created.ProjectName);
+        Assert.AreNotEqual(existingFhtProjectNumber, created.FhtProjectNumber,
+            "The reserved block must start past the highest number already in use, or this collides "
+            + "with AK_Project_FhtProjectNumber on a real database.");
+        StringAssert.StartsWith(created.FhtProjectNumber, $"FHT-{DateTime.Now.Year}-");
+
+        // The created project must carry the create-path stamps and the updated one must not gain them.
+        Assert.AreEqual(AttemptID, created.CreateGisUploadAttemptID);
+        Assert.IsNull(updated.CreateGisUploadAttemptID,
+            "A project the import merely updated must not be restamped as created by this attempt.");
+        Assert.AreEqual(AttemptID, updated.LastUpdateGisUploadAttemptID);
+
+        // The lead implementer relationship is create-path only, so exactly one must exist.
+        Assert.AreEqual(1, await db.ProjectOrganizations.CountAsync(),
+            "Only the created project gets a lead implementer row.");
+        Assert.AreEqual(created.ProjectID, (await db.ProjectOrganizations.AsNoTracking().SingleAsync()).ProjectID);
     }
 
     // ---------------------------------------------------------------------------------------

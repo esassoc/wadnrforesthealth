@@ -65,8 +65,6 @@ public partial class Project
     [Unicode(false)]
     public string? NoExpendituresToReportExplanation { get; set; }
 
-    public int? FocusAreaID { get; set; }
-
     [StringLength(4000)]
     [Unicode(false)]
     public string? NoRegionsExplanation { get; set; }
@@ -105,10 +103,6 @@ public partial class Project
     [ForeignKey("CreateGisUploadAttemptID")]
     [InverseProperty("ProjectCreateGisUploadAttempts")]
     public virtual GisUploadAttempt? CreateGisUploadAttempt { get; set; }
-
-    [ForeignKey("FocusAreaID")]
-    [InverseProperty("Projects")]
-    public virtual FocusArea? FocusArea { get; set; }
 
     [InverseProperty("Project")]
     public virtual ICollection<InteractionEventProject> InteractionEventProjects { get; set; } = new List<InteractionEventProject>();

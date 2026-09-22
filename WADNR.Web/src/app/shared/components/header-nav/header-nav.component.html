@@ -114,9 +114,6 @@
                         <li class="divider"></li>
                         <li><a routerLink="/priority-landscapes" class="dropdown-item">Priority Landscapes</a></li>
                         <li><a routerLink="/dnr-upland-regions" class="dropdown-item">DNR Upland Regions</a></li>
-                        @if (currentUser$ | async) {
-                        <li><a routerLink="/focus-areas" class="dropdown-item">DNR LOA Focus Areas</a></li>
-                        }
                         <li><a routerLink="/counties" class="dropdown-item">Counties</a></li>
                         <li class="divider"></li>
                         @if (hasCanStewardProjectsRelationship$ | async) {

@@ -91,7 +91,6 @@ namespace WADNR.EFModels.Entities
         public static readonly FieldDefinitionLandowner Landowner = FieldDefinitionLandowner.Instance;
         public static readonly FieldDefinitionPartner Partner = FieldDefinitionPartner.Instance;
         public static readonly FieldDefinitionPrimaryContact PrimaryContact = FieldDefinitionPrimaryContact.Instance;
-        public static readonly FieldDefinitionFocusArea FocusArea = FieldDefinitionFocusArea.Instance;
         public static readonly FieldDefinitionFundSource FundSource = FieldDefinitionFundSource.Instance;
         public static readonly FieldDefinitionFundSourceAllocation FundSourceAllocation = FieldDefinitionFundSourceAllocation.Instance;
         public static readonly FieldDefinitionCostType CostType = FieldDefinitionCostType.Instance;
@@ -125,11 +124,6 @@ namespace WADNR.EFModels.Entities
         public static readonly FieldDefinitionFundSourceAllocationNote FundSourceAllocationNote = FieldDefinitionFundSourceAllocationNote.Instance;
         public static readonly FieldDefinitionFileResource FileResource = FieldDefinitionFileResource.Instance;
         public static readonly FieldDefinitionProjectTotalCompletedFootprintAcres ProjectTotalCompletedFootprintAcres = FieldDefinitionProjectTotalCompletedFootprintAcres.Instance;
-        public static readonly FieldDefinitionFocusAreaTotalProjectReportedExpendiures FocusAreaTotalProjectReportedExpendiures = FieldDefinitionFocusAreaTotalProjectReportedExpendiures.Instance;
-        public static readonly FieldDefinitionFocusAreaTotalProjectEstimatedTotalCosts FocusAreaTotalProjectEstimatedTotalCosts = FieldDefinitionFocusAreaTotalProjectEstimatedTotalCosts.Instance;
-        public static readonly FieldDefinitionFocusAreaTotalCompletedFootprintAcres FocusAreaTotalCompletedFootprintAcres = FieldDefinitionFocusAreaTotalCompletedFootprintAcres.Instance;
-        public static readonly FieldDefinitionFocusAreaTotalPlannedFootprintAcres FocusAreaTotalPlannedFootprintAcres = FieldDefinitionFocusAreaTotalPlannedFootprintAcres.Instance;
-        public static readonly FieldDefinitionFocusAreaCloseoutReportProjectList FocusAreaCloseoutReportProjectList = FieldDefinitionFocusAreaCloseoutReportProjectList.Instance;
         public static readonly FieldDefinitionRequestorName RequestorName = FieldDefinitionRequestorName.Instance;
         public static readonly FieldDefinitionInvoiceDate InvoiceDate = FieldDefinitionInvoiceDate.Instance;
         public static readonly FieldDefinitionPurchaseAuthority PurchaseAuthority = FieldDefinitionPurchaseAuthority.Instance;
@@ -262,7 +256,7 @@ namespace WADNR.EFModels.Entities
         /// </summary>
         static FieldDefinition()
         {
-            All = new List<FieldDefinition> { ProjectType, TaxonomyTrunk, PrimaryContactOrganization, ProjectsStewardOrganizationRelationshipToProject, Organization, Password, MeasurementUnit, PhotoCaption, PhotoCredit, PhotoTiming, OrganizationPrimaryContact, TaxonomyBranch, CompletionDate, ProjectDescription, ProjectName, ProjectNote, ExpirationDate, ReportedValue, OrganizationType, ProjectFundSourceAllocationRequestTotalAmount, ProjectStage, ClassificationName, EstimatedTotalCost, UnfundedNeed, Username, Project, Classification, FundedAmount, ProjectLocation, ExcludeFromFactSheet, ProjectCostInYearOfExpenditure, GlobalInflationRate, ReportingYear, TagName, TagDescription, ReportedExpenditure, ProjectInitiationDate, AssociatedTaxonomyBranches, ExternalLinks, CurrentYearForPVCalculations, LifecycleOperatingCost, RoleName, DNRUplandRegion, MonitoringProgram, MonitoringApproach, MonitoringProgramPartner, MonitoringProgramUrl, ClassificationDescription, ClassificationGoalStatement, ClassificationNarrative, TaxonomySystemName, ProjectTypeDisplayNameForProject, ProjectRelationshipType, ProjectSteward, ChartLastUpdatedDate, UnsecuredFunding, ProjectStewardOrganizationDisplayName, ClassificationSystem, ClassificationSystemName, ProjectPrimaryContact, CustomPageDisplayType, TaxonomyTrunkDescription, TaxonomyBranchDescription, ProjectTypeDescription, ShowApplicationsToThePublic, ShowLeadImplementerLogoOnFactSheet, ProjectUpdateKickOffDate, ProjectUpdateReminderInterval, ProjectUpdateCloseOutDate, FundSourceAllocationAmount, NormalUser, ProjectStewardshipArea, ProjectInternalNote, StatewideVendorNumber, Contact, ContactRelationshipType, Contractor, Landowner, Partner, PrimaryContact, FocusArea, FundSource, FundSourceAllocation, CostType, ProjectCode, FundSourceAllocationProjectCode, ProgramIndex, FundSourceName, FundSourceShortName, FundSourceStatus, FundSourceType, FundSourceNumber, CFDA, TotalAwardAmount, FundSourceStartDate, FundSourceEndDate, FundSourceNote, PriorityLandscape, Invoice, Agreement, FederalFundCode, AllocationAmount, AgreementType, AgreementNumber, AgreementTitle, AgreementStartDate, AgreementEndDate, AgreementAmount, ProgramManager, AgreementNotes, AgreementStatus, FundSourceAllocationNote, FileResource, ProjectTotalCompletedFootprintAcres, FocusAreaTotalProjectReportedExpendiures, FocusAreaTotalProjectEstimatedTotalCosts, FocusAreaTotalCompletedFootprintAcres, FocusAreaTotalPlannedFootprintAcres, FocusAreaCloseoutReportProjectList, RequestorName, InvoiceDate, PurchaseAuthority, PaymentAmount, PreparedByPerson, InvoiceIdentifyingName, FundSourceNoteInternal, FundSourceAllocationNoteInternal, InvoiceStatus, InvoiceApprovalStatus, InvoiceApprovalComment, MatchAmount, Vendor, EstimatedIndirectCost, EstimatedPersonnelAndBenefitsCost, EstimatedSuppliesCost, EstimatedTravelCost, InvoiceID, InvoiceLineItem, InteractionEvent, InteractionEventType, DNRStaffPerson, InteractionEventContact, InteractionEventProject, InteractionEventLocation, FundSourceAllocationName, Division, FundSourceManager, Job, JobImportTableType, FundSourceAllocationBudgetLineItem, ProgramIndexProjectCode, FhtProjectNumber, FundSourceCurrentBalance, FundSourceAllocationCurrentBalance, FundSourceAllocationChangeLogNote, TreatmentStartDate, TreatmentEndDate, ChippingAcres, PruningAcres, ThinningAcres, MasticationAcres, GrazingAcres, LopAndScatterAcres, BiomassRemovalAcres, HandPileAcres, BroadcastBurnAcres, HandPileBurnAcres, MachinePileBurnAcres, OtherTreatmentAcres, SlashAcres, ProjectIdentifier, PlannedDate, TreatedAcres, TreatmentType, TreatmentDetailedActivityType, FootprintAcres, FundingSource, FundingSourceNote, ProjectTotalCompletedTreatmentAcres, LimitVisibilityToAdmin, Program, ProjectFundSourceAllocationRequestMatchAmount, ProjectFundSourceAllocationRequestPayAmount, ProjectApplicationDate, ProjectDecisionDate, ServiceForester, StewardshipFishAndWildlifeBiologist, RegulationAssistanceForester, FamilyForestFishPassageProgram, ForestryRiparianEasementProgram, RiversAndHabitatOpenSpaceProgramManager, CommunityResilienceCoordinator, UrbanForestryTechnician, ForestPracticesForester, SmallForestLandownerOfficeProgramManager, SmallForestLandownerProgramManager, UcfStatewideSpecialist, ServiceForestrySpecialist, ExternalMapLayer, ExternalMapLayerDisplayName, ExternalMapLayerUrl, ExternalMapLayerDescription, ExternalMapLayerFeatureNameField, ExternalMapLayerDisplayOnPriorityLandscape, ExternalMapLayerDisplayOnProjectMap, ExternalMapLayerDisplayOnAllOthers, ExternalMapLayerIsATiledMapService, ExternalMapLayerIsActive, UpdatesFromImport, TreatmentCode, TreatmentCostPerAcre, TreatmentTotalCost, ServiceForestryRegionalCoordinator, County, PercentageMatch, ReportTitle, ReportDescription, ReportFile, ReportModel, SelectedReportTemplate, InvoicePaymentRequest, DUNS, OrganizationCode, InvoiceNumber, Fund, Appn, SubObject, ServiceForestryProgramManager, ForestRegulationFishAndWildlifeBiologist, FundSourceAllocationFundFSPs, FundSourceAllocationSource, FundSourceAllocationAllocation, FundSourceAllocationTotalFundSourceFunds, FundSourceAllocationOverallBalance, FundSourceAllocationContractualBalance, FundSourceAllocationTravelBalance, FundSourceAllocationStaffBalance, FundSourceAllocationLikelyToUse, FundSourceAllocationCompleted, FundSourceAllocationPriority, LeadImplementerOrganization, IsUser };
+            All = new List<FieldDefinition> { ProjectType, TaxonomyTrunk, PrimaryContactOrganization, ProjectsStewardOrganizationRelationshipToProject, Organization, Password, MeasurementUnit, PhotoCaption, PhotoCredit, PhotoTiming, OrganizationPrimaryContact, TaxonomyBranch, CompletionDate, ProjectDescription, ProjectName, ProjectNote, ExpirationDate, ReportedValue, OrganizationType, ProjectFundSourceAllocationRequestTotalAmount, ProjectStage, ClassificationName, EstimatedTotalCost, UnfundedNeed, Username, Project, Classification, FundedAmount, ProjectLocation, ExcludeFromFactSheet, ProjectCostInYearOfExpenditure, GlobalInflationRate, ReportingYear, TagName, TagDescription, ReportedExpenditure, ProjectInitiationDate, AssociatedTaxonomyBranches, ExternalLinks, CurrentYearForPVCalculations, LifecycleOperatingCost, RoleName, DNRUplandRegion, MonitoringProgram, MonitoringApproach, MonitoringProgramPartner, MonitoringProgramUrl, ClassificationDescription, ClassificationGoalStatement, ClassificationNarrative, TaxonomySystemName, ProjectTypeDisplayNameForProject, ProjectRelationshipType, ProjectSteward, ChartLastUpdatedDate, UnsecuredFunding, ProjectStewardOrganizationDisplayName, ClassificationSystem, ClassificationSystemName, ProjectPrimaryContact, CustomPageDisplayType, TaxonomyTrunkDescription, TaxonomyBranchDescription, ProjectTypeDescription, ShowApplicationsToThePublic, ShowLeadImplementerLogoOnFactSheet, ProjectUpdateKickOffDate, ProjectUpdateReminderInterval, ProjectUpdateCloseOutDate, FundSourceAllocationAmount, NormalUser, ProjectStewardshipArea, ProjectInternalNote, StatewideVendorNumber, Contact, ContactRelationshipType, Contractor, Landowner, Partner, PrimaryContact, FundSource, FundSourceAllocation, CostType, ProjectCode, FundSourceAllocationProjectCode, ProgramIndex, FundSourceName, FundSourceShortName, FundSourceStatus, FundSourceType, FundSourceNumber, CFDA, TotalAwardAmount, FundSourceStartDate, FundSourceEndDate, FundSourceNote, PriorityLandscape, Invoice, Agreement, FederalFundCode, AllocationAmount, AgreementType, AgreementNumber, AgreementTitle, AgreementStartDate, AgreementEndDate, AgreementAmount, ProgramManager, AgreementNotes, AgreementStatus, FundSourceAllocationNote, FileResource, ProjectTotalCompletedFootprintAcres, RequestorName, InvoiceDate, PurchaseAuthority, PaymentAmount, PreparedByPerson, InvoiceIdentifyingName, FundSourceNoteInternal, FundSourceAllocationNoteInternal, InvoiceStatus, InvoiceApprovalStatus, InvoiceApprovalComment, MatchAmount, Vendor, EstimatedIndirectCost, EstimatedPersonnelAndBenefitsCost, EstimatedSuppliesCost, EstimatedTravelCost, InvoiceID, InvoiceLineItem, InteractionEvent, InteractionEventType, DNRStaffPerson, InteractionEventContact, InteractionEventProject, InteractionEventLocation, FundSourceAllocationName, Division, FundSourceManager, Job, JobImportTableType, FundSourceAllocationBudgetLineItem, ProgramIndexProjectCode, FhtProjectNumber, FundSourceCurrentBalance, FundSourceAllocationCurrentBalance, FundSourceAllocationChangeLogNote, TreatmentStartDate, TreatmentEndDate, ChippingAcres, PruningAcres, ThinningAcres, MasticationAcres, GrazingAcres, LopAndScatterAcres, BiomassRemovalAcres, HandPileAcres, BroadcastBurnAcres, HandPileBurnAcres, MachinePileBurnAcres, OtherTreatmentAcres, SlashAcres, ProjectIdentifier, PlannedDate, TreatedAcres, TreatmentType, TreatmentDetailedActivityType, FootprintAcres, FundingSource, FundingSourceNote, ProjectTotalCompletedTreatmentAcres, LimitVisibilityToAdmin, Program, ProjectFundSourceAllocationRequestMatchAmount, ProjectFundSourceAllocationRequestPayAmount, ProjectApplicationDate, ProjectDecisionDate, ServiceForester, StewardshipFishAndWildlifeBiologist, RegulationAssistanceForester, FamilyForestFishPassageProgram, ForestryRiparianEasementProgram, RiversAndHabitatOpenSpaceProgramManager, CommunityResilienceCoordinator, UrbanForestryTechnician, ForestPracticesForester, SmallForestLandownerOfficeProgramManager, SmallForestLandownerProgramManager, UcfStatewideSpecialist, ServiceForestrySpecialist, ExternalMapLayer, ExternalMapLayerDisplayName, ExternalMapLayerUrl, ExternalMapLayerDescription, ExternalMapLayerFeatureNameField, ExternalMapLayerDisplayOnPriorityLandscape, ExternalMapLayerDisplayOnProjectMap, ExternalMapLayerDisplayOnAllOthers, ExternalMapLayerIsATiledMapService, ExternalMapLayerIsActive, UpdatesFromImport, TreatmentCode, TreatmentCostPerAcre, TreatmentTotalCost, ServiceForestryRegionalCoordinator, County, PercentageMatch, ReportTitle, ReportDescription, ReportFile, ReportModel, SelectedReportTemplate, InvoicePaymentRequest, DUNS, OrganizationCode, InvoiceNumber, Fund, Appn, SubObject, ServiceForestryProgramManager, ForestRegulationFishAndWildlifeBiologist, FundSourceAllocationFundFSPs, FundSourceAllocationSource, FundSourceAllocationAllocation, FundSourceAllocationTotalFundSourceFunds, FundSourceAllocationOverallBalance, FundSourceAllocationContractualBalance, FundSourceAllocationTravelBalance, FundSourceAllocationStaffBalance, FundSourceAllocationLikelyToUse, FundSourceAllocationCompleted, FundSourceAllocationPriority, LeadImplementerOrganization, IsUser };
             AllLookupDictionary = new ReadOnlyDictionary<int, FieldDefinition>(All.ToDictionary(x => x.FieldDefinitionID));
         }
 
@@ -452,18 +446,6 @@ namespace WADNR.EFModels.Entities
                     return FhtProjectNumber;
                 case FieldDefinitionEnum.FileResource:
                     return FileResource;
-                case FieldDefinitionEnum.FocusArea:
-                    return FocusArea;
-                case FieldDefinitionEnum.FocusAreaCloseoutReportProjectList:
-                    return FocusAreaCloseoutReportProjectList;
-                case FieldDefinitionEnum.FocusAreaTotalCompletedFootprintAcres:
-                    return FocusAreaTotalCompletedFootprintAcres;
-                case FieldDefinitionEnum.FocusAreaTotalPlannedFootprintAcres:
-                    return FocusAreaTotalPlannedFootprintAcres;
-                case FieldDefinitionEnum.FocusAreaTotalProjectEstimatedTotalCosts:
-                    return FocusAreaTotalProjectEstimatedTotalCosts;
-                case FieldDefinitionEnum.FocusAreaTotalProjectReportedExpendiures:
-                    return FocusAreaTotalProjectReportedExpendiures;
                 case FieldDefinitionEnum.FootprintAcres:
                     return FootprintAcres;
                 case FieldDefinitionEnum.ForestPracticesForester:
@@ -906,7 +888,6 @@ namespace WADNR.EFModels.Entities
         Landowner = 273,
         Partner = 274,
         PrimaryContact = 275,
-        FocusArea = 276,
         FundSource = 277,
         FundSourceAllocation = 278,
         CostType = 279,
@@ -940,11 +921,6 @@ namespace WADNR.EFModels.Entities
         FundSourceAllocationNote = 307,
         FileResource = 308,
         ProjectTotalCompletedFootprintAcres = 309,
-        FocusAreaTotalProjectReportedExpendiures = 310,
-        FocusAreaTotalProjectEstimatedTotalCosts = 311,
-        FocusAreaTotalCompletedFootprintAcres = 312,
-        FocusAreaTotalPlannedFootprintAcres = 313,
-        FocusAreaCloseoutReportProjectList = 314,
         RequestorName = 315,
         InvoiceDate = 316,
         PurchaseAuthority = 317,
@@ -1550,12 +1526,6 @@ namespace WADNR.EFModels.Entities
         public static readonly FieldDefinitionPrimaryContact Instance = new FieldDefinitionPrimaryContact(275, @"PrimaryContact", @"Primary Contact", @"Placeholder definition for Primary Contact.");
     }
 
-    public partial class FieldDefinitionFocusArea : FieldDefinition
-    {
-        private FieldDefinitionFocusArea(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionFocusArea Instance = new FieldDefinitionFocusArea(276, @"FocusArea", @"Focus Area", @"Placeholder definition for Focus Area");
-    }
-
     public partial class FieldDefinitionFundSource : FieldDefinition
     {
         private FieldDefinitionFundSource(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
@@ -1752,36 +1722,6 @@ namespace WADNR.EFModels.Entities
     {
         private FieldDefinitionProjectTotalCompletedFootprintAcres(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
         public static readonly FieldDefinitionProjectTotalCompletedFootprintAcres Instance = new FieldDefinitionProjectTotalCompletedFootprintAcres(309, @"ProjectTotalCompletedFootprintAcres", @"Project Completed Footprint Acres", @"Sum of Footprint Acres on all completed Treatment Activities under a Project.");
-    }
-
-    public partial class FieldDefinitionFocusAreaTotalProjectReportedExpendiures : FieldDefinition
-    {
-        private FieldDefinitionFocusAreaTotalProjectReportedExpendiures(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionFocusAreaTotalProjectReportedExpendiures Instance = new FieldDefinitionFocusAreaTotalProjectReportedExpendiures(310, @"FocusAreaTotalProjectReportedExpendiures", @"Sum of Project Reported Expendiures", @"Sum of reported expenditures on all Projects within a Focus Area that are in an Implementation, Post-Implementation, or Completed Project Stage.");
-    }
-
-    public partial class FieldDefinitionFocusAreaTotalProjectEstimatedTotalCosts : FieldDefinition
-    {
-        private FieldDefinitionFocusAreaTotalProjectEstimatedTotalCosts(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionFocusAreaTotalProjectEstimatedTotalCosts Instance = new FieldDefinitionFocusAreaTotalProjectEstimatedTotalCosts(311, @"FocusAreaTotalProjectEstimatedTotalCosts", @"Sum of Project Estimated Total Costs", @"Sum of estimated total costs on all Projects within a Focus Area that are in an Implementation, Post-Implementation, or Completed Project Stage.");
-    }
-
-    public partial class FieldDefinitionFocusAreaTotalCompletedFootprintAcres : FieldDefinition
-    {
-        private FieldDefinitionFocusAreaTotalCompletedFootprintAcres(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionFocusAreaTotalCompletedFootprintAcres Instance = new FieldDefinitionFocusAreaTotalCompletedFootprintAcres(312, @"FocusAreaTotalCompletedFootprintAcres", @"Total Footprint Acres - Completed", @"Sum of Footprint Acres on all completed Treatment Activities under all Projects within a Focus Area that are in an Implementation, Post-Implementation, or Completed Project Stage.");
-    }
-
-    public partial class FieldDefinitionFocusAreaTotalPlannedFootprintAcres : FieldDefinition
-    {
-        private FieldDefinitionFocusAreaTotalPlannedFootprintAcres(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionFocusAreaTotalPlannedFootprintAcres Instance = new FieldDefinitionFocusAreaTotalPlannedFootprintAcres(313, @"FocusAreaTotalPlannedFootprintAcres", @"Total Footprint Acres - Planned", @"The value entered in the Planned Footprint Acres field of a Focus Area");
-    }
-
-    public partial class FieldDefinitionFocusAreaCloseoutReportProjectList : FieldDefinition
-    {
-        private FieldDefinitionFocusAreaCloseoutReportProjectList(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionFocusAreaCloseoutReportProjectList Instance = new FieldDefinitionFocusAreaCloseoutReportProjectList(314, @"FocusAreaCloseoutReportProjectList", @"Project List", @"All projects within a Focus Area that are in an Implementation, Post-Implementation, or Completed Project Stage.");
     }
 
     public partial class FieldDefinitionRequestorName : FieldDefinition

@@ -8,7 +8,6 @@
  */
 export const testData = {
     projectID: 12688,
-    focusAreaID: 1,
     countyID: 1,
     fundSourceID: 1,
     programID: 1,

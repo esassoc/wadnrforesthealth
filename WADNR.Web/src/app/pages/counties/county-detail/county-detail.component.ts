@@ -16,9 +16,14 @@ import { CountyDetail } from "src/app/shared/generated/model/county-detail";
 import { ProjectCountyDetailGridRow } from "src/app/shared/generated/model/project-county-detail-grid-row";
 import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
 import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
+import { MAP_LAYER_SORT_ORDER } from "src/app/shared/models/map-layer-sort-order";
 import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
+import { MapAreaInfoPopupComponent } from "src/app/shared/components/leaflet/map-area-info-popup/map-area-info-popup.component";
+import { MapAreaPopupService } from "src/app/shared/services/map-area-popup.service";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
@@ -41,8 +46,11 @@ import { ColDef } from "node_modules/ag-grid-community/dist/types/src/entities/c
         BreadcrumbComponent,
         WADNRMapComponent,
         CountiesLayerComponent,
+        PriorityLandscapesLayerComponent,
+        DNRUplandRegionsLayerComponent,
         ExternalMapLayersComponent,
         GenericFeatureCollectionLayerComponent,
+        MapAreaInfoPopupComponent,
         WADNRGridComponent,
         LoadingDirective,
         ButtonLoadingDirective,
@@ -69,6 +77,8 @@ export class CountyDetailComponent implements OnInit, AfterViewChecked {
     public mapIsReady: boolean = false;
     public highlightedCountyLayerMode = OverlayMode.Single;
     public allCountiesLayerMode = OverlayMode.ReferenceOnly;
+    public OverlayMode = OverlayMode;
+    public MapLayerSortOrder = MAP_LAYER_SORT_ORDER;
     public columnDefs: ColDef<ProjectCountyDetailGridRow>[] = [];
     public pinnedTotalsRow = {
         fields: ["EstimatedTotalCost", "TotalAmount"],
@@ -100,7 +110,8 @@ export class CountyDetailComponent implements OnInit, AfterViewChecked {
         private utilityFunctions: UtilityFunctionsService,
         private authenticationService: AuthenticationService,
         private sanitizer: DomSanitizer,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private mapAreaPopupService: MapAreaPopupService
     ) {}
 
     ngAfterViewChecked(): void {
@@ -192,19 +203,23 @@ export class CountyDetailComponent implements OnInit, AfterViewChecked {
         this.mapIsReady = true;
     }
 
-    buildProjectPopupContent(county: CountyDetail): (feature: Feature, latlng: L.LatLng) => string | null {
-        return (feature: Feature, latlng: L.LatLng): string | null => {
-            const props = feature.properties;
-            if (!props) return null;
-            const projectID = props["ProjectID"];
-            const projectName = props["ProjectName"] ?? projectID;
-            return `
-                <b>County:</b> <a href="/counties/${county.CountyID}">${county.CountyName}</a><br>
-                <b>Project:</b> <a href="/projects/${projectID}">${projectName}</a><br>
-                <b>Location:</b> ${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}
-            `;
-        };
-    }
+    /** Popup shown when a project location marker is clicked. Area lines weave in via areaMarkerPopupExtra. */
+    public projectPopupContentFn = (feature: Feature, latlng: L.LatLng): string | null => {
+        const props = feature.properties;
+        if (!props) return null;
+        const projectID = props["ProjectID"];
+        const projectName = props["ProjectName"] ?? projectID;
+        return `
+            <b>Project:</b> <a href="/projects/${projectID}">${projectName}</a><br>
+            <b>Location:</b> ${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}
+        `;
+    };
+
+    /** Marker popup addition: weaves the geographic areas (County, plus any visible overlays) before Location. */
+    public areaMarkerPopupExtra = async (_feature: Feature, latlng: L.LatLng, baseHtml: string): Promise<string | null> => {
+        const lines = await this.mapAreaPopupService.buildAreaLines(this.map, this.layerControl, latlng);
+        return lines.length ? this.mapAreaPopupService.weaveBeforeLocation(baseHtml, lines) : null;
+    };
 
     public enterEdit(currentContent: string | null | undefined): void {
         this.editedContent = currentContent ?? "";

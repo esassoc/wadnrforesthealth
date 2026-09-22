@@ -31,7 +31,6 @@ public class ProjectApiJson
     public DateTime? ApprovalDate { get; set; }
     public int? ReviewedByPersonID { get; set; }
     public string ReviewedByPersonName { get; set; }
-    public int? FocusAreaID { get; set; }
     public string NoExpendituresToReportExplanation { get; set; }
     public string NoRegionsExplanation { get; set; }
     public string NoPriorityLandscapesExplanation { get; set; }

@@ -25,10 +25,6 @@ public partial class LoaStage
     [Unicode(false)]
     public string? FundSourceNumber { get; set; }
 
-    [StringLength(600)]
-    [Unicode(false)]
-    public string? FocusAreaName { get; set; }
-
     public DateOnly? ProjectExpirationDate { get; set; }
 
     public DateOnly? LetterDate { get; set; }

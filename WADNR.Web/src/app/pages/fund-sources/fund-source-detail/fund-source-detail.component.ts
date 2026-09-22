@@ -16,7 +16,18 @@ import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-g
 import { FieldDefinitionComponent } from "src/app/shared/components/field-definition/field-definition.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { ImageGalleryComponent, ImageGalleryItem } from "src/app/shared/components/image-gallery/image-gallery.component";
-import { ProjectsMapSharedComponent } from "src/app/shared/components/projects-map/projects-map.component";
+import { WADNRMapComponent } from "src/app/shared/components/leaflet/wadnr-map/wadnr-map.component";
+import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
+import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
+import { PriorityLandscapesLayerComponent } from "src/app/shared/components/leaflet/layers/priority-landscapes-layer/priority-landscapes-layer.component";
+import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leaflet/layers/dnr-upland-regions-layer/dnr-upland-regions-layer.component";
+import { CountiesLayerComponent } from "src/app/shared/components/leaflet/layers/counties-layer/counties-layer.component";
+import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
+import { MapAreaInfoPopupComponent } from "src/app/shared/components/leaflet/map-area-info-popup/map-area-info-popup.component";
+import { MapAreaPopupService } from "src/app/shared/services/map-area-popup.service";
+import { MAP_LAYER_SORT_ORDER } from "src/app/shared/models/map-layer-sort-order";
+import { Map } from "leaflet";
+import { Feature } from "geojson";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
@@ -24,7 +35,6 @@ import { AlertService } from "src/app/shared/services/alert.service";
 import { Alert } from "src/app/shared/models/alert";
 import { AlertContext } from "src/app/shared/models/enums/alert-context.enum";
 import TinyMCEHelpers from "src/app/shared/helpers/tiny-mce-helpers";
-import { PROJECT_STAGE_LEGEND_COLORS, Palette } from "src/app/shared/models/legend-colors";
 
 import { FundSourceService } from "src/app/shared/generated/api/fund-source.service";
 import { FundSourceDetail } from "src/app/shared/generated/model/fund-source-detail";
@@ -57,7 +67,13 @@ import { LocalDatePipe } from "src/app/shared/pipes/local-date.pipe";
         FormsModule,
         EditorComponent,
         ImageGalleryComponent,
-        ProjectsMapSharedComponent,
+        WADNRMapComponent,
+        GenericFeatureCollectionLayerComponent,
+        ExternalMapLayersComponent,
+        PriorityLandscapesLayerComponent,
+        DNRUplandRegionsLayerComponent,
+        CountiesLayerComponent,
+        MapAreaInfoPopupComponent,
     ],
     providers: [{ provide: TINYMCE_SCRIPT_SRC, useValue: "tinymce/tinymce.min.js" }],
     templateUrl: "./fund-source-detail.component.html",
@@ -88,9 +104,29 @@ export class FundSourceDetailComponent implements AfterViewChecked {
 
     public canManageFundSources$: Observable<boolean>;
 
-    // Associated projects map coloring
-    public colorByPropertyName = "ProjectStageID";
-    public legendColorsToUse: Record<string, Palette> = PROJECT_STAGE_LEGEND_COLORS;
+    // Associated projects map
+    public map: Map;
+    public layerControl: L.Control.Layers;
+    public mapIsReady = false;
+    public OverlayMode = OverlayMode;
+    public MapLayerSortOrder = MAP_LAYER_SORT_ORDER;
+    /** Marker popup addition: weaves the visible geographic areas in before the Location line. */
+    public areaMarkerPopupExtra = async (_feature: Feature, latlng: L.LatLng, baseHtml: string): Promise<string | null> => {
+        const lines = await this.mapAreaPopupService.buildAreaLines(this.map, this.layerControl, latlng);
+        return lines.length ? this.mapAreaPopupService.weaveBeforeLocation(baseHtml, lines) : null;
+    };
+
+    /** Popup shown when a project location marker is clicked. */
+    public projectPopupContentFn = (feature: Feature, latlng: L.LatLng): string | null => {
+        const props = feature.properties;
+        if (!props) return null;
+        const projectID = props["ProjectID"];
+        const projectName = props["ProjectName"] ?? projectID;
+        return `
+            <b>Project:</b> <a href="/projects/${projectID}">${projectName}</a><br>
+            <b>Location:</b> ${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}
+        `;
+    };
 
     // Files & Photos tab state
     public activeFilesTab: "files" | "photos" = "files";
@@ -120,6 +156,7 @@ export class FundSourceDetailComponent implements AfterViewChecked {
         private confirmService: ConfirmService,
         private alertService: AlertService,
         private sanitizer: DomSanitizer,
+        private mapAreaPopupService: MapAreaPopupService,
     ) {}
 
     ngOnInit(): void {
@@ -199,6 +236,12 @@ export class FundSourceDetailComponent implements AfterViewChecked {
 
     ngAfterViewChecked(): void {
         this.tinyMceConfig = TinyMCEHelpers.DefaultInitConfig(this.tinyMceEditor, null, "About this fund source");
+    }
+
+    handleMapReady(event: any): void {
+        this.map = event.map;
+        this.layerControl = event.layerControl;
+        this.mapIsReady = true;
     }
 
     // ----- About this fund source (rich text) -----

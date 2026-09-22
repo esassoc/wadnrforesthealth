@@ -50,11 +50,18 @@ namespace WADNR.API.Services
             try
             {
                 var blobDto = await _azureStorage.DownloadAsync(FileContainerName, canonicalName);
+                if (blobDto == null)
+                {
+                    // DownloadAsync returns null when the blob does not exist in the container.
+                    _logger.LogWarning("Blob {CanonicalName} was not found in container {Container}.", canonicalName, FileContainerName);
+                    return null;
+                }
+
                 return blobDto.Content;
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError(e, "Error retrieving blob {CanonicalName} from {Container}", canonicalName, FileContainerName);
             }
 
             return null;

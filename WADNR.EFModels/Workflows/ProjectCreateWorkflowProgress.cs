@@ -44,7 +44,6 @@ public static class ProjectCreateWorkflowProgress
         public DateTime? CreateDate { get; init; }
         public int ProjectTypeID { get; init; }
         public int? ProjectStageID { get; init; }
-        public int? FocusAreaID { get; init; }
         public DateOnly? PlannedDate { get; init; }
         public bool HasSimpleLocation { get; init; }
         public int ProjectLocationSimpleTypeID { get; init; }
@@ -215,7 +214,6 @@ public static class ProjectCreateWorkflowProgress
                 CreateDate = p.ProposingDate,
                 ProjectTypeID = p.ProjectTypeID,
                 ProjectStageID = p.ProjectStageID,
-                FocusAreaID = p.FocusAreaID,
                 PlannedDate = p.PlannedDate,
                 HasSimpleLocation = p.ProjectLocationPoint != null,
                 ProjectLocationSimpleTypeID = p.ProjectLocationSimpleTypeID,

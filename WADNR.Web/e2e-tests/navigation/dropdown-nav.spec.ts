@@ -108,12 +108,6 @@ test.describe("Dropdown navigation", () => {
         await expect(page).toHaveURL(/\/programs$/);
     });
 
-    test("Program Info > Focus Areas navigates to /focus-areas", async ({ authedPage: page }) => {
-        await page.goto("/");
-        await clickDropdownItem(page, "Program Info", "Focus Areas");
-        await expect(page).toHaveURL(/\/focus-areas/);
-    });
-
     test("Program Info > Interactions/Events navigates to /interactions-events", async ({ authedPage: page }) => {
         await page.goto("/");
         await clickDropdownItem(page, "Program Info", "Interactions/Events");

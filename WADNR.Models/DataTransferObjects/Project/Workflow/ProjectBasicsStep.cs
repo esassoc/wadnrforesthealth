@@ -13,7 +13,6 @@ public class ProjectBasicsStep
     public DateOnly? PlannedDate { get; set; }
     public DateOnly? CompletionDate { get; set; }
     public DateOnly? ExpirationDate { get; set; }
-    public int? FocusAreaID { get; set; }
     public int? LeadImplementerOrganizationID { get; set; }
     public int? PercentageMatch { get; set; }
     public List<int> ProgramIDs { get; set; } = new();
@@ -31,7 +30,6 @@ public class ProjectBasicsStepRequest
     public DateOnly? PlannedDate { get; set; }
     public DateOnly? CompletionDate { get; set; }
     public DateOnly? ExpirationDate { get; set; }
-    public int? FocusAreaID { get; set; }
     public int? LeadImplementerOrganizationID { get; set; }
     public int? PercentageMatch { get; set; }
     public List<int> ProgramIDs { get; set; } = new();

@@ -28,7 +28,6 @@ public static class ProjectCreateWorkflowSteps
                 PlannedDate = p.PlannedDate,
                 CompletionDate = p.CompletionDate,
                 ExpirationDate = p.ExpirationDate,
-                FocusAreaID = p.FocusAreaID,
                 LeadImplementerOrganizationID = p.ProjectOrganizations
                     .Where(po => po.RelationshipType.IsPrimaryContact)
                     .Select(po => (int?)po.OrganizationID)
@@ -53,7 +52,6 @@ public static class ProjectCreateWorkflowSteps
             PlannedDate = request.PlannedDate,
             CompletionDate = request.CompletionDate,
             ExpirationDate = request.ExpirationDate,
-            FocusAreaID = request.FocusAreaID,
             PercentageMatch = request.PercentageMatch,
             ProjectApprovalStatusID = (int)ProjectApprovalStatusEnum.Draft,
             ProjectLocationSimpleTypeID = 1, // Default to "None" until location is set
@@ -114,7 +112,6 @@ public static class ProjectCreateWorkflowSteps
         project.PlannedDate = request.PlannedDate;
         project.CompletionDate = request.CompletionDate;
         project.ExpirationDate = request.ExpirationDate;
-        project.FocusAreaID = request.FocusAreaID;
         project.PercentageMatch = request.PercentageMatch;
 
         // Sync Lead Implementer organization

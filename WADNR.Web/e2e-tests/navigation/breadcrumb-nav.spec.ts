@@ -21,15 +21,6 @@ test.describe("Breadcrumb navigation", () => {
         await expect(page).toHaveURL(/\/counties$/);
     });
 
-    test("Focus area detail breadcrumb navigates back to Focus Areas list", async ({ authedPage: page }) => {
-        await page.goto(`/focus-areas/${testData.focusAreaID}`);
-        await expect(page.locator(".card").first()).toBeVisible({ timeout: 15000 });
-        const breadcrumbLink = page.locator("a.breadcrumb-item").first();
-        await expect(breadcrumbLink).toBeVisible({ timeout: 5000 });
-        await breadcrumbLink.click();
-        await expect(page).toHaveURL(/\/focus-areas$/);
-    });
-
     test("Fund source detail breadcrumb navigates back to list", async ({ authedPage: page }) => {
         await page.goto(`/fund-sources/${testData.fundSourceID}`);
         await expect(page.locator(".card").first()).toBeVisible({ timeout: 15000 });

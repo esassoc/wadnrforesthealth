@@ -23,7 +23,6 @@ using (values
 (49, 'Training','Training', 2),
 (51, 'CustomFooter', 'Custom Footer', 1),
 (54, 'FactSheetCustomText', 'Fact Sheet Custom Text', 2),
-(55, 'FocusAreasList', 'Focus Areas List', 1),
 (56, 'FullFundSourceList', 'Full Fund Source List', 1),
 (57, 'FullFundSourceAllocationList', 'Full Fund Source Allocation List', 1),
 (58, 'RegionsList', 'Regions List', 1),

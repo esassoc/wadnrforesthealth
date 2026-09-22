@@ -69,6 +69,11 @@ export class GenericWmsWfsLayerComponent extends MapLayerBase implements OnChang
                 cql_filter: this.cqlFilter,
             } as any;
             this.layer = L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", wmsOptions);
+            // Apply sortOrder so the grouped layer control orders this overlay deterministically
+            // (createWmsLayerIfNeeded does not go through MapLayerBase.initLayer, which normally sets this).
+            if (this.sortOrder) {
+                (this.layer as any).sortOrder = this.sortOrder;
+            }
         }
         // Add to layerControl only once, after both layer and layerControl are available
         if (this.layer && this.layerControl && !this.overlayAddedToControl && this.addToLayerControl) {

@@ -103,8 +103,6 @@ export const publicRoutes: A11yRoute[] = [
 // Authenticated pages (authGuard)
 // ────────────────────────────────────────────────────────────────────
 export const authedRoutes: A11yRoute[] = [
-    { name: "Focus Areas List", path: "/focus-areas", auth: "authed", waitFor: ".ag-row", timeout: 30000 },
-    { name: "Focus Area Detail", path: `/focus-areas/${testData.focusAreaID}`, auth: "authed", waitFor: ".card" },
     { name: "My Projects", path: "/my-projects", auth: "authed", waitFor: ".page-body" },
     { name: "Pending Projects", path: "/pending-projects", auth: "authed", waitFor: ".page-body" },
     { name: "JSON APIs", path: "/json-apis", auth: "authed", waitFor: ".page-body" },
@@ -359,23 +357,6 @@ export const elevatedModalRoutes: A11yModalRoute[] = [
 // Authenticated modal routes
 // ────────────────────────────────────────────────────────────────────
 export const authedModalRoutes: A11yModalRoute[] = [
-    // Focus Areas List — Create
-    {
-        name: "Modal: Create Focus Area",
-        pagePath: "/focus-areas",
-        pageWaitFor: ".ag-row",
-        triggerSelector: "button.btn-primary",
-        auth: "authed",
-        timeout: 30000,
-    },
-    // Focus Area Detail — Edit Basics
-    {
-        name: "Modal: Edit Focus Area",
-        pagePath: `/focus-areas/${testData.focusAreaID}`,
-        pageWaitFor: ".card",
-        triggerSelector: 'button[title="Edit Basics"]',
-        auth: "authed",
-    },
 ];
 
 // ────────────────────────────────────────────────────────────────────

@@ -34,7 +34,6 @@ namespace WADNR.EFModels.Entities
         public static readonly FirmaPageTypeTraining Training = FirmaPageTypeTraining.Instance;
         public static readonly FirmaPageTypeCustomFooter CustomFooter = FirmaPageTypeCustomFooter.Instance;
         public static readonly FirmaPageTypeFactSheetCustomText FactSheetCustomText = FirmaPageTypeFactSheetCustomText.Instance;
-        public static readonly FirmaPageTypeFocusAreasList FocusAreasList = FirmaPageTypeFocusAreasList.Instance;
         public static readonly FirmaPageTypeFullFundSourceList FullFundSourceList = FirmaPageTypeFullFundSourceList.Instance;
         public static readonly FirmaPageTypeFullFundSourceAllocationList FullFundSourceAllocationList = FirmaPageTypeFullFundSourceAllocationList.Instance;
         public static readonly FirmaPageTypeRegionsList RegionsList = FirmaPageTypeRegionsList.Instance;
@@ -64,7 +63,7 @@ namespace WADNR.EFModels.Entities
         /// </summary>
         static FirmaPageType()
         {
-            All = new List<FirmaPageType> { HomePage, DemoScript, InternalSetupNotes, FullProjectList, ProjectTypeList, TaxonomyBranchList, TaxonomyTrunkList, OrganizationsList, MyProjects, ProjectMap, HomeMapInfo, HomeAdditionalInfo, FeaturedProjectList, FullProjectListSimple, Taxonomy, TagList, ManageUpdateNotifications, ProjectStewardOrganizationList, EnterHistoricProjectInstructions, PendingProjects, Training, CustomFooter, FactSheetCustomText, FocusAreasList, FullFundSourceList, FullFundSourceAllocationList, RegionsList, PriorityLandscapesList, FullAgreementList, InteractionEventList, GisUploadAttemptInstructions, ProgramsList, UploadLoaTabularDataExcel, ManageFindYourForester, FindYourForester, ExternalMapLayers, County, Reports, ReportProjects, ReportAddReport, Vendor, ProjectCreateInstructions, ProjectUpdateInstructions, Classifications };
+            All = new List<FirmaPageType> { HomePage, DemoScript, InternalSetupNotes, FullProjectList, ProjectTypeList, TaxonomyBranchList, TaxonomyTrunkList, OrganizationsList, MyProjects, ProjectMap, HomeMapInfo, HomeAdditionalInfo, FeaturedProjectList, FullProjectListSimple, Taxonomy, TagList, ManageUpdateNotifications, ProjectStewardOrganizationList, EnterHistoricProjectInstructions, PendingProjects, Training, CustomFooter, FactSheetCustomText, FullFundSourceList, FullFundSourceAllocationList, RegionsList, PriorityLandscapesList, FullAgreementList, InteractionEventList, GisUploadAttemptInstructions, ProgramsList, UploadLoaTabularDataExcel, ManageFindYourForester, FindYourForester, ExternalMapLayers, County, Reports, ReportProjects, ReportAddReport, Vendor, ProjectCreateInstructions, ProjectUpdateInstructions, Classifications };
             AllLookupDictionary = new ReadOnlyDictionary<int, FirmaPageType>(All.ToDictionary(x => x.FirmaPageTypeID));
         }
 
@@ -154,8 +153,6 @@ namespace WADNR.EFModels.Entities
                     return FeaturedProjectList;
                 case FirmaPageTypeEnum.FindYourForester:
                     return FindYourForester;
-                case FirmaPageTypeEnum.FocusAreasList:
-                    return FocusAreasList;
                 case FirmaPageTypeEnum.FullAgreementList:
                     return FullAgreementList;
                 case FirmaPageTypeEnum.FullFundSourceAllocationList:
@@ -255,7 +252,6 @@ namespace WADNR.EFModels.Entities
         Training = 49,
         CustomFooter = 51,
         FactSheetCustomText = 54,
-        FocusAreasList = 55,
         FullFundSourceList = 56,
         FullFundSourceAllocationList = 57,
         RegionsList = 58,
@@ -414,12 +410,6 @@ namespace WADNR.EFModels.Entities
     {
         private FirmaPageTypeFactSheetCustomText(int firmaPageTypeID, string firmaPageTypeName, string firmaPageTypeDisplayName, int firmaPageRenderTypeID) : base(firmaPageTypeID, firmaPageTypeName, firmaPageTypeDisplayName, firmaPageRenderTypeID) {}
         public static readonly FirmaPageTypeFactSheetCustomText Instance = new FirmaPageTypeFactSheetCustomText(54, @"FactSheetCustomText", @"Fact Sheet Custom Text", 2);
-    }
-
-    public partial class FirmaPageTypeFocusAreasList : FirmaPageType
-    {
-        private FirmaPageTypeFocusAreasList(int firmaPageTypeID, string firmaPageTypeName, string firmaPageTypeDisplayName, int firmaPageRenderTypeID) : base(firmaPageTypeID, firmaPageTypeName, firmaPageTypeDisplayName, firmaPageRenderTypeID) {}
-        public static readonly FirmaPageTypeFocusAreasList Instance = new FirmaPageTypeFocusAreasList(55, @"FocusAreasList", @"Focus Areas List", 1);
     }
 
     public partial class FirmaPageTypeFullFundSourceList : FirmaPageType

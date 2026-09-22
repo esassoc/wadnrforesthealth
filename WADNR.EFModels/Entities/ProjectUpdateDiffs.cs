@@ -36,7 +36,6 @@ public static class ProjectUpdateDiffs
 
         // Load the update data
         var projectUpdate = await dbContext.ProjectUpdates
-            .Include(pu => pu.FocusArea)
             .FirstOrDefaultAsync(pu => pu.ProjectUpdateBatchID == batch.ProjectUpdateBatchID);
 
         // Generate each section's diff (legacy HTML)
@@ -63,18 +62,6 @@ public static class ProjectUpdateDiffs
     {
         if (projectUpdate == null) return null;
 
-        // Resolve FocusArea names via projection
-        var originalFocusAreaName = project.FocusAreaID.HasValue
-            ? await dbContext.FocusAreas.AsNoTracking()
-                .Where(f => f.FocusAreaID == project.FocusAreaID.Value)
-                .Select(f => f.FocusAreaName).FirstOrDefaultAsync()
-            : null;
-        var updateFocusAreaName = projectUpdate.FocusAreaID.HasValue
-            ? await dbContext.FocusAreas.AsNoTracking()
-                .Where(f => f.FocusAreaID == projectUpdate.FocusAreaID.Value)
-                .Select(f => f.FocusAreaName).FirstOrDefaultAsync()
-            : null;
-
         // Resolve Lead Implementer via projection
         var originalLeadName = await dbContext.ProjectOrganizations.AsNoTracking()
             .Where(po => po.ProjectID == project.ProjectID && po.RelationshipType.IsPrimaryContact)
@@ -99,8 +86,8 @@ public static class ProjectUpdateDiffs
             .OrderBy(n => n)
             .ToListAsync();
 
-        var originalHtml = RenderBasicsHtml(project, originalFocusAreaName, originalLeadName, originalPrograms);
-        var updatedHtml = RenderBasicsUpdateHtml(projectUpdate, project.ProjectName, updateFocusAreaName, updateLeadName, updatePrograms);
+        var originalHtml = RenderBasicsHtml(project, originalLeadName, originalPrograms);
+        var updatedHtml = RenderBasicsUpdateHtml(projectUpdate, project.ProjectName, updateLeadName, updatePrograms);
 
         if (originalHtml == updatedHtml) return null;
 
@@ -108,7 +95,7 @@ public static class ProjectUpdateDiffs
         return diff.Build();
     }
 
-    private static string RenderBasicsHtml(Project project, string? focusAreaName, string? leadImplementerName, List<string?> programNames)
+    private static string RenderBasicsHtml(Project project, string? leadImplementerName, List<string?> programNames)
     {
         var sb = new StringBuilder();
         sb.AppendLine("<table class='diff-table'>");
@@ -120,14 +107,13 @@ public static class ProjectUpdateDiffs
         AppendRow(sb, "Project Description", project.ProjectDescription ?? "");
         AppendRow(sb, "Expiration Date", project.ExpirationDate?.ToString("M/d/yyyy") ?? "");
         AppendRow(sb, "Percentage Match", project.PercentageMatch?.ToString() ?? "");
-        AppendRow(sb, "Focus Area", focusAreaName ?? "(none)");
         AppendRow(sb, "Programs", programNames.Any() ? string.Join(", ", programNames) : "(none)");
 
         sb.AppendLine("</table>");
         return sb.ToString();
     }
 
-    private static string RenderBasicsUpdateHtml(ProjectUpdate projectUpdate, string projectName, string? focusAreaName, string? leadImplementerName, List<string?> programNames)
+    private static string RenderBasicsUpdateHtml(ProjectUpdate projectUpdate, string projectName, string? leadImplementerName, List<string?> programNames)
     {
         var sb = new StringBuilder();
         sb.AppendLine("<table class='diff-table'>");
@@ -139,7 +125,6 @@ public static class ProjectUpdateDiffs
         AppendRow(sb, "Project Description", projectUpdate.ProjectDescription ?? "");
         AppendRow(sb, "Expiration Date", projectUpdate.ExpirationDate?.ToString("M/d/yyyy") ?? "");
         AppendRow(sb, "Percentage Match", projectUpdate.PercentageMatch?.ToString() ?? "");
-        AppendRow(sb, "Focus Area", focusAreaName ?? "(none)");
         AppendRow(sb, "Programs", programNames.Any() ? string.Join(", ", programNames) : "(none)");
 
         sb.AppendLine("</table>");
@@ -554,17 +539,6 @@ public static class ProjectUpdateDiffs
 
         if (projectUpdate == null) return new StepDiffResponse { HasChanges = false };
 
-        var originalFocusAreaName = project.FocusAreaID.HasValue
-            ? await dbContext.FocusAreas.AsNoTracking()
-                .Where(f => f.FocusAreaID == project.FocusAreaID.Value)
-                .Select(f => f.FocusAreaName).FirstOrDefaultAsync()
-            : null;
-        var updateFocusAreaName = projectUpdate.FocusAreaID.HasValue
-            ? await dbContext.FocusAreas.AsNoTracking()
-                .Where(f => f.FocusAreaID == projectUpdate.FocusAreaID.Value)
-                .Select(f => f.FocusAreaName).FirstOrDefaultAsync()
-            : null;
-
         var originalLeadName = await dbContext.ProjectOrganizations.AsNoTracking()
             .Where(po => po.ProjectID == project.ProjectID && po.RelationshipType.IsPrimaryContact)
             .Select(po => po.Organization.OrganizationName)
@@ -599,7 +573,6 @@ public static class ProjectUpdateDiffs
             new() { Label = "Project Description", OriginalValue = project.ProjectDescription ?? "", UpdatedValue = projectUpdate.ProjectDescription ?? "" },
             new() { Label = "Expiration Date", OriginalValue = project.ExpirationDate?.ToString("M/d/yyyy") ?? "", UpdatedValue = projectUpdate.ExpirationDate?.ToString("M/d/yyyy") ?? "" },
             new() { Label = "Percentage Match", OriginalValue = project.PercentageMatch?.ToString() ?? "", UpdatedValue = projectUpdate.PercentageMatch?.ToString() ?? "" },
-            new() { Label = "Focus Area", OriginalValue = originalFocusAreaName ?? "(none)", UpdatedValue = updateFocusAreaName ?? "(none)" },
             new() { Label = "Programs", OriginalValue = originalPrograms.Any() ? string.Join(", ", originalPrograms) : "(none)", UpdatedValue = updatePrograms.Any() ? string.Join(", ", updatePrograms) : "(none)" },
         };
 

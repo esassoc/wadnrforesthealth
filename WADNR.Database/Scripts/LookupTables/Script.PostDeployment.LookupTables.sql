@@ -32,8 +32,6 @@ GO
 GO
 :r ".\dbo.FirmaPageType.sql"
 GO
-:r ".\dbo.FocusAreaStatus.sql"
-GO
 :r ".\dbo.ForesterRole.sql"
 GO
 :r ".\dbo.FundingSource.sql"

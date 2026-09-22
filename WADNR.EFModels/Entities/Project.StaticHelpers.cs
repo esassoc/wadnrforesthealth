@@ -66,6 +66,57 @@ public static class Projects
         return $"{prefix}{maxCounter + 1:D5}";
     }
 
+    /// <summary>
+    /// Hands out consecutive FHT project numbers from a block reserved with one query, for callers that
+    /// create many projects in a single pass.
+    ///
+    /// The GIS bulk import creates one project per distinct GIS identifier — 3,042 of them for a State
+    /// Lands GDB — and calling <see cref="GenerateFhtProjectNumberAsync"/> per project costs a round trip
+    /// each.
+    ///
+    /// Seeds itself by calling <see cref="GenerateFhtProjectNumberAsync"/> once and continuing from what
+    /// it returned, so "what the next FHT number is" and the FHT-{year}-{counter:D5} format stay defined
+    /// in exactly one place and cannot drift from the interactive create path. Parsing back the number
+    /// that method just formatted is deliberate: the alternative is refactoring a shared method to
+    /// expose its seed, for no measurable gain.
+    ///
+    /// Concurrency is no better and no worse than per-project generation: both read the current maximum
+    /// and then insert, so two simultaneous imports can collide. The unique index
+    /// AK_Project_FhtProjectNumber is what makes such a collision fail loudly rather than silently
+    /// duplicate a number.
+    /// </summary>
+    public sealed class FhtProjectNumberAllocator
+    {
+        private readonly string _prefix;
+        private int _nextCounter;
+
+        private FhtProjectNumberAllocator(string prefix, int nextCounter)
+        {
+            _prefix = prefix;
+            _nextCounter = nextCounter;
+        }
+
+        /// <summary>Reserves a block starting at the number the shared generator would hand out next.</summary>
+        public static async Task<FhtProjectNumberAllocator> CreateAsync(WADNRDbContext dbContext)
+        {
+            var firstNumber = await GenerateFhtProjectNumberAsync(dbContext);
+
+            // "FHT-2026-01159" -> prefix "FHT-2026-", counter 1159. The generator always produces that
+            // shape, so failing to parse means its format changed and throwing loudly is correct.
+            var lastDash = firstNumber.LastIndexOf('-');
+            if (lastDash < 0 || !int.TryParse(firstNumber[(lastDash + 1)..], out var firstCounter))
+            {
+                throw new InvalidOperationException(
+                    $"Could not read a counter out of generated FHT project number '{firstNumber}'.");
+            }
+
+            return new FhtProjectNumberAllocator(firstNumber[..(lastDash + 1)], firstCounter);
+        }
+
+        /// <summary>The next unused number, identical in shape to what the shared generator returns.</summary>
+        public string Next() => $"{_prefix}{_nextCounter++:D5}";
+    }
+
     public static async Task<List<ProjectCountyDetailGridRow>> ListAsCountyDetailGridRowAsync(WADNRDbContext dbContext, int countyID)
     {
         return await dbContext.Projects
@@ -74,28 +125,6 @@ public static class Projects
             .Where(IsActiveProjectExpr)
             .Select(ProjectProjections.AsProjectCountyDetailGridRow)
             .ToListAsync();
-    }
-
-    public static async Task<List<ProjectFocusAreaDetailGridRow>> ListForFocusAreaAsGridRowAsync(
-        WADNRDbContext dbContext, int focusAreaID)
-    {
-        var rows = await dbContext.Projects
-            .AsNoTracking()
-            .Where(IsActiveProjectExpr)
-            .Where(p => p.FocusAreaID == focusAreaID)
-            .OrderBy(p => p.ProjectName)
-            .Select(ProjectProjections.AsFocusAreaDetailGridRow)
-            .ToListAsync();
-
-        foreach (var row in rows)
-        {
-            if (ProjectStage.AllLookupDictionary.TryGetValue(row.ProjectStage.ProjectStageID, out var stage))
-            {
-                row.ProjectStage.ProjectStageName = stage.ProjectStageDisplayName;
-            }
-        }
-
-        return rows;
     }
 
     public static async Task<List<ProjectProjectTypeDetailGridRow>> ListAsProjectTypeDetailGridRowAsync(WADNRDbContext dbContext, int projectTypeID)
@@ -187,7 +216,6 @@ public static class Projects
             ProposingDate = dto.ProposingDate?.DateTime,
             SubmissionDate = dto.SubmissionDate?.DateTime,
             ApprovalDate = dto.ApprovalDate?.DateTime,
-            FocusAreaID = dto.FocusAreaID,
             ExpirationDate = dto.ExpirationDate,
             FhtProjectNumber = dto.FhtProjectNumber
         };
@@ -213,7 +241,6 @@ public static class Projects
         entity.ProposingDate = dto.ProposingDate?.DateTime;
         entity.SubmissionDate = dto.SubmissionDate?.DateTime;
         entity.ApprovalDate = dto.ApprovalDate?.DateTime;
-        entity.FocusAreaID = dto.FocusAreaID;
         entity.ExpirationDate = dto.ExpirationDate;
         entity.FhtProjectNumber = dto.FhtProjectNumber;
 
@@ -764,7 +791,6 @@ public static class Projects
                     .Select(pr => pr.DNRUplandRegion.DNRUplandRegionName)),
                 CountyNames = string.Join(", ", p.ProjectCounties
                     .Select(pc => pc.County.CountyName)),
-                FocusAreaName = p.FocusArea != null ? p.FocusArea.FocusAreaName : null,
                 PlannedDate = p.PlannedDate,
                 CompletionDate = p.CompletionDate,
                 ProjectDescription = p.ProjectDescription,
@@ -834,7 +860,6 @@ public static class Projects
                     .Select(pr => pr.DNRUplandRegion.DNRUplandRegionName)),
                 CountyNames = string.Join(", ", p.ProjectCounties
                     .Select(pc => pc.County.CountyName)),
-                FocusAreaName = p.FocusArea != null ? p.FocusArea.FocusAreaName : null,
                 PlannedDate = p.PlannedDate,
                 CompletionDate = p.CompletionDate,
                 ProjectDescription = p.ProjectDescription,
@@ -1448,7 +1473,6 @@ public static class Projects
         project.CompletionDate = request.CompletionDate;
         project.ExpirationDate = request.ExpirationDate;
         project.ProjectGisIdentifier = request.ProjectGisIdentifier;
-        project.FocusAreaID = request.FocusAreaID;
         project.PercentageMatch = request.PercentageMatch;
 
         // Sync Lead Implementer Organization via ProjectOrganization with IsPrimaryContact relationship type

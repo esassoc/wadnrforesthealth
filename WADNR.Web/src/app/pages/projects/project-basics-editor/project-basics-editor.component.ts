@@ -16,7 +16,6 @@ import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading
 
 import { ProjectService } from "src/app/shared/generated/api/project.service";
 import { OrganizationService } from "src/app/shared/generated/api/organization.service";
-import { FocusAreaService } from "src/app/shared/generated/api/focus-area.service";
 import { ProgramService } from "src/app/shared/generated/api/program.service";
 import { ProjectTypeService } from "src/app/shared/generated/api/project-type.service";
 import { ProjectDetail } from "src/app/shared/generated/model/project-detail";
@@ -46,7 +45,6 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
     public projectTypeOptions: FormInputOption[] = [];
     public projectStageOptions: SelectDropdownOption[] = [];
     public organizationOptions: FormInputOption[] = [];
-    public focusAreaOptions: FormInputOption[] = [];
     public programOptions: FormInputOption[] = [];
 
     public editData: ProjectBasicsEditData = {};
@@ -58,7 +56,6 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
     constructor(
         private projectService: ProjectService,
         private organizationService: OrganizationService,
-        private focusAreaService: FocusAreaService,
         private programService: ProgramService,
         private projectTypeService: ProjectTypeService,
         alertService: AlertService
@@ -76,7 +73,6 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
             expirationDate: new FormControl(null),
             projectGisIdentifier: new FormControl("", [Validators.maxLength(140)]),
             leadImplementerOrganizationID: new FormControl(null),
-            focusAreaID: new FormControl(null),
             percentageMatch: new FormControl(null),
             programToAdd: new FormControl<number | null>(null),
         });
@@ -101,10 +97,6 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
                 map((orgs) => orgs.filter((o: any) => o.IsActive).map((o: any) => ({ Value: o.OrganizationID, Label: o.OrganizationName, disabled: false }))),
                 catchError(() => of([] as FormInputOption[]))
             ),
-            focusAreas: this.focusAreaService.listFocusArea().pipe(
-                map((fas) => fas.map((fa: any) => ({ Value: fa.FocusAreaID, Label: fa.FocusAreaName, disabled: false }))),
-                catchError(() => of([] as FormInputOption[]))
-            ),
             programs: this.programService.listProgram().pipe(
                 map((progs) => progs.filter((p: any) => p.IsActive).map((p: any) => ({ Value: p.ProgramID, Label: p.ProgramName, disabled: false }))),
                 catchError(() => of([] as FormInputOption[]))
@@ -121,14 +113,13 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
     }
 
     private initializeFormFromData(
-        result: { projectTypes: FormInputOption[]; organizations: FormInputOption[]; focusAreas: FormInputOption[]; programs: FormInputOption[]; editData: ProjectBasicsEditData },
+        result: { projectTypes: FormInputOption[]; organizations: FormInputOption[]; programs: FormInputOption[]; editData: ProjectBasicsEditData },
         project: ProjectDetail
     ): void {
-        const { projectTypes, organizations, focusAreas, programs, editData } = result;
+        const { projectTypes, organizations, programs, editData } = result;
 
         this.projectTypeOptions = projectTypes;
         this.organizationOptions = organizations;
-        this.focusAreaOptions = focusAreas;
         this.programOptions = programs;
         this.editData = editData;
 
@@ -143,7 +134,6 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
             expirationDate: project.ExpirationDate ? this.toDateInputValue(project.ExpirationDate) : null,
             projectGisIdentifier: project.ProjectGisIdentifier ?? "",
             leadImplementerOrganizationID: project.LeadImplementer?.OrganizationID ?? null,
-            focusAreaID: project.FocusAreaID ?? null,
             percentageMatch: project.PercentageMatch ?? null,
         });
 
@@ -224,7 +214,6 @@ export class ProjectBasicsEditorComponent extends BaseModal implements OnInit {
             ExpirationDate: raw.expirationDate || null,
             ProjectGisIdentifier: raw.projectGisIdentifier || null,
             LeadImplementerOrganizationID: raw.leadImplementerOrganizationID || null,
-            FocusAreaID: raw.focusAreaID || null,
             PercentageMatch: raw.percentageMatch != null ? Number(raw.percentageMatch) : null,
             ProgramIDs: this.selectedPrograms.map((p) => p.ProgramID),
         });

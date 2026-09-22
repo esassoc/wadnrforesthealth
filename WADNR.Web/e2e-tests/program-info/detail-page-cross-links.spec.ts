@@ -1,17 +1,6 @@
 import { test, expect } from "../fixtures/base-test";
-import { testData } from "../fixtures/test-data";
 
 test.describe("Program info page cross-entity links", () => {
-    test("Focus area detail has DNR upland region link", async ({ authedPage: page }) => {
-        await page.goto(`/focus-areas/${testData.focusAreaID}`);
-        await expect(page.locator(".card").first()).toBeVisible({ timeout: 15000 });
-        const regionLink = page.locator("a[href*='/dnr-upland-regions/']").first();
-        if (await regionLink.isVisible()) {
-            await regionLink.click();
-            await expect(page).toHaveURL(/\/dnr-upland-regions\/\d+/);
-        }
-    });
-
     test("Organization grid row links to valid org detail with projects", async ({ authedPage: page }) => {
         // Navigate from grid to a real org (avoid hardcoded ID that may not exist)
         await page.goto("/organizations");

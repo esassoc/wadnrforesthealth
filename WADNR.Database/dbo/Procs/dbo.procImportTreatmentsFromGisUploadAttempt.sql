@@ -50,6 +50,29 @@ declare @broadcastBurnAcresColName varchar(500) = (select GisMetadataAttributeNa
 declare @otherAcresColName varchar(500) = (select GisMetadataAttributeName from dbo.GisMetadataAttribute where GisMetadataAttributeID = @otherBurnAcresMetadataAttributeID);
 
 
+-- Narrow this attempt's staged features and their metadata into temp tables before anything joins to
+-- them. dbo.GisFeature holds ~2.5M rows and dbo.GisFeatureMetadataAttribute ~30M, and the upload that
+-- just ran inserted this attempt's rows moments ago, so column statistics still estimate roughly one
+-- matching row. The optimizer therefore picked nested loops over both tables and the INSERT below did
+-- 160 million logical reads on its first execution against a fresh attempt, taking ~45s; re-running the
+-- same proc afterwards reused a plan compiled once the rows existed and did 2.5 million in ~3s.
+-- Production always hits the first case, because every import uploads immediately before importing.
+--
+-- Temp tables get their own statistics from actual contents, so cardinality stops being a guess. Every
+-- column is carried across, which keeps the existing predicates (including the redundant
+-- GisUploadAttemptID filter) valid without touching them.
+if object_id('tempdb.dbo.#AttemptFeature') is not null drop table #AttemptFeature
+select * into #AttemptFeature from dbo.GisFeature where GisUploadAttemptID = @piGisUploadAttemptID
+create unique clustered index IX_AttemptFeature on #AttemptFeature (GisFeatureID)
+
+if object_id('tempdb.dbo.#AttemptMetadata') is not null drop table #AttemptMetadata
+select gfma.* into #AttemptMetadata
+from dbo.GisFeatureMetadataAttribute gfma
+join #AttemptFeature af on af.GisFeatureID = gfma.GisFeatureID
+-- Keyed attribute-first because every join below filters one specific GisMetadataAttributeID.
+create clustered index IX_AttemptMetadata on #AttemptMetadata (GisMetadataAttributeID, GisFeatureID)
+
+
 if object_id('tempdb.dbo.#tempTreatmentsForDelete') is not null drop table #tempTreatmentsForDelete
 select p.ProjectID, t.TreatmentID, pl.ProjectLocationID 
 into #tempTreatmentsForDelete
@@ -58,8 +81,8 @@ join dbo.Treatment t on t.ProjectID = p.ProjectID
 join dbo.ProjectLocation pl on t.ProjectLocationID = pl.ProjectLocationID
 where  p.ProjectGisIdentifier in (
 	select distinct gfma.GisFeatureMetadataAttributeValue 
-	from dbo.GisFeature gf 
-    join dbo.GisFeatureMetadataAttribute gfma on gfma.GisFeatureID = gf.GisFeatureID 
+	from #AttemptFeature gf 
+    join #AttemptMetadata gfma on gfma.GisFeatureID = gf.GisFeatureID 
     where gfma.GisMetadataAttributeID = @projectIdentifierGisMetadataAttributeID and gf.GisUploadAttemptID = @piGisUploadAttemptID)
 		and t.ProgramID = @programID
 
@@ -173,33 +196,33 @@ join (
         , gfmaOther.GisFeatureMetadataAttributeValue as OtherAcres
         , gfmaStartDate.GisFeatureMetadataAttributeValue as StartDate
         , gfmaEndDate.GisFeatureMetadataAttributeValue as EndDate
-        from dbo.GisFeature gf
-        join dbo.GisFeatureMetadataAttribute gfma on gfma.GisFeatureID = gf.GisFeatureID
-        left join dbo.GisFeatureMetadataAttribute gfmaFootprint on gfmaFootprint.GisFeatureID = gf.GisFeatureID and gfmaFootprint.GisMetadataAttributeID = @footprintAcresMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaTreated on gfmaTreated.GisFeatureID = gf.GisFeatureID and gfmaTreated.GisMetadataAttributeID = @treatedAcresMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaTreatmentType on gfmaTreatmentType.GisFeatureID = gf.GisFeatureID and gfmaTreatmentType.GisMetadataAttributeID = @treatmentTypeMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaTreatmentDetailedActivityType on gfmaTreatmentDetailedActivityType.GisFeatureID = gf.GisFeatureID and gfmaTreatmentDetailedActivityType.GisMetadataAttributeID = @treatmentDetailedActivityTypeMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaPruning on gfmaPruning.GisFeatureID = gf.GisFeatureID and gfmaPruning.GisMetadataAttributeID = @pruningAcresMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaThinning on gfmaThinning.GisFeatureID = gf.GisFeatureID and gfmaThinning.GisMetadataAttributeID = @thinningAcresMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaChipping on gfmaChipping.GisFeatureID = gf.GisFeatureID and gfmaChipping.GisMetadataAttributeID = @chippingAcresMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaMastication on gfmaMastication.GisFeatureID = gf.GisFeatureID and gfmaMastication.GisMetadataAttributeID = @masticationAcresMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaGrazing on gfmaGrazing.GisFeatureID = gf.GisFeatureID and gfmaGrazing.GisMetadataAttributeID = @grazingAcresMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaLopScatter on gfmaLopScatter.GisFeatureID = gf.GisFeatureID and gfmaLopScatter.GisMetadataAttributeID = @lopScatterAcresMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaBiomassRemoval on gfmaBiomassRemoval.GisFeatureID = gf.GisFeatureID and gfmaBiomassRemoval.GisMetadataAttributeID = @biomassRemovalAcresMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaHandPile on gfmaHandPile.GisFeatureID = gf.GisFeatureID and gfmaHandPile.GisMetadataAttributeID = @handPileAcresMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaHandPileBurn on gfmaHandPileBurn.GisFeatureID = gf.GisFeatureID and gfmaHandPileBurn.GisMetadataAttributeID = @handPileBurnAcresMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaMachineBurn on gfmaMachineBurn.GisFeatureID = gf.GisFeatureID and gfmaMachineBurn.GisMetadataAttributeID = @machineBurnAcresMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaBroadcastBurn on gfmaBroadcastBurn.GisFeatureID = gf.GisFeatureID and gfmaBroadcastBurn.GisMetadataAttributeID = @broadcastBurnAcresMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaOther on gfmaOther.GisFeatureID = gf.GisFeatureID and gfmaOther.GisMetadataAttributeID = @otherBurnAcresMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaStartDate on gfmaStartDate.GisFeatureID = gf.GisFeatureID and gfmaStartDate.GisMetadataAttributeID = @startDateMetadataAttributeID
-        left join dbo.GisFeatureMetadataAttribute gfmaEndDate on gfmaEndDate.GisFeatureID = gf.GisFeatureID and gfmaEndDate.GisMetadataAttributeID = @endDateMetadataAttributeID
+        from #AttemptFeature gf
+        join #AttemptMetadata gfma on gfma.GisFeatureID = gf.GisFeatureID
+        left join #AttemptMetadata gfmaFootprint on gfmaFootprint.GisFeatureID = gf.GisFeatureID and gfmaFootprint.GisMetadataAttributeID = @footprintAcresMetadataAttributeID
+        left join #AttemptMetadata gfmaTreated on gfmaTreated.GisFeatureID = gf.GisFeatureID and gfmaTreated.GisMetadataAttributeID = @treatedAcresMetadataAttributeID
+        left join #AttemptMetadata gfmaTreatmentType on gfmaTreatmentType.GisFeatureID = gf.GisFeatureID and gfmaTreatmentType.GisMetadataAttributeID = @treatmentTypeMetadataAttributeID
+        left join #AttemptMetadata gfmaTreatmentDetailedActivityType on gfmaTreatmentDetailedActivityType.GisFeatureID = gf.GisFeatureID and gfmaTreatmentDetailedActivityType.GisMetadataAttributeID = @treatmentDetailedActivityTypeMetadataAttributeID
+        left join #AttemptMetadata gfmaPruning on gfmaPruning.GisFeatureID = gf.GisFeatureID and gfmaPruning.GisMetadataAttributeID = @pruningAcresMetadataAttributeID
+        left join #AttemptMetadata gfmaThinning on gfmaThinning.GisFeatureID = gf.GisFeatureID and gfmaThinning.GisMetadataAttributeID = @thinningAcresMetadataAttributeID
+        left join #AttemptMetadata gfmaChipping on gfmaChipping.GisFeatureID = gf.GisFeatureID and gfmaChipping.GisMetadataAttributeID = @chippingAcresMetadataAttributeID
+        left join #AttemptMetadata gfmaMastication on gfmaMastication.GisFeatureID = gf.GisFeatureID and gfmaMastication.GisMetadataAttributeID = @masticationAcresMetadataAttributeID
+        left join #AttemptMetadata gfmaGrazing on gfmaGrazing.GisFeatureID = gf.GisFeatureID and gfmaGrazing.GisMetadataAttributeID = @grazingAcresMetadataAttributeID
+        left join #AttemptMetadata gfmaLopScatter on gfmaLopScatter.GisFeatureID = gf.GisFeatureID and gfmaLopScatter.GisMetadataAttributeID = @lopScatterAcresMetadataAttributeID
+        left join #AttemptMetadata gfmaBiomassRemoval on gfmaBiomassRemoval.GisFeatureID = gf.GisFeatureID and gfmaBiomassRemoval.GisMetadataAttributeID = @biomassRemovalAcresMetadataAttributeID
+        left join #AttemptMetadata gfmaHandPile on gfmaHandPile.GisFeatureID = gf.GisFeatureID and gfmaHandPile.GisMetadataAttributeID = @handPileAcresMetadataAttributeID
+        left join #AttemptMetadata gfmaHandPileBurn on gfmaHandPileBurn.GisFeatureID = gf.GisFeatureID and gfmaHandPileBurn.GisMetadataAttributeID = @handPileBurnAcresMetadataAttributeID
+        left join #AttemptMetadata gfmaMachineBurn on gfmaMachineBurn.GisFeatureID = gf.GisFeatureID and gfmaMachineBurn.GisMetadataAttributeID = @machineBurnAcresMetadataAttributeID
+        left join #AttemptMetadata gfmaBroadcastBurn on gfmaBroadcastBurn.GisFeatureID = gf.GisFeatureID and gfmaBroadcastBurn.GisMetadataAttributeID = @broadcastBurnAcresMetadataAttributeID
+        left join #AttemptMetadata gfmaOther on gfmaOther.GisFeatureID = gf.GisFeatureID and gfmaOther.GisMetadataAttributeID = @otherBurnAcresMetadataAttributeID
+        left join #AttemptMetadata gfmaStartDate on gfmaStartDate.GisFeatureID = gf.GisFeatureID and gfmaStartDate.GisMetadataAttributeID = @startDateMetadataAttributeID
+        left join #AttemptMetadata gfmaEndDate on gfmaEndDate.GisFeatureID = gf.GisFeatureID and gfmaEndDate.GisMetadataAttributeID = @endDateMetadataAttributeID
         where gfma.GisMetadataAttributeID = @projectIdentifierGisMetadataAttributeID 
         and gf.GisUploadAttemptID = @piGisUploadAttemptID)
    x on x.GisFeatureMetadataAttributeValue = p.ProjectGisIdentifier
    join dbo.GisUploadAttempt as gua on gua.GisUploadAttemptID = p.CreateGisUploadAttemptID
    join dbo.GisUploadSourceOrganization as guso on guso.GisUploadSourceOrganizationID = gua.GisUploadSourceOrganizationID
-where  p.ProjectGisIdentifier in (select distinct gfma.GisFeatureMetadataAttributeValue from dbo.GisFeature gf 
-                        join dbo.GisFeatureMetadataAttribute gfma on gfma.GisFeatureID = gf.GisFeatureID 
+where  p.ProjectGisIdentifier in (select distinct gfma.GisFeatureMetadataAttributeValue from #AttemptFeature gf 
+                        join #AttemptMetadata gfma on gfma.GisFeatureID = gf.GisFeatureID 
                         where gfma.GisMetadataAttributeID = @projectIdentifierGisMetadataAttributeID and gf.GisUploadAttemptID = @piGisUploadAttemptID)
                and pp.ProgramID = @programID
 
@@ -703,6 +726,10 @@ end
 
 update dbo.ProjectLocation
 set TemporaryTreatmentCacheID = null
+-- Only the rows this run stamped carry a value; without this the statement rewrote every
+-- row in dbo.ProjectLocation on every import (639,874 logical reads / 529ms measured at 173,908
+-- rows, growing with the table) to clear roughly 3,000 values.
+where TemporaryTreatmentCacheID is not null
 
 
 if(@isFlattened = 0)

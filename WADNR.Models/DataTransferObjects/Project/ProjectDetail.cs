@@ -29,10 +29,6 @@ public class ProjectDetail
     public decimal? EstimatedTotalCost { get; set; }
     public decimal? PercentageMatch { get; set; }
 
-    // Focus Area
-    public int? FocusAreaID { get; set; }
-    public string? FocusAreaName { get; set; }
-
     // Lead Implementer
     public OrganizationLookupItem? LeadImplementer { get; set; }
 

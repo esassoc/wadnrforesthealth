@@ -240,7 +240,6 @@ public static class ProjectUpdateWorkflowSteps
             PlannedDate = projectUpdate.PlannedDate,
             CompletionDate = projectUpdate.CompletionDate,
             ExpirationDate = projectUpdate.ExpirationDate,
-            FocusAreaID = projectUpdate.FocusAreaID,
             LeadImplementerOrganizationID = batch.ProjectOrganizationUpdates
                 .Where(ou => ou.RelationshipType.IsPrimaryContact)
                 .Select(ou => (int?)ou.OrganizationID)
@@ -291,7 +290,6 @@ public static class ProjectUpdateWorkflowSteps
         if (!CheckIfFieldIsImported(programs, (int)FieldDefinitionEnum.CompletionDate))
             projectUpdate.CompletionDate = request.CompletionDate;
         projectUpdate.ExpirationDate = request.ExpirationDate;
-        projectUpdate.FocusAreaID = request.FocusAreaID;
         projectUpdate.PercentageMatch = request.PercentageMatch;
 
         // Update batch tracking
@@ -2180,7 +2178,6 @@ public static class ProjectUpdateWorkflowSteps
         projectUpdate.PlannedDate = project.PlannedDate;
         projectUpdate.CompletionDate = project.CompletionDate;
         projectUpdate.ExpirationDate = project.ExpirationDate;
-        projectUpdate.FocusAreaID = project.FocusAreaID;
         projectUpdate.PercentageMatch = project.PercentageMatch;
 
         // Also revert programs

@@ -17,7 +17,6 @@ api/field-definition.service.ts
 api/file-resource.service.ts
 api/find-your-forester.service.ts
 api/firma-home-page-image.service.ts
-api/focus-area.service.ts
 api/fund-source-allocation-note-internal.service.ts
 api/fund-source-allocation-note.service.ts
 api/fund-source-allocation-priority.service.ts
@@ -137,10 +136,6 @@ model/firma-page-detail.ts
 model/firma-page-grid-row.ts
 model/firma-page-type-detail.ts
 model/firma-page-upsert-request.ts
-model/focus-area-closeout-project-item.ts
-model/focus-area-detail.ts
-model/focus-area-grid-row.ts
-model/focus-area-upsert-request.ts
 model/forester-contact-result.ts
 model/forester-role-lookup-item.ts
 model/forester-work-unit-grid-row.ts
@@ -331,7 +326,6 @@ model/project-external-link-update-item-request.ts
 model/project-external-link-update-item.ts
 model/project-fact-sheet.ts
 model/project-featured.ts
-model/project-focus-area-detail-grid-row.ts
 model/project-for-person-detail-grid-row.ts
 model/project-fund-source-allocation-request-item-request.ts
 model/project-funding-detail.ts

@@ -172,30 +172,33 @@ stages:
         TfStateStorageAccountResourceGroup: "$(azureApplicationTfStateResourceGroup)"
         WorkingDirectory: './'
         TerraformCommand: plan
-        TerraformCommandOptions: |
-          -var "keyVaultName=$(keyVaultName)" 
-          -var "environment=$(Environment)" 
-          -var "storageAccountName=$(storageAccountName)" 
-          -var "resourceGroupName=$(resourceGroupName)" 
-          -var "dbServerName=$(kv-dbServerName)" 
-          -var "datadogApiKey=$(kv-datadogApiKey)" 
-          -var "datadogAppKey=$(kv-datadogAppKey)" 
-          -var "domainApi=$(domainApi)" 
-          -var "domainGeoserver=$(domainGeoserver)" 
-          -var "domainWeb=$(domainWeb)" 
-          -var "databaseName=$(databaseName)" 
-          -var "databaseEdition=$(databaseEdition)" 
-          -var "databaseTier=$(databaseTier)" 
-          -var "sqlPassword=$(kv-sqlAdministratorPassword)" 
-          -var "sqlUsername=$(kv-sqlAdministratorUsername)" 
-          -var "azureClusterResourceGroup=$(kv-azureClusterResourceGroup)" 
-          -var "databaseResourceGroup=$(kv-databaseResourceGroup)" 
-          -var "sqlApiUsername=$(sqlApiUsername)" 
-          -var "sqlGeoserverUsername=$(sqlGeoserverUsername)" 
-          -var "storageAccountDevApplicationName=$(storageAccountDevApplicationName)" 
-          -var "team=$(team)" 
-          -var "projectNumber=$(projectNumber)" 
-          -var "elasticPoolName=$(kv-elasticPoolName)" 
+        # Folded scalar (>-) joins these lines with spaces. The TerraformCLI
+        # task strips newlines WITHOUT adding a space, so a literal block (|)
+        # only works with invisible trailing spaces on every line.
+        TerraformCommandOptions: >-
+          -var "keyVaultName=$(keyVaultName)"
+          -var "environment=$(Environment)"
+          -var "storageAccountName=$(storageAccountName)"
+          -var "resourceGroupName=$(resourceGroupName)"
+          -var "dbServerName=$(kv-dbServerName)"
+          -var "datadogApiKey=$(kv-datadogApiKey)"
+          -var "datadogAppKey=$(kv-datadogAppKey)"
+          -var "domainApi=$(domainApi)"
+          -var "domainGeoserver=$(domainGeoserver)"
+          -var "domainWeb=$(domainWeb)"
+          -var "databaseName=$(databaseName)"
+          -var "databaseEdition=$(databaseEdition)"
+          -var "databaseTier=$(databaseTier)"
+          -var "sqlPassword=$(kv-sqlAdministratorPassword)"
+          -var "sqlUsername=$(kv-sqlAdministratorUsername)"
+          -var "azureClusterResourceGroup=$(kv-azureClusterResourceGroup)"
+          -var "databaseResourceGroup=$(kv-databaseResourceGroup)"
+          -var "sqlApiUsername=$(sqlApiUsername)"
+          -var "sqlGeoserverUsername=$(sqlGeoserverUsername)"
+          -var "storageAccountDevApplicationName=$(storageAccountDevApplicationName)"
+          -var "team=$(team)"
+          -var "projectNumber=$(projectNumber)"
+          -var "elasticPoolName=$(kv-elasticPoolName)"
 
     - task: CopyFiles@2
       inputs:
@@ -496,6 +499,10 @@ stages:
             displayName: 'Install Helm 3.8.0'
             inputs:
               helmVersion: 3.8.0
+              # Must stay false. When true the task ignores helmVersion, resolves
+              # "latest" from the GitHub releases API, and on lookup failure falls
+              # back to its hardcoded v3.1.2 - which predates --create-namespace.
+              checkLatestHelmVersion: false
               installKubectl: true
 
           - task: Kubernetes@1

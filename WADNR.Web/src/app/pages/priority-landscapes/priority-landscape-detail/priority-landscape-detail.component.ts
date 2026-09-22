@@ -4,6 +4,7 @@ import { Component } from "@angular/core";
 import { DomSanitizer, SafeHtml, SafeResourceUrl } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
 import { Map } from "leaflet";
+import * as L from "leaflet";
 import { distinctUntilChanged, filter, forkJoin, map, Observable, shareReplay, startWith, Subject, switchMap } from "rxjs";
 import { DialogService } from "@ngneat/dialog";
 import { ConfirmService } from "src/app/shared/services/confirm/confirm.service";
@@ -20,8 +21,11 @@ import { DNRUplandRegionsLayerComponent } from "src/app/shared/components/leafle
 import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/layers/external-map-layers/external-map-layers.component";
 import { GenericFeatureCollectionLayerComponent } from "src/app/shared/components/leaflet/layers/generic-feature-collection-layer/generic-feature-collection-layer.component";
 import { GenericWmsWfsLayerComponent } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/generic-wms-wfs-layer.component";
+import { MapAreaInfoPopupComponent } from "src/app/shared/components/leaflet/map-area-info-popup/map-area-info-popup.component";
+import { MapAreaPopupService } from "src/app/shared/services/map-area-popup.service";
 
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
+import { MAP_LAYER_SORT_ORDER } from "src/app/shared/models/map-layer-sort-order";
 import { Feature } from "geojson";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
 import { PriorityLandscapeService } from "src/app/shared/generated/api/priority-landscape.service";
@@ -52,6 +56,7 @@ import { LoadingDirective } from "src/app/shared/directives/loading.directive";
         ExternalMapLayersComponent,
         GenericFeatureCollectionLayerComponent,
         GenericWmsWfsLayerComponent,
+        MapAreaInfoPopupComponent,
         ProjectGridComponent,
         IconComponent,
         DatePipe,
@@ -75,6 +80,7 @@ export class PriorityLandscapeDetailComponent {
     public highlightedPriorityLandscapeLayerMode = OverlayMode.Single;
     public allPriorityLandscapesLayerMode = OverlayMode.ReferenceOnly;
     public OverlayMode = OverlayMode;
+    public MapLayerSortOrder = MAP_LAYER_SORT_ORDER;
     public projectFeatures$: Observable<IFeature[]>;
     public projectIDsCqlFilter$: Observable<string>;
 
@@ -89,6 +95,7 @@ export class PriorityLandscapeDetailComponent {
         private dialogService: DialogService,
         private confirmService: ConfirmService,
         private alertService: AlertService,
+        private mapAreaPopupService: MapAreaPopupService,
     ) {}
 
     public sanitizeHtml(html: string | null | undefined): SafeHtml {
@@ -143,6 +150,12 @@ export class PriorityLandscapeDetailComponent {
         this.layerControl = event.layerControl;
         this.mapIsReady = true;
     }
+
+    /** Marker popup addition: weaves the geographic areas (Priority Landscape, plus any visible overlays) before Location. */
+    public areaMarkerPopupExtra = async (_feature: Feature, latlng: L.LatLng, baseHtml: string): Promise<string | null> => {
+        const lines = await this.mapAreaPopupService.buildAreaLines(this.map, this.layerControl, latlng);
+        return lines.length ? this.mapAreaPopupService.weaveBeforeLocation(baseHtml, lines) : null;
+    };
 
     public documentUrl(fileResourceGuid?: string | null): SafeResourceUrl | null {
         return getFileResourceUrlFromBase(environment.mainAppApiUrl, this.sanitizer, fileResourceGuid);
@@ -205,19 +218,17 @@ export class PriorityLandscapeDetailComponent {
         });
     }
 
-    buildProjectPopupContent(priorityLandscape: PriorityLandscapeDetail): (feature: Feature, latlng: L.LatLng) => string | null {
-        return (feature: Feature, latlng: L.LatLng): string | null => {
-            const props = feature.properties;
-            if (!props) return null;
-            const projectID = props["ProjectID"];
-            const projectName = props["ProjectName"] ?? projectID;
-            return `
-                <b>Priority Landscape:</b> <a href="/priority-landscapes/${priorityLandscape.PriorityLandscapeID}">${priorityLandscape.PriorityLandscapeName}</a><br>
-                <b>Project:</b> <a href="/projects/${projectID}">${projectName}</a><br>
-                <b>Location:</b> ${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}
-            `;
-        };
-    }
+    /** Popup shown when a project location marker is clicked. Area lines weave in via areaMarkerPopupExtra. */
+    public projectPopupContentFn = (feature: Feature, latlng: L.LatLng): string | null => {
+        const props = feature.properties;
+        if (!props) return null;
+        const projectID = props["ProjectID"];
+        const projectName = props["ProjectName"] ?? projectID;
+        return `
+            <b>Project:</b> <a href="/projects/${projectID}">${projectName}</a><br>
+            <b>Location:</b> ${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}
+        `;
+    };
 
     async deleteFile(priorityLandscapeID: number, priorityLandscapeFileResourceID: number): Promise<void> {
         const confirmed = await this.confirmService.confirm({

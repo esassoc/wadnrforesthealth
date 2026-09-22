@@ -9,7 +9,6 @@ CREATE TABLE [dbo].[ProjectUpdate](
     [ProjectLocationNotes] [varchar](4000) NULL,
     [PlannedDate] [date] NULL,
     [ProjectLocationSimpleTypeID] [int] NOT NULL CONSTRAINT [FK_ProjectUpdate_ProjectLocationSimpleType_ProjectLocationSimpleTypeID] FOREIGN KEY REFERENCES [dbo].[ProjectLocationSimpleType] ([ProjectLocationSimpleTypeID]),
-    [FocusAreaID] [int] NULL CONSTRAINT [FK_ProjectUpdate_FocusArea_FocusAreaID] FOREIGN KEY REFERENCES [dbo].[FocusArea] ([FocusAreaID]),
     [ExpirationDate] [date] NULL,
     [ProjectFundingSourceNotes] [varchar](4000) NULL,
     [PercentageMatch] [int] NULL

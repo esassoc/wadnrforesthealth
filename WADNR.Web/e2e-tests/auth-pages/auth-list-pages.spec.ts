@@ -1,12 +1,6 @@
 import { test, expect } from "../fixtures/base-test";
 
 test.describe("Authenticated list pages", () => {
-    test("/focus-areas renders with grid data", async ({ authedPage: page }) => {
-        await page.goto("/focus-areas");
-        await expect(page.getByRole("heading", { name: "Focus Areas" })).toBeVisible();
-        await expect(page.locator(".ag-row").first()).toBeVisible({ timeout: 30000 });
-    });
-
     test("/agreements renders with grid data", async ({ authedPage: page }) => {
         await page.goto("/agreements");
         await expect(page.getByRole("heading", { name: "Agreements" })).toBeVisible();

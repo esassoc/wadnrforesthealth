@@ -41,6 +41,7 @@
                 <div class="card-body">
                     <p>{{ vm.priorityLandscape.PriorityLandscapeAboveMapText }}</p>
                     <wadnr-map [mapHeight]="'400px'" [selectedTileLayer]="'Terrain'" [showLegend]="false" (onMapLoad)="handleMapReady($event)">
+                        <map-area-info-popup [map]="map" [layerControl]="layerControl"></map-area-info-popup>
                         <external-map-layers [map]="map" [layerControl]="layerControl" [context]="'priority-landscape'" [displayOnLoad]="false"></external-map-layers>
                         @if (projectFeatures$ | async; as projectFeatures) {
                             <generic-feature-collection-layer
@@ -48,9 +49,13 @@
                                 [layerControl]="layerControl"
                                 [featureCollection]="projectFeatures"
                                 [layerName]="'Project Locations'"
-                                [layerColor]="'#ffff00'"
+                                [layerColor]="'#3388ff'"
+                                [identifierProperty]="'ProjectID'"
+                                [selectOnClick]="true"
+                                [sortOrder]="MapLayerSortOrder.ProjectLocations"
                                 [displayOnLoad]="true"
-                                [popupContentFn]="buildProjectPopupContent(vm.priorityLandscape)"></generic-feature-collection-layer>
+                                [popupContentFn]="projectPopupContentFn"
+                                [extraPopupContentFn]="areaMarkerPopupExtra"></generic-feature-collection-layer>
                         }
                         <priority-landscapes-layer
                             [map]="map"
@@ -64,7 +69,7 @@
                             [mode]="allPriorityLandscapesLayerMode"
                             [categoryFilter]="'East'"
                             [overlayLabelOverride]="'20-Year Forest Health Strategic Plan: Eastern WA Priority Landscapes'"
-                            [showPopupOnClick]="true"
+                            [sortOrder]="MapLayerSortOrder.PriorityLandscape"
                             [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
                         <priority-landscapes-layer
                             [map]="map"
@@ -72,7 +77,7 @@
                             [mode]="allPriorityLandscapesLayerMode"
                             [categoryFilter]="'West'"
                             [overlayLabelOverride]="'Western WA Forest Health Priority Landscapes'"
-                            [showPopupOnClick]="true"
+                            [sortOrder]="MapLayerSortOrder.PriorityLandscapeWest"
                             [fitBoundsOnWmsAddToControl]="false"></priority-landscapes-layer>
                         @if (projectIDsCqlFilter$ | async; as projectCqlFilter) {
                             <generic-wms-wfs-layer
@@ -84,6 +89,7 @@
                                 [overlayLabel]="'Project Locations - Detail'"
                                 [wmsStyle]="''"
                                 [cqlFilter]="projectCqlFilter"
+                                [sortOrder]="MapLayerSortOrder.ProjectLocationsDetail"
                                 [displayOnLoad]="false"
                                 [fitBoundsOnWmsAddToControl]="false">
                             </generic-wms-wfs-layer>
@@ -96,6 +102,7 @@
                                 [overlayLabel]="'Project Treatment Areas'"
                                 [wmsStyle]="''"
                                 [cqlFilter]="projectCqlFilter"
+                                [sortOrder]="MapLayerSortOrder.ProjectTreatmentArea"
                                 [displayOnLoad]="false"
                                 [fitBoundsOnWmsAddToControl]="false">
                             </generic-wms-wfs-layer>
@@ -104,12 +111,14 @@
                             [map]="map"
                             [layerControl]="layerControl"
                             [mode]="OverlayMode.ReferenceOnly"
+                            [sortOrder]="MapLayerSortOrder.DNRUplandRegion"
                             [displayOnLoad]="false"
                             [fitBoundsOnWmsAddToControl]="false"></dnr-upland-regions-layer>
                         <counties-layer
                             [map]="map"
                             [layerControl]="layerControl"
                             [mode]="OverlayMode.ReferenceOnly"
+                            [sortOrder]="MapLayerSortOrder.County"
                             [displayOnLoad]="false"
                             [fitBoundsOnWmsAddToControl]="false"></counties-layer>
                     </wadnr-map>

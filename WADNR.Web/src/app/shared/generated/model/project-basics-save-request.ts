@@ -21,7 +21,6 @@ export class ProjectBasicsSaveRequest {
     ExpirationDate?: string | null;
     ProjectGisIdentifier?: string | null;
     LeadImplementerOrganizationID?: number | null;
-    FocusAreaID?: number | null;
     PercentageMatch?: number | null;
     ProgramIDs?: Array<number> | null;
     constructor(obj?: any) {
@@ -40,7 +39,6 @@ export interface ProjectBasicsSaveRequestForm {
     ExpirationDate?: FormControl<string>;
     ProjectGisIdentifier?: FormControl<string>;
     LeadImplementerOrganizationID?: FormControl<number>;
-    FocusAreaID?: FormControl<number>;
     PercentageMatch?: FormControl<number>;
     ProgramIDs?: FormControl<Array<number>>;
 }
@@ -137,16 +135,6 @@ export class ProjectBasicsSaveRequestFormControls {
         }
     );
     public static LeadImplementerOrganizationID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static FocusAreaID = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

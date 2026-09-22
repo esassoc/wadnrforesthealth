@@ -73,10 +73,6 @@ public static class ProjectProjections
         EstimatedTotalCost = x.EstimatedTotalCost,
         PercentageMatch = x.PercentageMatch,
 
-        // Focus Area
-        FocusAreaID = x.FocusAreaID,
-        FocusAreaName = x.FocusArea != null ? x.FocusArea.FocusAreaName : null,
-
         // Lead Implementer
         LeadImplementer = x.ProjectOrganizations
             .Where(po => po.RelationshipType.IsPrimaryContact)
@@ -728,34 +724,6 @@ public static class ProjectProjections
         IsMyProject = false, // Resolved in static helper
     };
 
-    public static readonly Expression<Func<Project, ProjectFocusAreaDetailGridRow>> AsFocusAreaDetailGridRow = x => new ProjectFocusAreaDetailGridRow
-    {
-        ProjectID = x.ProjectID,
-        FhtProjectNumber = x.FhtProjectNumber,
-        ProjectName = x.ProjectName,
-        ProjectStage = new ProjectStageLookupItem
-        {
-            ProjectStageID = x.ProjectStageID,
-            ProjectStageName = string.Empty // resolved client-side
-        },
-        ProjectInitiationDate = x.PlannedDate,
-        ExpirationDate = x.ExpirationDate,
-        CompletionDate = x.CompletionDate,
-        EstimatedTotalCost = x.EstimatedTotalCost,
-        TotalFunding = x.ProjectFundSourceAllocationRequests.Any()
-            ? x.ProjectFundSourceAllocationRequests.Sum(r => (decimal?)r.TotalAmount)
-            : null,
-        ProjectDescription = x.ProjectDescription,
-        PhotoCount = x.ProjectImages.Count,
-        Tags = x.ProjectTags
-            .Select(pt => new TagLookupItem
-            {
-                TagID = pt.Tag.TagID,
-                TagName = pt.Tag.TagName
-            })
-            .ToList()
-    };
-
     public static Expression<Func<Project, ProjectOrganizationDetailGridRow>> AsProjectOrganizationDetailGridRow(int organizationID) => x => new ProjectOrganizationDetailGridRow
     {
         ProjectID = x.ProjectID,
@@ -842,7 +810,6 @@ public static class ProjectProjections
         ApprovalDate = x.ApprovalDate,
         ReviewedByPersonID = x.ReviewedByPersonID,
         ReviewedByPersonName = x.ReviewedByPerson != null ? x.ReviewedByPerson.FirstName + " " + x.ReviewedByPerson.LastName : null,
-        FocusAreaID = x.FocusAreaID,
         NoExpendituresToReportExplanation = x.NoExpendituresToReportExplanation,
         NoRegionsExplanation = x.NoRegionsExplanation,
         NoPriorityLandscapesExplanation = x.NoPriorityLandscapesExplanation,

@@ -12,7 +12,6 @@ public class ProjectBasicsSaveRequest
     public DateOnly? ExpirationDate { get; set; }
     public string? ProjectGisIdentifier { get; set; }
     public int? LeadImplementerOrganizationID { get; set; }
-    public int? FocusAreaID { get; set; }
     public int? PercentageMatch { get; set; }
     public List<int> ProgramIDs { get; set; } = new();
 }

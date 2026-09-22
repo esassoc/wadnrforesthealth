@@ -67,10 +67,6 @@ public partial class WADNRDbContext : DbContext
 
     public virtual DbSet<FirmaPageImage> FirmaPageImages { get; set; }
 
-    public virtual DbSet<FocusArea> FocusAreas { get; set; }
-
-    public virtual DbSet<FocusAreaLocationStaging> FocusAreaLocationStagings { get; set; }
-
     public virtual DbSet<ForesterWorkUnit> ForesterWorkUnits { get; set; }
 
     public virtual DbSet<FundSource> FundSources { get; set; }
@@ -509,20 +505,6 @@ public partial class WADNRDbContext : DbContext
             entity.HasOne(d => d.FileResource).WithMany(p => p.FirmaPageImages).OnDelete(DeleteBehavior.ClientSetNull);
 
             entity.HasOne(d => d.FirmaPage).WithMany(p => p.FirmaPageImages).OnDelete(DeleteBehavior.ClientSetNull);
-        });
-
-        modelBuilder.Entity<FocusArea>(entity =>
-        {
-            entity.HasKey(e => e.FocusAreaID).HasName("PK_FocusArea_FocusAreaID");
-
-            entity.HasOne(d => d.DNRUplandRegion).WithMany(p => p.FocusAreas).OnDelete(DeleteBehavior.ClientSetNull);
-        });
-
-        modelBuilder.Entity<FocusAreaLocationStaging>(entity =>
-        {
-            entity.HasKey(e => e.FocusAreaLocationStagingID).HasName("PK_FocusAreaLocationStaging_FocusAreaLocationStagingID");
-
-            entity.HasOne(d => d.FocusArea).WithMany(p => p.FocusAreaLocationStagings).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<ForesterWorkUnit>(entity =>

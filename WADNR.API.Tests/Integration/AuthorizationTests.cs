@@ -584,31 +584,6 @@ public class AuthorizationTests
 
     #endregion
 
-    #region FocusAreaManageFeature — ProjectSteward, Admin, EsaAdmin (write endpoint)
-
-    [TestMethod]
-    public async Task FocusAreaManageFeature_Returns401_WhenUnauthenticated()
-    {
-        // FocusAreaController.Create() has [FocusAreaManageFeature]
-        var route = RouteHelper.GetRouteTemplateFor(typeof(FocusAreaController),
-            typeof(FocusAreaController).GetMethod(nameof(FocusAreaController.Create))!);
-        var result = await AssemblySteps.UnauthenticatedHttpClient.PostAsJsonAsync(route, new { });
-
-        Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-    }
-
-    [TestMethod]
-    public async Task FocusAreaManageFeature_Returns403_ForNormalUser()
-    {
-        var route = RouteHelper.GetRouteTemplateFor(typeof(FocusAreaController),
-            typeof(FocusAreaController).GetMethod(nameof(FocusAreaController.Create))!);
-        var result = await AssemblySteps.NormalHttpClient.PostAsJsonAsync(route, new { });
-
-        Assert.AreEqual(HttpStatusCode.Forbidden, result.StatusCode,
-            $"FocusAreaManageFeature should return 403 for Normal users.\nRoute: {route}");
-    }
-
-    #endregion
 
     #region ProgramManageFeature — Admin, EsaAdmin (write endpoint)
 
