@@ -11,11 +11,6 @@ import { testData } from "../fixtures/test-data";
  */
 
 test.describe("Additional detail pages render correctly", () => {
-    test("Agreement detail loads with cards", async ({ authedPage: page }) => {
-        await page.goto(`/agreements/${testData.agreementID}`);
-        await expect(page.locator(".card").first()).toBeVisible({ timeout: 15000 });
-    });
-
     test("Organization detail loads with cards", async ({ publicPage: page }) => {
         await page.goto(`/organizations/${testData.organizationID}`);
         await expect(page.locator(".card").first()).toBeVisible({ timeout: 15000 });

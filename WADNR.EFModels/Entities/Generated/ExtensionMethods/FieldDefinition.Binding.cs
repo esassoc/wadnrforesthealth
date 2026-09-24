@@ -109,18 +109,9 @@ namespace WADNR.EFModels.Entities
         public static readonly FieldDefinitionFundSourceNote FundSourceNote = FieldDefinitionFundSourceNote.Instance;
         public static readonly FieldDefinitionPriorityLandscape PriorityLandscape = FieldDefinitionPriorityLandscape.Instance;
         public static readonly FieldDefinitionInvoice Invoice = FieldDefinitionInvoice.Instance;
-        public static readonly FieldDefinitionAgreement Agreement = FieldDefinitionAgreement.Instance;
         public static readonly FieldDefinitionFederalFundCode FederalFundCode = FieldDefinitionFederalFundCode.Instance;
         public static readonly FieldDefinitionAllocationAmount AllocationAmount = FieldDefinitionAllocationAmount.Instance;
-        public static readonly FieldDefinitionAgreementType AgreementType = FieldDefinitionAgreementType.Instance;
-        public static readonly FieldDefinitionAgreementNumber AgreementNumber = FieldDefinitionAgreementNumber.Instance;
-        public static readonly FieldDefinitionAgreementTitle AgreementTitle = FieldDefinitionAgreementTitle.Instance;
-        public static readonly FieldDefinitionAgreementStartDate AgreementStartDate = FieldDefinitionAgreementStartDate.Instance;
-        public static readonly FieldDefinitionAgreementEndDate AgreementEndDate = FieldDefinitionAgreementEndDate.Instance;
-        public static readonly FieldDefinitionAgreementAmount AgreementAmount = FieldDefinitionAgreementAmount.Instance;
         public static readonly FieldDefinitionProgramManager ProgramManager = FieldDefinitionProgramManager.Instance;
-        public static readonly FieldDefinitionAgreementNotes AgreementNotes = FieldDefinitionAgreementNotes.Instance;
-        public static readonly FieldDefinitionAgreementStatus AgreementStatus = FieldDefinitionAgreementStatus.Instance;
         public static readonly FieldDefinitionFundSourceAllocationNote FundSourceAllocationNote = FieldDefinitionFundSourceAllocationNote.Instance;
         public static readonly FieldDefinitionFileResource FileResource = FieldDefinitionFileResource.Instance;
         public static readonly FieldDefinitionProjectTotalCompletedFootprintAcres ProjectTotalCompletedFootprintAcres = FieldDefinitionProjectTotalCompletedFootprintAcres.Instance;
@@ -256,7 +247,7 @@ namespace WADNR.EFModels.Entities
         /// </summary>
         static FieldDefinition()
         {
-            All = new List<FieldDefinition> { ProjectType, TaxonomyTrunk, PrimaryContactOrganization, ProjectsStewardOrganizationRelationshipToProject, Organization, Password, MeasurementUnit, PhotoCaption, PhotoCredit, PhotoTiming, OrganizationPrimaryContact, TaxonomyBranch, CompletionDate, ProjectDescription, ProjectName, ProjectNote, ExpirationDate, ReportedValue, OrganizationType, ProjectFundSourceAllocationRequestTotalAmount, ProjectStage, ClassificationName, EstimatedTotalCost, UnfundedNeed, Username, Project, Classification, FundedAmount, ProjectLocation, ExcludeFromFactSheet, ProjectCostInYearOfExpenditure, GlobalInflationRate, ReportingYear, TagName, TagDescription, ReportedExpenditure, ProjectInitiationDate, AssociatedTaxonomyBranches, ExternalLinks, CurrentYearForPVCalculations, LifecycleOperatingCost, RoleName, DNRUplandRegion, MonitoringProgram, MonitoringApproach, MonitoringProgramPartner, MonitoringProgramUrl, ClassificationDescription, ClassificationGoalStatement, ClassificationNarrative, TaxonomySystemName, ProjectTypeDisplayNameForProject, ProjectRelationshipType, ProjectSteward, ChartLastUpdatedDate, UnsecuredFunding, ProjectStewardOrganizationDisplayName, ClassificationSystem, ClassificationSystemName, ProjectPrimaryContact, CustomPageDisplayType, TaxonomyTrunkDescription, TaxonomyBranchDescription, ProjectTypeDescription, ShowApplicationsToThePublic, ShowLeadImplementerLogoOnFactSheet, ProjectUpdateKickOffDate, ProjectUpdateReminderInterval, ProjectUpdateCloseOutDate, FundSourceAllocationAmount, NormalUser, ProjectStewardshipArea, ProjectInternalNote, StatewideVendorNumber, Contact, ContactRelationshipType, Contractor, Landowner, Partner, PrimaryContact, FundSource, FundSourceAllocation, CostType, ProjectCode, FundSourceAllocationProjectCode, ProgramIndex, FundSourceName, FundSourceShortName, FundSourceStatus, FundSourceType, FundSourceNumber, CFDA, TotalAwardAmount, FundSourceStartDate, FundSourceEndDate, FundSourceNote, PriorityLandscape, Invoice, Agreement, FederalFundCode, AllocationAmount, AgreementType, AgreementNumber, AgreementTitle, AgreementStartDate, AgreementEndDate, AgreementAmount, ProgramManager, AgreementNotes, AgreementStatus, FundSourceAllocationNote, FileResource, ProjectTotalCompletedFootprintAcres, RequestorName, InvoiceDate, PurchaseAuthority, PaymentAmount, PreparedByPerson, InvoiceIdentifyingName, FundSourceNoteInternal, FundSourceAllocationNoteInternal, InvoiceStatus, InvoiceApprovalStatus, InvoiceApprovalComment, MatchAmount, Vendor, EstimatedIndirectCost, EstimatedPersonnelAndBenefitsCost, EstimatedSuppliesCost, EstimatedTravelCost, InvoiceID, InvoiceLineItem, InteractionEvent, InteractionEventType, DNRStaffPerson, InteractionEventContact, InteractionEventProject, InteractionEventLocation, FundSourceAllocationName, Division, FundSourceManager, Job, JobImportTableType, FundSourceAllocationBudgetLineItem, ProgramIndexProjectCode, FhtProjectNumber, FundSourceCurrentBalance, FundSourceAllocationCurrentBalance, FundSourceAllocationChangeLogNote, TreatmentStartDate, TreatmentEndDate, ChippingAcres, PruningAcres, ThinningAcres, MasticationAcres, GrazingAcres, LopAndScatterAcres, BiomassRemovalAcres, HandPileAcres, BroadcastBurnAcres, HandPileBurnAcres, MachinePileBurnAcres, OtherTreatmentAcres, SlashAcres, ProjectIdentifier, PlannedDate, TreatedAcres, TreatmentType, TreatmentDetailedActivityType, FootprintAcres, FundingSource, FundingSourceNote, ProjectTotalCompletedTreatmentAcres, LimitVisibilityToAdmin, Program, ProjectFundSourceAllocationRequestMatchAmount, ProjectFundSourceAllocationRequestPayAmount, ProjectApplicationDate, ProjectDecisionDate, ServiceForester, StewardshipFishAndWildlifeBiologist, RegulationAssistanceForester, FamilyForestFishPassageProgram, ForestryRiparianEasementProgram, RiversAndHabitatOpenSpaceProgramManager, CommunityResilienceCoordinator, UrbanForestryTechnician, ForestPracticesForester, SmallForestLandownerOfficeProgramManager, SmallForestLandownerProgramManager, UcfStatewideSpecialist, ServiceForestrySpecialist, ExternalMapLayer, ExternalMapLayerDisplayName, ExternalMapLayerUrl, ExternalMapLayerDescription, ExternalMapLayerFeatureNameField, ExternalMapLayerDisplayOnPriorityLandscape, ExternalMapLayerDisplayOnProjectMap, ExternalMapLayerDisplayOnAllOthers, ExternalMapLayerIsATiledMapService, ExternalMapLayerIsActive, UpdatesFromImport, TreatmentCode, TreatmentCostPerAcre, TreatmentTotalCost, ServiceForestryRegionalCoordinator, County, PercentageMatch, ReportTitle, ReportDescription, ReportFile, ReportModel, SelectedReportTemplate, InvoicePaymentRequest, DUNS, OrganizationCode, InvoiceNumber, Fund, Appn, SubObject, ServiceForestryProgramManager, ForestRegulationFishAndWildlifeBiologist, FundSourceAllocationFundFSPs, FundSourceAllocationSource, FundSourceAllocationAllocation, FundSourceAllocationTotalFundSourceFunds, FundSourceAllocationOverallBalance, FundSourceAllocationContractualBalance, FundSourceAllocationTravelBalance, FundSourceAllocationStaffBalance, FundSourceAllocationLikelyToUse, FundSourceAllocationCompleted, FundSourceAllocationPriority, LeadImplementerOrganization, IsUser };
+            All = new List<FieldDefinition> { ProjectType, TaxonomyTrunk, PrimaryContactOrganization, ProjectsStewardOrganizationRelationshipToProject, Organization, Password, MeasurementUnit, PhotoCaption, PhotoCredit, PhotoTiming, OrganizationPrimaryContact, TaxonomyBranch, CompletionDate, ProjectDescription, ProjectName, ProjectNote, ExpirationDate, ReportedValue, OrganizationType, ProjectFundSourceAllocationRequestTotalAmount, ProjectStage, ClassificationName, EstimatedTotalCost, UnfundedNeed, Username, Project, Classification, FundedAmount, ProjectLocation, ExcludeFromFactSheet, ProjectCostInYearOfExpenditure, GlobalInflationRate, ReportingYear, TagName, TagDescription, ReportedExpenditure, ProjectInitiationDate, AssociatedTaxonomyBranches, ExternalLinks, CurrentYearForPVCalculations, LifecycleOperatingCost, RoleName, DNRUplandRegion, MonitoringProgram, MonitoringApproach, MonitoringProgramPartner, MonitoringProgramUrl, ClassificationDescription, ClassificationGoalStatement, ClassificationNarrative, TaxonomySystemName, ProjectTypeDisplayNameForProject, ProjectRelationshipType, ProjectSteward, ChartLastUpdatedDate, UnsecuredFunding, ProjectStewardOrganizationDisplayName, ClassificationSystem, ClassificationSystemName, ProjectPrimaryContact, CustomPageDisplayType, TaxonomyTrunkDescription, TaxonomyBranchDescription, ProjectTypeDescription, ShowApplicationsToThePublic, ShowLeadImplementerLogoOnFactSheet, ProjectUpdateKickOffDate, ProjectUpdateReminderInterval, ProjectUpdateCloseOutDate, FundSourceAllocationAmount, NormalUser, ProjectStewardshipArea, ProjectInternalNote, StatewideVendorNumber, Contact, ContactRelationshipType, Contractor, Landowner, Partner, PrimaryContact, FundSource, FundSourceAllocation, CostType, ProjectCode, FundSourceAllocationProjectCode, ProgramIndex, FundSourceName, FundSourceShortName, FundSourceStatus, FundSourceType, FundSourceNumber, CFDA, TotalAwardAmount, FundSourceStartDate, FundSourceEndDate, FundSourceNote, PriorityLandscape, Invoice, FederalFundCode, AllocationAmount, ProgramManager, FundSourceAllocationNote, FileResource, ProjectTotalCompletedFootprintAcres, RequestorName, InvoiceDate, PurchaseAuthority, PaymentAmount, PreparedByPerson, InvoiceIdentifyingName, FundSourceNoteInternal, FundSourceAllocationNoteInternal, InvoiceStatus, InvoiceApprovalStatus, InvoiceApprovalComment, MatchAmount, Vendor, EstimatedIndirectCost, EstimatedPersonnelAndBenefitsCost, EstimatedSuppliesCost, EstimatedTravelCost, InvoiceID, InvoiceLineItem, InteractionEvent, InteractionEventType, DNRStaffPerson, InteractionEventContact, InteractionEventProject, InteractionEventLocation, FundSourceAllocationName, Division, FundSourceManager, Job, JobImportTableType, FundSourceAllocationBudgetLineItem, ProgramIndexProjectCode, FhtProjectNumber, FundSourceCurrentBalance, FundSourceAllocationCurrentBalance, FundSourceAllocationChangeLogNote, TreatmentStartDate, TreatmentEndDate, ChippingAcres, PruningAcres, ThinningAcres, MasticationAcres, GrazingAcres, LopAndScatterAcres, BiomassRemovalAcres, HandPileAcres, BroadcastBurnAcres, HandPileBurnAcres, MachinePileBurnAcres, OtherTreatmentAcres, SlashAcres, ProjectIdentifier, PlannedDate, TreatedAcres, TreatmentType, TreatmentDetailedActivityType, FootprintAcres, FundingSource, FundingSourceNote, ProjectTotalCompletedTreatmentAcres, LimitVisibilityToAdmin, Program, ProjectFundSourceAllocationRequestMatchAmount, ProjectFundSourceAllocationRequestPayAmount, ProjectApplicationDate, ProjectDecisionDate, ServiceForester, StewardshipFishAndWildlifeBiologist, RegulationAssistanceForester, FamilyForestFishPassageProgram, ForestryRiparianEasementProgram, RiversAndHabitatOpenSpaceProgramManager, CommunityResilienceCoordinator, UrbanForestryTechnician, ForestPracticesForester, SmallForestLandownerOfficeProgramManager, SmallForestLandownerProgramManager, UcfStatewideSpecialist, ServiceForestrySpecialist, ExternalMapLayer, ExternalMapLayerDisplayName, ExternalMapLayerUrl, ExternalMapLayerDescription, ExternalMapLayerFeatureNameField, ExternalMapLayerDisplayOnPriorityLandscape, ExternalMapLayerDisplayOnProjectMap, ExternalMapLayerDisplayOnAllOthers, ExternalMapLayerIsATiledMapService, ExternalMapLayerIsActive, UpdatesFromImport, TreatmentCode, TreatmentCostPerAcre, TreatmentTotalCost, ServiceForestryRegionalCoordinator, County, PercentageMatch, ReportTitle, ReportDescription, ReportFile, ReportModel, SelectedReportTemplate, InvoicePaymentRequest, DUNS, OrganizationCode, InvoiceNumber, Fund, Appn, SubObject, ServiceForestryProgramManager, ForestRegulationFishAndWildlifeBiologist, FundSourceAllocationFundFSPs, FundSourceAllocationSource, FundSourceAllocationAllocation, FundSourceAllocationTotalFundSourceFunds, FundSourceAllocationOverallBalance, FundSourceAllocationContractualBalance, FundSourceAllocationTravelBalance, FundSourceAllocationStaffBalance, FundSourceAllocationLikelyToUse, FundSourceAllocationCompleted, FundSourceAllocationPriority, LeadImplementerOrganization, IsUser };
             AllLookupDictionary = new ReadOnlyDictionary<int, FieldDefinition>(All.ToDictionary(x => x.FieldDefinitionID));
         }
 
@@ -328,24 +319,6 @@ namespace WADNR.EFModels.Entities
         {
             switch (enumValue)
             {
-                case FieldDefinitionEnum.Agreement:
-                    return Agreement;
-                case FieldDefinitionEnum.AgreementAmount:
-                    return AgreementAmount;
-                case FieldDefinitionEnum.AgreementEndDate:
-                    return AgreementEndDate;
-                case FieldDefinitionEnum.AgreementNotes:
-                    return AgreementNotes;
-                case FieldDefinitionEnum.AgreementNumber:
-                    return AgreementNumber;
-                case FieldDefinitionEnum.AgreementStartDate:
-                    return AgreementStartDate;
-                case FieldDefinitionEnum.AgreementStatus:
-                    return AgreementStatus;
-                case FieldDefinitionEnum.AgreementTitle:
-                    return AgreementTitle;
-                case FieldDefinitionEnum.AgreementType:
-                    return AgreementType;
                 case FieldDefinitionEnum.AllocationAmount:
                     return AllocationAmount;
                 case FieldDefinitionEnum.Appn:
@@ -906,18 +879,9 @@ namespace WADNR.EFModels.Entities
         FundSourceNote = 292,
         PriorityLandscape = 293,
         Invoice = 294,
-        Agreement = 295,
         FederalFundCode = 296,
         AllocationAmount = 297,
-        AgreementType = 298,
-        AgreementNumber = 299,
-        AgreementTitle = 300,
-        AgreementStartDate = 301,
-        AgreementEndDate = 302,
-        AgreementAmount = 303,
         ProgramManager = 304,
-        AgreementNotes = 305,
-        AgreementStatus = 306,
         FundSourceAllocationNote = 307,
         FileResource = 308,
         ProjectTotalCompletedFootprintAcres = 309,
@@ -1634,12 +1598,6 @@ namespace WADNR.EFModels.Entities
         public static readonly FieldDefinitionInvoice Instance = new FieldDefinitionInvoice(294, @"Invoice", @"Invoice", @"<p>Placeholder for Invoice</p>");
     }
 
-    public partial class FieldDefinitionAgreement : FieldDefinition
-    {
-        private FieldDefinitionAgreement(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionAgreement Instance = new FieldDefinitionAgreement(295, @"Agreement", @"Agreement", @"<p>Placeholder for Agreement.</p>");
-    }
-
     public partial class FieldDefinitionFederalFundCode : FieldDefinition
     {
         private FieldDefinitionFederalFundCode(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
@@ -1652,58 +1610,10 @@ namespace WADNR.EFModels.Entities
         public static readonly FieldDefinitionAllocationAmount Instance = new FieldDefinitionAllocationAmount(297, @"AllocationAmount", @"Allocation Amount", @"Placeholder for Fund SourceAllocation Allocation Amount.");
     }
 
-    public partial class FieldDefinitionAgreementType : FieldDefinition
-    {
-        private FieldDefinitionAgreementType(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionAgreementType Instance = new FieldDefinitionAgreementType(298, @"AgreementType", @"Agreement Type", @"<p>The type of Agreement.</p>");
-    }
-
-    public partial class FieldDefinitionAgreementNumber : FieldDefinition
-    {
-        private FieldDefinitionAgreementNumber(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionAgreementNumber Instance = new FieldDefinitionAgreementNumber(299, @"AgreementNumber", @"Agreement Number", @"<p>The number for referencing the Agreement</p>");
-    }
-
-    public partial class FieldDefinitionAgreementTitle : FieldDefinition
-    {
-        private FieldDefinitionAgreementTitle(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionAgreementTitle Instance = new FieldDefinitionAgreementTitle(300, @"AgreementTitle", @"Agreement Title", @"<p>The Agreement Title should generally include a 1) reference to the location, 2) the primary implementation activity, and 3) the year.</p>");
-    }
-
-    public partial class FieldDefinitionAgreementStartDate : FieldDefinition
-    {
-        private FieldDefinitionAgreementStartDate(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionAgreementStartDate Instance = new FieldDefinitionAgreementStartDate(301, @"AgreementStartDate", @"Agreement Start Date", @"<p>The start date of the Agreement.</p>");
-    }
-
-    public partial class FieldDefinitionAgreementEndDate : FieldDefinition
-    {
-        private FieldDefinitionAgreementEndDate(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionAgreementEndDate Instance = new FieldDefinitionAgreementEndDate(302, @"AgreementEndDate", @"Agreement End Date", @"<p>The end date of the Agreement.</p>");
-    }
-
-    public partial class FieldDefinitionAgreementAmount : FieldDefinition
-    {
-        private FieldDefinitionAgreementAmount(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionAgreementAmount Instance = new FieldDefinitionAgreementAmount(303, @"AgreementAmount", @"Agreement Amount", @"<p>The amount of the Agreement.</p>");
-    }
-
     public partial class FieldDefinitionProgramManager : FieldDefinition
     {
         private FieldDefinitionProgramManager(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
         public static readonly FieldDefinitionProgramManager Instance = new FieldDefinitionProgramManager(304, @"ProgramManager", @"Program Manager", @"Placeholder for Program Manager.");
-    }
-
-    public partial class FieldDefinitionAgreementNotes : FieldDefinition
-    {
-        private FieldDefinitionAgreementNotes(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionAgreementNotes Instance = new FieldDefinitionAgreementNotes(305, @"AgreementNotes", @"Agreement Notes", @"Placeholder for Agreement Notes.");
-    }
-
-    public partial class FieldDefinitionAgreementStatus : FieldDefinition
-    {
-        private FieldDefinitionAgreementStatus(int fieldDefinitionID, string fieldDefinitionName, string fieldDefinitionDisplayName, string defaultDefinition) : base(fieldDefinitionID, fieldDefinitionName, fieldDefinitionDisplayName, defaultDefinition) {}
-        public static readonly FieldDefinitionAgreementStatus Instance = new FieldDefinitionAgreementStatus(306, @"AgreementStatus", @"Agreement Status", @"Placeholder for Agreement Status.");
     }
 
     public partial class FieldDefinitionFundSourceAllocationNote : FieldDefinition

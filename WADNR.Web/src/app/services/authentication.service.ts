@@ -264,11 +264,11 @@ export class AuthenticationService {
     }
 
     /**
-     * Checks if user can manage fund sources and agreements.
+     * Checks if user can manage fund sources.
      */
     public canManageFundSources(user: PersonDetail | null): boolean {
         if (!user) return false;
-        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanManageFundSourcesAndAgreements]);
+        return this.doesUserHaveOneOfTheseRoles(user, [RoleEnum.Admin, RoleEnum.EsaAdmin, RoleEnum.CanManageFundSources]);
     }
 
     /**

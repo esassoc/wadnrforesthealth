@@ -250,33 +250,6 @@
             </div>
         </div>
 
-        <!-- Agreements Grid Card -->
-        @if (agreements$ | async; as agreements) {
-            <div class="g-col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Agreements</span>
-                    </div>
-                    <div class="card-body" [loadingSpinner]="{ isLoading: agreementsIsLoading$ | async, loadingHeight: 300 }">
-                        <p>{{ organization.OrganizationName }} is associated with the following Agreements:</p>
-                        @if (agreements.length > 0) {
-                            <wadnr-grid [rowData]="agreements" [columnDefs]="agreementColumnDefs" height="300px" downloadFileName="Organization_Agreements" fullscreenTitle="Agreements">
-                                @if (canDownloadExcel$ | async) {
-                                <div customGridActionsRight class="flex">
-                                    <button class="btn btn-sm btn-secondary" (click)="downloadAgreementExcel()" [buttonLoading]="isDownloadingAgreements()">
-                                        <span class="fas fa-download"></span> Download Full Database
-                                    </button>
-                                </div>
-                                }
-                            </wadnr-grid>
-                        } @else {
-                            <p class="org-detail__system-text">No Agreements associated with this Contributing Organization.</p>
-                        }
-                    </div>
-                </div>
-            </div>
-        }
-
         <!-- Pending Projects Grid Card -->
         @if (pendingProjects$ | async; as pendingProjects) {
             @if (pendingProjects.length > 0) {

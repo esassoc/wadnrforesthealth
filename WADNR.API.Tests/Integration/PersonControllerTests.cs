@@ -244,22 +244,6 @@ public class PersonControllerTests
 
     #endregion
 
-    #region Agreements Tests
-
-    [TestMethod]
-    public async Task ListAgreements_ReturnsEmptyList_WhenNoAgreements()
-    {
-        // Act
-        var agreements = await Agreements.ListForPersonAsGridRowAsync(
-            AssemblySteps.DbContext, _testPersonID);
-
-        // Assert
-        Assert.IsNotNull(agreements);
-        Assert.AreEqual(0, agreements.Count);
-    }
-
-    #endregion
-
     #region Roles Tests
 
     [TestMethod]

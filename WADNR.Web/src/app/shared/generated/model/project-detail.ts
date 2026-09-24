@@ -15,7 +15,6 @@ import { ClassificationLookupItem } from './classification-lookup-item';
 import { CountyLookupItem } from './county-lookup-item';
 import { ProgramLookupItem } from './program-lookup-item';
 import { ProjectStageLookupItem } from './project-stage-lookup-item';
-import { AgreementLookupItem } from './agreement-lookup-item';
 import { ProjectTypeLookupItem } from './project-type-lookup-item';
 import { DNRUplandRegionLookupItem } from './dnr-upland-region-lookup-item';
 import { FundSourceAllocationRequestItem } from './fund-source-allocation-request-item';
@@ -49,7 +48,6 @@ export class ProjectDetail {
     FundingSources?: Array<string> | null;
     FundingSourceNotes?: string | null;
     FundSourceAllocationRequests?: Array<FundSourceAllocationRequestItem> | null;
-    Agreements?: Array<AgreementLookupItem> | null;
     DefaultBoundingBox?: BoundingBox;
     HasLocationData?: boolean;
     Latitude?: number | null;
@@ -105,7 +103,6 @@ export interface ProjectDetailForm {
     FundingSources?: FormControl<Array<string>>;
     FundingSourceNotes?: FormControl<string>;
     FundSourceAllocationRequests?: FormControl<Array<FundSourceAllocationRequestItem>>;
-    Agreements?: FormControl<Array<AgreementLookupItem>>;
     DefaultBoundingBox?: FormControl<BoundingBox>;
     HasLocationData?: FormControl<boolean>;
     Latitude?: FormControl<number>;
@@ -365,16 +362,6 @@ export class ProjectDetailFormControls {
         }
     );
     public static FundSourceAllocationRequests = (value: FormControlState<Array<FundSourceAllocationRequestItem>> | Array<FundSourceAllocationRequestItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<FundSourceAllocationRequestItem>>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static Agreements = (value: FormControlState<Array<AgreementLookupItem>> | Array<AgreementLookupItem> = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<Array<AgreementLookupItem>>(
         value,
         formControlOptions ?? 
         {

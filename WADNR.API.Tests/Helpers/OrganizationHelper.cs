@@ -68,16 +68,6 @@ public static class OrganizationHelper
         await dbContext.Database.ExecuteSqlInterpolatedAsync(
             $"UPDATE dbo.Person SET OrganizationID = NULL WHERE OrganizationID = {organizationID}");
 
-        // Delete Agreements that reference this organization (cascade will handle AgreementPerson, AgreementProject)
-        await dbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM dbo.AgreementPerson WHERE AgreementID IN (SELECT AgreementID FROM dbo.Agreement WHERE OrganizationID = {organizationID})");
-        await dbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM dbo.AgreementProject WHERE AgreementID IN (SELECT AgreementID FROM dbo.Agreement WHERE OrganizationID = {organizationID})");
-        await dbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM dbo.AgreementFundSourceAllocation WHERE AgreementID IN (SELECT AgreementID FROM dbo.Agreement WHERE OrganizationID = {organizationID})");
-        await dbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM dbo.Agreement WHERE OrganizationID = {organizationID}");
-
         // Delete Programs that reference this organization
         await dbContext.Database.ExecuteSqlInterpolatedAsync(
             $"DELETE FROM dbo.ProgramPerson WHERE ProgramID IN (SELECT ProgramID FROM dbo.Program WHERE OrganizationID = {organizationID})");

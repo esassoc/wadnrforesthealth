@@ -41,7 +41,6 @@ public class PersonDetail
     // Related data counts
     public int PrimaryContactOrganizationCount { get; set; }
     public int ProjectCount { get; set; }
-    public int AgreementCount { get; set; }
     public int InteractionEventCount { get; set; }
 
     // Computed properties

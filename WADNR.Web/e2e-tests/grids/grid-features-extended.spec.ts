@@ -29,11 +29,6 @@ const gridPages: GridPageConfig[] = [
         filterText: "forest",
     },
     {
-        name: "Agreements",
-        url: "/agreements",
-        expectedColumns: ["Agreement Title", "Agreement Number"],
-    },
-    {
         name: "Organizations",
         url: "/organizations",
         expectedColumns: ["Organization Name"],
@@ -127,7 +122,7 @@ test.describe("Grid filtering", () => {
 // ─── CSV Download Tests ────────────────────────────────────────────────────────
 
 test.describe("Grid CSV download", () => {
-    const pagesWithCsv = ["/projects", "/agreements", "/organizations"];
+    const pagesWithCsv = ["/projects", "/organizations"];
 
     for (const url of pagesWithCsv) {
         test(`${url} CSV download button triggers file download`, async ({ authedPage: page }) => {

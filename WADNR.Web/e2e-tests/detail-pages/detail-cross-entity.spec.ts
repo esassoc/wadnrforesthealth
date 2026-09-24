@@ -4,8 +4,6 @@
  * Verifies that links between entity detail pages navigate correctly:
  * - Project detail → Organization detail (via organization links)
  * - Organization detail → Project detail (via project grid rows)
- * - Fund source detail → Agreement detail (via agreement links)
- * - Agreement detail → Fund source detail (via fund source links)
  * - Program detail → Project detail (via project grid rows)
  */
 
@@ -43,38 +41,6 @@ test.describe("Organization → Project cross-links", () => {
             await projectLink.click();
             await page.waitForLoadState("networkidle");
             expect(page.url()).toContain("/projects/");
-            await expect(page.locator(".card-header, h2.page-title").first()).toBeVisible({ timeout: 10000 });
-        }
-    });
-});
-
-test.describe("Fund Source → Agreement cross-links", () => {
-    test("Fund source detail links to agreement detail", async ({ authedPage: page }) => {
-        await page.goto(`/fund-sources/${testData.fundSourceID}`);
-        await page.waitForLoadState("networkidle");
-
-        const agreementLink = page.locator('a[href*="/agreements/"]').first();
-
-        if (await agreementLink.isVisible({ timeout: 10000 }).catch(() => false)) {
-            await agreementLink.click();
-            await page.waitForLoadState("networkidle");
-            expect(page.url()).toContain("/agreements/");
-            await expect(page.locator(".card-header, h2.page-title").first()).toBeVisible({ timeout: 10000 });
-        }
-    });
-});
-
-test.describe("Agreement → Fund Source cross-links", () => {
-    test("Agreement detail links to fund source detail", async ({ authedPage: page }) => {
-        await page.goto(`/agreements/${testData.agreementID}`);
-        await page.waitForLoadState("networkidle");
-
-        const fundSourceLink = page.locator('a[href*="/fund-sources/"]').first();
-
-        if (await fundSourceLink.isVisible({ timeout: 10000 }).catch(() => false)) {
-            await fundSourceLink.click();
-            await page.waitForLoadState("networkidle");
-            expect(page.url()).toContain("/fund-sources/");
             await expect(page.locator(".card-header, h2.page-title").first()).toBeVisible({ timeout: 10000 });
         }
     });

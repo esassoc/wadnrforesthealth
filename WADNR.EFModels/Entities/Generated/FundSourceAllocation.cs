@@ -43,9 +43,6 @@ public partial class FundSourceAllocation
 
     public int FundSourceID { get; set; }
 
-    [InverseProperty("FundSourceAllocation")]
-    public virtual ICollection<AgreementFundSourceAllocation> AgreementFundSourceAllocations { get; set; } = new List<AgreementFundSourceAllocation>();
-
     [ForeignKey("DNRUplandRegionID")]
     [InverseProperty("FundSourceAllocations")]
     public virtual DNRUplandRegion? DNRUplandRegion { get; set; }

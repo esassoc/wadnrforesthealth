@@ -243,33 +243,6 @@ public class OrganizationControllerTests
 
     #endregion
 
-    #region Agreements Tests
-
-    [TestMethod]
-    public async Task ListAgreementsForOrganization_ReturnsAgreements_WhenExist()
-    {
-        // Arrange - Create an agreement for the test organization
-        var agreement = await AgreementHelper.CreateAgreementAsync(
-            AssemblySteps.DbContext, organizationID: _testOrganizationID);
-
-        try
-        {
-            // Act
-            var agreements = await Agreements.ListAsGridRowByOrganizationIDAsync(
-                AssemblySteps.DbContext, _testOrganizationID);
-
-            // Assert
-            Assert.IsNotNull(agreements);
-            Assert.IsTrue(agreements.Any(a => a.AgreementID == agreement.AgreementID));
-        }
-        finally
-        {
-            await AgreementHelper.DeleteAgreementAsync(AssemblySteps.DbContext, agreement.AgreementID);
-        }
-    }
-
-    #endregion
-
     #region Boundary Tests
 
     [TestMethod]

@@ -121,8 +121,6 @@ public static class PersonHelper
         await dbContext.Database.ExecuteSqlInterpolatedAsync(
             $"DELETE FROM dbo.ProjectPersonUpdate WHERE PersonID = {personID}");
         await dbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM dbo.AgreementPerson WHERE PersonID = {personID}");
-        await dbContext.Database.ExecuteSqlInterpolatedAsync(
             $"DELETE FROM dbo.InteractionEventContact WHERE PersonID = {personID}");
         await dbContext.Database.ExecuteSqlInterpolatedAsync(
             $"DELETE FROM dbo.Notification WHERE PersonID = {personID}");

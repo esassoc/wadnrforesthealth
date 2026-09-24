@@ -4,7 +4,7 @@ namespace WADNR.API.Services.Authorization;
 
 /// <summary>
 /// Allows access to users who can manage treatments.
-/// Includes Admin, EsaAdmin, and CanManageFundSourcesAndAgreements supplemental role.
+/// Includes Admin, EsaAdmin, and CanManageFundSources supplemental role.
 /// Matches legacy TreatmentEditAsAdminFeature.
 /// </summary>
 public class TreatmentManageFeature : BaseAuthorizationAttribute
@@ -12,7 +12,7 @@ public class TreatmentManageFeature : BaseAuthorizationAttribute
     public TreatmentManageFeature() : base([
         RoleEnum.Admin,
         RoleEnum.EsaAdmin,
-        RoleEnum.CanManageFundSourcesAndAgreements
+        RoleEnum.CanManageFundSources
     ])
     {
     }

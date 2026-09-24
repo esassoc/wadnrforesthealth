@@ -10,8 +10,6 @@ GO
 
 :r ".\dbo.ActivityType.sql"
 GO
-:r ".\dbo.AgreementPersonRole.sql"
-GO
 :r ".\dbo.ArcOnlineFinanceApiRawJsonImportTableType.sql"
 GO
 :r ".\dbo.AuditLogEventType.sql"

@@ -361,27 +361,6 @@
             </div>
         }
 
-        <!-- AGREEMENTS -->
-        @if (agreements$ | async; as agreements) {
-            <div class="g-col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Agreements Associated to this WA DNR Fund Source Allocation</span>
-                    </div>
-                    <div class="card-body" [loadingSpinner]="{ isLoading: agreementsIsLoading$ | async, loadingHeight: 300 }">
-                        @if (agreements.length) {
-                            @for (agreement of agreements; track agreement.AgreementID) {
-                                <a [routerLink]="['/agreements', agreement.AgreementID]">{{ agreement.AgreementTitle }}</a
-                                ><br />
-                            }
-                        } @else {
-                            <p class="text-muted">There are no Agreements associated to this WA DNR Fund Source Allocation</p>
-                        }
-                    </div>
-                </div>
-            </div>
-        }
-
         <!-- REPORTED EXPENDITURES -->
         @if (expenditures$ | async; as expenditures) {
             <div class="g-col-12">

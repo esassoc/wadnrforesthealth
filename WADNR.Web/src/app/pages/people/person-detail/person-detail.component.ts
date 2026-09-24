@@ -1,7 +1,7 @@
 import { AsyncPipe, DatePipe } from "@angular/common";
-import { Component, Input, signal } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, finalize, forkJoin, map, Observable, of, shareReplay, switchMap, tap } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, forkJoin, map, Observable, of, shareReplay, switchMap, tap } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 import { DialogService } from "@ngneat/dialog";
@@ -10,7 +10,6 @@ import { BreadcrumbComponent } from "src/app/shared/components/breadcrumb/breadc
 import { PageHeaderComponent } from "src/app/shared/components/page-header/page-header.component";
 import { WADNRGridComponent } from "src/app/shared/components/wadnr-grid/wadnr-grid.component";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
-import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { CopyToClipboardDirective } from "src/app/shared/directives/copy-to-clipboard.directive";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
@@ -28,11 +27,9 @@ import { SelectDropdownOption } from "src/app/shared/components/forms/form-field
 import { PersonDetail } from "src/app/shared/generated/model/person-detail";
 import { PersonApiKey } from "src/app/shared/generated/model/person-api-key";
 import { ProjectForPersonDetailGridRow } from "src/app/shared/generated/model/project-for-person-detail-grid-row";
-import { AgreementGridRow } from "src/app/shared/generated/model/agreement-grid-row";
 import { InteractionEventGridRow } from "src/app/shared/generated/model/interaction-event-grid-row";
 import { NotificationGridRow } from "src/app/shared/generated/model/notification-grid-row";
 import { RoleEnum } from "src/app/shared/generated/enum/role-enum";
-import { environment } from "src/environments/environment";
 
 import { PersonPrimaryContactOrgsModalComponent, PersonPrimaryContactOrgsModalData } from "../person-primary-contact-orgs-modal/person-primary-contact-orgs-modal.component";
 import { EditPersonModalComponent, EditPersonModalData } from "../edit-person-modal/edit-person-modal.component";
@@ -42,7 +39,7 @@ import { PersonEditStewardshipAreasModalComponent, PersonEditStewardshipAreasMod
 @Component({
     selector: "person-detail",
     standalone: true,
-    imports: [PageHeaderComponent, AsyncPipe, DatePipe, RouterLink, BreadcrumbComponent, WADNRGridComponent, ButtonLoadingDirective, LoadingDirective, IconComponent, CopyToClipboardDirective],
+    imports: [PageHeaderComponent, AsyncPipe, DatePipe, RouterLink, BreadcrumbComponent, WADNRGridComponent, LoadingDirective, IconComponent, CopyToClipboardDirective],
     templateUrl: "./person-detail.component.html",
     styleUrls: ["./person-detail.component.scss"],
 })
@@ -57,21 +54,17 @@ export class PersonDetailComponent {
     public personID$: Observable<number>;
     public person$: Observable<PersonDetail>;
     public projects$: Observable<ProjectForPersonDetailGridRow[]>;
-    public agreements$: Observable<AgreementGridRow[]>;
     public interactionEvents$: Observable<InteractionEventGridRow[]>;
     public notifications$: Observable<NotificationGridRow[]>;
 
     public projectsIsLoading$: Observable<boolean>;
-    public agreementsIsLoading$: Observable<boolean>;
     public interactionEventsIsLoading$: Observable<boolean>;
     public notificationsIsLoading$: Observable<boolean>;
-    public isDownloadingAgreements = signal(false);
 
     public apiKey$: Observable<PersonApiKey>;
     public canViewApiKey$: Observable<boolean>;
     private refreshApiKey$ = new BehaviorSubject<void>(undefined);
 
-    public canDownloadExcel$: Observable<boolean>;
     public canImpersonate$: Observable<boolean>;
     public canEditBasics$: Observable<boolean>;
     public canManageUsers$: Observable<boolean>;
@@ -81,16 +74,11 @@ export class PersonDetailComponent {
     public canEditInteractionEvents$: Observable<boolean>;
 
     public projectColumnDefs: ColDef<ProjectForPersonDetailGridRow>[] = [];
-    public agreementColumnDefs: ColDef<AgreementGridRow>[] = [];
     public interactionEventColumnDefs: ColDef<InteractionEventGridRow>[] = [];
     public notificationColumnDefs: ColDef<NotificationGridRow>[] = [];
 
     public projectTotalsRow = {
         fields: ["EstimatedTotalCost", "TotalFunding"],
-        filteredOnly: true,
-    };
-    public agreementTotalsRow = {
-        fields: ["AgreementAmount"],
         filteredOnly: true,
     };
 
@@ -123,11 +111,6 @@ export class PersonDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.agreements$ = this.personID$.pipe(
-            switchMap((personID) => this.personService.listAgreementsPerson(personID)),
-            shareReplay({ bufferSize: 1, refCount: true })
-        );
-
         this.interactionEvents$ = this.personID$.pipe(
             switchMap((personID) => this.personService.listInteractionEventsPerson(personID)),
             shareReplay({ bufferSize: 1, refCount: true })
@@ -139,7 +122,6 @@ export class PersonDetailComponent {
         );
 
         this.projectsIsLoading$ = toLoadingState(this.projects$);
-        this.agreementsIsLoading$ = toLoadingState(this.agreements$);
         this.interactionEventsIsLoading$ = toLoadingState(this.interactionEvents$);
         this.notificationsIsLoading$ = toLoadingState(this.notifications$);
 
@@ -147,10 +129,6 @@ export class PersonDetailComponent {
             this.person$,
             this.authenticationService.currentUserSetObservable,
         ]).pipe(shareReplay({ bufferSize: 1, refCount: true }));
-
-        this.canDownloadExcel$ = this.authenticationService.currentUserSetObservable.pipe(
-            map((user) => this.authenticationService.hasElevatedProjectAccess(user)),
-        );
 
         this.canImpersonate$ = userAndPerson$.pipe(
             map(([person, currentUser]) => {
@@ -234,7 +212,6 @@ export class PersonDetailComponent {
         );
 
         this.projectColumnDefs = this.createProjectColumnDefs();
-        this.agreementColumnDefs = this.createAgreementColumnDefs();
         this.interactionEventColumnDefs = this.createInteractionEventColumnDefs();
         this.notificationColumnDefs = this.createNotificationColumnDefs();
     }
@@ -277,57 +254,6 @@ export class PersonDetailComponent {
         ];
     }
 
-    private createAgreementColumnDefs(): ColDef<AgreementGridRow>[] {
-        return [
-            this.utilityFunctions.createBasicColumnDef("Type", "AgreementTypeAbbrev", {
-                FieldDefinitionType: "AgreementType",
-                FieldDefinitionLabelOverride: "Type",
-            }),
-            this.utilityFunctions.createBasicColumnDef("Number", "AgreementNumber", {
-                FieldDefinitionType: "AgreementNumber",
-                FieldDefinitionLabelOverride: "Number",
-            }),
-            this.utilityFunctions.createBasicColumnDef("Fund Source", "FundSources", {
-                FieldDefinitionType: "FundSource",
-                ValueGetter: (params) => {
-                    const fundSources = params.data?.FundSources;
-                    if (!fundSources || fundSources.length === 0) return "";
-                    return fundSources.map((fs) => fs.FundSourceNumber).join(", ");
-                },
-            }),
-            this.utilityFunctions.createLinkColumnDef("Contributing Organization", "Organization.OrganizationName", "Organization.OrganizationID", {
-                InRouterLink: "/organizations/",
-                FieldDefinitionType: "Organization",
-                FieldDefinitionLabelOverride: "Contributing Organization",
-            }),
-            this.utilityFunctions.createLinkColumnDef("Agreement Title", "AgreementTitle", "AgreementID", {
-                InRouterLink: "/agreements/",
-                FieldDefinitionType: "AgreementTitle",
-            }),
-            this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy", {
-                FieldDefinitionType: "AgreementStartDate",
-                FieldDefinitionLabelOverride: "Start Date",
-            }),
-            this.utilityFunctions.createDateColumnDef("End Date", "EndDate", "M/d/yyyy", {
-                FieldDefinitionType: "AgreementEndDate",
-                FieldDefinitionLabelOverride: "End Date",
-            }),
-            this.utilityFunctions.createCurrencyColumnDef("Amount", "AgreementAmount", {
-                FieldDefinitionType: "AgreementAmount",
-                FieldDefinitionLabelOverride: "Amount",
-                MaxDecimalPlacesToDisplay: 2,
-            }),
-            this.utilityFunctions.createBasicColumnDef("Program Index", "ProgramIndices", {
-                FieldDefinitionType: "ProgramIndex",
-                CustomDropdownFilterField: "ProgramIndices",
-            }),
-            this.utilityFunctions.createBasicColumnDef("Project Code", "ProjectCodes", {
-                FieldDefinitionType: "ProjectCode",
-                CustomDropdownFilterField: "ProjectCodes",
-            }),
-        ];
-    }
-
     private createInteractionEventColumnDefs(): ColDef<InteractionEventGridRow>[] {
         return [
             this.utilityFunctions.createLinkColumnDef("Title", "InteractionEventTitle", "InteractionEventID", {
@@ -358,16 +284,6 @@ export class PersonDetailComponent {
                 InRouterLink: "/projects/",
             }),
         ];
-    }
-
-    downloadAgreementExcel(): void {
-        const id = this._personID$.getValue();
-        if (id == null) return;
-        const url = `${environment.mainAppApiUrl}/people/${id}/agreements/excel-download`;
-        this.isDownloadingAgreements.set(true);
-        this.utilityFunctions.downloadExcel(url, "person-agreements.xlsx")
-            .pipe(finalize(() => this.isDownloadingAgreements.set(false)))
-            .subscribe();
     }
 
     async generateApiKey(personID: number, hasExistingKey: boolean): Promise<void> {

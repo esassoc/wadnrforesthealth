@@ -1,7 +1,7 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, signal } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
-import { BehaviorSubject, Subject, combineLatest, distinctUntilChanged, filter, finalize, map, Observable, shareReplay, startWith, switchMap, take } from "rxjs";
+import { BehaviorSubject, Subject, combineLatest, distinctUntilChanged, filter, map, Observable, shareReplay, startWith, switchMap, take } from "rxjs";
 import { toLoadingState } from "src/app/shared/interfaces/page-loading.interface";
 import { ColDef } from "ag-grid-community";
 import { Map as LeafletMap, Control } from "leaflet";
@@ -22,7 +22,6 @@ import { ExternalMapLayersComponent } from "src/app/shared/components/leaflet/la
 import { OverlayMode } from "src/app/shared/components/leaflet/layers/generic-wms-wfs-layer/overlay-mode.enum";
 import { IconComponent } from "src/app/shared/components/icon/icon.component";
 import { PersonLinkComponent } from "src/app/shared/components/person-link/person-link.component";
-import { ButtonLoadingDirective } from "src/app/shared/directives/button-loading.directive";
 import { LoadingDirective } from "src/app/shared/directives/loading.directive";
 import { Palette, PROJECT_STAGE_LEGEND_COLORS } from "src/app/shared/models/legend-colors";
 import { UtilityFunctionsService } from "src/app/services/utility-functions.service";
@@ -38,7 +37,6 @@ import { ProgramService } from "src/app/shared/generated/api/program.service";
 import { OrganizationDetail } from "src/app/shared/generated/model/organization-detail";
 import { ProgramGridRow } from "src/app/shared/generated/model/program-grid-row";
 import { ProjectOrganizationDetailGridRow } from "src/app/shared/generated/model/project-organization-detail-grid-row";
-import { AgreementGridRow } from "src/app/shared/generated/model/agreement-grid-row";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
 import { OrganizationModalComponent, OrganizationModalData } from "../organization-modal/organization-modal.component";
 import { ProgramModalComponent, ProgramModalData } from "../../programs/program-modal/program-modal.component";
@@ -68,7 +66,6 @@ import { AuthenticationService } from "src/app/services/authentication.service";
         ExternalMapLayersComponent,
         IconComponent,
         PersonLinkComponent,
-        ButtonLoadingDirective,
         LoadingDirective,
     ],
     templateUrl: "./organization-detail.component.html",
@@ -80,13 +77,9 @@ export class OrganizationDetailComponent {
     public programs$: Observable<ProgramGridRow[]>;
     public projects$: Observable<ProjectOrganizationDetailGridRow[]>;
     public pendingProjects$: Observable<ProjectOrganizationDetailGridRow[]>;
-    public agreements$: Observable<AgreementGridRow[]>;
 
     public programsIsLoading$: Observable<boolean>;
     public projectsIsLoading$: Observable<boolean>;
-    public agreementsIsLoading$: Observable<boolean>;
-    public isDownloadingAgreements = signal(false);
-    private agreementExcelDownloadUrl: string;
 
     // Map properties
     public boundaryFeatures$: Observable<IFeature[]>;
@@ -99,7 +92,6 @@ export class OrganizationDetailComponent {
 
     public programColumnDefs: ColDef<ProgramGridRow>[] = [];
     public projectColumnDefs: ColDef<ProjectOrganizationDetailGridRow>[] = [];
-    public agreementColumnDefs: ColDef<AgreementGridRow>[] = [];
     public projectPinnedTotalsRow = {
         fields: ["EstimatedTotalCost", "TotalAmount", "PhotoCount"],
         label: "Totals",
@@ -111,7 +103,6 @@ export class OrganizationDetailComponent {
 
     public canManageUsersContactsOrganizations$: Observable<boolean>;
     public canManagePrograms$: Observable<boolean>;
-    public canDownloadExcel$: Observable<boolean>;
 
     private refreshData$ = new Subject<void>();
 
@@ -155,11 +146,6 @@ export class OrganizationDetailComponent {
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
-        this.agreements$ = this.organizationID$.pipe(
-            switchMap((organizationID) => this.organizationService.listAgreementsForOrganizationOrganization(organizationID)),
-            shareReplay({ bufferSize: 1, refCount: true })
-        );
-
         // Map feature observables - respond to refreshData$ so uploads/deletes reload the map
         this.boundaryFeatures$ = combineLatest([this.organizationID$, this.refreshData$.pipe(startWith(undefined))]).pipe(
             switchMap(([organizationID]) => this.organizationService.getBoundaryOrganization(organizationID)),
@@ -190,10 +176,6 @@ export class OrganizationDetailComponent {
 
         this.programsIsLoading$ = toLoadingState(this.programs$);
         this.projectsIsLoading$ = toLoadingState(this.projects$);
-        this.agreementsIsLoading$ = toLoadingState(this.agreements$);
-        this.organizationID$.subscribe((id) => {
-            this.agreementExcelDownloadUrl = `${environment.mainAppApiUrl}/organizations/${id}/agreements/excel-download`;
-        });
 
         this.canManageUsersContactsOrganizations$ = this.authenticationService.currentUserSetObservable.pipe(
             map(user => this.authenticationService.canManageUsersContactsOrganizations(user)),
@@ -204,15 +186,11 @@ export class OrganizationDetailComponent {
             map(user => this.authenticationService.canManagePrograms(user)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
-        this.canDownloadExcel$ = this.authenticationService.currentUserSetObservable.pipe(
-            map(user => this.authenticationService.hasElevatedProjectAccess(user)),
-        );
 
         this.canManagePrograms$.pipe(take(1)).subscribe(canManage => {
             this.programColumnDefs = this.createProgramColumnDefs(canManage);
         });
         this.projectColumnDefs = this.createProjectColumnDefs();
-        this.agreementColumnDefs = this.createAgreementColumnDefs();
     }
 
     getLogoUrl(logoGuid: string | null | undefined): string | null {
@@ -298,60 +276,6 @@ export class OrganizationDetailComponent {
                 MaxDecimalPlacesToDisplay: 0,
             }),
         ];
-    }
-
-    private createAgreementColumnDefs(): ColDef<AgreementGridRow>[] {
-        return [
-            this.utilityFunctions.createBasicColumnDef("Type", "AgreementTypeAbbrev", {
-                FieldDefinitionType: "AgreementType",
-                FieldDefinitionLabelOverride: "Type",
-            }),
-            this.utilityFunctions.createBasicColumnDef("Number", "AgreementNumber", {
-                FieldDefinitionType: "AgreementNumber",
-                FieldDefinitionLabelOverride: "Number",
-            }),
-            this.utilityFunctions.createBasicColumnDef("Fund Source", "FundSources", {
-                FieldDefinitionType: "FundSource",
-                ValueGetter: (params) => {
-                    const fundSources = params.data?.FundSources;
-                    if (!fundSources || fundSources.length === 0) return "";
-                    return fundSources.map((fs) => fs.FundSourceNumber).join(", ");
-                },
-            }),
-            this.utilityFunctions.createLinkColumnDef("Agreement Title", "AgreementTitle", "AgreementID", {
-                InRouterLink: "/agreements/",
-                FieldDefinitionType: "AgreementTitle",
-            }),
-            this.utilityFunctions.createDateColumnDef("Start Date", "StartDate", "M/d/yyyy", {
-                FieldDefinitionType: "AgreementStartDate",
-                FieldDefinitionLabelOverride: "Start Date",
-            }),
-            this.utilityFunctions.createDateColumnDef("End Date", "EndDate", "M/d/yyyy", {
-                FieldDefinitionType: "AgreementEndDate",
-                FieldDefinitionLabelOverride: "End Date",
-            }),
-            this.utilityFunctions.createCurrencyColumnDef("Amount", "AgreementAmount", {
-                FieldDefinitionType: "AgreementAmount",
-                FieldDefinitionLabelOverride: "Amount",
-            }),
-            this.utilityFunctions.createBasicColumnDef("Program Index", "ProgramIndices", {
-                FieldDefinitionType: "ProgramIndex",
-                CustomDropdownFilterField: "ProgramIndices",
-            }),
-            this.utilityFunctions.createBasicColumnDef("Project Code", "ProjectCodes", {
-                FieldDefinitionType: "ProjectCode",
-                CustomDropdownFilterField: "ProjectCodes",
-            }),
-        ];
-    }
-
-    downloadAgreementExcel(): void {
-        if (this.agreementExcelDownloadUrl) {
-            this.isDownloadingAgreements.set(true);
-            this.utilityFunctions.downloadExcel(this.agreementExcelDownloadUrl, "organization-agreements.xlsx")
-                .pipe(finalize(() => this.isDownloadingAgreements.set(false)))
-                .subscribe();
-        }
     }
 
     handleMapReady(event: WADNRMapInitEvent): void {

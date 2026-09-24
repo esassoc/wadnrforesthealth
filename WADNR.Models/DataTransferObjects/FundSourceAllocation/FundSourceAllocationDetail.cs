@@ -51,7 +51,6 @@ public class FundSourceAllocationDetail
 
     // Related counts
     public int ProjectCount { get; set; }
-    public int AgreementCount { get; set; }
 
     // People
     public List<PersonLookupItem> ProgramManagers { get; set; } = new();

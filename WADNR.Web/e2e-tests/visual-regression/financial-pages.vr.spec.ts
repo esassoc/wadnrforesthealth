@@ -2,7 +2,7 @@
  * Visual regression tests for financial entity detail pages.
  *
  * Covers detail pages for fund sources, fund source allocations,
- * agreements, invoices, program indices, and project codes.
+ * invoices, program indices, and project codes.
  */
 
 import { test, expect } from "@playwright/test";

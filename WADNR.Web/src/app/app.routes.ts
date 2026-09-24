@@ -18,7 +18,6 @@ export const routeParams = {
     classificationID: "classificationID",
     tagID: "tagID",
     interactionEventID: "interactionEventID",
-    agreementID: "agreementID",
     organizationID: "organizationID",
     programID: "programID",
     fundSourceID: "fundSourceID",
@@ -34,12 +33,6 @@ export const routes: Routes = [
 
     { path: "", loadComponent: () => import("./pages/home/home-index/home-index.component").then((m) => m.HomeIndexComponent) },
     { path: "about", loadComponent: () => import("./pages/about/about.component").then((m) => m.AboutComponent) },
-    {
-        path: `agreements/:${routeParams.agreementID}`,
-        title: "Agreement Detail",
-        loadComponent: () => import("./pages/agreements/agreement-detail/agreement-detail.component").then((m) => m.AgreementDetailComponent),
-    },
-    { path: "agreements", title: "Agreements", canActivate: [adminGuard], loadComponent: () => import("./pages/agreements/agreements.component").then((m) => m.AgreementsComponent) },
     {
         path: "counties",
         title: "Counties",
@@ -536,7 +529,6 @@ export const routes: Routes = [
         // Entity detail routes
         { path: "Project/FactSheet/:id", data: { redirectTo: "/projects/:id/fact-sheet" } },
         { path: "Project/Detail/:id", data: { redirectTo: "/projects/:id" } },
-        { path: "Agreement/Detail/:id", data: { redirectTo: "/agreements/:id" } },
         { path: "FundSourceAllocation/Detail/:id", data: { redirectTo: "/fund-source-allocations/:id" } },
         { path: "FundSource/Detail/:id", data: { redirectTo: "/fund-sources/:id" } },
         { path: "Program/Detail/:id", data: { redirectTo: "/programs/:id" } },
@@ -552,8 +544,6 @@ export const routes: Routes = [
         // Entity index routes
         { path: "Project/Index", data: { redirectTo: "/projects" } },
         { path: "Project", data: { redirectTo: "/projects" } },
-        { path: "Agreement/Index", data: { redirectTo: "/agreements" } },
-        { path: "Agreement", data: { redirectTo: "/agreements" } },
         { path: "FundSource/Index", data: { redirectTo: "/fund-sources" } },
         { path: "FundSource", data: { redirectTo: "/fund-sources" } },
         { path: "Program/Index", data: { redirectTo: "/programs" } },

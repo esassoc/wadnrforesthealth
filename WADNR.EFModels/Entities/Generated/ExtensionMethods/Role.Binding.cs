@@ -19,7 +19,7 @@ namespace WADNR.EFModels.Entities
         public static readonly RoleCanEditProgram CanEditProgram = RoleCanEditProgram.Instance;
         public static readonly RoleCanManagePageContent CanManagePageContent = RoleCanManagePageContent.Instance;
         public static readonly RoleCanViewLandownerInfo CanViewLandownerInfo = RoleCanViewLandownerInfo.Instance;
-        public static readonly RoleCanManageFundSourcesAndAgreements CanManageFundSourcesAndAgreements = RoleCanManageFundSourcesAndAgreements.Instance;
+        public static readonly RoleCanManageFundSources CanManageFundSources = RoleCanManageFundSources.Instance;
         public static readonly RoleCanAddEditUsersContactsOrganizations CanAddEditUsersContactsOrganizations = RoleCanAddEditUsersContactsOrganizations.Instance;
 
         public static readonly List<Role> All;
@@ -30,7 +30,7 @@ namespace WADNR.EFModels.Entities
         /// </summary>
         static Role()
         {
-            All = new List<Role> { Admin, Normal, Unassigned, EsaAdmin, ProjectSteward, CanEditProgram, CanManagePageContent, CanViewLandownerInfo, CanManageFundSourcesAndAgreements, CanAddEditUsersContactsOrganizations };
+            All = new List<Role> { Admin, Normal, Unassigned, EsaAdmin, ProjectSteward, CanEditProgram, CanManagePageContent, CanViewLandownerInfo, CanManageFundSources, CanAddEditUsersContactsOrganizations };
             AllLookupDictionary = new ReadOnlyDictionary<int, Role>(All.ToDictionary(x => x.RoleID));
         }
 
@@ -110,8 +110,8 @@ namespace WADNR.EFModels.Entities
                     return CanAddEditUsersContactsOrganizations;
                 case RoleEnum.CanEditProgram:
                     return CanEditProgram;
-                case RoleEnum.CanManageFundSourcesAndAgreements:
-                    return CanManageFundSourcesAndAgreements;
+                case RoleEnum.CanManageFundSources:
+                    return CanManageFundSources;
                 case RoleEnum.CanManagePageContent:
                     return CanManagePageContent;
                 case RoleEnum.CanViewLandownerInfo:
@@ -140,7 +140,7 @@ namespace WADNR.EFModels.Entities
         CanEditProgram = 10,
         CanManagePageContent = 11,
         CanViewLandownerInfo = 12,
-        CanManageFundSourcesAndAgreements = 13,
+        CanManageFundSources = 13,
         CanAddEditUsersContactsOrganizations = 14
     }
 
@@ -192,10 +192,10 @@ namespace WADNR.EFModels.Entities
         public static readonly RoleCanViewLandownerInfo Instance = new RoleCanViewLandownerInfo(12, @"CanViewLandownerInfo", @"Can View Landowner Info", @"Users with this role can view landowner information", false);
     }
 
-    public partial class RoleCanManageFundSourcesAndAgreements : Role
+    public partial class RoleCanManageFundSources : Role
     {
-        private RoleCanManageFundSourcesAndAgreements(int roleID, string roleName, string roleDisplayName, string roleDescription, bool isBaseRole) : base(roleID, roleName, roleDisplayName, roleDescription, isBaseRole) {}
-        public static readonly RoleCanManageFundSourcesAndAgreements Instance = new RoleCanManageFundSourcesAndAgreements(13, @"CanManageFundSourcesAndAgreements", @"Can Manage Fund Sources and Agreements", @"Users with this role can manage Fund Sources and Agreements", false);
+        private RoleCanManageFundSources(int roleID, string roleName, string roleDisplayName, string roleDescription, bool isBaseRole) : base(roleID, roleName, roleDisplayName, roleDescription, isBaseRole) {}
+        public static readonly RoleCanManageFundSources Instance = new RoleCanManageFundSources(13, @"CanManageFundSources", @"Can Manage Fund Sources", @"Users with this role can manage Fund Sources", false);
     }
 
     public partial class RoleCanAddEditUsersContactsOrganizations : Role

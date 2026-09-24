@@ -108,15 +108,6 @@ public class PersonControllerHttpTests
         Assert.IsTrue(result.IsSuccessStatusCode, $"Route: {route}\n{await result.Content.ReadAsStringAsync()}");
     }
 
-    [TestMethod]
-    public async Task ListAgreements_Returns200()
-    {
-        var route = RouteHelper.GetRouteFor<PersonController>(c => c.ListAgreements(_testPersonID));
-        var result = await AssemblySteps.AdminHttpClient.GetAsync(route);
-
-        Assert.IsTrue(result.IsSuccessStatusCode, $"Route: {route}\n{await result.Content.ReadAsStringAsync()}");
-    }
-
     #endregion
 
     #region Authorization Tests

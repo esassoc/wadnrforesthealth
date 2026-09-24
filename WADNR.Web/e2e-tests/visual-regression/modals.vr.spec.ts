@@ -63,28 +63,6 @@ test.describe("Modals - visual regression", () => {
 
     // ─── Financial modals ───────────────────────────────────────────────
 
-    test("Create agreement modal", async ({ page }) => {
-        await page.goto("/agreements");
-        await waitForPageStable(page);
-        const createBtn = page.locator("button", { hasText: "Create New" });
-        if (await createBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
-            await createBtn.click();
-            await waitForModalStable(page);
-            await expect(page.locator(MODAL_SELECTOR)).toHaveScreenshot("modal-create-agreement.png", MODAL_SCREENSHOT_OPTIONS);
-        }
-    });
-
-    test("Edit agreement modal", async ({ page }) => {
-        await page.goto(`/agreements/${testData.agreementID}`);
-        await waitForPageStable(page);
-        const editButton = page.locator("button", { hasText: "Edit" }).first();
-        if (await editButton.isVisible({ timeout: 5000 }).catch(() => false)) {
-            await editButton.click();
-            await waitForModalStable(page);
-            await expect(page.locator(MODAL_SELECTOR)).toHaveScreenshot("modal-edit-agreement.png", MODAL_SCREENSHOT_OPTIONS);
-        }
-    });
-
     test("Edit fund source modal", async ({ page }) => {
         await page.goto(`/fund-sources/${testData.fundSourceID}`);
         await waitForPageStable(page);

@@ -610,37 +610,6 @@
                 </div>
             }
 
-            <!-- Associated Agreements Card (inside funding, no TOC entry) -->
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Agreements Associated to this Project</span>
-                </div>
-                <div class="card-body">
-                    @if (project.Agreements && project.Agreements.length > 0) {
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Agreement</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @for (agreement of project.Agreements; track agreement.AgreementID) {
-                                    <tr>
-                                        <td>
-                                            <a [routerLink]="['/agreements', agreement.AgreementID]">
-                                                {{ agreement.AgreementNumber ? agreement.AgreementNumber + " - " : "" }}{{ agreement.AgreementTitle }}
-                                            </a>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    } @else {
-                        <p class="system-text">No Agreements associated with this project.</p>
-                    }
-                </div>
-            </div>
-
             <!-- ==================== Activities (leaf) ==================== -->
             @if (treatments$ | async; as treatments) {
                 <div class="card" id="card-activities">

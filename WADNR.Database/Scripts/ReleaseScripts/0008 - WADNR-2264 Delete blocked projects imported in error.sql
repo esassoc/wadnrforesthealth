@@ -96,7 +96,6 @@ BEGIN
     DELETE FROM dbo.ProjectUpdateBatch    WHERE ProjectID IN (SELECT ProjectID FROM @ProjectIDs);
 
     -- Layer 3: Direct Project children
-    DELETE FROM dbo.AgreementProject              WHERE ProjectID IN (SELECT ProjectID FROM @ProjectIDs);
     DELETE FROM dbo.InteractionEventProject       WHERE ProjectID IN (SELECT ProjectID FROM @ProjectIDs);
     DELETE FROM dbo.NotificationProject           WHERE ProjectID IN (SELECT ProjectID FROM @ProjectIDs);
     DELETE FROM dbo.ProgramNotificationSentProject WHERE ProjectID IN (SELECT ProjectID FROM @ProjectIDs);

@@ -55,9 +55,6 @@ public partial class DNRUplandRegion
     public string? RegionContent { get; set; }
 
     [InverseProperty("DNRUplandRegion")]
-    public virtual ICollection<Agreement> Agreements { get; set; } = new List<Agreement>();
-
-    [InverseProperty("DNRUplandRegion")]
     public virtual ICollection<DNRUplandRegionContentImage> DNRUplandRegionContentImages { get; set; } = new List<DNRUplandRegionContentImage>();
 
     [ForeignKey("DNRUplandRegionCoordinatorID")]

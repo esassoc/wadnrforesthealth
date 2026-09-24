@@ -76,12 +76,6 @@ test.describe("Dropdown navigation", () => {
         await expect(page).toHaveURL(/\/fund-sources$/);
     });
 
-    test("Financials > Full Agreement List navigates to /agreements", async ({ authedPage: page }) => {
-        await page.goto("/");
-        await clickDropdownItem(page, "Financials", "Full Agreement List");
-        await expect(page).toHaveURL(/\/agreements$/);
-    });
-
     test("Financials > Full Invoice List navigates to /invoices", async ({ authedPage: page }) => {
         await page.goto("/");
         await clickDropdownItem(page, "Financials", "Full Invoice List");

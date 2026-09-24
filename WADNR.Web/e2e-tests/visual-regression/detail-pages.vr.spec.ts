@@ -50,15 +50,6 @@ test.describe("Detail pages - visual regression", () => {
         });
     });
 
-    test("Agreement detail", async ({ page }) => {
-        await page.goto(`/agreements/${testData.agreementID}`);
-        await waitForPageStable(page);
-        await expect(page).toHaveScreenshot("detail-agreement.png", {
-            ...DEFAULT_SCREENSHOT_OPTIONS,
-            mask: getGridBodyMasks(page),
-        });
-    });
-
     test("Invoice detail", async ({ page }) => {
         await page.goto(`/invoices/${testData.invoiceID}`);
         await waitForPageStable(page);

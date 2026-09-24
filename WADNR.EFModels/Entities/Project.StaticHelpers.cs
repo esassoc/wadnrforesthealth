@@ -356,7 +356,6 @@ public static class Projects
         await dbContext.ProjectUpdateBatches.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
 
         // Layer 3: Direct Project children (no dependents among themselves)
-        await dbContext.AgreementProjects.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
         await dbContext.InteractionEventProjects.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
         await dbContext.NotificationProjects.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
         await dbContext.ProgramNotificationSentProjects.Where(x => x.ProjectID == projectID).ExecuteDeleteAsync();
@@ -1043,7 +1042,7 @@ public static class Projects
 
         entity.UserCanManageTreatments = isAdmin
             || (callingUser.SupplementalRoleList?.Any(r =>
-                r.RoleID == (int)RoleEnum.CanManageFundSourcesAndAgreements) ?? false);
+                r.RoleID == (int)RoleEnum.CanManageFundSources) ?? false);
 
         entity.UserCanEditProjectAsAdmin = ProjectAuthorization.CanEditAsAdmin(callingUser, authData, stewardshipAreaTypeID);
 
