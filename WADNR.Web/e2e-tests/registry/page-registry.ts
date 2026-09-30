@@ -291,40 +291,6 @@ export const pageRegistry: PageRegistryEntry[] = [
         pageType: "modal",
     },
 
-    // ── Agreements ──────────────────────────────────────────────────────────────
-    {
-        id: "agreements-list",
-        name: "Agreements List",
-        area: "agreements",
-        legacyPath: "/Agreement/Index",
-        modernPath: "/agreements",
-        status: "migrated",
-        auth: "public",
-        pageType: "page",
-    },
-    {
-        id: "agreement-detail",
-        name: "Agreement Detail",
-        area: "agreements",
-        legacyPath: "/Agreement/AgreementDetail/{agreementID}",
-        modernPath: "/agreements/{agreementID}",
-        status: "migrated",
-        auth: "public",
-        tokens: ["agreementID"],
-        pageType: "page",
-    },
-    {
-        id: "agreement-create-modal",
-        name: "Agreement Create",
-        area: "agreements",
-        legacyPath: "/Agreement/New",
-        modernPath: null,
-        status: "restructured",
-        auth: "elevated",
-        restructureNote: "Create/edit now handled via modal dialog on agreements list page",
-        pageType: "modal",
-    },
-
     // ── Organizations ──────────────────────────────────────────────────────────
     {
         id: "organizations-list",

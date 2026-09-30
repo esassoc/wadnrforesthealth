@@ -39,7 +39,6 @@ delete from dbo.ProjectUpdateProgram where ProjectUpdateBatchID in (select Proje
 
 
 --remove references to Project second:
-delete from dbo.AgreementProject where ProjectID in (select ID from @ProjectIDList)
 delete from dbo.InteractionEventProject where ProjectID in (select ID from @ProjectIDList)
 delete from dbo.Invoice where InvoicePaymentRequestID in (select InvoicePaymentRequestID from dbo.InvoicePaymentRequest where ProjectID in (select ID from @ProjectIDList))
 delete from dbo.InvoicePaymentRequest where ProjectID in (select ID from @ProjectIDList)

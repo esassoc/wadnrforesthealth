@@ -277,50 +277,6 @@ public class ReferenceDataControllerHttpTests
 
     #endregion
 
-    #region AgreementStatusController
-
-    [TestMethod]
-    public async Task AgreementStatusListLookup_Returns200()
-    {
-        var route = RouteHelper.GetRouteFor<AgreementStatusController>(c => c.ListLookup());
-        var result = await AssemblySteps.AdminHttpClient.GetAsync(route);
-
-        Assert.IsTrue(result.IsSuccessStatusCode, $"Route: {route}\n{await result.Content.ReadAsStringAsync()}");
-    }
-
-    [TestMethod]
-    public async Task AgreementStatusListLookup_Returns200_WhenUnauthenticated()
-    {
-        var route = RouteHelper.GetRouteFor<AgreementStatusController>(c => c.ListLookup());
-        var result = await AssemblySteps.UnauthenticatedHttpClient.GetAsync(route);
-
-        Assert.IsTrue(result.IsSuccessStatusCode, $"AllowAnonymous should succeed.\nRoute: {route}");
-    }
-
-    #endregion
-
-    #region AgreementTypeController
-
-    [TestMethod]
-    public async Task AgreementTypeListLookup_Returns200()
-    {
-        var route = RouteHelper.GetRouteFor<AgreementTypeController>(c => c.ListLookup());
-        var result = await AssemblySteps.AdminHttpClient.GetAsync(route);
-
-        Assert.IsTrue(result.IsSuccessStatusCode, $"Route: {route}\n{await result.Content.ReadAsStringAsync()}");
-    }
-
-    [TestMethod]
-    public async Task AgreementTypeListLookup_Returns200_WhenUnauthenticated()
-    {
-        var route = RouteHelper.GetRouteFor<AgreementTypeController>(c => c.ListLookup());
-        var result = await AssemblySteps.UnauthenticatedHttpClient.GetAsync(route);
-
-        Assert.IsTrue(result.IsSuccessStatusCode, $"AllowAnonymous should succeed.\nRoute: {route}");
-    }
-
-    #endregion
-
     #region ClassificationSystemController
 
     [TestMethod]

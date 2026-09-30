@@ -14,7 +14,7 @@ export enum RoleEnum {
   CanEditProgram = 10,
   CanManagePageContent = 11,
   CanViewLandownerInfo = 12,
-  CanManageFundSourcesAndAgreements = 13,
+  CanManageFundSources = 13,
   CanAddEditUsersContactsOrganizations = 14
 }
 
@@ -27,7 +27,7 @@ export const Roles: LookupTableEntry[]  = [
   { Name: "CanEditProgram", DisplayName: "Can Edit Program", Value: 10, SortOrder: 100 },
   { Name: "CanManagePageContent", DisplayName: "Can Manage Page Content", Value: 11, SortOrder: 110 },
   { Name: "CanViewLandownerInfo", DisplayName: "Can View Landowner Info", Value: 12, SortOrder: 120 },
-  { Name: "CanManageFundSourcesAndAgreements", DisplayName: "Can Manage Fund Sources and Agreements", Value: 13, SortOrder: 130 },
+  { Name: "CanManageFundSources", DisplayName: "Can Manage Fund Sources", Value: 13, SortOrder: 130 },
   { Name: "CanAddEditUsersContactsOrganizations", DisplayName: "Can Add/Edit Users, Contacts, Organizations", Value: 14, SortOrder: 140 }
 ];
 export const RolesAsSelectDropdownOptions = Roles.map((x) => ({ Value: x.Value, Label: x.DisplayName, SortOrder: x.SortOrder } as SelectDropdownOption));

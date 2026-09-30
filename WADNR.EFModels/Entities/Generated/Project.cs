@@ -97,9 +97,6 @@ public partial class Project
 
     public int? PercentageMatch { get; set; }
 
-    [InverseProperty("Project")]
-    public virtual ICollection<AgreementProject> AgreementProjects { get; set; } = new List<AgreementProject>();
-
     [ForeignKey("CreateGisUploadAttemptID")]
     [InverseProperty("ProjectCreateGisUploadAttempts")]
     public virtual GisUploadAttempt? CreateGisUploadAttempt { get; set; }

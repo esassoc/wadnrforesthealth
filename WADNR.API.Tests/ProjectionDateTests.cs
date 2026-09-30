@@ -56,19 +56,6 @@ public class ProjectionDateTests
     }
 
     [TestMethod]
-    public void AgreementDetail_DateOnly_PreservedInDto()
-    {
-        var dto = new AgreementDetail
-        {
-            StartDate = new DateOnly(2025, 1, 1),
-            EndDate = new DateOnly(2025, 12, 31),
-        };
-
-        Assert.AreEqual(new DateOnly(2025, 1, 1), dto.StartDate);
-        Assert.AreEqual(new DateOnly(2025, 12, 31), dto.EndDate);
-    }
-
-    [TestMethod]
     public void TreatmentGridRow_DateOnly_PreservedInDto()
     {
         var dto = new TreatmentGridRow

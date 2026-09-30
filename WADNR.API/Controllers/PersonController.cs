@@ -72,32 +72,6 @@ public class PersonController(
         return Ok(projects);
     }
 
-    [HttpGet("{personID}/agreements")]
-    [PersonViewFeature]
-    [EntityNotFound(typeof(Person), "personID")]
-    public async Task<ActionResult<IEnumerable<AgreementGridRow>>> ListAgreements([FromRoute] int personID)
-    {
-        var gate = await CheckEsaAdminGate(personID);
-        if (gate != null) return gate;
-
-        var agreements = await Agreements.ListForPersonAsGridRowAsync(DbContext, personID);
-        return Ok(agreements);
-    }
-
-    [HttpGet("{personID}/agreements/excel-download")]
-    [ExcelDownloadFeature]
-    [EntityNotFound(typeof(Person), "personID")]
-    public async Task<IActionResult> AgreementsExcelDownload([FromRoute] int personID)
-    {
-        var gate = await CheckEsaAdminGate(personID);
-        if (gate != null) return gate;
-
-        var agreements = await Agreements.ListForPersonAsExcelRowAsync(DbContext, personID);
-        var spec = new AgreementExcelSpec();
-        var sheet = ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Agreements", spec, agreements);
-        return ExcelFileResult(new ExcelWorkbookMaker(sheet), "Agreements.xlsx");
-    }
-
     [HttpGet("{personID}/interaction-events")]
     [PersonViewFeature]
     [EntityNotFound(typeof(Person), "personID")]

@@ -71,7 +71,7 @@ e2e-tests/
 ├── comparison/           # Legacy MVC comparison engine
 ├── detail-pages/         # Entity detail page tests
 ├── error-handling/       # 404 and error pages
-├── financial-pages/      # Agreement/invoice cross-links
+├── financial-pages/      # Invoice cross-links
 ├── fixtures/             # Shared auth, test data, helpers
 ├── grids/                # Grid features and navigation
 ├── homepage/             # Homepage features

@@ -2,7 +2,7 @@
  * Known entity IDs from the dev database for use in E2E tests.
  * These should reference stable records that won't be deleted.
  *
- * NOTE: For entities without known stable IDs (organizations, agreements,
+ * NOTE: For entities without known stable IDs (organizations,
  * priority landscapes, DNR upland regions), tests navigate from grid
  * list pages to avoid hardcoded IDs that may not exist.
  */
@@ -15,7 +15,6 @@ export const testData = {
 
     // Additional IDs for comparison tests (detail page routes).
     // TODO: Replace placeholder values with stable record IDs from your dev database.
-    agreementID: 105, // TODO: verify stable agreement record
     organizationID: 4702, // TODO: verify stable organization record
     dnrUplandRegionID: 7515, // TODO: verify stable DNR upland region record
     priorityLandscapeID: 7521, // TODO: verify stable priority landscape record

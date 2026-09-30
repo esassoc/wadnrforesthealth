@@ -113,17 +113,6 @@ public class AuthorizationTests
     }
 
     [TestMethod]
-    public async Task AdminFeature_AgreementList_Returns401_WhenUnauthenticated()
-    {
-        // AgreementController.List() has [AdminFeature] (WADNR-2251 hotfix)
-        var route = RouteHelper.GetRouteFor<AgreementController>(c => c.List());
-        var result = await AssemblySteps.UnauthenticatedHttpClient.GetAsync(route);
-
-        Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode,
-            $"AdminFeature endpoint should return 401 for unauthenticated users.\nRoute: {route}");
-    }
-
-    [TestMethod]
     public async Task NormalUserFeature_PersonLookup_Returns401_WhenUnauthenticated()
     {
         // PersonController.ListLookup() has [NormalUserFeature]
@@ -174,27 +163,6 @@ public class AuthorizationTests
     public async Task AdminFeature_RoleList_Returns200_ForAdmin()
     {
         var route = RouteHelper.GetRouteFor<RoleController>(c => c.List());
-        var result = await AssemblySteps.AdminHttpClient.GetAsync(route);
-
-        Assert.IsTrue(result.IsSuccessStatusCode,
-            $"AdminFeature endpoint should succeed for Admin.\nRoute: {route}\nStatus: {result.StatusCode}\n{await result.Content.ReadAsStringAsync()}");
-    }
-
-    [TestMethod]
-    public async Task AdminFeature_AgreementList_Returns403_ForNormalUser()
-    {
-        // AgreementController.List() has [AdminFeature] (WADNR-2251 hotfix) — Normal users should get 403
-        var route = RouteHelper.GetRouteFor<AgreementController>(c => c.List());
-        var result = await AssemblySteps.NormalHttpClient.GetAsync(route);
-
-        Assert.AreEqual(HttpStatusCode.Forbidden, result.StatusCode,
-            $"AdminFeature endpoint should return 403 for Normal users.\nRoute: {route}");
-    }
-
-    [TestMethod]
-    public async Task AdminFeature_AgreementList_Returns200_ForAdmin()
-    {
-        var route = RouteHelper.GetRouteFor<AgreementController>(c => c.List());
         var result = await AssemblySteps.AdminHttpClient.GetAsync(route);
 
         Assert.IsTrue(result.IsSuccessStatusCode,
@@ -346,53 +314,7 @@ public class AuthorizationTests
 
     #endregion
 
-    #region AgreementManageFeature — Admin only (or CanManageFundSourcesAndAgreements supplemental)
-
-    [TestMethod]
-    public async Task AgreementManageFeature_Returns401_WhenUnauthenticated()
-    {
-        var request = new AgreementUpsertRequest { AgreementTitle = "Auth test", AgreementTypeID = 1, OrganizationID = 1 };
-        var route = RouteHelper.GetRouteTemplateFor(typeof(AgreementController),
-            typeof(AgreementController).GetMethod(nameof(AgreementController.Create))!);
-        var result = await AssemblySteps.UnauthenticatedHttpClient.PostAsJsonAsync(route, request);
-
-        Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-    }
-
-    [TestMethod]
-    public async Task AgreementManageFeature_Returns403_ForNormalUser()
-    {
-        var request = new AgreementUpsertRequest { AgreementTitle = "Auth test", AgreementTypeID = 1, OrganizationID = 1 };
-        var route = RouteHelper.GetRouteTemplateFor(typeof(AgreementController),
-            typeof(AgreementController).GetMethod(nameof(AgreementController.Create))!);
-        var result = await AssemblySteps.NormalHttpClient.PostAsJsonAsync(route, request);
-
-        Assert.AreEqual(HttpStatusCode.Forbidden, result.StatusCode,
-            $"AgreementManageFeature should return 403 for Normal users.\nRoute: {route}");
-    }
-
-    [TestMethod]
-    public async Task AgreementManageFeature_PassesAuth_ForUserWithFundSourceAgreementSupplementalRole()
-    {
-        var user = await PersonHelper.CreateUserAsync(AssemblySteps.DbContext, RoleEnum.Normal);
-        _createdPersonIDs.Add(user.PersonID);
-        await PersonHelper.AddSupplementalRoleAsync(AssemblySteps.DbContext, user.PersonID,
-            RoleEnum.CanManageFundSourcesAndAgreements);
-
-        var request = new AgreementUpsertRequest { AgreementTitle = "SupRole Auth test", AgreementTypeID = 1, OrganizationID = 1 };
-        var route = RouteHelper.GetRouteTemplateFor(typeof(AgreementController),
-            typeof(AgreementController).GetMethod(nameof(AgreementController.Create))!);
-        var result = await HttpResponseHelper.PostAsUserAsync(route, user.GlobalID!, request);
-
-        Assert.AreNotEqual(HttpStatusCode.Forbidden, result.StatusCode,
-            $"AgreementManageFeature should allow users with CanManageFundSourcesAndAgreements.\nRoute: {route}");
-        Assert.AreNotEqual(HttpStatusCode.Unauthorized, result.StatusCode,
-            $"AgreementManageFeature should not return 401 for authenticated user.\nRoute: {route}");
-    }
-
-    #endregion
-
-    #region FundSourceManageFeature — Admin only (or CanManageFundSourcesAndAgreements supplemental)
+    #region FundSourceManageFeature — Admin only (or CanManageFundSources supplemental)
 
     [TestMethod]
     public async Task FundSourceManageFeature_Returns401_WhenUnauthenticated()
@@ -417,19 +339,19 @@ public class AuthorizationTests
     }
 
     [TestMethod]
-    public async Task FundSourceManageFeature_PassesAuth_ForUserWithFundSourceAgreementSupplementalRole()
+    public async Task FundSourceManageFeature_PassesAuth_ForUserWithFundSourceSupplementalRole()
     {
         var user = await PersonHelper.CreateUserAsync(AssemblySteps.DbContext, RoleEnum.Normal);
         _createdPersonIDs.Add(user.PersonID);
         await PersonHelper.AddSupplementalRoleAsync(AssemblySteps.DbContext, user.PersonID,
-            RoleEnum.CanManageFundSourcesAndAgreements);
+            RoleEnum.CanManageFundSources);
 
         var route = RouteHelper.GetRouteTemplateFor(typeof(FundSourceAllocationController),
             typeof(FundSourceAllocationController).GetMethod(nameof(FundSourceAllocationController.Create))!);
         var result = await HttpResponseHelper.PostAsUserAsync(route, user.GlobalID!, new { });
 
         Assert.AreNotEqual(HttpStatusCode.Forbidden, result.StatusCode,
-            $"FundSourceManageFeature should allow users with CanManageFundSourcesAndAgreements.\nRoute: {route}");
+            $"FundSourceManageFeature should allow users with CanManageFundSources.\nRoute: {route}");
         Assert.AreNotEqual(HttpStatusCode.Unauthorized, result.StatusCode,
             $"FundSourceManageFeature should not return 401 for authenticated user.\nRoute: {route}");
     }
@@ -556,7 +478,7 @@ public class AuthorizationTests
     [TestMethod]
     public async Task ExcelDownloadFeature_Returns401_WhenUnauthenticated()
     {
-        var route = RouteHelper.GetRouteFor<AgreementController>(c => c.ExcelDownload());
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.ExcelDownload());
         var result = await AssemblySteps.UnauthenticatedHttpClient.GetAsync(route);
 
         Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
@@ -565,7 +487,7 @@ public class AuthorizationTests
     [TestMethod]
     public async Task ExcelDownloadFeature_Returns403_ForNormalUser()
     {
-        var route = RouteHelper.GetRouteFor<AgreementController>(c => c.ExcelDownload());
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.ExcelDownload());
         var result = await AssemblySteps.NormalHttpClient.GetAsync(route);
 
         Assert.AreEqual(HttpStatusCode.Forbidden, result.StatusCode,
@@ -575,7 +497,7 @@ public class AuthorizationTests
     [TestMethod]
     public async Task ExcelDownloadFeature_Returns200_ForAdmin()
     {
-        var route = RouteHelper.GetRouteFor<AgreementController>(c => c.ExcelDownload());
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.ExcelDownload());
         var result = await AssemblySteps.AdminHttpClient.GetAsync(route);
 
         Assert.IsTrue(result.IsSuccessStatusCode,

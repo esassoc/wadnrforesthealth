@@ -136,24 +136,6 @@ public class DateSerializationTests
     }
 
     [TestMethod]
-    public void AgreementDetail_RoundTrip()
-    {
-        var detail = new AgreementDetail
-        {
-            AgreementID = 1,
-            AgreementTitle = "Test Agreement",
-            StartDate = new DateOnly(2025, 1, 1),
-            EndDate = new DateOnly(2025, 12, 31),
-        };
-
-        var json = JsonSerializer.Serialize(detail, _options);
-        var deserialized = JsonSerializer.Deserialize<AgreementDetail>(json, _options)!;
-
-        Assert.AreEqual(new DateOnly(2025, 1, 1), deserialized.StartDate);
-        Assert.AreEqual(new DateOnly(2025, 12, 31), deserialized.EndDate);
-    }
-
-    [TestMethod]
     public void No_DateTimeConverter_Registered()
     {
         // Verify that the old DateTimeConverter is not in the converter list

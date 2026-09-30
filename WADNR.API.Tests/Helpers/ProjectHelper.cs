@@ -282,8 +282,6 @@ public static class ProjectHelper
         await dbContext.Database.ExecuteSqlInterpolatedAsync(
             $"DELETE FROM dbo.InteractionEventProject WHERE ProjectID = {projectID}");
         await dbContext.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM dbo.AgreementProject WHERE ProjectID = {projectID}");
-        await dbContext.Database.ExecuteSqlInterpolatedAsync(
             $"DELETE FROM dbo.ProjectImportBlockList WHERE ProjectID = {projectID}");
         await dbContext.Database.ExecuteSqlInterpolatedAsync(
             $"DELETE FROM dbo.ProgramNotificationSentProject WHERE ProjectID = {projectID}");

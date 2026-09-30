@@ -164,19 +164,6 @@ public static class FundSourceAllocationProjections
         TotalAmount = x.TotalAmount
     };
 
-    public static readonly Expression<Func<AgreementFundSourceAllocation, FundSourceAllocationAgreementGridRow>> AsAgreementGridRow = x => new FundSourceAllocationAgreementGridRow
-    {
-        AgreementID = x.AgreementID,
-        AgreementNumber = x.Agreement.AgreementNumber,
-        AgreementTitle = x.Agreement.AgreementTitle,
-        AgreementTypeAbbrev = x.Agreement.AgreementType.AgreementTypeAbbrev,
-        OrganizationID = x.Agreement.OrganizationID,
-        OrganizationName = x.Agreement.Organization.OrganizationName,
-        StartDate = x.Agreement.StartDate,
-        EndDate = x.Agreement.EndDate,
-        AgreementAmount = x.Agreement.AgreementAmount
-    };
-
     public static readonly Expression<Func<FundSourceAllocationChangeLog, FundSourceAllocationChangeLogGridRow>> AsChangeLogGridRow = x => new FundSourceAllocationChangeLogGridRow
     {
         FundSourceAllocationChangeLogID = x.FundSourceAllocationChangeLogID,
@@ -252,7 +239,6 @@ public static class FundSourceAllocationProjections
         FundSourceAllocationSourceID = x.FundSourceAllocationSourceID,
         FundSourceAllocationSourceName = x.FundSourceAllocationSource != null ? x.FundSourceAllocationSource.FundSourceAllocationSourceDisplayName : null,
         ProjectCount = x.ProjectFundSourceAllocationRequests.Select(p => p.ProjectID).Distinct().Count(),
-        AgreementCount = x.AgreementFundSourceAllocations.Select(a => a.AgreementID).Distinct().Count(),
         ProgramManagers = x.FundSourceAllocationProgramManagers
             .Select(pm => new PersonLookupItem { PersonID = pm.PersonID, FullName = pm.Person.FirstName + " " + pm.Person.LastName })
             .ToList(),

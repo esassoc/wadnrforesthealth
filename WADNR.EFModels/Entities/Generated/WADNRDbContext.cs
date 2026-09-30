@@ -11,18 +11,6 @@ public partial class WADNRDbContext : DbContext
     {
     }
 
-    public virtual DbSet<Agreement> Agreements { get; set; }
-
-    public virtual DbSet<AgreementFundSourceAllocation> AgreementFundSourceAllocations { get; set; }
-
-    public virtual DbSet<AgreementPerson> AgreementPeople { get; set; }
-
-    public virtual DbSet<AgreementProject> AgreementProjects { get; set; }
-
-    public virtual DbSet<AgreementStatus> AgreementStatuses { get; set; }
-
-    public virtual DbSet<AgreementType> AgreementTypes { get; set; }
-
     public virtual DbSet<ArcOnlineFinanceApiRawJsonImport> ArcOnlineFinanceApiRawJsonImports { get; set; }
 
     public virtual DbSet<AuditLog> AuditLogs { get; set; }
@@ -315,52 +303,6 @@ public partial class WADNRDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Agreement>(entity =>
-        {
-            entity.HasKey(e => e.AgreementID).HasName("PK_Agreement_AgreementID");
-
-            entity.HasOne(d => d.AgreementType).WithMany(p => p.Agreements).OnDelete(DeleteBehavior.ClientSetNull);
-
-            entity.HasOne(d => d.Organization).WithMany(p => p.Agreements).OnDelete(DeleteBehavior.ClientSetNull);
-        });
-
-        modelBuilder.Entity<AgreementFundSourceAllocation>(entity =>
-        {
-            entity.HasKey(e => e.AgreementFundSourceAllocationID).HasName("PK_AgreementFundSourceAllocation_AgreementFundSourceAllocationID");
-
-            entity.HasOne(d => d.Agreement).WithMany(p => p.AgreementFundSourceAllocations).OnDelete(DeleteBehavior.ClientSetNull);
-
-            entity.HasOne(d => d.FundSourceAllocation).WithMany(p => p.AgreementFundSourceAllocations).OnDelete(DeleteBehavior.ClientSetNull);
-        });
-
-        modelBuilder.Entity<AgreementPerson>(entity =>
-        {
-            entity.HasKey(e => e.AgreementPersonID).HasName("PK_AgreementPerson_AgreementPersonID");
-
-            entity.HasOne(d => d.Agreement).WithMany(p => p.AgreementPeople).OnDelete(DeleteBehavior.ClientSetNull);
-
-            entity.HasOne(d => d.Person).WithMany(p => p.AgreementPeople).OnDelete(DeleteBehavior.ClientSetNull);
-        });
-
-        modelBuilder.Entity<AgreementProject>(entity =>
-        {
-            entity.HasKey(e => e.AgreementProjectID).HasName("PK_AgreementProject_AgreementProjectID");
-
-            entity.HasOne(d => d.Agreement).WithMany(p => p.AgreementProjects).OnDelete(DeleteBehavior.ClientSetNull);
-
-            entity.HasOne(d => d.Project).WithMany(p => p.AgreementProjects).OnDelete(DeleteBehavior.ClientSetNull);
-        });
-
-        modelBuilder.Entity<AgreementStatus>(entity =>
-        {
-            entity.HasKey(e => e.AgreementStatusID).HasName("PK_AgreementStatus_AgreementStatusID");
-        });
-
-        modelBuilder.Entity<AgreementType>(entity =>
-        {
-            entity.HasKey(e => e.AgreementTypeID).HasName("PK_AgreementType_AgreementTypeID");
-        });
-
         modelBuilder.Entity<ArcOnlineFinanceApiRawJsonImport>(entity =>
         {
             entity.HasKey(e => e.ArcOnlineFinanceApiRawJsonImportID).HasName("PK_ArcOnlineFinanceApiRawJsonImport_ArcOnlineFinanceApiRawJsonImportID");

@@ -44,7 +44,6 @@ export class FundSourceAllocationDetail {
     FundSourceAllocationSourceID?: number | null;
     FundSourceAllocationSourceName?: string | null;
     ProjectCount?: number;
-    AgreementCount?: number;
     ProgramManagers?: Array<PersonLookupItem> | null;
     LikelyToUsePeople?: Array<PersonLookupItem> | null;
     ProgramIndexProjectCodes?: Array<FundSourceAllocationProgramIndexProjectCodeItem> | null;
@@ -85,7 +84,6 @@ export interface FundSourceAllocationDetailForm {
     FundSourceAllocationSourceID?: FormControl<number>;
     FundSourceAllocationSourceName?: FormControl<string>;
     ProjectCount?: FormControl<number>;
-    AgreementCount?: FormControl<number>;
     ProgramManagers?: FormControl<Array<PersonLookupItem>>;
     LikelyToUsePeople?: FormControl<Array<PersonLookupItem>>;
     ProgramIndexProjectCodes?: FormControl<Array<FundSourceAllocationProgramIndexProjectCodeItem>>;
@@ -393,16 +391,6 @@ export class FundSourceAllocationDetailFormControls {
         }
     );
     public static ProjectCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static AgreementCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

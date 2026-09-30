@@ -260,30 +260,6 @@
             </div>
         </div>
 
-        <!-- Agreements Grid -->
-        <div class="card mt-3">
-            <div class="card-header">
-                <span class="card-title">
-                    @if (person.IsUser) {
-                        Agreements for which {{ person.FullName }} is a Contributing Organization Primary Contact
-                    } @else {
-                        Agreements for which {{ person.FullName }} is a Contact
-                    }
-                </span>
-            </div>
-            <div class="card-body" [loadingSpinner]="{ isLoading: agreementsIsLoading$ | async, loadingHeight: 300 }">
-                <wadnr-grid [rowData]="agreements$ | async" [columnDefs]="agreementColumnDefs" [pinnedTotalsRow]="agreementTotalsRow" downloadFileName="person-agreements" fullscreenTitle="Agreements" [hideGlobalFilter]="true">
-                    @if (canDownloadExcel$ | async) {
-                    <div customGridActionsRight class="flex">
-                        <button class="btn btn-sm btn-secondary" (click)="downloadAgreementExcel()" [buttonLoading]="isDownloadingAgreements()">
-                            <span class="fas fa-download"></span> Download Full Database
-                        </button>
-                    </div>
-                    }
-                </wadnr-grid>
-            </div>
-        </div>
-
         <!-- Interaction Events Grid -->
         <div class="card mt-3">
             <div class="card-header">

@@ -381,9 +381,6 @@ public static class People
         var allowedAuth = await dbContext.PersonAllowedAuthenticators.Where(x => x.PersonID == personID).ToListAsync();
         dbContext.PersonAllowedAuthenticators.RemoveRange(allowedAuth);
 
-        var agreementPeople = await dbContext.AgreementPeople.Where(x => x.PersonID == personID).ToListAsync();
-        dbContext.AgreementPeople.RemoveRange(agreementPeople);
-
         var interactionContacts = await dbContext.InteractionEventContacts.Where(x => x.PersonID == personID).ToListAsync();
         dbContext.InteractionEventContacts.RemoveRange(interactionContacts);
 

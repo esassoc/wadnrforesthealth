@@ -31,7 +31,6 @@ export class FundSourceDetail {
     ConditionsAndRequirements?: string | null;
     ComplianceNotes?: string | null;
     AllocationCount?: number;
-    AgreementCount?: number;
     ProjectCount?: number;
     FileCount?: number;
     NoteCount?: number;
@@ -60,7 +59,6 @@ export interface FundSourceDetailForm {
     ConditionsAndRequirements?: FormControl<string>;
     ComplianceNotes?: FormControl<string>;
     AllocationCount?: FormControl<number>;
-    AgreementCount?: FormControl<number>;
     ProjectCount?: FormControl<number>;
     FileCount?: FormControl<number>;
     NoteCount?: FormControl<number>;
@@ -239,16 +237,6 @@ export class FundSourceDetailFormControls {
         }
     );
     public static AllocationCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static AgreementCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

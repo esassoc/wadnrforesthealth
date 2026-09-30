@@ -154,26 +154,6 @@ public class OrganizationController(
         return Ok(projects);
     }
 
-    [HttpGet("{organizationID}/agreements")]
-    [AllowAnonymous]
-    [EntityNotFound(typeof(Organization), "organizationID")]
-    public async Task<ActionResult<IEnumerable<AgreementGridRow>>> ListAgreementsForOrganization([FromRoute] int organizationID)
-    {
-        var agreements = await Agreements.ListAsGridRowByOrganizationIDAsync(DbContext, organizationID);
-        return Ok(agreements);
-    }
-
-    [HttpGet("{organizationID}/agreements/excel-download")]
-    [ExcelDownloadFeature]
-    [EntityNotFound(typeof(Organization), "organizationID")]
-    public async Task<IActionResult> AgreementsExcelDownload([FromRoute] int organizationID)
-    {
-        var agreements = await Agreements.ListAsExcelRowByOrganizationIDAsync(DbContext, organizationID);
-        var spec = new AgreementExcelSpec();
-        var sheet = ExcelWorkbookSheetDescriptorFactory.MakeWorksheet("Agreements", spec, agreements);
-        return ExcelFileResult(new ExcelWorkbookMaker(sheet), "Agreements.xlsx");
-    }
-
     [HttpGet("{organizationID}/boundary")]
     [AllowAnonymous]
     [EntityNotFound(typeof(Organization), "organizationID")]

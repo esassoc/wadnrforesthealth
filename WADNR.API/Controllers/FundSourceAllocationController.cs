@@ -146,15 +146,6 @@ public class FundSourceAllocationController(
         return Ok(items);
     }
 
-    [HttpGet("{fundSourceAllocationID}/agreements")]
-    [AllowAnonymous]
-    public async Task<ActionResult<List<FundSourceAllocationAgreementGridRow>>> ListAgreements(
-        [FromRoute] int fundSourceAllocationID)
-    {
-        var items = await FundSourceAllocations.ListAgreementsAsync(DbContext, fundSourceAllocationID);
-        return Ok(items);
-    }
-
     [HttpGet("{fundSourceAllocationID}/files")]
     [AllowAnonymous]
     public async Task<ActionResult<List<FundSourceAllocationFileGridRow>>> ListFiles(
