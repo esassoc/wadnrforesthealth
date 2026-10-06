@@ -17,6 +17,40 @@ public static class GisBulkImports
     /// </summary>
     private const int TreatmentImportCommandTimeoutSeconds = 600;
 
+    /// <summary>
+    /// TableName of the per-project summary Audit Log row an upload writes. Its RecordID is the
+    /// GisUploadAttemptID; AuditLogs shows these under a "GIS Bulk Upload" section.
+    /// </summary>
+    public const string UploadSummaryAuditLogTableName = "GisUploadAttempt";
+
+    /// <summary>Provenance columns every upload stamps; not meaningful as Audit Log entries.</summary>
+    private static readonly HashSet<string> GisUploadBookkeepingColumns = new(StringComparer.OrdinalIgnoreCase)
+    {
+        nameof(Project.CreateGisUploadAttemptID),
+        nameof(Project.LastUpdateGisUploadAttemptID)
+    };
+
+    private static AuditLog BuildUploadSummaryAuditLog(
+        int projectID, bool wasCreated, int gisUploadAttemptID, GisUploadSourceOrganization sourceOrg,
+        int personID, DateTime auditDate)
+    {
+        var verb = wasCreated ? "created" : "updated";
+        return new AuditLog
+        {
+            PersonID = personID,
+            AuditLogDate = auditDate,
+            AuditLogEventTypeID = wasCreated
+                ? AuditLogEventType.Added.AuditLogEventTypeID
+                : AuditLogEventType.Modified.AuditLogEventTypeID,
+            TableName = UploadSummaryAuditLogTableName,
+            RecordID = gisUploadAttemptID,
+            ColumnName = "GisUploadAttemptID",
+            NewValue = gisUploadAttemptID.ToString(),
+            AuditDescription = $"Project {verb} by GIS bulk upload #{gisUploadAttemptID} from {sourceOrg.GisUploadSourceOrganizationName}",
+            ProjectID = projectID
+        };
+    }
+
     public static async Task<List<GisUploadSourceOrganizationSummary>> ListSourceOrganizationsAsync(WADNRDbContext dbContext)
     {
         return await dbContext.GisUploadSourceOrganizations
@@ -406,6 +440,12 @@ public static class GisBulkImports
 
         var sourceOrg = attempt.GisUploadSourceOrganization;
 
+        // Every save below bypasses the auditing SaveChanges (it would log every column of thousands of
+        // projects), so the import writes its own Audit Log rows, attributed to whoever ran the upload
+        // (the system person for scheduled imports). WADNR-2288.
+        var auditPersonID = attempt.GisUploadAttemptCreatePersonID;
+        var auditDate = DateTime.Now;
+
         // Load features with metadata
         var features = await dbContext.GisFeatures
             .Where(x => x.GisUploadAttemptID == gisUploadAttemptID)
@@ -714,6 +754,16 @@ public static class GisBulkImports
                 }
             }
 
+            // Field-level Audit Log rows for updated projects, captured while the tracker still knows
+            // the original values. Created projects get only the summary row in phase 4.
+            foreach (var plan in plans.Where(p => !p.WasCreated))
+            {
+                var fieldAuditLogs = AuditLogHelper
+                    .CreateAuditLogsForModifiedOrDeleted(dbContext.Entry(plan.Project), auditPersonID, auditDate)
+                    .Where(a => !GisUploadBookkeepingColumns.Contains(a.ColumnName));
+                dbContext.AuditLogs.AddRange(fieldAuditLogs);
+            }
+
             // EF batches these, so 3,042 individual INSERTs collapse to roughly 40 commands, and the
             // generated IDs come back populated.
             await dbContext.SaveChangesWithNoAuditingAsync();
@@ -743,6 +793,9 @@ public static class GisBulkImports
                         RelationshipTypeID = sourceOrg.RelationshipTypeForDefaultOrganizationID
                     });
                 }
+
+                dbContext.AuditLogs.Add(BuildUploadSummaryAuditLog(
+                    plan.Project.ProjectID, plan.WasCreated, gisUploadAttemptID, sourceOrg, auditPersonID, auditDate));
             }
             await dbContext.SaveChangesWithNoAuditingAsync();
 
@@ -858,7 +911,7 @@ public static class GisBulkImports
         // a type from a partially imported treatment set.
         if (treatmentsImported)
         {
-            await ApplyProjectTypeFromTreatmentTypesAsync(dbContext, sourceOrg, gisUploadAttemptID);
+            await ApplyProjectTypeFromTreatmentTypesAsync(dbContext, sourceOrg, gisUploadAttemptID, auditPersonID, auditDate);
         }
 
         // Ensure every project the attempt touched has a simple-location point. For detailed-location
@@ -2127,7 +2180,8 @@ DROP TABLE #ImportProject;
     /// CreateGisUploadAttemptID, so this covers projects created *and* updated by this attempt.
     /// </summary>
     private static async Task ApplyProjectTypeFromTreatmentTypesAsync(
-        WADNRDbContext dbContext, GisUploadSourceOrganization sourceOrg, int gisUploadAttemptID)
+        WADNRDbContext dbContext, GisUploadSourceOrganization sourceOrg, int gisUploadAttemptID,
+        int auditPersonID, DateTime auditDate)
     {
         if (!sourceOrg.AdjustProjectTypeBasedOnTreatmentTypes)
         {
@@ -2179,6 +2233,12 @@ DROP TABLE #ImportProject;
             .GroupBy(t => t.ProjectID)
             .ToDictionary(g => g.Key, g => g.Select(t => t.TreatmentTypeID).ToList());
 
+        var projectTypeNamesByID = projectTypeIDsByName
+            .GroupBy(kvp => kvp.Value)
+            .ToDictionary(g => g.Key, g => g.First().Key);
+        string ProjectTypeNameOrID(int projectTypeID) =>
+            projectTypeNamesByID.TryGetValue(projectTypeID, out var name) ? name : projectTypeID.ToString();
+
         var anyChanged = false;
         foreach (var project in projects)
         {
@@ -2193,6 +2253,23 @@ DROP TABLE #ImportProject;
             {
                 continue;
             }
+
+            // ProjectType is a database table rather than a static lookup, so AuditLogHelper can't
+            // name it; describe the change here from the names already loaded.
+            var originalProjectTypeID = project.ProjectTypeID;
+            dbContext.AuditLogs.Add(new AuditLog
+            {
+                PersonID = auditPersonID,
+                AuditLogDate = auditDate,
+                AuditLogEventTypeID = AuditLogEventType.Modified.AuditLogEventTypeID,
+                TableName = "Project",
+                RecordID = project.ProjectID,
+                ColumnName = nameof(Project.ProjectTypeID),
+                OriginalValue = originalProjectTypeID.ToString(),
+                NewValue = derivedProjectTypeID.ToString(),
+                AuditDescription = $"Project Type: {ProjectTypeNameOrID(originalProjectTypeID)} changed to {ProjectTypeNameOrID(derivedProjectTypeID)}",
+                ProjectID = project.ProjectID
+            });
 
             project.ProjectTypeID = derivedProjectTypeID;
             anyChanged = true;

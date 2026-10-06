@@ -34,7 +34,9 @@ public static partial class AuditLogs
                 ? eventType.AuditLogEventTypeDisplayName
                 : $"Unknown ({log.AuditLogEventTypeID})";
 
-            log.Section = PascalCaseToSpaced(log.TableName);
+            log.Section = string.Equals(log.TableName, GisBulkImports.UploadSummaryAuditLogTableName, StringComparison.OrdinalIgnoreCase)
+                ? "GIS Bulk Upload"
+                : PascalCaseToSpaced(log.TableName);
 
             if (!string.IsNullOrWhiteSpace(log.AuditDescription))
             {
