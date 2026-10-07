@@ -8,3 +8,5 @@ CREATE TABLE [dbo].[ProjectPerson](
 GO
 --CREATE UNIQUE NONCLUSTERED INDEX [UNQ_ProjectPerson_ProjectPersonRelationshipTypeID] ON [dbo].[ProjectPerson]([ProjectID]) WHERE ([ProjectPersonRelationshipTypeID]=(1))
 --GO
+CREATE NONCLUSTERED INDEX [IX_ProjectPerson_ProjectID] ON [dbo].[ProjectPerson]([ProjectID])
+GO

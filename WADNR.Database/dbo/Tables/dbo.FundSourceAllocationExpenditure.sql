@@ -9,3 +9,5 @@ CREATE TABLE [dbo].[FundSourceAllocationExpenditure](
     [ExpenditureAmount] [money] NOT NULL
 )
 GO
+CREATE NONCLUSTERED INDEX [IX_FundSourceAllocationExpenditure_FundSourceAllocationID] ON [dbo].[FundSourceAllocationExpenditure]([FundSourceAllocationID])
+GO

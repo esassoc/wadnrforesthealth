@@ -13,3 +13,5 @@ CREATE TABLE dbo.AuditLog
     ProjectID int NULL
 )
 GO
+CREATE NONCLUSTERED INDEX [IX_AuditLog_PersonID] ON [dbo].[AuditLog]([PersonID])
+GO

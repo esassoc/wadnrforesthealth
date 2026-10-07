@@ -7,3 +7,5 @@ CREATE TABLE [dbo].[GisFeature](
     [CalculatedArea] [decimal](38, 20) NULL
 )
 GO
+CREATE NONCLUSTERED INDEX [IX_GisFeature_GisUploadAttemptID] ON [dbo].[GisFeature]([GisUploadAttemptID])
+GO
