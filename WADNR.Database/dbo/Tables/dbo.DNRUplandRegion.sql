@@ -13,5 +13,5 @@ CREATE TABLE [dbo].[DNRUplandRegion](
     [RegionContent] [dbo].[html] NULL
 )
 GO
---CREATE SPATIAL INDEX SPATIAL_DNRUplandRegion_DNRUplandRegionLocation ON [dbo].[DNRUplandRegion]([DNRUplandRegionLocation]) USING GEOMETRY_AUTO_GRID WITH (BOUNDING_BOX =(-125, 45, -116, 50), CELLS_PER_OBJECT = 8);
---GO
+CREATE SPATIAL INDEX [SPATIAL_DNRUplandRegion_DNRUplandRegionLocation] ON [dbo].[DNRUplandRegion]([DNRUplandRegionLocation]) USING GEOMETRY_AUTO_GRID WITH (BOUNDING_BOX =(-125, 45, -116, 50), CELLS_PER_OBJECT = 8);
+GO
