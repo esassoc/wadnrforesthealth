@@ -19,3 +19,5 @@ CREATE TABLE [dbo].[Treatment](
     [CostPerAcre] [money] NULL
 )
 GO
+CREATE NONCLUSTERED INDEX [IX_Treatment_ProjectLocationID] ON [dbo].[Treatment]([ProjectLocationID])
+GO
