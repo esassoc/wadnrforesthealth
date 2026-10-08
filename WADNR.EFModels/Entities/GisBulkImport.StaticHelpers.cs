@@ -3,6 +3,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Features;
 using NetTopologySuite.IO.Converters;
+using NetTopologySuite.Operation.OverlayNG;
 using WADNR.Common.GeoSpatial;
 using WADNR.Models.DataTransferObjects.GisBulkImport;
 
@@ -1905,32 +1906,36 @@ DROP TABLE #ImportProject;
         var anyChanged = false;
         foreach (var project in projects)
         {
+            // Only fill an unset simple location. This runs for every project the attempt touched,
+            // not just newly-created ones, so overwriting unconditionally would replace a point a
+            // steward positioned by hand with the computed centroid on every nightly run. Checked
+            // before the union so the union only runs for projects that will actually use it.
+            if (project.ProjectLocationSimpleTypeID != (int)ProjectLocationSimpleTypeEnum.None
+                && project.ProjectLocationPoint != null)
+            {
+                continue;
+            }
+
             if (!geometriesByProjectID.TryGetValue(project.ProjectID, out var geometries) || geometries.Count == 0)
             {
                 continue;
             }
 
             // Union then centroid, matching the proc's geometry::UnionAggregate(...).STCentroid().
-            var combined = geometries[0];
-            for (var i = 1; i < geometries.Count; i++)
-            {
-                combined = combined.Union(geometries[i]);
-            }
+            // OverlayNGRobust rather than Geometry.Union: the legacy overlay throws TopologyException
+            // ("found non-noded intersection") on valid polygons whose edges meet at a nearly
+            // coincident vertex, which USFS NEPA boundaries do. OverlayNGRobust falls back through
+            // snapping and snap-rounding instead of failing the import.
+            var combined = geometries.Count == 1
+                ? geometries[0]
+                : OverlayNGRobust.Union(geometries);
 
             var centroid = combined?.Centroid;
             if (centroid == null || centroid.IsEmpty)
             {
                 continue;
             }
-
-            // Only fill an unset simple location. This runs for every project the attempt touched,
-            // not just newly-created ones, so overwriting unconditionally would replace a point a
-            // steward positioned by hand with the computed centroid on every nightly run.
-            if (project.ProjectLocationSimpleTypeID != (int)ProjectLocationSimpleTypeEnum.None
-                && project.ProjectLocationPoint != null)
-            {
-                continue;
-            }
+            centroid.SRID = geometries[0].SRID;
 
             project.ProjectLocationPoint = centroid;
             project.ProjectLocationSimpleTypeID = (int)ProjectLocationSimpleTypeEnum.PointOnMap;

@@ -60,35 +60,16 @@ public static class GeometryHelper
             return null;
         }
 
-        Geometry union;
         // all geometries have to have the same SRS or the union isn't defined anyway, so just grab the first one
         var coordinateSystemId = inputGeometries.First().SRID;
 
-        try
-        {
-            var reader = new NetTopologySuite.IO.WKBReader();
-
-            var internalGeometries = inputGeometries.Select(x => x.MakeValid()).Select(x => reader.Read(x.AsBinary()))
-                .ToList();
-
-            union = NetTopologySuite.Operation.Union.CascadedPolygonUnion.Union(internalGeometries);
-            union.SRID = coordinateSystemId;
-            return union;
-        }
-        catch (TopologyException)
-        {
-            // fall back on the iterative union 
-
-            union = inputGeometries.First();
-
-            for (var i = 1; i < inputGeometries.Count; i++)
-            {
-                var temp = union.Union(inputGeometries[i]);
-                union = temp;
-            }
-            union.SRID = coordinateSystemId;
-            return union;
-        }
+        // OverlayNGRobust falls back through snapping and snap-rounding on its own, so it doesn't need
+        // the TopologyException fallback the legacy CascadedPolygonUnion did (whose fallback, the
+        // legacy iterative union, could throw the same "found non-noded intersection" anyway).
+        var union = NetTopologySuite.Operation.OverlayNG.OverlayNGRobust.Union(
+            inputGeometries.Select(x => x.MakeValid()).ToList());
+        union.SRID = coordinateSystemId;
+        return union;
     }
 
     public static Geometry? FromWKT(string? wkt, int srid)
