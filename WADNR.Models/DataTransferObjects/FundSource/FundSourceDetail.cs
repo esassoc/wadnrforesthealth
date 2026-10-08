@@ -36,7 +36,6 @@ public class FundSourceDetail
 
     // Counts for related entities
     public int AllocationCount { get; set; }
-    public int AgreementCount { get; set; }
     public int ProjectCount { get; set; }
     public int FileCount { get; set; }
     public int NoteCount { get; set; }

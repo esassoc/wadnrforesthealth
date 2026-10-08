@@ -52,9 +52,6 @@ public class ProjectDetail
     public string? FundingSourceNotes { get; set; }
     public List<FundSourceAllocationRequestItem> FundSourceAllocationRequests { get; set; } = new();
 
-    // Associated Agreements
-    public List<AgreementLookupItem> Agreements { get; set; } = new();
-
     // Location
     public BoundingBox? DefaultBoundingBox { get; set; }
     public bool HasLocationData { get; set; }

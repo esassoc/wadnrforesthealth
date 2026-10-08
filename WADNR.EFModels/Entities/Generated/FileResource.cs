@@ -34,9 +34,6 @@ public partial class FileResource
 
     public long? ContentLength { get; set; }
 
-    [InverseProperty("AgreementFileResource")]
-    public virtual ICollection<Agreement> Agreements { get; set; } = new List<Agreement>();
-
     [InverseProperty("KeyImageFileResource")]
     public virtual ICollection<Classification> Classifications { get; set; } = new List<Classification>();
 

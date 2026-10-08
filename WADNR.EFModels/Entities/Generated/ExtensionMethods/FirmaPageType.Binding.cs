@@ -38,7 +38,6 @@ namespace WADNR.EFModels.Entities
         public static readonly FirmaPageTypeFullFundSourceAllocationList FullFundSourceAllocationList = FirmaPageTypeFullFundSourceAllocationList.Instance;
         public static readonly FirmaPageTypeRegionsList RegionsList = FirmaPageTypeRegionsList.Instance;
         public static readonly FirmaPageTypePriorityLandscapesList PriorityLandscapesList = FirmaPageTypePriorityLandscapesList.Instance;
-        public static readonly FirmaPageTypeFullAgreementList FullAgreementList = FirmaPageTypeFullAgreementList.Instance;
         public static readonly FirmaPageTypeInteractionEventList InteractionEventList = FirmaPageTypeInteractionEventList.Instance;
         public static readonly FirmaPageTypeGisUploadAttemptInstructions GisUploadAttemptInstructions = FirmaPageTypeGisUploadAttemptInstructions.Instance;
         public static readonly FirmaPageTypeProgramsList ProgramsList = FirmaPageTypeProgramsList.Instance;
@@ -63,7 +62,7 @@ namespace WADNR.EFModels.Entities
         /// </summary>
         static FirmaPageType()
         {
-            All = new List<FirmaPageType> { HomePage, DemoScript, InternalSetupNotes, FullProjectList, ProjectTypeList, TaxonomyBranchList, TaxonomyTrunkList, OrganizationsList, MyProjects, ProjectMap, HomeMapInfo, HomeAdditionalInfo, FeaturedProjectList, FullProjectListSimple, Taxonomy, TagList, ManageUpdateNotifications, ProjectStewardOrganizationList, EnterHistoricProjectInstructions, PendingProjects, Training, CustomFooter, FactSheetCustomText, FullFundSourceList, FullFundSourceAllocationList, RegionsList, PriorityLandscapesList, FullAgreementList, InteractionEventList, GisUploadAttemptInstructions, ProgramsList, UploadLoaTabularDataExcel, ManageFindYourForester, FindYourForester, ExternalMapLayers, County, Reports, ReportProjects, ReportAddReport, Vendor, ProjectCreateInstructions, ProjectUpdateInstructions, Classifications };
+            All = new List<FirmaPageType> { HomePage, DemoScript, InternalSetupNotes, FullProjectList, ProjectTypeList, TaxonomyBranchList, TaxonomyTrunkList, OrganizationsList, MyProjects, ProjectMap, HomeMapInfo, HomeAdditionalInfo, FeaturedProjectList, FullProjectListSimple, Taxonomy, TagList, ManageUpdateNotifications, ProjectStewardOrganizationList, EnterHistoricProjectInstructions, PendingProjects, Training, CustomFooter, FactSheetCustomText, FullFundSourceList, FullFundSourceAllocationList, RegionsList, PriorityLandscapesList, InteractionEventList, GisUploadAttemptInstructions, ProgramsList, UploadLoaTabularDataExcel, ManageFindYourForester, FindYourForester, ExternalMapLayers, County, Reports, ReportProjects, ReportAddReport, Vendor, ProjectCreateInstructions, ProjectUpdateInstructions, Classifications };
             AllLookupDictionary = new ReadOnlyDictionary<int, FirmaPageType>(All.ToDictionary(x => x.FirmaPageTypeID));
         }
 
@@ -153,8 +152,6 @@ namespace WADNR.EFModels.Entities
                     return FeaturedProjectList;
                 case FirmaPageTypeEnum.FindYourForester:
                     return FindYourForester;
-                case FirmaPageTypeEnum.FullAgreementList:
-                    return FullAgreementList;
                 case FirmaPageTypeEnum.FullFundSourceAllocationList:
                     return FullFundSourceAllocationList;
                 case FirmaPageTypeEnum.FullFundSourceList:
@@ -256,7 +253,6 @@ namespace WADNR.EFModels.Entities
         FullFundSourceAllocationList = 57,
         RegionsList = 58,
         PriorityLandscapesList = 59,
-        FullAgreementList = 60,
         InteractionEventList = 62,
         GisUploadAttemptInstructions = 63,
         ProgramsList = 65,
@@ -434,12 +430,6 @@ namespace WADNR.EFModels.Entities
     {
         private FirmaPageTypePriorityLandscapesList(int firmaPageTypeID, string firmaPageTypeName, string firmaPageTypeDisplayName, int firmaPageRenderTypeID) : base(firmaPageTypeID, firmaPageTypeName, firmaPageTypeDisplayName, firmaPageRenderTypeID) {}
         public static readonly FirmaPageTypePriorityLandscapesList Instance = new FirmaPageTypePriorityLandscapesList(59, @"PriorityLandscapesList", @"Priority Landscapes List", 1);
-    }
-
-    public partial class FirmaPageTypeFullAgreementList : FirmaPageType
-    {
-        private FirmaPageTypeFullAgreementList(int firmaPageTypeID, string firmaPageTypeName, string firmaPageTypeDisplayName, int firmaPageRenderTypeID) : base(firmaPageTypeID, firmaPageTypeName, firmaPageTypeDisplayName, firmaPageRenderTypeID) {}
-        public static readonly FirmaPageTypeFullAgreementList Instance = new FirmaPageTypeFullAgreementList(60, @"FullAgreementList", @"Full Agreement List", 1);
     }
 
     public partial class FirmaPageTypeInteractionEventList : FirmaPageType

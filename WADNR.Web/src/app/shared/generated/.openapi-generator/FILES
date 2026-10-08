@@ -1,9 +1,6 @@
 .gitignore
 api.base.service.ts
 api.module.ts
-api/agreement-status.service.ts
-api/agreement-type.service.ts
-api/agreement.service.ts
 api/classification-system.service.ts
 api/classification.service.ts
 api/cost-share.service.ts
@@ -64,17 +61,6 @@ api/vendor.service.ts
 configuration.ts
 encoder.ts
 model/add-to-block-list-request.ts
-model/agreement-contact-grid-row.ts
-model/agreement-contact-upsert-request.ts
-model/agreement-detail.ts
-model/agreement-fund-source-allocations-update-request.ts
-model/agreement-grid-row.ts
-model/agreement-lookup-item.ts
-model/agreement-person-role-lookup-item.ts
-model/agreement-projects-update-request.ts
-model/agreement-status-lookup-item.ts
-model/agreement-type-lookup-item.ts
-model/agreement-upsert-request.ts
 model/bounding-box.ts
 model/bulk-assign-foresters-request.ts
 model/bulk-tag-projects-request.ts
@@ -125,7 +111,6 @@ model/field-definition-datum-detail.ts
 model/field-definition-datum-upsert-request.ts
 model/field-definition-detail.ts
 model/file-resource-interaction-event-detail.ts
-model/file-resource-lookup-item.ts
 model/file-resource-priority-landscape-detail.ts
 model/find-your-forester-point-request.ts
 model/find-your-forester-point-result.ts
@@ -140,7 +125,6 @@ model/forester-contact-result.ts
 model/forester-role-lookup-item.ts
 model/forester-work-unit-grid-row.ts
 model/fund-source-about-upsert-request.ts
-model/fund-source-allocation-agreement-grid-row.ts
 model/fund-source-allocation-budget-line-item-grid-row.ts
 model/fund-source-allocation-budget-line-item-upsert-item.ts
 model/fund-source-allocation-budget-line-item-upsert-request.ts
@@ -257,7 +241,6 @@ model/pending-project-grid-row.ts
 model/people-receiving-reminder-grid-row.ts
 model/person-api-key.ts
 model/person-detail.ts
-model/person-first-name-last-name.ts
 model/person-grid-row.ts
 model/person-lookup-item-with-email.ts
 model/person-lookup-item.ts

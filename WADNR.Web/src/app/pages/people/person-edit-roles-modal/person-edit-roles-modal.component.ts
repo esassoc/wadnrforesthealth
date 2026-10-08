@@ -64,7 +64,7 @@ export class PersonEditRolesModalComponent extends BaseModal implements OnInit, 
             RoleEnum.CanEditProgram,
             RoleEnum.CanManagePageContent,
             RoleEnum.CanViewLandownerInfo,
-            RoleEnum.CanManageFundSourcesAndAgreements,
+            RoleEnum.CanManageFundSources,
             RoleEnum.CanAddEditUsersContactsOrganizations,
         ];
 

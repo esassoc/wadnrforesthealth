@@ -271,17 +271,6 @@ public static class FundSourceAllocations
         return rows;
     }
 
-    public static async Task<List<FundSourceAllocationAgreementGridRow>> ListAgreementsAsync(
-        WADNRDbContext dbContext, int fundSourceAllocationID)
-    {
-        return await dbContext.AgreementFundSourceAllocations
-            .AsNoTracking()
-            .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
-            .Select(FundSourceAllocationProjections.AsAgreementGridRow)
-            .OrderBy(x => x.AgreementNumber)
-            .ToListAsync();
-    }
-
     public static async Task<List<FundSourceAllocationChangeLogGridRow>> ListChangeLogsAsync(
         WADNRDbContext dbContext, int fundSourceAllocationID)
     {
@@ -586,9 +575,6 @@ public static class FundSourceAllocations
             .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
             .ExecuteDeleteAsync();
         await dbContext.ProjectFundSourceAllocationRequests
-            .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
-            .ExecuteDeleteAsync();
-        await dbContext.AgreementFundSourceAllocations
             .Where(x => x.FundSourceAllocationID == fundSourceAllocationID)
             .ExecuteDeleteAsync();
         await dbContext.FundSourceAllocationExpenditures

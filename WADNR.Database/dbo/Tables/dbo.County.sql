@@ -7,5 +7,5 @@ CREATE TABLE [dbo].[County](
     CONSTRAINT AK_County_CountyName_StateProvinceID UNIQUE ([CountyName], [StateProvinceID])
 )
 GO
---CREATE SPATIAL INDEX SPATIAL_County_CountyFeature ON [dbo].[County]([CountyFeature]) USING GEOMETRY_AUTO_GRID WITH (BOUNDING_BOX =(-125, 45, -116, 50), CELLS_PER_OBJECT = 8);
---GO
+CREATE SPATIAL INDEX [SPATIAL_County_CountyFeature] ON [dbo].[County]([CountyFeature]) USING GEOMETRY_AUTO_GRID WITH (BOUNDING_BOX =(-125, 45, -116, 50), CELLS_PER_OBJECT = 8);
+GO

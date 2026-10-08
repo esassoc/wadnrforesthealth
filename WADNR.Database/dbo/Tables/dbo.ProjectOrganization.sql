@@ -5,3 +5,5 @@ CREATE TABLE [dbo].[ProjectOrganization](
     [RelationshipTypeID] [int] NOT NULL CONSTRAINT [FK_ProjectOrganization_RelationshipType_RelationshipTypeID] FOREIGN KEY REFERENCES [dbo].[RelationshipType]([RelationshipTypeID])
 )
 GO
+CREATE NONCLUSTERED INDEX [IX_ProjectOrganization_ProjectID] ON [dbo].[ProjectOrganization]([ProjectID])
+GO

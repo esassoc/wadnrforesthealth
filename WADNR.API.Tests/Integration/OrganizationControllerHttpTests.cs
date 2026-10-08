@@ -102,15 +102,6 @@ public class OrganizationControllerHttpTests
     }
 
     [TestMethod]
-    public async Task ListAgreementsForOrganization_Returns200()
-    {
-        var route = RouteHelper.GetRouteFor<OrganizationController>(c => c.ListAgreementsForOrganization(_testOrganizationID));
-        var result = await AssemblySteps.AdminHttpClient.GetAsync(route);
-
-        Assert.IsTrue(result.IsSuccessStatusCode, $"Route: {route}\n{await result.Content.ReadAsStringAsync()}");
-    }
-
-    [TestMethod]
     public async Task GetBoundary_Returns200()
     {
         var route = RouteHelper.GetRouteFor<OrganizationController>(c => c.GetBoundary(_testOrganizationID));

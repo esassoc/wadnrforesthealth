@@ -21,15 +21,15 @@ function stripBase(apiBaseUrl: string, uri: string): string | null {
 
 const ANON_EXACT: ExactMap = {
   'DELETE': [],
-  'GET': ["/","/agreement-statuses/lookup","/agreement-types/lookup","/classification-systems","/classification-systems/lookup","/classification-systems/with-classifications","/classifications","/cost-share/generate-pdf","/counties","/custom-pages/menu-item","/dnr-upland-regions","/dnr-upland-regions/lookup","/external-map-layers/other-maps","/external-map-layers/priority-landscape","/external-map-layers/project-map","/federal-fund-codes/lookup","/find-your-forester/questions","/find-your-forester/roles","/firma-home-page-images","/fund-source-allocation-priorities/lookup","/fund-source-allocations","/fund-source-allocations/lookup","/fund-source-types/lookup","/fund-sources","/fund-sources/lookup","/funding-sources","/interactions-events","/invoices/approval-statuses","/organization-types","/organization-types/lookup","/organizations","/organizations/lead-implementers","/organizations/lookup","/organizations/lookup-with-short-name","/priority-landscapes","/priority-landscapes/categories","/program-indices","/program-indices/lookup","/program-indices/search","/programs","/project-codes","/project-codes/lookup","/project-codes/search","/project-documents/types","/project-images/timings","/project-person-relationship-types","/project-types","/project-types/lookup","/project-types/taxonomy","/projects","/projects/featured","/projects/mapped-point/feature-collection","/projects/no-simple-location","/relationship-types","/relationship-types/lookup","/relationship-types/summary","/tags","/taxonomy-branches","/taxonomy-branches/lookup","/taxonomy-trunks","/taxonomy-trunks/lookup","/with-project-count"],
+  'GET': ["/","/classification-systems","/classification-systems/lookup","/classification-systems/with-classifications","/classifications","/cost-share/generate-pdf","/counties","/custom-pages/menu-item","/dnr-upland-regions","/dnr-upland-regions/lookup","/external-map-layers/other-maps","/external-map-layers/priority-landscape","/external-map-layers/project-map","/federal-fund-codes/lookup","/find-your-forester/questions","/find-your-forester/roles","/firma-home-page-images","/fund-source-allocation-priorities/lookup","/fund-source-allocations","/fund-source-allocations/lookup","/fund-source-types/lookup","/fund-sources","/fund-sources/lookup","/funding-sources","/interactions-events","/invoices/approval-statuses","/organization-types","/organization-types/lookup","/organizations","/organizations/lead-implementers","/organizations/lookup","/organizations/lookup-with-short-name","/priority-landscapes","/priority-landscapes/categories","/program-indices","/program-indices/lookup","/program-indices/search","/programs","/project-codes","/project-codes/lookup","/project-codes/search","/project-documents/types","/project-images/timings","/project-person-relationship-types","/project-types","/project-types/lookup","/project-types/taxonomy","/projects","/projects/featured","/projects/mapped-point/feature-collection","/projects/no-simple-location","/relationship-types","/relationship-types/lookup","/relationship-types/summary","/tags","/taxonomy-branches","/taxonomy-branches/lookup","/taxonomy-trunks","/taxonomy-trunks/lookup","/with-project-count"],
   'POST': ["/find-your-forester/by-point","/sitkacapture/generate-pdf"],
   'PUT': [],
 };
 
 const SECURED_EXACT: ExactMap = {
   'DELETE': [],
-  'GET': ["/agreements","/agreements/excel-download","/api/Job/import-history","/custom-pages","/custom-rich-texts","/external-map-layers","/field-definitions","/find-your-forester/assignable-people","/fund-sources/excel-download","/gis-bulk-import/source-organizations","/invoices","/loa-upload/dashboard","/people","/people/lookup","/people/lookup/wadnr","/people/stewardship-areas/regions","/programs/eligible-editors","/project-update-configurations","/projects/excel-download","/projects/lookup","/projects/no-contact-count","/projects/pending","/projects/pending/excel-download","/projects/people-receiving-reminders","/projects/update-status","/report-templates","/report-templates/models","/roles","/service-forestry-upload/dashboard","/vendors","/vendors/excel-download","/vendors/search"],
-  'POST': ["/agreements","/agreements/upload-file","/api/Job/clear-outdated-imports","/classifications","/classifications/upload-key-image","/custom-pages","/dnr-upland-regions","/external-map-layers","/find-your-forester/work-units/bulk-assign","/firma-home-page-images","/fund-source-allocation-notes","/fund-source-allocation-notes-internal","/fund-source-allocations","/fund-source-images","/fund-sources","/gis-bulk-import/attempts","/impersonation/stop","/interactions-events","/invoice-payment-requests","/invoices","/loa-upload/publish","/organization-types","/organizations","/people","/priority-landscapes","/programs","/programs/upload-example-geospatial-file","/programs/upload-program-file","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/projects/send-custom-notification","/projects/send-preview-notification","/relationship-types","/report-templates","/report-templates/generate-reports","/service-forestry-upload/import","/service-forestry-upload/publish","/support-requests","/tags","/tags/bulk-tag-projects","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
+  'GET': ["/api/Job/import-history","/custom-pages","/custom-rich-texts","/external-map-layers","/field-definitions","/find-your-forester/assignable-people","/fund-sources/excel-download","/gis-bulk-import/source-organizations","/invoices","/loa-upload/dashboard","/people","/people/lookup","/people/lookup/wadnr","/people/stewardship-areas/regions","/programs/eligible-editors","/project-update-configurations","/projects/excel-download","/projects/lookup","/projects/no-contact-count","/projects/pending","/projects/pending/excel-download","/projects/people-receiving-reminders","/projects/update-status","/report-templates","/report-templates/models","/roles","/service-forestry-upload/dashboard","/vendors","/vendors/excel-download","/vendors/search"],
+  'POST': ["/api/Job/clear-outdated-imports","/classifications","/classifications/upload-key-image","/custom-pages","/dnr-upland-regions","/external-map-layers","/find-your-forester/work-units/bulk-assign","/firma-home-page-images","/fund-source-allocation-notes","/fund-source-allocation-notes-internal","/fund-source-allocations","/fund-source-images","/fund-sources","/gis-bulk-import/attempts","/impersonation/stop","/interactions-events","/invoice-payment-requests","/invoices","/loa-upload/publish","/organization-types","/organizations","/people","/priority-landscapes","/programs","/programs/upload-example-geospatial-file","/programs/upload-program-file","/project-documents","/project-images","/project-internal-notes","/project-notes","/project-types","/projects","/projects/create-workflow/steps/basics","/projects/send-custom-notification","/projects/send-preview-notification","/relationship-types","/report-templates","/report-templates/generate-reports","/service-forestry-upload/import","/service-forestry-upload/publish","/support-requests","/tags","/tags/bulk-tag-projects","/taxonomy-branches","/taxonomy-trunks","/treatments","/user-claims"],
   'PUT': ["/classifications/sort-order","/firma-home-page-images/sort-order","/project-types/sort-order","/project-update-configurations","/projects/featured"],
 };
 
@@ -38,10 +38,6 @@ const ANON_REGEX: RegexMap = {
 
   ],
   'GET': [
-    new RegExp("^/agreements/[^/]+$"),
-    new RegExp("^/agreements/[^/]+/contacts$"),
-    new RegExp("^/agreements/[^/]+/fund-source-allocations$"),
-    new RegExp("^/agreements/[^/]+/projects$"),
     new RegExp("^/classification-systems/[^/]+$"),
     new RegExp("^/classifications/[^/]+$"),
     new RegExp("^/classifications/[^/]+/projects$"),
@@ -60,7 +56,6 @@ const ANON_REGEX: RegexMap = {
     new RegExp("^/file-resources/[^/]+$"),
     new RegExp("^/fund-source-allocation-notes/[^/]+$"),
     new RegExp("^/fund-source-allocations/[^/]+$"),
-    new RegExp("^/fund-source-allocations/[^/]+/agreements$"),
     new RegExp("^/fund-source-allocations/[^/]+/budget-line-items$"),
     new RegExp("^/fund-source-allocations/[^/]+/expenditure-summary$"),
     new RegExp("^/fund-source-allocations/[^/]+/expenditures$"),
@@ -83,7 +78,6 @@ const ANON_REGEX: RegexMap = {
     new RegExp("^/interactions-events/[^/]+/simple-location/feature-collection$"),
     new RegExp("^/invoices/[^/]+$"),
     new RegExp("^/organizations/[^/]+$"),
-    new RegExp("^/organizations/[^/]+/agreements$"),
     new RegExp("^/organizations/[^/]+/boundary$"),
     new RegExp("^/organizations/[^/]+/programs$"),
     new RegExp("^/organizations/[^/]+/project-locations$"),
@@ -142,8 +136,6 @@ const ANON_REGEX: RegexMap = {
 
 const SECURED_REGEX: RegexMap = {
   'DELETE': [
-    new RegExp("^/agreements/[^/]+$"),
-    new RegExp("^/agreements/[^/]+/contacts/[^/]+$"),
     new RegExp("^/classifications/[^/]+$"),
     new RegExp("^/custom-pages/[^/]+$"),
     new RegExp("^/dnr-upland-regions/[^/]+$"),
@@ -207,12 +199,9 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/gis-bulk-import/attempts/[^/]+/metadata-attributes$"),
     new RegExp("^/invoice-payment-requests/[^/]+/invoices$"),
     new RegExp("^/organization-types/[^/]+$"),
-    new RegExp("^/organizations/[^/]+/agreements/excel-download$"),
     new RegExp("^/organizations/[^/]+/boundary/staged-features$"),
     new RegExp("^/organizations/[^/]+/projects/pending$"),
     new RegExp("^/people/[^/]+$"),
-    new RegExp("^/people/[^/]+/agreements$"),
-    new RegExp("^/people/[^/]+/agreements/excel-download$"),
     new RegExp("^/people/[^/]+/api-key$"),
     new RegExp("^/people/[^/]+/interaction-events$"),
     new RegExp("^/people/[^/]+/notifications$"),
@@ -274,7 +263,6 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/vendors/[^/]+/people$"),
   ],
   'POST': [
-    new RegExp("^/agreements/[^/]+/contacts$"),
     new RegExp("^/api/Job/[^/]+/trigger$"),
     new RegExp("^/fund-source-allocations/[^/]+/duplicate$"),
     new RegExp("^/fund-source-allocations/[^/]+/files$"),
@@ -322,10 +310,6 @@ const SECURED_REGEX: RegexMap = {
     new RegExp("^/report-templates/system/invoice-payment-request/[^/]+$"),
   ],
   'PUT': [
-    new RegExp("^/agreements/[^/]+$"),
-    new RegExp("^/agreements/[^/]+/contacts/[^/]+$"),
-    new RegExp("^/agreements/[^/]+/fund-source-allocations$"),
-    new RegExp("^/agreements/[^/]+/projects$"),
     new RegExp("^/classifications/[^/]+$"),
     new RegExp("^/counties/[^/]+/content$"),
     new RegExp("^/custom-pages/[^/]+$"),

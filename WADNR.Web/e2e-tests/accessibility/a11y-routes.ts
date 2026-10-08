@@ -90,10 +90,6 @@ export const publicRoutes: A11yRoute[] = [
     { name: "Tags List", path: "/tags", auth: "public", waitFor: ".page-body" },
     { name: "Tag Detail", path: `/tags/${testData.tagID}`, auth: "public", waitFor: ".card" },
 
-    // Agreements
-    { name: "Agreements List", path: "/agreements", auth: "public", waitFor: ".page-body" },
-    { name: "Agreement Detail", path: `/agreements/${testData.agreementID}`, auth: "public", waitFor: ".card" },
-
     // Interactions/Events
     { name: "Interactions/Events List", path: "/interactions-events", auth: "public", waitFor: ".ag-row", timeout: 30000 },
     { name: "Interaction/Event Detail", path: `/interactions-events/${testData.interactionEventID}`, auth: "public", waitFor: ".card" },
@@ -469,40 +465,6 @@ export const publicPageModalRoutes: A11yModalRoute[] = [
         pagePath: `/fund-source-allocations/${testData.fundSourceAllocationID}`,
         pageWaitFor: ".card",
         triggerSelector: 'button:has-text("Add Note") >> nth=0',
-        auth: "admin",
-    },
-
-    // ── Agreements ─────────────────────────────────────────────────
-    // Agreement Detail — Edit Basics
-    {
-        name: "Modal: Edit Agreement",
-        pagePath: `/agreements/${testData.agreementID}`,
-        pageWaitFor: ".card",
-        triggerSelector: 'button[title="Edit Agreement Basics"]',
-        auth: "admin",
-    },
-    // Agreement Detail — Edit Fund Source Allocations
-    {
-        name: "Modal: Edit Agreement Fund Source Allocations",
-        pagePath: `/agreements/${testData.agreementID}`,
-        pageWaitFor: ".card",
-        triggerSelector: 'button[title="Edit Fund Source Allocations"]',
-        auth: "admin",
-    },
-    // Agreement Detail — Edit Projects
-    {
-        name: "Modal: Edit Agreement Projects",
-        pagePath: `/agreements/${testData.agreementID}`,
-        pageWaitFor: ".card",
-        triggerSelector: 'button[title="Edit Projects"]',
-        auth: "admin",
-    },
-    // Agreement Detail — Add Contact
-    {
-        name: "Modal: Add Agreement Contact",
-        pagePath: `/agreements/${testData.agreementID}`,
-        pageWaitFor: ".card",
-        triggerSelector: 'button:has-text("Add Contact")',
         auth: "admin",
     },
 

@@ -39,7 +39,6 @@ export class PersonDetail {
     SupplementalRoles?: string | null;
     PrimaryContactOrganizationCount?: number;
     ProjectCount?: number;
-    AgreementCount?: number;
     InteractionEventCount?: number;
     readonly FullName?: string | null;
     readonly FullNameFirstLastAndMiddle?: string | null;
@@ -83,7 +82,6 @@ export interface PersonDetailForm {
     SupplementalRoles?: FormControl<string>;
     PrimaryContactOrganizationCount?: FormControl<number>;
     ProjectCount?: FormControl<number>;
-    AgreementCount?: FormControl<number>;
     InteractionEventCount?: FormControl<number>;
     FullName?: FormControl<string>;
     FullNameFirstLastAndMiddle?: FormControl<string>;
@@ -331,16 +329,6 @@ export class PersonDetailFormControls {
         }
     );
     public static ProjectCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
-        value,
-        formControlOptions ?? 
-        {
-            nonNullable: false,
-            validators: 
-            [
-            ],
-        }
-    );
-    public static AgreementCount = (value: FormControlState<number> | number = undefined, formControlOptions?: FormControlOptions | null) => new FormControl<number>(
         value,
         formControlOptions ?? 
         {

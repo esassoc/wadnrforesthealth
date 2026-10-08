@@ -3,6 +3,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Features;
 using NetTopologySuite.IO.Converters;
+using NetTopologySuite.Operation.OverlayNG;
 using WADNR.Common.GeoSpatial;
 using WADNR.Models.DataTransferObjects.GisBulkImport;
 
@@ -16,6 +17,40 @@ public static class GisBulkImports
     /// request-timeout so the proc fails before Application Gateway drops the connection.
     /// </summary>
     private const int TreatmentImportCommandTimeoutSeconds = 600;
+
+    /// <summary>
+    /// TableName of the per-project summary Audit Log row an upload writes. Its RecordID is the
+    /// GisUploadAttemptID; AuditLogs shows these under a "GIS Bulk Upload" section.
+    /// </summary>
+    public const string UploadSummaryAuditLogTableName = "GisUploadAttempt";
+
+    /// <summary>Provenance columns every upload stamps; not meaningful as Audit Log entries.</summary>
+    private static readonly HashSet<string> GisUploadBookkeepingColumns = new(StringComparer.OrdinalIgnoreCase)
+    {
+        nameof(Project.CreateGisUploadAttemptID),
+        nameof(Project.LastUpdateGisUploadAttemptID)
+    };
+
+    private static AuditLog BuildUploadSummaryAuditLog(
+        int projectID, bool wasCreated, int gisUploadAttemptID, GisUploadSourceOrganization sourceOrg,
+        int personID, DateTime auditDate)
+    {
+        var verb = wasCreated ? "created" : "updated";
+        return new AuditLog
+        {
+            PersonID = personID,
+            AuditLogDate = auditDate,
+            AuditLogEventTypeID = wasCreated
+                ? AuditLogEventType.Added.AuditLogEventTypeID
+                : AuditLogEventType.Modified.AuditLogEventTypeID,
+            TableName = UploadSummaryAuditLogTableName,
+            RecordID = gisUploadAttemptID,
+            ColumnName = "GisUploadAttemptID",
+            NewValue = gisUploadAttemptID.ToString(),
+            AuditDescription = $"Project {verb} by GIS bulk upload #{gisUploadAttemptID} from {sourceOrg.GisUploadSourceOrganizationName}",
+            ProjectID = projectID
+        };
+    }
 
     public static async Task<List<GisUploadSourceOrganizationSummary>> ListSourceOrganizationsAsync(WADNRDbContext dbContext)
     {
@@ -406,6 +441,12 @@ public static class GisBulkImports
 
         var sourceOrg = attempt.GisUploadSourceOrganization;
 
+        // Every save below bypasses the auditing SaveChanges (it would log every column of thousands of
+        // projects), so the import writes its own Audit Log rows, attributed to whoever ran the upload
+        // (the system person for scheduled imports). WADNR-2288.
+        var auditPersonID = attempt.GisUploadAttemptCreatePersonID;
+        var auditDate = DateTime.Now;
+
         // Load features with metadata
         var features = await dbContext.GisFeatures
             .Where(x => x.GisUploadAttemptID == gisUploadAttemptID)
@@ -714,6 +755,16 @@ public static class GisBulkImports
                 }
             }
 
+            // Field-level Audit Log rows for updated projects, captured while the tracker still knows
+            // the original values. Created projects get only the summary row in phase 4.
+            foreach (var plan in plans.Where(p => !p.WasCreated))
+            {
+                var fieldAuditLogs = AuditLogHelper
+                    .CreateAuditLogsForModifiedOrDeleted(dbContext.Entry(plan.Project), auditPersonID, auditDate)
+                    .Where(a => !GisUploadBookkeepingColumns.Contains(a.ColumnName));
+                dbContext.AuditLogs.AddRange(fieldAuditLogs);
+            }
+
             // EF batches these, so 3,042 individual INSERTs collapse to roughly 40 commands, and the
             // generated IDs come back populated.
             await dbContext.SaveChangesWithNoAuditingAsync();
@@ -743,6 +794,9 @@ public static class GisBulkImports
                         RelationshipTypeID = sourceOrg.RelationshipTypeForDefaultOrganizationID
                     });
                 }
+
+                dbContext.AuditLogs.Add(BuildUploadSummaryAuditLog(
+                    plan.Project.ProjectID, plan.WasCreated, gisUploadAttemptID, sourceOrg, auditPersonID, auditDate));
             }
             await dbContext.SaveChangesWithNoAuditingAsync();
 
@@ -858,7 +912,7 @@ public static class GisBulkImports
         // a type from a partially imported treatment set.
         if (treatmentsImported)
         {
-            await ApplyProjectTypeFromTreatmentTypesAsync(dbContext, sourceOrg, gisUploadAttemptID);
+            await ApplyProjectTypeFromTreatmentTypesAsync(dbContext, sourceOrg, gisUploadAttemptID, auditPersonID, auditDate);
         }
 
         // Ensure every project the attempt touched has a simple-location point. For detailed-location
@@ -1234,26 +1288,67 @@ public static class GisBulkImports
     /// Equivalence with the per-project version: that one unions a project's geometries and intersects
     /// once; this intersects per geometry and takes DISTINCT. A union intersects R if and only if some
     /// member does, so the resulting set is identical.
+    ///
+    /// Bounding-box prefilter: County and DNRUplandRegion have no spatial index (both are commented out
+    /// in the sqlproj), so a plain CROSS JOIN ran STIntersects of every imported geometry against every
+    /// full-detail boundary multipolygon. The scheduled LOA and USFS imports re-import their whole feed,
+    /// and that cross join exceeded the command timeout. Candidate pairs are now chosen by a numeric
+    /// bounding-box overlap first, and STIntersects runs only on those pairs. Box overlap is necessary
+    /// for an intersection, so the result is unchanged.
     /// </summary>
     private static async Task AssignRegionsSetBasedAsync(WADNRDbContext dbContext, List<int> projectIDs)
     {
-        // ONE command. The temp tables must live across every statement, and EF can return the
-        // connection to the pool between separate ExecuteSqlRaw calls, which would drop them. Sending
-        // it as a single batch also makes the whole of region assignment one round trip instead of
-        // 9,126.
-        await dbContext.Database.ExecuteSqlRawAsync(SetBasedRegionSql,
-            JsonSerializer.Serialize(projectIDs), NoCountiesExplanation, NoRegionsExplanation, NoPriorityLandscapesExplanation);
+        var previousCommandTimeout = dbContext.Database.GetCommandTimeout();
+        dbContext.Database.SetCommandTimeout(RegionAssignmentCommandTimeoutSeconds);
+        try
+        {
+            // ONE command. The temp tables must live across every statement, and EF can return the
+            // connection to the pool between separate ExecuteSqlRaw calls, which would drop them. Sending
+            // it as a single batch also makes the whole of region assignment one round trip instead of
+            // 9,126.
+            await dbContext.Database.ExecuteSqlRawAsync(SetBasedRegionSql,
+                JsonSerializer.Serialize(projectIDs), NoCountiesExplanation, NoRegionsExplanation, NoPriorityLandscapesExplanation);
+        }
+        catch (Microsoft.Data.SqlClient.SqlException ex) when (ex.Number == -2)
+        {
+            // SQL timeouts are classed transient, so letting this one escape would make the retrying
+            // execution strategy around ImportProjectsAsync's write phase re-run the whole import up to
+            // four times, each hitting the same deterministic timeout (the same amplification described
+            // on ExecuteTreatmentImportProcAsync). Rethrow as a non-transient exception so it fails once.
+            // Not TimeoutException: EF's SQL Server transient detector retries that too.
+            throw new InvalidOperationException(
+                $"Geographic region assignment timed out after {RegionAssignmentCommandTimeoutSeconds}s for {projectIDs.Count} project(s).", ex);
+        }
+        finally
+        {
+            dbContext.Database.SetCommandTimeout(previousCommandTimeout);
+        }
     }
 
+    /// <summary>
+    /// Command timeout for the set-based region assignment. The global default is 180s
+    /// (WADNR.API/Startup.cs); the scheduled LOA and USFS imports re-assign regions for their whole feed.
+    /// </summary>
+    private const int RegionAssignmentCommandTimeoutSeconds = 600;
+
+    // Bounding boxes are taken as the MIN/MAX over the envelope's points rather than fixed point
+    // positions, because STEnvelope of a point or an axis-aligned line is not a four-corner polygon.
+    // An empty shape gets a NULL box and so never becomes a candidate, which is correct: it intersects
+    // nothing.
     private const string SetBasedRegionSql = @"
 IF OBJECT_ID('tempdb..#ImportProject')  IS NOT NULL DROP TABLE #ImportProject;
 IF OBJECT_ID('tempdb..#ImportGeometry') IS NOT NULL DROP TABLE #ImportGeometry;
+IF OBJECT_ID('tempdb..#Boundary')       IS NOT NULL DROP TABLE #Boundary;
+IF OBJECT_ID('tempdb..#Candidate')      IS NOT NULL DROP TABLE #Candidate;
 
 CREATE TABLE #ImportProject (ProjectID int NOT NULL PRIMARY KEY, HasGeometry bit NOT NULL DEFAULT(0));
 INSERT INTO #ImportProject (ProjectID)
 SELECT DISTINCT CAST([value] AS int) FROM OPENJSON({0});
 
-CREATE TABLE #ImportGeometry (ProjectID int NOT NULL, Shape geometry NOT NULL);
+CREATE TABLE #ImportGeometry (
+    RowID int IDENTITY(1,1) NOT NULL PRIMARY KEY NONCLUSTERED,
+    ProjectID int NOT NULL, Shape geometry NOT NULL,
+    MinX float NULL, MinY float NULL, MaxX float NULL, MaxY float NULL);
 
 -- Detailed locations plus the simple point: exactly what the per-project version unions together.
 INSERT INTO #ImportGeometry (ProjectID, Shape)
@@ -1270,6 +1365,52 @@ WHERE p.ProjectLocationPoint IS NOT NULL;
 
 CREATE CLUSTERED INDEX IX_ImportGeometry_ProjectID ON #ImportGeometry (ProjectID);
 
+UPDATE g SET MinX = box.MinX, MinY = box.MinY, MaxX = box.MaxX, MaxY = box.MaxY
+FROM #ImportGeometry g
+CROSS APPLY (
+    SELECT MIN(e.Env.STPointN(n.N).STX) AS MinX, MIN(e.Env.STPointN(n.N).STY) AS MinY,
+           MAX(e.Env.STPointN(n.N).STX) AS MaxX, MAX(e.Env.STPointN(n.N).STY) AS MaxY
+    FROM (SELECT g.Shape.STEnvelope() AS Env) e
+    CROSS JOIN (VALUES (1), (2), (3), (4), (5)) n(N)
+    WHERE n.N <= e.Env.STNumPoints()
+) box;
+
+-- Every boundary, with its bounding box computed once. 1 = County, 2 = DNRUplandRegion,
+-- 3 = PriorityLandscape.
+CREATE TABLE #Boundary (
+    BoundaryKind tinyint NOT NULL, BoundaryID int NOT NULL, Shape geometry NOT NULL,
+    MinX float NULL, MinY float NULL, MaxX float NULL, MaxY float NULL,
+    PRIMARY KEY (BoundaryKind, BoundaryID));
+
+INSERT INTO #Boundary (BoundaryKind, BoundaryID, Shape)
+SELECT 1, c.CountyID, c.CountyFeature FROM dbo.County c WHERE c.CountyFeature IS NOT NULL
+UNION ALL
+SELECT 2, r.DNRUplandRegionID, r.DNRUplandRegionLocation FROM dbo.DNRUplandRegion r WHERE r.DNRUplandRegionLocation IS NOT NULL
+UNION ALL
+SELECT 3, pl.PriorityLandscapeID, pl.PriorityLandscapeLocation FROM dbo.PriorityLandscape pl WHERE pl.PriorityLandscapeLocation IS NOT NULL;
+
+UPDATE b SET MinX = box.MinX, MinY = box.MinY, MaxX = box.MaxX, MaxY = box.MaxY
+FROM #Boundary b
+CROSS APPLY (
+    SELECT MIN(e.Env.STPointN(n.N).STX) AS MinX, MIN(e.Env.STPointN(n.N).STY) AS MinY,
+           MAX(e.Env.STPointN(n.N).STX) AS MaxX, MAX(e.Env.STPointN(n.N).STY) AS MaxY
+    FROM (SELECT b.Shape.STEnvelope() AS Env) e
+    CROSS JOIN (VALUES (1), (2), (3), (4), (5)) n(N)
+    WHERE n.N <= e.Env.STNumPoints()
+) box;
+
+-- Candidate pairs by bounding-box overlap alone. Overlapping boxes are necessary for an
+-- intersection, so this drops no real match; it just cuts the STIntersects calls from every
+-- geometry x every boundary down to the few boundaries near each geometry. Materialized so the
+-- cheap numeric test is guaranteed to run before any STIntersects.
+CREATE TABLE #Candidate (RowID int NOT NULL, BoundaryKind tinyint NOT NULL, BoundaryID int NOT NULL);
+INSERT INTO #Candidate (RowID, BoundaryKind, BoundaryID)
+SELECT g.RowID, b.BoundaryKind, b.BoundaryID
+FROM #ImportGeometry g
+JOIN #Boundary b
+  ON g.MinX <= b.MaxX AND g.MaxX >= b.MinX
+ AND g.MinY <= b.MaxY AND g.MaxY >= b.MinY;
+
 UPDATE ip SET HasGeometry = 1
 FROM #ImportProject ip
 WHERE EXISTS (SELECT 1 FROM #ImportGeometry g WHERE g.ProjectID = ip.ProjectID);
@@ -1279,19 +1420,25 @@ DELETE pr  FROM dbo.ProjectRegion pr            JOIN #ImportProject ip ON ip.Pro
 DELETE ppl FROM dbo.ProjectPriorityLandscape ppl JOIN #ImportProject ip ON ip.ProjectID = ppl.ProjectID;
 
 INSERT INTO dbo.ProjectCounty (ProjectID, CountyID)
-SELECT DISTINCT g.ProjectID, c.CountyID
-FROM #ImportGeometry g CROSS JOIN dbo.County c
-WHERE c.CountyFeature.STIntersects(g.Shape) = 1;
+SELECT DISTINCT g.ProjectID, b.BoundaryID
+FROM #Candidate cand
+JOIN #ImportGeometry g ON g.RowID = cand.RowID
+JOIN #Boundary b ON b.BoundaryKind = cand.BoundaryKind AND b.BoundaryID = cand.BoundaryID
+WHERE cand.BoundaryKind = 1 AND b.Shape.STIntersects(g.Shape) = 1;
 
 INSERT INTO dbo.ProjectRegion (ProjectID, DNRUplandRegionID)
-SELECT DISTINCT g.ProjectID, r.DNRUplandRegionID
-FROM #ImportGeometry g CROSS JOIN dbo.DNRUplandRegion r
-WHERE r.DNRUplandRegionLocation.STIntersects(g.Shape) = 1;
+SELECT DISTINCT g.ProjectID, b.BoundaryID
+FROM #Candidate cand
+JOIN #ImportGeometry g ON g.RowID = cand.RowID
+JOIN #Boundary b ON b.BoundaryKind = cand.BoundaryKind AND b.BoundaryID = cand.BoundaryID
+WHERE cand.BoundaryKind = 2 AND b.Shape.STIntersects(g.Shape) = 1;
 
 INSERT INTO dbo.ProjectPriorityLandscape (ProjectID, PriorityLandscapeID)
-SELECT DISTINCT g.ProjectID, pl.PriorityLandscapeID
-FROM #ImportGeometry g CROSS JOIN dbo.PriorityLandscape pl
-WHERE pl.PriorityLandscapeLocation.STIntersects(g.Shape) = 1;
+SELECT DISTINCT g.ProjectID, b.BoundaryID
+FROM #Candidate cand
+JOIN #ImportGeometry g ON g.RowID = cand.RowID
+JOIN #Boundary b ON b.BoundaryKind = cand.BoundaryKind AND b.BoundaryID = cand.BoundaryID
+WHERE cand.BoundaryKind = 3 AND b.Shape.STIntersects(g.Shape) = 1;
 
 -- Explanations. Two cases because the per-project version treats them differently: with geometry it
 -- ASSIGNS (the string when nothing intersected, NULL when something did); with no geometry at all it
@@ -1310,6 +1457,8 @@ UPDATE p SET
 FROM dbo.Project p JOIN #ImportProject ip ON ip.ProjectID = p.ProjectID
 WHERE ip.HasGeometry = 0;
 
+DROP TABLE #Candidate;
+DROP TABLE #Boundary;
 DROP TABLE #ImportGeometry;
 DROP TABLE #ImportProject;
 ";
@@ -1757,32 +1906,36 @@ DROP TABLE #ImportProject;
         var anyChanged = false;
         foreach (var project in projects)
         {
+            // Only fill an unset simple location. This runs for every project the attempt touched,
+            // not just newly-created ones, so overwriting unconditionally would replace a point a
+            // steward positioned by hand with the computed centroid on every nightly run. Checked
+            // before the union so the union only runs for projects that will actually use it.
+            if (project.ProjectLocationSimpleTypeID != (int)ProjectLocationSimpleTypeEnum.None
+                && project.ProjectLocationPoint != null)
+            {
+                continue;
+            }
+
             if (!geometriesByProjectID.TryGetValue(project.ProjectID, out var geometries) || geometries.Count == 0)
             {
                 continue;
             }
 
             // Union then centroid, matching the proc's geometry::UnionAggregate(...).STCentroid().
-            var combined = geometries[0];
-            for (var i = 1; i < geometries.Count; i++)
-            {
-                combined = combined.Union(geometries[i]);
-            }
+            // OverlayNGRobust rather than Geometry.Union: the legacy overlay throws TopologyException
+            // ("found non-noded intersection") on valid polygons whose edges meet at a nearly
+            // coincident vertex, which USFS NEPA boundaries do. OverlayNGRobust falls back through
+            // snapping and snap-rounding instead of failing the import.
+            var combined = geometries.Count == 1
+                ? geometries[0]
+                : OverlayNGRobust.Union(geometries);
 
             var centroid = combined?.Centroid;
             if (centroid == null || centroid.IsEmpty)
             {
                 continue;
             }
-
-            // Only fill an unset simple location. This runs for every project the attempt touched,
-            // not just newly-created ones, so overwriting unconditionally would replace a point a
-            // steward positioned by hand with the computed centroid on every nightly run.
-            if (project.ProjectLocationSimpleTypeID != (int)ProjectLocationSimpleTypeEnum.None
-                && project.ProjectLocationPoint != null)
-            {
-                continue;
-            }
+            centroid.SRID = geometries[0].SRID;
 
             project.ProjectLocationPoint = centroid;
             project.ProjectLocationSimpleTypeID = (int)ProjectLocationSimpleTypeEnum.PointOnMap;
@@ -2127,7 +2280,8 @@ DROP TABLE #ImportProject;
     /// CreateGisUploadAttemptID, so this covers projects created *and* updated by this attempt.
     /// </summary>
     private static async Task ApplyProjectTypeFromTreatmentTypesAsync(
-        WADNRDbContext dbContext, GisUploadSourceOrganization sourceOrg, int gisUploadAttemptID)
+        WADNRDbContext dbContext, GisUploadSourceOrganization sourceOrg, int gisUploadAttemptID,
+        int auditPersonID, DateTime auditDate)
     {
         if (!sourceOrg.AdjustProjectTypeBasedOnTreatmentTypes)
         {
@@ -2179,6 +2333,12 @@ DROP TABLE #ImportProject;
             .GroupBy(t => t.ProjectID)
             .ToDictionary(g => g.Key, g => g.Select(t => t.TreatmentTypeID).ToList());
 
+        var projectTypeNamesByID = projectTypeIDsByName
+            .GroupBy(kvp => kvp.Value)
+            .ToDictionary(g => g.Key, g => g.First().Key);
+        string ProjectTypeNameOrID(int projectTypeID) =>
+            projectTypeNamesByID.TryGetValue(projectTypeID, out var name) ? name : projectTypeID.ToString();
+
         var anyChanged = false;
         foreach (var project in projects)
         {
@@ -2193,6 +2353,23 @@ DROP TABLE #ImportProject;
             {
                 continue;
             }
+
+            // ProjectType is a database table rather than a static lookup, so AuditLogHelper can't
+            // name it; describe the change here from the names already loaded.
+            var originalProjectTypeID = project.ProjectTypeID;
+            dbContext.AuditLogs.Add(new AuditLog
+            {
+                PersonID = auditPersonID,
+                AuditLogDate = auditDate,
+                AuditLogEventTypeID = AuditLogEventType.Modified.AuditLogEventTypeID,
+                TableName = "Project",
+                RecordID = project.ProjectID,
+                ColumnName = nameof(Project.ProjectTypeID),
+                OriginalValue = originalProjectTypeID.ToString(),
+                NewValue = derivedProjectTypeID.ToString(),
+                AuditDescription = $"Project Type: {ProjectTypeNameOrID(originalProjectTypeID)} changed to {ProjectTypeNameOrID(derivedProjectTypeID)}",
+                ProjectID = project.ProjectID
+            });
 
             project.ProjectTypeID = derivedProjectTypeID;
             anyChanged = true;

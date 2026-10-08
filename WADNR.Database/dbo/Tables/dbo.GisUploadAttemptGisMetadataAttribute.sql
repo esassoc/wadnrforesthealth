@@ -5,3 +5,5 @@ CREATE TABLE [dbo].[GisUploadAttemptGisMetadataAttribute](
     [SortOrder] [int] NOT NULL
 )
 GO
+CREATE NONCLUSTERED INDEX [IX_GisUploadAttemptGisMetadataAttribute_GisUploadAttemptID] ON [dbo].[GisUploadAttemptGisMetadataAttribute]([GisUploadAttemptID])
+GO

@@ -227,6 +227,12 @@ public static class AuditLogHelper
                     id => ProjectStage.AllLookupDictionary.TryGetValue(id, out var stage) ? stage.ProjectStageDisplayName : null,
                     eventType);
 
+            case "ProjectApprovalStatusID":
+                return ResolveLookupDescription("Approval Status",
+                    originalValue as int?, currentValue as int?,
+                    id => ProjectApprovalStatus.AllLookupDictionary.TryGetValue(id, out var status) ? status.ProjectApprovalStatusDisplayName : null,
+                    eventType);
+
             case "ProjectImageTimingID":
                 return ResolveLookupDescription("Image Timing",
                     originalValue as int?, currentValue as int?,

@@ -54,7 +54,6 @@ public static class FundSourceProjections
 
         // Counts
         AllocationCount = x.FundSourceAllocations.Count,
-        AgreementCount = x.FundSourceAllocations.SelectMany(a => a.AgreementFundSourceAllocations).Select(a => a.AgreementID).Distinct().Count(),
         ProjectCount = x.FundSourceAllocations.SelectMany(a => a.ProjectFundSourceAllocationRequests).Select(p => p.ProjectID).Distinct().Count(),
         FileCount = x.FundSourceFileResources.Count,
         NoteCount = x.FundSourceNotes.Count,

@@ -28,7 +28,6 @@ public static class PersonProjections
         AddedByPersonName = x.AddedByPerson != null ? x.AddedByPerson.FirstName + " " + x.AddedByPerson.LastName : null,
         PrimaryContactOrganizationCount = x.Organizations.Count,
         ProjectCount = x.ProjectPeople.Count,
-        AgreementCount = x.AgreementPeople.Count,
         InteractionEventCount = x.InteractionEventContacts.Count,
         PrimaryContactOrganizations = x.Organizations.Select(o => new OrganizationLookupItemWithShortName
         {

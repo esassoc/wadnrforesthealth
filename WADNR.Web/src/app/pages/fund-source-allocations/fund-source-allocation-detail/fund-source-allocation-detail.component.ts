@@ -29,7 +29,6 @@ import { FundSourceAllocationNoteInternalService } from "src/app/shared/generate
 import { FundSourceAllocationDetail } from "src/app/shared/generated/model/fund-source-allocation-detail";
 import { FundSourceAllocationBudgetLineItemGridRow } from "src/app/shared/generated/model/fund-source-allocation-budget-line-item-grid-row";
 import { FundSourceAllocationProjectGridRow } from "src/app/shared/generated/model/fund-source-allocation-project-grid-row";
-import { FundSourceAllocationAgreementGridRow } from "src/app/shared/generated/model/fund-source-allocation-agreement-grid-row";
 import { FundSourceAllocationChangeLogGridRow } from "src/app/shared/generated/model/fund-source-allocation-change-log-grid-row";
 import { FundSourceAllocationNoteGridRow } from "src/app/shared/generated/model/fund-source-allocation-note-grid-row";
 import { FundSourceAllocationNoteInternalGridRow } from "src/app/shared/generated/model/fund-source-allocation-note-internal-grid-row";
@@ -70,7 +69,6 @@ export class FundSourceAllocationDetailComponent {
     public fundSourceAllocation$: Observable<FundSourceAllocationDetail>;
     public budgetLineItems$: Observable<FundSourceAllocationBudgetLineItemGridRow[]>;
     public projects$: Observable<FundSourceAllocationProjectGridRow[]>;
-    public agreements$: Observable<FundSourceAllocationAgreementGridRow[]>;
     public changeLogs$: Observable<FundSourceAllocationChangeLogGridRow[]>;
     public notes$: Observable<FundSourceAllocationNoteGridRow[]>;
     public internalNotes$: Observable<FundSourceAllocationNoteInternalGridRow[]>;
@@ -82,7 +80,6 @@ export class FundSourceAllocationDetailComponent {
 
     public budgetLineItemsIsLoading$: Observable<boolean>;
     public projectsIsLoading$: Observable<boolean>;
-    public agreementsIsLoading$: Observable<boolean>;
     public expendituresIsLoading$: Observable<boolean>;
     public filesIsLoading$: Observable<boolean>;
     public expenditureSummaryIsLoading$: Observable<boolean>;
@@ -140,11 +137,6 @@ export class FundSourceAllocationDetailComponent {
 
         this.projects$ = this.fundSourceAllocationID$.pipe(
             switchMap((id) => this.fundSourceAllocationService.listProjectsFundSourceAllocation(id)),
-            shareReplay({ bufferSize: 1, refCount: true })
-        );
-
-        this.agreements$ = this.fundSourceAllocationID$.pipe(
-            switchMap((id) => this.fundSourceAllocationService.listAgreementsFundSourceAllocation(id)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -214,7 +206,6 @@ export class FundSourceAllocationDetailComponent {
 
         this.budgetLineItemsIsLoading$ = toLoadingState(this.budgetLineItems$);
         this.projectsIsLoading$ = toLoadingState(this.projects$);
-        this.agreementsIsLoading$ = toLoadingState(this.agreements$);
         this.expendituresIsLoading$ = toLoadingState(this.expenditures$);
         this.filesIsLoading$ = toLoadingState(this.files$);
         this.expenditureSummaryIsLoading$ = toLoadingState(this.expenditureSummary$);

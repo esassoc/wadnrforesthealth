@@ -81,9 +81,6 @@ public partial class Person
     public virtual Person? AddedByPerson { get; set; }
 
     [InverseProperty("Person")]
-    public virtual ICollection<AgreementPerson> AgreementPeople { get; set; } = new List<AgreementPerson>();
-
-    [InverseProperty("Person")]
     public virtual ICollection<AuditLog> AuditLogs { get; set; } = new List<AuditLog>();
 
     [InverseProperty("DNRUplandRegionCoordinator")]

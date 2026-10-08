@@ -45,9 +45,6 @@ public partial class Organization
     public bool IsEditable { get; set; }
 
     [InverseProperty("Organization")]
-    public virtual ICollection<Agreement> Agreements { get; set; } = new List<Agreement>();
-
-    [InverseProperty("Organization")]
     public virtual ICollection<FundSourceAllocation> FundSourceAllocations { get; set; } = new List<FundSourceAllocation>();
 
     [InverseProperty("Organization")]

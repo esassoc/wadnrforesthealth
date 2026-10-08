@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
+using NetTopologySuite.Operation.OverlayNG;
 using WADNR.Common.GeoSpatial;
 using WADNR.EFModels.Workflows;
 using WADNR.Models.DataTransferObjects;
@@ -662,8 +663,11 @@ public static class ProjectCreateWorkflowSteps
             return;
         }
 
-        // Create union of all geometries for intersection queries
-        var combinedGeometry = geometries.Count == 1 ? geometries[0] : new GeometryCollection(geometries.ToArray()).Union();
+        // Create union of all geometries for intersection queries. OverlayNGRobust rather than
+        // GeometryCollection.Union: the legacy overlay throws TopologyException ("found non-noded
+        // intersection") on valid polygons that meet at a nearly coincident vertex.
+        var combinedGeometry = geometries.Count == 1 ? geometries[0] : OverlayNGRobust.Union(geometries);
+        combinedGeometry.SRID = geometries[0].SRID;
 
         // Find intersecting priority landscapes
         var priorityLandscapeIDs = await dbContext.PriorityLandscapes

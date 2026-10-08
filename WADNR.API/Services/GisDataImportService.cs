@@ -187,18 +187,12 @@ public class GisDataImportService(
     private async Task ProcessAndImportFeaturesAsync(List<JsonElement> esriFeatures,
         GisUploadSourceOrganization sourceOrg, int orgID)
     {
-        // Get system user (PersonID = 1 by convention)
-        var systemPersonID = await dbContext.People
-            .Where(x => x.IsActive)
-            .OrderBy(x => x.PersonID)
-            .Select(x => x.PersonID)
-            .FirstAsync();
-
-        // Create GisUploadAttempt
+        // Create GisUploadAttempt, attributed (along with the Audit Log rows the import writes) to the
+        // System User, as legacy did.
         var gisAttempt = new GisUploadAttempt
         {
             GisUploadSourceOrganizationID = orgID,
-            GisUploadAttemptCreatePersonID = systemPersonID,
+            GisUploadAttemptCreatePersonID = Person.SystemPersonID,
             GisUploadAttemptCreateDate = DateTime.UtcNow
         };
         dbContext.GisUploadAttempts.Add(gisAttempt);

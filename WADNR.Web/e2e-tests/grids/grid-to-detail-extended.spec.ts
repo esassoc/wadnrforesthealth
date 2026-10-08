@@ -5,15 +5,6 @@ import { testUsers } from "../fixtures/test-users";
 import { testData } from "../fixtures/test-data";
 
 test.describe("Extended grid-to-detail navigation", () => {
-    test("Agreements grid links to agreement detail", async ({ authedPage: page }) => {
-        await page.goto("/agreements");
-        await expect(page.locator(".ag-row").first()).toBeVisible({ timeout: 30000 });
-        const firstLink = page.locator(".ag-row .ag-cell a[href*='/agreements/']").first();
-        await firstLink.click();
-        await expect(page).toHaveURL(/\/agreements\/\d+/);
-        await expect(page.locator(".card").first()).toBeVisible({ timeout: 15000 });
-    });
-
     test("Classification systems grid links to classification system detail", async ({ authedPage: page }) => {
         await page.goto("/classification-systems");
         await expect(page.locator(".ag-row").first()).toBeVisible({ timeout: 30000 });

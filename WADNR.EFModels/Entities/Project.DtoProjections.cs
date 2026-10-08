@@ -159,16 +159,6 @@ public static class ProjectProjections
             })
             .ToList(),
 
-        // Associated Agreements
-        Agreements = x.AgreementProjects
-            .Select(ap => new AgreementLookupItem
-            {
-                AgreementID = ap.Agreement.AgreementID,
-                AgreementTitle = ap.Agreement.AgreementTitle ?? string.Empty,
-                AgreementNumber = ap.Agreement.AgreementNumber
-            })
-            .ToList(),
-
         // Location
         HasLocationData = x.ProjectLocationPoint != null || x.ProjectLocations.Any(),
         Latitude = x.ProjectLocationPoint != null ? x.ProjectLocationPoint.Coordinate.Y : (double?)null,

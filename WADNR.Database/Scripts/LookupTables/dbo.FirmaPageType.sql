@@ -27,7 +27,6 @@ using (values
 (57, 'FullFundSourceAllocationList', 'Full Fund Source Allocation List', 1),
 (58, 'RegionsList', 'Regions List', 1),
 (59, 'PriorityLandscapesList', 'Priority Landscapes List', 1),
-(60, 'FullAgreementList', 'Full Agreement List', 1),
 (62, 'InteractionEventList', 'Interaction/Event List', 1),
 (63, 'GisUploadAttemptInstructions', 'GIS Upload Attempt Instructions', 1),
 (65, 'ProgramsList', 'Programs List', 1),

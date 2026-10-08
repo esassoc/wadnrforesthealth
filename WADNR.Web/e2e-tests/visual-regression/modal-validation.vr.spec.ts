@@ -46,19 +46,6 @@ test.describe("Modal validation states - visual regression", () => {
         await expect(page.locator(MODAL_SELECTOR)).toHaveScreenshot("validation-map-layer.png", MODAL_SCREENSHOT_OPTIONS);
     });
 
-    test("Agreement - validation errors", async ({ page }) => {
-        await page.goto("/agreements");
-        await waitForPageStable(page);
-        const createBtn = page.locator("button", { hasText: "Create New" });
-        if (await createBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
-            await createBtn.click();
-            await waitForModalStable(page);
-            await clickModalSave(page);
-            await expectValidationErrors(page);
-            await expect(page.locator(MODAL_SELECTOR)).toHaveScreenshot("validation-agreement.png", MODAL_SCREENSHOT_OPTIONS);
-        }
-    });
-
     test("Add contact - validation errors", async ({ page }) => {
         await page.goto("/people");
         await waitForPageStable(page);

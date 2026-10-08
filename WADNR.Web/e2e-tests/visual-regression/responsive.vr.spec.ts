@@ -51,17 +51,6 @@ for (const viewport of responsiveViewports) {
             });
         });
 
-        test(`Agreements - ${viewport.name}`, async ({ page }) => {
-            await setupTestAuth(page, testUsers.admin);
-            await page.goto("/agreements");
-            await waitForPageStable(page);
-            await waitForGrid(page);
-            await expect(page).toHaveScreenshot(`responsive-agreements-${viewport.name}.png`, {
-                ...DEFAULT_SCREENSHOT_OPTIONS,
-                mask: getGridBodyMasks(page),
-            });
-        });
-
         test(`Workflow basics - ${viewport.name}`, async ({ page }) => {
             await setupTestAuth(page, testUsers.admin);
             await page.goto(`/projects/edit/${testData.projectID}/basics`);
