@@ -5,7 +5,7 @@ import { FormsModule } from "@angular/forms";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { RouterLink } from "@angular/router";
 import { DialogService } from "@ngneat/dialog";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, of, shareReplay, startWith, Subject, switchMap } from "rxjs";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, of, shareReplay, startWith, Subject, switchMap, take } from "rxjs";
 import { ColDef } from "ag-grid-community";
 import { EditorComponent, TINYMCE_SCRIPT_SRC } from "@tinymce/tinymce-angular";
 import { environment } from "src/environments/environment";
@@ -44,6 +44,7 @@ import { FundSourceProjectGridRow } from "src/app/shared/generated/model/fund-so
 import { FundSourceFileResourceGridRow } from "src/app/shared/generated/model/fund-source-file-resource-grid-row";
 import { FundSourceNoteGridRow } from "src/app/shared/generated/model/fund-source-note-grid-row";
 import { FundSourceNoteInternalGridRow } from "src/app/shared/generated/model/fund-source-note-internal-grid-row";
+import { FundSourceExternalLinkGridRow } from "src/app/shared/generated/model/fund-source-external-link-grid-row";
 import { IFeature } from "src/app/shared/generated/model/i-feature";
 import { FieldDefinitionEnum, FieldDefinitions } from "src/app/shared/generated/enum/field-definition-enum";
 import { FundSourceImageService } from "src/app/shared/generated/api/fund-source-image.service";
@@ -87,6 +88,7 @@ export class FundSourceDetailComponent implements AfterViewChecked {
 
     private _fundSourceID$ = new BehaviorSubject<number | null>(null);
     private refreshData$ = new Subject<void>();
+    private refreshExternalLinks$ = new Subject<void>();
     private destroyRef = inject(DestroyRef);
 
     public fundSourceID$: Observable<number>;
@@ -98,6 +100,7 @@ export class FundSourceDetailComponent implements AfterViewChecked {
     public photoItems$: Observable<ImageGalleryItem[]>;
     public notes$: Observable<FundSourceNoteGridRow[]>;
     public internalNotes$: Observable<FundSourceNoteInternalGridRow[]>;
+    public externalLinks$: Observable<FundSourceExternalLinkGridRow[]>;
 
     public allocationColumnDefs: ColDef<FundSourceAllocationGridRow>[] = [];
     public projectColumnDefs: ColDef<FundSourceProjectGridRow>[] = [];
@@ -227,6 +230,11 @@ export class FundSourceDetailComponent implements AfterViewChecked {
                 ? this.fundSourceService.listInternalNotesFundSource(id)
                 : of([] as FundSourceNoteInternalGridRow[])
             ),
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
+
+        this.externalLinks$ = combineLatest([this.fundSourceID$, this.refreshExternalLinks$.pipe(startWith(undefined))]).pipe(
+            switchMap(([id]) => this.fundSourceService.listExternalLinksFundSource(id)),
             shareReplay({ bufferSize: 1, refCount: true })
         );
 
@@ -482,6 +490,20 @@ export class FundSourceDetailComponent implements AfterViewChecked {
             });
             dialogRef.afterClosed$.subscribe((result) => {
                 if (result) this.refreshData$.next();
+            });
+        });
+    }
+
+    openEditExternalLinksModal(fundSourceID: number): void {
+        this.externalLinks$.pipe(take(1)).subscribe((existingLinks) => {
+            import("./fund-source-external-link-editor-modal.component").then(({ FundSourceExternalLinkEditorModalComponent }) => {
+                const dialogRef = this.dialogService.open(FundSourceExternalLinkEditorModalComponent, {
+                    data: { fundSourceID, existingLinks },
+                    width: "700px",
+                });
+                dialogRef.afterClosed$.subscribe((result) => {
+                    if (result) this.refreshExternalLinks$.next();
+                });
             });
         });
     }

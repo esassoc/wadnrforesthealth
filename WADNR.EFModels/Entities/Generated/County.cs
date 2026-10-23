@@ -9,6 +9,7 @@ namespace WADNR.EFModels.Entities;
 
 [Table("County")]
 [Index("CountyName", "StateProvinceID", Name = "AK_County_CountyName_StateProvinceID", IsUnique = true)]
+[Index("CountyFeature", Name = "SPATIAL_County_CountyFeature")]
 public partial class County
 {
     [StringLength(100)]

@@ -394,6 +394,35 @@
             </div>
         </div>
     </div>
+
+    <!-- External Links -->
+    <div class="g-col-12">
+        <div class="card">
+            <div class="card-header flex-between">
+                <span class="card-title">External Links</span>
+                @if (canManageFundSources$ | async) {
+                    <button class="card-header-edit-link" (click)="openEditExternalLinksModal(fundSource.FundSourceID)" [attr.aria-label]="'Edit External Links'" title="Edit External Links">
+                        <icon icon="Edit" aria-hidden="true"></icon>
+                    </button>
+                }
+            </div>
+            <div class="card-body">
+                @if (externalLinks$ | async; as externalLinks) {
+                    @if (externalLinks.length > 0) {
+                        <ul class="fund-source-detail__external-links-list">
+                            @for (link of externalLinks; track link.FundSourceExternalLinkID) {
+                                <li>
+                                    <a [href]="link.ExternalLinkUrl" target="_blank" rel="noopener noreferrer">{{ link.ExternalLinkLabel }}</a>
+                                </li>
+                            }
+                        </ul>
+                    } @else {
+                        <p class="text-muted mb-0">No external links for this fund source.</p>
+                    }
+                }
+            </div>
+        </div>
+    </div>
 </div>
 } @else {
     <div [loadingSpinner]="{ isLoading: true, loadingHeight: 200 }"></div>

@@ -9,6 +9,7 @@ namespace WADNR.EFModels.Entities;
 
 [Table("DNRUplandRegion")]
 [Index("DNRUplandRegionName", Name = "AK_DNRUplandRegion_DNRUplandRegionName", IsUnique = true)]
+[Index("DNRUplandRegionLocation", Name = "SPATIAL_DNRUplandRegion_DNRUplandRegionLocation")]
 public partial class DNRUplandRegion
 {
     [Key]

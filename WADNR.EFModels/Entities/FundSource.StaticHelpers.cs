@@ -152,6 +152,9 @@ public static class FundSources
         await dbContext.FundSourceFileResources
             .Where(x => x.FundSourceID == fundSourceID)
             .ExecuteDeleteAsync();
+        await dbContext.FundSourceExternalLinks
+            .Where(x => x.FundSourceID == fundSourceID)
+            .ExecuteDeleteAsync();
 
         var deletedCount = await dbContext.FundSources
             .Where(x => x.FundSourceID == fundSourceID)

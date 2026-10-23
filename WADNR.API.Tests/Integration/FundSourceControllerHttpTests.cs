@@ -71,6 +71,8 @@ public class FundSourceControllerHttpTests
                     $"DELETE FROM dbo.FundSourceAllocation WHERE FundSourceAllocationID = {allocationID}");
             }
             await AssemblySteps.DbContext.Database.ExecuteSqlInterpolatedAsync(
+                $"DELETE FROM dbo.FundSourceExternalLink WHERE FundSourceID IN ({_testFundSourceID}, {_otherFundSourceID})");
+            await AssemblySteps.DbContext.Database.ExecuteSqlInterpolatedAsync(
                 $"DELETE FROM dbo.FundSource WHERE FundSourceID IN ({_testFundSourceID}, {_otherFundSourceID})");
             await OrganizationHelper.DeleteOrganizationAsync(AssemblySteps.DbContext, _testOrganizationID);
         }
@@ -215,4 +217,130 @@ public class FundSourceControllerHttpTests
         Assert.IsTrue(result.StatusCode == HttpStatusCode.Unauthorized || result.StatusCode == HttpStatusCode.Forbidden,
             $"Expected 401/403 for anonymous edit, got {result.StatusCode}");
     }
+
+    #region External Links
+
+    private static FundSourceExternalLinkSaveRequest LinksRequest(params (int? id, string label, string url)[] links)
+    {
+        return new FundSourceExternalLinkSaveRequest
+        {
+            ExternalLinks = links.Select(l => new FundSourceExternalLinkItemRequest
+            {
+                FundSourceExternalLinkID = l.id,
+                ExternalLinkLabel = l.label,
+                ExternalLinkUrl = l.url
+            }).ToList()
+        };
+    }
+
+    private async Task<List<FundSourceExternalLinkGridRow>> SaveLinksAsAdminAsync(FundSourceExternalLinkSaveRequest request)
+    {
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.SaveAllExternalLinks(_testFundSourceID, null));
+        var result = await AssemblySteps.AdminHttpClient.PutAsJsonAsync(route, request);
+        Assert.IsTrue(result.IsSuccessStatusCode, $"Route: {route}\n{await result.Content.ReadAsStringAsync()}");
+        return await result.DeserializeContentAsync<List<FundSourceExternalLinkGridRow>>();
+    }
+
+    [TestMethod]
+    public async Task ListExternalLinks_Returns200SortedByLabel_WhenAnonymous()
+    {
+        await SaveLinksAsAdminAsync(LinksRequest(
+            (null, "Zebra", "https://example.com/z"),
+            (null, "Alpha", "https://example.com/a")));
+
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.ListExternalLinks(_testFundSourceID));
+        var result = await AssemblySteps.UnauthenticatedHttpClient.GetAsync(route);
+
+        Assert.IsTrue(result.IsSuccessStatusCode, $"External links should allow anonymous access. Route: {route}, Status: {result.StatusCode}");
+        var rows = await result.DeserializeContentAsync<List<FundSourceExternalLinkGridRow>>();
+        CollectionAssert.AreEqual(new[] { "Alpha", "Zebra" }, rows.Select(r => r.ExternalLinkLabel).ToArray());
+    }
+
+    [TestMethod]
+    public async Task ListExternalLinks_Returns404_WhenFundSourceMissing()
+    {
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.ListExternalLinks(-1));
+        var result = await AssemblySteps.UnauthenticatedHttpClient.GetAsync(route);
+
+        Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
+    }
+
+    [TestMethod]
+    public async Task SaveAllExternalLinks_Returns200AndPersists_WhenAdmin()
+    {
+        var saved = await SaveLinksAsAdminAsync(LinksRequest(
+            (null, "Keep", "https://example.com/keep"),
+            (null, "Remove", "https://example.com/remove")));
+        Assert.AreEqual(2, saved.Count);
+
+        var keep = saved.Single(l => l.ExternalLinkLabel == "Keep");
+        var updated = await SaveLinksAsAdminAsync(LinksRequest(
+            (keep.FundSourceExternalLinkID, "Kept", "https://example.com/kept"),
+            (null, "Added", "https://example.com/added")));
+
+        CollectionAssert.AreEqual(new[] { "Added", "Kept" }, updated.Select(l => l.ExternalLinkLabel).ToArray());
+        Assert.AreEqual(keep.FundSourceExternalLinkID, updated.Single(l => l.ExternalLinkLabel == "Kept").FundSourceExternalLinkID);
+        Assert.AreEqual(0, await AssemblySteps.DbContext.FundSourceExternalLinks.CountAsync(l => l.ExternalLinkLabel == "Remove" && l.FundSourceID == _testFundSourceID));
+        Assert.AreEqual(0, await AssemblySteps.DbContext.FundSourceExternalLinks.CountAsync(l => l.FundSourceID == _otherFundSourceID));
+    }
+
+    [TestMethod]
+    public async Task SaveAllExternalLinks_PrefixesHttps_WhenSchemeMissing()
+    {
+        var saved = await SaveLinksAsAdminAsync(LinksRequest(
+            (null, "No Scheme", "  example.com/page  "),
+            (null, "Http", "http://example.com/http")));
+
+        Assert.AreEqual("https://example.com/page", saved.Single(l => l.ExternalLinkLabel == "No Scheme").ExternalLinkUrl);
+        Assert.AreEqual("http://example.com/http", saved.Single(l => l.ExternalLinkLabel == "Http").ExternalLinkUrl);
+    }
+
+    [TestMethod]
+    public async Task SaveAllExternalLinks_Returns400AndSavesNothing_WhenLabelOrUrlBlank()
+    {
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.SaveAllExternalLinks(_testFundSourceID, null));
+
+        var blankLabel = await AssemblySteps.AdminHttpClient.PutAsJsonAsync(route,
+            LinksRequest((null, "Valid", "https://example.com"), (null, "   ", "https://example.com/blank")));
+        var blankUrl = await AssemblySteps.AdminHttpClient.PutAsJsonAsync(route,
+            LinksRequest((null, "Valid", "https://example.com"), (null, "Blank Url", "   ")));
+
+        Assert.AreEqual(HttpStatusCode.BadRequest, blankLabel.StatusCode);
+        Assert.AreEqual(HttpStatusCode.BadRequest, blankUrl.StatusCode);
+        Assert.AreEqual(0, await AssemblySteps.DbContext.FundSourceExternalLinks.CountAsync(l => l.FundSourceID == _testFundSourceID));
+    }
+
+    [TestMethod]
+    public async Task SaveAllExternalLinks_Returns401Or403_WhenAnonymous()
+    {
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.SaveAllExternalLinks(_testFundSourceID, null));
+        var result = await AssemblySteps.UnauthenticatedHttpClient.PutAsJsonAsync(route,
+            LinksRequest((null, "Nope", "https://example.com")));
+
+        Assert.IsTrue(result.StatusCode == HttpStatusCode.Unauthorized || result.StatusCode == HttpStatusCode.Forbidden,
+            $"Expected 401/403 for anonymous edit, got {result.StatusCode}");
+    }
+
+    [TestMethod]
+    public async Task SaveAllExternalLinks_Returns403_WhenNormalUser()
+    {
+        var route = RouteHelper.GetRouteFor<FundSourceController>(c => c.SaveAllExternalLinks(_testFundSourceID, null));
+        var result = await AssemblySteps.NormalHttpClient.PutAsJsonAsync(route,
+            LinksRequest((null, "Nope", "https://example.com")));
+
+        Assert.AreEqual(HttpStatusCode.Forbidden, result.StatusCode);
+    }
+
+    [TestMethod]
+    public async Task Delete_RemovesExternalLinks_WhenFundSourceHasLinks()
+    {
+        await SaveLinksAsAdminAsync(LinksRequest((null, "Link", "https://example.com")));
+
+        var deleted = await FundSources.DeleteAsync(AssemblySteps.DbContext, _testFundSourceID);
+
+        Assert.IsTrue(deleted);
+        Assert.AreEqual(0, await AssemblySteps.DbContext.FundSourceExternalLinks.CountAsync(l => l.FundSourceID == _testFundSourceID));
+    }
+
+    #endregion
 }

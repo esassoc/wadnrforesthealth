@@ -157,6 +157,9 @@ model/fund-source-allocation-request-update-item.ts
 model/fund-source-allocation-source-lookup-item.ts
 model/fund-source-allocation-upsert-request.ts
 model/fund-source-detail.ts
+model/fund-source-external-link-grid-row.ts
+model/fund-source-external-link-item-request.ts
+model/fund-source-external-link-save-request.ts
 model/fund-source-file-resource-grid-row.ts
 model/fund-source-file-update-request.ts
 model/fund-source-grid-row.ts

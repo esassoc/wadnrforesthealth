@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace WADNR.EFModels.Entities;
 
 [Table("AuditLog")]
+[Index("PersonID", Name = "IX_AuditLog_PersonID")]
 public partial class AuditLog
 {
     [Key]

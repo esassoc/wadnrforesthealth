@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace WADNR.EFModels.Entities;
 
 [Table("ProjectOrganization")]
+[Index("ProjectID", Name = "IX_ProjectOrganization_ProjectID")]
 public partial class ProjectOrganization
 {
     [Key]

@@ -3804,6 +3804,124 @@
         }
       }
     },
+    "/fund-sources/{fundSourceID}/external-links": {
+      "get": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "ListExternalLinks_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceExternalLinkGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceExternalLinkGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceExternalLinkGridRow"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-anonymous": true
+      },
+      "put": {
+        "tags": [
+          "FundSource"
+        ],
+        "operationId": "SaveAllExternalLinks_FundSource",
+        "parameters": [
+          {
+            "name": "fundSourceID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceExternalLinkSaveRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceExternalLinkSaveRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundSourceExternalLinkSaveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceExternalLinkGridRow"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceExternalLinkGridRow"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FundSourceExternalLinkGridRow"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/fund-sources/{fundSourceID}/files/{fundSourceFileResourceID}": {
       "put": {
         "tags": [
@@ -25416,6 +25534,62 @@
           "InternalNoteCount": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceExternalLinkGridRow": {
+        "type": "object",
+        "properties": {
+          "FundSourceExternalLinkID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ExternalLinkLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "ExternalLinkUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceExternalLinkItemRequest": {
+        "required": [
+          "ExternalLinkLabel",
+          "ExternalLinkUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "FundSourceExternalLinkID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ExternalLinkLabel": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "ExternalLinkUrl": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FundSourceExternalLinkSaveRequest": {
+        "type": "object",
+        "properties": {
+          "ExternalLinks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FundSourceExternalLinkItemRequest"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

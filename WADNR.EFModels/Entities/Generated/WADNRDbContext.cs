@@ -83,6 +83,8 @@ public partial class WADNRDbContext : DbContext
 
     public virtual DbSet<FundSourceAllocationProgramManager> FundSourceAllocationProgramManagers { get; set; }
 
+    public virtual DbSet<FundSourceExternalLink> FundSourceExternalLinks { get; set; }
+
     public virtual DbSet<FundSourceFileResource> FundSourceFileResources { get; set; }
 
     public virtual DbSet<FundSourceImage> FundSourceImages { get; set; }
@@ -567,6 +569,13 @@ public partial class WADNRDbContext : DbContext
             entity.HasOne(d => d.FundSourceAllocation).WithMany(p => p.FundSourceAllocationProgramManagers).OnDelete(DeleteBehavior.ClientSetNull);
 
             entity.HasOne(d => d.Person).WithMany(p => p.FundSourceAllocationProgramManagers).OnDelete(DeleteBehavior.ClientSetNull);
+        });
+
+        modelBuilder.Entity<FundSourceExternalLink>(entity =>
+        {
+            entity.HasKey(e => e.FundSourceExternalLinkID).HasName("PK_FundSourceExternalLink_FundSourceExternalLinkID");
+
+            entity.HasOne(d => d.FundSource).WithMany(p => p.FundSourceExternalLinks).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<FundSourceFileResource>(entity =>

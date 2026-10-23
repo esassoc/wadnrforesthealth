@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace WADNR.EFModels.Entities;
 
 [Table("FundSourceAllocationExpenditure")]
+[Index("FundSourceAllocationID", Name = "IX_FundSourceAllocationExpenditure_FundSourceAllocationID")]
 public partial class FundSourceAllocationExpenditure
 {
     [Key]

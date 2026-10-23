@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -195,6 +196,49 @@ public class FundSourceController(
     {
         var notes = await FundSources.ListInternalNotesAsync(DbContext, fundSourceID);
         return Ok(notes);
+    }
+
+    [HttpGet("{fundSourceID}/external-links")]
+    [AllowAnonymous]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<ActionResult<IEnumerable<FundSourceExternalLinkGridRow>>> ListExternalLinks([FromRoute] int fundSourceID)
+    {
+        var links = await FundSourceExternalLinks.ListForFundSourceAsGridRowAsync(DbContext, fundSourceID);
+        return Ok(links);
+    }
+
+    [HttpPut("{fundSourceID}/external-links")]
+    [FundSourceManageFeature]
+    [EntityNotFound(typeof(FundSource), "fundSourceID")]
+    public async Task<ActionResult<List<FundSourceExternalLinkGridRow>>> SaveAllExternalLinks(
+        [FromRoute] int fundSourceID,
+        [FromBody] FundSourceExternalLinkSaveRequest request)
+    {
+        foreach (var link in request.ExternalLinks)
+        {
+            if (string.IsNullOrWhiteSpace(link.ExternalLinkLabel))
+            {
+                return BadRequest("Link label is required.");
+            }
+            if (string.IsNullOrWhiteSpace(link.ExternalLinkUrl))
+            {
+                return BadRequest("Link URL is required.");
+            }
+            link.ExternalLinkLabel = link.ExternalLinkLabel.Trim();
+            link.ExternalLinkUrl = link.ExternalLinkUrl.Trim();
+            if (!link.ExternalLinkUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                !link.ExternalLinkUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                link.ExternalLinkUrl = "https://" + link.ExternalLinkUrl;
+            }
+            if (link.ExternalLinkUrl.Length > FundSourceExternalLink.FieldLengths.ExternalLinkUrl)
+            {
+                return BadRequest($"Link URL cannot exceed {FundSourceExternalLink.FieldLengths.ExternalLinkUrl} characters.");
+            }
+        }
+
+        var result = await FundSourceExternalLinks.SaveAllAsync(DbContext, fundSourceID, request);
+        return Ok(result);
     }
 
     // File update/delete

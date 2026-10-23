@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace WADNR.EFModels.Entities;
 
 [Table("GisUploadAttemptGisMetadataAttribute")]
+[Index("GisUploadAttemptID", Name = "IX_GisUploadAttemptGisMetadataAttribute_GisUploadAttemptID")]
 public partial class GisUploadAttemptGisMetadataAttribute
 {
     [Key]

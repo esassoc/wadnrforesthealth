@@ -8,6 +8,7 @@ using NetTopologySuite.Geometries;
 namespace WADNR.EFModels.Entities;
 
 [Table("GisFeature")]
+[Index("GisUploadAttemptID", Name = "IX_GisFeature_GisUploadAttemptID")]
 public partial class GisFeature
 {
     [Key]

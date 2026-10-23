@@ -54,6 +54,9 @@ public partial class FundSource
     public virtual ICollection<FundSourceAllocation> FundSourceAllocations { get; set; } = new List<FundSourceAllocation>();
 
     [InverseProperty("FundSource")]
+    public virtual ICollection<FundSourceExternalLink> FundSourceExternalLinks { get; set; } = new List<FundSourceExternalLink>();
+
+    [InverseProperty("FundSource")]
     public virtual ICollection<FundSourceFileResource> FundSourceFileResources { get; set; } = new List<FundSourceFileResource>();
 
     [InverseProperty("FundSource")]

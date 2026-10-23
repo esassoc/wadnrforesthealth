@@ -54,6 +54,21 @@
         }
     }
 
+    &__external-links-list {
+        list-style: none;
+        padding-left: 0;
+        margin-bottom: 0;
+
+        li {
+            padding: var(--spacing-200) 0;
+            border-bottom: 1px solid var(--gray-200);
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+    }
+
     &__note {
         padding: 8px 0;
 

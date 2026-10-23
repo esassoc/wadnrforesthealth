@@ -21,6 +21,10 @@ import { FundSourceAllocationGridRow } from '../model/fund-source-allocation-gri
 // @ts-ignore
 import { FundSourceDetail } from '../model/fund-source-detail';
 // @ts-ignore
+import { FundSourceExternalLinkGridRow } from '../model/fund-source-external-link-grid-row';
+// @ts-ignore
+import { FundSourceExternalLinkSaveRequest } from '../model/fund-source-external-link-save-request';
+// @ts-ignore
 import { FundSourceFileResourceGridRow } from '../model/fund-source-file-resource-grid-row';
 // @ts-ignore
 import { FundSourceFileUpdateRequest } from '../model/fund-source-file-update-request';
@@ -636,6 +640,61 @@ export class FundSourceService extends BaseService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
+    public listExternalLinksFundSource(fundSourceID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FundSourceExternalLinkGridRow>>;
+    public listExternalLinksFundSource(fundSourceID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FundSourceExternalLinkGridRow>>>;
+    public listExternalLinksFundSource(fundSourceID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FundSourceExternalLinkGridRow>>>;
+    public listExternalLinksFundSource(fundSourceID: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (fundSourceID === null || fundSourceID === undefined) {
+            throw new Error('Required parameter fundSourceID was null or undefined when calling listExternalLinksFundSource.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/external-links`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<FundSourceExternalLinkGridRow>>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param fundSourceID 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
     public listFilesFundSource(fundSourceID: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FundSourceFileResourceGridRow>>;
     public listFilesFundSource(fundSourceID: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FundSourceFileResourceGridRow>>>;
     public listFilesFundSource(fundSourceID: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FundSourceFileResourceGridRow>>>;
@@ -1053,6 +1112,74 @@ export class FundSourceService extends BaseService {
         return this.httpClient.request<Array<FundSourceProjectGridRow>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * @param fundSourceID 
+     * @param fundSourceExternalLinkSaveRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public saveAllExternalLinksFundSource(fundSourceID: number, fundSourceExternalLinkSaveRequest?: FundSourceExternalLinkSaveRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<FundSourceExternalLinkGridRow>>;
+    public saveAllExternalLinksFundSource(fundSourceID: number, fundSourceExternalLinkSaveRequest?: FundSourceExternalLinkSaveRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<FundSourceExternalLinkGridRow>>>;
+    public saveAllExternalLinksFundSource(fundSourceID: number, fundSourceExternalLinkSaveRequest?: FundSourceExternalLinkSaveRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<FundSourceExternalLinkGridRow>>>;
+    public saveAllExternalLinksFundSource(fundSourceID: number, fundSourceExternalLinkSaveRequest?: FundSourceExternalLinkSaveRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (fundSourceID === null || fundSourceID === undefined) {
+            throw new Error('Required parameter fundSourceID was null or undefined when calling saveAllExternalLinksFundSource.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/plain',
+            'application/json',
+            'text/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/fund-sources/${this.configuration.encodeParam({name: "fundSourceID", value: fundSourceID, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/external-links`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<FundSourceExternalLinkGridRow>>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: fundSourceExternalLinkSaveRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
