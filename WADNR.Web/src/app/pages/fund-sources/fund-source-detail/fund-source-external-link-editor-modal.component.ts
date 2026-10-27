@@ -1,6 +1,8 @@
-import { Component, inject, OnInit, signal } from "@angular/core";
+import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DialogRef } from "@ngneat/dialog";
+import { map } from "rxjs";
 
 import { BaseModal } from "src/app/shared/components/modal/base-modal";
 import { ModalAlertsComponent } from "src/app/shared/components/modal/modal-alerts.component";
@@ -102,7 +104,7 @@ export interface FundSourceExternalLinkEditorData {
                 }
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" (click)="save()" [disabled]="isSubmitting()" [buttonLoading]="isSubmitting()">
+                <button class="btn btn-primary" (click)="save()" [disabled]="!canSave()" [buttonLoading]="isSubmitting()">
                     Save
                 </button>
                 <button class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting()">Cancel</button>
@@ -122,6 +124,14 @@ export class FundSourceExternalLinkEditorModalComponent extends BaseModal implem
         linkUrl: new FormControl<string>("", [Validators.required, Validators.maxLength(300)]),
     });
 
+    // Save is enabled only when the list changed or the add form has pending text
+    public listChanged = signal(false);
+    public addFormHasText = toSignal(
+        this.addLinkForm.valueChanges.pipe(map((v) => !!v.linkLabel?.trim() || !!v.linkUrl?.trim())),
+        { initialValue: false }
+    );
+    public canSave = computed(() => !this.isSubmitting() && (this.listChanged() || this.addFormHasText()));
+
     constructor(
         private fundSourceService: FundSourceService,
         private confirmService: ConfirmService,
@@ -135,12 +145,27 @@ export class FundSourceExternalLinkEditorModalComponent extends BaseModal implem
     }
 
     addLink(): void {
+        const pendingLink = this.buildPendingLink();
+        if (pendingLink === "invalid") {
+            return;
+        }
+        if (pendingLink === null) {
+            this.showRequiredError();
+            return;
+        }
+        this.appendLink(pendingLink);
+    }
+
+    // null = add form is empty; "invalid" = partially filled or too long (error already shown)
+    private buildPendingLink(): FundSourceExternalLinkGridRow | null | "invalid" {
         const label = this.addLinkForm.value.linkLabel?.trim() ?? "";
         let url = this.addLinkForm.value.linkUrl?.trim() ?? "";
+        if (!label && !url) {
+            return null;
+        }
         if (this.addLinkForm.invalid || !label || !url) {
-            this.addLinkForm.markAllAsTouched();
-            this.addLocalAlert("Link label and URL are required.", AlertContext.Danger, true);
-            return;
+            this.showRequiredError();
+            return "invalid";
         }
 
         if (!/^https?:\/\//i.test(url)) {
@@ -148,13 +173,22 @@ export class FundSourceExternalLinkEditorModalComponent extends BaseModal implem
         }
 
         // ID 0 marks a new link; save() sends it as null
-        const newLink: FundSourceExternalLinkGridRow = {
+        return {
             FundSourceExternalLinkID: 0,
             ExternalLinkLabel: label,
             ExternalLinkUrl: url,
         };
+    }
 
-        this.externalLinks.update((links) => [...links, newLink]);
+    private showRequiredError(): void {
+        this.addLinkForm.markAllAsTouched();
+        this.localAlerts.set([]);
+        this.addLocalAlert("Link label and URL are required.", AlertContext.Danger, true);
+    }
+
+    private appendLink(link: FundSourceExternalLinkGridRow): void {
+        this.externalLinks.update((links) => [...links, link]);
+        this.listChanged.set(true);
         this.addLinkForm.reset();
         this.localAlerts.set([]);
     }
@@ -172,10 +206,25 @@ export class FundSourceExternalLinkEditorModalComponent extends BaseModal implem
 
         if (confirmed) {
             this.externalLinks.update((links) => links.filter((_, i) => i !== index));
+            this.listChanged.set(true);
         }
     }
 
     save(): void {
+        const pendingLink = this.buildPendingLink();
+        if (pendingLink === "invalid") {
+            return;
+        }
+        if (pendingLink !== null) {
+            this.localAlerts.set([]);
+            this.addLocalAlert(
+                "The link you entered hasn't been added. Click Add to include it, or click Cancel to discard your changes.",
+                AlertContext.Warning,
+                true
+            );
+            return;
+        }
+
         this.isSubmitting.set(true);
         this.localAlerts.set([]);
 
