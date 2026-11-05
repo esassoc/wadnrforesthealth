@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Serilog;
+using Serilog.Formatting.Compact;
 using System.Linq;
 
 namespace WADNR.Web
@@ -116,7 +117,10 @@ namespace WADNR.Web
         private Serilog.ILogger GetSerilogLogger()
         {
             var serilogLogger = new LoggerConfiguration()
-                .ReadFrom.Configuration(Configuration);
+                .MinimumLevel.Warning()
+                .Enrich.FromLogContext()
+                .ReadFrom.Configuration(Configuration)
+                .WriteTo.Console(new RenderedCompactJsonFormatter());
 
             return serilogLogger.CreateLogger();
         }

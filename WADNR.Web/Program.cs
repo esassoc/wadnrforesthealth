@@ -3,6 +3,7 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace WADNR.Web
 {
@@ -16,6 +17,8 @@ namespace WADNR.Web
         public static IWebHost BuildWebHost(string[] args)
         {
             var host = WebHost.CreateDefaultBuilder(args)
+                // Remove the default plain-text console logger; Startup adds Serilog (JSON) instead.
+                .ConfigureLogging(logging => logging.ClearProviders())
                 .UseStartup<Startup>()
                 .UseKestrel(options =>
                 {
