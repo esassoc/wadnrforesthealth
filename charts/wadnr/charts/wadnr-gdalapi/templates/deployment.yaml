@@ -19,6 +19,7 @@ spec:
     metadata:
       annotations:
         ad.datadoghq.com/tags: '{"teamName": "{{ .Values.namespace }}"}'
+        ad.datadoghq.com/{{ .Chart.Name }}.logs: '[{"source": "csharp", "service": "{{ include "gdalapi.fullname" . }}"}]'
         rollme: {{ randAlphaNum 5 | quote }}  # roll deployments on every upgrade: https://helm.sh/docs/howto/charts_tips_and_tricks/#automatically-roll-deployments
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
