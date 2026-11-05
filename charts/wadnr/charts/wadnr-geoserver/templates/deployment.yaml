@@ -24,6 +24,8 @@ spec:
       {{- end }}
       labels:
         {{- include "geoserver.selectorLabels" . | nindent 8 }}
+        tags.datadoghq.com/env: {{ .Values.global.env.name | quote }}
+        tags.datadoghq.com/service: {{ include "geoserver.fullname" . }}
     spec:
       volumes:
       - name: geoserver-data
