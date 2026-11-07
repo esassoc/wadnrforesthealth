@@ -139,8 +139,15 @@ node $S/nuget-license-diff.mjs <scratch>/pkgs-before.json <scratch>/pkgs-after.j
   continue):
   - `Hangfire.*`: LGPL-3.0 open-source edition (dual-licensed with Hangfire's commercial terms). A new
     *major* needs its license re-read.
-  - `ProjNet` / `ProjNET`: LGPL-2.1-or-later. Both casings appear across projects; they're the same
-    package.
+  - `ProjNet`: LGPL-2.1-or-later (referenced only by `WADNR.Common`).
+- **License holds in place** (version-range ceilings; `apply-updates.mjs` leaves them alone):
+  - `PDFsharp` `[6.2.4,6.3)` in `WADNR.API`: 6.5.0 changed from MIT to **AGPL-3.0-only**. Re-check on each
+    run whether a later release returns to MIT.
+- **Security pins in place**: `System.Security.Cryptography.Pkcs` in `WADNR.EFModels` (SqlClient 6.1.x pulls a
+  vulnerable 9.0.x). Bump it with the .NET patch; remove it once SqlClient depends on a patched version.
+- `nuget-license-diff.mjs` compares embedded license files by their **first line only** (Hangfire's is just
+  "License"), so a `bumped` row can hide changed terms. For flagged packages, diff the full file between
+  versions (`unzip -p <nupkg> LICENSE.md`).
 - **`CHANGED`** — read it even when both ends look fine. A *transitive* package moving to a new major
   can change terms (Microsoft has shipped release packages that pull a dependency under "MICROSOFT
   PRE-RELEASE SOFTWARE LICENSE TERMS"). A change can also be an improvement — say so in the commit.
