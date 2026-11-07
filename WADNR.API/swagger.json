@@ -26464,9 +26464,7 @@
           "Factory": {
             "$ref": "#/components/schemas/GeometryFactory"
           },
-          "UserData": {
-            "nullable": true
-          },
+          "UserData": { },
           "SRID": {
             "type": "integer",
             "format": "int32"
@@ -29049,9 +29047,7 @@
           "Factory": {
             "$ref": "#/components/schemas/GeometryFactory"
           },
-          "UserData": {
-            "nullable": true
-          },
+          "UserData": { },
           "SRID": {
             "type": "integer",
             "format": "int32"
