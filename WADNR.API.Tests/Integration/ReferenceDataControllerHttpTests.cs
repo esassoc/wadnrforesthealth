@@ -34,7 +34,7 @@ public class ReferenceDataControllerHttpTests
         Assert.IsTrue(result.IsSuccessStatusCode, $"AllowAnonymous should succeed.\nRoute: {route}");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(1)]
     [DataRow(-1)]
     public async Task CountyGet_ReturnsExpectedStatus(int countyID)

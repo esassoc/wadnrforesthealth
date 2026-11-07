@@ -169,7 +169,7 @@ public class ProgramControllerTests
         };
 
         // Act & Assert - UpdateAsync uses FirstAsync which throws if not found
-        await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
+        await Assert.ThrowsExactlyAsync<InvalidOperationException>(async () =>
             await Programs.UpdateAsync(
                 AssemblySteps.DbContext, 999999, request, AssemblySteps.TestAdminPersonID));
     }

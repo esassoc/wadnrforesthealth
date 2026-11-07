@@ -126,7 +126,7 @@ public class ProtectedControllerHttpTests
         Assert.AreEqual(HttpStatusCode.Forbidden, result.StatusCode);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(1)]
     [DataRow(-1)]
     public async Task RoleGet_ReturnsExpectedStatus(int roleID)

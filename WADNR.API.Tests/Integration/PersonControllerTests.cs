@@ -208,7 +208,7 @@ public class PersonControllerTests
         try
         {
             // Act & Assert
-            await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
+            await Assert.ThrowsExactlyAsync<InvalidOperationException>(async () =>
                 await People.DeleteAsync(AssemblySteps.DbContext, userID));
         }
         finally
