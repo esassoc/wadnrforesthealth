@@ -295,7 +295,11 @@ namespace WADNR.API
             #region Swagger
             // Register swagger middleware and enable the swagger UI which will be 
             // accessible at https://<apihostname>/swagger
-            // NOTE: There is no auth on these endpoints out of the box.
+            // NOTE: These run after UseAuthorization, so the fallback policy (RequireAuthenticatedUser, set in
+            // ConfigureServices) applies: /swagger and /swagger/v1/swagger.json return 401 without a JWT
+            // bearer token. The static WADNR.API/swagger.json used by `npm run gen-model` is generated at build
+            // time by the PostBuild target, not served from here. Scalar (WADNR.Scalar, /docs/) is the public
+            // browsable API reference.
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
