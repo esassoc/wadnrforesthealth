@@ -6,7 +6,8 @@ description: >
   projects, removal of unused packages, then a triaged pass over major versions — with a vulnerability
   scan, a license check of the whole resolved (transitive) graph after every change (catching packages
   that went commercial or pull in pre-release-licensed dependencies), per-package breaking-change
-  review, targeted verification, one commit per package group, and a full-suite gate at the end. Use
+  review, targeted verification, one commit per package group on a new feature branch, and a
+  full-suite gate at the end. Use
   when the user says "update the backend packages", "upgrade NuGet packages", "bump the .NET
   dependencies", "what NuGet majors can we take", or "/upgrade-backend". The frontend counterpart is
   /upgrade-frontend.
@@ -14,10 +15,11 @@ description: >
 
 # Upgrade Backend Packages
 
-Work on the current branch unless the user asks for a new one. Commands run from the repo root in Git
-Bash. There is no central package management — each `.csproj` pins its own versions, so a package
-shared across projects (EF Core, Swashbuckle, Azure.Storage.Blobs, NTS, Serilog) must move to one
-version everywhere. Commit each package group after `/precommit-review`; push only when the user asks.
+All work happens on a new upgrade branch (§0); never commit to `develop` or `main`. Commands run from
+the repo root in Git Bash. There is no central package management — each `.csproj` pins its own
+versions, so a package shared across projects (EF Core, Swashbuckle, Azure.Storage.Blobs, NTS, Serilog)
+must move to one version everywhere. Commit each package group to the upgrade branch after
+`/precommit-review`; push only when the user asks.
 
 Scripts next to this file:
 
@@ -58,6 +60,26 @@ build_all() { for p in WADNR.API.Tests WADNR.GDALAPI WADNR.Scalar WADNR.Web; do 
 ```bash
 for p in $(git ls-files '*.csproj'); do dotnet list "$p" package --vulnerable --include-transitive; done
 ```
+
+## 0 · Branch
+
+Create the upgrade branch before touching anything. Invoking the skill is the request to branch, so
+don't ask first.
+
+```bash
+git status --porcelain        # must be empty; if not, stop and ask the user what to do with the changes
+git fetch origin
+git switch -c feature/upgrade-backend-$(date +%Y-%m-%d) origin/develop
+```
+
+- **Resuming:** if the current branch is already a `feature/upgrade-backend-*` branch from an
+  interrupted run, keep working on it instead of creating another.
+- **Before every commit:** run `git branch --show-current`. If it prints `develop` or `main`, stop
+  and don't commit.
+- **Database baseline:** the §1 baseline tests must run on the branch's starting point. If that means
+  stashing work in progress (as when resuming), clean `WADNR.API.Tests/bin` and `obj` before the run.
+  Otherwise newer test-adapter DLLs left over from a later build load alongside an older framework,
+  and test discovery finds 0 tests.
 
 ## 1 · Baseline
 
@@ -194,6 +216,7 @@ node $S/list-packages.mjs --include-transitive > <scratch>/pkgs-final.json
 node $S/nuget-license-diff.mjs <scratch>/pkgs-before.json <scratch>/pkgs-final.json
 ```
 
-…plus the vulnerability scan. When the user asks for a PR (`gh pr create`), include the upgrades table,
+…plus the vulnerability scan. Push the branch (`git push -u origin <branch>`) only when the user
+asks. When the user asks for a PR (`gh pr create --base develop`), include the upgrades table,
 removals, holds and ceilings (with the reason for each), deferred majors, and any behavior change a
 reviewer should know (serializer output, job behavior, generated client changes).

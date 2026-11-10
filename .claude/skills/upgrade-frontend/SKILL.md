@@ -4,7 +4,8 @@ description: >
   Refresh WADNR.Web's npm dependencies end to end — in-range bumps via npm-check-updates, then a
   triaged pass over available major versions — with a license check on every lockfile change
   (catching packages that went source-available / commercial / GPL), per-package breaking-change
-  review, targeted verification, one commit per package group, and a full gate at the end. Use when
+  review, targeted verification, one commit per package group on a new feature branch, and a full
+  gate at the end. Use when
   the user says "update the frontend packages", "upgrade web dependencies", "bump npm packages",
   "what majors can we take", or "/upgrade-frontend". Frontend only — NuGet (backend) updates are
   /upgrade-backend.
@@ -12,10 +13,10 @@ description: >
 
 # Upgrade Frontend Packages
 
-Work on the current branch unless the user asks for a new one. All commands run from `WADNR.Web/` in
-Git Bash unless noted, on the Node version in `.nvmrc` (`nvm use $(cat .nvmrc)`). Commit each package
-group after `/precommit-review`, so each upgrade is independently revertible; push only when the user
-asks.
+All work happens on a new upgrade branch (§0); never commit to `develop` or `main`. All commands run
+from `WADNR.Web/` in Git Bash unless noted, on the Node version in `.nvmrc` (`nvm use $(cat .nvmrc)`).
+Commit each package group to the upgrade branch after `/precommit-review`, so each upgrade is
+independently revertible; push only when the user asks.
 
 The scripts next to this file do the mechanical parts:
 
@@ -36,6 +37,22 @@ WADNR.Web has **no unit tests** (no `*.spec.ts`, no `test` target in `angular.js
 **no `typecheck` script**, and a large standing lint backlog (~49K errors, mostly formatting rules).
 Verification is therefore: the Angular build (TypeScript + template type-checking), lint by rule against
 the baseline, the production build, and the Playwright e2e suite when an app is running.
+
+## 0 · Branch
+
+Create the upgrade branch before touching anything. Invoking the skill is the request to branch, so
+don't ask first.
+
+```bash
+git status --porcelain        # must be empty; if not, stop and ask the user what to do with the changes
+git fetch origin
+git switch -c feature/upgrade-frontend-$(date +%Y-%m-%d) origin/develop
+```
+
+- **Resuming:** if the current branch is already a `feature/upgrade-frontend-*` branch from an
+  interrupted run, keep working on it instead of creating another.
+- **Before every commit:** run `git branch --show-current`. If it prints `develop` or `main`, stop
+  and don't commit.
 
 ## 1 · Baseline
 
@@ -167,7 +184,8 @@ node ../.claude/skills/upgrade-frontend/lint-diff.mjs <scratch>/lint-before.json
 node ../.claude/skills/upgrade-frontend/license-diff.mjs --all
 ```
 
-…plus the Playwright suites from §5 if an app is running. When the user asks for a PR
-(`gh pr create`), include: the upgrades table (package, from → to, license, what changed in our code),
+…plus the Playwright suites from §5 if an app is running. Push the branch
+(`git push -u origin <branch>`) only when the user asks. When the user asks for a PR
+(`gh pr create --base develop`), include: the upgrades table (package, from → to, license, what changed in our code),
 anything removed, anything deferred and why, and a manual smoke list for the medium-risk upgrades the
 build can't see (grids, maps, rich-text editor, charts, dialogs).
