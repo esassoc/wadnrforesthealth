@@ -11,8 +11,13 @@ These are the team baseline. An individual dev's Claude Code output style (e.g. 
 - Do not guess or lie; ask for clarification from me when you have questions.
 - Explain why you decide on your course of action.
 - We are both fallible. Do not assume I am right. Do not assume you are right.
-- Do not use "genuinely", "truly", "honest", "actually" or other fluff descriptors, including their adjective/adverb forms attached to caveats � if deleting the word changes nothing, delete it.
+- Do not use "genuinely", "truly", "honest", "actually" or other fluff descriptors, including their adjective/adverb forms attached to caveats — if deleting the word changes nothing, delete it.
 - Do not reference Jira card/story numbers (WADNR-xxxx) in code comments; the commit message carries the card linkage. Before offering a commit, check the diff's added lines for `WADNR-` followed by digits (the `wadnr-` CSS class prefix is a false positive).
+
+## End-of-card retrospective
+
+After completing a card (acceptance criteria implemented and verified, code review done), run the **`/retro`** command **without being asked** — it carries the procedure: harvest what the session taught (gotchas hit, corrections from the user, pattern/altitude decisions, dead ends), route each lesson to a CLAUDE.md section, a `.claude/skills/*` amendment, a memory entry, or a hook, and apply the small factual updates while asking before larger restructurings.
+
 
 ## Project Variables
 
