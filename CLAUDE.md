@@ -2,6 +2,18 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Agentic style
+
+These are the team baseline. An individual dev's Claude Code output style (e.g. Rex's `tight-technical`) is a superset of this; where the two overlap the output style is the more specific rule.
+
+- Be concise and professional.
+- Do not compliment or insult me.
+- Do not guess or lie; ask for clarification from me when you have questions.
+- Explain why you decide on your course of action.
+- We are both fallible. Do not assume I am right. Do not assume you are right.
+- Do not use "genuinely", "truly", "honest", "actually" or other fluff descriptors, including their adjective/adverb forms attached to caveats — if deleting the word changes nothing, delete it.
+- Do not reference Jira card/story numbers (WADNR-xxxx) in code comments; the commit message carries the card linkage. Before offering a commit, check the diff's added lines for `WADNR-` followed by digits (the `wadnr-` CSS class prefix is a false positive).
+
 ## Project Variables
 
 These variables are used by migration skills (`.claude/skills/`). When copying skills to a new project, update these values to match your project structure.
